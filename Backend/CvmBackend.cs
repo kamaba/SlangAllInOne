@@ -18,10 +18,22 @@ internal sealed class CvmBackend
         Config = config;
     }
 
-    /// <summary>Locates the C VM build tree under <paramref name="repoRoot"/>
-    /// (csimple_lang/build/{Debug,Release}/bin). Falls back Debug -> Release.</summary>
-    public static CvmBackend? Locate(string repoRoot, string config = "Debug")
+    /// <summary>Locates the C VM runtime. Two layouts are supported:
+    /// 1) packaged: &lt;exe dir&gt;\lib\csimple_lang_dll.dll (self-contained
+    ///    publish output, no repo/build tree needed);
+    /// 2) dev: <paramref name="repoRoot"/>\csimple_lang\build\{Debug,Release}\bin
+    ///    (falls back Debug -&gt; Release / Release -&gt; Debug).</summary>
+    public static CvmBackend? Locate(string? repoRoot, string config = "Debug")
     {
+        // Packaged layout first: the publish step copies the C VM runtime
+        // (csimple_lang_dll.dll + sqlite3.dll) next to the app under lib\.
+        var libDir = Path.Combine(AppContext.BaseDirectory, "lib");
+        if (File.Exists(Path.Combine(libDir, "csimple_lang_dll.dll")))
+            return new CvmBackend(libDir, "package");
+
+        if (repoRoot == null)
+            return null;
+
         var candidates = string.Equals(config, "Release", StringComparison.OrdinalIgnoreCase)
             ? new[] { "Release", "Debug" }
             : new[] { "Debug", "Release" };
@@ -59,6 +71,32 @@ internal sealed class CvmBackend
         finally
         {
             CvmInterop.FreeAll(argsPtr, elements, jsonPtr, baseDirPtr);
+        }
+    }
+
+    /// <summary>Binary variant of the compile-to-run fast path (SLB_DESIGN.md P2):
+    /// the Front-built SLB byte package goes straight into the VM memory entry
+    /// (cli_run_module_in_memory_binary) without writing/reading a .module.slb.
+    /// The bytes may also be a NUL-terminated JSON text (magic-dispatched).</summary>
+    public int RunInMemoryBinary(byte[] packageBytes, string? baseDir, int flags, IReadOnlyList<string> programArgs)
+    {
+        if (packageBytes == null || packageBytes.Length == 0)
+            throw new ArgumentException("package bytes are empty", nameof(packageBytes));
+
+        PrepareNativeLoad();
+
+        var dataPtr = Marshal.AllocHGlobal(packageBytes.Length);
+        var baseDirPtr = CvmInterop.AllocUtf8(baseDir);
+        var argsPtr = CvmInterop.AllocUtf8Array(programArgs, out var elements);
+        try
+        {
+            Marshal.Copy(packageBytes, 0, dataPtr, packageBytes.Length);
+            return CvmInterop.cli_run_module_in_memory_binary(
+                dataPtr, packageBytes.LongLength, baseDirPtr, flags, argsPtr, programArgs.Count);
+        }
+        finally
+        {
+            CvmInterop.FreeAll(argsPtr, elements, baseDirPtr, dataPtr);
         }
     }
 

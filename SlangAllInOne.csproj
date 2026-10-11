@@ -13,4 +13,31 @@
     <ProjectReference Include="..\simple_language\source\Front\SimpleLanguageFront.csproj" />
   </ItemGroup>
 
+  <!-- C VM config that feeds the packaged runtime: follows the publish
+       configuration (-c Debug / -c Release); override with -p:CvmBuildConfig. -->
+  <PropertyGroup>
+    <CvmBuildConfig Condition="'$(CvmBuildConfig)' == '' and ('$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release')">$(Configuration)</CvmBuildConfig>
+    <CvmBuildConfig Condition="'$(CvmBuildConfig)' == ''">Release</CvmBuildConfig>
+    <CvmBinDir>$(MSBuildThisFileDirectory)..\csimple_lang\build\$(CvmBuildConfig)\bin</CvmBinDir>
+  </PropertyGroup>
+
+  <!-- Publish is self-contained: build the C VM tree (incremental Ninja build,
+       a no-op when unchanged) and pack the runtime next to the app under lib\
+       so the output depends only on its own directory.
+       CvmBackend.Locate prefers <app dir>\lib\ over the dev build trees. -->
+  <Target Name="PackCvmRuntime" AfterTargets="Publish">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig)" />
+    <ItemGroup>
+      <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
+      <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
+      <!-- Debug-symbol sidecar so the packaged C VM can be debugged
+           (attach to SlangAllInOne.exe and break in csimple_lang sources;
+           the PDB source paths match this repo checkout). -->
+      <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.pdb" Condition="Exists('$(CvmBinDir)\csimple_lang_dll.pdb')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CvmRuntimeFiles)"
+          DestinationFolder="$(PublishDir)lib\"
+          SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>

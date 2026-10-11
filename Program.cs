@@ -26,6 +26,8 @@ internal static class Program
         public bool Help = false;
         public string CvmConfig = "Debug";
         public int OptimizeLevel = -1;
+        /// <summary>Export format: "" = compiler default (json), "json", "binary" (SLB).</summary>
+        public string Format = "";
         public List<string> ProgramArgs = new();
     }
 
@@ -59,11 +61,16 @@ internal static class Program
     // compile: Front in-process compile (disk export unless --in-memory)
     static int RunCompile(Options opts)
     {
-        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel);
+        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format);
         if (!result.Success)
             return 1;
         if (opts.InMemory)
-            Console.WriteLine($"Package JSON built in memory ({result.PackageJson!.Length} chars), baseDir: {result.ExportDir}");
+        {
+            if (result.PackageBytes != null)
+                Console.WriteLine($"Package SLB built in memory ({result.PackageBytes.Length} bytes), baseDir: {result.ExportDir}");
+            else
+                Console.WriteLine($"Package JSON built in memory ({result.PackageJson!.Length} chars), baseDir: {result.ExportDir}");
+        }
         Console.WriteLine("Compile completed.");
         return 0;
     }
@@ -71,10 +78,11 @@ internal static class Program
     // run: Front in-memory compile -> C VM memory entry (no module.json IO)
     static int RunInMemory(Options opts)
     {
-        string repoRoot = GetRepoRoot();
+        string? repoRoot = GetRepoRoot();
 
-        // Step 1: compile with the Front, keeping the package JSON in memory
-        var result = FrontendService.Compile(opts.ProjectPath, inMemory: true, opts.OptimizeLevel);
+        // Step 1: compile with the Front, keeping the package (json text or SLB
+        // bytes, per --format) in memory
+        var result = FrontendService.Compile(opts.ProjectPath, inMemory: true, opts.OptimizeLevel, opts.Format);
         if (!result.Success)
             return 1;
 
@@ -85,7 +93,7 @@ internal static class Program
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
         if (cvm == null)
         {
-            Console.WriteLine($"csimple_lang_dll.dll not found under {repoRoot}\\csimple_lang\\build\\{{{opts.CvmConfig}}}\\bin.");
+            Console.WriteLine("csimple_lang_dll.dll not found (neither <app dir>\\lib\\ nor a csimple_lang build tree).");
             Console.WriteLine("Build the C VM first: powershell scripts\\build-vm-win.ps1 -Config " + opts.CvmConfig);
             return 4;
         }
@@ -98,7 +106,7 @@ internal static class Program
         if (Directory.Exists(projectDir))
             Environment.CurrentDirectory = projectDir;
 
-        // Step 4: hand the package JSON straight to the VM
+        // Step 4: hand the package straight to the VM (SLB bytes or json text)
         int flags = 0;
         if (opts.NoBanner) flags |= CvmInterop.FlagNoBanner;
         if (opts.DebugVm) flags |= CvmInterop.FlagDebug;
@@ -106,7 +114,16 @@ internal static class Program
         if (opts.StrictPlugins) flags |= CvmInterop.FlagStrictPlugins;
         if (opts.Test) flags |= CvmInterop.FlagTest;
 
-        int exitCode = cvm.RunInMemory(result.PackageJson!, result.ExportDir, flags, opts.ProgramArgs);
+        int exitCode;
+        if (result.PackageBytes != null)
+        {
+            Console.WriteLine($"SLB package: {result.PackageBytes.Length} bytes (binary in-memory chain)");
+            exitCode = cvm.RunInMemoryBinary(result.PackageBytes, result.ExportDir, flags, opts.ProgramArgs);
+        }
+        else
+        {
+            exitCode = cvm.RunInMemory(result.PackageJson!, result.ExportDir, flags, opts.ProgramArgs);
+        }
         if (exitCode != 0)
             Console.WriteLine($"C VM run failed, exit code: {exitCode}");
         else
@@ -117,7 +134,7 @@ internal static class Program
     // run-disk: classic path, run an already exported module.json via cli_main
     static int RunDisk(Options opts)
     {
-        string repoRoot = GetRepoRoot();
+        string? repoRoot = GetRepoRoot();
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
         if (cvm == null)
         {
@@ -145,7 +162,7 @@ internal static class Program
     // info: show module metadata via the C VM info command
     static int RunInfo(Options opts)
     {
-        string repoRoot = GetRepoRoot();
+        string? repoRoot = GetRepoRoot();
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
         if (cvm == null)
         {
@@ -159,7 +176,7 @@ internal static class Program
 
     static int RunVersion(Options opts)
     {
-        string repoRoot = GetRepoRoot();
+        string? repoRoot = GetRepoRoot();
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
         Console.WriteLine("SlangAllInOne (FrontEnd + C VM in one host)");
         Console.WriteLine("  Frontend: SimpleLanguage Front Compiler v" + SimpleLanguage.Project.CommandExecutor.VersionString);
@@ -253,6 +270,17 @@ internal static class Program
             {
                 opts.CvmConfig = args[++i];
             }
+            else if (a == "--format" && i + 1 < args.Length)
+            {
+                var f = args[++i];
+                if (!string.Equals(f, "json", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(f, "binary", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"Unknown format: {f} (expected json|binary)");
+                    return null;
+                }
+                opts.Format = f.ToLowerInvariant();
+            }
             else if (a.Length == 3 && a[0] == '-' && (a[1] == 'O' || a[1] == 'o') && a[2] >= '0' && a[2] <= '3')
             {
                 opts.OptimizeLevel = a[2] - '0';
@@ -302,10 +330,12 @@ internal static class Program
         return opts;
     }
 
-    static string GetRepoRoot()
+    static string? GetRepoRoot()
     {
         // SlangAllInOne lives directly under the workspace root; walk up from
-        // the output dir until we see the csimple_lang source tree.
+        // the output dir until we see the csimple_lang source tree. Returns
+        // null when the app runs outside the repo (packaged layout: the C VM
+        // runtime then comes from <app dir>\lib\, see CvmBackend.Locate).
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir != null)
         {
@@ -313,7 +343,7 @@ internal static class Program
                 return dir.FullName;
             dir = dir.Parent!;
         }
-        throw new DirectoryNotFoundException("Cannot locate the workspace root (csimple_lang/CMakeLists.txt).");
+        return null;
     }
 
     static int PrintHelp()

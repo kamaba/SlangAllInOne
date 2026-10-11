@@ -17,8 +17,11 @@ internal sealed class FrontendService
     public sealed class CompileResult
     {
         public bool Success = false;
-        /// <summary>In-memory SLIR package JSON (null when the Export phase was skipped).</summary>
+        /// <summary>In-memory SLIR package JSON (null when the Export phase was skipped
+        /// or when the binary format produced PackageBytes instead).</summary>
         public string? PackageJson = null;
+        /// <summary>In-memory SLB package bytes (--format binary; null for the json format).</summary>
+        public byte[]? PackageBytes = null;
         /// <summary>Directory the package would have been written to;
         /// the C VM resolves reference packages / plugin libs against it.</summary>
         public string? ExportDir = null;
@@ -26,9 +29,10 @@ internal sealed class FrontendService
     }
 
     /// <param name="projectPath">Project path (directory or .sp file).</param>
-    /// <param name="inMemory">true = keep the exported package JSON in memory.</param>
+    /// <param name="inMemory">true = keep the exported package (json text or SLB bytes) in memory.</param>
     /// <param name="optimizeLevel">-1 = compiler default, otherwise 0..3 (-O0..-O3).</param>
-    public static CompileResult Compile(string projectPath, bool inMemory, int optimizeLevel = -1)
+    /// <param name="format">"" = compiler default (jsonc export.format); "json" | "binary" overrides it.</param>
+    public static CompileResult Compile(string projectPath, bool inMemory, int optimizeLevel = -1, string format = "")
     {
         var result = new CompileResult();
 
@@ -37,6 +41,8 @@ internal sealed class FrontendService
             frontArgs.Add("-O" + optimizeLevel);
         if (inMemory)
             frontArgs.Add("--in-memory");
+        if (!string.IsNullOrEmpty(format))
+            frontArgs.AddRange(new[] { "--format", format });
         frontArgs.Add("--no-banner");
 
         Console.WriteLine("=== Front compile (in-process) ===");
@@ -58,14 +64,23 @@ internal sealed class FrontendService
 
             if (inMemory)
             {
-                if (string.IsNullOrEmpty(ExportLangManager.LastMemoryPackageJson))
+                if (ExportLangManager.LastMemoryPackageBytes != null)
+                {
+                    // Binary format: SLB bytes were built in memory
+                    result.PackageBytes = ExportLangManager.LastMemoryPackageBytes;
+                    result.ExportDir = ExportLangManager.LastMemoryExportDir;
+                }
+                else if (string.IsNullOrEmpty(ExportLangManager.LastMemoryPackageJson))
                 {
                     // Export phase skipped: an upstream phase failed silently
                     Console.WriteLine("Front compile finished but the in-memory package was not produced (Export phase skipped).");
                     return result;
                 }
-                result.PackageJson = ExportLangManager.LastMemoryPackageJson;
-                result.ExportDir = ExportLangManager.LastMemoryExportDir;
+                else
+                {
+                    result.PackageJson = ExportLangManager.LastMemoryPackageJson;
+                    result.ExportDir = ExportLangManager.LastMemoryExportDir;
+                }
             }
             result.Success = true;
             return result;

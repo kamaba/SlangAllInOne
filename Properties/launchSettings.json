@@ -1,0 +1,25 @@
+{
+  "profiles": {
+    // F5 mixed-mode debugging: C# breakpoints in Frontend sources
+    // (SimpleLanguageFront) + native breakpoints in C VM sources
+    // (csimple_lang/src/**) in the same process. The dev-mode run loads
+    // the C VM from csimple_lang\build\Debug\bin (with its .pdb).
+    // Absolute paths on purpose: dotnet run does not honor the profile
+    // workingDirectory, so relative project paths break under some shells.
+    "run MiniSmoke (C# + C VM mixed)": {
+      "commandName": "Project",
+      "commandLineArgs": "run D:\\project\\lang\\simple_language\\test\\Other\\MiniSmoke\\MiniSmoke",
+      "nativeDebugging": true
+    },
+    "run-disk ProjectTest (C# + C VM mixed)": {
+      "commandName": "Project",
+      "commandLineArgs": "run-disk D:\\project\\lang\\simple_language\\out\\export\\ProjectTest\\ProjectTest.module.json",
+      "nativeDebugging": true
+    },
+    "package": {
+      "commandName": "Project",
+      "commandLineArgs": "",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -34,6 +34,10 @@ internal static class CvmInterop
     internal static extern int cli_run_module_in_memory(
         IntPtr jsonText, IntPtr baseDir, int flags, IntPtr programArgs, int programArgCount);
 
+    [DllImport("csimple_lang_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int cli_run_module_in_memory_binary(
+        IntPtr data, long dataSize, IntPtr baseDir, int flags, IntPtr programArgs, int programArgCount);
+
     /// <summary>Allocates a NUL-terminated UTF-8 copy of text (or returns IntPtr.Zero
     /// for null). Caller must free with Marshal.FreeHGlobal.</summary>
     internal static IntPtr AllocUtf8(string? text)

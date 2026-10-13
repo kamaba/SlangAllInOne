@@ -117,11 +117,29 @@ dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\pa
 `slang.exe` / `slang.dll`（工程目录与命名空间仍是 SlangAllInOne；publish target 用
 `$(AssemblyName)` 自举，pack-modules / pack-docs 自动跟随）。
 
-任一步失败 publish 即失败（不打缺运行时/缺模块的坏包）。包内容对比：
+任一步失败 publish 即失败（不打缺运行时/缺模块的坏包）。
+
+**Release 包卫生措施**（csproj 两个 hygiene target，2026-10-13）：`dotnet publish`
+从不清理输出目录，历史残留（旧 dll、`1.cmd`、运行日志 `build\logs`、test 草稿）
+会永久堆积，故 Release 发布时——
+- **发布拷贝前**整树清空输出目录（`WipeReleasePackage`，挂 `_CopyFilesToPublishFolder`
+  之前；⚠ 不能挂 `Publish`——那个钩子在依赖链拷贝**之后**才执行，会把刚拷出的产物
+  连带 pack 自举用的 slang.exe 一起删掉，MSB3073/9009）。安全护栏：`-o` 路径含
+  `package` 字样才执行，`publish -o <任意目录>` 不会误清无关目录；
+- **全链结束后**剪掉运行不需要的文件（`TrimReleasePackage`）：被引用 Exe 工程的
+  `SimpleLanguageFront.exe` / `.deps.json` / `.runtimeconfig.json`（宿主进程内编译只
+  用它的 `.dll`，依赖解析走宿主自己的 `slang.deps.json`；pack 命令自举走本应用 exe）
+  与根目录 `*.pdb`。最终 Release 根目录仅：`slang.exe` / `slang.dll` /
+  `slang.deps.json` / `slang.runtimeconfig.json` + `SimpleLanguageFront.dll` +
+  插件 frontend 两 dll（`SLCSharpMonoFrontend` / `SLJavaHotspotFrontend`，Front 编译
+  插件工程时反射装载，必留）。
+Debug 包保留 publish 原始产物（现场调试用），不做这两步。
+
+包内容对比：
 
 | 目录 | Debug 包 | Release 包 |
 |------|----------|------------|
-| `slang.exe + *.dll` | .NET 应用 + Front 编译器（发布产物名 `slang`，见下） | 同左 |
+| `slang.exe + *.dll` | .NET 应用 + Front 编译器（发布产物名 `slang`，见下）+ publish 原始产物全量 | 同左（另自动剪掉 Front 的 exe/deps.json/runtimeconfig.json 与根 `*.pdb`，只留运行必需件，见上方卫生措施） |
 | `bin\` | csimple_lang_dll.dll（~3MB 带边界检查）+ sqlite3.dll + pdb | csimple_lang_dll.dll（~1.6MB）+ sqlite3.dll |
 | `module\` | `*.module.slb` **+ `*.module.json` 调试副本**，**平铺单目录**（无按模块子树） | **仅必须的 `*.module.slb`**，平铺单目录 |
 | `module\math_lib.dll` | ✓（FFI 原生库，vmDllImports 预载 + 静态绑定） | ✓ |
@@ -196,5 +214,6 @@ C VM `-test` 目前只解析不生效（`opts.test` 全源码只写不读，`cli
 | 正式发布包·平铺布局（2026-10-13） | ✅ publish 全自动（`bin\` 运行时 + `module\` slb 直排单目录 + math_lib.dll）：Release 包 run-disk Std（packageCount=2）、Math（packageCount=3 + math_lib FFI 预载 40/40）exit 0；Debug 包（slb + json）包内 `run` 用户工程（references 写 `{ "path": "../../module", "name": "Core.module.json" }`）：Front 装载 `module\Core.module.json`、C VM SLB 优先直指 `module\Core.module.slb`、packageCount=2，exit 0；仓库开发布局（`out\export\` 深层路径）回归无退化 |
 | 用户文档打包（2026-10-13） | ✅ `pack-docs` 随 publish 自动执行，双包各 92 篇：根 5 + syntax 38 + lib 26 + project 12 + log 2 + plugins 2 + src-lib 7；`cvm_sl_mysql_lib` 等 C 侧工程与 `md\ai\`、`md\vm\` 正确排除；`--dest` 手动模式抽查通过 |
 | 产物名改为 slang（2026-10-13） | ✅ `<AssemblyName>slang</AssemblyName>`：双包产出 `slang.exe`/`slang.dll`，publish 自举 targets（pack-modules / pack-docs，走 `$(AssemblyName)`）正常；Release `slang.exe version` 与 Debug `slang.exe run-disk Core.module.slb` 均 exit 0 |
+| Release 包卫生清理（2026-10-13） | ✅ Wipe（挂 `_CopyFilesToPublishFolder` 前）+ Trim（挂 PackDocs 后）随 publish 自动执行：根目录仅剩 slang 四件套 + `SimpleLanguageFront.dll` + 插件 frontend 两 dll，`1.cmd`/`SimpleLanguageFront.exe`/根 `*.pdb`/`build\logs`/test 草稿全消失；回归 `run-disk Std.module.slb`（packageCount=2）、`Math.module.slb`（packageCount=3 + math_lib FFI 预载 40/40）均 exit 0 |
 
 相关文档：C VM 宿主 API 见 `csimple_lang\md\cli.md`；Front 内存导出模式见 `simple_language\md\ai\EXPORT_PATHS.md`。

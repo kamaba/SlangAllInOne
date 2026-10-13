@@ -71,4 +71,47 @@
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 
+  <!-- Release-package hygiene (part 1/2, BEFORE the publish copy): dotnet
+       publish never cleans the output directory, so stale files from older
+       publishes (old host/frontend assemblies, test scratch dirs, runtime
+       build\logs) would accumulate forever. Wipe the whole package directory
+       first so the result contains ONLY what the current publish produces.
+       NOTE: must hook _CopyFilesToPublishFolder, NOT Publish — a
+       BeforeTargets="Publish" hook runs AFTER Publish's dependency chain
+       (which already copied the files), so it would delete the fresh output
+       and the pack targets would then find no slang.exe (MSB3073/9009).
+       Guarded by "the PublishDir lies under a package folder" so an
+       accidental "publish -o <precious dir>" cannot wipe anything unrelated. -->
+  <Target Name="WipeReleasePackage" BeforeTargets="_CopyFilesToPublishFolder"
+          Condition="'$(Configuration)' == 'Release' and $([System.String]::Copy('$(PublishDir)').Contains('package'))">
+    <RemoveDir Directories="$(PublishDir)" Condition="Exists('$(PublishDir)')" />
+    <MakeDir Directories="$(PublishDir)" />
+  </Target>
+
+  <!-- Release-package hygiene (part 2/2, AFTER all pack targets): the runtime
+       package keeps only what is needed at run time.
+         - SimpleLanguageFront.exe: the Front CLI apphost of a referenced Exe
+           project. The host compiles in-process through SimpleLanguageFront.dll
+           (and pack-modules bootstraps via this app's own exe), so the CLI
+           host is dead weight in the package. The .dll itself stays (needed).
+         - SimpleLanguageFront.deps.json / .runtimeconfig.json: same story as
+           the exe — dependency resolution and TFM binding run against the
+           host's own slang.deps.json / slang.runtimeconfig.json.
+         - *.pdb in the package root: no debugging value in the runtime
+           package (plugin frontend pdbs, referenced project pdbs). The C VM
+           sidecar pdb under bin\ is handled by PackCvmRuntime's Exists()
+           condition and is not packed for Release builds.
+       Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend)
+       stay: Front loads them via reflection when compiling plugin projects. -->
+  <Target Name="TrimReleasePackage" AfterTargets="PackDocs"
+          Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup>
+      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.exe" />
+      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.deps.json" />
+      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.runtimeconfig.json" />
+      <ReleaseJunk Include="$(PublishDir)*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(ReleaseJunk)" />
+  </Target>
+
 </Project>

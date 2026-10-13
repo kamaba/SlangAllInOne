@@ -1,0 +1,53 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "SimpleLanguageFront/1.0.0": {
+        "dependencies": {
+          "SLCSharpMonoFrontend": "1.0.0",
+          "SLJavaHotspotFrontend": "1.0.0"
+        },
+        "runtime": {
+          "SimpleLanguageFront.dll": {}
+        }
+      },
+      "SLCSharpMonoFrontend/1.0.0": {
+        "runtime": {
+          "SLCSharpMonoFrontend.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "SLJavaHotspotFrontend/1.0.0": {
+        "runtime": {
+          "SLJavaHotspotFrontend.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SimpleLanguageFront/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SLCSharpMonoFrontend/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SLJavaHotspotFrontend/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

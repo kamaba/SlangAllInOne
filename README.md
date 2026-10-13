@@ -12,7 +12,7 @@ SlangAllInOne/
 ├── FrontEnd/FrontendService.cs   进程内调用 Front CommandExecutor（compile -e ir [--in-memory]）
 └── Backend/
     ├── CvmInterop.cs             P/Invoke：cli_main / cli_run_module_in_memory + SLVM_MEM_FLAG_* 常量 + 手动 UTF-8 组参
-    └── CvmBackend.cs             定位 C VM 运行时（发布包 lib\ 优先，回退构建树）+ RunInMemory / RunCli
+    └── CvmBackend.cs             定位 C VM 运行时（发布包 bin\ 优先，回退构建树）+ RunInMemory / RunCli
 ```
 
 - **FrontEnd**：不派生 `dotnet run SimpleLanguageFront.csproj` 子进程，直接进程内调 `CommandExecutor.Execute`；
@@ -49,6 +49,8 @@ SlangAllInOne/
 | `run <project>` | **编译即运行**：内存编译 → C VM 内存入口（不写 module.json；`--format binary` 时 SLB 字节直传 `cli_run_module_in_memory_binary`） |
 | `run-disk <module.json\|module.slb>` | 经典路径：对已导出的包走 `cli_main run`（两种格式，magic 自动探测） |
 | `info <module.json\|module.slb>` | 模块元数据（`cli_main info`） |
+| `pack-modules` | 编译标准库三件套（Core → Math → Std）并平铺打进 `module\`（slb 直排单目录，无按模块子树；`--dest <dir>` 默认 exe 目录；`--config Debug` = slb + json，`Release` = 仅 slb + math_lib.dll）；`dotnet publish` 自动调起（见「正式发布包」） |
+| `pack-docs` | 把 FrontEnd 用户文档拷进 `md\`（根入口 5 篇 + `syntax/lib/project/log/plugins` 目录镜像 + `source\Front\Lib` 各库说明 → `md\src-lib\`；排除内部 `md\ai\`、`md\vm\` 与 `cvm_*` C 侧工程，共 ~92 篇）；`dotnet publish` 自动调起 |
 | `version` | Front 版本 + C VM DLL 路径/配置 |
 
 ## 选项
@@ -58,6 +60,7 @@ SlangAllInOne/
 | `-p, --project <path>` | 工程路径（目录或 .sp 文件） |
 | `-O0..-O3` | Front 优化级别 |
 | `--format <json\|binary>` | 导出格式二选一（透传 Front `--format`；binary = SLB `.module.slb`，规范见 `csimple_lang/md/design/SLB_DESIGN.md`）。`run --in-memory --format binary` 为 SLB 内存直传链路（P2） |
+| `--export-json` / `--no-export-json` | compile 磁盘导出：是否附带 `.module.json` 调试副本（覆盖 jsonc `export.binary.exportJson`，仅 `--format binary` 时生效） |
 | `--in-memory` | compile：包 JSON 留内存（隐含 `-e ir`） |
 | `-t, --test` | 向 C VM 传 `-test`（⚠ 当前为占位，见下） |
 | `--no-banner` | 抑制 banner |
@@ -93,31 +96,67 @@ dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run-disk simple_langu
 
 注意：`run` 在进 C VM 前把 CWD 切到工程目录（用例含 `Resources/` 等相对路径，与 CSimpleVMTest 宿主行为一致）；编译阶段沿用启动 CWD。
 
-## 自包含发布（package\debug | package\release）
+## 正式发布包（package\debug | package\release）
 
-`dotnet publish` **一条命令**产出自包含包：publish 过程自动增量构建对应配置的 C VM（Ninja，无变化秒过），
-再把运行时拷到发布目录 `lib\`——产物**只依赖自身目录**，不需要事先手动跑构建脚本：
+`dotnet publish` **一条命令**产出自包含发布包。publish 过程全自动四步：
+① 增量构建对应配置的 C VM（Ninja，无变化秒过）→ ② 拷 C VM 运行时到 `bin\` →
+③ **编译标准库三件套并打进包内**（`PackStdModules` target 调起刚发布的 exe 执行
+`pack-modules`，制作逻辑全部在工程代码 `Pack/PackModulesCommand.cs` 里，无手工脚本）→
+④ **拷 FrontEnd 用户文档进包内 `md\`**（`PackDocs` target 调起 `pack-docs`，
+清单在 `Pack/PackDocsCommand.cs`：根入口 5 篇 + `syntax/lib/project/log/plugins`
+目录镜像 + `source\Front\Lib` 各库说明 → `md\src-lib\`，排除 `md\ai\`、`md\vm\`
+内部文档与 `cvm_*` C 侧工程）：
 
 ```powershell
 cd d:\project\lang
 dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -o SlangAllInOne\package\release
 dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\package\debug
-# 产物（两种包同构）：
-#   package\<cfg>\SlangAllInOne.exe + *.dll（.NET 应用）
-#   package\<cfg>\lib\csimple_lang_dll.dll + sqlite3.dll（C VM 运行时）
-# 运行（任意位置，绝对路径指工程即可）：
-.\SlangAllInOne.exe run D:\project\lang\simple_language\test\Other\JsonTest\JsonTest
 ```
+
+**产物名 `slang`**：csproj 设 `<AssemblyName>slang</AssemblyName>`，发布包主程序为
+`slang.exe` / `slang.dll`（工程目录与命名空间仍是 SlangAllInOne；publish target 用
+`$(AssemblyName)` 自举，pack-modules / pack-docs 自动跟随）。
+
+任一步失败 publish 即失败（不打缺运行时/缺模块的坏包）。包内容对比：
+
+| 目录 | Debug 包 | Release 包 |
+|------|----------|------------|
+| `slang.exe + *.dll` | .NET 应用 + Front 编译器（发布产物名 `slang`，见下） | 同左 |
+| `bin\` | csimple_lang_dll.dll（~3MB 带边界检查）+ sqlite3.dll + pdb | csimple_lang_dll.dll（~1.6MB）+ sqlite3.dll |
+| `module\` | `*.module.slb` **+ `*.module.json` 调试副本**，**平铺单目录**（无按模块子树） | **仅必须的 `*.module.slb`**，平铺单目录 |
+| `module\math_lib.dll` | ✓（FFI 原生库，vmDllImports 预载 + 静态绑定） | ✓ |
+| `md\` | ✓ 用户文档 ~92 篇（语法/库/工程/日志/插件 + 各库说明） | ✓ 同左 |
+| 定位 | 编译 + 运行 + 调试全功能 | 运行包（跑已编译 slb） |
+
+**平铺布局**：包内模块不再镜像仓库 `out\export\<模块>\` 子树，`module\` 单目录直排
+`<模块>.module.slb`（Debug 另有 `.module.json` 调试副本）+ `math_lib.dll`。模块间
+引用（`moduleReferences`，基准 = 主包所在目录）由 C VM 装载器回退解析：原样相对
+路径落空时按 basename 回退 `<主包目录>\<名>.module.json`（json 或 slb 任一存在即
+尝试，SLB 优先重定向）；FFI `dllImports` 同理按 `<主包目录>\<basename>` 直查。
+仓库开发布局（`out\export\<模块>\` 深层路径）不受影响，仍走原路径直接装载。
+
+**包内使用**（整包拷到任意位置，脱离仓库运行）：
+
+```powershell
+# Release 包：跑已编译模块 —— 用户 slb 放包内 module\ 即可
+slang.exe run-disk module\MyProj.module.slb
+
+# Debug 包：编译 + 运行用户工程 —— 工程 jsonc 的 references 指向包内 module\
+# （例：工程放 <pkg>\test\MyProj\，references 写 { "path": "../../module", "name": "Core.module.json" }）
+slang.exe run test\MyProj\MyProj
+```
+
+注意：**用户模块必须与包内标准库同源编译**（引用装载有 uuid 校验，旧模块配新
+标准库仅 Warning 但类装配可能错位）；标准库更新后用户模块需重新 compile。
 
 | 项 | 说明 |
 |----|------|
-| C VM 配置联动 | `-c Debug` → 打包 Debug 树 C VM（带边界检查/调试信息，dll ~4.4MB）；`-c Release` → Release 树（~1.5MB）；显式 `-p:CvmBuildConfig=<cfg>` 最优先 |
-| 自动构建 | publish 内调根 `scripts\build-vm-win.ps1 -Config <cfg>`（增量，无变化 no-op）；构建失败则 publish 失败——**不会**打出缺 runtime 的坏包 |
-| DLL 定位优先级 | `<exe 目录>\lib\csimple_lang_dll.dll`（打包布局，优先）→ `csimple_lang\build\{Debug,Release}\bin`（开发布局，回退） |
-| 运行时构成 | 仅 2 文件：`csimple_lang_dll.dll` + `sqlite3.dll`（lz4/zlib 已静态编入） |
-
-工程 `references` 仍按 jsonc 相对路径解析（指向仓库 `out\export\`，属共享磁盘资源，非本包内容）。
-打包的 dll 均来自 publish 当次构建，天然含 `cli_run_module_in_memory` 导出，无旧 dll 隐患。
+| C VM 配置联动 | `-c Debug` → 打包 Debug 树 C VM；`-c Release` → Release 树；显式 `-p:CvmBuildConfig=<cfg>` 最优先；`pack-modules --config` 随之联动 |
+| 标准库编译模型 | Core → Math → Std，每模块一个干净子进程（publish 出的 exe 自举 `compile -O3 --format binary --export-json`，R15）；成功判据 = exit 0 + slb mtime fresh（对齐 scripts\compile-stdlib.ps1） |
+| Math 的 vmDlls | 编译 Math 时 Front 自动 MSBuild 构建 `cvm_math_lib.vcxproj` 并拷出 math_lib.dll（MSBuild 缺失仅跳过并复用已有 dll，缺失则打包失败） |
+| DLL 定位优先级 | `<exe 目录>\bin\csimple_lang_dll.dll`（打包布局，优先）→ `csimple_lang\build\{Debug,Release}\bin`（开发布局，回退） |
+| 手动重打模块 | `slang.exe pack-modules [--dest <dir>] [--config Debug|Release]`（默认 dest = exe 目录） |
+| 手动重打文档 | `slang.exe pack-docs [--dest <dir>]`（默认 dest = exe 目录；不在仓库内运行时报错跳过） |
 
 ## 调试（Frontend C# + C VM C 同进程混合）
 
@@ -130,8 +169,8 @@ dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\pa
 - 换调试用例：改 launchSettings 的 `commandLineArgs`，或命令行 `dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run <工程>`；
 - 命令行裸 `dotnet run`（不带 `--`）即走默认 profile 的参数。
 
-**调试发布包**：`package\debug\lib\` 已含 `csimple_lang_dll.pdb`（publish 自动打包，Debug 树产物），
-VS「调试 → 附加到进程」选 `SlangAllInOne.exe`（或在包目录直接用 VS 打开 exe 调试）即可在
+**调试发布包**：`package\debug\bin\` 已含 `csimple_lang_dll.pdb`（publish 自动打包，Debug 树产物），
+VS「调试 → 附加到进程」选 `slang.exe`（或在包目录直接用 VS 打开 exe 调试）即可在
 C VM 源码断点；`.NET` 侧 Debug 包带自身 pdb，Frontend 断点同样可用。
 `package\release` 无 pdb（Release 树不产出），只用于运行不发调试。
 
@@ -154,5 +193,8 @@ C VM `-test` 目前只解析不生效（`opts.test` 全源码只写不读，`cli
 | `-- a b c` → `global._inputArgs` | ✅ args count = 3 |
 | 负例（ConstProbe 等故意报错探针） | ✅ exit 1 正确传播 |
 | 自包含发布包（2026-10-09） | ✅ package\release 内 JsonTest/ExportPermTest exit 0，DLL 来自包内 lib\；整包拷 %TEMP% 脱离仓库运行同样通过（`DLL: ...\lib\csimple_lang_dll.dll (package)`） |
+| 正式发布包·平铺布局（2026-10-13） | ✅ publish 全自动（`bin\` 运行时 + `module\` slb 直排单目录 + math_lib.dll）：Release 包 run-disk Std（packageCount=2）、Math（packageCount=3 + math_lib FFI 预载 40/40）exit 0；Debug 包（slb + json）包内 `run` 用户工程（references 写 `{ "path": "../../module", "name": "Core.module.json" }`）：Front 装载 `module\Core.module.json`、C VM SLB 优先直指 `module\Core.module.slb`、packageCount=2，exit 0；仓库开发布局（`out\export\` 深层路径）回归无退化 |
+| 用户文档打包（2026-10-13） | ✅ `pack-docs` 随 publish 自动执行，双包各 92 篇：根 5 + syntax 38 + lib 26 + project 12 + log 2 + plugins 2 + src-lib 7；`cvm_sl_mysql_lib` 等 C 侧工程与 `md\ai\`、`md\vm\` 正确排除；`--dest` 手动模式抽查通过 |
+| 产物名改为 slang（2026-10-13） | ✅ `<AssemblyName>slang</AssemblyName>`：双包产出 `slang.exe`/`slang.dll`，publish 自举 targets（pack-modules / pack-docs，走 `$(AssemblyName)`）正常；Release `slang.exe version` 与 Debug `slang.exe run-disk Core.module.slb` 均 exit 0 |
 
 相关文档：C VM 宿主 API 见 `csimple_lang\md\cli.md`；Front 内存导出模式见 `simple_language\md\ai\EXPORT_PATHS.md`。

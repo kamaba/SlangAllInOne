@@ -1,6 +1,7 @@
 using System.Text;
 using SlangAllInOne.Backend;
 using SlangAllInOne.FrontEnd;
+using SlangAllInOne.Pack;
 
 namespace SlangAllInOne;
 
@@ -28,6 +29,13 @@ internal static class Program
         public int OptimizeLevel = -1;
         /// <summary>Export format: "" = compiler default (json), "json", "binary" (SLB).</summary>
         public string Format = "";
+        /// <summary>compile: null = compiler default; true/false = --export-json/--no-export-json
+        /// (json debug copy next to the SLB, disk export only).</summary>
+        public bool? ExportJson = null;
+        /// <summary>pack-modules: package root; "" = exe directory.</summary>
+        public string DestPath = "";
+        /// <summary>pack-modules: package config — Debug = slb + json, Release = slb only.</summary>
+        public string PackConfig = "Debug";
         public List<string> ProgramArgs = new();
     }
 
@@ -52,6 +60,8 @@ internal static class Program
             "run-disk" => RunDisk(opts),
             "info" => RunInfo(opts),
             "version" => RunVersion(opts),
+            "pack-modules" => PackModulesCommand.Run(opts.DestPath, opts.PackConfig),
+            "pack-docs" => PackDocsCommand.Run(opts.DestPath),
             _ => PrintHelp(),
         };
     }
@@ -61,7 +71,7 @@ internal static class Program
     // compile: Front in-process compile (disk export unless --in-memory)
     static int RunCompile(Options opts)
     {
-        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format);
+        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format, opts.ExportJson);
         if (!result.Success)
             return 1;
         if (opts.InMemory)
@@ -93,7 +103,7 @@ internal static class Program
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
         if (cvm == null)
         {
-            Console.WriteLine("csimple_lang_dll.dll not found (neither <app dir>\\lib\\ nor a csimple_lang build tree).");
+            Console.WriteLine("csimple_lang_dll.dll not found (neither <app dir>\\bin\\ nor a csimple_lang build tree).");
             Console.WriteLine("Build the C VM first: powershell scripts\\build-vm-win.ps1 -Config " + opts.CvmConfig);
             return 4;
         }
@@ -281,6 +291,29 @@ internal static class Program
                 }
                 opts.Format = f.ToLowerInvariant();
             }
+            else if (a == "--export-json")
+            {
+                opts.ExportJson = true;
+            }
+            else if (a == "--no-export-json")
+            {
+                opts.ExportJson = false;
+            }
+            else if (a == "--dest" && i + 1 < args.Length)
+            {
+                opts.DestPath = args[++i];
+            }
+            else if (a == "--config" && i + 1 < args.Length)
+            {
+                var c = args[++i];
+                if (!string.Equals(c, "Debug", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(c, "Release", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"Unknown config: {c} (expected Debug|Release)");
+                    return null;
+                }
+                opts.PackConfig = char.ToUpperInvariant(c[0]) + c.Substring(1).ToLowerInvariant();
+            }
             else if (a.Length == 3 && a[0] == '-' && (a[1] == 'O' || a[1] == 'o') && a[2] >= '0' && a[2] <= '3')
             {
                 opts.OptimizeLevel = a[2] - '0';
@@ -330,12 +363,12 @@ internal static class Program
         return opts;
     }
 
-    static string? GetRepoRoot()
+    internal static string? GetRepoRoot()
     {
         // SlangAllInOne lives directly under the workspace root; walk up from
         // the output dir until we see the csimple_lang source tree. Returns
         // null when the app runs outside the repo (packaged layout: the C VM
-        // runtime then comes from <app dir>\lib\, see CvmBackend.Locate).
+        // runtime then comes from <app dir>\bin\, see CvmBackend.Locate).
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
         while (dir != null)
         {
@@ -360,6 +393,19 @@ Commands:
   run-disk <module.json>    Run an exported module.json via the C VM (classic).
   info <module.json>        Show module metadata via the C VM.
   version                   Show Front/Backend versions.
+  pack-modules              Compile the stdlib (Core -> Math -> Std, slb +
+   [--dest <dir>]             json debug copy) and pack it into <dest>\out\
+   [--config Debug|Release]   export\ mirroring the repo layout so package
+                              references resolve unchanged. Debug keeps
+                              .module.json + .slb; Release keeps only the
+                              mandatory .slb (+ math_lib.dll). Default dest =
+                              exe directory. Runs automatically on dotnet
+                              publish (official release packaging).
+  pack-docs                  Copy the user-facing FrontEnd markdown docs
+   [--dest <dir>]             (syntax / lib / project / log / plugins + entry
+                              docs + per-library notes) into <dest>\md\.
+                              Runs automatically on dotnet publish; skips the
+                              internal md\ai\ and md\vm\ trees.
   help                      Show this help.
 
 Options:
@@ -369,6 +415,10 @@ Options:
                              both disk and memory paths run the _main_ entry)
   -O0..-O3                  Front optimize level
   --in-memory               compile: keep the package JSON in memory
+  --format <json|binary>    Export format (binary = SLB; with --export-json
+                             also writes the .module.json debug copy)
+  --export-json             compile: json debug copy next to the SLB
+  --no-export-json          compile: skip the json co-export
   --no-banner               Suppress banners
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
@@ -382,6 +432,8 @@ Examples:
   slang run MyProject -- arg1 arg2
   slang compile MyProject
   slang compile MyProject --in-memory
+  slang compile MyProject --format binary --export-json
+  slang pack-modules --config Release
   slang run-disk simple_language\out\export\ProjectTest\ProjectTest.module.json
   slang info simple_language\out\export\ProjectTest\ProjectTest.module.json");
         return 0;

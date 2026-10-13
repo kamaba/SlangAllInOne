@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>
+    <!-- 发布产物名：slang.exe / slang.dll（工程目录与命名空间保持 SlangAllInOne） -->
+    <AssemblyName>slang</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,22 +24,51 @@
   </PropertyGroup>
 
   <!-- Publish is self-contained: build the C VM tree (incremental Ninja build,
-       a no-op when unchanged) and pack the runtime next to the app under lib\
+       a no-op when unchanged) and pack the runtime next to the app under bin\
        so the output depends only on its own directory.
-       CvmBackend.Locate prefers <app dir>\lib\ over the dev build trees. -->
+       CvmBackend.Locate prefers <app dir>\bin\ over the dev build trees. -->
   <Target Name="PackCvmRuntime" AfterTargets="Publish">
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig)" />
     <ItemGroup>
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
       <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
       <!-- Debug-symbol sidecar so the packaged C VM can be debugged
-           (attach to SlangAllInOne.exe and break in csimple_lang sources;
+           (attach to slang.exe and break in csimple_lang sources;
            the PDB source paths match this repo checkout). -->
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.pdb" Condition="Exists('$(CvmBinDir)\csimple_lang_dll.pdb')" />
     </ItemGroup>
     <Copy SourceFiles="@(CvmRuntimeFiles)"
-          DestinationFolder="$(PublishDir)lib\"
+          DestinationFolder="$(PublishDir)bin\"
           SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- Official release packaging: compile the standard library modules
+       (Core, then Math, then Std; R15: format binary + export-json = SLB
+       main + json debug copy) and pack them flat under <package>\module\
+       (one directory, no per-module sub-trees). The deep relative paths
+       embedded in the modules (moduleReferences "../Core", FFI dllImports
+       "../../out/export/Math/math_lib.dll") resolve through the C VM
+       loader fallbacks: references retry <dir>\<basename>.module.json
+       (json OR slb, SLB-preferred) and FFI retries <pkg_dir>\<basename>.
+       Debug package keeps .module.slb + .module.json; Release keeps only
+       the mandatory .slb (+ math_lib.dll).
+       The whole build recipe lives in the app itself
+       (Pack/PackModulesCommand.cs) and runs here through the just-published
+       exe: one clean child process per module, same model as
+       CompileCore/CompileMath/CompileStd. A non-zero exit fails the publish
+       (never ship a broken package). -->
+  <Target Name="PackStdModules" AfterTargets="PackCvmRuntime">
+    <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-modules --config $(CvmBuildConfig)" />
+  </Target>
+
+  <!-- Official release packaging: copy the user-facing FrontEnd markdown docs
+       (md root entry docs + syntax/lib/project/log/plugins mirrors + per-library
+       notes under source\Front\Lib) into <package>\md\. Internal trees (md\ai\,
+       md\vm\) and cvm_* C-side project docs are excluded. Recipe lives in
+       Pack/PackDocsCommand.cs and runs here through the just-published exe,
+       same self-bootstrap model as pack-modules. -->
+  <Target Name="PackDocs" AfterTargets="PackStdModules">
+    <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 
 </Project>

@@ -19,17 +19,17 @@ internal sealed class CvmBackend
     }
 
     /// <summary>Locates the C VM runtime. Two layouts are supported:
-    /// 1) packaged: &lt;exe dir&gt;\lib\csimple_lang_dll.dll (self-contained
+    /// 1) packaged: &lt;exe dir&gt;\bin\csimple_lang_dll.dll (self-contained
     ///    publish output, no repo/build tree needed);
     /// 2) dev: <paramref name="repoRoot"/>\csimple_lang\build\{Debug,Release}\bin
     ///    (falls back Debug -&gt; Release / Release -&gt; Debug).</summary>
     public static CvmBackend? Locate(string? repoRoot, string config = "Debug")
     {
         // Packaged layout first: the publish step copies the C VM runtime
-        // (csimple_lang_dll.dll + sqlite3.dll) next to the app under lib\.
-        var libDir = Path.Combine(AppContext.BaseDirectory, "lib");
-        if (File.Exists(Path.Combine(libDir, "csimple_lang_dll.dll")))
-            return new CvmBackend(libDir, "package");
+        // (csimple_lang_dll.dll + sqlite3.dll) next to the app under bin\.
+        var packBinDir = Path.Combine(AppContext.BaseDirectory, "bin");
+        if (File.Exists(Path.Combine(packBinDir, "csimple_lang_dll.dll")))
+            return new CvmBackend(packBinDir, "package");
 
         if (repoRoot == null)
             return null;

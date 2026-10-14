@@ -11,8 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="resources\S语言图标-方案B-极简线性.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- FrontEnd: SimpleLanguage compiler (in-process compile) -->
     <ProjectReference Include="..\simple_language\source\Front\SimpleLanguageFront.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="resources\S语言图标-方案B-极简线性.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <!-- C VM config that feeds the packaged runtime: follows the publish
@@ -21,6 +32,10 @@
     <CvmBuildConfig Condition="'$(CvmBuildConfig)' == '' and ('$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release')">$(Configuration)</CvmBuildConfig>
     <CvmBuildConfig Condition="'$(CvmBuildConfig)' == ''">Release</CvmBuildConfig>
     <CvmBinDir>$(MSBuildThisFileDirectory)..\csimple_lang\build\$(CvmBuildConfig)\bin</CvmBinDir>
+    <ApplicationIcon>resources\S语言图标-方案B-极简线性.ico</ApplicationIcon>
+    <PackageId>simple_language.kamaba233.dingo.com</PackageId>
+    <Authors>kamaba233</Authors>
+    <PackageIcon>S语言图标-方案B-极简线性.png</PackageIcon>
   </PropertyGroup>
 
   <!-- Publish is self-contained: build the C VM tree (incremental Ninja build,
@@ -37,9 +52,7 @@
            the PDB source paths match this repo checkout). -->
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.pdb" Condition="Exists('$(CvmBinDir)\csimple_lang_dll.pdb')" />
     </ItemGroup>
-    <Copy SourceFiles="@(CvmRuntimeFiles)"
-          DestinationFolder="$(PublishDir)bin\"
-          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(CvmRuntimeFiles)" DestinationFolder="$(PublishDir)bin\" SkipUnchangedFiles="true" />
   </Target>
 
   <!-- Official release packaging: compile the standard library modules
@@ -82,8 +95,7 @@
        and the pack targets would then find no slang.exe (MSB3073/9009).
        Guarded by "the PublishDir lies under a package folder" so an
        accidental "publish -o <precious dir>" cannot wipe anything unrelated. -->
-  <Target Name="WipeReleasePackage" BeforeTargets="_CopyFilesToPublishFolder"
-          Condition="'$(Configuration)' == 'Release' and $([System.String]::Copy('$(PublishDir)').Contains('package'))">
+  <Target Name="WipeReleasePackage" BeforeTargets="_CopyFilesToPublishFolder" Condition="'$(Configuration)' == 'Release' and $([System.String]::Copy('$(PublishDir)').Contains('package'))">
     <RemoveDir Directories="$(PublishDir)" Condition="Exists('$(PublishDir)')" />
     <MakeDir Directories="$(PublishDir)" />
   </Target>
@@ -103,8 +115,7 @@
            condition and is not packed for Release builds.
        Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend)
        stay: Front loads them via reflection when compiling plugin projects. -->
-  <Target Name="TrimReleasePackage" AfterTargets="PackDocs"
-          Condition="'$(Configuration)' == 'Release'">
+  <Target Name="TrimReleasePackage" AfterTargets="PackDocs" Condition="'$(Configuration)' == 'Release'">
     <ItemGroup>
       <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.exe" />
       <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.deps.json" />

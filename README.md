@@ -96,7 +96,11 @@ dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run-disk simple_langu
 
 注意：`run` 在进 C VM 前把 CWD 切到工程目录（用例含 `Resources/` 等相对路径，与 CSimpleVMTest 宿主行为一致）；编译阶段沿用启动 CWD。
 
-## 正式发布包（package\debug | package\release）
+## 经典发布包（package\debug | package\release，本地开发用）
+
+🔥 **发布渠道策略（2026-10-17 用户指令）：GitHub Release 今后只发 Native AOT 包**
+（见下方「Native AOT 发布」与「一键发布」节）；经典 Release/Debug 包不再对外发布，
+仅作本地开发 / 调试使用。
 
 `dotnet publish` **一条命令**产出自包含发布包。publish 过程全自动四步：
 ① 增量构建对应配置的 C VM（Ninja，无变化秒过）→ ② 拷 C VM 运行时到 `bin\` →
@@ -113,22 +117,23 @@ dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -o SlangAllInOne\pa
 dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\package\debug
 ```
 
-**一键发布 GitHub Release**（2026-10-17，维护机专用）：工作区根
-`scripts\release-slang.ps1` 把整条 publish 链 + 打包 + 发布串成一键，产出
+**一键发布 GitHub Release**（🔥 2026-10-17 起 **AOT-only + 双平台同发**，维护机专用；权威策略文档见 [RELEASE.md](RELEASE.md)）：`scripts\release-slang.ps1` 全自动产出
 https://github.com/kamaba/SlangAllInOne 上的 tag `v<版本>`、Release
-`slang_release <版本>` 与附件 zip：
+`slang_release <版本>` 与**两个资产**：win-x64 zip（`package\aot`）+
+linux-x64 tar.gz（`package\aot-linux`，WSL 构建，目标机无需 .NET 运行时）：
 
 ```powershell
 cd d:\project\lang
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1                 # 发布 0.0.1
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.2
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.3
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.3 -Draft
 ```
 
-流程：preflight（tag/Release 查重、token 校验）→ `dotnet publish -c Release`（上方全自动
-四步）→ 冒烟（临时目录 run-disk 包内 Std/Math，防止 VM 日志 `build\logs` 污染包）→ 压
-`package\dist\slang_release_<版本>_win-x64.zip`（顶层文件夹 `slang_release_<版本>`）→
-git 提交（`release: slang_release <版本>`）+ 打 tag + push → 创建 GitHub Release 并上传
-zip。参数：`-Draft`（草稿）、`-SkipBuild`（复用现包重压）、`-NoCommit`（工作区脏则中止
+流程：preflight（tag/Release 查重、token 校验、`-Version` 必填、WSL 工具链+dotnet SDK）→
+Windows AOT 包（`-r win-x64 -p:PublishAot=true`，布局校验）→ Linux AOT 包（WSL：cmake
+ReleaseLinux hardened `.so` + `-r linux-x64` AOT 发布 + bin 组装 + module/md 复用）→
+双平台冒烟（win run-disk Std/Math；linux run-disk Std + `run MiniSmoke` Front E2E）→
+压 zip + tar.gz（WSL 内 tar 保 exec 位）→ git 提交 + tag + push → GitHub Release 附双资产。
+参数：`-Draft`（草稿）、`-SkipBuild`（复用现包重压）、`-NoCommit`（工作区脏则中止
 而非自动提交）、`-NoPush`（本地到 tag 为止）、`-Token <t>`（显式指定）。鉴权默认取
 git 凭据管理器里的 GitHub token（即 `git push` 用的那个，需 `repo` 权限）。
 
@@ -199,7 +204,11 @@ slang.exe run test\MyProj\MyProj
 | 手动重打模块 | `slang.exe pack-modules [--dest <dir>] [--config Debug|Release]`（默认 dest = exe 目录） |
 | 手动重打文档 | `slang.exe pack-docs [--dest <dir>]`（默认 dest = exe 目录；不在仓库内运行时报错跳过） |
 
-## Native AOT 发布（实验性，2026-10-17）
+## Native AOT 发布（★ 官方发布渠道，2026-10-17 起 AOT-only + 双平台同发）
+
+GitHub Release 今后**只发本节产物**（用户指令 2026-10-17，权威文档见 [RELEASE.md](RELEASE.md)）；
+一键发布走 `scripts\release-slang.ps1 -Version <v>`（见上节），每版双平台同发：
+Windows 包（`package\aot`）+ Linux 包（`package\aot-linux`）。
 
 `dotnet publish` 加 `-r win-x64 -p:PublishAot=true` 即产出 **Native AOT 单文件 exe**（~9.9MB，
 自带 Front 编译器全量 native 代码，无需 .NET 运行时），其余包结构与经典发布一致

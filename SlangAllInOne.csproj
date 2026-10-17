@@ -69,7 +69,16 @@
        a no-op when unchanged) and pack the runtime next to the app under bin\
        so the output depends only on its own directory.
        CvmBackend.Locate prefers <app dir>\bin\ over the dev build trees. -->
-  <Target Name="PackCvmRuntime" AfterTargets="Publish">
+  <!-- Linux AOT 发布（2026-10-17，双平台发版）：以 -r linux-x64 发布时（无论宿主是
+       Windows 还是 WSL），跳过三个 Windows 专属打包 target——PackCvmRuntime 调
+       build-vm-win.ps1（PowerShell/MSVC），PackStdModules/PackDocs 的 Exec 跑
+       "$(PublishDir)$(AssemblyName).exe"（Windows PE）。Linux 包的 bin\（.so）/
+       module\（slb）由发布脚本在 WSL 侧用 Linux slang 二进制自举组装。
+       PackStdModules/PackDocs 挂在前一 target 的 AfterTargets 上，前置被跳过时
+       本身也不再触发，此处三个都显式加条件以防将来挂钩方式变化。
+       手动逃逸：-p:SkipCvmPack=true。 -->
+  <Target Name="PackCvmRuntime" AfterTargets="Publish"
+          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <!-- BINARY_HARDENING.md: Release packages carry the hardened VM
          (SLVM_HARDEN=ON startup anti-debug); Debug packages stay debuggable. -->
     <PropertyGroup>
@@ -102,7 +111,8 @@
        exe: one clean child process per module, same model as
        CompileCore/CompileMath/CompileStd. A non-zero exit fails the publish
        (never ship a broken package). -->
-  <Target Name="PackStdModules" AfterTargets="PackCvmRuntime">
+  <Target Name="PackStdModules" AfterTargets="PackCvmRuntime"
+          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-modules --config $(CvmBuildConfig)" />
   </Target>
 
@@ -112,7 +122,8 @@
        md\vm\) and cvm_* C-side project docs are excluded. Recipe lives in
        Pack/PackDocsCommand.cs and runs here through the just-published exe,
        same self-bootstrap model as pack-modules. -->
-  <Target Name="PackDocs" AfterTargets="PackStdModules">
+  <Target Name="PackDocs" AfterTargets="PackStdModules"
+          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 

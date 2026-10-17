@@ -27,6 +27,21 @@ internal static class CvmInterop
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     internal static extern bool SetDllDirectory(string? lpPathName);
 
+    // ---- Unix: manual dlopen with RTLD_GLOBAL (2026-10-17, linux 包 -13 修复) ----
+    // The C VM registers its ~614 vm_sys_* system methods through
+    // dlsym(dlopen(NULL), symbol) - i.e. it looks itself up in the GLOBAL
+    // dynamic symbol namespace. .NET's NativeLibrary.Load dlopens with
+    // RTLD_LOCAL, so the symbols never become globally visible and every
+    // CallSystemMethod dies with error_code=-13 ("not registered").
+    // dlopen(path, RTLD_NOW|RTLD_GLOBAL) up front makes the .so's exported
+    // symbols resolvable from the main-program handle - the moral equivalent
+    // of the -rdynamic link the standalone csimple_lang exe uses.
+    internal const int RtldNow = 0x2;      // glibc RTLD_NOW
+    internal const int RtldGlobal = 0x100; // glibc RTLD_GLOBAL
+
+    [DllImport("libdl.so.2", SetLastError = true)]
+    internal static extern IntPtr dlopen(string? filename, int flags);
+
     [DllImport("csimple_lang_dll.dll", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int cli_main(int argc, IntPtr argv);
 

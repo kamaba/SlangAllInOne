@@ -199,6 +199,39 @@ slang.exe run test\MyProj\MyProj
 | 手动重打模块 | `slang.exe pack-modules [--dest <dir>] [--config Debug|Release]`（默认 dest = exe 目录） |
 | 手动重打文档 | `slang.exe pack-docs [--dest <dir>]`（默认 dest = exe 目录；不在仓库内运行时报错跳过） |
 
+## Native AOT 发布（实验性，2026-10-17）
+
+`dotnet publish` 加 `-r win-x64 -p:PublishAot=true` 即产出 **Native AOT 单文件 exe**（~9.9MB，
+自带 Front 编译器全量 native 代码，无需 .NET 运行时），其余包结构与经典发布一致
+（`bin\` C VM 运行时 + `module\` 标准库 slb + `md\` 用户文档，publish 四步链全自动不变）：
+
+```powershell
+cd d:\project\lang
+dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -r win-x64 -p:PublishAot=true -o SlangAllInOne\package\aot
+```
+
+### 为 AOT 做的兼容改造（均在普通构建下行为不变）
+
+| # | 改动 | 原因 |
+|---|------|------|
+| 1 | 插件 frontend 两工程 TFM `netstandard2.0` → `net8.0` | AOT 要求引用链全部 TFM 支持 AOT（netstandard → `NETSDK1207`） |
+| 2 | [LogManager.cs](../simple_language/source/Front/Log/LogManager.cs) 移除 `Assembly.GetCallingAssembly()` | AOT 无运行期栈回溯 → `PlatformNotSupportedException` |
+| 3 | [MetaEnum.cs](../simple_language/source/Front/Core/MetaEnum.cs) 枚举成员自增 `dynamic` → `object` + `DynamicEnumAddOne`（复刻 C# 数值提升/unchecked 回绕语义） | AOT 不支持 `dynamic`（CallSite/Microsoft.CSharp） |
+| 4 | **SLIR/插件契约 JSON 全面迁移 source-gen**：新增 `FrontJsonContext.cs`（`[JsonSerializable]` 登记根类型），`SerializePackage`/`Read`/插件 Parse/Build/IRData 遗留 JSON 全部改走 `FrontJsonOptions`；`payload` byte[] 的 Latin1 编码改属性级 `[JsonConverter]`；宏注入 `SerializeToElement(字典)` 改手工 Utf8JsonWriter | **核心硬墙**：STJ 反射序列化运行期 `MakeGenericType` 展开 `JsonPropertyInfo<T>`，AOT 必炸；source-gen 编译期生成元数据，产物与反射版字节级一致（694,409 行 diff 仅 `globalStaticVariableList[].id` 等逐进程随机哈希值，经典构建同样逐次不同） |
+| 5 | csproj：AOT 发布时 `TrimmerRootAssembly`（SimpleLanguageFront + 两插件 frontend，类型/成员/嵌入资源全保形）+ `JsonSerializerIsReflectionEnabledByDefault=true`（CompileBeforeManager 基元 `SerializeToElement` 等残余反射点） | 裁剪器按静态可达性裁类型，Front 大量"按名字字符串反射"会 MissingMetadata / GetType 返回 null |
+| 6 | csproj：AOT 发布时 `DebugType=none`（不产出 ~50MB 原生 slang.pdb）+ `TrimReleasePackage` 的 `PublishDir` 先绝对化再通配 | 前者：AOT 发布里 pdb 的 Delete/Wipe 实测失效——junk 列表正确（含 pdb）、exit 0，文件却原样驻留（发布后手动删除正常；推测 Trim 落在 pack-modules/pack-docs `<Exec>` 运行 AOT exe 的窗口内，机制未深挖），故源头关掉 pdb 生成一劳永逸，且包体省 50MB（Release 哲学只运行不发调试）。后者：`msbuild -p:PublishDir=<相对>` 直跑 target 时 SDK 按工程目录规范化 → 双层路径错位 → glob 落空 |
+
+### 已知限制（AOT 形态）
+
+- **C# 导出目标不可用**：`Export/CSharp/IL/CSharpEmitter.cs` 走 `System.Reflection.Emit`（运行期
+  动态程序集），AOT 下调用即抛 `PlatformNotSupportedException`。AllInOne 主链路只走 `-e ir`，不受影响。
+- **插件 frontend 只能使用内置（编译进 exe）的程序集**：`Assembly.LoadFrom` 在 AOT 下无法运行期加载
+  管理程序集；`PluginFrontendParser.FindLoadedAssembly` 旁路命中 exe 内已 AOT 化的插件程序集
+  （TrimmerRootAssembly 保形后 `GetType/GetMethod/Invoke` 可用），但磁盘上新编译的插件 dll
+  需重新 publish 才生效。`@csharp_mono` 全链路（含 mono 运行时）未在 AOT 形态实测。
+- 发布构建仍有 IL2026/IL3050 警告残留（反射 API 的"可能不兼容"提示，类型已保形 + source-gen
+  接线后实际路径安全）；启动性能、编译吞吐与 JIT 版的对比未做基准测量。
+
 ## 调试（Frontend C# + C VM C 同进程混合）
 
 **VS F5（主推）**：用 VS 打开 `SlangAllInOne\SlangAllInOne.csproj`，选 `Properties\launchSettings.json` 里的
@@ -237,6 +270,7 @@ C VM `-test` 目前只解析不生效（`opts.test` 全源码只写不读，`cli
 | 正式发布包·平铺布局（2026-10-13） | ✅ publish 全自动（`bin\` 运行时 + `module\` slb 直排单目录 + math_lib.dll）：Release 包 run-disk Std（packageCount=2）、Math（packageCount=3 + math_lib FFI 预载 40/40）exit 0；Debug 包（slb + json）包内 `run` 用户工程（references 写 `{ "path": "../../module", "name": "Core.module.json" }`）：Front 装载 `module\Core.module.json`、C VM SLB 优先直指 `module\Core.module.slb`、packageCount=2，exit 0；仓库开发布局（`out\export\` 深层路径）回归无退化 |
 | 用户文档打包（2026-10-13） | ✅ `pack-docs` 随 publish 自动执行，双包各 92 篇：根 5 + syntax 38 + lib 26 + project 12 + log 2 + plugins 2 + src-lib 7；`cvm_sl_mysql_lib` 等 C 侧工程与 `md\ai\`、`md\vm\` 正确排除；`--dest` 手动模式抽查通过 |
 | 产物名改为 slang（2026-10-13） | ✅ `<AssemblyName>slang</AssemblyName>`：双包产出 `slang.exe`/`slang.dll`，publish 自举 targets（pack-modules / pack-docs，走 `$(AssemblyName)`）正常；Release `slang.exe version` 与 Debug `slang.exe run-disk Core.module.slb` 均 exit 0 |
+| Native AOT 发布（2026-10-17） | ✅ `-r win-x64 -p:PublishAot=true`：publish 四步链全绿（slang.exe 9.87MB 单文件 + `bin\` C VM 运行时 + `module\` 三件套 slb + math_lib.dll + `md\` 93 篇，包内无 pdb——DebugType=none）；Core.module.json 与反射版 694,409 行结构逐行一致（仅逐进程随机哈希值不同，AOT 自跑两次同样不同）；AOT exe `run BaseTest\ProjectTest` 全链路（Front 编译→SLIR 内存直传→C VM 执行）exit 0、`run MiniSmoke` exit 0；兼容改造清单与已知限制见「Native AOT 发布」节 |
 | Release 包卫生清理（2026-10-13） | ✅ Wipe（挂 `_CopyFilesToPublishFolder` 前）+ Trim（挂 PackDocs 后）随 publish 自动执行：根目录仅剩 slang 四件套 + `SimpleLanguageFront.dll` + 插件 frontend 两 dll，`1.cmd`/`SimpleLanguageFront.exe`/根 `*.pdb`/`build\logs`/test 草稿全消失；回归 `run-disk Std.module.slb`（packageCount=2）、`Math.module.slb`（packageCount=3 + math_lib FFI 预载 40/40）均 exit 0 |
 
 相关文档：C VM 宿主 API 见 `csimple_lang\md\cli.md`；Front 内存导出模式见 `simple_language\md\ai\EXPORT_PATHS.md`。

@@ -8,6 +8,19 @@
     <RootNamespace>SlangAllInOne</RootNamespace>
     <!-- 发布产物名：slang.exe / slang.dll（工程目录与命名空间保持 SlangAllInOne） -->
     <AssemblyName>slang</AssemblyName>
+    <!-- Native AOT 发布（-p:PublishAot=true）：PublishAot 默认把 STJ 反射序列化开关
+         System.Text.Json.JsonSerializer.IsReflectionEnabledByDefault 置为 false，
+         Front 的 SLIR 导出（SLModulePackageWriter.SerializePackage 等全部 json 路径）
+         走反射序列化 → 运行期 ReflectionDisabled 异常。Front 已整体 TrimmerRootAssembly
+         保形，这里把开关翻回 true（反射序列化经 Delegate.CreateDelegate 装箱访问器
+         在 AOT 下可用，性能换兼容；长期正确解 = STJ source-gen，见 md 文档）。 -->
+    <JsonSerializerIsReflectionEnabledByDefault Condition="'$(PublishAot)' == 'true'">true</JsonSerializerIsReflectionEnabledByDefault>
+    <!-- Native AOT 会产出 ~50MB 原生 slang.pdb；运行包只运行不发调试（Release 哲学，
+         C VM 侧 bin\*.pdb 也已按包卫生排除），且实测 TrimReleasePackage 的 Delete
+         成功（exit 0）后 pdb 仍驻留包内（CT 未变、首次执行时 WT 被 touch，复活
+         机制未定位）——源头关掉 pdb 生成，一劳永逸。仅 AOT 发布生效，普通构建不受影响。 -->
+    <DebugSymbols Condition="'$(PublishAot)' == 'true'">false</DebugSymbols>
+    <DebugType Condition="'$(PublishAot)' == 'true'">none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +30,20 @@
   <ItemGroup>
     <!-- FrontEnd: SimpleLanguage compiler (in-process compile) -->
     <ProjectReference Include="..\simple_language\source\Front\SimpleLanguageFront.csproj" />
+  </ItemGroup>
+
+  <!-- Native AOT 发布支持（2026-10-17，-p:PublishAot=true 时生效）：
+       Front 与插件 frontend 是反射重度用户——SLIR 反射 JSON（SLModulePackage 全图）、
+       插件 parser/builder 按类型名字符串反射转调（Assembly.GetType/GetMethod/Invoke）、
+       SLModulePackageWriter.Build 的 GetMethod/GetProperty、AotStringEnumConverterFactory
+       的 Enum.Parse/ToObject。AOT/裁剪器默认按静态可达性裁类型，仅按名字字符串反射的
+       类型会被裁掉（运行期 MissingMetadataException / 插件 GetType 返回 null）。
+       把三个程序集整体置为裁剪根：类型+成员+嵌入资源全保形（代价：exe 变大）。
+       普通（非 AOT）publish 不受影响。 -->
+  <ItemGroup Condition="'$(PublishAot)' == 'true'">
+    <TrimmerRootAssembly Include="SimpleLanguageFront" />
+    <TrimmerRootAssembly Include="SLCSharpMonoFrontend" />
+    <TrimmerRootAssembly Include="SLJavaHotspotFrontend" />
   </ItemGroup>
 
   <ItemGroup>
@@ -121,19 +148,26 @@
        Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend)
        stay: Front loads them via reflection when compiling plugin projects. -->
   <Target Name="TrimReleasePackage" AfterTargets="PackDocs" Condition="'$(Configuration)' == 'Release'">
+    <!-- 相对 PublishDir 加固（2026-10-17）：dotnet publish -o 传入的已是绝对路径；
+         但经 msbuild -p:PublishDir=<相对> 直跑本 target 时，SDK 按工程目录规范化
+         （实测 → SlangAllInOne\SlangAllInOne\... 双层错位，glob 落空、清理静默失效）。
+         先绝对化再取通配，两种入口下 Delete 都指对地方。 -->
+    <PropertyGroup>
+      <PublishDirAbsolute>$([System.IO.Path]::GetFullPath('$(PublishDir)'))</PublishDirAbsolute>
+    </PropertyGroup>
     <ItemGroup>
-      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.exe" />
-      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.deps.json" />
-      <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.runtimeconfig.json" />
-      <ReleaseJunk Include="$(PublishDir)*.pdb" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.exe" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.deps.json" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.runtimeconfig.json" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)*.pdb" />
       <!-- BINARY_HARDENING.md P0: binary-artifact blacklist under bin\ (defense
            in depth - PackCvmRuntime only copies the two runtime dlls, but any
            future copy pattern must not leak symbol/linker artifacts). -->
-      <ReleaseJunk Include="$(PublishDir)bin\*.map" />
-      <ReleaseJunk Include="$(PublishDir)bin\*.pdb" />
-      <ReleaseJunk Include="$(PublishDir)bin\*.exp" />
-      <ReleaseJunk Include="$(PublishDir)bin\*.ilk" />
-      <ReleaseJunk Include="$(PublishDir)bin\*.lib" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.map" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.pdb" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.exp" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.ilk" />
+      <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.lib" />
     </ItemGroup>
     <Delete Files="@(ReleaseJunk)" />
   </Target>

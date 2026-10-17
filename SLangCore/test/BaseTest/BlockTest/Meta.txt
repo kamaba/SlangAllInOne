@@ -1,0 +1,260 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/BlockTest.sl-----------------------
+public class Class2 extends Core.Object
+{
+    public static [Core.Int32]m2 = 10i;
+    public [Core.Object]m = 10i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    public  Core.Void _init_([Core.Int32]x)
+    {
+        [Core.Class2]Core.Class2._init_.this  ->  public [Core.Int32]m = ConstExpressNode: [Int32] 10i; = 10i;
+
+    }
+
+}
+
+public class Class1 extends Core.Object
+{
+    public [Core.Class2]c3 = Core.Class2().{m=20i};
+    public  static Core.Object scopeShadowCase()
+    {
+        [Core.Int32]a = 1i;
+        {
+            [Core.Int32]a = 2i;
+            {
+                [Core.Int32]a = 3i;
+                println("inner a = " + a)
+                println("middle a = " + a)
+                println("outer a = " + a)
+
+
+
+            }
+        }
+    }
+
+    public  static Core.Object emptyAndStandaloneBlockCase()
+    {
+        {
+        }            {
+                [Core.Int32]onlyInBlock = 100i;
+                println("onlyInBlock = " + onlyInBlock)
+                Core.Boolean autocreate_32237730 = True
+                if autocreate_32237730
+                {
+                    [Core.Int32]inIf = 200i;
+                    println("inIf = " + inIf)
+
+                }
+
+
+            }
+
+    }
+
+    public  static Core.Object initAndStatementMixedCase()
+    {
+        [Core.Class2]c = Core.Class2().{m=88i};
+        {
+            [Core.Class2]c  ->  public [Core.Int32]m = ConstExpressNode: [Int32] 10i; = ([Core.Class2]c  ->  public [Core.Int32]m = ConstExpressNode: [Int32] 10i; + 1i);
+            println("c.m = " + c.m)
+
+        }
+    }
+
+    public  static Core.Object err_missing_right_brace()
+    {
+        [Core.Int32]x = 10i;
+        {
+            [Core.Int32]y = 20i;
+        }
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    public  Core.Object print()
+    {
+        [Core.Int32]a = 10i;
+        {
+            [Core.Object]b = 20i;
+            {
+                [Core.Int32]a = 15i;
+                [Core.Object]a2 = 13i;
+                {
+                    [Core.Object]m = 10i;
+                    println("a2 = " + b)
+
+                }
+            }
+        }
+    }
+
+}
+
+public class BlockTest extends Core.Object
+{
+    public  static Core.Object fun()
+    {
+          ->  scopeShadowCase()
+          ->  emptyAndStandaloneBlockCase()
+          ->  initAndStatementMixedCase()
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

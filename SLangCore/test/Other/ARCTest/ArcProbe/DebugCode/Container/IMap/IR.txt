@@ -1,0 +1,132 @@
+-------------------IR 文件显示 开始 : Path: Container/IMap.sl-----------------------
+Class: Core.IMap<T1,T2>
+  metaClassKind: Interface
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.IMap<T1,T2>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: True
+    Return:
+      - #0 id=18429167 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39330387 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=31644779 idx=1 name=capacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=13090320 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=16367560 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=53682985 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50704018 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=13384821 idx=1 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=10428696 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53354527 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=26749401 idx=1 name=min type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.add_2_T1_T2
+    VirtualName: add_Core.Boolean_2_T1_T2
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=19217855 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39418019 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=38742975 idx=1 name=key type=T[0]
+      - #2 id=13142459 idx=2 name=value type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.remove_1_T1
+    VirtualName: remove_T2_1_T1
+    Name: remove
+    InterfaceMethod: True
+    Return:
+      - #0 id=57906226 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=51173267 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=51393992 idx=1 name=key type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.removeAt_1_Core.Int32
+    VirtualName: removeAt_Core.Void_1_Core.Int32
+    Name: removeAt
+    InterfaceMethod: True
+    Return:
+      - #0 id=2163846 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59892750 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=19474615 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: True
+    Return:
+      - #0 id=33939988 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41053812 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>._getItem__1_T1
+    VirtualName: _getItem__T2_1_T1
+    Name: _getItem_
+    InterfaceMethod: True
+    Return:
+      - #0 id=64784526 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=37024442 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=46189825 idx=1 name=key type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.IMap<T1,T2>._setItem__2_T1_T2
+    VirtualName: _setItem__Core.Void_2_T1_T2
+    Name: _setItem_
+    InterfaceMethod: True
+    Return:
+      - #0 id=50388336 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13055244 idx=0 name=this] type=Core.IMap<T1,T2><T[0], T[1]>
+      - #1 id=50841847 idx=1 name=key type=T[0]
+      - #2 id=54923440 idx=2 name=value type=T[1]
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

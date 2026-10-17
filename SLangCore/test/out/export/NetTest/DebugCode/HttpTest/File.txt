@@ -1,0 +1,361 @@
+-------------------FileMeta 文件显示 开始 : Path: HttpTest.sl-----------------------
+ ;
+ ;
+HttpTest
+{
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            Console.println("[HttpTest] " + name + " : OK");
+        }
+        else
+        {
+            Console.println("[HttpTest] " + name + " : FAIL");
+        }
+    }
+    _public static Int32 sfFind( string text,  string sub )
+    {
+        Int32 tlen = SystemStringLength(text);
+        Int32 slen = SystemStringLength(sub);
+        if slen == 0i
+        {
+            ret 0i
+        }
+        if tlen < slen
+        {
+            ret - - 1i
+        }
+        Int32 last = tlen - slen;
+        
+        for Int32 i = 0i, i <= last, i = i + 1i;
+        {
+            bool matched = true;
+            
+            for Int32 j = 0i, j < slen, j = j + 1i;
+            {
+                if SystemStringCharCodeAt(text,i + j) != SystemStringCharCodeAt(sub,j)
+                {
+                    matched = false;
+                    break
+                }
+            }
+            if matched
+            {
+                ret i
+            }
+        }
+        ret - - 1i
+    }
+    _public static Int32 sfHeaderInt( string text,  string name )
+    {
+        string pat = "
+" + name + ":";
+        Int32 pos = sfFind(text,pat);
+        if pos < 0i
+        {
+            ret - - 1i
+        }
+        Int32 i = pos + SystemStringLength(pat);
+        Int32 tlen = SystemStringLength(text);
+        while i < tlen && SystemStringCharCodeAt(text,i) == 32i
+        {
+            i = i + 1i;
+        }
+        Int32 v = 0i;
+        bool any = false;
+        while i < tlen
+        {
+            Int32 ch = SystemStringCharCodeAt(text,i);
+            if ch < 48i || ch > 57i
+            {
+                break
+            }
+            v = v * 10i + ch - 48i;
+            any = true;
+            i = i + 1i;
+        }
+        if any
+        {
+            ret v
+        }
+        ret - - 1i
+    }
+    _public static throws string sfReadAll( Net.NetStream s )
+    {
+        string text = "";
+        Int32 headerEnd = - - 1i;
+        Int32 bodyNeed = 0i;
+        bool done = false;
+        while done == false
+        {
+            ByteBuffer b = ByteBuffer(512i);
+            Int32 n = s.read(b);
+            if n == 0i
+            {
+                ret text
+            }
+            text = text + b.readString(n);
+            if headerEnd < 0i
+            {
+                Int32 he = sfFind(text,"
+
+");
+                if he >= 0i
+                {
+                    headerEnd = he + 4i;
+                    Int32 bn = sfHeaderInt(text,"Content-Length");
+                    if bn < 0i
+                    {
+                        bn = 0i;
+                    }
+                    bodyNeed = bn;
+                }
+            }
+            if headerEnd >= 0i
+            {
+                if SystemStringLength(text) >= headerEnd + bodyNeed
+                {
+                    done = true;
+                }
+            }
+        }
+        ret text
+    }
+    _public static throws Int32 sfL2Server( Net.TcpServer srv,  Channel<object> doneCh )
+    {
+        Net.TcpStream c = srv.accept();
+        Net.NetStream s = c;
+        string req = sfReadAll(s);
+        Int32 p1 = sfFind(req,"GET /a/b?q=1&r=2 HTTP/1.1
+");
+        Int32 p2 = sfFind(req,"
+Host: 127.0.0.1:19361
+");
+        Int32 p3 = sfFind(req,"
+Connection: close
+");
+        check("L2 server request line",p1 == 0i);
+        check("L2 server Host header",p2 >= 0i);
+        check("L2 server Connection: close",p3 >= 0i);
+        string body = "hello-http-1";
+        Int32 blen = SystemStringLength(body);
+        string resp = "HTTP/1.1 200 OK
+Content-Type: text/plain
+";
+        resp = resp + "Content-Length: " + blen.toString() + "
+";
+        resp = resp + "X-Http-Test: l2
+Connection: close
+
+" + body;
+        ByteBuffer w = ByteBuffer(512i);
+        w.writeString(resp);
+        s.write(w);
+        object msg = doneCh.recv();
+        s.close();
+        ret 1i
+    }
+    _public static throws Int32 sfL3Server( Net.TcpServer srv,  Channel<object> doneCh )
+    {
+        Net.TcpStream c = srv.accept();
+        Net.NetStream s = c;
+        string req = sfReadAll(s);
+        Int32 p1 = sfFind(req,"POST /echo HTTP/1.1
+");
+        Int32 p2 = sfFind(req,"
+Content-Type: text/plain
+");
+        Int32 p3 = sfFind(req,"
+Content-Length: 10
+");
+        Int32 p4 = sfFind(req,"
+
+hello=http");
+        check("L3 server request line",p1 == 0i);
+        check("L3 server Content-Type header",p2 >= 0i);
+        check("L3 server Content-Length: 10",p3 >= 0i);
+        check("L3 server body after blank line",p4 >= 0i);
+        string resp = "HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Connection: close
+
+";
+        resp = resp + "b
+hello-http-
+";
+        resp = resp + "1
+3
+";
+        resp = resp + "0
+
+";
+        ByteBuffer w = ByteBuffer(512i);
+        w.writeString(resp);
+        s.write(w);
+        object msg = doneCh.recv();
+        s.close();
+        ret 1i
+    }
+    _public static throws Int32 sfL4Server( Net.TcpServer srv,  string certPem,  string keyPem,  Channel<object> doneCh )
+    {
+        Net.TcpStream c = srv.accept();
+        Console.println("L4 dbg: server accepted");
+        Net.TlsOptions sopt = Net.TlsOptions();
+        sopt.certPem = certPem;
+        sopt.keyPem = keyPem;
+        Net.TlsStream tls = Net.TlsStream.accept(c,sopt);
+        Console.println("L4 dbg: server tls accepted");
+        Net.NetStream s = tls;
+        string req = sfReadAll(s);
+        Console.println("L4 dbg: server req read");
+        Int32 p1 = sfFind(req,"GET /secure HTTP/1.1
+");
+        Int32 p2 = sfFind(req,"
+Host: localhost:19363
+");
+        Int32 p3 = sfFind(req,"
+X-Test: xyz
+");
+        Int32 p4 = sfFind(req,"
+X-Test: abc
+");
+        check("L4 server https request line",p1 == 0i);
+        check("L4 server Host header",p2 >= 0i);
+        check("L4 server setHeader override value",p3 >= 0i);
+        check("L4 server setHeader no stale copy",p4 < 0i);
+        string body = "secure-http-4";
+        Int32 blen = SystemStringLength(body);
+        string resp = "HTTP/1.1 200 OK
+Content-Length: " + blen.toString() + "
+
+" + body;
+        ByteBuffer w = ByteBuffer(512i);
+        w.writeString(resp);
+        s.write(w);
+        object msg = doneCh.recv();
+        tls.close();
+        ret 1i
+    }
+    _public static testGroupL( )
+    {
+        Console.println("========== L: HTTP 客户端 ==========");
+        Net.Uri u1 = Net.Uri("http://example.com:8080/a/b?q=1&r=2");
+        bool f1a = u1.scheme == "http" && u1.host == "example.com" && u1.port == 8080i;
+        bool f1b = u1.path == "/a/b" && u1.query == "q=1&r=2" && u1.pathAndQuery == "/a/b?q=1&r=2";
+        bool f1c = u1.isHttp == true && u1.isHttps == false && u1.effectivePort == 8080i;
+        bool f1d = u1.hostHeader == "example.com:8080";
+        check("L1 uri scheme/host/port",f1a);
+        check("L1 uri path/query/pathAndQuery",f1b);
+        check("L1 uri flags + effectivePort",f1c);
+        check("L1 uri hostHeader (explicit 8080)",f1d);
+        Net.Uri u2 = Net.Uri("https://example.com/x");
+        bool f1e = u2.scheme == "https" && u2.isHttps == true && u2.port < 0i;
+        bool f1f = u2.effectivePort == 443i && u2.hostHeader == "example.com";
+        check("L1 uri https defaults",f1e);
+        check("L1 uri https effectivePort/hostHeader",f1f);
+        Net.Uri u3 = Net.Uri("http://example.com");
+        bool f1g = u3.path == "/" && u3.pathAndQuery == "/" && u3.query == "";
+        check("L1 uri empty path -> /",f1g);
+        Net.Uri bad = null;
+        bool fBad = false;
+        try
+        {
+            bad = Net.Uri("http://");
+        }
+        catch e
+        {
+            Error te = eas Error;
+            fBad = te != null && te.code == 1i;
+        }
+        check("L1 uri empty host -> UriFormat(1)",fBad);
+        Net.HttpResponse fr = null;
+        bool fFtp = false;
+        try
+        {
+            fr = Net.HttpClient.httpGet("ftp://127.0.0.1/x");
+        }
+        catch e
+        {
+            Error te2 = eas Error;
+            fFtp = te2 != null && te2.code == 2i;
+        }
+        check("L1 ftp scheme -> UnsupportedScheme(2)",fFtp);
+        Net.TcpServer srv2 = Net.Tcp.listen(19361i);
+        Channel<object> doneCh2 = Channel<object>.create(4i);
+        var fL2 = function(  )
+            {
+                object r = try? try? HttpTest.sfL2Server(srv2,doneCh2);
+            }
+        Coroutine.spawnClosure0(fL2);
+        Net.HttpResponse r2 = Net.HttpClient.httpGet("http://127.0.0.1:19361/a/b?q=1&r=2");
+        bool f2a = r2.statusCode == 200i && r2.reasonPhrase == "OK" && r2.protocol == "HTTP/1.1";
+        bool f2b = r2.body == "hello-http-1";
+        string ct2 = r2.headers.getHeader("Content-Type");
+        string xt2 = r2.headers.getHeader("x-http-test");
+        Int64 cl2 = r2.contentLength;
+        bool f2c = ct2 == "text/plain" && xt2 == "l2";
+        bool f2d1 = cl2 == 12i;
+        bool f2d2 = r2.isOk;
+        bool f2d3 = r2.headers.count >= 2i;
+        check("L2 GET status line",f2a);
+        check("L2 GET body via content-length",f2b);
+        check("L2 GET response headers (case-insensitive get)",f2c);
+        check("L2 GET contentLength == 12",f2d1);
+        check("L2 GET isOk",f2d2);
+        check("L2 GET headers.count >= 2",f2d3);
+        doneCh2.send("ok");
+        srv2.close();
+        Net.TcpServer srv3 = Net.Tcp.listen(19362i);
+        Channel<object> doneCh3 = Channel<object>.create(4i);
+        var fL3 = function(  )
+            {
+                object r = try? try? HttpTest.sfL3Server(srv3,doneCh3);
+            }
+        Coroutine.spawnClosure0(fL3);
+        Net.HttpResponse r3 = Net.HttpClient.httpPost("http://127.0.0.1:19362/echo","hello=http","text/plain");
+        bool f3a = r3.statusCode == 200i && r3.isOk;
+        bool f3b = r3.body == "hello-http-3";
+        Int64 cl3 = r3.contentLength;
+        string te3 = r3.headers.getHeader("Transfer-Encoding");
+        bool f3c = cl3 < 0i && te3 == "chunked";
+        check("L3 POST status + isOk",f3a);
+        check("L3 chunked body aggregation (2 chunks)",f3b);
+        check("L3 contentLength -1 + chunked header",f3c);
+        doneCh3.send("ok");
+        srv3.close();
+        string certPem = File.readAllText("Resources/cert.pem");
+        string keyPem = File.readAllText("Resources/key.pem");
+        Console.println("L4 dbg: client certs loaded");
+        Net.TcpServer srv4 = Net.Tcp.listen(19363i);
+        Channel<object> doneCh4 = Channel<object>.create(4i);
+        var fL4 = function(  )
+            {
+                object r = try? try? HttpTest.sfL4Server(srv4,certPem,keyPem,doneCh4);
+            }
+        Coroutine.spawnClosure0(fL4);
+        Net.HttpClient c4 = Net.HttpClient();
+        c4.caPem = certPem;
+        Net.HttpRequest req4 = Net.HttpRequest();
+        req4.method = 0i;
+        req4.url = "https://localhost:19363/secure";
+        req4.headers.setHeader("X-Test","abc");
+        req4.headers.setHeader("x-TEST","xyz");
+        Console.println("L4 dbg: client connecting");
+        Net.HttpResponse r4 = c4.send(req4);
+        Console.println("L4 dbg: client response got");
+        bool f4a = r4.statusCode == 200i && r4.isOk;
+        bool f4b = r4.body == "secure-http-4";
+        check("L4 https GET status",f4a);
+        check("L4 https GET body",f4b);
+        doneCh4.send("ok");
+        srv4.close();
+    }
+    _public static fun( )
+    {
+        Console.println("===== HttpTest start =====");
+        testGroupL();
+        Console.println("===== HttpTest end =====");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

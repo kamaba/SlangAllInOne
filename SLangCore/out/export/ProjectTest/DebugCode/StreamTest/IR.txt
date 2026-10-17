@@ -1,0 +1,1849 @@
+-------------------IR 文件显示 开始 : Path: StreamTest.sl-----------------------
+Class: ProjectTest.StreamTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1807185 idx=0 name=ProjectTest.StreamTest.g_count type=Core.Int32
+      - #1 id=7657338 idx=1 name=ProjectTest.StreamTest.g_sum type=Core.Int32
+      - #2 id=17725233 idx=2 name=ProjectTest.StreamTest.g_first type=Core.Int32
+      - #3 id=25309374 idx=3 name=ProjectTest.StreamTest.g_last type=Core.Int32
+      - #4 id=26457778 idx=4 name=ProjectTest.StreamTest.g_stepOK type=Core.Int32
+      - #5 id=25927028 idx=5 name=ProjectTest.StreamTest.g_err type=Core.String
+      - #6 id=27476571 idx=6 name=ProjectTest.StreamTest.g_done type=Core.Boolean
+      - #7 id=11009764 idx=7 name=ProjectTest.StreamTest.g_mapCount type=Core.Int32
+      - #8 id=45962549 idx=8 name=ProjectTest.StreamTest.g_genCount type=Core.Int32
+      - #9 id=16264673 idx=9 name=ProjectTest.StreamTest.g_f1sent type=Core.Int32
+      - #10 id=12164329 idx=10 name=ProjectTest.StreamTest.g_f2sent type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.StreamTest.check_2_Core.String_Core.Boolean
+    VirtualName: check_Core.Void_2_Core.String_Core.Boolean
+    Name: check
+    InterfaceMethod: False
+    Return:
+      - #0 id=31823427 idx=0 name=_local[ProjectTest.StreamTest.check.return] type=Core.Void
+    Arguments:
+      - #0 id=17975388 idx=0 name=_local[name] type=Core.String
+      - #1 id=27560766 idx=1 name=_local[cond] type=Core.Boolean
+    Locals:
+      - #0 id=46720306 idx=0 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+2 2   [ StreamTest.sl:25] [LoadArgument] index:[1] info:[Argument]
+3 3   [ StreamTest.sl:23] [StoreLocal] index:[0] info:[if/elif store condition var]
+4 4   [ StreamTest.sl:23] [LoadLocal] index:[0] info:[if/elif load condition var]
+5 5   [ StreamTest.sl:25] [BrFalse] index:[18] info:[if/elif BrFalse]
+6 6   [ :0] [Nop] index:[0]
+7 7   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+8 8   [ StreamTest.sl:27] [LoadArgument] index:[0] info:[Argument]
+9 9   [ StreamTest.sl:27] [Add] index:[0]
+10 10   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+11 11   [ StreamTest.sl:27] [Add] index:[0]
+12 12   [ StreamTest.sl:23] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+16 16   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+17 17   [ StreamTest.sl:28] [Br] index:[31] info:[if/elif/else block end Br]
+18 18   [ StreamTest.sl:29] [Label] index:[1] info:[if/elif/else branch start]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+21 21   [ StreamTest.sl:31] [LoadArgument] index:[0] info:[Argument]
+22 22   [ StreamTest.sl:31] [Add] index:[0]
+23 23   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+24 24   [ StreamTest.sl:31] [Add] index:[0]
+25 25   [ StreamTest.sl:23] [StoreLocal] index:[2] info:[LocalStatement]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+28 28   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+29 29   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+30 30   [ StreamTest.sl:32] [Br] index:[31] info:[if/elif/else block end Br]
+31 31   [ StreamTest.sl:32] [Label] index:[2] info:[if end]
+32 32   [ StreamTest.sl:23] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.coroStreamE1Pull_1_Core.StreamController<Core.Int32>
+    VirtualName: coroStreamE1Pull_Core.Void_1_Core.StreamController<Core.Int32>
+    Name: coroStreamE1Pull
+    InterfaceMethod: False
+    Return:
+      - #0 id=34909710 idx=0 name=_local[ProjectTest.StreamTest.coroStreamE1Pull.return] type=Core.Void
+    Arguments:
+      - #0 id=45751941 idx=0 name=_local[ctrl] type=Core.StreamController<T><Core.Int32>
+    Locals:
+      - #0 id=9114291 idx=0 name=coroStreamE1Pull_local[s] type=Core.Stream<T><Core.Int32>
+      - #1 id=14919761 idx=1 name=coroStreamE1Pull_local[it] type=Core.IIterator<T><Core.Int32>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StreamTest.sl:55] [LoadArgument] index:[0] info:[Argument]
+2 2   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ StreamTest.sl:53] [StoreLocal] index:[0] info:[LocalStatement]
+4 4   [ StreamTest.sl:56] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallDynamic] index:[1] info:[CallDynamic iterator] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ StreamTest.sl:53] [StoreLocal] index:[1] info:[LocalStatement]
+7 7   [ :0] [Label] index:[2]
+8 8   [ StreamTest.sl:57] [LoadLocal] index:[1] info:[LocalStatement]
+9 9   [ :0] [CallDynamic] index:[1] info:[CallDynamic moveNext] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ :0] [BrFalse] index:[24]
+11 11   [ :0] [Nop] index:[0]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ StreamTest.sl:59] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+14 14   [ StreamTest.sl:59] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ StreamTest.sl:59] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+17 17   [ StreamTest.sl:59] [Add] index:[0]
+18 18   [ StreamTest.sl:53] [StoreStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+19 19   [ StreamTest.sl:60] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+20 20   [ StreamTest.sl:60] [LoadConstInt32] index:[0] val: int32[1] 
+21 21   [ StreamTest.sl:60] [Add] index:[0]
+22 22   [ StreamTest.sl:53] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+23 23   [ :0] [Br] index:[7]
+24 24   [ :0] [Label] index:[1]
+25 25   [ StreamTest.sl:53] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.coroStreamF1Produce_1_Core.StreamController<Core.Int32>
+    VirtualName: coroStreamF1Produce_Core.Void_1_Core.StreamController<Core.Int32>
+    Name: coroStreamF1Produce
+    InterfaceMethod: False
+    Return:
+      - #0 id=4870463 idx=0 name=_local[ProjectTest.StreamTest.coroStreamF1Produce.return] type=Core.Void
+    Arguments:
+      - #0 id=43834167 idx=0 name=_local[ctrl] type=Core.StreamController<T><Core.Int32>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StreamTest.sl:67] [LoadArgument] index:[0] info:[Argument]
+2 2   [ StreamTest.sl:67] [LoadConstInt32] index:[0] val: int32[10] 
+3 3   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ StreamTest.sl:68] [LoadConstInt32] index:[0] val: int32[1] 
+5 5   [ StreamTest.sl:65] [StoreStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+6 6   [ StreamTest.sl:69] [LoadArgument] index:[0] info:[Argument]
+7 7   [ StreamTest.sl:69] [LoadConstInt32] index:[0] val: int32[20] 
+8 8   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ StreamTest.sl:70] [LoadConstInt32] index:[0] val: int32[2] 
+10 10   [ StreamTest.sl:65] [StoreStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+11 11   [ StreamTest.sl:71] [LoadArgument] index:[0] info:[Argument]
+12 12   [ StreamTest.sl:71] [LoadConstInt32] index:[0] val: int32[30] 
+13 13   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+14 14   [ StreamTest.sl:72] [LoadConstInt32] index:[0] val: int32[3] 
+15 15   [ StreamTest.sl:65] [StoreStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+16 16   [ StreamTest.sl:73] [LoadArgument] index:[0] info:[Argument]
+17 17   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ StreamTest.sl:65] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.coroStreamF2Burst_1_Core.StreamController<Core.Int32>
+    VirtualName: coroStreamF2Burst_Core.Void_1_Core.StreamController<Core.Int32>
+    Name: coroStreamF2Burst
+    InterfaceMethod: False
+    Return:
+      - #0 id=58963189 idx=0 name=_local[ProjectTest.StreamTest.coroStreamF2Burst.return] type=Core.Void
+    Arguments:
+      - #0 id=60906657 idx=0 name=_local[ctrl] type=Core.StreamController<T><Core.Int32>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StreamTest.sl:79] [LoadArgument] index:[0] info:[Argument]
+2 2   [ StreamTest.sl:79] [LoadConstInt32] index:[0] val: int32[1] 
+3 3   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ StreamTest.sl:80] [LoadArgument] index:[0] info:[Argument]
+5 5   [ StreamTest.sl:80] [LoadConstInt32] index:[0] val: int32[2] 
+6 6   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ StreamTest.sl:81] [LoadArgument] index:[0] info:[Argument]
+8 8   [ StreamTest.sl:81] [LoadConstInt32] index:[0] val: int32[3] 
+9 9   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ StreamTest.sl:82] [LoadConstInt32] index:[0] val: int32[3] 
+11 11   [ StreamTest.sl:77] [StoreStaticField] index:[10] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f2sent]
+12 12   [ StreamTest.sl:83] [LoadArgument] index:[0] info:[Argument]
+13 13   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ StreamTest.sl:77] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.testGroupC
+    VirtualName: testGroupC_Core.Void_0
+    Name: testGroupC
+    InterfaceMethod: False
+    Return:
+      - #0 id=11289004 idx=0 name=_local[ProjectTest.StreamTest.testGroupC.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=34492175 idx=0 name=testGroupC_local[arr1] type=Core.Array<T><Core.Int32>
+      - #1 id=41994123 idx=1 name=testGroupC_local[s1] type=Core.Stream<T><Core.Int32>
+      - #2 id=42402794 idx=2 name=testGroupC_local[t1] type=Core.Task
+      - #3 id=46080827 idx=3 name=testGroupC_local[r1] type=Core.Object
+      - #4 id=12074265 idx=4 name=testGroupC_local[lst1] type=Core.List<T><Core.Int32>
+      - #5 id=41559524 idx=5 name=testGroupC_local[c1cnt] type=Core.Int32
+      - #6 id=38491397 idx=6 name=testGroupC_local[c1sum] type=Core.Int32
+      - #7 id=10878253 idx=7 name=testGroupC_local[c1first] type=Core.Int32
+      - #8 id=30795413 idx=8 name=testGroupC_local[c1last] type=Core.Int32
+      - #9 id=8723262 idx=9 name=testGroupC_local[gen] type=Core.Function
+      - #10 id=11400497 idx=10 name=_local[ProjectTest.StreamTest.testGroupC.__closure_ctx__] type=Core.Object
+      - #11 id=35495616 idx=11 name=testGroupC_local[act] type=Core.Function
+      - #12 id=51025090 idx=12 name=testGroupC_local[s2] type=Core.Stream<T><Core.Int32>
+      - #13 id=56572634 idx=13 name=testGroupC_local[t2] type=Core.Task
+      - #14 id=39391664 idx=14 name=testGroupC_local[s3] type=Core.Stream<T><Core.Int32>
+      - #15 id=18980661 idx=15 name=testGroupC_local[onData3] type=Core.Function
+      - #16 id=36608226 idx=16 name=testGroupC_local[onDone3] type=Core.Function
+      - #17 id=61038585 idx=17 name=testGroupC_local[autocreate_42370099] type=Core.Boolean
+      - #18 id=12476353 idx=18 name=testGroupC_local[for_iterator_45786577] type=Core.IIterator<T><Core.Int32>
+      - #19 id=45178316 idx=19 name=testGroupC_local[v] type=Core.Int32
+      - #20 id=3951668 idx=20 name=testGroupC_local[x] type=Core.Int32
+      - #21 id=35565017 idx=21 name=testGroupC_local[autocreate_9426010] type=Core.Boolean
+      - #22 id=37952469 idx=22 name=_local[txt] type=Core.Object
+      - #23 id=17975388 idx=23 name=_local[name] type=Core.String
+      - #24 id=27560766 idx=24 name=_local[cond] type=Core.Boolean
+      - #25 id=46720306 idx=25 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #26 id=37952469 idx=26 name=_local[txt] type=Core.Object
+      - #27 id=37952469 idx=27 name=_local[txt] type=Core.Object
+      - #28 id=17975388 idx=28 name=_local[name] type=Core.String
+      - #29 id=27560766 idx=29 name=_local[cond] type=Core.Boolean
+      - #30 id=46720306 idx=30 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #31 id=37952469 idx=31 name=_local[txt] type=Core.Object
+      - #32 id=37952469 idx=32 name=_local[txt] type=Core.Object
+      - #33 id=17975388 idx=33 name=_local[name] type=Core.String
+      - #34 id=27560766 idx=34 name=_local[cond] type=Core.Boolean
+      - #35 id=46720306 idx=35 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #36 id=37952469 idx=36 name=_local[txt] type=Core.Object
+      - #37 id=37952469 idx=37 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ StreamTest.sl:89] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ StreamTest.sl:89] [StoreLocal] index:[10] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ StreamTest.sl:91] [LoadConstString] index:[4016] val: string[========== C: Stream 基础 ==========] 
+4 4   [ StreamTest.sl:89] [StoreLocal] index:[22] info:[LocalStatement]
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ProjectTest.sp:8] [LoadLocal] index:[22] info:[LocalStatement]
+7 7   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+8 8   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+9 9   [ StreamTest.sl:94] [LoadConstInt32] index:[0] val: int32[5] 
+10 10   [ :0] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ StreamTest.sl:89] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ StreamTest.sl:95] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ StreamTest.sl:95] [LoadConstInt32] index:[0] val: int32[0] 
+14 14   [ StreamTest.sl:95] [LoadConstInt32] index:[0] val: int32[1] 
+15 15   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+16 16   [ StreamTest.sl:96] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ StreamTest.sl:96] [LoadConstInt32] index:[0] val: int32[1] 
+18 18   [ StreamTest.sl:96] [LoadConstInt32] index:[0] val: int32[2] 
+19 19   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+20 20   [ StreamTest.sl:97] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ StreamTest.sl:97] [LoadConstInt32] index:[0] val: int32[2] 
+22 22   [ StreamTest.sl:97] [LoadConstInt32] index:[0] val: int32[3] 
+23 23   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+24 24   [ StreamTest.sl:98] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ StreamTest.sl:98] [LoadConstInt32] index:[0] val: int32[3] 
+26 26   [ StreamTest.sl:98] [LoadConstInt32] index:[0] val: int32[4] 
+27 27   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+28 28   [ StreamTest.sl:99] [LoadLocal] index:[0] info:[LocalStatement]
+29 29   [ StreamTest.sl:99] [LoadConstInt32] index:[0] val: int32[4] 
+30 30   [ StreamTest.sl:99] [LoadConstInt32] index:[0] val: int32[5] 
+31 31   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+32 32   [ StreamTest.sl:100] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ :0] [CallStatic] index:[1] info:[CallStatic fromIterable] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.fromIterable_1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+34 34   [ StreamTest.sl:89] [StoreLocal] index:[1] info:[LocalStatement]
+35 35   [ StreamTest.sl:101] [LoadLocal] index:[1] info:[LocalStatement]
+36 36   [ :0] [CallVirt] index:[16] info:[CallVirt toListThenTask] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.toListThenTask, MethodRuntimeTypeList=[], ParamCount=0}] 
+37 37   [ StreamTest.sl:89] [StoreLocal] index:[2] info:[LocalStatement]
+38 38   [ StreamTest.sl:102] [LoadLocal] index:[2] info:[LocalStatement]
+39 39   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+40 40   [ StreamTest.sl:89] [StoreLocal] index:[3] info:[LocalStatement]
+41 41   [ StreamTest.sl:103] [LoadLocal] index:[3] info:[LocalStatement]
+42 42   [ StreamTest.sl:103] [CastClass] index:[0] info:[CastClass as Core.List<Core.Int32>Core.Int32
+] val irmt:[Core.List<T><Core.Int32>] 
+43 43   [ StreamTest.sl:89] [StoreLocal] index:[4] info:[LocalStatement]
+44 44   [ StreamTest.sl:104] [LoadConstInt32] index:[0] val: int32[0] 
+45 45   [ StreamTest.sl:89] [StoreLocal] index:[5] info:[LocalStatement]
+46 46   [ StreamTest.sl:105] [LoadConstInt32] index:[0] val: int32[0] 
+47 47   [ StreamTest.sl:89] [StoreLocal] index:[6] info:[LocalStatement]
+48 48   [ StreamTest.sl:106] [LoadConstInt32] index:[0] val: int32[1] 
+49 49   [ StreamTest.sl:106] [Neg] index:[0]
+50 50   [ StreamTest.sl:89] [StoreLocal] index:[7] info:[LocalStatement]
+51 51   [ StreamTest.sl:107] [LoadConstInt32] index:[0] val: int32[100] 
+52 52   [ StreamTest.sl:107] [Neg] index:[0]
+53 53   [ StreamTest.sl:89] [StoreLocal] index:[8] info:[LocalStatement]
+54 54   [ StreamTest.sl:108] [Nop] index:[0] info:[if/elif/else branch start]
+55 55   [ StreamTest.sl:108] [LoadLocal] index:[4] info:[LocalStatement]
+56 56   [ StreamTest.sl:108] [BrIsNull] index:[99] info:[if/elif BrFalse]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ StreamTest.sl:89] [LoadLocal] index:[4] info:[LocalStatement]
+59 59   [ StreamTest.sl:110] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.List<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.List<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+60 60   [ StreamTest.sl:89] [StoreLocal] index:[18] info:[LocalStatement]
+61 61   [ StreamTest.sl:89] [LoadLocal] index:[18] info:[LocalStatement]
+62 62   [ StreamTest.sl:110] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+63 63   [ StreamTest.sl:110] [Label] index:[4] info:[for-in: Nop loop head]
+64 64   [ StreamTest.sl:89] [LoadLocal] index:[18] info:[LocalStatement]
+65 65   [ StreamTest.sl:110] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+66 66   [ StreamTest.sl:110] [BrFalse] index:[97] info:[for-in: BrFalse exit when !moveNext()]
+67 67   [ StreamTest.sl:89] [LoadLocal] index:[18] info:[LocalStatement]
+68 68   [ StreamTest.sl:110] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+69 69   [ StreamTest.sl:89] [StoreLocal] index:[19] info:[LocalStatement]
+70 70   [ :0] [Nop] index:[0]
+71 71   [ StreamTest.sl:112] [LoadLocal] index:[19] info:[LocalStatement]
+72 72   [ StreamTest.sl:112] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+73 73   [ StreamTest.sl:89] [StoreLocal] index:[20] info:[LocalStatement]
+74 74   [ StreamTest.sl:113] [Nop] index:[0] info:[if/elif/else branch start]
+75 75   [ StreamTest.sl:113] [LoadLocal] index:[5] info:[LocalStatement]
+76 76   [ StreamTest.sl:113] [LoadConstInt32] index:[0] val: int32[0] 
+77 77   [ StreamTest.sl:113] [Ceq] index:[0]
+78 78   [ StreamTest.sl:89] [StoreLocal] index:[21] info:[if/elif store condition var]
+79 79   [ StreamTest.sl:89] [LoadLocal] index:[21] info:[if/elif load condition var]
+80 80   [ StreamTest.sl:113] [BrFalse] index:[85] info:[if/elif BrFalse]
+81 81   [ :0] [Nop] index:[0]
+82 82   [ StreamTest.sl:115] [LoadLocal] index:[20] info:[LocalStatement]
+83 83   [ StreamTest.sl:89] [StoreLocal] index:[7] info:[LocalStatement]
+84 84   [ StreamTest.sl:116] [Br] index:[85] info:[if/elif/else block end Br]
+85 85   [ StreamTest.sl:116] [Label] index:[3] info:[if end]
+86 86   [ StreamTest.sl:117] [LoadLocal] index:[20] info:[LocalStatement]
+87 87   [ StreamTest.sl:89] [StoreLocal] index:[8] info:[LocalStatement]
+88 88   [ StreamTest.sl:118] [LoadLocal] index:[6] info:[LocalStatement]
+89 89   [ StreamTest.sl:118] [LoadLocal] index:[20] info:[LocalStatement]
+90 90   [ StreamTest.sl:118] [Add] index:[0]
+91 91   [ StreamTest.sl:89] [StoreLocal] index:[6] info:[LocalStatement]
+92 92   [ StreamTest.sl:119] [LoadLocal] index:[5] info:[LocalStatement]
+93 93   [ StreamTest.sl:119] [LoadConstInt32] index:[0] val: int32[1] 
+94 94   [ StreamTest.sl:119] [Add] index:[0]
+95 95   [ StreamTest.sl:89] [StoreLocal] index:[5] info:[LocalStatement]
+96 96   [ StreamTest.sl:110] [Br] index:[63] info:[for-in: Br to loop head]
+97 97   [ StreamTest.sl:110] [Label] index:[2] info:[for-in: Nop end]
+98 98   [ StreamTest.sl:121] [Br] index:[99] info:[if/elif/else block end Br]
+99 99   [ StreamTest.sl:121] [Label] index:[1] info:[if end]
+100 100   [ StreamTest.sl:122] [LoadConstString] index:[4017] val: string[C1 fromIterable+toList] 
+101 101   [ StreamTest.sl:122] [LoadLocal] index:[5] info:[LocalStatement]
+102 102   [ StreamTest.sl:122] [LoadConstInt32] index:[0] val: int32[5] 
+103 103   [ StreamTest.sl:122] [Ceq] index:[0]
+104 104   [ StreamTest.sl:122] [LoadLocal] index:[6] info:[LocalStatement]
+105 105   [ StreamTest.sl:122] [LoadConstInt32] index:[0] val: int32[15] 
+106 106   [ StreamTest.sl:122] [Ceq] index:[0]
+107 107   [ StreamTest.sl:122] [And] index:[0]
+108 108   [ StreamTest.sl:122] [LoadLocal] index:[7] info:[LocalStatement]
+109 109   [ StreamTest.sl:122] [LoadConstInt32] index:[0] val: int32[1] 
+110 110   [ StreamTest.sl:122] [Ceq] index:[0]
+111 111   [ StreamTest.sl:122] [And] index:[0]
+112 112   [ StreamTest.sl:122] [LoadLocal] index:[8] info:[LocalStatement]
+113 113   [ StreamTest.sl:122] [LoadConstInt32] index:[0] val: int32[5] 
+114 114   [ StreamTest.sl:122] [Ceq] index:[0]
+115 115   [ StreamTest.sl:122] [And] index:[0]
+116 116   [ StreamTest.sl:89] [StoreLocal] index:[24] info:[LocalStatement]
+117 117   [ StreamTest.sl:89] [StoreLocal] index:[23] info:[LocalStatement]
+118 118   [ :0] [Nop] index:[0]
+119 119   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+120 120   [ StreamTest.sl:25] [LoadLocal] index:[24] info:[LocalStatement]
+121 121   [ StreamTest.sl:89] [StoreLocal] index:[25] info:[if/elif store condition var]
+122 122   [ StreamTest.sl:89] [LoadLocal] index:[25] info:[if/elif load condition var]
+123 123   [ StreamTest.sl:25] [BrFalse] index:[136] info:[if/elif BrFalse]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+126 126   [ StreamTest.sl:27] [LoadLocal] index:[23] info:[LocalStatement]
+127 127   [ StreamTest.sl:27] [Add] index:[0]
+128 128   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+129 129   [ StreamTest.sl:27] [Add] index:[0]
+130 130   [ StreamTest.sl:89] [StoreLocal] index:[26] info:[LocalStatement]
+131 131   [ :0] [Nop] index:[0]
+132 132   [ ProjectTest.sp:8] [LoadLocal] index:[26] info:[LocalStatement]
+133 133   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+134 134   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+135 135   [ StreamTest.sl:28] [Br] index:[149] info:[if/elif/else block end Br]
+136 136   [ StreamTest.sl:29] [Label] index:[5] info:[if/elif/else branch start]
+137 137   [ :0] [Nop] index:[0]
+138 138   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+139 139   [ StreamTest.sl:31] [LoadLocal] index:[23] info:[LocalStatement]
+140 140   [ StreamTest.sl:31] [Add] index:[0]
+141 141   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+142 142   [ StreamTest.sl:31] [Add] index:[0]
+143 143   [ StreamTest.sl:89] [StoreLocal] index:[27] info:[LocalStatement]
+144 144   [ :0] [Nop] index:[0]
+145 145   [ ProjectTest.sp:8] [LoadLocal] index:[27] info:[LocalStatement]
+146 146   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+147 147   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+148 148   [ StreamTest.sl:32] [Br] index:[149] info:[if/elif/else block end Br]
+149 149   [ StreamTest.sl:32] [Label] index:[6] info:[if end]
+150 150   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+151 151   [ StreamTest.sl:125] [LoadConstInt32] index:[0] val: int32[0] 
+152 152   [ StreamTest.sl:89] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+153 153   [ StreamTest.sl:126] [LoadConstInt32] index:[0] val: int32[0] 
+154 154   [ StreamTest.sl:89] [StoreStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+155 155   [ StreamTest.sl:127] [LoadConstInt32] index:[0] val: int32[1] 
+156 156   [ StreamTest.sl:127] [Neg] index:[0]
+157 157   [ StreamTest.sl:89] [StoreStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_first]
+158 158   [ StreamTest.sl:128] [LoadConstInt32] index:[0] val: int32[100] 
+159 159   [ StreamTest.sl:128] [Neg] index:[0]
+160 160   [ StreamTest.sl:89] [StoreStaticField] index:[3] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_last]
+161 161   [ StreamTest.sl:129] [LoadConstInt32] index:[0] val: int32[1] 
+162 162   [ StreamTest.sl:89] [StoreStaticField] index:[4] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_stepOK]
+163 163   [ StreamTest.sl:130] [LoadLocal] index:[10] info:[LoadLocal __closure_ctx__]
+164 164   [ StreamTest.sl:130] [NewClosure] index:[0] info:[NewClosure __closure_gen_109] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_gen_109_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+165 165   [ StreamTest.sl:89] [StoreLocal] index:[9] info:[LocalStatement]
+166 166   [ StreamTest.sl:134] [LoadLocal] index:[10] info:[LoadLocal __closure_ctx__]
+167 167   [ StreamTest.sl:134] [NewClosure] index:[0] info:[NewClosure __closure_act_110] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_act_110_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+168 168   [ StreamTest.sl:89] [StoreLocal] index:[11] info:[LocalStatement]
+169 169   [ StreamTest.sl:152] [LoadConstInt32] index:[0] val: int32[5] 
+170 170   [ StreamTest.sl:152] [LoadLocal] index:[9] info:[LocalStatement]
+171 171   [ :0] [CallStatic] index:[2] info:[CallStatic generate] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.generate_2_Core.Int32_Core.Function, MethodRuntimeTypeList=[], ParamCount=2}] 
+172 172   [ StreamTest.sl:89] [StoreLocal] index:[12] info:[LocalStatement]
+173 173   [ StreamTest.sl:153] [LoadLocal] index:[12] info:[LocalStatement]
+174 174   [ StreamTest.sl:153] [LoadLocal] index:[11] info:[LocalStatement]
+175 175   [ :0] [CallVirt] index:[15] info:[CallVirt forEach] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.forEach_1_Core.Function, MethodRuntimeTypeList=[], ParamCount=1}] 
+176 176   [ StreamTest.sl:89] [StoreLocal] index:[13] info:[LocalStatement]
+177 177   [ StreamTest.sl:154] [LoadLocal] index:[13] info:[LocalStatement]
+178 178   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+179 179   [ :0] [Pop] index:[0]
+180 180   [ StreamTest.sl:155] [LoadConstString] index:[4018] val: string[C2 generate+forEach 顺序] 
+181 181   [ StreamTest.sl:155] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+182 182   [ StreamTest.sl:155] [LoadConstInt32] index:[0] val: int32[5] 
+183 183   [ StreamTest.sl:155] [Ceq] index:[0]
+184 184   [ StreamTest.sl:155] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+185 185   [ StreamTest.sl:155] [LoadConstInt32] index:[0] val: int32[15] 
+186 186   [ StreamTest.sl:155] [Ceq] index:[0]
+187 187   [ StreamTest.sl:155] [And] index:[0]
+188 188   [ StreamTest.sl:155] [LoadStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_first]
+189 189   [ StreamTest.sl:155] [LoadConstInt32] index:[0] val: int32[1] 
+190 190   [ StreamTest.sl:155] [Ceq] index:[0]
+191 191   [ StreamTest.sl:155] [And] index:[0]
+192 192   [ StreamTest.sl:155] [LoadStaticField] index:[3] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_last]
+193 193   [ StreamTest.sl:155] [LoadConstInt32] index:[0] val: int32[5] 
+194 194   [ StreamTest.sl:155] [Ceq] index:[0]
+195 195   [ StreamTest.sl:155] [And] index:[0]
+196 196   [ StreamTest.sl:155] [LoadStaticField] index:[4] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_stepOK]
+197 197   [ StreamTest.sl:155] [LoadConstInt32] index:[0] val: int32[1] 
+198 198   [ StreamTest.sl:155] [Ceq] index:[0]
+199 199   [ StreamTest.sl:155] [And] index:[0]
+200 200   [ StreamTest.sl:89] [StoreLocal] index:[29] info:[LocalStatement]
+201 201   [ StreamTest.sl:89] [StoreLocal] index:[28] info:[LocalStatement]
+202 202   [ :0] [Nop] index:[0]
+203 203   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+204 204   [ StreamTest.sl:25] [LoadLocal] index:[29] info:[LocalStatement]
+205 205   [ StreamTest.sl:89] [StoreLocal] index:[30] info:[if/elif store condition var]
+206 206   [ StreamTest.sl:89] [LoadLocal] index:[30] info:[if/elif load condition var]
+207 207   [ StreamTest.sl:25] [BrFalse] index:[220] info:[if/elif BrFalse]
+208 208   [ :0] [Nop] index:[0]
+209 209   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+210 210   [ StreamTest.sl:27] [LoadLocal] index:[28] info:[LocalStatement]
+211 211   [ StreamTest.sl:27] [Add] index:[0]
+212 212   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+213 213   [ StreamTest.sl:27] [Add] index:[0]
+214 214   [ StreamTest.sl:89] [StoreLocal] index:[31] info:[LocalStatement]
+215 215   [ :0] [Nop] index:[0]
+216 216   [ ProjectTest.sp:8] [LoadLocal] index:[31] info:[LocalStatement]
+217 217   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+218 218   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+219 219   [ StreamTest.sl:28] [Br] index:[233] info:[if/elif/else block end Br]
+220 220   [ StreamTest.sl:29] [Label] index:[7] info:[if/elif/else branch start]
+221 221   [ :0] [Nop] index:[0]
+222 222   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+223 223   [ StreamTest.sl:31] [LoadLocal] index:[28] info:[LocalStatement]
+224 224   [ StreamTest.sl:31] [Add] index:[0]
+225 225   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+226 226   [ StreamTest.sl:31] [Add] index:[0]
+227 227   [ StreamTest.sl:89] [StoreLocal] index:[32] info:[LocalStatement]
+228 228   [ :0] [Nop] index:[0]
+229 229   [ ProjectTest.sp:8] [LoadLocal] index:[32] info:[LocalStatement]
+230 230   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+231 231   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+232 232   [ StreamTest.sl:32] [Br] index:[233] info:[if/elif/else block end Br]
+233 233   [ StreamTest.sl:32] [Label] index:[8] info:[if end]
+234 234   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+235 235   [ StreamTest.sl:158] [LoadConstInt32] index:[0] val: int32[0] 
+236 236   [ StreamTest.sl:89] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+237 237   [ StreamTest.sl:159] [LoadConstBoolean] index:[0] val:[False] 
+238 238   [ StreamTest.sl:89] [StoreStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+239 239   [ :0] [CallStatic] index:[0] info:[CallStatic empty] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.empty, MethodRuntimeTypeList=[], ParamCount=0}] 
+240 240   [ StreamTest.sl:89] [StoreLocal] index:[14] info:[LocalStatement]
+241 241   [ StreamTest.sl:161] [LoadLocal] index:[10] info:[LoadLocal __closure_ctx__]
+242 242   [ StreamTest.sl:161] [NewClosure] index:[0] info:[NewClosure __closure_onData3_111] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData3_111_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+243 243   [ StreamTest.sl:89] [StoreLocal] index:[15] info:[LocalStatement]
+244 244   [ StreamTest.sl:165] [LoadLocal] index:[10] info:[LoadLocal __closure_ctx__]
+245 245   [ StreamTest.sl:165] [NewClosure] index:[0] info:[NewClosure __closure_onDone3_112] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onDone3_112_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+246 246   [ StreamTest.sl:89] [StoreLocal] index:[16] info:[LocalStatement]
+247 247   [ StreamTest.sl:169] [LoadLocal] index:[14] info:[LocalStatement]
+248 248   [ StreamTest.sl:169] [LoadLocal] index:[15] info:[LocalStatement]
+249 249   [ StreamTest.sl:169] [LoadConstNull] index:[0] val:[null] 
+250 250   [ StreamTest.sl:169] [LoadLocal] index:[16] info:[LocalStatement]
+251 251   [ StreamTest.sl:169] [LoadConstBoolean] index:[0] val:[False] 
+252 252   [ :0] [CallVirt] index:[7] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean, MethodRuntimeTypeList=[], ParamCount=4}] 
+253 253   [ :0] [Pop] index:[0]
+254 254   [ StreamTest.sl:170] [LoadConstInt32] index:[0] val: int32[10] 
+255 255   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+256 256   [ StreamTest.sl:171] [LoadConstString] index:[4019] val: string[C3 empty 流订阅即 done] 
+257 257   [ StreamTest.sl:171] [LoadStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+258 258   [ StreamTest.sl:171] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+259 259   [ StreamTest.sl:171] [LoadConstInt32] index:[0] val: int32[0] 
+260 260   [ StreamTest.sl:171] [Ceq] index:[0]
+261 261   [ StreamTest.sl:171] [And] index:[0]
+262 262   [ StreamTest.sl:89] [StoreLocal] index:[34] info:[LocalStatement]
+263 263   [ StreamTest.sl:89] [StoreLocal] index:[33] info:[LocalStatement]
+264 264   [ :0] [Nop] index:[0]
+265 265   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+266 266   [ StreamTest.sl:25] [LoadLocal] index:[34] info:[LocalStatement]
+267 267   [ StreamTest.sl:89] [StoreLocal] index:[35] info:[if/elif store condition var]
+268 268   [ StreamTest.sl:89] [LoadLocal] index:[35] info:[if/elif load condition var]
+269 269   [ StreamTest.sl:25] [BrFalse] index:[282] info:[if/elif BrFalse]
+270 270   [ :0] [Nop] index:[0]
+271 271   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+272 272   [ StreamTest.sl:27] [LoadLocal] index:[33] info:[LocalStatement]
+273 273   [ StreamTest.sl:27] [Add] index:[0]
+274 274   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+275 275   [ StreamTest.sl:27] [Add] index:[0]
+276 276   [ StreamTest.sl:89] [StoreLocal] index:[36] info:[LocalStatement]
+277 277   [ :0] [Nop] index:[0]
+278 278   [ ProjectTest.sp:8] [LoadLocal] index:[36] info:[LocalStatement]
+279 279   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+280 280   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+281 281   [ StreamTest.sl:28] [Br] index:[295] info:[if/elif/else block end Br]
+282 282   [ StreamTest.sl:29] [Label] index:[9] info:[if/elif/else branch start]
+283 283   [ :0] [Nop] index:[0]
+284 284   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+285 285   [ StreamTest.sl:31] [LoadLocal] index:[33] info:[LocalStatement]
+286 286   [ StreamTest.sl:31] [Add] index:[0]
+287 287   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+288 288   [ StreamTest.sl:31] [Add] index:[0]
+289 289   [ StreamTest.sl:89] [StoreLocal] index:[37] info:[LocalStatement]
+290 290   [ :0] [Nop] index:[0]
+291 291   [ ProjectTest.sp:8] [LoadLocal] index:[37] info:[LocalStatement]
+292 292   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+293 293   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+294 294   [ StreamTest.sl:32] [Br] index:[295] info:[if/elif/else block end Br]
+295 295   [ StreamTest.sl:32] [Label] index:[10] info:[if end]
+296 296   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+297 297   [ StreamTest.sl:89] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.testGroupC2
+    VirtualName: testGroupC2_Core.Void_0
+    Name: testGroupC2
+    InterfaceMethod: False
+    Return:
+      - #0 id=36836846 idx=0 name=_local[ProjectTest.StreamTest.testGroupC2.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=63096163 idx=0 name=testGroupC2_local[gen] type=Core.Function
+      - #1 id=30994559 idx=1 name=_local[ProjectTest.StreamTest.testGroupC2.__closure_ctx__] type=Core.Object
+      - #2 id=10515579 idx=2 name=testGroupC2_local[pred] type=Core.Function
+      - #3 id=27531352 idx=3 name=testGroupC2_local[mapper] type=Core.Function
+      - #4 id=46455584 idx=4 name=testGroupC2_local[s] type=Core.Stream<T><Core.Int32>
+      - #5 id=15447074 idx=5 name=testGroupC2_local[w] type=Core.Stream<T><Core.Int32>
+      - #6 id=4805945 idx=6 name=testGroupC2_local[m] type=Core.Stream<T><Core.Int32>
+      - #7 id=43253509 idx=7 name=testGroupC2_local[tk] type=Core.Stream<T><Core.Int32>
+      - #8 id=53737263 idx=8 name=testGroupC2_local[t] type=Core.Task
+      - #9 id=13873320 idx=9 name=testGroupC2_local[r] type=Core.Object
+      - #10 id=57751017 idx=10 name=testGroupC2_local[lst] type=Core.List<T><Core.Int32>
+      - #11 id=49997107 idx=11 name=testGroupC2_local[cnt] type=Core.Int32
+      - #12 id=47320783 idx=12 name=testGroupC2_local[sum] type=Core.Int32
+      - #13 id=23233871 idx=13 name=testGroupC2_local[first] type=Core.Int32
+      - #14 id=7778251 idx=14 name=testGroupC2_local[last] type=Core.Int32
+      - #15 id=2895395 idx=15 name=testGroupC2_local[ctrl] type=Core.StreamController<T><Core.Int32>
+      - #16 id=26058562 idx=16 name=testGroupC2_local[src] type=Core.Stream<T><Core.Int32>
+      - #17 id=33200472 idx=17 name=testGroupC2_local[mapper2] type=Core.Function
+      - #18 id=30368798 idx=18 name=testGroupC2_local[mm] type=Core.Stream<T><Core.Int32>
+      - #19 id=4883734 idx=19 name=testGroupC2_local[onData] type=Core.Function
+      - #20 id=43953607 idx=20 name=testGroupC2_local[beforeOk] type=Core.Boolean
+      - #21 id=60038148 idx=21 name=testGroupC2_local[afterOneOk] type=Core.Boolean
+      - #22 id=3472420 idx=22 name=testGroupC2_local[afterCloseOk] type=Core.Boolean
+      - #23 id=31251786 idx=23 name=testGroupC2_local[autocreate_31979016] type=Core.Boolean
+      - #24 id=12830622 idx=24 name=testGroupC2_local[for_iterator_19375690] type=Core.IIterator<T><Core.Int32>
+      - #25 id=48366737 idx=25 name=testGroupC2_local[v] type=Core.Int32
+      - #26 id=32647452 idx=26 name=testGroupC2_local[x] type=Core.Int32
+      - #27 id=25391616 idx=27 name=testGroupC2_local[autocreate_40163483] type=Core.Boolean
+      - #28 id=37952469 idx=28 name=_local[txt] type=Core.Object
+      - #29 id=17975388 idx=29 name=_local[name] type=Core.String
+      - #30 id=27560766 idx=30 name=_local[cond] type=Core.Boolean
+      - #31 id=46720306 idx=31 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #32 id=37952469 idx=32 name=_local[txt] type=Core.Object
+      - #33 id=37952469 idx=33 name=_local[txt] type=Core.Object
+      - #34 id=17975388 idx=34 name=_local[name] type=Core.String
+      - #35 id=27560766 idx=35 name=_local[cond] type=Core.Boolean
+      - #36 id=46720306 idx=36 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #37 id=37952469 idx=37 name=_local[txt] type=Core.Object
+      - #38 id=37952469 idx=38 name=_local[txt] type=Core.Object
+      - #39 id=17975388 idx=39 name=_local[name] type=Core.String
+      - #40 id=27560766 idx=40 name=_local[cond] type=Core.Boolean
+      - #41 id=46720306 idx=41 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #42 id=37952469 idx=42 name=_local[txt] type=Core.Object
+      - #43 id=37952469 idx=43 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ StreamTest.sl:177] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ StreamTest.sl:177] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ StreamTest.sl:179] [LoadConstString] index:[4020] val: string[========== C2: 惰性转换链 ==========] 
+4 4   [ StreamTest.sl:177] [StoreLocal] index:[28] info:[LocalStatement]
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ProjectTest.sp:8] [LoadLocal] index:[28] info:[LocalStatement]
+7 7   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+8 8   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+9 9   [ StreamTest.sl:182] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ StreamTest.sl:177] [StoreStaticField] index:[8] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_genCount]
+11 11   [ StreamTest.sl:183] [LoadConstInt32] index:[0] val: int32[0] 
+12 12   [ StreamTest.sl:177] [StoreStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+13 13   [ StreamTest.sl:184] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+14 14   [ StreamTest.sl:184] [NewClosure] index:[0] info:[NewClosure __closure_gen_113] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_gen_113_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ StreamTest.sl:177] [StoreLocal] index:[0] info:[LocalStatement]
+16 16   [ StreamTest.sl:189] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+17 17   [ StreamTest.sl:189] [NewClosure] index:[0] info:[NewClosure __closure_pred_114] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_pred_114_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ StreamTest.sl:177] [StoreLocal] index:[2] info:[LocalStatement]
+19 19   [ StreamTest.sl:195] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+20 20   [ StreamTest.sl:195] [NewClosure] index:[0] info:[NewClosure __closure_mapper_115] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_mapper_115_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ StreamTest.sl:177] [StoreLocal] index:[3] info:[LocalStatement]
+22 22   [ StreamTest.sl:201] [LoadConstInt32] index:[0] val: int32[10] 
+23 23   [ StreamTest.sl:201] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ :0] [CallStatic] index:[2] info:[CallStatic generate] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.generate_2_Core.Int32_Core.Function, MethodRuntimeTypeList=[], ParamCount=2}] 
+25 25   [ StreamTest.sl:177] [StoreLocal] index:[4] info:[LocalStatement]
+26 26   [ StreamTest.sl:202] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ StreamTest.sl:202] [LoadLocal] index:[2] info:[LocalStatement]
+28 28   [ :0] [CallVirt] index:[11] info:[CallVirt where] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.where_1_Core.Function, MethodRuntimeTypeList=[], ParamCount=1}] 
+29 29   [ StreamTest.sl:177] [StoreLocal] index:[5] info:[LocalStatement]
+30 30   [ StreamTest.sl:203] [LoadLocal] index:[5] info:[LocalStatement]
+31 31   [ StreamTest.sl:203] [LoadLocal] index:[3] info:[LocalStatement]
+32 32   [ :0] [CallVirt] index:[10] info:[CallVirt mapEach] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.mapEach<U>_1_Core.Function, MethodRuntimeTypeList=[Core.Int32], ParamCount=1}] 
+33 33   [ StreamTest.sl:177] [StoreLocal] index:[6] info:[LocalStatement]
+34 34   [ StreamTest.sl:204] [LoadLocal] index:[6] info:[LocalStatement]
+35 35   [ StreamTest.sl:204] [LoadConstInt32] index:[0] val: int32[3] 
+36 36   [ :0] [CallVirt] index:[12] info:[CallVirt take] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.take_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ StreamTest.sl:177] [StoreLocal] index:[7] info:[LocalStatement]
+38 38   [ StreamTest.sl:205] [LoadConstString] index:[4021] val: string[C2-1 链构建期间零求值] 
+39 39   [ StreamTest.sl:205] [LoadStaticField] index:[8] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_genCount]
+40 40   [ StreamTest.sl:205] [LoadConstInt32] index:[0] val: int32[0] 
+41 41   [ StreamTest.sl:205] [Ceq] index:[0]
+42 42   [ StreamTest.sl:205] [LoadStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+43 43   [ StreamTest.sl:205] [LoadConstInt32] index:[0] val: int32[0] 
+44 44   [ StreamTest.sl:205] [Ceq] index:[0]
+45 45   [ StreamTest.sl:205] [And] index:[0]
+46 46   [ StreamTest.sl:177] [StoreLocal] index:[30] info:[LocalStatement]
+47 47   [ StreamTest.sl:177] [StoreLocal] index:[29] info:[LocalStatement]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+50 50   [ StreamTest.sl:25] [LoadLocal] index:[30] info:[LocalStatement]
+51 51   [ StreamTest.sl:177] [StoreLocal] index:[31] info:[if/elif store condition var]
+52 52   [ StreamTest.sl:177] [LoadLocal] index:[31] info:[if/elif load condition var]
+53 53   [ StreamTest.sl:25] [BrFalse] index:[66] info:[if/elif BrFalse]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+56 56   [ StreamTest.sl:27] [LoadLocal] index:[29] info:[LocalStatement]
+57 57   [ StreamTest.sl:27] [Add] index:[0]
+58 58   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+59 59   [ StreamTest.sl:27] [Add] index:[0]
+60 60   [ StreamTest.sl:177] [StoreLocal] index:[32] info:[LocalStatement]
+61 61   [ :0] [Nop] index:[0]
+62 62   [ ProjectTest.sp:8] [LoadLocal] index:[32] info:[LocalStatement]
+63 63   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+64 64   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+65 65   [ StreamTest.sl:28] [Br] index:[79] info:[if/elif/else block end Br]
+66 66   [ StreamTest.sl:29] [Label] index:[1] info:[if/elif/else branch start]
+67 67   [ :0] [Nop] index:[0]
+68 68   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+69 69   [ StreamTest.sl:31] [LoadLocal] index:[29] info:[LocalStatement]
+70 70   [ StreamTest.sl:31] [Add] index:[0]
+71 71   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+72 72   [ StreamTest.sl:31] [Add] index:[0]
+73 73   [ StreamTest.sl:177] [StoreLocal] index:[33] info:[LocalStatement]
+74 74   [ :0] [Nop] index:[0]
+75 75   [ ProjectTest.sp:8] [LoadLocal] index:[33] info:[LocalStatement]
+76 76   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+77 77   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+78 78   [ StreamTest.sl:32] [Br] index:[79] info:[if/elif/else block end Br]
+79 79   [ StreamTest.sl:32] [Label] index:[2] info:[if end]
+80 80   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+81 81   [ StreamTest.sl:208] [LoadLocal] index:[7] info:[LocalStatement]
+82 82   [ :0] [CallVirt] index:[16] info:[CallVirt toListThenTask] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.toListThenTask, MethodRuntimeTypeList=[], ParamCount=0}] 
+83 83   [ StreamTest.sl:177] [StoreLocal] index:[8] info:[LocalStatement]
+84 84   [ StreamTest.sl:209] [LoadLocal] index:[8] info:[LocalStatement]
+85 85   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+86 86   [ StreamTest.sl:177] [StoreLocal] index:[9] info:[LocalStatement]
+87 87   [ StreamTest.sl:210] [LoadLocal] index:[9] info:[LocalStatement]
+88 88   [ StreamTest.sl:210] [CastClass] index:[0] info:[CastClass as Core.List<Core.Int32>Core.Int32
+] val irmt:[Core.List<T><Core.Int32>] 
+89 89   [ StreamTest.sl:177] [StoreLocal] index:[10] info:[LocalStatement]
+90 90   [ StreamTest.sl:211] [LoadConstInt32] index:[0] val: int32[0] 
+91 91   [ StreamTest.sl:177] [StoreLocal] index:[11] info:[LocalStatement]
+92 92   [ StreamTest.sl:212] [LoadConstInt32] index:[0] val: int32[0] 
+93 93   [ StreamTest.sl:177] [StoreLocal] index:[12] info:[LocalStatement]
+94 94   [ StreamTest.sl:213] [LoadConstInt32] index:[0] val: int32[1] 
+95 95   [ StreamTest.sl:213] [Neg] index:[0]
+96 96   [ StreamTest.sl:177] [StoreLocal] index:[13] info:[LocalStatement]
+97 97   [ StreamTest.sl:214] [LoadConstInt32] index:[0] val: int32[100] 
+98 98   [ StreamTest.sl:214] [Neg] index:[0]
+99 99   [ StreamTest.sl:177] [StoreLocal] index:[14] info:[LocalStatement]
+100 100   [ StreamTest.sl:215] [Nop] index:[0] info:[if/elif/else branch start]
+101 101   [ StreamTest.sl:215] [LoadLocal] index:[10] info:[LocalStatement]
+102 102   [ StreamTest.sl:215] [BrIsNull] index:[145] info:[if/elif BrFalse]
+103 103   [ :0] [Nop] index:[0]
+104 104   [ StreamTest.sl:177] [LoadLocal] index:[10] info:[LocalStatement]
+105 105   [ StreamTest.sl:217] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.List<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.List<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+106 106   [ StreamTest.sl:177] [StoreLocal] index:[24] info:[LocalStatement]
+107 107   [ StreamTest.sl:177] [LoadLocal] index:[24] info:[LocalStatement]
+108 108   [ StreamTest.sl:217] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+109 109   [ StreamTest.sl:217] [Label] index:[6] info:[for-in: Nop loop head]
+110 110   [ StreamTest.sl:177] [LoadLocal] index:[24] info:[LocalStatement]
+111 111   [ StreamTest.sl:217] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+112 112   [ StreamTest.sl:217] [BrFalse] index:[143] info:[for-in: BrFalse exit when !moveNext()]
+113 113   [ StreamTest.sl:177] [LoadLocal] index:[24] info:[LocalStatement]
+114 114   [ StreamTest.sl:217] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+115 115   [ StreamTest.sl:177] [StoreLocal] index:[25] info:[LocalStatement]
+116 116   [ :0] [Nop] index:[0]
+117 117   [ StreamTest.sl:219] [LoadLocal] index:[25] info:[LocalStatement]
+118 118   [ StreamTest.sl:219] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+119 119   [ StreamTest.sl:177] [StoreLocal] index:[26] info:[LocalStatement]
+120 120   [ StreamTest.sl:220] [Nop] index:[0] info:[if/elif/else branch start]
+121 121   [ StreamTest.sl:220] [LoadLocal] index:[11] info:[LocalStatement]
+122 122   [ StreamTest.sl:220] [LoadConstInt32] index:[0] val: int32[0] 
+123 123   [ StreamTest.sl:220] [Ceq] index:[0]
+124 124   [ StreamTest.sl:177] [StoreLocal] index:[27] info:[if/elif store condition var]
+125 125   [ StreamTest.sl:177] [LoadLocal] index:[27] info:[if/elif load condition var]
+126 126   [ StreamTest.sl:220] [BrFalse] index:[131] info:[if/elif BrFalse]
+127 127   [ :0] [Nop] index:[0]
+128 128   [ StreamTest.sl:222] [LoadLocal] index:[26] info:[LocalStatement]
+129 129   [ StreamTest.sl:177] [StoreLocal] index:[13] info:[LocalStatement]
+130 130   [ StreamTest.sl:223] [Br] index:[131] info:[if/elif/else block end Br]
+131 131   [ StreamTest.sl:223] [Label] index:[5] info:[if end]
+132 132   [ StreamTest.sl:224] [LoadLocal] index:[26] info:[LocalStatement]
+133 133   [ StreamTest.sl:177] [StoreLocal] index:[14] info:[LocalStatement]
+134 134   [ StreamTest.sl:225] [LoadLocal] index:[12] info:[LocalStatement]
+135 135   [ StreamTest.sl:225] [LoadLocal] index:[26] info:[LocalStatement]
+136 136   [ StreamTest.sl:225] [Add] index:[0]
+137 137   [ StreamTest.sl:177] [StoreLocal] index:[12] info:[LocalStatement]
+138 138   [ StreamTest.sl:226] [LoadLocal] index:[11] info:[LocalStatement]
+139 139   [ StreamTest.sl:226] [LoadConstInt32] index:[0] val: int32[1] 
+140 140   [ StreamTest.sl:226] [Add] index:[0]
+141 141   [ StreamTest.sl:177] [StoreLocal] index:[11] info:[LocalStatement]
+142 142   [ StreamTest.sl:217] [Br] index:[109] info:[for-in: Br to loop head]
+143 143   [ StreamTest.sl:217] [Label] index:[4] info:[for-in: Nop end]
+144 144   [ StreamTest.sl:228] [Br] index:[145] info:[if/elif/else block end Br]
+145 145   [ StreamTest.sl:228] [Label] index:[3] info:[if end]
+146 146   [ StreamTest.sl:229] [LoadConstString] index:[4022] val: string[C2-2 where+map+take 结果] 
+147 147   [ StreamTest.sl:229] [LoadLocal] index:[11] info:[LocalStatement]
+148 148   [ StreamTest.sl:229] [LoadConstInt32] index:[0] val: int32[3] 
+149 149   [ StreamTest.sl:229] [Ceq] index:[0]
+150 150   [ StreamTest.sl:229] [LoadLocal] index:[12] info:[LocalStatement]
+151 151   [ StreamTest.sl:229] [LoadConstInt32] index:[0] val: int32[60] 
+152 152   [ StreamTest.sl:229] [Ceq] index:[0]
+153 153   [ StreamTest.sl:229] [And] index:[0]
+154 154   [ StreamTest.sl:229] [LoadLocal] index:[13] info:[LocalStatement]
+155 155   [ StreamTest.sl:229] [LoadConstInt32] index:[0] val: int32[0] 
+156 156   [ StreamTest.sl:229] [Ceq] index:[0]
+157 157   [ StreamTest.sl:229] [And] index:[0]
+158 158   [ StreamTest.sl:229] [LoadLocal] index:[14] info:[LocalStatement]
+159 159   [ StreamTest.sl:229] [LoadConstInt32] index:[0] val: int32[40] 
+160 160   [ StreamTest.sl:229] [Ceq] index:[0]
+161 161   [ StreamTest.sl:229] [And] index:[0]
+162 162   [ StreamTest.sl:177] [StoreLocal] index:[35] info:[LocalStatement]
+163 163   [ StreamTest.sl:177] [StoreLocal] index:[34] info:[LocalStatement]
+164 164   [ :0] [Nop] index:[0]
+165 165   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+166 166   [ StreamTest.sl:25] [LoadLocal] index:[35] info:[LocalStatement]
+167 167   [ StreamTest.sl:177] [StoreLocal] index:[36] info:[if/elif store condition var]
+168 168   [ StreamTest.sl:177] [LoadLocal] index:[36] info:[if/elif load condition var]
+169 169   [ StreamTest.sl:25] [BrFalse] index:[182] info:[if/elif BrFalse]
+170 170   [ :0] [Nop] index:[0]
+171 171   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+172 172   [ StreamTest.sl:27] [LoadLocal] index:[34] info:[LocalStatement]
+173 173   [ StreamTest.sl:27] [Add] index:[0]
+174 174   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+175 175   [ StreamTest.sl:27] [Add] index:[0]
+176 176   [ StreamTest.sl:177] [StoreLocal] index:[37] info:[LocalStatement]
+177 177   [ :0] [Nop] index:[0]
+178 178   [ ProjectTest.sp:8] [LoadLocal] index:[37] info:[LocalStatement]
+179 179   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+180 180   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+181 181   [ StreamTest.sl:28] [Br] index:[195] info:[if/elif/else block end Br]
+182 182   [ StreamTest.sl:29] [Label] index:[7] info:[if/elif/else branch start]
+183 183   [ :0] [Nop] index:[0]
+184 184   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+185 185   [ StreamTest.sl:31] [LoadLocal] index:[34] info:[LocalStatement]
+186 186   [ StreamTest.sl:31] [Add] index:[0]
+187 187   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+188 188   [ StreamTest.sl:31] [Add] index:[0]
+189 189   [ StreamTest.sl:177] [StoreLocal] index:[38] info:[LocalStatement]
+190 190   [ :0] [Nop] index:[0]
+191 191   [ ProjectTest.sp:8] [LoadLocal] index:[38] info:[LocalStatement]
+192 192   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+193 193   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+194 194   [ StreamTest.sl:32] [Br] index:[195] info:[if/elif/else block end Br]
+195 195   [ StreamTest.sl:32] [Label] index:[8] info:[if end]
+196 196   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+197 197   [ StreamTest.sl:232] [LoadConstInt32] index:[0] val: int32[0] 
+198 198   [ StreamTest.sl:177] [StoreStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+199 199   [ StreamTest.sl:177] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+200 200   [ :0] [Dup] index:[0]
+201 201   [ StreamTest.sl:233] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+202 202   [ StreamTest.sl:177] [StoreLocal] index:[15] info:[LocalStatement]
+203 203   [ StreamTest.sl:234] [LoadLocal] index:[15] info:[LocalStatement]
+204 204   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+205 205   [ StreamTest.sl:177] [StoreLocal] index:[16] info:[LocalStatement]
+206 206   [ StreamTest.sl:235] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+207 207   [ StreamTest.sl:235] [NewClosure] index:[0] info:[NewClosure __closure_mapper2_116] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_mapper2_116_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+208 208   [ StreamTest.sl:177] [StoreLocal] index:[17] info:[LocalStatement]
+209 209   [ StreamTest.sl:240] [LoadLocal] index:[16] info:[LocalStatement]
+210 210   [ StreamTest.sl:240] [LoadLocal] index:[17] info:[LocalStatement]
+211 211   [ :0] [CallVirt] index:[10] info:[CallVirt mapEach] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.mapEach<U>_1_Core.Function, MethodRuntimeTypeList=[Core.Int32], ParamCount=1}] 
+212 212   [ StreamTest.sl:177] [StoreLocal] index:[18] info:[LocalStatement]
+213 213   [ StreamTest.sl:241] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+214 214   [ StreamTest.sl:241] [NewClosure] index:[0] info:[NewClosure __closure_onData_117] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData_117_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+215 215   [ StreamTest.sl:177] [StoreLocal] index:[19] info:[LocalStatement]
+216 216   [ StreamTest.sl:244] [LoadLocal] index:[18] info:[LocalStatement]
+217 217   [ StreamTest.sl:244] [LoadLocal] index:[19] info:[LocalStatement]
+218 218   [ :0] [CallVirt] index:[8] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_1_Core.Function, MethodRuntimeTypeList=[], ParamCount=1}] 
+219 219   [ :0] [Pop] index:[0]
+220 220   [ StreamTest.sl:245] [LoadConstInt32] index:[0] val: int32[10] 
+221 221   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+222 222   [ StreamTest.sl:246] [LoadStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+223 223   [ StreamTest.sl:246] [LoadConstInt32] index:[0] val: int32[0] 
+224 224   [ StreamTest.sl:246] [Ceq] index:[0]
+225 225   [ StreamTest.sl:177] [StoreLocal] index:[20] info:[LocalStatement]
+226 226   [ StreamTest.sl:247] [LoadLocal] index:[15] info:[LocalStatement]
+227 227   [ StreamTest.sl:247] [LoadConstInt32] index:[0] val: int32[1] 
+228 228   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+229 229   [ StreamTest.sl:248] [LoadConstInt32] index:[0] val: int32[10] 
+230 230   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+231 231   [ StreamTest.sl:249] [LoadStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+232 232   [ StreamTest.sl:249] [LoadConstInt32] index:[0] val: int32[1] 
+233 233   [ StreamTest.sl:249] [Ceq] index:[0]
+234 234   [ StreamTest.sl:177] [StoreLocal] index:[21] info:[LocalStatement]
+235 235   [ StreamTest.sl:250] [LoadLocal] index:[15] info:[LocalStatement]
+236 236   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+237 237   [ StreamTest.sl:251] [LoadConstInt32] index:[0] val: int32[10] 
+238 238   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+239 239   [ StreamTest.sl:252] [LoadStaticField] index:[7] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_mapCount]
+240 240   [ StreamTest.sl:252] [LoadConstInt32] index:[0] val: int32[1] 
+241 241   [ StreamTest.sl:252] [Ceq] index:[0]
+242 242   [ StreamTest.sl:177] [StoreLocal] index:[22] info:[LocalStatement]
+243 243   [ StreamTest.sl:253] [LoadConstString] index:[4023] val: string[C2-3 周期性流未提前求值] 
+244 244   [ StreamTest.sl:253] [LoadLocal] index:[20] info:[LocalStatement]
+245 245   [ StreamTest.sl:253] [LoadLocal] index:[21] info:[LocalStatement]
+246 246   [ StreamTest.sl:253] [And] index:[0]
+247 247   [ StreamTest.sl:253] [LoadLocal] index:[22] info:[LocalStatement]
+248 248   [ StreamTest.sl:253] [And] index:[0]
+249 249   [ StreamTest.sl:177] [StoreLocal] index:[40] info:[LocalStatement]
+250 250   [ StreamTest.sl:177] [StoreLocal] index:[39] info:[LocalStatement]
+251 251   [ :0] [Nop] index:[0]
+252 252   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+253 253   [ StreamTest.sl:25] [LoadLocal] index:[40] info:[LocalStatement]
+254 254   [ StreamTest.sl:177] [StoreLocal] index:[41] info:[if/elif store condition var]
+255 255   [ StreamTest.sl:177] [LoadLocal] index:[41] info:[if/elif load condition var]
+256 256   [ StreamTest.sl:25] [BrFalse] index:[269] info:[if/elif BrFalse]
+257 257   [ :0] [Nop] index:[0]
+258 258   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+259 259   [ StreamTest.sl:27] [LoadLocal] index:[39] info:[LocalStatement]
+260 260   [ StreamTest.sl:27] [Add] index:[0]
+261 261   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+262 262   [ StreamTest.sl:27] [Add] index:[0]
+263 263   [ StreamTest.sl:177] [StoreLocal] index:[42] info:[LocalStatement]
+264 264   [ :0] [Nop] index:[0]
+265 265   [ ProjectTest.sp:8] [LoadLocal] index:[42] info:[LocalStatement]
+266 266   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+267 267   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+268 268   [ StreamTest.sl:28] [Br] index:[282] info:[if/elif/else block end Br]
+269 269   [ StreamTest.sl:29] [Label] index:[9] info:[if/elif/else branch start]
+270 270   [ :0] [Nop] index:[0]
+271 271   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+272 272   [ StreamTest.sl:31] [LoadLocal] index:[39] info:[LocalStatement]
+273 273   [ StreamTest.sl:31] [Add] index:[0]
+274 274   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+275 275   [ StreamTest.sl:31] [Add] index:[0]
+276 276   [ StreamTest.sl:177] [StoreLocal] index:[43] info:[LocalStatement]
+277 277   [ :0] [Nop] index:[0]
+278 278   [ ProjectTest.sp:8] [LoadLocal] index:[43] info:[LocalStatement]
+279 279   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+280 280   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+281 281   [ StreamTest.sl:32] [Br] index:[282] info:[if/elif/else block end Br]
+282 282   [ StreamTest.sl:32] [Label] index:[10] info:[if end]
+283 283   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+284 284   [ StreamTest.sl:177] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.testGroupD
+    VirtualName: testGroupD_Core.Void_0
+    Name: testGroupD
+    InterfaceMethod: False
+    Return:
+      - #0 id=16358126 idx=0 name=_local[ProjectTest.StreamTest.testGroupD.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=13005406 idx=0 name=testGroupD_local[ctrl1] type=Core.StreamController<T><Core.Int32>
+      - #1 id=49939793 idx=1 name=testGroupD_local[s1] type=Core.Stream<T><Core.Int32>
+      - #2 id=46804961 idx=2 name=testGroupD_local[onData1] type=Core.Function
+      - #3 id=18591470 idx=3 name=_local[ProjectTest.StreamTest.testGroupD.__closure_ctx__] type=Core.Object
+      - #4 id=33105505 idx=4 name=testGroupD_local[onError1] type=Core.Function
+      - #5 id=29514091 idx=5 name=testGroupD_local[onDone1] type=Core.Function
+      - #6 id=64300229 idx=6 name=testGroupD_local[ctrl2] type=Core.StreamController<T><Core.Int32>
+      - #7 id=41831152 idx=7 name=testGroupD_local[s2] type=Core.Stream<T><Core.Int32>
+      - #8 id=40936054 idx=8 name=testGroupD_local[onData2] type=Core.Function
+      - #9 id=32880166 idx=9 name=testGroupD_local[onError2] type=Core.Function
+      - #10 id=27486043 idx=10 name=testGroupD_local[onDone2] type=Core.Function
+      - #11 id=46047796 idx=11 name=testGroupD_local[s3] type=Core.Stream<T><Core.Int32>
+      - #12 id=11776988 idx=12 name=testGroupD_local[onData3] type=Core.Function
+      - #13 id=38884035 idx=13 name=testGroupD_local[onError3] type=Core.Function
+      - #14 id=14412003 idx=14 name=testGroupD_local[onDone3] type=Core.Function
+      - #15 id=62599163 idx=15 name=testGroupD_local[arr4] type=Core.Array<T><Core.Int32>
+      - #16 id=26521557 idx=16 name=testGroupD_local[s4] type=Core.Stream<T><Core.Int32>
+      - #17 id=37367427 idx=17 name=testGroupD_local[onData4] type=Core.Function
+      - #18 id=762524 idx=18 name=testGroupD_local[sub4] type=Core.StreamSubscription
+      - #19 id=37952469 idx=19 name=_local[txt] type=Core.Object
+      - #20 id=17975388 idx=20 name=_local[name] type=Core.String
+      - #21 id=27560766 idx=21 name=_local[cond] type=Core.Boolean
+      - #22 id=46720306 idx=22 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #23 id=37952469 idx=23 name=_local[txt] type=Core.Object
+      - #24 id=37952469 idx=24 name=_local[txt] type=Core.Object
+      - #25 id=17975388 idx=25 name=_local[name] type=Core.String
+      - #26 id=27560766 idx=26 name=_local[cond] type=Core.Boolean
+      - #27 id=46720306 idx=27 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #28 id=37952469 idx=28 name=_local[txt] type=Core.Object
+      - #29 id=37952469 idx=29 name=_local[txt] type=Core.Object
+      - #30 id=17975388 idx=30 name=_local[name] type=Core.String
+      - #31 id=27560766 idx=31 name=_local[cond] type=Core.Boolean
+      - #32 id=46720306 idx=32 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #33 id=37952469 idx=33 name=_local[txt] type=Core.Object
+      - #34 id=37952469 idx=34 name=_local[txt] type=Core.Object
+      - #35 id=17975388 idx=35 name=_local[name] type=Core.String
+      - #36 id=27560766 idx=36 name=_local[cond] type=Core.Boolean
+      - #37 id=46720306 idx=37 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #38 id=37952469 idx=38 name=_local[txt] type=Core.Object
+      - #39 id=37952469 idx=39 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ StreamTest.sl:259] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ StreamTest.sl:259] [StoreLocal] index:[3] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ StreamTest.sl:261] [LoadConstString] index:[4024] val: string[========== D: 错误传播 ==========] 
+4 4   [ StreamTest.sl:259] [StoreLocal] index:[19] info:[LocalStatement]
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ProjectTest.sp:8] [LoadLocal] index:[19] info:[LocalStatement]
+7 7   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+8 8   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+9 9   [ StreamTest.sl:259] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+10 10   [ :0] [Dup] index:[0]
+11 11   [ StreamTest.sl:264] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ StreamTest.sl:259] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ StreamTest.sl:265] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ StreamTest.sl:259] [StoreLocal] index:[1] info:[LocalStatement]
+16 16   [ StreamTest.sl:266] [LoadConstString] index:[2] val: string[] 
+17 17   [ StreamTest.sl:259] [StoreStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+18 18   [ StreamTest.sl:267] [LoadConstInt32] index:[0] val: int32[0] 
+19 19   [ StreamTest.sl:259] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+20 20   [ StreamTest.sl:268] [LoadConstBoolean] index:[0] val:[False] 
+21 21   [ StreamTest.sl:259] [StoreStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+22 22   [ StreamTest.sl:269] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+23 23   [ StreamTest.sl:269] [NewClosure] index:[0] info:[NewClosure __closure_onData1_118] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData1_118_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ StreamTest.sl:259] [StoreLocal] index:[2] info:[LocalStatement]
+25 25   [ StreamTest.sl:273] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+26 26   [ StreamTest.sl:273] [NewClosure] index:[0] info:[NewClosure __closure_onError1_119] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onError1_119_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ StreamTest.sl:259] [StoreLocal] index:[4] info:[LocalStatement]
+28 28   [ StreamTest.sl:277] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+29 29   [ StreamTest.sl:277] [NewClosure] index:[0] info:[NewClosure __closure_onDone1_120] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onDone1_120_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ StreamTest.sl:259] [StoreLocal] index:[5] info:[LocalStatement]
+31 31   [ StreamTest.sl:281] [LoadLocal] index:[1] info:[LocalStatement]
+32 32   [ StreamTest.sl:281] [LoadLocal] index:[2] info:[LocalStatement]
+33 33   [ StreamTest.sl:281] [LoadLocal] index:[4] info:[LocalStatement]
+34 34   [ StreamTest.sl:281] [LoadLocal] index:[5] info:[LocalStatement]
+35 35   [ StreamTest.sl:281] [LoadConstBoolean] index:[0] val:[False] 
+36 36   [ :0] [CallVirt] index:[7] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean, MethodRuntimeTypeList=[], ParamCount=4}] 
+37 37   [ :0] [Pop] index:[0]
+38 38   [ StreamTest.sl:282] [LoadLocal] index:[0] info:[LocalStatement]
+39 39   [ StreamTest.sl:282] [LoadConstInt32] index:[0] val: int32[1] 
+40 40   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+41 41   [ StreamTest.sl:283] [LoadLocal] index:[0] info:[LocalStatement]
+42 42   [ StreamTest.sl:283] [LoadConstString] index:[4025] val: string[boom1] 
+43 43   [ :0] [CallVirt] index:[13] info:[CallVirt addError] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.addError_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+44 44   [ StreamTest.sl:284] [LoadLocal] index:[0] info:[LocalStatement]
+45 45   [ StreamTest.sl:284] [LoadConstInt32] index:[0] val: int32[2] 
+46 46   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+47 47   [ StreamTest.sl:285] [LoadLocal] index:[0] info:[LocalStatement]
+48 48   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+49 49   [ StreamTest.sl:286] [LoadConstInt32] index:[0] val: int32[30] 
+50 50   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+51 51   [ StreamTest.sl:287] [LoadConstString] index:[4026] val: string[D1 addError 传播且不中断] 
+52 52   [ StreamTest.sl:287] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+53 53   [ StreamTest.sl:287] [LoadConstString] index:[4025] val: string[boom1] 
+54 54   [ StreamTest.sl:287] [Ceq] index:[0]
+55 55   [ StreamTest.sl:287] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+56 56   [ StreamTest.sl:287] [LoadConstInt32] index:[0] val: int32[2] 
+57 57   [ StreamTest.sl:287] [Ceq] index:[0]
+58 58   [ StreamTest.sl:287] [And] index:[0]
+59 59   [ StreamTest.sl:287] [LoadStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+60 60   [ StreamTest.sl:287] [And] index:[0]
+61 61   [ StreamTest.sl:259] [StoreLocal] index:[21] info:[LocalStatement]
+62 62   [ StreamTest.sl:259] [StoreLocal] index:[20] info:[LocalStatement]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+65 65   [ StreamTest.sl:25] [LoadLocal] index:[21] info:[LocalStatement]
+66 66   [ StreamTest.sl:259] [StoreLocal] index:[22] info:[if/elif store condition var]
+67 67   [ StreamTest.sl:259] [LoadLocal] index:[22] info:[if/elif load condition var]
+68 68   [ StreamTest.sl:25] [BrFalse] index:[81] info:[if/elif BrFalse]
+69 69   [ :0] [Nop] index:[0]
+70 70   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+71 71   [ StreamTest.sl:27] [LoadLocal] index:[20] info:[LocalStatement]
+72 72   [ StreamTest.sl:27] [Add] index:[0]
+73 73   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+74 74   [ StreamTest.sl:27] [Add] index:[0]
+75 75   [ StreamTest.sl:259] [StoreLocal] index:[23] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ ProjectTest.sp:8] [LoadLocal] index:[23] info:[LocalStatement]
+78 78   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+79 79   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+80 80   [ StreamTest.sl:28] [Br] index:[94] info:[if/elif/else block end Br]
+81 81   [ StreamTest.sl:29] [Label] index:[1] info:[if/elif/else branch start]
+82 82   [ :0] [Nop] index:[0]
+83 83   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+84 84   [ StreamTest.sl:31] [LoadLocal] index:[20] info:[LocalStatement]
+85 85   [ StreamTest.sl:31] [Add] index:[0]
+86 86   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+87 87   [ StreamTest.sl:31] [Add] index:[0]
+88 88   [ StreamTest.sl:259] [StoreLocal] index:[24] info:[LocalStatement]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ ProjectTest.sp:8] [LoadLocal] index:[24] info:[LocalStatement]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+93 93   [ StreamTest.sl:32] [Br] index:[94] info:[if/elif/else block end Br]
+94 94   [ StreamTest.sl:32] [Label] index:[2] info:[if end]
+95 95   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+96 96   [ StreamTest.sl:259] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+97 97   [ :0] [Dup] index:[0]
+98 98   [ StreamTest.sl:290] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+99 99   [ StreamTest.sl:259] [StoreLocal] index:[6] info:[LocalStatement]
+100 100   [ StreamTest.sl:291] [LoadLocal] index:[6] info:[LocalStatement]
+101 101   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+102 102   [ StreamTest.sl:259] [StoreLocal] index:[7] info:[LocalStatement]
+103 103   [ StreamTest.sl:292] [LoadConstString] index:[2] val: string[] 
+104 104   [ StreamTest.sl:259] [StoreStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+105 105   [ StreamTest.sl:293] [LoadConstInt32] index:[0] val: int32[0] 
+106 106   [ StreamTest.sl:259] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+107 107   [ StreamTest.sl:294] [LoadConstBoolean] index:[0] val:[False] 
+108 108   [ StreamTest.sl:259] [StoreStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+109 109   [ StreamTest.sl:295] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+110 110   [ StreamTest.sl:295] [NewClosure] index:[0] info:[NewClosure __closure_onData2_121] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData2_121_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+111 111   [ StreamTest.sl:259] [StoreLocal] index:[8] info:[LocalStatement]
+112 112   [ StreamTest.sl:299] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+113 113   [ StreamTest.sl:299] [NewClosure] index:[0] info:[NewClosure __closure_onError2_122] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onError2_122_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+114 114   [ StreamTest.sl:259] [StoreLocal] index:[9] info:[LocalStatement]
+115 115   [ StreamTest.sl:303] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+116 116   [ StreamTest.sl:303] [NewClosure] index:[0] info:[NewClosure __closure_onDone2_123] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onDone2_123_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+117 117   [ StreamTest.sl:259] [StoreLocal] index:[10] info:[LocalStatement]
+118 118   [ StreamTest.sl:307] [LoadLocal] index:[7] info:[LocalStatement]
+119 119   [ StreamTest.sl:307] [LoadLocal] index:[8] info:[LocalStatement]
+120 120   [ StreamTest.sl:307] [LoadLocal] index:[9] info:[LocalStatement]
+121 121   [ StreamTest.sl:307] [LoadLocal] index:[10] info:[LocalStatement]
+122 122   [ StreamTest.sl:307] [LoadConstBoolean] index:[0] val:[True] 
+123 123   [ :0] [CallVirt] index:[7] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean, MethodRuntimeTypeList=[], ParamCount=4}] 
+124 124   [ :0] [Pop] index:[0]
+125 125   [ StreamTest.sl:308] [LoadLocal] index:[6] info:[LocalStatement]
+126 126   [ StreamTest.sl:308] [LoadConstInt32] index:[0] val: int32[1] 
+127 127   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+128 128   [ StreamTest.sl:309] [LoadLocal] index:[6] info:[LocalStatement]
+129 129   [ StreamTest.sl:309] [LoadConstString] index:[4027] val: string[boom2] 
+130 130   [ :0] [CallVirt] index:[13] info:[CallVirt addError] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.addError_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+131 131   [ StreamTest.sl:310] [LoadLocal] index:[6] info:[LocalStatement]
+132 132   [ StreamTest.sl:310] [LoadConstInt32] index:[0] val: int32[2] 
+133 133   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+134 134   [ StreamTest.sl:311] [LoadLocal] index:[6] info:[LocalStatement]
+135 135   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+136 136   [ StreamTest.sl:312] [LoadConstInt32] index:[0] val: int32[30] 
+137 137   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+138 138   [ StreamTest.sl:313] [LoadConstString] index:[4028] val: string[D2 cancelOnError 停止分发] 
+139 139   [ StreamTest.sl:313] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+140 140   [ StreamTest.sl:313] [LoadConstString] index:[4027] val: string[boom2] 
+141 141   [ StreamTest.sl:313] [Ceq] index:[0]
+142 142   [ StreamTest.sl:313] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+143 143   [ StreamTest.sl:313] [LoadConstInt32] index:[0] val: int32[1] 
+144 144   [ StreamTest.sl:313] [Ceq] index:[0]
+145 145   [ StreamTest.sl:313] [And] index:[0]
+146 146   [ StreamTest.sl:313] [LoadStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+147 147   [ StreamTest.sl:313] [LoadConstBoolean] index:[0] val:[False] 
+148 148   [ StreamTest.sl:313] [Ceq] index:[0]
+149 149   [ StreamTest.sl:313] [And] index:[0]
+150 150   [ StreamTest.sl:259] [StoreLocal] index:[26] info:[LocalStatement]
+151 151   [ StreamTest.sl:259] [StoreLocal] index:[25] info:[LocalStatement]
+152 152   [ :0] [Nop] index:[0]
+153 153   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+154 154   [ StreamTest.sl:25] [LoadLocal] index:[26] info:[LocalStatement]
+155 155   [ StreamTest.sl:259] [StoreLocal] index:[27] info:[if/elif store condition var]
+156 156   [ StreamTest.sl:259] [LoadLocal] index:[27] info:[if/elif load condition var]
+157 157   [ StreamTest.sl:25] [BrFalse] index:[170] info:[if/elif BrFalse]
+158 158   [ :0] [Nop] index:[0]
+159 159   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+160 160   [ StreamTest.sl:27] [LoadLocal] index:[25] info:[LocalStatement]
+161 161   [ StreamTest.sl:27] [Add] index:[0]
+162 162   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+163 163   [ StreamTest.sl:27] [Add] index:[0]
+164 164   [ StreamTest.sl:259] [StoreLocal] index:[28] info:[LocalStatement]
+165 165   [ :0] [Nop] index:[0]
+166 166   [ ProjectTest.sp:8] [LoadLocal] index:[28] info:[LocalStatement]
+167 167   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+168 168   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+169 169   [ StreamTest.sl:28] [Br] index:[183] info:[if/elif/else block end Br]
+170 170   [ StreamTest.sl:29] [Label] index:[3] info:[if/elif/else branch start]
+171 171   [ :0] [Nop] index:[0]
+172 172   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+173 173   [ StreamTest.sl:31] [LoadLocal] index:[25] info:[LocalStatement]
+174 174   [ StreamTest.sl:31] [Add] index:[0]
+175 175   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+176 176   [ StreamTest.sl:31] [Add] index:[0]
+177 177   [ StreamTest.sl:259] [StoreLocal] index:[29] info:[LocalStatement]
+178 178   [ :0] [Nop] index:[0]
+179 179   [ ProjectTest.sp:8] [LoadLocal] index:[29] info:[LocalStatement]
+180 180   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+181 181   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+182 182   [ StreamTest.sl:32] [Br] index:[183] info:[if/elif/else block end Br]
+183 183   [ StreamTest.sl:32] [Label] index:[4] info:[if end]
+184 184   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+185 185   [ StreamTest.sl:316] [LoadConstString] index:[2] val: string[] 
+186 186   [ StreamTest.sl:259] [StoreStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+187 187   [ StreamTest.sl:317] [LoadConstInt32] index:[0] val: int32[0] 
+188 188   [ StreamTest.sl:259] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+189 189   [ StreamTest.sl:318] [LoadConstBoolean] index:[0] val:[False] 
+190 190   [ StreamTest.sl:259] [StoreStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+191 191   [ StreamTest.sl:319] [LoadConstString] index:[4029] val: string[errFactory] 
+192 192   [ :0] [CallStatic] index:[1] info:[CallStatic failed] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.failed_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+193 193   [ StreamTest.sl:259] [StoreLocal] index:[11] info:[LocalStatement]
+194 194   [ StreamTest.sl:320] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+195 195   [ StreamTest.sl:320] [NewClosure] index:[0] info:[NewClosure __closure_onData3_124] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData3_124_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+196 196   [ StreamTest.sl:259] [StoreLocal] index:[12] info:[LocalStatement]
+197 197   [ StreamTest.sl:324] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+198 198   [ StreamTest.sl:324] [NewClosure] index:[0] info:[NewClosure __closure_onError3_125] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onError3_125_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+199 199   [ StreamTest.sl:259] [StoreLocal] index:[13] info:[LocalStatement]
+200 200   [ StreamTest.sl:328] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+201 201   [ StreamTest.sl:328] [NewClosure] index:[0] info:[NewClosure __closure_onDone3_126] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onDone3_126_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+202 202   [ StreamTest.sl:259] [StoreLocal] index:[14] info:[LocalStatement]
+203 203   [ StreamTest.sl:332] [LoadLocal] index:[11] info:[LocalStatement]
+204 204   [ StreamTest.sl:332] [LoadLocal] index:[12] info:[LocalStatement]
+205 205   [ StreamTest.sl:332] [LoadLocal] index:[13] info:[LocalStatement]
+206 206   [ StreamTest.sl:332] [LoadLocal] index:[14] info:[LocalStatement]
+207 207   [ StreamTest.sl:332] [LoadConstBoolean] index:[0] val:[False] 
+208 208   [ :0] [CallVirt] index:[7] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean, MethodRuntimeTypeList=[], ParamCount=4}] 
+209 209   [ :0] [Pop] index:[0]
+210 210   [ StreamTest.sl:333] [LoadConstInt32] index:[0] val: int32[20] 
+211 211   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+212 212   [ StreamTest.sl:334] [LoadConstString] index:[4030] val: string[D3 Stream.error 订阅即错误] 
+213 213   [ StreamTest.sl:334] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_err]
+214 214   [ StreamTest.sl:334] [LoadConstString] index:[4029] val: string[errFactory] 
+215 215   [ StreamTest.sl:334] [Ceq] index:[0]
+216 216   [ StreamTest.sl:334] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+217 217   [ StreamTest.sl:334] [LoadConstInt32] index:[0] val: int32[0] 
+218 218   [ StreamTest.sl:334] [Ceq] index:[0]
+219 219   [ StreamTest.sl:334] [And] index:[0]
+220 220   [ StreamTest.sl:334] [LoadStaticField] index:[6] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_done]
+221 221   [ StreamTest.sl:334] [And] index:[0]
+222 222   [ StreamTest.sl:259] [StoreLocal] index:[31] info:[LocalStatement]
+223 223   [ StreamTest.sl:259] [StoreLocal] index:[30] info:[LocalStatement]
+224 224   [ :0] [Nop] index:[0]
+225 225   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+226 226   [ StreamTest.sl:25] [LoadLocal] index:[31] info:[LocalStatement]
+227 227   [ StreamTest.sl:259] [StoreLocal] index:[32] info:[if/elif store condition var]
+228 228   [ StreamTest.sl:259] [LoadLocal] index:[32] info:[if/elif load condition var]
+229 229   [ StreamTest.sl:25] [BrFalse] index:[242] info:[if/elif BrFalse]
+230 230   [ :0] [Nop] index:[0]
+231 231   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+232 232   [ StreamTest.sl:27] [LoadLocal] index:[30] info:[LocalStatement]
+233 233   [ StreamTest.sl:27] [Add] index:[0]
+234 234   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+235 235   [ StreamTest.sl:27] [Add] index:[0]
+236 236   [ StreamTest.sl:259] [StoreLocal] index:[33] info:[LocalStatement]
+237 237   [ :0] [Nop] index:[0]
+238 238   [ ProjectTest.sp:8] [LoadLocal] index:[33] info:[LocalStatement]
+239 239   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+240 240   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+241 241   [ StreamTest.sl:28] [Br] index:[255] info:[if/elif/else block end Br]
+242 242   [ StreamTest.sl:29] [Label] index:[5] info:[if/elif/else branch start]
+243 243   [ :0] [Nop] index:[0]
+244 244   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+245 245   [ StreamTest.sl:31] [LoadLocal] index:[30] info:[LocalStatement]
+246 246   [ StreamTest.sl:31] [Add] index:[0]
+247 247   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+248 248   [ StreamTest.sl:31] [Add] index:[0]
+249 249   [ StreamTest.sl:259] [StoreLocal] index:[34] info:[LocalStatement]
+250 250   [ :0] [Nop] index:[0]
+251 251   [ ProjectTest.sp:8] [LoadLocal] index:[34] info:[LocalStatement]
+252 252   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+253 253   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+254 254   [ StreamTest.sl:32] [Br] index:[255] info:[if/elif/else block end Br]
+255 255   [ StreamTest.sl:32] [Label] index:[6] info:[if end]
+256 256   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+257 257   [ StreamTest.sl:337] [LoadConstInt32] index:[0] val: int32[3] 
+258 258   [ :0] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+259 259   [ StreamTest.sl:259] [StoreLocal] index:[15] info:[LocalStatement]
+260 260   [ StreamTest.sl:338] [LoadLocal] index:[15] info:[LocalStatement]
+261 261   [ StreamTest.sl:338] [LoadConstInt32] index:[0] val: int32[0] 
+262 262   [ StreamTest.sl:338] [LoadConstInt32] index:[0] val: int32[7] 
+263 263   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+264 264   [ StreamTest.sl:339] [LoadLocal] index:[15] info:[LocalStatement]
+265 265   [ StreamTest.sl:339] [LoadConstInt32] index:[0] val: int32[1] 
+266 266   [ StreamTest.sl:339] [LoadConstInt32] index:[0] val: int32[8] 
+267 267   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+268 268   [ StreamTest.sl:340] [LoadLocal] index:[15] info:[LocalStatement]
+269 269   [ StreamTest.sl:340] [LoadConstInt32] index:[0] val: int32[2] 
+270 270   [ StreamTest.sl:340] [LoadConstInt32] index:[0] val: int32[9] 
+271 271   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+272 272   [ StreamTest.sl:341] [LoadLocal] index:[15] info:[LocalStatement]
+273 273   [ :0] [CallStatic] index:[1] info:[CallStatic fromIterable] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.fromIterable_1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+274 274   [ StreamTest.sl:259] [StoreLocal] index:[16] info:[LocalStatement]
+275 275   [ StreamTest.sl:342] [LoadConstInt32] index:[0] val: int32[0] 
+276 276   [ StreamTest.sl:259] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+277 277   [ StreamTest.sl:343] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+278 278   [ StreamTest.sl:343] [NewClosure] index:[0] info:[NewClosure __closure_onData4_127] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_onData4_127_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+279 279   [ StreamTest.sl:259] [StoreLocal] index:[17] info:[LocalStatement]
+280 280   [ StreamTest.sl:347] [LoadLocal] index:[16] info:[LocalStatement]
+281 281   [ StreamTest.sl:347] [LoadLocal] index:[17] info:[LocalStatement]
+282 282   [ :0] [CallVirt] index:[8] info:[CallVirt listen] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.listen_1_Core.Function, MethodRuntimeTypeList=[], ParamCount=1}] 
+283 283   [ StreamTest.sl:259] [StoreLocal] index:[18] info:[LocalStatement]
+284 284   [ StreamTest.sl:348] [LoadLocal] index:[18] info:[LocalStatement]
+285 285   [ :0] [CallVirt] index:[8] info:[CallVirt cancel] val:[RuntimeCall{StaticRuntimeType=Core.StreamSubscription, StaticRuntimeTypeList=[], Method=Core.StreamSubscription.cancel, MethodRuntimeTypeList=[], ParamCount=0}] 
+286 286   [ :0] [Pop] index:[0]
+287 287   [ StreamTest.sl:349] [LoadConstInt32] index:[0] val: int32[30] 
+288 288   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+289 289   [ StreamTest.sl:350] [LoadConstString] index:[4031] val: string[D4 cancel 后无分发] 
+290 290   [ StreamTest.sl:350] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+291 291   [ StreamTest.sl:350] [LoadConstInt32] index:[0] val: int32[0] 
+292 292   [ StreamTest.sl:350] [Ceq] index:[0]
+293 293   [ StreamTest.sl:350] [LoadLocal] index:[18] info:[LocalStatement]
+294 294   [ :0] [CallVirt] index:[9] info:[CallVirt isCanceled] val:[RuntimeCall{StaticRuntimeType=Core.StreamSubscription, StaticRuntimeTypeList=[], Method=Core.StreamSubscription.isCanceled, MethodRuntimeTypeList=[], ParamCount=0}] 
+295 295   [ StreamTest.sl:350] [And] index:[0]
+296 296   [ StreamTest.sl:259] [StoreLocal] index:[36] info:[LocalStatement]
+297 297   [ StreamTest.sl:259] [StoreLocal] index:[35] info:[LocalStatement]
+298 298   [ :0] [Nop] index:[0]
+299 299   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+300 300   [ StreamTest.sl:25] [LoadLocal] index:[36] info:[LocalStatement]
+301 301   [ StreamTest.sl:259] [StoreLocal] index:[37] info:[if/elif store condition var]
+302 302   [ StreamTest.sl:259] [LoadLocal] index:[37] info:[if/elif load condition var]
+303 303   [ StreamTest.sl:25] [BrFalse] index:[316] info:[if/elif BrFalse]
+304 304   [ :0] [Nop] index:[0]
+305 305   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+306 306   [ StreamTest.sl:27] [LoadLocal] index:[35] info:[LocalStatement]
+307 307   [ StreamTest.sl:27] [Add] index:[0]
+308 308   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+309 309   [ StreamTest.sl:27] [Add] index:[0]
+310 310   [ StreamTest.sl:259] [StoreLocal] index:[38] info:[LocalStatement]
+311 311   [ :0] [Nop] index:[0]
+312 312   [ ProjectTest.sp:8] [LoadLocal] index:[38] info:[LocalStatement]
+313 313   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+314 314   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+315 315   [ StreamTest.sl:28] [Br] index:[329] info:[if/elif/else block end Br]
+316 316   [ StreamTest.sl:29] [Label] index:[7] info:[if/elif/else branch start]
+317 317   [ :0] [Nop] index:[0]
+318 318   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+319 319   [ StreamTest.sl:31] [LoadLocal] index:[35] info:[LocalStatement]
+320 320   [ StreamTest.sl:31] [Add] index:[0]
+321 321   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+322 322   [ StreamTest.sl:31] [Add] index:[0]
+323 323   [ StreamTest.sl:259] [StoreLocal] index:[39] info:[LocalStatement]
+324 324   [ :0] [Nop] index:[0]
+325 325   [ ProjectTest.sp:8] [LoadLocal] index:[39] info:[LocalStatement]
+326 326   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+327 327   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+328 328   [ StreamTest.sl:32] [Br] index:[329] info:[if/elif/else block end Br]
+329 329   [ StreamTest.sl:32] [Label] index:[8] info:[if end]
+330 330   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+331 331   [ StreamTest.sl:259] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.testGroupE
+    VirtualName: testGroupE_Core.Void_0
+    Name: testGroupE
+    InterfaceMethod: False
+    Return:
+      - #0 id=32975066 idx=0 name=_local[ProjectTest.StreamTest.testGroupE.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=28340140 idx=0 name=testGroupE_local[e1PullFn] type=Core.Function
+      - #1 id=53734669 idx=1 name=_local[ProjectTest.StreamTest.testGroupE.__closure_ctx__] type=Core.Object
+      - #2 id=13849974 idx=2 name=testGroupE_local[ctrl] type=Core.StreamController<T><Core.Int32>
+      - #3 id=57540904 idx=3 name=testGroupE_local[pull] type=Core.Task
+      - #4 id=48106092 idx=4 name=testGroupE_local[suspendedOk] type=Core.Boolean
+      - #5 id=30301652 idx=5 name=testGroupE_local[arr2] type=Core.Array<T><Core.Int32>
+      - #6 id=4279416 idx=6 name=testGroupE_local[s2] type=Core.Stream<T><Core.Int32>
+      - #7 id=38514744 idx=7 name=testGroupE_local[it] type=Core.IIterator<T><Core.Int32>
+      - #8 id=11088383 idx=8 name=testGroupE_local[e2sum] type=Core.Int32
+      - #9 id=32686589 idx=9 name=testGroupE_local[e2cnt] type=Core.Int32
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=17975388 idx=11 name=_local[name] type=Core.String
+      - #12 id=27560766 idx=12 name=_local[cond] type=Core.Boolean
+      - #13 id=46720306 idx=13 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=17975388 idx=16 name=_local[name] type=Core.String
+      - #17 id=27560766 idx=17 name=_local[cond] type=Core.Boolean
+      - #18 id=46720306 idx=18 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #19 id=37952469 idx=19 name=_local[txt] type=Core.Object
+      - #20 id=37952469 idx=20 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ StreamTest.sl:356] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ StreamTest.sl:356] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ StreamTest.sl:358] [LoadConstString] index:[4032] val: string[========== E: 拉取模式 ==========] 
+4 4   [ StreamTest.sl:356] [StoreLocal] index:[10] info:[LocalStatement]
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+7 7   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+8 8   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+9 9   [ StreamTest.sl:361] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+10 10   [ StreamTest.sl:361] [NewClosure] index:[0] info:[NewClosure __closure_e1PullFn_128] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_e1PullFn_128_2_Core.Object_Core.StreamController<Core.Int32>, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ StreamTest.sl:356] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ StreamTest.sl:367] [LoadConstInt32] index:[0] val: int32[0] 
+13 13   [ StreamTest.sl:356] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+14 14   [ StreamTest.sl:368] [LoadConstInt32] index:[0] val: int32[0] 
+15 15   [ StreamTest.sl:356] [StoreStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+16 16   [ StreamTest.sl:356] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ StreamTest.sl:369] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ StreamTest.sl:356] [StoreLocal] index:[2] info:[LocalStatement]
+20 20   [ StreamTest.sl:370] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ StreamTest.sl:370] [LoadLocal] index:[2] info:[LocalStatement]
+22 22   [ :0] [CallStatic] index:[2] info:[CallStatic spawnClosure1] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.spawnClosure1_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+23 23   [ StreamTest.sl:356] [StoreLocal] index:[3] info:[LocalStatement]
+24 24   [ StreamTest.sl:371] [LoadConstInt32] index:[0] val: int32[30] 
+25 25   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ StreamTest.sl:372] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+27 27   [ StreamTest.sl:372] [LoadConstInt32] index:[0] val: int32[0] 
+28 28   [ StreamTest.sl:372] [Ceq] index:[0]
+29 29   [ StreamTest.sl:372] [LoadLocal] index:[3] info:[LocalStatement]
+30 30   [ :0] [CallVirt] index:[11] info:[CallVirt isDead] val:[RuntimeCall{StaticRuntimeType=Core.Task, StaticRuntimeTypeList=[], Method=Core.Task.isDead, MethodRuntimeTypeList=[], ParamCount=0}] 
+31 31   [ StreamTest.sl:372] [LoadConstBoolean] index:[0] val:[False] 
+32 32   [ StreamTest.sl:372] [Ceq] index:[0]
+33 33   [ StreamTest.sl:372] [And] index:[0]
+34 34   [ StreamTest.sl:356] [StoreLocal] index:[4] info:[LocalStatement]
+35 35   [ StreamTest.sl:373] [LoadLocal] index:[2] info:[LocalStatement]
+36 36   [ StreamTest.sl:373] [LoadConstInt32] index:[0] val: int32[1] 
+37 37   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+38 38   [ StreamTest.sl:374] [LoadLocal] index:[2] info:[LocalStatement]
+39 39   [ StreamTest.sl:374] [LoadConstInt32] index:[0] val: int32[2] 
+40 40   [ :0] [CallVirt] index:[12] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+41 41   [ StreamTest.sl:375] [LoadLocal] index:[2] info:[LocalStatement]
+42 42   [ :0] [CallVirt] index:[14] info:[CallVirt close] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.close, MethodRuntimeTypeList=[], ParamCount=0}] 
+43 43   [ StreamTest.sl:376] [LoadLocal] index:[3] info:[LocalStatement]
+44 44   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+45 45   [ :0] [Pop] index:[0]
+46 46   [ StreamTest.sl:377] [LoadConstString] index:[4033] val: string[E1 拉取协程挂起与恢复] 
+47 47   [ StreamTest.sl:377] [LoadLocal] index:[4] info:[LocalStatement]
+48 48   [ StreamTest.sl:377] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_count]
+49 49   [ StreamTest.sl:377] [LoadConstInt32] index:[0] val: int32[2] 
+50 50   [ StreamTest.sl:377] [Ceq] index:[0]
+51 51   [ StreamTest.sl:377] [And] index:[0]
+52 52   [ StreamTest.sl:377] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_sum]
+53 53   [ StreamTest.sl:377] [LoadConstInt32] index:[0] val: int32[3] 
+54 54   [ StreamTest.sl:377] [Ceq] index:[0]
+55 55   [ StreamTest.sl:377] [And] index:[0]
+56 56   [ StreamTest.sl:356] [StoreLocal] index:[12] info:[LocalStatement]
+57 57   [ StreamTest.sl:356] [StoreLocal] index:[11] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+60 60   [ StreamTest.sl:25] [LoadLocal] index:[12] info:[LocalStatement]
+61 61   [ StreamTest.sl:356] [StoreLocal] index:[13] info:[if/elif store condition var]
+62 62   [ StreamTest.sl:356] [LoadLocal] index:[13] info:[if/elif load condition var]
+63 63   [ StreamTest.sl:25] [BrFalse] index:[76] info:[if/elif BrFalse]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+66 66   [ StreamTest.sl:27] [LoadLocal] index:[11] info:[LocalStatement]
+67 67   [ StreamTest.sl:27] [Add] index:[0]
+68 68   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+69 69   [ StreamTest.sl:27] [Add] index:[0]
+70 70   [ StreamTest.sl:356] [StoreLocal] index:[14] info:[LocalStatement]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+73 73   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+74 74   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+75 75   [ StreamTest.sl:28] [Br] index:[89] info:[if/elif/else block end Br]
+76 76   [ StreamTest.sl:29] [Label] index:[1] info:[if/elif/else branch start]
+77 77   [ :0] [Nop] index:[0]
+78 78   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+79 79   [ StreamTest.sl:31] [LoadLocal] index:[11] info:[LocalStatement]
+80 80   [ StreamTest.sl:31] [Add] index:[0]
+81 81   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+82 82   [ StreamTest.sl:31] [Add] index:[0]
+83 83   [ StreamTest.sl:356] [StoreLocal] index:[15] info:[LocalStatement]
+84 84   [ :0] [Nop] index:[0]
+85 85   [ ProjectTest.sp:8] [LoadLocal] index:[15] info:[LocalStatement]
+86 86   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+87 87   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+88 88   [ StreamTest.sl:32] [Br] index:[89] info:[if/elif/else block end Br]
+89 89   [ StreamTest.sl:32] [Label] index:[2] info:[if end]
+90 90   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+91 91   [ StreamTest.sl:380] [LoadConstInt32] index:[0] val: int32[4] 
+92 92   [ :0] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+93 93   [ StreamTest.sl:356] [StoreLocal] index:[5] info:[LocalStatement]
+94 94   [ StreamTest.sl:381] [LoadLocal] index:[5] info:[LocalStatement]
+95 95   [ StreamTest.sl:381] [LoadConstInt32] index:[0] val: int32[0] 
+96 96   [ StreamTest.sl:381] [LoadConstInt32] index:[0] val: int32[1] 
+97 97   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+98 98   [ StreamTest.sl:382] [LoadLocal] index:[5] info:[LocalStatement]
+99 99   [ StreamTest.sl:382] [LoadConstInt32] index:[0] val: int32[1] 
+100 100   [ StreamTest.sl:382] [LoadConstInt32] index:[0] val: int32[2] 
+101 101   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+102 102   [ StreamTest.sl:383] [LoadLocal] index:[5] info:[LocalStatement]
+103 103   [ StreamTest.sl:383] [LoadConstInt32] index:[0] val: int32[2] 
+104 104   [ StreamTest.sl:383] [LoadConstInt32] index:[0] val: int32[3] 
+105 105   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+106 106   [ StreamTest.sl:384] [LoadLocal] index:[5] info:[LocalStatement]
+107 107   [ StreamTest.sl:384] [LoadConstInt32] index:[0] val: int32[3] 
+108 108   [ StreamTest.sl:384] [LoadConstInt32] index:[0] val: int32[4] 
+109 109   [ :0] [CallVirt] index:[17] info:[CallVirt _setItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._setItem__2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+110 110   [ StreamTest.sl:385] [LoadLocal] index:[5] info:[LocalStatement]
+111 111   [ :0] [CallStatic] index:[1] info:[CallStatic fromIterable] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stream<T>.fromIterable_1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+112 112   [ StreamTest.sl:356] [StoreLocal] index:[6] info:[LocalStatement]
+113 113   [ StreamTest.sl:386] [LoadLocal] index:[6] info:[LocalStatement]
+114 114   [ :0] [CallDynamic] index:[1] info:[CallDynamic iterator] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+115 115   [ StreamTest.sl:356] [StoreLocal] index:[7] info:[LocalStatement]
+116 116   [ StreamTest.sl:387] [LoadConstInt32] index:[0] val: int32[0] 
+117 117   [ StreamTest.sl:356] [StoreLocal] index:[8] info:[LocalStatement]
+118 118   [ StreamTest.sl:388] [LoadConstInt32] index:[0] val: int32[0] 
+119 119   [ StreamTest.sl:356] [StoreLocal] index:[9] info:[LocalStatement]
+120 120   [ :0] [Label] index:[4]
+121 121   [ StreamTest.sl:389] [LoadLocal] index:[7] info:[LocalStatement]
+122 122   [ :0] [CallDynamic] index:[1] info:[CallDynamic moveNext] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+123 123   [ :0] [BrFalse] index:[137]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ :0] [Nop] index:[0]
+126 126   [ StreamTest.sl:391] [LoadLocal] index:[8] info:[LocalStatement]
+127 127   [ StreamTest.sl:391] [LoadLocal] index:[7] info:[LocalStatement]
+128 128   [ :0] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+129 129   [ StreamTest.sl:391] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+130 130   [ StreamTest.sl:391] [Add] index:[0]
+131 131   [ StreamTest.sl:356] [StoreLocal] index:[8] info:[LocalStatement]
+132 132   [ StreamTest.sl:392] [LoadLocal] index:[9] info:[LocalStatement]
+133 133   [ StreamTest.sl:392] [LoadConstInt32] index:[0] val: int32[1] 
+134 134   [ StreamTest.sl:392] [Add] index:[0]
+135 135   [ StreamTest.sl:356] [StoreLocal] index:[9] info:[LocalStatement]
+136 136   [ :0] [Br] index:[120]
+137 137   [ :0] [Label] index:[3]
+138 138   [ StreamTest.sl:394] [LoadConstString] index:[4034] val: string[E2 拉取生产流全量] 
+139 139   [ StreamTest.sl:394] [LoadLocal] index:[8] info:[LocalStatement]
+140 140   [ StreamTest.sl:394] [LoadConstInt32] index:[0] val: int32[10] 
+141 141   [ StreamTest.sl:394] [Ceq] index:[0]
+142 142   [ StreamTest.sl:394] [LoadLocal] index:[9] info:[LocalStatement]
+143 143   [ StreamTest.sl:394] [LoadConstInt32] index:[0] val: int32[4] 
+144 144   [ StreamTest.sl:394] [Ceq] index:[0]
+145 145   [ StreamTest.sl:394] [And] index:[0]
+146 146   [ StreamTest.sl:356] [StoreLocal] index:[17] info:[LocalStatement]
+147 147   [ StreamTest.sl:356] [StoreLocal] index:[16] info:[LocalStatement]
+148 148   [ :0] [Nop] index:[0]
+149 149   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+150 150   [ StreamTest.sl:25] [LoadLocal] index:[17] info:[LocalStatement]
+151 151   [ StreamTest.sl:356] [StoreLocal] index:[18] info:[if/elif store condition var]
+152 152   [ StreamTest.sl:356] [LoadLocal] index:[18] info:[if/elif load condition var]
+153 153   [ StreamTest.sl:25] [BrFalse] index:[166] info:[if/elif BrFalse]
+154 154   [ :0] [Nop] index:[0]
+155 155   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+156 156   [ StreamTest.sl:27] [LoadLocal] index:[16] info:[LocalStatement]
+157 157   [ StreamTest.sl:27] [Add] index:[0]
+158 158   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+159 159   [ StreamTest.sl:27] [Add] index:[0]
+160 160   [ StreamTest.sl:356] [StoreLocal] index:[19] info:[LocalStatement]
+161 161   [ :0] [Nop] index:[0]
+162 162   [ ProjectTest.sp:8] [LoadLocal] index:[19] info:[LocalStatement]
+163 163   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+164 164   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+165 165   [ StreamTest.sl:28] [Br] index:[179] info:[if/elif/else block end Br]
+166 166   [ StreamTest.sl:29] [Label] index:[5] info:[if/elif/else branch start]
+167 167   [ :0] [Nop] index:[0]
+168 168   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+169 169   [ StreamTest.sl:31] [LoadLocal] index:[16] info:[LocalStatement]
+170 170   [ StreamTest.sl:31] [Add] index:[0]
+171 171   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+172 172   [ StreamTest.sl:31] [Add] index:[0]
+173 173   [ StreamTest.sl:356] [StoreLocal] index:[20] info:[LocalStatement]
+174 174   [ :0] [Nop] index:[0]
+175 175   [ ProjectTest.sp:8] [LoadLocal] index:[20] info:[LocalStatement]
+176 176   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+177 177   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+178 178   [ StreamTest.sl:32] [Br] index:[179] info:[if/elif/else block end Br]
+179 179   [ StreamTest.sl:32] [Label] index:[6] info:[if end]
+180 180   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+181 181   [ StreamTest.sl:356] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.testGroupF
+    VirtualName: testGroupF_Core.Void_0
+    Name: testGroupF
+    InterfaceMethod: False
+    Return:
+      - #0 id=55624859 idx=0 name=_local[ProjectTest.StreamTest.testGroupF.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=30861686 idx=0 name=testGroupF_local[f1ProduceFn] type=Core.Function
+      - #1 id=9319721 idx=1 name=_local[ProjectTest.StreamTest.testGroupF.__closure_ctx__] type=Core.Object
+      - #2 id=16768629 idx=2 name=testGroupF_local[f2BurstFn] type=Core.Function
+      - #3 id=16699940 idx=3 name=testGroupF_local[ctrl] type=Core.StreamController<T><Core.Int32>
+      - #4 id=16081733 idx=4 name=testGroupF_local[p] type=Core.Task
+      - #5 id=10517875 idx=5 name=testGroupF_local[blockedOk] type=Core.Boolean
+      - #6 id=27552014 idx=6 name=testGroupF_local[s] type=Core.Stream<T><Core.Int32>
+      - #7 id=46641535 idx=7 name=testGroupF_local[it] type=Core.IIterator<T><Core.Int32>
+      - #8 id=17120631 idx=8 name=testGroupF_local[f1sum] type=Core.Int32
+      - #9 id=19867951 idx=9 name=testGroupF_local[f1cnt] type=Core.Int32
+      - #10 id=44593832 idx=10 name=testGroupF_local[ctrl2] type=Core.StreamController<T><Core.Int32>
+      - #11 id=65800171 idx=11 name=testGroupF_local[p2] type=Core.Task
+      - #12 id=55330634 idx=12 name=testGroupF_local[burstOk] type=Core.Boolean
+      - #13 id=28213660 idx=13 name=testGroupF_local[s2] type=Core.Stream<T><Core.Int32>
+      - #14 id=52596356 idx=14 name=testGroupF_local[it2] type=Core.IIterator<T><Core.Int32>
+      - #15 id=3605162 idx=15 name=testGroupF_local[f2sum] type=Core.Int32
+      - #16 id=37952469 idx=16 name=_local[txt] type=Core.Object
+      - #17 id=17975388 idx=17 name=_local[name] type=Core.String
+      - #18 id=27560766 idx=18 name=_local[cond] type=Core.Boolean
+      - #19 id=46720306 idx=19 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #20 id=37952469 idx=20 name=_local[txt] type=Core.Object
+      - #21 id=37952469 idx=21 name=_local[txt] type=Core.Object
+      - #22 id=17975388 idx=22 name=_local[name] type=Core.String
+      - #23 id=27560766 idx=23 name=_local[cond] type=Core.Boolean
+      - #24 id=46720306 idx=24 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #25 id=37952469 idx=25 name=_local[txt] type=Core.Object
+      - #26 id=37952469 idx=26 name=_local[txt] type=Core.Object
+      - #27 id=17975388 idx=27 name=_local[name] type=Core.String
+      - #28 id=27560766 idx=28 name=_local[cond] type=Core.Boolean
+      - #29 id=46720306 idx=29 name=check_local[autocreate_60503138] type=Core.Boolean
+      - #30 id=37952469 idx=30 name=_local[txt] type=Core.Object
+      - #31 id=37952469 idx=31 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ StreamTest.sl:400] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ StreamTest.sl:400] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ StreamTest.sl:402] [LoadConstString] index:[4035] val: string[========== F: 背压 ==========] 
+4 4   [ StreamTest.sl:400] [StoreLocal] index:[16] info:[LocalStatement]
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ProjectTest.sp:8] [LoadLocal] index:[16] info:[LocalStatement]
+7 7   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+8 8   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+9 9   [ StreamTest.sl:405] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+10 10   [ StreamTest.sl:405] [NewClosure] index:[0] info:[NewClosure __closure_f1ProduceFn_129] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_f1ProduceFn_129_2_Core.Object_Core.StreamController<Core.Int32>, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ StreamTest.sl:400] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ StreamTest.sl:409] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+13 13   [ StreamTest.sl:409] [NewClosure] index:[0] info:[NewClosure __closure_f2BurstFn_130] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.__closure_f2BurstFn_130_2_Core.Object_Core.StreamController<Core.Int32>, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ StreamTest.sl:400] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ StreamTest.sl:415] [LoadConstInt32] index:[0] val: int32[0] 
+16 16   [ StreamTest.sl:400] [StoreStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+17 17   [ StreamTest.sl:400] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ StreamTest.sl:416] [LoadConstInt32] index:[0] val: int32[1] 
+20 20   [ StreamTest.sl:416] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+21 21   [ StreamTest.sl:400] [StoreLocal] index:[3] info:[LocalStatement]
+22 22   [ StreamTest.sl:417] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ StreamTest.sl:417] [LoadLocal] index:[3] info:[LocalStatement]
+24 24   [ :0] [CallStatic] index:[2] info:[CallStatic spawnClosure1] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.spawnClosure1_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+25 25   [ StreamTest.sl:400] [StoreLocal] index:[4] info:[LocalStatement]
+26 26   [ StreamTest.sl:418] [LoadConstInt32] index:[0] val: int32[30] 
+27 27   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+28 28   [ StreamTest.sl:419] [LoadStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+29 29   [ StreamTest.sl:419] [LoadConstInt32] index:[0] val: int32[1] 
+30 30   [ StreamTest.sl:419] [Ceq] index:[0]
+31 31   [ StreamTest.sl:419] [LoadLocal] index:[4] info:[LocalStatement]
+32 32   [ :0] [CallVirt] index:[11] info:[CallVirt isDead] val:[RuntimeCall{StaticRuntimeType=Core.Task, StaticRuntimeTypeList=[], Method=Core.Task.isDead, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ StreamTest.sl:419] [LoadConstBoolean] index:[0] val:[False] 
+34 34   [ StreamTest.sl:419] [Ceq] index:[0]
+35 35   [ StreamTest.sl:419] [And] index:[0]
+36 36   [ StreamTest.sl:400] [StoreLocal] index:[5] info:[LocalStatement]
+37 37   [ StreamTest.sl:421] [LoadLocal] index:[3] info:[LocalStatement]
+38 38   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+39 39   [ StreamTest.sl:400] [StoreLocal] index:[6] info:[LocalStatement]
+40 40   [ StreamTest.sl:422] [LoadLocal] index:[6] info:[LocalStatement]
+41 41   [ :0] [CallDynamic] index:[1] info:[CallDynamic iterator] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+42 42   [ StreamTest.sl:400] [StoreLocal] index:[7] info:[LocalStatement]
+43 43   [ StreamTest.sl:423] [LoadConstInt32] index:[0] val: int32[0] 
+44 44   [ StreamTest.sl:400] [StoreLocal] index:[8] info:[LocalStatement]
+45 45   [ StreamTest.sl:424] [LoadConstInt32] index:[0] val: int32[0] 
+46 46   [ StreamTest.sl:400] [StoreLocal] index:[9] info:[LocalStatement]
+47 47   [ :0] [Label] index:[2]
+48 48   [ StreamTest.sl:425] [LoadLocal] index:[7] info:[LocalStatement]
+49 49   [ :0] [CallDynamic] index:[1] info:[CallDynamic moveNext] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ :0] [BrFalse] index:[64]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ StreamTest.sl:427] [LoadLocal] index:[8] info:[LocalStatement]
+54 54   [ StreamTest.sl:427] [LoadLocal] index:[7] info:[LocalStatement]
+55 55   [ :0] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ StreamTest.sl:427] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+57 57   [ StreamTest.sl:427] [Add] index:[0]
+58 58   [ StreamTest.sl:400] [StoreLocal] index:[8] info:[LocalStatement]
+59 59   [ StreamTest.sl:428] [LoadLocal] index:[9] info:[LocalStatement]
+60 60   [ StreamTest.sl:428] [LoadConstInt32] index:[0] val: int32[1] 
+61 61   [ StreamTest.sl:428] [Add] index:[0]
+62 62   [ StreamTest.sl:400] [StoreLocal] index:[9] info:[LocalStatement]
+63 63   [ :0] [Br] index:[47]
+64 64   [ :0] [Label] index:[1]
+65 65   [ StreamTest.sl:430] [LoadLocal] index:[4] info:[LocalStatement]
+66 66   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+67 67   [ :0] [Pop] index:[0]
+68 68   [ StreamTest.sl:431] [LoadConstString] index:[4036] val: string[F1 容量满 add 挂起] 
+69 69   [ StreamTest.sl:431] [LoadLocal] index:[5] info:[LocalStatement]
+70 70   [ StreamTest.sl:400] [StoreLocal] index:[18] info:[LocalStatement]
+71 71   [ StreamTest.sl:400] [StoreLocal] index:[17] info:[LocalStatement]
+72 72   [ :0] [Nop] index:[0]
+73 73   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+74 74   [ StreamTest.sl:25] [LoadLocal] index:[18] info:[LocalStatement]
+75 75   [ StreamTest.sl:400] [StoreLocal] index:[19] info:[if/elif store condition var]
+76 76   [ StreamTest.sl:400] [LoadLocal] index:[19] info:[if/elif load condition var]
+77 77   [ StreamTest.sl:25] [BrFalse] index:[90] info:[if/elif BrFalse]
+78 78   [ :0] [Nop] index:[0]
+79 79   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+80 80   [ StreamTest.sl:27] [LoadLocal] index:[17] info:[LocalStatement]
+81 81   [ StreamTest.sl:27] [Add] index:[0]
+82 82   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+83 83   [ StreamTest.sl:27] [Add] index:[0]
+84 84   [ StreamTest.sl:400] [StoreLocal] index:[20] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ProjectTest.sp:8] [LoadLocal] index:[20] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+89 89   [ StreamTest.sl:28] [Br] index:[103] info:[if/elif/else block end Br]
+90 90   [ StreamTest.sl:29] [Label] index:[3] info:[if/elif/else branch start]
+91 91   [ :0] [Nop] index:[0]
+92 92   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+93 93   [ StreamTest.sl:31] [LoadLocal] index:[17] info:[LocalStatement]
+94 94   [ StreamTest.sl:31] [Add] index:[0]
+95 95   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+96 96   [ StreamTest.sl:31] [Add] index:[0]
+97 97   [ StreamTest.sl:400] [StoreLocal] index:[21] info:[LocalStatement]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ProjectTest.sp:8] [LoadLocal] index:[21] info:[LocalStatement]
+100 100   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+101 101   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+102 102   [ StreamTest.sl:32] [Br] index:[103] info:[if/elif/else block end Br]
+103 103   [ StreamTest.sl:32] [Label] index:[4] info:[if end]
+104 104   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+105 105   [ StreamTest.sl:432] [LoadConstString] index:[4037] val: string[F1 消费驱动生产完成] 
+106 106   [ StreamTest.sl:432] [LoadLocal] index:[8] info:[LocalStatement]
+107 107   [ StreamTest.sl:432] [LoadConstInt32] index:[0] val: int32[60] 
+108 108   [ StreamTest.sl:432] [Ceq] index:[0]
+109 109   [ StreamTest.sl:432] [LoadLocal] index:[9] info:[LocalStatement]
+110 110   [ StreamTest.sl:432] [LoadConstInt32] index:[0] val: int32[3] 
+111 111   [ StreamTest.sl:432] [Ceq] index:[0]
+112 112   [ StreamTest.sl:432] [And] index:[0]
+113 113   [ StreamTest.sl:432] [LoadStaticField] index:[9] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f1sent]
+114 114   [ StreamTest.sl:432] [LoadConstInt32] index:[0] val: int32[3] 
+115 115   [ StreamTest.sl:432] [Ceq] index:[0]
+116 116   [ StreamTest.sl:432] [And] index:[0]
+117 117   [ StreamTest.sl:400] [StoreLocal] index:[23] info:[LocalStatement]
+118 118   [ StreamTest.sl:400] [StoreLocal] index:[22] info:[LocalStatement]
+119 119   [ :0] [Nop] index:[0]
+120 120   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+121 121   [ StreamTest.sl:25] [LoadLocal] index:[23] info:[LocalStatement]
+122 122   [ StreamTest.sl:400] [StoreLocal] index:[24] info:[if/elif store condition var]
+123 123   [ StreamTest.sl:400] [LoadLocal] index:[24] info:[if/elif load condition var]
+124 124   [ StreamTest.sl:25] [BrFalse] index:[137] info:[if/elif BrFalse]
+125 125   [ :0] [Nop] index:[0]
+126 126   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+127 127   [ StreamTest.sl:27] [LoadLocal] index:[22] info:[LocalStatement]
+128 128   [ StreamTest.sl:27] [Add] index:[0]
+129 129   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+130 130   [ StreamTest.sl:27] [Add] index:[0]
+131 131   [ StreamTest.sl:400] [StoreLocal] index:[25] info:[LocalStatement]
+132 132   [ :0] [Nop] index:[0]
+133 133   [ ProjectTest.sp:8] [LoadLocal] index:[25] info:[LocalStatement]
+134 134   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+135 135   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+136 136   [ StreamTest.sl:28] [Br] index:[150] info:[if/elif/else block end Br]
+137 137   [ StreamTest.sl:29] [Label] index:[5] info:[if/elif/else branch start]
+138 138   [ :0] [Nop] index:[0]
+139 139   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+140 140   [ StreamTest.sl:31] [LoadLocal] index:[22] info:[LocalStatement]
+141 141   [ StreamTest.sl:31] [Add] index:[0]
+142 142   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+143 143   [ StreamTest.sl:31] [Add] index:[0]
+144 144   [ StreamTest.sl:400] [StoreLocal] index:[26] info:[LocalStatement]
+145 145   [ :0] [Nop] index:[0]
+146 146   [ ProjectTest.sp:8] [LoadLocal] index:[26] info:[LocalStatement]
+147 147   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+148 148   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+149 149   [ StreamTest.sl:32] [Br] index:[150] info:[if/elif/else block end Br]
+150 150   [ StreamTest.sl:32] [Label] index:[6] info:[if end]
+151 151   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+152 152   [ StreamTest.sl:435] [LoadConstInt32] index:[0] val: int32[0] 
+153 153   [ StreamTest.sl:400] [StoreStaticField] index:[10] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f2sent]
+154 154   [ StreamTest.sl:400] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.StreamController<T><Core.Int32>] 
+155 155   [ :0] [Dup] index:[0]
+156 156   [ StreamTest.sl:436] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.StreamController<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+157 157   [ StreamTest.sl:400] [StoreLocal] index:[10] info:[LocalStatement]
+158 158   [ StreamTest.sl:437] [LoadLocal] index:[2] info:[LocalStatement]
+159 159   [ StreamTest.sl:437] [LoadLocal] index:[10] info:[LocalStatement]
+160 160   [ :0] [CallStatic] index:[2] info:[CallStatic spawnClosure1] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.spawnClosure1_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+161 161   [ StreamTest.sl:400] [StoreLocal] index:[11] info:[LocalStatement]
+162 162   [ StreamTest.sl:438] [LoadConstInt32] index:[0] val: int32[30] 
+163 163   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+164 164   [ StreamTest.sl:439] [LoadStaticField] index:[10] info:[Static] fieldTypeIrmt:[ProjectTest.StreamTest] staticOwner:[ProjectTest.StreamTest]  field:[ProjectTest.StreamTest.g_f2sent]
+165 165   [ StreamTest.sl:439] [LoadConstInt32] index:[0] val: int32[3] 
+166 166   [ StreamTest.sl:439] [Ceq] index:[0]
+167 167   [ StreamTest.sl:400] [StoreLocal] index:[12] info:[LocalStatement]
+168 168   [ StreamTest.sl:441] [LoadLocal] index:[10] info:[LocalStatement]
+169 169   [ :0] [CallVirt] index:[8] info:[CallVirt stream] val:[RuntimeCall{StaticRuntimeType=Core.StreamController<T>, StaticRuntimeTypeList=[], Method=Core.StreamController<T>.stream, MethodRuntimeTypeList=[], ParamCount=0}] 
+170 170   [ StreamTest.sl:400] [StoreLocal] index:[13] info:[LocalStatement]
+171 171   [ StreamTest.sl:442] [LoadLocal] index:[13] info:[LocalStatement]
+172 172   [ :0] [CallDynamic] index:[1] info:[CallDynamic iterator] val:[RuntimeCall{StaticRuntimeType=Core.Stream<T>, StaticRuntimeTypeList=[], Method=Core.Stream<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+173 173   [ StreamTest.sl:400] [StoreLocal] index:[14] info:[LocalStatement]
+174 174   [ StreamTest.sl:443] [LoadConstInt32] index:[0] val: int32[0] 
+175 175   [ StreamTest.sl:400] [StoreLocal] index:[15] info:[LocalStatement]
+176 176   [ :0] [Label] index:[8]
+177 177   [ StreamTest.sl:444] [LoadLocal] index:[14] info:[LocalStatement]
+178 178   [ :0] [CallDynamic] index:[1] info:[CallDynamic moveNext] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+179 179   [ :0] [BrFalse] index:[189]
+180 180   [ :0] [Nop] index:[0]
+181 181   [ :0] [Nop] index:[0]
+182 182   [ StreamTest.sl:446] [LoadLocal] index:[15] info:[LocalStatement]
+183 183   [ StreamTest.sl:446] [LoadLocal] index:[14] info:[LocalStatement]
+184 184   [ :0] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+185 185   [ StreamTest.sl:446] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+186 186   [ StreamTest.sl:446] [Add] index:[0]
+187 187   [ StreamTest.sl:400] [StoreLocal] index:[15] info:[LocalStatement]
+188 188   [ :0] [Br] index:[176]
+189 189   [ :0] [Label] index:[7]
+190 190   [ StreamTest.sl:448] [LoadLocal] index:[11] info:[LocalStatement]
+191 191   [ :0] [CallStatic] index:[1] info:[CallStatic awaitTask] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.awaitTask_1_Core.Task, MethodRuntimeTypeList=[], ParamCount=1}] 
+192 192   [ :0] [Pop] index:[0]
+193 193   [ StreamTest.sl:449] [LoadConstString] index:[4038] val: string[F2 无上限 add 不挂起] 
+194 194   [ StreamTest.sl:449] [LoadLocal] index:[12] info:[LocalStatement]
+195 195   [ StreamTest.sl:449] [LoadLocal] index:[15] info:[LocalStatement]
+196 196   [ StreamTest.sl:449] [LoadConstInt32] index:[0] val: int32[6] 
+197 197   [ StreamTest.sl:449] [Ceq] index:[0]
+198 198   [ StreamTest.sl:449] [And] index:[0]
+199 199   [ StreamTest.sl:400] [StoreLocal] index:[28] info:[LocalStatement]
+200 200   [ StreamTest.sl:400] [StoreLocal] index:[27] info:[LocalStatement]
+201 201   [ :0] [Nop] index:[0]
+202 202   [ StreamTest.sl:25] [Nop] index:[0] info:[if/elif/else branch start]
+203 203   [ StreamTest.sl:25] [LoadLocal] index:[28] info:[LocalStatement]
+204 204   [ StreamTest.sl:400] [StoreLocal] index:[29] info:[if/elif store condition var]
+205 205   [ StreamTest.sl:400] [LoadLocal] index:[29] info:[if/elif load condition var]
+206 206   [ StreamTest.sl:25] [BrFalse] index:[219] info:[if/elif BrFalse]
+207 207   [ :0] [Nop] index:[0]
+208 208   [ StreamTest.sl:27] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+209 209   [ StreamTest.sl:27] [LoadLocal] index:[27] info:[LocalStatement]
+210 210   [ StreamTest.sl:27] [Add] index:[0]
+211 211   [ StreamTest.sl:27] [LoadConstString] index:[1834] val: string[ : OK] 
+212 212   [ StreamTest.sl:27] [Add] index:[0]
+213 213   [ StreamTest.sl:400] [StoreLocal] index:[30] info:[LocalStatement]
+214 214   [ :0] [Nop] index:[0]
+215 215   [ ProjectTest.sp:8] [LoadLocal] index:[30] info:[LocalStatement]
+216 216   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+217 217   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+218 218   [ StreamTest.sl:28] [Br] index:[232] info:[if/elif/else block end Br]
+219 219   [ StreamTest.sl:29] [Label] index:[9] info:[if/elif/else branch start]
+220 220   [ :0] [Nop] index:[0]
+221 221   [ StreamTest.sl:31] [LoadConstString] index:[4015] val: string[[StreamTest] ] 
+222 222   [ StreamTest.sl:31] [LoadLocal] index:[27] info:[LocalStatement]
+223 223   [ StreamTest.sl:31] [Add] index:[0]
+224 224   [ StreamTest.sl:31] [LoadConstString] index:[1835] val: string[ : FAIL] 
+225 225   [ StreamTest.sl:31] [Add] index:[0]
+226 226   [ StreamTest.sl:400] [StoreLocal] index:[31] info:[LocalStatement]
+227 227   [ :0] [Nop] index:[0]
+228 228   [ ProjectTest.sp:8] [LoadLocal] index:[31] info:[LocalStatement]
+229 229   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+230 230   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+231 231   [ StreamTest.sl:32] [Br] index:[232] info:[if/elif/else block end Br]
+232 232   [ StreamTest.sl:32] [Label] index:[10] info:[if end]
+233 233   [ StreamTest.sl:23] [Nop] index:[0] info:[inline end: check]
+234 234   [ StreamTest.sl:400] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.StreamTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=28067877 idx=0 name=_local[ProjectTest.StreamTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StreamTest.sl:457] [LoadConstString] index:[4039] val: string[========== StreamTest (start) ==========] 
+2 2   [ StreamTest.sl:455] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StreamTest.sl:89] [CallStatic] index:[0] info:[CallStatic testGroupC] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StreamTest, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.testGroupC, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ StreamTest.sl:177] [CallStatic] index:[0] info:[CallStatic testGroupC2] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StreamTest, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.testGroupC2, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ StreamTest.sl:259] [CallStatic] index:[0] info:[CallStatic testGroupD] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StreamTest, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.testGroupD, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ StreamTest.sl:356] [CallStatic] index:[0] info:[CallStatic testGroupE] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StreamTest, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.testGroupE, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ StreamTest.sl:400] [CallStatic] index:[0] info:[CallStatic testGroupF] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StreamTest, StaticRuntimeTypeList=[], Method=ProjectTest.StreamTest.testGroupF, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ StreamTest.sl:465] [LoadConstString] index:[4040] val: string[========== StreamTest (end) ==========] 
+13 13   [ StreamTest.sl:455] [StoreLocal] index:[1] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ StreamTest.sl:455] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

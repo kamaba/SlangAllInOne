@@ -1,0 +1,265 @@
+-------------------IR 文件显示 开始 : Path: Encoding/Base64.sl-----------------------
+Class: Std.Base64
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Base64.encodeBound_1_Core.Int32
+    VirtualName: encodeBound_Core.Int32_1_Core.Int32
+    Name: encodeBound
+    InterfaceMethod: False
+    Return:
+      - #0 id=34108880 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=38544467 idx=0 name=inputSize type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Base64.encode_1_Core.ByteBuffer
+    VirtualName: encode_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=35094160 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=47411987 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=24054701 idx=0 name=id type=Core.Int64
+      - #1 id=15165719 idx=1 name=autocreate_25660991 type=Core.Boolean
+      - #2 id=2273746 idx=2 name=autocreate_29622330 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Base64.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=19884118 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=44739342 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=901 idx=0 name=id type=Core.Int64
+      - #1 id=8117 idx=1 name=autocreate_65274381 type=Core.Boolean
+      - #2 id=73053 idx=2 name=autocreate_50598521 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Base64.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=9540645 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=18756946 idx=0 name=src type=Core.String
+    Locals:
+      - #0 id=34594790 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=42917658 idx=1 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Base64.encode_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: encode_Core.ByteBuffer_1_Core.Array<Core.UInt8>[-1]
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=53778287 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=14242537 idx=0 name=src type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=61073976 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=12794876 idx=1 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Base64.encodeToString_1_Core.ByteBuffer
+    VirtualName: encodeToString_Core.String_1_Core.ByteBuffer
+    Name: encodeToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=29752015 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=66441544 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=61102986 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=13055966 idx=1 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Base64.encodeToString_1_Core.String
+    VirtualName: encodeToString_Core.String_1_Core.String
+    Name: encodeToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=50900362 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=55450074 idx=0 name=src type=Core.String
+    Locals:
+      - #0 id=29288625 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=62271039 idx=1 name=encoded type=Core.ByteBuffer
+      - #2 id=23568445 idx=2 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Base64.decodeString_1_Core.ByteBuffer
+    VirtualName: decodeString_Core.String_1_Core.ByteBuffer
+    Name: decodeString
+    InterfaceMethod: False
+    Return:
+      - #0 id=29995926 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=1527883 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=13750947 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=56649665 idx=1 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Base64.decodeString_1_Core.String
+    VirtualName: decodeString_Core.String_1_Core.String
+    Name: decodeString
+    InterfaceMethod: False
+    Return:
+      - #0 id=25220152 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=25654779 idx=0 name=src type=Core.String
+    Locals:
+      - #0 id=29566423 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=64771222 idx=1 name=decoded type=Core.ByteBuffer
+      - #2 id=46070087 idx=2 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Base64.decodeBytes_1_Core.ByteBuffer
+    VirtualName: decodeBytes_Core.Array<Core.UInt8>[-1]_1_Core.ByteBuffer
+    Name: decodeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=40689584 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=30661937 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=7521977 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=588929 idx=1 name=bytes type=Core.Array<T><Core.UInt8>
+    Instructions:
+
+  Method: Std.Base64.encode_1_Core.ByteStream
+    VirtualName: encode_Core.ByteBuffer_1_Core.ByteStream
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=47703261 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=26676172 idx=0 name=src type=Core.ByteStream
+    Locals:
+      - #0 id=38758958 idx=0 name=all type=Core.ByteBuffer
+      - #1 id=13286310 idx=1 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Base64.encodeTo_2_Core.ByteStream_Core.ByteBuffer
+    VirtualName: encodeTo_Core.Void_2_Core.ByteStream_Core.ByteBuffer
+    Name: encodeTo
+    InterfaceMethod: False
+    Return:
+      - #0 id=2449345 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=22044110 idx=0 name=dst type=Core.ByteStream
+      - #1 id=64179269 idx=1 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=40742509 idx=0 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Base64.decodeTo_2_Core.ByteStream_Core.ByteBuffer
+    VirtualName: decodeTo_Core.Void_2_Core.ByteStream_Core.ByteBuffer
+    Name: decodeTo
+    InterfaceMethod: False
+    Return:
+      - #0 id=31138264 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11808928 idx=0 name=dst type=Core.ByteStream
+      - #1 id=39171493 idx=1 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=16999120 idx=0 name=decoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.Base64Error
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1075945753 idx=0 name=Std.Base64Error.EncodeFailed type=Core.Member
+      - #1 id=-1672908334 idx=1 name=Std.Base64Error.DecodeFailed type=Core.Member
+      - #2 id=-329319196 idx=2 name=Std.Base64Error.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

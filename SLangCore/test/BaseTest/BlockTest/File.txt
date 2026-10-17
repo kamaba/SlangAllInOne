@@ -1,0 +1,83 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/BlockTest.sl-----------------------
+Class2
+{
+     staticint intm2 = 10i
+    m = 10i
+
+    _public _init_( int x )
+    {
+        this.m = 10i;
+    }
+}
+Class1
+{
+    Class2 Class2c3 = {m = 20i}
+
+    _public print( )
+    {
+        int a = 10i;
+        {
+            b = 20i;
+            {
+                a = 15i;
+                a2 = 13i;
+                {
+                    m = 10i;
+                }
+            }
+            global.println("a2 = " + b);
+        }
+    }
+    _public static scopeShadowCase( )
+    {
+        int a = 1i;
+        {
+            a = 2i;
+            {
+                a = 3i;
+                global.println("inner a = " + a);
+            }
+            global.println("middle a = " + a);
+        }
+        global.println("outer a = " + a);
+    }
+    _public static emptyAndStandaloneBlockCase( )
+    {
+        {
+        }
+        {
+            int onlyInBlock = 100i;
+            global.println("onlyInBlock = " + onlyInBlock);
+        }
+        if true
+        {
+            int inIf = 200i;
+            global.println("inIf = " + inIf);
+        }
+    }
+    _public static initAndStatementMixedCase( )
+    {
+        Class2 c = {m = 88i};
+        {
+            c.m = c.m + 1i;
+            global.println("c.m = " + c.m);
+        }
+    }
+    _public static err_missing_right_brace( )
+    {
+        int x = 10i;
+        {
+            int y = 20i;
+        }
+    }
+}
+BlockTest
+{
+    _public static fun( )
+    {
+        Class1.scopeShadowCase();
+        Class1.emptyAndStandaloneBlockCase();
+        Class1.initAndStatementMixedCase();
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

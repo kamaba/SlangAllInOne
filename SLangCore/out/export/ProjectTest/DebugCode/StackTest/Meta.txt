@@ -1,0 +1,192 @@
+-------------------Meta 文件显示 开始 : Path: StackTest.sl-----------------------
+StackTest
+{
+    _public static testBasicPushPop( )
+    {
+        global.println("===== testBasicPushPop =====");
+        Stack<int> s = new();
+        global.println("isEmpty = " + s.isEmpty.toString());
+        s.push(1i);
+        s.push(2i);
+        s.push(3i);
+        global.println("length = " + s.length.toString());
+        global.println("peek = " + s.peek.toString());
+        global.println("bottom = " + s.bottom.toString());
+        global.println("pop = " + s.pop().toString());
+        global.println("pop = " + s.pop().toString());
+        global.println("length = " + s.length.toString());
+        global.println("peek = " + s.peek.toString());
+        global.println("isEmpty = " + s.isEmpty.toString());
+        global.println("pop = " + s.pop().toString());
+        global.println("isEmpty = " + s.isEmpty.toString());
+        global.println("pop on empty is null = " + ((s.pop() == null).toString());
+        global.println("peek on empty is null = " + ((s.peek == null).toString());
+    }
+    _public static testConstructors( )
+    {
+        global.println("===== testConstructors =====");
+        Stack<int> s1 = Stack(8i);
+        global.println("capacity(s1) = " + s1.capacity.toString());
+        Array<int> arr = Array(3i);
+        arr[0i] = 10i;
+        arr[1i] = 20i;
+        arr[2i] = 30i;
+        Stack<int> s2 = Stack(arr);
+        global.println("s2.length = " + s2.length.toString());
+        global.println("s2.bottom = " + s2.bottom.toString());
+        global.println("s2.peek = " + s2.peek.toString());
+        global.println("s2.toString = " + s2.toString());
+    }
+    _public static testSearchAndPushRange( )
+    {
+        global.println("===== testSearchAndPushRange =====");
+        Stack<int> s = new();
+        s.push(1i);
+        s.push(2i);
+        s.push(3i);
+        s.push(2i);
+        global.println("contains(2) = " + s.contains(2i).toString());
+        global.println("contains(9) = " + s.contains(9i).toString());
+        global.println("indexOf(2) = " + s.indexOf(2i).toString());
+        global.println("lastIndexOf(2) = " + s.lastIndexOf(2i).toString());
+        global.println("indexOf(9) = " + s.indexOf(9i).toString());
+        Array<int> more = Array(3i);
+        more[0i] = 4i;
+        more[1i] = 5i;
+        more[2i] = 6i;
+        s.pushRange(more);
+        global.println("after pushRange, length = " + s.length.toString());
+        global.println("s.toString = " + s.toString());
+    }
+    _public static testGrow( )
+    {
+        global.println("===== testGrow =====");
+        Stack<int> s = new();
+        global.println("initial capacity = " + s.capacity.toString());
+        s.push(1i);
+        global.println("after 1 push, capacity = " + s.capacity.toString());
+        
+        for i = 2i, i <= 4i, i ++ 
+        {
+            s.push(i);
+        }
+        global.println("after 4 pushes, capacity = " + s.capacity.toString());
+        s.push(5i);
+        global.println("after 5 pushes, capacity = " + s.capacity.toString());
+        
+        for i = 6i, i <= 16i, i ++ 
+        {
+            s.push(i);
+        }
+        global.println("after 16 pushes, capacity = " + s.capacity.toString());
+        global.println("length = " + s.length.toString());
+    }
+    _public static testEnsureCapacity( )
+    {
+        global.println("===== testEnsureCapacity =====");
+        Stack<int> s = new();
+        s.ensureCapacity(100i);
+        global.println("after ensureCapacity(100), capacity = " + s.capacity.toString());
+        s.push(1i);
+        global.println("after 1 push, capacity = " + s.capacity.toString());
+    }
+    _public static testClear( )
+    {
+        global.println("===== testClear =====");
+        Stack<int> s = new();
+        s.push(1i);
+        s.push(2i);
+        s.push(3i);
+        s.clear();
+        global.println("after clear, length = " + s.length.toString());
+        global.println("after clear, isEmpty = " + s.isEmpty.toString());
+        global.println("after clear, capacity = " + s.capacity.toString());
+        s.push(9i);
+        global.println("push after clear works, length = " + s.length.toString());
+    }
+    _public static testConvert( )
+    {
+        global.println("===== testConvert =====");
+        Array<int> arr = Array(3i);
+        arr[0i] = 10i;
+        arr[1i] = 20i;
+        arr[2i] = 30i;
+        Stack<int> s = Stack(arr);
+        Array<int> outArr = s.toArray();
+        global.println("toArray.length = " + outArr.length.toString());
+        
+        for i = 0i, i < outArr.length, i ++ 
+        {
+            global.println("outArr[" + i.toString() + "] = " + outArr[i].toString());
+        }
+        List<int> list = s.toList();
+        global.println("toList.length = " + list.length.toString());
+        Stack<int> c = s.copy();
+        global.println("copy.length = " + c.length.toString());
+        global.println("copy.peek = " + c.peek.toString());
+        global.println("copy.toString = " + c.toString());
+    }
+    _public static testIterator( )
+    {
+        global.println("===== testIterator =====");
+        Stack<string> s = new();
+        s.push("a");
+        s.push("b");
+        s.push("c");
+        int count = 0i;
+        
+        for item in s
+        {
+            global.println("foreach item = " + item);
+            count ++ 
+        }
+        global.println("iterated count = " + count.toString());
+        
+        for item in s
+        {
+            global.println("foreach again item = " + item);
+        }
+    }
+    _public static testStringElements( )
+    {
+        global.println("===== testStringElements =====");
+        Stack<string> s = new();
+        s.push("apple");
+        s.push("banana");
+        s.push("cherry");
+        global.println("length = " + s.length.toString());
+        global.println("contains(banana) = " + s.contains("banana").toString());
+        global.println("toString = " + s.toString());
+    }
+    _public static testEmptyEdge( )
+    {
+        global.println("===== testEmptyEdge =====");
+        Stack<int> s = new();
+        global.println("toArray.length = " + s.toArray().length.toString());
+        global.println("bottom is null = " + ((s.bottom == null).toString());
+        global.println("toString = " + s.toString());
+        global.println("contains(1) = " + s.contains(1i).toString());
+        global.println("indexOf(1) = " + s.indexOf(1i).toString());
+        
+        for item in s
+        {
+            global.println("should not reach here");
+        }
+        global.println("empty foreach done");
+    }
+    _public static fun( )
+    {
+        global.println("===== StackTest =====");
+        testBasicPushPop();
+        testConstructors();
+        testSearchAndPushRange();
+        testGrow();
+        testEnsureCapacity();
+        testClear();
+        testConvert();
+        testIterator();
+        testStringElements();
+        testEmptyEdge();
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

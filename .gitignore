@@ -20,3 +20,8 @@
 /package/debug/SLCSharpMonoFrontend.pdb
 /package/debug/SLJavaHotspotFrontend.dll
 /package/debug/SLJavaHotspotFrontend.pdb
+/tools/llvm/llc.exe
+/tools/llvm/mlir_float16_utils.dll
+/tools/llvm/mlir-opt.exe
+/tools/llvm/mlir-transform-opt.exe
+/tools/llvm/mlir-translate.exe

@@ -1,0 +1,589 @@
+-------------------IR 文件显示 开始 : Path: BoolTest.sl-----------------------
+Class: ProjectTest.BoolTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.BoolTest.compareTest
+    VirtualName: compareTest_Core.Void_0
+    Name: compareTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=5968939 idx=0 name=_local[ProjectTest.BoolTest.compareTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=53720453 idx=0 name=compareTest_local[a] type=Core.Num
+      - #1 id=13722030 idx=1 name=compareTest_local[b] type=Core.Num
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:5] [LoadConstString] index:[227] val: string[----- compareTest -----] 
+2 2   [ BoolTest.sl:3] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:7] [LoadConstFloat32] index:[0] val:[3.14] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ BoolTest.sl:3] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ BoolTest.sl:8] [LoadConstFloat32] index:[0] val:[2.5] 
+11 11   [ :0] [Nop] index:[0]
+12 12   [ BoolTest.sl:3] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ BoolTest.sl:10] [LoadConstString] index:[228] val: string[a > b  = ] 
+14 14   [ BoolTest.sl:10] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ BoolTest.sl:10] [LoadLocal] index:[1] info:[LocalStatement]
+16 16   [ BoolTest.sl:10] [Cgt] index:[0]
+17 17   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ BoolTest.sl:10] [Add] index:[0]
+19 19   [ BoolTest.sl:3] [StoreLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+22 22   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+23 23   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+24 24   [ BoolTest.sl:11] [LoadConstString] index:[229] val: string[a < b  = ] 
+25 25   [ BoolTest.sl:11] [LoadLocal] index:[0] info:[LocalStatement]
+26 26   [ BoolTest.sl:11] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ BoolTest.sl:11] [Clt] index:[0]
+28 28   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ BoolTest.sl:11] [Add] index:[0]
+30 30   [ BoolTest.sl:3] [StoreLocal] index:[4] info:[LocalStatement]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+33 33   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+34 34   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+35 35   [ BoolTest.sl:12] [LoadConstString] index:[230] val: string[a == b = ] 
+36 36   [ BoolTest.sl:12] [LoadLocal] index:[0] info:[LocalStatement]
+37 37   [ BoolTest.sl:12] [LoadLocal] index:[1] info:[LocalStatement]
+38 38   [ BoolTest.sl:12] [Ceq] index:[0]
+39 39   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ BoolTest.sl:12] [Add] index:[0]
+41 41   [ BoolTest.sl:3] [StoreLocal] index:[5] info:[LocalStatement]
+42 42   [ :0] [Nop] index:[0]
+43 43   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+44 44   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+45 45   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+46 46   [ BoolTest.sl:13] [LoadConstString] index:[231] val: string[a != b = ] 
+47 47   [ BoolTest.sl:13] [LoadLocal] index:[0] info:[LocalStatement]
+48 48   [ BoolTest.sl:13] [LoadLocal] index:[1] info:[LocalStatement]
+49 49   [ BoolTest.sl:13] [Cne] index:[0]
+50 50   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+51 51   [ BoolTest.sl:13] [Add] index:[0]
+52 52   [ BoolTest.sl:3] [StoreLocal] index:[6] info:[LocalStatement]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+55 55   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+56 56   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+57 57   [ BoolTest.sl:14] [LoadConstString] index:[232] val: string[a >= b = ] 
+58 58   [ BoolTest.sl:14] [LoadLocal] index:[0] info:[LocalStatement]
+59 59   [ BoolTest.sl:14] [LoadLocal] index:[1] info:[LocalStatement]
+60 60   [ BoolTest.sl:14] [Cge] index:[0]
+61 61   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+62 62   [ BoolTest.sl:14] [Add] index:[0]
+63 63   [ BoolTest.sl:3] [StoreLocal] index:[7] info:[LocalStatement]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+66 66   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+67 67   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+68 68   [ BoolTest.sl:15] [LoadConstString] index:[233] val: string[a <= b = ] 
+69 69   [ BoolTest.sl:15] [LoadLocal] index:[0] info:[LocalStatement]
+70 70   [ BoolTest.sl:15] [LoadLocal] index:[1] info:[LocalStatement]
+71 71   [ BoolTest.sl:15] [Cle] index:[0]
+72 72   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+73 73   [ BoolTest.sl:15] [Add] index:[0]
+74 74   [ BoolTest.sl:3] [StoreLocal] index:[8] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ BoolTest.sl:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.BoolTest.boolLiteralAndNotTest
+    VirtualName: boolLiteralAndNotTest_Core.Void_0
+    Name: boolLiteralAndNotTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=56389407 idx=0 name=_local[ProjectTest.BoolTest.boolLiteralAndNotTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37742617 idx=0 name=boolLiteralAndNotTest_local[t] type=Core.Boolean
+      - #1 id=4139237 idx=1 name=boolLiteralAndNotTest_local[f] type=Core.Boolean
+      - #2 id=37253141 idx=2 name=boolLiteralAndNotTest_local[nt] type=Core.Boolean
+      - #3 id=66842817 idx=3 name=boolLiteralAndNotTest_local[nf] type=Core.Boolean
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:20] [LoadConstString] index:[531] val: string[----- boolLiteralAndNotTest -----] 
+2 2   [ BoolTest.sl:18] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:22] [LoadConstBoolean] index:[0] val:[True] 
+8 8   [ BoolTest.sl:18] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ BoolTest.sl:23] [LoadConstBoolean] index:[0] val:[False] 
+10 10   [ BoolTest.sl:18] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ BoolTest.sl:24] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ BoolTest.sl:24] [Not] index:[0]
+13 13   [ BoolTest.sl:18] [StoreLocal] index:[2] info:[LocalStatement]
+14 14   [ BoolTest.sl:25] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ BoolTest.sl:25] [Not] index:[0]
+16 16   [ BoolTest.sl:18] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ BoolTest.sl:27] [LoadConstString] index:[532] val: string[true  -> ] 
+18 18   [ BoolTest.sl:27] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ BoolTest.sl:27] [Add] index:[0]
+21 21   [ BoolTest.sl:18] [StoreLocal] index:[5] info:[LocalStatement]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+24 24   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+25 25   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+26 26   [ BoolTest.sl:28] [LoadConstString] index:[533] val: string[false -> ] 
+27 27   [ BoolTest.sl:28] [LoadLocal] index:[1] info:[LocalStatement]
+28 28   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ BoolTest.sl:28] [Add] index:[0]
+30 30   [ BoolTest.sl:18] [StoreLocal] index:[6] info:[LocalStatement]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+33 33   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+34 34   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+35 35   [ BoolTest.sl:29] [LoadConstString] index:[534] val: string[!true -> ] 
+36 36   [ BoolTest.sl:29] [LoadLocal] index:[2] info:[LocalStatement]
+37 37   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+38 38   [ BoolTest.sl:29] [Add] index:[0]
+39 39   [ BoolTest.sl:18] [StoreLocal] index:[7] info:[LocalStatement]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+42 42   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+43 43   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+44 44   [ BoolTest.sl:30] [LoadConstString] index:[535] val: string[!false -> ] 
+45 45   [ BoolTest.sl:30] [LoadLocal] index:[3] info:[LocalStatement]
+46 46   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ BoolTest.sl:30] [Add] index:[0]
+48 48   [ BoolTest.sl:18] [StoreLocal] index:[8] info:[LocalStatement]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+51 51   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+52 52   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+53 53   [ BoolTest.sl:18] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.BoolTest.logicOperatorTest
+    VirtualName: logicOperatorTest_Core.Void_0
+    Name: logicOperatorTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=64714441 idx=0 name=_local[ProjectTest.BoolTest.logicOperatorTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=45559064 idx=0 name=logicOperatorTest_local[a] type=Core.Boolean
+      - #1 id=7378398 idx=1 name=logicOperatorTest_local[b] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:35] [LoadConstString] index:[536] val: string[----- logicOperatorTest -----] 
+2 2   [ BoolTest.sl:33] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:37] [LoadConstBoolean] index:[0] val:[True] 
+8 8   [ BoolTest.sl:33] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ BoolTest.sl:38] [LoadConstBoolean] index:[0] val:[False] 
+10 10   [ BoolTest.sl:33] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ BoolTest.sl:40] [LoadConstString] index:[537] val: string[a && b -> ] 
+12 12   [ BoolTest.sl:40] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ BoolTest.sl:40] [LoadLocal] index:[1] info:[LocalStatement]
+14 14   [ BoolTest.sl:40] [And] index:[0]
+15 15   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ BoolTest.sl:40] [Add] index:[0]
+17 17   [ BoolTest.sl:33] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+21 21   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+22 22   [ BoolTest.sl:41] [LoadConstString] index:[538] val: string[a || b -> ] 
+23 23   [ BoolTest.sl:41] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ BoolTest.sl:41] [LoadLocal] index:[1] info:[LocalStatement]
+25 25   [ BoolTest.sl:41] [Or] index:[0]
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ BoolTest.sl:41] [Add] index:[0]
+28 28   [ BoolTest.sl:33] [StoreLocal] index:[4] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ BoolTest.sl:42] [LoadConstString] index:[539] val: string[(a && !b) || (b && !a) -> ] 
+34 34   [ BoolTest.sl:42] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ BoolTest.sl:42] [LoadLocal] index:[1] info:[LocalStatement]
+36 36   [ BoolTest.sl:42] [Not] index:[0]
+37 37   [ BoolTest.sl:42] [And] index:[0]
+38 38   [ BoolTest.sl:42] [LoadLocal] index:[1] info:[LocalStatement]
+39 39   [ BoolTest.sl:42] [LoadLocal] index:[0] info:[LocalStatement]
+40 40   [ BoolTest.sl:42] [Not] index:[0]
+41 41   [ BoolTest.sl:42] [And] index:[0]
+42 42   [ BoolTest.sl:42] [Or] index:[0]
+43 43   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+44 44   [ BoolTest.sl:42] [Add] index:[0]
+45 45   [ BoolTest.sl:33] [StoreLocal] index:[5] info:[LocalStatement]
+46 46   [ :0] [Nop] index:[0]
+47 47   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+48 48   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+49 49   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+50 50   [ BoolTest.sl:45] [LoadConstString] index:[315] val: string[true || false && false -> ] 
+51 51   [ BoolTest.sl:45] [LoadConstBoolean] index:[0] val:[True] 
+52 52   [ BoolTest.sl:45] [LoadConstBoolean] index:[0] val:[False] 
+53 53   [ BoolTest.sl:45] [LoadConstBoolean] index:[0] val:[False] 
+54 54   [ BoolTest.sl:45] [And] index:[0]
+55 55   [ BoolTest.sl:45] [Or] index:[0]
+56 56   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ BoolTest.sl:45] [Add] index:[0]
+58 58   [ BoolTest.sl:33] [StoreLocal] index:[6] info:[LocalStatement]
+59 59   [ :0] [Nop] index:[0]
+60 60   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+61 61   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+62 62   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+63 63   [ BoolTest.sl:46] [LoadConstString] index:[540] val: string[(true || false) && false -> ] 
+64 64   [ BoolTest.sl:46] [LoadConstBoolean] index:[0] val:[True] 
+65 65   [ BoolTest.sl:46] [LoadConstBoolean] index:[0] val:[False] 
+66 66   [ BoolTest.sl:46] [Or] index:[0]
+67 67   [ BoolTest.sl:46] [LoadConstBoolean] index:[0] val:[False] 
+68 68   [ BoolTest.sl:46] [And] index:[0]
+69 69   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+70 70   [ BoolTest.sl:46] [Add] index:[0]
+71 71   [ BoolTest.sl:33] [StoreLocal] index:[7] info:[LocalStatement]
+72 72   [ :0] [Nop] index:[0]
+73 73   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+74 74   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+75 75   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+76 76   [ BoolTest.sl:33] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.BoolTest.boolFromCompareAndConditionTest
+    VirtualName: boolFromCompareAndConditionTest_Core.Void_0
+    Name: boolFromCompareAndConditionTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=66405588 idx=0 name=_local[ProjectTest.BoolTest.boolFromCompareAndConditionTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=60779388 idx=0 name=boolFromCompareAndConditionTest_local[x] type=Core.Int32
+      - #1 id=10143581 idx=1 name=boolFromCompareAndConditionTest_local[y] type=Core.Int32
+      - #2 id=24183370 idx=2 name=boolFromCompareAndConditionTest_local[c1] type=Core.Boolean
+      - #3 id=16323738 idx=3 name=boolFromCompareAndConditionTest_local[c2] type=Core.Boolean
+      - #4 id=12695920 idx=4 name=boolFromCompareAndConditionTest_local[c3] type=Core.Boolean
+      - #5 id=47154420 idx=5 name=boolFromCompareAndConditionTest_local[autocreate_42135876] type=Core.Boolean
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:51] [LoadConstString] index:[541] val: string[----- boolFromCompareAndConditionTest -----] 
+2 2   [ BoolTest.sl:49] [StoreLocal] index:[6] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:53] [LoadConstInt32] index:[0] val: int32[12] 
+8 8   [ BoolTest.sl:49] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ BoolTest.sl:54] [LoadConstInt32] index:[0] val: int32[7] 
+10 10   [ BoolTest.sl:49] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ BoolTest.sl:55] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ BoolTest.sl:55] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ BoolTest.sl:55] [Cgt] index:[0]
+14 14   [ BoolTest.sl:49] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ BoolTest.sl:56] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ BoolTest.sl:56] [LoadLocal] index:[1] info:[LocalStatement]
+17 17   [ BoolTest.sl:56] [Ceq] index:[0]
+18 18   [ BoolTest.sl:49] [StoreLocal] index:[3] info:[LocalStatement]
+19 19   [ BoolTest.sl:57] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ BoolTest.sl:57] [LoadConstInt32] index:[0] val: int32[10] 
+21 21   [ BoolTest.sl:57] [Cge] index:[0]
+22 22   [ BoolTest.sl:57] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ BoolTest.sl:57] [LoadConstInt32] index:[0] val: int32[20] 
+24 24   [ BoolTest.sl:57] [Cle] index:[0]
+25 25   [ BoolTest.sl:57] [And] index:[0]
+26 26   [ BoolTest.sl:49] [StoreLocal] index:[4] info:[LocalStatement]
+27 27   [ BoolTest.sl:59] [LoadConstString] index:[542] val: string[x > y -> ] 
+28 28   [ BoolTest.sl:59] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ BoolTest.sl:59] [Add] index:[0]
+31 31   [ BoolTest.sl:49] [StoreLocal] index:[7] info:[LocalStatement]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+34 34   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+35 35   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+36 36   [ BoolTest.sl:60] [LoadConstString] index:[543] val: string[x == y -> ] 
+37 37   [ BoolTest.sl:60] [LoadLocal] index:[3] info:[LocalStatement]
+38 38   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+39 39   [ BoolTest.sl:60] [Add] index:[0]
+40 40   [ BoolTest.sl:49] [StoreLocal] index:[8] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+43 43   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+44 44   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+45 45   [ BoolTest.sl:61] [LoadConstString] index:[544] val: string[x in [10,20] -> ] 
+46 46   [ BoolTest.sl:61] [LoadLocal] index:[4] info:[LocalStatement]
+47 47   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+48 48   [ BoolTest.sl:61] [Add] index:[0]
+49 49   [ BoolTest.sl:49] [StoreLocal] index:[9] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0]
+51 51   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+52 52   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+53 53   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+54 54   [ BoolTest.sl:63] [Nop] index:[0] info:[if/elif/else branch start]
+55 55   [ BoolTest.sl:63] [LoadLocal] index:[4] info:[LocalStatement]
+56 56   [ BoolTest.sl:63] [LoadLocal] index:[3] info:[LocalStatement]
+57 57   [ BoolTest.sl:63] [Not] index:[0]
+58 58   [ BoolTest.sl:63] [And] index:[0]
+59 59   [ BoolTest.sl:49] [StoreLocal] index:[5] info:[if/elif store condition var]
+60 60   [ BoolTest.sl:49] [LoadLocal] index:[5] info:[if/elif load condition var]
+61 61   [ BoolTest.sl:63] [BrFalse] index:[70] info:[if/elif BrFalse]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ BoolTest.sl:65] [LoadConstString] index:[545] val: string[if(c3 && !c2) -> true branch] 
+64 64   [ BoolTest.sl:49] [StoreLocal] index:[10] info:[LocalStatement]
+65 65   [ :0] [Nop] index:[0]
+66 66   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+67 67   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+68 68   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+69 69   [ BoolTest.sl:66] [Br] index:[79] info:[if/elif/else block end Br]
+70 70   [ BoolTest.sl:67] [Label] index:[1] info:[if/elif/else branch start]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ BoolTest.sl:69] [LoadConstString] index:[546] val: string[if(c3 && !c2) -> false branch] 
+73 73   [ BoolTest.sl:49] [StoreLocal] index:[11] info:[LocalStatement]
+74 74   [ :0] [Nop] index:[0]
+75 75   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+76 76   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+77 77   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+78 78   [ BoolTest.sl:70] [Br] index:[79] info:[if/elif/else block end Br]
+79 79   [ BoolTest.sl:70] [Label] index:[2] info:[if end]
+80 80   [ BoolTest.sl:49] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.BoolTest.boolAssignFlowTest
+    VirtualName: boolAssignFlowTest_Core.Void_0
+    Name: boolAssignFlowTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=15834086 idx=0 name=_local[ProjectTest.BoolTest.boolAssignFlowTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=8289053 idx=0 name=boolAssignFlowTest_local[ok] type=Core.Boolean
+      - #1 id=7492614 idx=1 name=boolAssignFlowTest_local[score] type=Core.Int32
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:75] [LoadConstString] index:[547] val: string[----- boolAssignFlowTest -----] 
+2 2   [ BoolTest.sl:73] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:77] [LoadConstBoolean] index:[0] val:[False] 
+8 8   [ BoolTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ BoolTest.sl:78] [LoadConstInt32] index:[0] val: int32[86] 
+10 10   [ BoolTest.sl:73] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ BoolTest.sl:80] [LoadLocal] index:[1] info:[LocalStatement]
+12 12   [ BoolTest.sl:80] [LoadConstInt32] index:[0] val: int32[60] 
+13 13   [ BoolTest.sl:80] [Cge] index:[0]
+14 14   [ BoolTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+15 15   [ BoolTest.sl:81] [LoadConstString] index:[548] val: string[ok = score >= 60 -> ] 
+16 16   [ BoolTest.sl:81] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ BoolTest.sl:81] [Add] index:[0]
+19 19   [ BoolTest.sl:73] [StoreLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+22 22   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+23 23   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+24 24   [ BoolTest.sl:83] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ BoolTest.sl:83] [LoadLocal] index:[1] info:[LocalStatement]
+26 26   [ BoolTest.sl:83] [LoadConstInt32] index:[0] val: int32[100] 
+27 27   [ BoolTest.sl:83] [Clt] index:[0]
+28 28   [ BoolTest.sl:83] [And] index:[0]
+29 29   [ BoolTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+30 30   [ BoolTest.sl:84] [LoadConstString] index:[549] val: string[ok = ok && score < 100 -> ] 
+31 31   [ BoolTest.sl:84] [LoadLocal] index:[0] info:[LocalStatement]
+32 32   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ BoolTest.sl:84] [Add] index:[0]
+34 34   [ BoolTest.sl:73] [StoreLocal] index:[4] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ BoolTest.sl:86] [LoadLocal] index:[0] info:[LocalStatement]
+40 40   [ BoolTest.sl:86] [Not] index:[0]
+41 41   [ BoolTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+42 42   [ BoolTest.sl:87] [LoadConstString] index:[550] val: string[ok = !ok -> ] 
+43 43   [ BoolTest.sl:87] [LoadLocal] index:[0] info:[LocalStatement]
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ BoolTest.sl:87] [Add] index:[0]
+46 46   [ BoolTest.sl:73] [StoreLocal] index:[5] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+49 49   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+50 50   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+51 51   [ BoolTest.sl:89] [LoadLocal] index:[0] info:[LocalStatement]
+52 52   [ BoolTest.sl:89] [Not] index:[0]
+53 53   [ BoolTest.sl:89] [LoadConstBoolean] index:[0] val:[False] 
+54 54   [ BoolTest.sl:89] [Or] index:[0]
+55 55   [ BoolTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+56 56   [ BoolTest.sl:90] [LoadConstString] index:[551] val: string[ok = !ok || false -> ] 
+57 57   [ BoolTest.sl:90] [LoadLocal] index:[0] info:[LocalStatement]
+58 58   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+59 59   [ BoolTest.sl:90] [Add] index:[0]
+60 60   [ BoolTest.sl:73] [StoreLocal] index:[6] info:[LocalStatement]
+61 61   [ :0] [Nop] index:[0]
+62 62   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+63 63   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+64 64   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+65 65   [ BoolTest.sl:73] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.BoolTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=324668 idx=0 name=_local[ProjectTest.BoolTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BoolTest.sl:95] [LoadConstString] index:[552] val: string[========== BoolTest (start) ==========] 
+2 2   [ BoolTest.sl:93] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ BoolTest.sl:3] [CallStatic] index:[0] info:[CallStatic compareTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.BoolTest, StaticRuntimeTypeList=[], Method=ProjectTest.BoolTest.compareTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ BoolTest.sl:18] [CallStatic] index:[0] info:[CallStatic boolLiteralAndNotTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.BoolTest, StaticRuntimeTypeList=[], Method=ProjectTest.BoolTest.boolLiteralAndNotTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ BoolTest.sl:33] [CallStatic] index:[0] info:[CallStatic logicOperatorTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.BoolTest, StaticRuntimeTypeList=[], Method=ProjectTest.BoolTest.logicOperatorTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ BoolTest.sl:49] [CallStatic] index:[0] info:[CallStatic boolFromCompareAndConditionTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.BoolTest, StaticRuntimeTypeList=[], Method=ProjectTest.BoolTest.boolFromCompareAndConditionTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ BoolTest.sl:73] [CallStatic] index:[0] info:[CallStatic boolAssignFlowTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.BoolTest, StaticRuntimeTypeList=[], Method=ProjectTest.BoolTest.boolAssignFlowTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ BoolTest.sl:101] [LoadConstString] index:[553] val: string[========== BoolTest (end) ==========] 
+13 13   [ BoolTest.sl:93] [StoreLocal] index:[1] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ BoolTest.sl:93] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

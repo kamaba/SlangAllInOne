@@ -1,0 +1,195 @@
+-------------------FileMeta 文件显示 开始 : Path: ClosureTest.sl-----------------------
+namespace NSClosureTest
+{
+    ClosureTest
+    {
+         staticint ints_counter = 0i
+        int intm_value = 0i
+
+        _public static captureCase( )
+        {
+            int baseVal = 100i;
+            function addBase(  int a,  int b )
+                {
+                    ret a + b + baseVal
+                }
+            global.println("addBase(1,2) = " + addBase(1i,2i).toString());
+        }
+        _public static anonymousCase( )
+        {
+            var mul = function(  int a,  int b )
+                {
+                    ret a * b
+                }
+            global.println("mul(3,4) = " + mul(3i,4i).toString());
+        }
+        _public static writeCaptureCase( )
+        {
+            int count = 0i;
+            function inc(  int step )
+                {
+                    count = count + step;
+                    ret count
+                }
+            inc(5i);
+            inc(7i);
+            global.println("count = " + count.toString());
+            Array<int> counts = [0i];
+            function getCounts(  Array<int> arr )
+                {
+                    int totalLen = counts.length + arr.length;
+                    Array<int> result = Array(totalLen);
+                    int idx = 0i;
+                    
+                    for i = 0i, i < counts.length, i ++ 
+                    {
+                        result._setItem_(idx,counts._getItem_(i));
+                        idx = idx + 1i;
+                    }
+                    
+                    for j = 0i, j < arr.length, j ++ 
+                    {
+                        result._setItem_(idx,arr._getItem_(j));
+                        idx = idx + 1i;
+                    }
+                    ret result
+                }
+            Array<int> merged = getCounts([10i,20i]);
+            global.println("merged = " + merged.toString());
+        }
+        _public static int helperAdd( int x,  int y )
+        {
+            ret x + y
+        }
+        _public static memberFunctionRelation( )
+        {
+            function caller(  int a,  int b )
+                {
+                    ret helperAdd(a,b)
+                }
+            global.println("caller(10,20) = " + caller(10i,20i).toString());
+        }
+        _public static memberVariableRelation( )
+        {
+            function incCounter(  int step )
+                {
+                    s_counter = s_counter + step;
+                    ret s_counter
+                }
+            incCounter(10i);
+            incCounter(5i);
+            global.println("s_counter = " + s_counter.toString());
+        }
+        _public static variableAbout( )
+        {
+            var doubler = function(  int x )
+                {
+                    ret x * 2i
+                }
+            Array<int> nums = [1i,2i,3i];
+            
+            for i = 0i, i < nums.length, i ++ 
+            {
+                int val = nums._getItem_(i);
+                global.println("doubler(" + val.toString() + ") = " + doubler(val).toString());
+            }
+        }
+        _public static Function makeCounter( )
+        {
+            int count = 0i;
+            function counter(  )
+                {
+                    count = count + 1i;
+                    ret count
+                }
+            ret counter
+        }
+        _public static returnClosureFunction( )
+        {
+            c = makeCounter();
+            global.println("c() = " + c().toString());
+            global.println("c() = " + c().toString());
+            global.println("c() = " + c().toString());
+        }
+        _public static forEachCase( )
+        {
+            Array<int> arr = [1i,2i,3i,4i,5i];
+            var printer = function(  int i )
+                {
+                    global.println("i = " + i.toString());
+                }
+            arr.forEach(printer);
+        }
+        _public static returnTypeInferenceCase( )
+        {
+            function adder(  int a,  int b )
+                {
+                    ret a + b
+                }
+            global.println("adder(3,4) = " + adder(3i,4i).toString());
+            function greeter(  string name )
+                {
+                    ret "hello, " + name
+                }
+            global.println("greeter = " + greeter("world"));
+            function printer(  int x )
+                {
+                    global.println("printer: " + x.toString());
+                }
+            printer(42i);
+        }
+        _public static CalcFunc makeCalc( )
+        {
+            var f = function(  int a,  int b )
+                {
+                    ret a * b
+                }
+            ret f
+        }
+        _public static typealiasFuncCase( )
+        {
+            var adder = function(  int a,  int b )
+                {
+                    ret a + b
+                }
+            global.println("adder(5,6) = " + adder(5i,6i).toString());
+            calc = makeCalc();
+            global.println("calc(3,7) = " + calc(3i,7i).toString());
+        }
+        _public thisInClosureCase( )
+        {
+            this.m_value = 100i;
+            function getValue(  )
+                {
+                    ret this.m_value
+                }
+            function setValue(  int v )
+                {
+                    this.m_value = v;
+                }
+            global.println("getValue() = " + getValue().toString());
+            setValue(200i);
+            global.println("after setValue(200), getValue() = " + getValue().toString());
+        }
+        _public static fun( )
+        {
+            captureCase();
+            anonymousCase();
+            writeCaptureCase();
+            memberFunctionRelation();
+            memberVariableRelation();
+            variableAbout();
+            returnClosureFunction();
+            forEachCase();
+            returnTypeInferenceCase();
+            typealiasFuncCase();
+            thisInClosureTest();
+        }
+        _public static thisInClosureTest( )
+        {
+            test = ClosureTest();
+            test.thisInClosureCase();
+        }
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

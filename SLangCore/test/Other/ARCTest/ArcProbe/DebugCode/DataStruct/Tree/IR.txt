@@ -1,0 +1,2979 @@
+-------------------IR 文件显示 开始 : Path: DataStruct/Tree.sl-----------------------
+Class: Core.TreeNode<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1424149596 idx=0 name=Core.TreeNode<T>._name type=Core.String
+      - #1 id=563989602 idx=1 name=Core.TreeNode<T>._value type=T[0]
+      - #2 id=828235129 idx=2 name=Core.TreeNode<T>._parent type=Core.TreeNode<T><T[0]>
+      - #3 id=-681410082 idx=3 name=Core.TreeNode<T>._firstChild type=Core.TreeNode<T><T[0]>
+      - #4 id=-669720885 idx=4 name=Core.TreeNode<T>._lastChild type=Core.TreeNode<T><T[0]>
+      - #5 id=-2093461872 idx=5 name=Core.TreeNode<T>._prevSibling type=Core.TreeNode<T><T[0]>
+      - #6 id=-1461084279 idx=6 name=Core.TreeNode<T>._nextSibling type=Core.TreeNode<T><T[0]>
+      - #7 id=-865362148 idx=7 name=Core.TreeNode<T>._childCount type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=8187461 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=909717 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=59204636 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=6578292 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=63079676 idx=0 name=autocreate_50254714 type=Core.Boolean
+      - #1 id=30846174 idx=1 name=autocreate_49639248 type=Core.Boolean
+      - #2 id=9180116 idx=2 name=autocreate_44100051 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=19891428 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=2210158 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=44805132 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>._init__2_Core.String_T
+    VirtualName: _init__Core.Void_2_Core.String_T
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=5337050 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=593005 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=48033450 idx=1 name=name type=Core.String
+      - #2 id=29647872 idx=2 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.name
+    VirtualName: name_Core.String_0
+    Name: name
+    InterfaceMethod: False
+    Return:
+      - #0 id=52667431 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65504260 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.name_1_Core.String
+    VirtualName: name_Core.Void_1_Core.String
+    Name: name
+    InterfaceMethod: False
+    Return:
+      - #0 id=8287277 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38203510 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=7476630 idx=1 name=value type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.value
+    VirtualName: value_T_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=1627311 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=180812 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.value_1_T
+    VirtualName: value_Core.Void_1_T
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=45459112 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64703336 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=6478825 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.parent
+    VirtualName: parent_Core.TreeNode<T>_0
+    Name: parent
+    InterfaceMethod: False
+    Return:
+      - #0 id=55022811 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=58309428 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.firstChild
+    VirtualName: firstChild_Core.TreeNode<T>_0
+    Name: firstChild
+    InterfaceMethod: False
+    Return:
+      - #0 id=47637651 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=27662693 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.lastChild
+    VirtualName: lastChild_Core.TreeNode<T>_0
+    Name: lastChild
+    InterfaceMethod: False
+    Return:
+      - #0 id=32565348 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=33444533 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.prevSibling
+    VirtualName: prevSibling_Core.TreeNode<T>_0
+    Name: prevSibling
+    InterfaceMethod: False
+    Return:
+      - #0 id=50709735 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=20547495 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.nextSibling
+    VirtualName: nextSibling_Core.TreeNode<T>_0
+    Name: nextSibling
+    InterfaceMethod: False
+    Return:
+      - #0 id=57522049 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=13847879 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.childCount
+    VirtualName: childCount_Core.Int32_0
+    Name: childCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=57642780 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=28774374 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.isLeaf
+    VirtualName: isLeaf_Core.Boolean_0
+    Name: isLeaf
+    InterfaceMethod: False
+    Return:
+      - #0 id=11437802 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=38553569 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=35831362 idx=0 name=autocreate_26800560 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.isRoot
+    VirtualName: isRoot_Core.Boolean_0
+    Name: isRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=64605626 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66830726 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=44579726 idx=0 name=autocreate_39878449 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.hasChildren
+    VirtualName: hasChildren_Core.Boolean_0
+    Name: hasChildren
+    InterfaceMethod: False
+    Return:
+      - #0 id=44657822 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=4961980 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=66376082 idx=0 name=autocreate_23361726 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.path
+    VirtualName: path_Core.String_0
+    Name: path
+    InterfaceMethod: False
+    Return:
+      - #0 id=55777439 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=28567114 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.attach_1_Core.TreeNode<T>
+    VirtualName: attach_Core.Boolean_1_Core.TreeNode<T>
+    Name: attach
+    InterfaceMethod: False
+    Return:
+      - #0 id=60890369 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=21678677 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=11142412 idx=1 name=node type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.addChild_1_Core.String
+    VirtualName: addChild_Core.TreeNode<T>_1_Core.String
+    Name: addChild
+    InterfaceMethod: False
+    Return:
+      - #0 id=2646090 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=30120171 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=23814811 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=13006713 idx=0 name=node type=Core.TreeNode<T><T[0]>
+      - #1 id=49951556 idx=1 name=autocreate_8928942 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.addChild_2_Core.String_T
+    VirtualName: addChild_Core.TreeNode<T>_2_Core.String_T
+    Name: addChild
+    InterfaceMethod: False
+    Return:
+      - #0 id=39576734 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=41680117 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=20646289 idx=1 name=name type=Core.String
+      - #2 id=51598880 idx=2 name=value type=T[0]
+    Locals:
+      - #0 id=61736738 idx=0 name=node type=Core.TreeNode<T><T[0]>
+      - #1 id=18759738 idx=1 name=autocreate_13251620 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.detach
+    VirtualName: detach_Core.Boolean_0
+    Name: detach
+    InterfaceMethod: False
+    Return:
+      - #0 id=4989273 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=52750146 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.childAt_1_Core.Int32
+    VirtualName: childAt_Core.TreeNode<T>_1_Core.Int32
+    Name: childAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=13301396 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=1477932 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=52603705 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.childByName_1_Core.String
+    VirtualName: childByName_Core.TreeNode<T>_1_Core.String
+    Name: childByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=28939864 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=33041702 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=59132187 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.childrenToArray_1_Core.Array<Core.TreeNode<T>>[-1]
+    VirtualName: childrenToArray_Core.Int32_1_Core.Array<Core.TreeNode<T>>[-1]
+    Name: childrenToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=23474126 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=24977857 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=9940543 idx=1 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Locals:
+      - #0 id=22356031 idx=0 name=autocreate_52155720 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.children
+    VirtualName: children_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: children
+    InterfaceMethod: False
+    Return:
+      - #0 id=57871327 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=6430147 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=51079899 idx=0 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Instructions:
+
+  Method: Core.TreeNode<T>.contains_1_Core.TreeNode<T>
+    VirtualName: contains_Core.Boolean_1_Core.TreeNode<T>
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=58936194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=43831168 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=60663705 idx=1 name=target type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.count
+    VirtualName: count_Core.Int32_0
+    Name: count
+    InterfaceMethod: False
+    Return:
+      - #0 id=66208776 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=14813071 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=14924591 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61310611 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.depth
+    VirtualName: depth_Core.Int32_0
+    Name: depth
+    InterfaceMethod: False
+    Return:
+      - #0 id=8391555 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=932395 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.find_1_T
+    VirtualName: find_Core.TreeNode<T>_1_T
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=10537598 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=8627384 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=27729526 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.findByName_1_Core.String
+    VirtualName: findByName_Core.TreeNode<T>_1_Core.String
+    Name: findByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=15056516 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=31499108 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=1290922 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.findAll_2_T_Core.Array<Core.TreeNode<T>>[-1]
+    VirtualName: findAll_Core.Int32_2_T_Core.Array<Core.TreeNode<T>>[-1]
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=1558396 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=37455857 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=14025568 idx=1 name=value type=T[0]
+      - #2 id=59121255 idx=2 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Locals:
+      - #0 id=62329248 idx=0 name=autocreate_66748299 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.findAll_1_T
+    VirtualName: findAll_Core.Array<Core.TreeNode<T>>[-1]_1_T
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=30917775 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=18348389 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=9824527 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=21311885 idx=0 name=total type=Core.Int32
+      - #1 id=57589242 idx=1 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+      - #2 id=48541135 idx=2 name=n type=Core.Int32
+      - #3 id=34217038 idx=3 name=res type=Core.Array<T><Core.TreeNode<T><T[0]>>
+      - #4 id=39517886 idx=4 name=autocreate_63863782 type=Core.Boolean
+      - #5 id=20116657 idx=5 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.TreeNode<T>.select_1_Core.String
+    VirtualName: select_Core.TreeNode<T>_1_Core.String
+    Name: select
+    InterfaceMethod: False
+    Return:
+      - #0 id=39240784 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=41642789 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=17622742 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.lca_1_Core.TreeNode<T>
+    VirtualName: lca_Core.TreeNode<T>_1_Core.TreeNode<T>
+    Name: lca
+    InterfaceMethod: False
+    Return:
+      - #0 id=29185940 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=18155963 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=61346876 idx=1 name=other type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.pathToRoot
+    VirtualName: pathToRoot_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: pathToRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=27369819 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=3041091 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=45001781 idx=0 name=n type=Core.Int32
+      - #1 id=2362851 idx=1 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Instructions:
+
+  Method: Core.TreeNode<T>.nodesToArray_2_Core.Int32_Core.Array<Core.TreeNode<T>>[-1]
+    VirtualName: nodesToArray_Core.Int32_2_Core.Int32_Core.Array<Core.TreeNode<T>>[-1]
+    Name: nodesToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=44796928 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=57173219 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=519172 idx=1 name=order type=Core.Int32
+      - #2 id=4672552 idx=2 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Locals:
+      - #0 id=42052973 idx=0 name=autocreate_37903130 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.valuesToArray_2_Core.Int32_Core.Array<T>[-1]
+    VirtualName: valuesToArray_Core.Int32_2_Core.Int32_Core.Array<T>[-1]
+    Name: valuesToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=55932620 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=21127816 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=33631540 idx=1 name=order type=Core.Int32
+      - #2 id=34248408 idx=2 name=arr type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=39800216 idx=0 name=autocreate_5583857 type=Core.Boolean
+    Instructions:
+
+  Method: Core.TreeNode<T>.nodes_1_Core.Int32
+    VirtualName: nodes_Core.Array<Core.TreeNode<T>>[-1]_1_Core.Int32
+    Name: nodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=11273467 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=1252607 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=34352342 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=40735625 idx=0 name=n type=Core.Int32
+      - #1 id=31076309 idx=1 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Instructions:
+
+  Method: Core.TreeNode<T>.values_1_Core.Int32
+    VirtualName: values_Core.Array<T>[-1]_1_Core.Int32
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=38942675 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=34153125 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+      - #1 id=14939758 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=240095 idx=0 name=n type=Core.Int32
+      - #1 id=2160855 idx=1 name=arr type=Core.Array<T><T[0]>
+    Instructions:
+
+  Method: Core.TreeNode<T>.preorder
+    VirtualName: preorder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: preorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=31759435 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=40811528 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.postorder
+    VirtualName: postorder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: postorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=70628 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=22377468 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.levelOrder
+    VirtualName: levelOrder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: levelOrder
+    InterfaceMethod: False
+    Return:
+      - #0 id=51488348 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=5720927 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.preorderValues
+    VirtualName: preorderValues_Core.Array<T>[-1]_0
+    Name: preorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=21151286 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=9806683 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.postorderValues
+    VirtualName: postorderValues_Core.Array<T>[-1]_0
+    Name: postorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=51358334 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=35532643 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.TreeNode<T>.levelOrderValues
+    VirtualName: levelOrderValues_Core.Array<T>[-1]_0
+    Name: levelOrderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=60588421 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=66384370 idx=0 name=this] type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.Tree<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1496703364 idx=0 name=Core.Tree<T>._root type=Core.TreeNode<T><T[0]>
+      - #1 id=-1728604244 idx=1 name=Core.Tree<T>._iterNode type=Core.TreeNode<T><T[0]>
+      - #2 id=-1649908196 idx=2 name=Core.Tree<T>._index type=Core.Int32
+      - #3 id=1972909911 idx=3 name=Core.Tree<T>._current type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=11326888 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8715083 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=45062713 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=34833129 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=2911240 idx=0 name=showstr type=Core.String
+      - #1 id=26201168 idx=1 name=arr type=Core.Array<T><Core.TreeNode<T><T[0]>>
+      - #2 id=34483920 idx=2 name=autocreate_18697032 type=Core.Boolean
+      - #3 id=41919826 idx=3 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.Tree<T>._init__1_Core.TreeNode<T>
+    VirtualName: _init__Core.Void_1_Core.TreeNode<T>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=22952463 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32376435 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=5245577 idx=1 name=root type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=47210194 idx=0 name=autocreate_61356140 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=17307650 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9379612 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=21551128 idx=1 name=rootName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>._init__2_Core.String_T
+    VirtualName: _init__Core.Void_2_Core.String_T
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=810977 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59742432 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=7298798 idx=1 name=rootName type=Core.String
+      - #2 id=65689182 idx=2 name=rootValue type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.root
+    VirtualName: root_Core.TreeNode<T>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=19223544 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=54331732 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.root_1_Core.TreeNode<T>
+    VirtualName: root_Core.Void_1_Core.TreeNode<T>
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=55320138 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13603222 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=28119201 idx=1 name=node type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=63062784 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=51746218 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=30694147 idx=0 name=autocreate_15334348 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=32622215 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=55820473 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=25164484 idx=0 name=autocreate_3791404 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=16394943 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16734741 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=13336762 idx=0 name=autocreate_34122637 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=3567727 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=52592197 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=32109549 idx=0 name=autocreate_38668280 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.rootName
+    VirtualName: rootName_Core.String_0
+    Name: rootName
+    InterfaceMethod: False
+    Return:
+      - #0 id=15147232 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=1683025 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals:
+      - #0 id=2107364 idx=0 name=autocreate_12470207 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.setRoot_1_Core.TreeNode<T>
+    VirtualName: setRoot_Core.Void_1_Core.TreeNode<T>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=45389273 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=42325954 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=5850279 idx=1 name=node type=Core.TreeNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.addRoot_1_Core.String
+    VirtualName: addRoot_Core.TreeNode<T>_1_Core.String
+    Name: addRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=4110613 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=52652517 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=36995518 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.addRoot_2_Core.String_T
+    VirtualName: addRoot_Core.TreeNode<T>_2_Core.String_T
+    Name: addRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=59078569 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=43846987 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=61945077 idx=1 name=name type=Core.String
+      - #2 id=20634784 idx=2 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.find_1_T
+    VirtualName: find_Core.TreeNode<T>_1_T
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=10372286 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=60804799 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=26241711 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=34848813 idx=0 name=autocreate_45123001 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.findByName_1_Core.String
+    VirtualName: findByName_Core.TreeNode<T>_1_Core.String
+    Name: findByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=42069902 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=27044054 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=43084804 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=52218921 idx=0 name=autocreate_3453833 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.findAll_1_T
+    VirtualName: findAll_Core.Array<Core.TreeNode<T>>[-1]_1_T
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=6231436 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=8148922 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=56082927 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=34984301 idx=0 name=autocreate_31084503 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.select_1_Core.String
+    VirtualName: select_Core.TreeNode<T>_1_Core.String
+    Name: select
+    InterfaceMethod: False
+    Return:
+      - #0 id=18840050 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=31919500 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=35342723 idx=1 name=path type=Core.String
+    Locals:
+      - #0 id=49649058 idx=0 name=autocreate_11325076 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.lca_2_Core.TreeNode<T>_Core.TreeNode<T>
+    VirtualName: lca_Core.TreeNode<T>_2_Core.TreeNode<T>_Core.TreeNode<T>
+    Name: lca
+    InterfaceMethod: False
+    Return:
+      - #0 id=57955715 idx=0 name=return] type=Core.TreeNode<T><T[0]>
+    Arguments:
+      - #0 id=28809145 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=51839388 idx=1 name=a type=Core.TreeNode<T><T[0]>
+      - #2 id=63901309 idx=2 name=b type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=38240871 idx=0 name=autocreate_34816825 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.contains_1_Core.TreeNode<T>
+    VirtualName: contains_Core.Boolean_1_Core.TreeNode<T>
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=45424599 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27416799 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=6168214 idx=1 name=node type=Core.TreeNode<T><T[0]>
+    Locals:
+      - #0 id=55513932 idx=0 name=autocreate_44915976 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.containsValue_1_T
+    VirtualName: containsValue_Core.Boolean_1_T
+    Name: containsValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=27107960 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3011995 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=42645048 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=48261118 idx=0 name=autocreate_1590600 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.nodes_1_Core.Int32
+    VirtualName: nodes_Core.Array<Core.TreeNode<T>>[-1]_1_Core.Int32
+    Name: nodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=32603030 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=40905261 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=24991814 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=23599734 idx=0 name=autocreate_14315403 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.values_1_Core.Int32
+    VirtualName: values_Core.Array<T>[-1]_1_Core.Int32
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=65903650 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=7322627 idx=0 name=this] type=Core.Tree<T><T[0]>
+      - #1 id=56261938 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=36595397 idx=0 name=autocreate_61729771 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tree<T>.preorder
+    VirtualName: preorder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: preorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=3269999 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=22732954 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.postorder
+    VirtualName: postorder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: postorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=35019191 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=63543344 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.levelOrder
+    VirtualName: levelOrder_Core.Array<Core.TreeNode<T>>[-1]_0
+    Name: levelOrder
+    InterfaceMethod: False
+    Return:
+      - #0 id=27622569 idx=0 name=return] type=Core.Array<T><Core.TreeNode<T><T[0]>>
+    Arguments:
+      - #0 id=17982255 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.preorderValues
+    VirtualName: preorderValues_Core.Array<T>[-1]_0
+    Name: preorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=4194103 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=22835632 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.postorderValues
+    VirtualName: postorderValues_Core.Array<T>[-1]_0
+    Name: postorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=37602652 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=4178072 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.levelOrderValues
+    VirtualName: levelOrderValues_Core.Array<T>[-1]_0
+    Name: levelOrderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=31917275 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=25915985 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=48027136 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35162510 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=64992778 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29591041 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=29923648 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48064092 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=3959276 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=7896460 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=631679 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=52265969 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tree<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=57841469 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=51166072 idx=0 name=this] type=Core.Tree<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.BinaryNode<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1787014044 idx=0 name=Core.BinaryNode<T>._value type=T[0]
+      - #1 id=-1751917641 idx=1 name=Core.BinaryNode<T>._left type=Core.BinaryNode<T><T[0]>
+      - #2 id=1043262230 idx=2 name=Core.BinaryNode<T>._right type=Core.BinaryNode<T><T[0]>
+      - #3 id=2051259015 idx=3 name=Core.BinaryNode<T>._parent type=Core.BinaryNode<T><T[0]>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=22064367 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54647379 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=42383293 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64361578 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=45905321 idx=0 name=autocreate_60968157 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>._init__1_T
+    VirtualName: _init__Core.Void_1_T
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33790399 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63406812 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=35678142 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.value
+    VirtualName: value_T_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=4248376 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=52667824 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.value_1_T
+    VirtualName: value_Core.Void_1_T
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=10058896 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8574195 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=23421207 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.left
+    VirtualName: left_Core.BinaryNode<T>_0
+    Name: left
+    InterfaceMethod: False
+    Return:
+      - #0 id=18069578 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=9464271 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.left_1_Core.BinaryNode<T>
+    VirtualName: left_Core.Void_1_Core.BinaryNode<T>
+    Name: left
+    InterfaceMethod: False
+    Return:
+      - #0 id=19385714 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54349751 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=40253700 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=26738982 idx=0 name=autocreate_34055563 type=Core.Boolean
+      - #1 id=39324249 idx=1 name=autocreate_38064613 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.right
+    VirtualName: right_Core.BinaryNode<T>_0
+    Name: right
+    InterfaceMethod: False
+    Return:
+      - #0 id=2171049 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=30067389 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.right_1_Core.BinaryNode<T>
+    VirtualName: right_Core.Void_1_Core.BinaryNode<T>
+    Name: right
+    InterfaceMethod: False
+    Return:
+      - #0 id=39191328 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41637294 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=17177639 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=20381027 idx=0 name=autocreate_7037199 type=Core.Boolean
+      - #1 id=49211517 idx=1 name=autocreate_63334794 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.parent
+    VirtualName: parent_Core.BinaryNode<T>_0
+    Name: parent
+    InterfaceMethod: False
+    Return:
+      - #0 id=43896488 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=57073170 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.isLeaf
+    VirtualName: isLeaf_Core.Boolean_0
+    Name: isLeaf
+    InterfaceMethod: False
+    Return:
+      - #0 id=56720842 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=65954639 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=40725534 idx=0 name=autocreate_33142240 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.isRoot
+    VirtualName: isRoot_Core.Boolean_0
+    Name: isRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=39846231 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26796980 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=23071760 idx=0 name=autocreate_29844704 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.hasLeft
+    VirtualName: hasLeft_Core.Boolean_0
+    Name: hasLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=11799640 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=8767611 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=39087901 idx=0 name=autocreate_166885 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.hasRight
+    VirtualName: hasRight_Core.Boolean_0
+    Name: hasRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=28578190 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=18088435 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=55877124 idx=0 name=autocreate_1501966 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.linkLeft_1_Core.BinaryNode<T>
+    VirtualName: linkLeft_Core.Boolean_1_Core.BinaryNode<T>
+    Name: linkLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=8017921 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=60543203 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=5052426 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.linkRight_1_Core.BinaryNode<T>
+    VirtualName: linkRight_Core.Boolean_1_Core.BinaryNode<T>
+    Name: linkRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=59340514 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=6593390 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=64302582 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.addLeft_1_T
+    VirtualName: addLeft_Core.BinaryNode<T>_1_T
+    Name: addLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=34595685 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=41126667 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=42925716 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=50787128 idx=0 name=node type=Core.BinaryNode<T><T[0]>
+      - #1 id=54430970 idx=1 name=autocreate_13517702 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.addRight_1_T
+    VirtualName: addRight_Core.BinaryNode<T>_1_T
+    Name: addRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=35329658 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=18838598 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=49531474 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=43130086 idx=0 name=node type=Core.BinaryNode<T><T[0]>
+      - #1 id=52626454 idx=1 name=autocreate_54550461 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.unlink
+    VirtualName: unlink_Core.Boolean_0
+    Name: unlink
+    InterfaceMethod: False
+    Return:
+      - #0 id=7065065 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=45524249 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.count
+    VirtualName: count_Core.Int32_0
+    Name: count
+    InterfaceMethod: False
+    Return:
+      - #0 id=50158847 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35399367 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=58577972 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=36334825 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.depth
+    VirtualName: depth_Core.Int32_0
+    Name: depth
+    InterfaceMethod: False
+    Return:
+      - #0 id=22104370 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47195283 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.find_1_T
+    VirtualName: find_Core.BinaryNode<T>_1_T
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=7958508 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=45623521 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=4517709 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.findAll_2_T_Core.Array<Core.BinaryNode<T>>[-1]
+    VirtualName: findAll_Core.Int32_2_T_Core.Array<Core.BinaryNode<T>>[-1]
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=5075526 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=30390109 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=45679737 idx=1 name=value type=T[0]
+      - #2 id=8464456 idx=2 name=arr type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Locals:
+      - #0 id=9071242 idx=0 name=autocreate_21192109 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.findAll_1_T
+    VirtualName: findAll_Core.Array<Core.BinaryNode<T>>[-1]_1_T
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=10546145 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=45911036 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=27806444 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=48931406 idx=0 name=total type=Core.Int32
+      - #1 id=37729472 idx=1 name=arr type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+      - #2 id=4020931 idx=2 name=n type=Core.Int32
+      - #3 id=36188385 idx=3 name=res type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+      - #4 id=57260009 idx=4 name=autocreate_56511253 type=Core.Boolean
+      - #5 id=45578038 idx=5 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.BinaryNode<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=33273344 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3697038 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=31024646 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.lca_1_Core.BinaryNode<T>
+    VirtualName: lca_Core.BinaryNode<T>_1_Core.BinaryNode<T>
+    Name: lca
+    InterfaceMethod: False
+    Return:
+      - #0 id=1279915 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=29968374 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=11519239 idx=1 name=other type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.pathFromRoot
+    VirtualName: pathFromRoot_Core.Array<T>[-1]_0
+    Name: pathFromRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=8917608 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=60643168 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=13149610 idx=0 name=n type=Core.Int32
+      - #1 id=51237633 idx=1 name=r type=Core.BinaryNode<T><T[0]>
+      - #2 id=58485517 idx=2 name=arr type=Core.Array<T><T[0]>
+      - #3 id=56607607 idx=3 name=autocreate_38839231 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.invert
+    VirtualName: invert_Core.BinaryNode<T>_0
+    Name: invert
+    InterfaceMethod: False
+    Return:
+      - #0 id=61120992 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=29160842 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.isSymmetric
+    VirtualName: isSymmetric_Core.Boolean_0
+    Name: isSymmetric
+    InterfaceMethod: False
+    Return:
+      - #0 id=64026895 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=51853342 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.isBalanced
+    VirtualName: isBalanced_Core.Boolean_0
+    Name: isBalanced
+    InterfaceMethod: False
+    Return:
+      - #0 id=34946386 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=18796012 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.isBst
+    VirtualName: isBst_Core.Boolean_0
+    Name: isBst
+    InterfaceMethod: False
+    Return:
+      - #0 id=41656292 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12085017 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.nodesToArray_2_Core.Int32_Core.Array<Core.BinaryNode<T>>[-1]
+    VirtualName: nodesToArray_Core.Int32_2_Core.Int32_Core.Array<Core.BinaryNode<T>>[-1]
+    Name: nodesToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=34230728 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=18716495 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=39641102 idx=1 name=order type=Core.Int32
+      - #2 id=21225601 idx=2 name=arr type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Locals:
+      - #0 id=56812682 idx=0 name=autocreate_14008765 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.valuesToArray_2_Core.Int32_Core.Array<T>[-1]
+    VirtualName: valuesToArray_Core.Int32_2_Core.Int32_Core.Array<T>[-1]
+    Name: valuesToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=18276642 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61683061 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=30272055 idx=1 name=order type=Core.Int32
+      - #2 id=4013046 idx=2 name=arr type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=36117414 idx=0 name=autocreate_58970022 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryNode<T>.nodes_1_Core.Int32
+    VirtualName: nodes_Core.Array<Core.BinaryNode<T>>[-1]_1_Core.Int32
+    Name: nodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=64996270 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=44504510 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=48095523 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=30206524 idx=0 name=n type=Core.Int32
+      - #1 id=3423268 idx=1 name=arr type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Instructions:
+
+  Method: Core.BinaryNode<T>.values_1_Core.Int32
+    VirtualName: values_Core.Array<T>[-1]_1_Core.Int32
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=12535043 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=8849323 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+      - #1 id=45706525 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=8705547 idx=0 name=n type=Core.Int32
+      - #1 id=11241060 idx=1 name=arr type=Core.Array<T><T[0]>
+    Instructions:
+
+  Method: Core.BinaryNode<T>.preorder
+    VirtualName: preorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: preorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=7451948 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=38110696 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.inorder
+    VirtualName: inorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: inorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=63761349 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=66736917 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.postorder
+    VirtualName: postorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: postorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=42689762 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=64395630 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.levelOrder
+    VirtualName: levelOrder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: levelOrder
+    InterfaceMethod: False
+    Return:
+      - #0 id=49432638 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=35318677 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.preorderValues
+    VirtualName: preorderValues_Core.Array<T>[-1]_0
+    Name: preorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=66042204 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=44620724 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.inorderValues
+    VirtualName: inorderValues_Core.Array<T>[-1]_0
+    Name: inorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=27711559 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=47818304 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.postorderValues
+    VirtualName: postorderValues_Core.Array<T>[-1]_0
+    Name: postorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=1958995 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=30043827 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryNode<T>.levelOrderValues
+    VirtualName: levelOrderValues_Core.Array<T>[-1]_0
+    Name: levelOrderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=18821337 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=24460881 idx=0 name=this] type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.BinaryTree<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-980430817 idx=0 name=Core.BinaryTree<T>._root type=Core.BinaryNode<T><T[0]>
+      - #1 id=72197687 idx=1 name=Core.BinaryTree<T>._iterNode type=Core.BinaryNode<T><T[0]>
+      - #2 id=17979271 idx=2 name=Core.BinaryTree<T>._index type=Core.Int32
+      - #3 id=-383646004 idx=3 name=Core.BinaryTree<T>._current type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=30546942 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=48133347 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=58383229 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=6487025 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=55687020 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=31421133 idx=1 name=showstr type=Core.String
+      - #2 id=14354747 idx=2 name=autocreate_30479771 type=Core.Boolean
+      - #3 id=62083862 idx=3 name=i type=Core.Int32
+      - #4 id=21883847 idx=4 name=v type=T[0]
+      - #5 id=62736895 idx=5 name=autocreate_5882489 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>._init__1_Core.BinaryNode<T>
+    VirtualName: _init__Core.Void_1_Core.BinaryNode<T>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10990381 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16134234 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=31804571 idx=1 name=root type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=17805683 idx=0 name=autocreate_11842506 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>._init__1_T
+    VirtualName: _init__Core.Void_1_T
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=53520400 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=65599034 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=11921553 idx=1 name=rootValue type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.root
+    VirtualName: root_Core.BinaryNode<T>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=26121765 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=40185120 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.root_1_Core.BinaryNode<T>
+    VirtualName: root_Core.Void_1_Core.BinaryNode<T>
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=50958538 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35488221 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=55973666 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=37573083 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34000948 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=2613431 idx=0 name=autocreate_39473694 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=9227524 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23394901 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=15938858 idx=0 name=autocreate_19718930 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=16157182 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16708323 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=11196914 idx=0 name=autocreate_43252647 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=56265616 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43534437 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=36628503 idx=0 name=autocreate_53729511 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.setRoot_1_Core.BinaryNode<T>
+    VirtualName: setRoot_Core.Void_1_Core.BinaryNode<T>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=59079939 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43847139 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=61957408 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addRoot_1_T
+    VirtualName: addRoot_Core.BinaryNode<T>_1_T
+    Name: addRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=52494141 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=20745763 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=2685223 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.linkLeft_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: linkLeft_Core.Boolean_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: linkLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=11370808 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16176504 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=35228413 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=48620262 idx=2 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=34929182 idx=0 name=autocreate_13803553 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.linkRight_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: linkRight_Core.Boolean_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: linkRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=9993078 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=8566882 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=22828842 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=4132991 idx=2 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=37196927 idx=0 name=autocreate_57123120 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addLeft_2_Core.BinaryNode<T>_T
+    VirtualName: addLeft_Core.BinaryNode<T>_2_Core.BinaryNode<T>_T
+    Name: addLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=10563686 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=1173742 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=27964314 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=50352234 idx=2 name=value type=T[0]
+    Locals:
+      - #0 id=50516929 idx=0 name=autocreate_44346036 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addRight_2_Core.BinaryNode<T>_T
+    VirtualName: addRight_Core.BinaryNode<T>_2_Core.BinaryNode<T>_T
+    Name: addRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=7531464 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=836829 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=674315 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=6068839 idx=2 name=value type=T[0]
+    Locals:
+      - #0 id=54619558 idx=0 name=autocreate_63570006 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.find_1_T
+    VirtualName: find_Core.BinaryNode<T>_1_T
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=17645916 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=9417197 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=24595518 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=20033078 idx=0 name=autocreate_35259143 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.findAll_1_T
+    VirtualName: findAll_Core.Array<Core.BinaryNode<T>>[-1]_1_T
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=11673056 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=53492789 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=37948642 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=5993460 idx=0 name=autocreate_48896832 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=52061026 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=65436882 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=65896052 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=56193562 idx=0 name=autocreate_37418306 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.containsSubtree_1_Core.BinaryNode<T>
+    VirtualName: containsSubtree_Core.Boolean_1_Core.BinaryNode<T>
+    Name: containsSubtree
+    InterfaceMethod: False
+    Return:
+      - #0 id=20224181 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=61899454 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=47799905 idx=1 name=pattern type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=27545963 idx=0 name=autocreate_1220438 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.lca_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: lca_Core.BinaryNode<T>_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: lca
+    InterfaceMethod: False
+    Return:
+      - #0 id=4893323 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=15456783 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=44039915 idx=1 name=a type=Core.BinaryNode<T><T[0]>
+      - #2 id=60814919 idx=2 name=b type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=10463359 idx=0 name=autocreate_10983950 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.pathToNode_1_Core.BinaryNode<T>
+    VirtualName: pathToNode_Core.Array<T>[-1]_1_Core.BinaryNode<T>
+    Name: pathToNode
+    InterfaceMethod: False
+    Return:
+      - #0 id=64845042 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=44487706 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=46734467 idx=1 name=target type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=17957024 idx=0 name=n type=Core.Int32
+      - #1 id=27395488 idx=1 name=arr type=Core.Array<T><T[0]>
+      - #2 id=45232806 idx=2 name=w type=Core.Int32
+      - #3 id=4442074 idx=3 name=res type=Core.Array<T><T[0]>
+      - #4 id=39978669 idx=4 name=autocreate_31746690 type=Core.Boolean
+      - #5 id=24263704 idx=5 name=autocreate_17284754 type=Core.Boolean
+      - #6 id=17046748 idx=6 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.BinaryTree<T>.invert
+    VirtualName: invert_Core.Void_0
+    Name: invert
+    InterfaceMethod: False
+    Return:
+      - #0 id=22521054 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47241582 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=1362895 idx=0 name=autocreate_21345065 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isSymmetric
+    VirtualName: isSymmetric_Core.Boolean_0
+    Name: isSymmetric
+    InterfaceMethod: False
+    Return:
+      - #0 id=66649034 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=67057771 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=62970394 idx=0 name=autocreate_57887863 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isBalanced
+    VirtualName: isBalanced_Core.Boolean_0
+    Name: isBalanced
+    InterfaceMethod: False
+    Return:
+      - #0 id=33736386 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48487730 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=35192023 idx=0 name=autocreate_51228725 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isBst
+    VirtualName: isBst_Core.Boolean_0
+    Name: isBst
+    InterfaceMethod: False
+    Return:
+      - #0 id=29332447 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3259160 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=62665436 idx=0 name=autocreate_58405349 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.nodes_1_Core.Int32
+    VirtualName: nodes_Core.Array<Core.BinaryNode<T>>[-1]_1_Core.Int32
+    Name: nodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=47477033 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=42557928 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=24640114 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=20434436 idx=0 name=autocreate_55886094 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.values_1_Core.Int32
+    VirtualName: values_Core.Array<T>[-1]_1_Core.Int32
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=60977760 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=14231847 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=11928933 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=40251533 idx=0 name=autocreate_33212803 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.preorder
+    VirtualName: preorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: preorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=15937898 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=31597039 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.inorder
+    VirtualName: inorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: inorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=8894251 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=15901331 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.postorder
+    VirtualName: postorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: postorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=41458150 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=49345703 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.levelOrder
+    VirtualName: levelOrder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: levelOrder
+    InterfaceMethod: False
+    Return:
+      - #0 id=24002790 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=2666976 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.preorderValues
+    VirtualName: preorderValues_Core.Array<T>[-1]_0
+    Name: preorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=49729727 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=65177848 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.inorderValues
+    VirtualName: inorderValues_Core.Array<T>[-1]_0
+    Name: inorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=14184458 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=1576050 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.postorderValues
+    VirtualName: postorderValues_Core.Array<T>[-1]_0
+    Name: postorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=5705260 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=8090458 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.levelOrderValues
+    VirtualName: levelOrderValues_Core.Array<T>[-1]_0
+    Name: levelOrderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=65494031 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=59472897 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=30746341 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3416260 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=7425732 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8281621 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=64613452 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66831596 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=59893061 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=66307108 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=41280485 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=19499801 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=28702870 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55384990 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.BinarySearchTree<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-628108989 idx=0 name=Core.BinarySearchTree<T>._root type=Core.BinaryNode<T><T[0]>
+      - #1 id=458073963 idx=1 name=Core.BinarySearchTree<T>._iterNode type=Core.BinaryNode<T><T[0]>
+      - #2 id=504518363 idx=2 name=Core.BinarySearchTree<T>._index type=Core.Int32
+      - #3 id=-165542000 idx=3 name=Core.BinarySearchTree<T>._current type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=53535755 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43231119 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=58383229 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=6487025 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=55687020 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=31421133 idx=1 name=showstr type=Core.String
+      - #2 id=14354747 idx=2 name=autocreate_30479771 type=Core.Boolean
+      - #3 id=62083862 idx=3 name=i type=Core.Int32
+      - #4 id=21883847 idx=4 name=v type=T[0]
+      - #5 id=62736895 idx=5 name=autocreate_5882489 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>._init__1_Core.BinaryNode<T>
+    VirtualName: _init__Core.Void_1_Core.BinaryNode<T>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10990381 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16134234 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=31804571 idx=1 name=root type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=17805683 idx=0 name=autocreate_11842506 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>._init__1_T
+    VirtualName: _init__Core.Void_1_T
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=41428878 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12059749 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=37315583 idx=1 name=rootValue type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.root
+    VirtualName: root_Core.BinaryNode<T>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=26121765 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=40185120 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.root_1_Core.BinaryNode<T>
+    VirtualName: root_Core.Void_1_Core.BinaryNode<T>
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=50958538 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35488221 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=55973666 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=37573083 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34000948 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=2613431 idx=0 name=autocreate_39473694 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=9227524 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23394901 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=15938858 idx=0 name=autocreate_19718930 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=16157182 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16708323 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=11196914 idx=0 name=autocreate_43252647 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=56265616 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43534437 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=36628503 idx=0 name=autocreate_53729511 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.setRoot_1_Core.BinaryNode<T>
+    VirtualName: setRoot_Core.Void_1_Core.BinaryNode<T>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=59079939 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43847139 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=61957408 idx=1 name=node type=Core.BinaryNode<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addRoot_1_T
+    VirtualName: addRoot_Core.BinaryNode<T>_1_T
+    Name: addRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=52494141 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=20745763 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=2685223 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.linkLeft_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: linkLeft_Core.Boolean_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: linkLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=11370808 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16176504 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=35228413 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=48620262 idx=2 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=34929182 idx=0 name=autocreate_13803553 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.linkRight_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: linkRight_Core.Boolean_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: linkRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=9993078 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=8566882 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=22828842 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=4132991 idx=2 name=node type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=37196927 idx=0 name=autocreate_57123120 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addLeft_2_Core.BinaryNode<T>_T
+    VirtualName: addLeft_Core.BinaryNode<T>_2_Core.BinaryNode<T>_T
+    Name: addLeft
+    InterfaceMethod: False
+    Return:
+      - #0 id=10563686 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=1173742 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=27964314 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=50352234 idx=2 name=value type=T[0]
+    Locals:
+      - #0 id=50516929 idx=0 name=autocreate_44346036 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.addRight_2_Core.BinaryNode<T>_T
+    VirtualName: addRight_Core.BinaryNode<T>_2_Core.BinaryNode<T>_T
+    Name: addRight
+    InterfaceMethod: False
+    Return:
+      - #0 id=7531464 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=836829 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=674315 idx=1 name=parent type=Core.BinaryNode<T><T[0]>
+      - #2 id=6068839 idx=2 name=value type=T[0]
+    Locals:
+      - #0 id=54619558 idx=0 name=autocreate_63570006 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.find_1_T
+    VirtualName: find_Core.BinaryNode<T>_1_T
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=17645916 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=9417197 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=24595518 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=20033078 idx=0 name=autocreate_35259143 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.findAll_1_T
+    VirtualName: findAll_Core.Array<Core.BinaryNode<T>>[-1]_1_T
+    Name: findAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=11673056 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=53492789 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=37948642 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=5993460 idx=0 name=autocreate_48896832 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=2663365 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=295929 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=23970293 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=14406049 idx=0 name=autocreate_60476403 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.containsSubtree_1_Core.BinaryNode<T>
+    VirtualName: containsSubtree_Core.Boolean_1_Core.BinaryNode<T>
+    Name: containsSubtree
+    InterfaceMethod: False
+    Return:
+      - #0 id=20224181 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=61899454 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=47799905 idx=1 name=pattern type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=27545963 idx=0 name=autocreate_1220438 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.lca_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    VirtualName: lca_Core.BinaryNode<T>_2_Core.BinaryNode<T>_Core.BinaryNode<T>
+    Name: lca
+    InterfaceMethod: False
+    Return:
+      - #0 id=4893323 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=15456783 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=44039915 idx=1 name=a type=Core.BinaryNode<T><T[0]>
+      - #2 id=60814919 idx=2 name=b type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=10463359 idx=0 name=autocreate_10983950 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.pathToNode_1_Core.BinaryNode<T>
+    VirtualName: pathToNode_Core.Array<T>[-1]_1_Core.BinaryNode<T>
+    Name: pathToNode
+    InterfaceMethod: False
+    Return:
+      - #0 id=64845042 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=44487706 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=46734467 idx=1 name=target type=Core.BinaryNode<T><T[0]>
+    Locals:
+      - #0 id=17957024 idx=0 name=n type=Core.Int32
+      - #1 id=27395488 idx=1 name=arr type=Core.Array<T><T[0]>
+      - #2 id=45232806 idx=2 name=w type=Core.Int32
+      - #3 id=4442074 idx=3 name=res type=Core.Array<T><T[0]>
+      - #4 id=39978669 idx=4 name=autocreate_31746690 type=Core.Boolean
+      - #5 id=24263704 idx=5 name=autocreate_17284754 type=Core.Boolean
+      - #6 id=17046748 idx=6 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.BinaryTree<T>.invert
+    VirtualName: invert_Core.Void_0
+    Name: invert
+    InterfaceMethod: False
+    Return:
+      - #0 id=22521054 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47241582 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=1362895 idx=0 name=autocreate_21345065 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isSymmetric
+    VirtualName: isSymmetric_Core.Boolean_0
+    Name: isSymmetric
+    InterfaceMethod: False
+    Return:
+      - #0 id=66649034 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=67057771 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=62970394 idx=0 name=autocreate_57887863 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isBalanced
+    VirtualName: isBalanced_Core.Boolean_0
+    Name: isBalanced
+    InterfaceMethod: False
+    Return:
+      - #0 id=33736386 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48487730 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=35192023 idx=0 name=autocreate_51228725 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.isBst
+    VirtualName: isBst_Core.Boolean_0
+    Name: isBst
+    InterfaceMethod: False
+    Return:
+      - #0 id=29332447 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3259160 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals:
+      - #0 id=62665436 idx=0 name=autocreate_58405349 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.nodes_1_Core.Int32
+    VirtualName: nodes_Core.Array<Core.BinaryNode<T>>[-1]_1_Core.Int32
+    Name: nodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=47477033 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=42557928 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=24640114 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=20434436 idx=0 name=autocreate_55886094 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.values_1_Core.Int32
+    VirtualName: values_Core.Array<T>[-1]_1_Core.Int32
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=60977760 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=14231847 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+      - #1 id=11928933 idx=1 name=order type=Core.Int32
+    Locals:
+      - #0 id=40251533 idx=0 name=autocreate_33212803 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinaryTree<T>.preorder
+    VirtualName: preorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: preorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=15937898 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=31597039 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.inorder
+    VirtualName: inorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: inorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=8894251 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=15901331 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.postorder
+    VirtualName: postorder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: postorder
+    InterfaceMethod: False
+    Return:
+      - #0 id=41458150 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=49345703 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.levelOrder
+    VirtualName: levelOrder_Core.Array<Core.BinaryNode<T>>[-1]_0
+    Name: levelOrder
+    InterfaceMethod: False
+    Return:
+      - #0 id=24002790 idx=0 name=return] type=Core.Array<T><Core.BinaryNode<T><T[0]>>
+    Arguments:
+      - #0 id=2666976 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.preorderValues
+    VirtualName: preorderValues_Core.Array<T>[-1]_0
+    Name: preorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=49729727 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=65177848 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.inorderValues
+    VirtualName: inorderValues_Core.Array<T>[-1]_0
+    Name: inorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=14184458 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=1576050 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.postorderValues
+    VirtualName: postorderValues_Core.Array<T>[-1]_0
+    Name: postorderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=5705260 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=8090458 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.levelOrderValues
+    VirtualName: levelOrderValues_Core.Array<T>[-1]_0
+    Name: levelOrderValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=65494031 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=59472897 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=30746341 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3416260 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=7425732 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8281621 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=64613452 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66831596 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=59893061 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=66307108 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=41280485 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=19499801 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinaryTree<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=28702870 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55384990 idx=0 name=this] type=Core.BinaryTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.insert_1_T
+    VirtualName: insert_Core.BinaryNode<T>_1_T
+    Name: insert
+    InterfaceMethod: False
+    Return:
+      - #0 id=51886416 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=28134778 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=64324564 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=42050167 idx=0 name=node type=Core.BinaryNode<T><T[0]>
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.insertRange_1_Core.Array<T>[-1]
+    VirtualName: insertRange_Core.Void_1_Core.Array<T>[-1]
+    Name: insertRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=52930045 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50620358 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=6608358 idx=1 name=values type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=59475228 idx=0 name=autocreate_52942405 type=Core.Boolean
+      - #1 id=65515007 idx=1 name=i type=Core.Int32
+      - #2 id=52764152 idx=2 name=v type=Core.Object
+      - #3 id=5115320 idx=3 name=autocreate_6719600 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.findNode_1_T
+    VirtualName: findNode_Core.BinaryNode<T>_1_T
+    Name: findNode
+    InterfaceMethod: False
+    Return:
+      - #0 id=54071387 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=28377553 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=16880438 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.remove_1_T
+    VirtualName: remove_Core.Boolean_1_T
+    Name: remove
+    InterfaceMethod: False
+    Return:
+      - #0 id=24917681 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=25138252 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+      - #1 id=22932538 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.minNode
+    VirtualName: minNode_Core.BinaryNode<T>_0
+    Name: minNode
+    InterfaceMethod: False
+    Return:
+      - #0 id=7713785 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=45596329 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.maxNode
+    VirtualName: maxNode_Core.BinaryNode<T>_0
+    Name: maxNode
+    InterfaceMethod: False
+    Return:
+      - #0 id=53313577 idx=0 name=return] type=Core.BinaryNode<T><T[0]>
+    Arguments:
+      - #0 id=20836811 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.min
+    VirtualName: min_T_0
+    Name: min
+    InterfaceMethod: False
+    Return:
+      - #0 id=9565526 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=23432457 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+    Locals:
+      - #0 id=18980874 idx=0 name=node type=Core.BinaryNode<T><T[0]>
+      - #1 id=36610142 idx=1 name=autocreate_7416719 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BinarySearchTree<T>.max
+    VirtualName: max_T_0
+    Name: max
+    InterfaceMethod: False
+    Return:
+      - #0 id=29752302 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=18218892 idx=0 name=this] type=Core.BinarySearchTree<T><T[0]>
+    Locals:
+      - #0 id=66444130 idx=0 name=node type=Core.BinaryNode<T><T[0]>
+      - #1 id=61126266 idx=1 name=autocreate_66750478 type=Core.Boolean
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

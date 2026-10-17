@@ -1,0 +1,396 @@
+-------------------IR 文件显示 开始 : Path: IO/Console.sl-----------------------
+Class: Std.Console
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1750472466 idx=0 name=Std.Console.colorBlack type=Core.Int32
+      - #1 id=1071481527 idx=1 name=Std.Console.colorDarkBlue type=Core.Int32
+      - #2 id=166595057 idx=2 name=Std.Console.colorDarkGreen type=Core.Int32
+      - #3 id=19729012 idx=3 name=Std.Console.colorDarkCyan type=Core.Int32
+      - #4 id=-2046421499 idx=4 name=Std.Console.colorDarkRed type=Core.Int32
+      - #5 id=-2018751818 idx=5 name=Std.Console.colorDarkMagenta type=Core.Int32
+      - #6 id=-298763691 idx=6 name=Std.Console.colorDarkYellow type=Core.Int32
+      - #7 id=-1415830098 idx=7 name=Std.Console.colorGray type=Core.Int32
+      - #8 id=1691445822 idx=8 name=Std.Console.colorDarkGray type=Core.Int32
+      - #9 id=-612014599 idx=9 name=Std.Console.colorBlue type=Core.Int32
+      - #10 id=828859562 idx=10 name=Std.Console.colorGreen type=Core.Int32
+      - #11 id=-1733725102 idx=11 name=Std.Console.colorCyan type=Core.Int32
+      - #12 id=1774240693 idx=12 name=Std.Console.colorRed type=Core.Int32
+      - #13 id=487578709 idx=13 name=Std.Console.colorMagenta type=Core.Int32
+      - #14 id=637897823 idx=14 name=Std.Console.colorYellow type=Core.Int32
+      - #15 id=-935111611 idx=15 name=Std.Console.colorWhite type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.write_2_Core.String_Core.Array<Core.Object>[-1]
+    VirtualName: write_Core.Void_2_Core.String_Core.Array<Core.Object>[-1]
+    Name: write
+    InterfaceMethod: False
+    Return:
+      - #0 id=21405046 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58427690 idx=0 name=text type=Core.String
+      - #1 id=56087165 idx=1 name=param type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.print_2_Core.String_Core.Array<Core.Object>[-1]
+    VirtualName: print_Core.Void_2_Core.String_Core.Array<Core.Object>[-1]
+    Name: print
+    InterfaceMethod: False
+    Return:
+      - #0 id=46766508 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=18245395 idx=0 name=text type=Core.String
+      - #1 id=29990828 idx=1 name=param type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1]
+    VirtualName: println_Core.Void_2_Core.String_Core.Array<Core.Object>[-1]
+    Name: println
+    InterfaceMethod: False
+    Return:
+      - #0 id=1482002 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13338021 idx=0 name=text type=Core.String
+      - #1 id=52933326 idx=1 name=param type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.newLine
+    VirtualName: newLine_Core.Void_0
+    Name: newLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=6637886 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.writeLine_2_Core.String_Core.Array<Core.Object>[-1]
+    VirtualName: writeLine_Core.Void_2_Core.String_Core.Array<Core.Object>[-1]
+    Name: writeLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=59740974 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=797855 idx=0 name=text type=Core.String
+      - #1 id=7180698 idx=1 name=param type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.input
+    VirtualName: input_Core.String_0
+    Name: input
+    InterfaceMethod: False
+    Return:
+      - #0 id=64626289 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.input_1_Core.String
+    VirtualName: input_Core.String_1_Core.String
+    Name: input
+    InterfaceMethod: False
+    Return:
+      - #0 id=238043 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=2142393 idx=0 name=prompt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readLine
+    VirtualName: readLine_Core.String_0
+    Name: readLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=39316155 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readLine_1_Core.String
+    VirtualName: readLine_Core.String_1_Core.String
+    Name: readLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=30492010 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=5992637 idx=0 name=prompt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readKey
+    VirtualName: readKey_Core.String_0
+    Name: readKey
+    InterfaceMethod: False
+    Return:
+      - #0 id=15641626 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readKey_1_Core.String
+    VirtualName: readKey_Core.String_1_Core.String
+    Name: readKey
+    InterfaceMethod: False
+    Return:
+      - #0 id=59012183 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=61347601 idx=0 name=prompt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readInt
+    VirtualName: readInt_Core.Int32_0
+    Name: readInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=3099778 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readInt_1_Core.String
+    VirtualName: readInt_Core.Int32_1_Core.String
+    Name: readInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=49755431 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45145696 idx=0 name=prompt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readDouble
+    VirtualName: readDouble_Core.Float64_0
+    Name: readDouble
+    InterfaceMethod: False
+    Return:
+      - #0 id=32922799 idx=0 name=return] type=Core.Float64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readDouble_1_Core.String
+    VirtualName: readDouble_Core.Float64_1_Core.String
+    Name: readDouble
+    InterfaceMethod: False
+    Return:
+      - #0 id=49501095 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=42856673 idx=0 name=prompt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=48838504 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.setCursorPosition_2_Core.Int32_Core.Int32
+    VirtualName: setCursorPosition_Core.Void_2_Core.Int32_Core.Int32
+    Name: setCursorPosition
+    InterfaceMethod: False
+    Return:
+      - #0 id=36893359 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63604780 idx=0 name=left type=Core.Int32
+      - #1 id=35572112 idx=1 name=top type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.setCursorVisible_1_Core.Boolean
+    VirtualName: setCursorVisible_Core.Void_1_Core.Boolean
+    Name: setCursorVisible
+    InterfaceMethod: False
+    Return:
+      - #0 id=51713556 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62768825 idx=0 name=visible type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.hideCursor
+    VirtualName: hideCursor_Core.Void_0
+    Name: hideCursor
+    InterfaceMethod: False
+    Return:
+      - #0 id=28048521 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.showCursor
+    VirtualName: showCursor_Core.Void_0
+    Name: showCursor
+    InterfaceMethod: False
+    Return:
+      - #0 id=51110099 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.setForegroundColor_1_Core.Int32
+    VirtualName: setForegroundColor_Core.Void_1_Core.Int32
+    Name: setForegroundColor
+    InterfaceMethod: False
+    Return:
+      - #0 id=57337714 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=46277382 idx=0 name=color type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.setBackgroundColor_1_Core.Int32
+    VirtualName: setBackgroundColor_Core.Void_1_Core.Int32
+    Name: setBackgroundColor
+    InterfaceMethod: False
+    Return:
+      - #0 id=13843256 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57480441 idx=0 name=color type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.resetColor
+    VirtualName: resetColor_Core.Void_0
+    Name: resetColor
+    InterfaceMethod: False
+    Return:
+      - #0 id=47561922 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.keyAvailable
+    VirtualName: keyAvailable_Core.Boolean_0
+    Name: keyAvailable
+    InterfaceMethod: False
+    Return:
+      - #0 id=25404116 idx=0 name=return] type=Core.Boolean
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.readKeyDirect
+    VirtualName: readKeyDirect_Core.String_0
+    Name: readKeyDirect
+    InterfaceMethod: False
+    Return:
+      - #0 id=44467520 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.windowWidth
+    VirtualName: windowWidth_Core.Int32_0
+    Name: windowWidth
+    InterfaceMethod: False
+    Return:
+      - #0 id=45099364 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.windowHeight
+    VirtualName: windowHeight_Core.Int32_0
+    Name: windowHeight
+    InterfaceMethod: False
+    Return:
+      - #0 id=29169897 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Console.sleep_1_Core.Int32
+    VirtualName: sleep_Core.Void_1_Core.Int32
+    Name: sleep
+    InterfaceMethod: False
+    Return:
+      - #0 id=13951479 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58454448 idx=0 name=ms type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

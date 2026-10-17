@@ -1,0 +1,19 @@
+-------------------Meta 文件显示 开始 : Path: Class2Test.sl-----------------------
+Class2TestSmoke
+{
+    _public static fun( )
+    {
+        global.println("========== Class2Test (start) ==========");
+        c5 = N1.N3.Class5();
+        global.println("N1.N3.Class5 X52 -> " + c5.X52.toString());
+        global.println("N1.N3.Class5 sumX -> " + c5.sumX().toString());
+        c6 = N1.Class6(66i);
+        inner = N1.Class6.Class6Inner();
+        global.println("N1.Class6 describe -> " + c6.describe());
+        global.println("N1.Class6 innerValue -> " + inner.innerValue.toString());
+        c7 = N1.N4.Class7(70i,71i);
+        global.println("N1.N4.Class7 total -> " + c7.total().toString());
+        global.println("========== Class2Test (end) ==========");
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

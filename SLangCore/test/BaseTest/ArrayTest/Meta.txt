@@ -1,0 +1,740 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/ArrayTest.sl-----------------------
+public class ArrayTest extends Core.Object
+{
+    public class ArrClass extends Core.Object
+    {
+        public [Core.Int32]i1 = 0i;
+        public [Core.Object]i2 = "aaa";
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+        public  override Core.String toString()
+        {
+            return (((("ArrClass(){ this.i1=" + [Core.ArrayTest.ArrClass]Core.ArrayTest.ArrClass.toString.this  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i;  ->  [Core.Int32]i1.toString()) + " this.i2= ") + [Core.ArrayTest.ArrClass]Core.ArrayTest.ArrClass.toString.this  ->  public [Core.String]i2 = ConstExpressNode: [String] "aaa";  ->  [Core.String]i2.toString()) + "}");
+        }
+
+        public  Core.Void _init_([Core.Int32]i1)
+        {
+            [Core.ArrayTest.ArrClass]Core.ArrayTest.ArrClass._init_.this  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = [Core.Int32]i1;
+
+        }
+
+        public  Core.Void _init_([Core.Int32]i1,[Core.String]i2)
+        {
+            [Core.ArrayTest.ArrClass]Core.ArrayTest.ArrClass._init_.this  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = [Core.Int32]i1;
+            [Core.ArrayTest.ArrClass]Core.ArrayTest.ArrClass._init_.this  ->  public [Core.String]i2 = ConstExpressNode: [String] "aaa"; = [Core.String]i2;
+
+        }
+
+    }
+    public class Level<T extends Core.Object> extends Core.Object
+    {
+        public [Core.Object]t = Core.Object().;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+        public  override Core.String toString()
+        {
+            return (("Level<T>(" + [Core.ArrayTest.Level<T><T>]Core.ArrayTest.Level<T>.toString.this  ->  public [T]t = NewObjectExpressNode: Core.Object().;  ->  [Core.Object]t.toString()) + ")");
+        }
+
+        public  Core.Void _init_([Core.Object]obj)
+        {
+            [Core.ArrayTest.Level<T><T>]Core.ArrayTest.Level<T>._init_.this  ->  public [T]t = NewObjectExpressNode: Core.Object().; = [Core.Object]obj as Core.Object ;
+
+        }
+
+    }
+    public  static Core.Object forIIterator([Core.Object]obj)
+    {
+        println("==========forIIterator ==========")
+        [Core.Object]arr = [Core.Object]obj as Core.IIterable<Core.Object>Core.Object
+ ;
+for v in arr
+{
+            Core.Boolean autocreate_7092232 = (v != null)
+            if autocreate_7092232
+            {
+                println("for-in -> " + v.toString())
+
+            }
+            else
+            {
+                println("for-in -> null")
+
+            }
+
+}
+
+
+
+    }
+
+    public  static Core.Object forObject([Core.Object]arr)
+    {
+        println("==========forObject ==========")
+        [Core.Object]iter = [Core.Object]arr as Core.Array<Core.Object>Core.Object
+ ;
+        Core.Boolean autocreate_49967061 = ([Array<Core.Object>[-1]]iter != null)
+        if autocreate_49967061
+        {
+for v in iter
+{
+                Core.Boolean autocreate_20800170 = (v != null)
+                if autocreate_20800170
+                {
+                    println("1111111111= " + v.toString())
+
+                }
+
+}
+
+
+        }
+
+
+    }
+
+    public  static Core.Object arrayBasicApiTest()
+    {
+        println("========== Array.basic api ==========")
+        [Core.Array<Core.Int32>Core.Int32
+]nums =   ->  create(3i);
+        [Array<Core.Int32>[-1]]nums  ->  [Core.Array<Core.Int32>]nums.fill(7i)
+        [Array<Core.Int32>[-1]]nums  ->  [Core.Array<Core.Int32>]nums.setValue(2i,99i)
+        [Core.Int32]lenValue = [Array<Core.Int32>[-1]]nums  ->  [Core.Array<Core.Int32>]nums.length();
+        [Core.Int32]lenValue = 1i;
+        println("nums.length -> " + nums.length.toString())
+        println("lenValue -> " + lenValue.toString())
+        println("nums.getValue(0) -> " + nums.getValue(0i).toString())
+        println("nums.getValue(2) -> " + nums.getValue(2i).toString())
+        [Array<Core.Int32>[-1]]nums  ->  [Core.Array<Core.Int32>]nums.index(2i);
+        println("nums.current() $ index=1 -> " + nums.current().toString())
+        [Array<Core.Int32>[-1]]nums  ->  [Core.Array<Core.Int32>]nums.current(123i);
+        println("nums.getValue(1) after set current -> " + nums.getValue(2i).toString())
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayGenericElementTest()
+    {
+        println("========== Array.generic element ==========")
+        [Core.Object]ttt = Core.ArrayTest.Level< [Gen] Level<Core.Int32>>().{t=Core.ArrayTest.Level<Core.Int32>().};
+        println("ttt -> " + ttt.toString())
+        [Core.Array< [Gen] Level<Core.Int32>>Core.ArrayTest.Level<Core.Int32><Core.Int32>
+]levels = Core.Array< [Gen] Level<Core.Int32>>().{Core.ArrayTest.Level<Core.Int32>()., Core.ArrayTest.Level<Core.Int32>().{t=120i}, Core.ArrayTest.Level<Core.Int32>().};
+        [Array< [Gen] Level<Core.Int32>>[-1]]levels  ->  levels[Visit_1]  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().; = 5i;
+for v in levels
+{
+            Core.Boolean autocreate_27921517 = (v != null)
+            if autocreate_27921517
+            {
+                println("level item -> " + v.toString())
+
+            }
+
+}
+
+
+
+
+    }
+
+    public  static Core.Object arrayCreateInstanceIndexLoopTest()
+    {
+        println("========== createInstance / index / for-i ==========")
+        [Core.Object]intvalue = 16us;
+        [Core.Array<Core.Int32>Core.Int32
+]a2 =   ->  create(intvalue);
+        [Array<Core.Int32>[-1]]a2  ->  a2[Visit_1] = 50i;
+        [Array<Core.Int32>[-1]]a2  ->  a2[Visit_1] = 100i;
+        [Array<Core.Int32>[-1]]a2  ->  a2[Visit_1] = ([Array<Core.Int32>[-1]]a2  ->  a2[Visit_1] + 200i);
+        [Array<Core.Int32>[-1]]a2  ->  a2[Visit_1] = 1;
+        println("createInstance= " + a2[1i])
+        println("createInstance= " + intvalue)
+        [Core.UInt16]intvalue = 40i;
+        [Core.UInt16]intvalue = 13i;
+        println("createInstance= " + intvalue)
+for 
+{
+    [Core.Object]i = 0i;    [Core.Int32]i = 1;
+
+    if ([Core.Int32]i < [Array<Core.Int32>[-1]]a2  ->  [Core.Array<Core.Int32>]a2.length()){break;}
+            Core.Boolean autocreate_54443429 = ([Core.Int32]i > 0i)
+            if autocreate_54443429
+            {
+                [Array<Core.Int32>[-1]]a2  ->  a2[Visit_i] = ([Array<Core.Int32>[-1]]a2  ->  a2[Visit_express20228817] + 100i);
+
+            }
+            else
+            {
+                [Array<Core.Int32>[-1]]a2  ->  a2[Visit_0] = 123i;
+
+            }
+            println("createInstance= " + a2.$i)
+
+}
+
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayCovariantAndLiteralForInTest()
+    {
+        println("========== ObjectArray 装箱 + literal for-in ==========")
+        [Core.Array<Core.Object>Core.Object
+]boxed = Core.Array<Core.Object>().;
+        [Array<Core.Object>[-1]]boxed  ->  boxed[Visit_0] = Core.Array<T>().{111i, 2222i, 3333i};
+        [Array<Core.Object>[-1]]boxed  ->  boxed[Visit_1] = Core.ArrayTest.Level<Core.Int32>().;
+        forIIterator(boxed)
+        forObject(boxed)
+        [Core.Object]arr2 = Core.Array<T>().{1000i, 2000i, 3000i, 1005i};
+        forIIterator(arr2)
+        forObject(arr2)
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayNumberIteratorFromConcreteArrayTest()
+    {
+        println("========== IIterator<Num> <- Int32[]（只读遍历） ==========")
+        [Core.Array<Core.Int32>Core.Int32
+]concrete = Core.Array<Core.Int32>().;
+        [Array<Core.Int32>[-1]]concrete  ->  concrete[Visit_0] = 11i;
+        [Array<Core.Int32>[-1]]concrete  ->  concrete[Visit_1] = 22i;
+        [Core.IIterator<Core.Num>Core.Num
+]it = [Array<Core.Int32>[-1]]concrete  ->  [Core.Array<Core.Int32>]concrete.iterator();
+        [Core.IIterable<Core.Object>Core.Object
+]it2 = [Array<Core.Int32>[-1]]concrete;
+        [IIterator<Core.Num>]it  ->  [Core.IIterator<Core.Num>]it.reset()
+while [IIterator<Core.Num>]it  ->  [Core.IIterator<Core.Num>]it.moveNext()
+        {
+            [Core.Num]n = [IIterator<Core.Num>]it  ->  [Core.IIterator<Core.Num>]it.current();
+            println("IIterator<Num> current -> " + n.toString())
+
+        }
+
+
+
+
+    }
+
+    public  static Core.Object arrayNestedObjectTreeTest()
+    {
+        println("========== nested Array<Object> / testArray / deep walk ==========")
+        [Core.Array<Core.Int32>Core.Int32
+]aaaxx12 =   ->  create(2i);
+        [Array<Core.Int32>[-1]]aaaxx12  ->  aaaxx12[Visit_0] = 5i;
+        [Array<Core.Int32>[-1]]aaaxx12  ->  aaaxx12[Visit_1] = 6i;
+        forIIterator(aaaxx12)
+        [Core.Array<Core.Int32>Core.Int32
+]axxx12 = Core.Array<T>().{7i, 8i, 9i, 5i};
+        forIIterator(axxx12)
+        [Core.Array< [Gen] Array<Core.Int32>>Array<Core.Int32>[-1]
+]axxx13 = Core.Array< [Gen] Array<Core.Int32>>().{[Array<Core.Int32>[-1]]aaaxx12, Core.Array<T>().{991i, 992i, 993i, 994i}};
+        forIIterator(axxx13)
+        [Core.Array<Core.Int32>Core.Int32
+]axx22 = Core.Array<Core.Int32>().{SystemConvertInt32(100.0f), SystemConvertInt32("101")};
+        forIIterator(axx22)
+        [Core.Array<Core.Object>Core.Object
+]axx23 = Core.Array<Core.Object>().{[Array<Core.Int32>[-1]]axx22};
+        forIIterator(axx23)
+        [Core.Object]a1 = Core.Array<Core.Object>().{1i, [Array< [Gen] Array<Core.Int32>>[-1]]axxx13, [Array<Core.Object>[-1]]axx23};
+        forIIterator(a1)
+for v in a1
+{
+            Core.Boolean autocreate_61119323 = (v != null)
+            if autocreate_61119323
+            {
+                println("nested level1 -> " + v.toString())
+
+            }
+            else
+            {
+                println("============index: " + v)
+
+            }
+
+}
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayJagged2DAssignTest()
+    {
+        println("========== jagged object[][] assign ==========")
+        [Core.Array< [Gen] Array<Core.Int32>>Array<Core.Int32>[-1]
+]jagged2 = Core.Array< [Gen] Array<Core.Int32>>().;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_0] = Core.Array<Core.Int32>().;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_1] = Core.Array<Core.Int32>().;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_0]  ->  Visit_0[Visit_0] = 999i;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_0]  ->  Visit_0[Visit_1] = 998i;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_0]  ->  Visit_0[Visit_2] = 997i;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_0]  ->  Visit_0[Visit_3] = 996i;
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_1] = Core.Array<T>().{1i, 100i, 1000i};
+        [Array< [Gen] Array<Core.Int32>>[-1]]jagged2  ->  jagged2[Visit_1]  ->  [Core.Array<Core.Int32>]Visit_1.setValue(0i,2222i)
+        forIIterator(jagged2)
+
+
+
+    }
+
+    public  static Core.Object arrayIntLiteralReadTest()
+    {
+        println("========== int[] literal read ==========")
+        [Core.Array<Core.Int32>Core.Int32
+]a33 = Core.Array<T>().{1i, 2i, 3i, 4i};
+        [Core.Array<Core.Int32>Core.Int32
+]a332 = Core.Array<Core.Int32>().{21i, 22i, 23i, 24i};
+        [Array<Core.Int32>[-1]]a33  ->  a33[Visit_3] = 123i;
+        [Core.Object]aa333 = [Array<Core.Int32>[-1]]a332  ->  a332[Visit_0];
+        println("1111111111= " + a33[3i] + "-----" + a33[0i] + "  xxxxx=" + aa333)
+
+
+    }
+
+    public  static Core.Object arrayRank2SparseJaggedTest()
+    {
+        println("========== int[4][] sparse jagged ==========")
+        [Core.Array< [Gen] Array<Core.Int32>>Array<Core.Int32>[-1]
+]a335 = Core.Array<T>().{Core.Array<T>().{11i, 22i, 33i}, Core.Array<Core.Int32>().{871i, 872i, 873i}, Core.Array<Core.Int32>().};
+        [Array< [Gen] Array<Core.Int32>>[3]]a335  ->  a335[Visit_2]  ->  Visit_2[Visit_1] = 123i;
+        println("1111111111= " + a335[2i].toString() + "-----" + a335[0i].toString())
+
+
+    }
+
+    public  static Core.Object arrayMixedLiteralDollarIndexTest()
+    {
+        println("========== mixed literal / `$` / is ArrClass ==========")
+        [Core.Object]ac = Core.ArrayTest.ArrClass().{i1=20i, i2="mix"};
+        [Core.Array< [Gen] Array<Core.Object>>Array<Core.Object>[-1]
+]mixedNest = Core.Array<T>().{Core.Array<T>().{137i, 138i, 139i, [Core.ArrayTest.ArrClass]ac, 148i}, Core.Array<T>().{Core.Array<T>().{11i}, Core.Array<T>().{13i, 14i, 15i}}, Core.Array<T>().{[Core.ArrayTest.ArrClass]ac}, Core.Array<Core.Object>().{1i, [Core.ArrayTest.ArrClass]ac, "aaa"}};
+        forIIterator(mixedNest)
+        [Core.Int32]aa = 0i;
+        println("1111111111= " + mixedNest.$1i.toString())
+        [Core.Object]tt1 = [Array< [Gen] Array<Core.Object>>[5]]mixedNest  ->  mixedNest[Visit_aa]  ->  Visit_aa[Visit_3];
+        Core.Boolean autocreate_18495050 = [Core.Object]tt1 is Core.ArrayTest.ArrClass tt2 
+        if autocreate_18495050
+        {
+            [Core.ArrayTest.ArrClass]tt2  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 200i;
+            [Core.Object]aa1111 = [Core.ArrayTest.ArrClass]tt2  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i;;
+            println("22222222= " + aa1111)
+
+        }
+
+
+
+
+    }
+
+    public  static Core.Object arrayLevelMatrixTest()
+    {
+        println("========== Level<int>[][] matrix ==========")
+        [Core.Object]levelvar = Core.ArrayTest.Level<Core.Int32>().;
+        [Core.Object]levelvar2 = Core.ArrayTest.Level<Core.Int32>().;
+        [Core.Array< [Gen] Array< [Gen] Level<Core.Int32>>>Array< [Gen] Level<Core.Int32>>[-1]
+]levelGrid = Core.Array<T>().{Core.Array<T>().{[ArrayTest.Level<Core.Int32>]levelvar, [ArrayTest.Level<Core.Int32>]levelvar}, Core.Array<T>().{[ArrayTest.Level<Core.Int32>]levelvar, [ArrayTest.Level<Core.Int32>]levelvar}, Core.Array<T>().{[ArrayTest.Level<Core.Int32>]levelvar2}};
+        [Array< [Gen] Array< [Gen] Level<Core.Int32>>>[-1]]levelGrid  ->  levelGrid[Visit_2]  ->  Visit_2[Visit_0]  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().; = 200i;
+        forIIterator(levelGrid)
+
+
+    }
+
+    public  static Core.Object arrayStringAndLevelVectorTest()
+    {
+        println("========== string[] + Level<int>[] vector ==========")
+        [Core.Array< [Gen] Level<Core.Int32>>Core.ArrayTest.Level<Core.Int32><Core.Int32>
+]a44 = Core.Array< [Gen] Level<Core.Int32>>().{Core.ArrayTest.Level<Core.Int32>().};
+        [Array< [Gen] Level<Core.Int32>>[-1]]a44  ->  a44[Visit_1] = Core.ArrayTest.Level<Core.Int32>().;
+        [Core.Int32]xxx = -2i;
+        [Array< [Gen] Level<Core.Int32>>[-1]]a44  ->  a44[Visit_express59880657]  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().; = 100i;
+for 
+{
+    [Core.Object]i = 4i;    [Core.Int32]i = 1;
+
+    if ([Core.Int32]i < 8i){break;}
+            [Array< [Gen] Level<Core.Int32>>[-1]]a44  ->  a44[Visit_i] = Core.ArrayTest.Level<Core.Int32>().;
+            [Array< [Gen] Level<Core.Int32>>[-1]]a44  ->  a44[Visit_i]  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().; = 135i;
+
+}
+        forIIterator(a44)
+
+
+
+    }
+
+    public  static Core.Object arrayHeterogeneousObject2DTest()
+    {
+        println("========== heterogeneous object[][] ==========")
+        [Core.Array< [Gen] Array<Core.Object>>Array<Core.Object>[-1]
+]a42 = Core.Array<T>().{Core.Array<T>().{1.2f, 1.3f, 1.4f, 1.5f}, Core.Array<T>().{3i, 4i, 5i}};
+        forIIterator(a42)
+
+
+    }
+
+    public  static Core.Object arrayCtorPrimitiveAndAliasTest()
+    {
+        println("========== ctor: primitive + alias ==========")
+        [Core.Object]intsByCtor = Core.Array<Core.Int32>().{1i, 2i, 3i, 4i, 5i};
+        [Core.Object]objsByAlias = Core.Array<Core.Object>().;
+        [Core.Object]objectRows = Core.Array<Core.Object>().{[Array<Core.Int32>[5]]intsByCtor, [Array<Core.Object>[20]]objsByAlias, Core.Array<Core.Object>().};
+        forIIterator(objectRows)
+
+
+    }
+
+    public  static Core.Object arrayCtorMultidimClassShapeTest()
+    {
+        println("========== ctor: multidim class shape ==========")
+        [Core.Array< [Gen] Array< [Gen] Array<Core.Int32>>>Array< [Gen] Array<Core.Int32>>[-1]
+]cube = Core.Array<T>().{Core.Array<T>().{Core.Array<T>().{1i, 2i, 3i}, Core.Array<T>().{1i, 2i, 3i, 4i}}, Core.Array<T>().{Core.Array<T>().{1i, 2i, 3i}, Core.Array<T>().{5i, 6i, 7i, 8i}}};
+        [Array< [Gen] Array< [Gen] Array<Core.Int32>>>[-1]]cube  ->  cube[Visit_1]  ->  Visit_1[Visit_1]  ->  Visit_1[Visit_1] = 12i;
+        forIIterator(cube)
+        [Core.Object]cubeValue = [Array< [Gen] Array< [Gen] Array<Core.Int32>>>[-1]]cube  ->  cube[Visit_1]  ->  Visit_1[Visit_1]  ->  Visit_1[Visit_1];
+        println("==========cubevalue:" + cubeValue)
+        [Core.Array< [Gen] Array<Core.ArrayTest.ArrClass>>Array<Core.ArrayTest.ArrClass>[-1]
+]arrclass1 = Core.Array< [Gen] Array<Core.ArrayTest.ArrClass>>().;
+        [Array< [Gen] Array<Core.ArrayTest.ArrClass>>[-1]]arrclass1  ->  [Core.Array< [Gen] Array<Core.ArrayTest.ArrClass>>]arrclass1.fill(ArrClass[2i])
+        forIIterator(arrclass1)
+        [Core.Object]arrClass2 = Core.Array< [Gen] Array< [Gen] Array<Core.ArrayTest.ArrClass>>>().;
+        forIIterator(arrClass2)
+
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayCtorLiteralMixTypeTest()
+    {
+        println("========== ctor: literal mix ==========")
+        [Core.Array<Core.Float32>Core.Float32
+]floatsFromLiteral = Core.Array<T>().{1.2f, 1.3f, 1.5f};
+        forIIterator(floatsFromLiteral)
+        [Core.Object]mixedObj = Core.Array<Core.Object>().{"aa", 1i, "232", 1f};
+        forIIterator(mixedObj)
+
+
+
+    }
+
+    public  static Core.Object arrayCtorFloatOverloadTest()
+    {
+        println("========== ctor: float overload ==========")
+        [Core.Array<Core.Float32>Core.Float32
+]a7 = Core.Array<Core.Float32>().{1.2f, 2.2f, 3.4f};
+        [Core.Array<Core.Float32>Core.Float32
+]a8 = Core.Array<Core.Float32>().{1f, 2f, 3f, 5f, 3.3f};
+        forIIterator(a7)
+        forIIterator(a8)
+
+
+
+    }
+
+    public  static Core.Object arrayArrClassIndexAndCurrentTest()
+    {
+        println("========== ArrClass[]: index/current ==========")
+        [Core.Array<Core.ArrayTest.ArrClass>Core.ArrayTest.ArrClass
+]arr1 = Core.Array<Core.ArrayTest.ArrClass>().;
+        [Core.Int32]i11 = 2i;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_0] = Core.ArrayTest.ArrClass().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_1] = Core.ArrayTest.ArrClass().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_i11] = Core.ArrayTest.ArrClass().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_i11]  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 10i;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_1] = Core.ArrayTest.ArrClass().{i1=20i};
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_1]  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 10000i;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_0]  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 330i;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  [Core.Array<Core.ArrayTest.ArrClass>]arr1.index(2i);
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  [Core.Array<Core.ArrayTest.ArrClass>]arr1.current()  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 10i;
+        forIIterator(arr1)
+
+
+    }
+
+    public  static Core.Object arrayArrClassForInAssignTest()
+    {
+        println("========== ArrClass[]: for-in assign ==========")
+        [Core.Array<Core.ArrayTest.ArrClass>Core.ArrayTest.ArrClass
+]arr1 = Core.Array<Core.ArrayTest.ArrClass>().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_0] = Core.ArrayTest.ArrClass().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_1] = Core.ArrayTest.ArrClass().;
+        [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_2] = Core.ArrayTest.ArrClass().;
+for a in arr1
+{
+            Core.Boolean autocreate_58849189 = ([Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  [Core.Array<Core.ArrayTest.ArrClass>]arr1.index() == 2i)
+            if autocreate_58849189
+            {
+                [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  [Core.Array<Core.ArrayTest.ArrClass>]arr1.current(Core.ArrayTest.ArrClass().{i1=100i});
+                println("=========arr1: " + a.toString())
+                continue;
+
+            }
+            a  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 200i;
+            println("=========arr111---: " + a.toString())
+
+}
+
+
+
+    }
+
+    public  static Core.Object arrayForInLiteralIndexTest()
+    {
+        println("========== for-in literal index ==========")
+        [Core.Object]arr = Core.Array<T>().{111L, 2222L, 33L, 44444444444L};
+for a in arr
+{
+            [Core.Object]forInIdx = ([Core.Array<T><Core.Int64>[4]]arr  ->  [Core.Array<T>]arr.index() + 1i);
+            println("=forIndex=" + arr.index)
+
+}
+for a in forcontent_48779793
+{
+            println("=a==" + a.toString())
+
+}
+
+
+
+
+    }
+
+    public  static Core.Object arrayArrClassCountLoopWriteTest()
+    {
+        println("========== ArrClass[]: count loop write ==========")
+        [Core.Array<Core.ArrayTest.ArrClass>Core.ArrayTest.ArrClass
+]arr1 = Core.Array<Core.ArrayTest.ArrClass>().;
+for 
+{
+    [Core.Object]i = 0i;
+    if ([Core.Int32]i < [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  [Core.Array<Core.ArrayTest.ArrClass>]arr1.length()){break;}
+            [Core.Int32]i = 1;
+            Core.Boolean autocreate_66054074 = ([Core.Int32]i < 40i)
+            if autocreate_66054074
+            {
+                continue;
+            }
+            [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_i] = Core.ArrayTest.ArrClass().;
+            [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_i]  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 100i;
+            [Array<Core.ArrayTest.ArrClass>[-1]]arr1  ->  arr1[Visit_i]  ->  public [Core.Int32]i1 = ConstExpressNode: [Int32] 0i; = 100i;
+            println("====index: " + i + "  arrobj: " + arr1.$i.toString())
+            [Core.Int32]i = 2i;
+
+
+}
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        arrayBasicApiTest()
+        arrayGenericElementTest()
+        arrayCreateInstanceIndexLoopTest()
+        arrayCovariantAndLiteralForInTest()
+        arrayNumberIteratorFromConcreteArrayTest()
+        arrayNestedObjectTreeTest()
+        arrayJagged2DAssignTest()
+        arrayIntLiteralReadTest()
+        arrayRank2SparseJaggedTest()
+        arrayMixedLiteralDollarIndexTest()
+        arrayLevelMatrixTest()
+        arrayStringAndLevelVectorTest()
+        arrayHeterogeneousObject2DTest()
+        arrayCtorPrimitiveAndAliasTest()
+        arrayCtorMultidimClassShapeTest()
+        arrayCtorLiteralMixTypeTest()
+        arrayCtorFloatOverloadTest()
+        arrayArrClassIndexAndCurrentTest()
+        arrayArrClassForInAssignTest()
+        arrayForInLiteralIndexTest()
+        arrayArrClassCountLoopWriteTest()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

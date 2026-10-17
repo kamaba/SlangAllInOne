@@ -1,0 +1,1334 @@
+-------------------IR 文件显示 开始 : Path: ../../../../test/BaseTest/AssignStatement.sl-----------------------
+Class: Core.AssignStatement
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.AssignStatement.scalarAssignTest
+    VirtualName: scalarAssignTest_Core.Object_0
+    Name: scalarAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=26301173 idx=0 name=_local[Core.AssignStatement.scalarAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=35383970 idx=0 name=scalarAssignTest_local[expr] type=Core.Int32
+      - #1 id=50020275 idx=1 name=scalarAssignTest_local[addValue] type=Core.Int32
+      - #2 id=47529299 idx=2 name=scalarAssignTest_local[minusValue] type=Core.Int32
+      - #3 id=25110514 idx=3 name=scalarAssignTest_local[multiplyValue] type=Core.Int32
+      - #4 id=24668042 idx=4 name=scalarAssignTest_local[divideValue] type=Core.Int32
+      - #5 id=20685786 idx=5 name=scalarAssignTest_local[moduloValue] type=Core.Int32
+      - #6 id=51954348 idx=6 name=scalarAssignTest_local[shiftLeftValue] type=Core.Int32
+      - #7 id=64935954 idx=7 name=scalarAssignTest_local[shiftRightValue] type=Core.Int32
+      - #8 id=47552675 idx=8 name=scalarAssignTest_local[andValue] type=Core.Int32
+      - #9 id=25320898 idx=9 name=scalarAssignTest_local[xorValue] type=Core.Int32
+      - #10 id=26561495 idx=10 name=scalarAssignTest_local[orValue] type=Core.Int32
+      - #11 id=37726867 idx=11 name=scalarAssignTest_local[stepValue] type=Core.Int32
+      - #12 id=3997487 idx=12 name=scalarAssignTest_local[mixed] type=Core.Num
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:45] [LoadConstString] index:[498] val: string[----- scalarAssignTest -----] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:47] [LoadConstInt32] index:[0] val: int32[0] 
+4 4   [ :0] [StoreLocal] index:[0]
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:48] [LoadConstInt32] index:[0] val: int32[20] 
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:48] [LoadConstInt32] index:[0] val: int32[3] 
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:48] [Divide] index:[0]
+8 8   [ Int32.sl:63] [CallVirt] index:[21] info:[CallVirt toInt32] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toInt32, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ ../../../../test/BaseTest/AssignStatement.sl:48] [LoadConstInt32] index:[0] val: int32[104] 
+10 10   [ ../../../../test/BaseTest/AssignStatement.sl:48] [Add] index:[0]
+11 11   [ :0] [StoreLocal] index:[0]
+12 12   [ ../../../../test/BaseTest/AssignStatement.sl:49] [LoadConstString] index:[499] val: string[expr = (20 / 3).toInt32() + 104 -> ] 
+13 13   [ ../../../../test/BaseTest/AssignStatement.sl:49] [LoadLocal] index:[0]
+14 14   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ../../../../test/BaseTest/AssignStatement.sl:49] [Add] index:[0]
+16 16   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+17 17   [ ../../../../test/BaseTest/AssignStatement.sl:51] [LoadConstInt32] index:[0] val: int32[10] 
+18 18   [ :0] [StoreLocal] index:[1]
+19 19   [ ../../../../test/BaseTest/AssignStatement.sl:52] [LoadLocal] index:[1]
+20 20   [ ../../../../test/BaseTest/AssignStatement.sl:52] [LoadConstInt32] index:[0] val: int32[5] 
+21 21   [ :0] [Add] index:[0]
+22 22   [ :0] [StoreLocal] index:[1]
+23 23   [ ../../../../test/BaseTest/AssignStatement.sl:53] [LoadConstString] index:[500] val: string[addValue += 5 -> ] 
+24 24   [ ../../../../test/BaseTest/AssignStatement.sl:53] [LoadLocal] index:[1]
+25 25   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ ../../../../test/BaseTest/AssignStatement.sl:53] [Add] index:[0]
+27 27   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+28 28   [ ../../../../test/BaseTest/AssignStatement.sl:55] [LoadConstInt32] index:[0] val: int32[50] 
+29 29   [ :0] [StoreLocal] index:[2]
+30 30   [ ../../../../test/BaseTest/AssignStatement.sl:56] [LoadLocal] index:[2]
+31 31   [ ../../../../test/BaseTest/AssignStatement.sl:56] [LoadConstInt32] index:[0] val: int32[12] 
+32 32   [ :0] [Minus] index:[0]
+33 33   [ :0] [StoreLocal] index:[2]
+34 34   [ ../../../../test/BaseTest/AssignStatement.sl:57] [LoadConstString] index:[501] val: string[minusValue -= 12 -> ] 
+35 35   [ ../../../../test/BaseTest/AssignStatement.sl:57] [LoadLocal] index:[2]
+36 36   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+37 37   [ ../../../../test/BaseTest/AssignStatement.sl:57] [Add] index:[0]
+38 38   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+39 39   [ ../../../../test/BaseTest/AssignStatement.sl:59] [LoadConstInt32] index:[0] val: int32[6] 
+40 40   [ :0] [StoreLocal] index:[3]
+41 41   [ ../../../../test/BaseTest/AssignStatement.sl:60] [LoadLocal] index:[3]
+42 42   [ ../../../../test/BaseTest/AssignStatement.sl:60] [LoadConstInt32] index:[0] val: int32[7] 
+43 43   [ :0] [Multiply] index:[0]
+44 44   [ :0] [StoreLocal] index:[3]
+45 45   [ ../../../../test/BaseTest/AssignStatement.sl:61] [LoadConstString] index:[502] val: string[multiplyValue *= 7 -> ] 
+46 46   [ ../../../../test/BaseTest/AssignStatement.sl:61] [LoadLocal] index:[3]
+47 47   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+48 48   [ ../../../../test/BaseTest/AssignStatement.sl:61] [Add] index:[0]
+49 49   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+50 50   [ ../../../../test/BaseTest/AssignStatement.sl:63] [LoadConstInt32] index:[0] val: int32[47] 
+51 51   [ :0] [StoreLocal] index:[4]
+52 52   [ ../../../../test/BaseTest/AssignStatement.sl:64] [LoadLocal] index:[4]
+53 53   [ ../../../../test/BaseTest/AssignStatement.sl:64] [LoadConstInt32] index:[0] val: int32[5] 
+54 54   [ :0] [Divide] index:[0]
+55 55   [ :0] [StoreLocal] index:[4]
+56 56   [ ../../../../test/BaseTest/AssignStatement.sl:65] [LoadConstString] index:[503] val: string[divideValue /= 5 -> ] 
+57 57   [ ../../../../test/BaseTest/AssignStatement.sl:65] [LoadLocal] index:[4]
+58 58   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+59 59   [ ../../../../test/BaseTest/AssignStatement.sl:65] [Add] index:[0]
+60 60   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+61 61   [ ../../../../test/BaseTest/AssignStatement.sl:67] [LoadConstInt32] index:[0] val: int32[23] 
+62 62   [ :0] [StoreLocal] index:[5]
+63 63   [ ../../../../test/BaseTest/AssignStatement.sl:68] [LoadLocal] index:[5]
+64 64   [ ../../../../test/BaseTest/AssignStatement.sl:68] [LoadConstInt32] index:[0] val: int32[5] 
+65 65   [ :0] [Modulo] index:[0]
+66 66   [ :0] [StoreLocal] index:[5]
+67 67   [ ../../../../test/BaseTest/AssignStatement.sl:69] [LoadConstString] index:[504] val: string[moduloValue %= 5 -> ] 
+68 68   [ ../../../../test/BaseTest/AssignStatement.sl:69] [LoadLocal] index:[5]
+69 69   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+70 70   [ ../../../../test/BaseTest/AssignStatement.sl:69] [Add] index:[0]
+71 71   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+72 72   [ ../../../../test/BaseTest/AssignStatement.sl:71] [LoadConstInt32] index:[0] val: int32[3] 
+73 73   [ :0] [StoreLocal] index:[6]
+74 74   [ ../../../../test/BaseTest/AssignStatement.sl:72] [LoadLocal] index:[6]
+75 75   [ ../../../../test/BaseTest/AssignStatement.sl:72] [LoadConstInt32] index:[0] val: int32[2] 
+76 76   [ :0] [Shi] index:[0]
+77 77   [ :0] [StoreLocal] index:[6]
+78 78   [ ../../../../test/BaseTest/AssignStatement.sl:73] [LoadConstString] index:[505] val: string[shiftLeftValue <<= 2 -> ] 
+79 79   [ ../../../../test/BaseTest/AssignStatement.sl:73] [LoadLocal] index:[6]
+80 80   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+81 81   [ ../../../../test/BaseTest/AssignStatement.sl:73] [Add] index:[0]
+82 82   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+83 83   [ ../../../../test/BaseTest/AssignStatement.sl:75] [LoadConstInt32] index:[0] val: int32[16] 
+84 84   [ ../../../../test/BaseTest/AssignStatement.sl:75] [Neg] index:[0]
+85 85   [ :0] [StoreLocal] index:[7]
+86 86   [ ../../../../test/BaseTest/AssignStatement.sl:76] [LoadLocal] index:[7]
+87 87   [ ../../../../test/BaseTest/AssignStatement.sl:76] [LoadConstInt32] index:[0] val: int32[2] 
+88 88   [ :0] [Shr] index:[0]
+89 89   [ :0] [StoreLocal] index:[7]
+90 90   [ ../../../../test/BaseTest/AssignStatement.sl:77] [LoadConstString] index:[506] val: string[shiftRightValue >>= 2 -> ] 
+91 91   [ ../../../../test/BaseTest/AssignStatement.sl:77] [LoadLocal] index:[7]
+92 92   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+93 93   [ ../../../../test/BaseTest/AssignStatement.sl:77] [Add] index:[0]
+94 94   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+95 95   [ ../../../../test/BaseTest/AssignStatement.sl:79] [LoadConstUInt8] index:[0] val:[12] 
+96 96   [ :0] [StoreLocal] index:[8]
+97 97   [ ../../../../test/BaseTest/AssignStatement.sl:80] [LoadLocal] index:[8]
+98 98   [ ../../../../test/BaseTest/AssignStatement.sl:80] [LoadConstUInt8] index:[0] val:[10] 
+99 99   [ :0] [Combine] index:[0]
+100 100   [ :0] [StoreLocal] index:[8]
+101 101   [ ../../../../test/BaseTest/AssignStatement.sl:81] [LoadConstString] index:[507] val: string[andValue &= 0b1010 -> ] 
+102 102   [ ../../../../test/BaseTest/AssignStatement.sl:81] [LoadLocal] index:[8]
+103 103   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+104 104   [ ../../../../test/BaseTest/AssignStatement.sl:81] [Add] index:[0]
+105 105   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+106 106   [ ../../../../test/BaseTest/AssignStatement.sl:83] [LoadConstUInt8] index:[0] val:[10] 
+107 107   [ :0] [StoreLocal] index:[9]
+108 108   [ ../../../../test/BaseTest/AssignStatement.sl:84] [LoadLocal] index:[9]
+109 109   [ ../../../../test/BaseTest/AssignStatement.sl:84] [LoadConstUInt8] index:[0] val:[12] 
+110 110   [ :0] [XOR] index:[0]
+111 111   [ :0] [StoreLocal] index:[9]
+112 112   [ ../../../../test/BaseTest/AssignStatement.sl:85] [LoadConstString] index:[508] val: string[xorValue ^= 0b1100 -> ] 
+113 113   [ ../../../../test/BaseTest/AssignStatement.sl:85] [LoadLocal] index:[9]
+114 114   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+115 115   [ ../../../../test/BaseTest/AssignStatement.sl:85] [Add] index:[0]
+116 116   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+117 117   [ ../../../../test/BaseTest/AssignStatement.sl:87] [LoadConstUInt8] index:[0] val:[10] 
+118 118   [ :0] [StoreLocal] index:[10]
+119 119   [ ../../../../test/BaseTest/AssignStatement.sl:88] [LoadLocal] index:[10]
+120 120   [ ../../../../test/BaseTest/AssignStatement.sl:88] [LoadConstUInt8] index:[0] val:[4] 
+121 121   [ :0] [InclusiveOr] index:[0]
+122 122   [ :0] [StoreLocal] index:[10]
+123 123   [ ../../../../test/BaseTest/AssignStatement.sl:89] [LoadConstString] index:[509] val: string[orValue |= 0b0100 -> ] 
+124 124   [ ../../../../test/BaseTest/AssignStatement.sl:89] [LoadLocal] index:[10]
+125 125   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+126 126   [ ../../../../test/BaseTest/AssignStatement.sl:89] [Add] index:[0]
+127 127   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+128 128   [ ../../../../test/BaseTest/AssignStatement.sl:91] [LoadConstInt32] index:[0] val: int32[10] 
+129 129   [ :0] [StoreLocal] index:[11]
+130 130   [ ../../../../test/BaseTest/AssignStatement.sl:92] [LoadLocal] index:[11]
+131 131   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+132 132   [ :0] [Add] index:[0]
+133 133   [ :0] [StoreLocal] index:[11]
+134 134   [ ../../../../test/BaseTest/AssignStatement.sl:93] [LoadLocal] index:[11]
+135 135   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+136 136   [ :0] [Minus] index:[0]
+137 137   [ :0] [StoreLocal] index:[11]
+138 138   [ ../../../../test/BaseTest/AssignStatement.sl:95] [LoadConstString] index:[510] val: string[stepValue ++ / -- -> ] 
+139 139   [ ../../../../test/BaseTest/AssignStatement.sl:95] [LoadLocal] index:[11]
+140 140   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+141 141   [ ../../../../test/BaseTest/AssignStatement.sl:95] [Add] index:[0]
+142 142   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+143 143   [ ../../../../test/BaseTest/AssignStatement.sl:97] [LoadConstFloat32] index:[0] val:[10] 
+144 144   [ :0] [StoreLocal] index:[12]
+145 145   [ ../../../../test/BaseTest/AssignStatement.sl:98] [LoadLocal] index:[12]
+146 146   [ ../../../../test/BaseTest/AssignStatement.sl:98] [LoadConstFloat32] index:[0] val:[2.5] 
+147 147   [ :0] [Add] index:[0]
+148 148   [ :0] [StoreLocal] index:[12]
+149 149   [ ../../../../test/BaseTest/AssignStatement.sl:99] [LoadLocal] index:[12]
+150 150   [ ../../../../test/BaseTest/AssignStatement.sl:99] [LoadConstFloat32] index:[0] val:[1.5] 
+151 151   [ :0] [Minus] index:[0]
+152 152   [ :0] [StoreLocal] index:[12]
+153 153   [ ../../../../test/BaseTest/AssignStatement.sl:100] [LoadLocal] index:[12]
+154 154   [ ../../../../test/BaseTest/AssignStatement.sl:100] [LoadConstInt32] index:[0] val: int32[2] 
+155 155   [ :0] [Multiply] index:[0]
+156 156   [ :0] [StoreLocal] index:[12]
+157 157   [ ../../../../test/BaseTest/AssignStatement.sl:101] [LoadLocal] index:[12]
+158 158   [ ../../../../test/BaseTest/AssignStatement.sl:101] [LoadConstInt32] index:[0] val: int32[4] 
+159 159   [ :0] [Divide] index:[0]
+160 160   [ :0] [StoreLocal] index:[12]
+161 161   [ ../../../../test/BaseTest/AssignStatement.sl:102] [LoadConstString] index:[511] val: string[Num mixed after += -= *= /= -> ] 
+162 162   [ ../../../../test/BaseTest/AssignStatement.sl:102] [LoadLocal] index:[12]
+163 163   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+164 164   [ ../../../../test/BaseTest/AssignStatement.sl:102] [Add] index:[0]
+165 165   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+166 166   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.memberAssignTest
+    VirtualName: memberAssignTest_Core.Object_0
+    Name: memberAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=35977388 idx=0 name=_local[Core.AssignStatement.memberAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=55361044 idx=0 name=memberAssignTest_local[box] type=Core.AssignStatement.AssignBox
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:107] [LoadConstString] index:[512] val: string[----- memberAssignTest -----] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+4 4   [ :0] [Dup] index:[0]
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:109] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ :0] [Dup] index:[0]
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:109] [LoadConstInt32] index:[0] val: int32[10] 
+8 8   [ :0] [StoreNotStaticField2] index:[0]
+9 9   [ :0] [Dup] index:[0]
+10 10   [ ../../../../test/BaseTest/AssignStatement.sl:109] [LoadConstString] index:[513] val: string[member] 
+11 11   [ :0] [StoreNotStaticField2] index:[0]
+12 12   [ :0] [Dup] index:[0]
+13 13   [ ../../../../test/BaseTest/AssignStatement.sl:109] [LoadConstUInt8] index:[0] val:[5] 
+14 14   [ :0] [StoreNotStaticField2] index:[0]
+15 15   [ :0] [StoreLocal] index:[0]
+16 16   [ ../../../../test/BaseTest/AssignStatement.sl:110] [LoadLocal] index:[0]
+17 17   [ ../../../../test/BaseTest/AssignStatement.sl:110] [LoadConstInt32] index:[0] val: int32[12] 
+18 18   [ :0] [StoreNotStaticField2] index:[0]
+19 19   [ ../../../../test/BaseTest/AssignStatement.sl:111] [LoadLocal] index:[0]
+20 20   [ :0] [Dup] index:[0]
+21 21   [ ../../../../test/BaseTest/AssignStatement.sl:111] [LoadNotStaticField] index:[0]
+22 22   [ ../../../../test/BaseTest/AssignStatement.sl:111] [LoadConstInt32] index:[0] val: int32[20] 
+23 23   [ :0] [Add] index:[0]
+24 24   [ :0] [StoreNotStaticField2] index:[0]
+25 25   [ ../../../../test/BaseTest/AssignStatement.sl:112] [LoadLocal] index:[0]
+26 26   [ :0] [Dup] index:[0]
+27 27   [ ../../../../test/BaseTest/AssignStatement.sl:112] [LoadNotStaticField] index:[0]
+28 28   [ ../../../../test/BaseTest/AssignStatement.sl:112] [LoadConstInt32] index:[0] val: int32[5] 
+29 29   [ :0] [Minus] index:[0]
+30 30   [ :0] [StoreNotStaticField2] index:[0]
+31 31   [ ../../../../test/BaseTest/AssignStatement.sl:113] [LoadLocal] index:[0]
+32 32   [ :0] [Dup] index:[0]
+33 33   [ ../../../../test/BaseTest/AssignStatement.sl:113] [LoadNotStaticField] index:[0]
+34 34   [ ../../../../test/BaseTest/AssignStatement.sl:113] [LoadConstInt32] index:[0] val: int32[2] 
+35 35   [ :0] [Multiply] index:[0]
+36 36   [ :0] [StoreNotStaticField2] index:[0]
+37 37   [ ../../../../test/BaseTest/AssignStatement.sl:114] [LoadLocal] index:[0]
+38 38   [ :0] [Dup] index:[0]
+39 39   [ ../../../../test/BaseTest/AssignStatement.sl:114] [LoadNotStaticField] index:[0]
+40 40   [ ../../../../test/BaseTest/AssignStatement.sl:114] [LoadConstInt32] index:[0] val: int32[3] 
+41 41   [ :0] [Divide] index:[0]
+42 42   [ :0] [StoreNotStaticField2] index:[0]
+43 43   [ ../../../../test/BaseTest/AssignStatement.sl:115] [LoadLocal] index:[0]
+44 44   [ :0] [Dup] index:[0]
+45 45   [ ../../../../test/BaseTest/AssignStatement.sl:115] [LoadNotStaticField] index:[0]
+46 46   [ ../../../../test/BaseTest/AssignStatement.sl:115] [LoadConstInt32] index:[0] val: int32[7] 
+47 47   [ :0] [Modulo] index:[0]
+48 48   [ :0] [StoreNotStaticField2] index:[0]
+49 49   [ ../../../../test/BaseTest/AssignStatement.sl:116] [LoadLocal] index:[0]
+50 50   [ :0] [Dup] index:[0]
+51 51   [ ../../../../test/BaseTest/AssignStatement.sl:116] [LoadNotStaticField] index:[0]
+52 52   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+53 53   [ :0] [Add] index:[0]
+54 54   [ :0] [StoreNotStaticField2] index:[0]
+55 55   [ ../../../../test/BaseTest/AssignStatement.sl:117] [LoadLocal] index:[0]
+56 56   [ :0] [Dup] index:[0]
+57 57   [ ../../../../test/BaseTest/AssignStatement.sl:117] [LoadNotStaticField] index:[0]
+58 58   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+59 59   [ :0] [Minus] index:[0]
+60 60   [ :0] [StoreNotStaticField2] index:[0]
+61 61   [ ../../../../test/BaseTest/AssignStatement.sl:119] [LoadLocal] index:[0]
+62 62   [ :0] [Dup] index:[0]
+63 63   [ ../../../../test/BaseTest/AssignStatement.sl:119] [LoadNotStaticField] index:[2]
+64 64   [ ../../../../test/BaseTest/AssignStatement.sl:119] [LoadConstUInt8] index:[0] val:[6] 
+65 65   [ :0] [Combine] index:[0]
+66 66   [ :0] [StoreNotStaticField2] index:[2]
+67 67   [ ../../../../test/BaseTest/AssignStatement.sl:120] [LoadLocal] index:[0]
+68 68   [ :0] [Dup] index:[0]
+69 69   [ ../../../../test/BaseTest/AssignStatement.sl:120] [LoadNotStaticField] index:[2]
+70 70   [ ../../../../test/BaseTest/AssignStatement.sl:120] [LoadConstUInt8] index:[0] val:[3] 
+71 71   [ :0] [XOR] index:[0]
+72 72   [ :0] [StoreNotStaticField2] index:[2]
+73 73   [ ../../../../test/BaseTest/AssignStatement.sl:121] [LoadLocal] index:[0]
+74 74   [ :0] [Dup] index:[0]
+75 75   [ ../../../../test/BaseTest/AssignStatement.sl:121] [LoadNotStaticField] index:[2]
+76 76   [ ../../../../test/BaseTest/AssignStatement.sl:121] [LoadConstUInt8] index:[0] val:[8] 
+77 77   [ :0] [InclusiveOr] index:[0]
+78 78   [ :0] [StoreNotStaticField2] index:[2]
+79 79   [ ../../../../test/BaseTest/AssignStatement.sl:122] [LoadLocal] index:[0]
+80 80   [ :0] [Dup] index:[0]
+81 81   [ ../../../../test/BaseTest/AssignStatement.sl:122] [LoadNotStaticField] index:[2]
+82 82   [ ../../../../test/BaseTest/AssignStatement.sl:122] [LoadConstInt32] index:[0] val: int32[1] 
+83 83   [ :0] [Shi] index:[0]
+84 84   [ :0] [StoreNotStaticField2] index:[2]
+85 85   [ ../../../../test/BaseTest/AssignStatement.sl:123] [LoadLocal] index:[0]
+86 86   [ :0] [Dup] index:[0]
+87 87   [ ../../../../test/BaseTest/AssignStatement.sl:123] [LoadNotStaticField] index:[2]
+88 88   [ ../../../../test/BaseTest/AssignStatement.sl:123] [LoadConstInt32] index:[0] val: int32[2] 
+89 89   [ :0] [Shr] index:[0]
+90 90   [ :0] [StoreNotStaticField2] index:[2]
+91 91   [ ../../../../test/BaseTest/AssignStatement.sl:125] [LoadLocal] index:[0]
+92 92   [ ../../../../test/BaseTest/AssignStatement.sl:125] [LoadConstInt32] index:[0] val: int32[250] 
+93 93   [ ../../../../test/BaseTest/AssignStatement.sl:17] [CallVirt] index:[11] info:[CallVirt score] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.score_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+94 94   [ ../../../../test/BaseTest/AssignStatement.sl:126] [LoadLocal] index:[0]
+95 95   [ ../../../../test/BaseTest/AssignStatement.sl:126] [LoadConstString] index:[514] val: string[member-updated] 
+96 96   [ :0] [StoreNotStaticField2] index:[1]
+97 97   [ ../../../../test/BaseTest/AssignStatement.sl:128] [LoadConstString] index:[515] val: string[box -> ] 
+98 98   [ ../../../../test/BaseTest/AssignStatement.sl:128] [LoadLocal] index:[0]
+99 99   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+100 100   [ ../../../../test/BaseTest/AssignStatement.sl:128] [Add] index:[0]
+101 101   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+102 102   [ ../../../../test/BaseTest/AssignStatement.sl:129] [LoadConstString] index:[516] val: string[box.total -> ] 
+103 103   [ ../../../../test/BaseTest/AssignStatement.sl:129] [LoadLocal] index:[0]
+104 104   [ ../../../../test/BaseTest/AssignStatement.sl:12] [CallVirt] index:[10] info:[CallVirt total] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.total, MethodRuntimeTypeList=[], ParamCount=0}] 
+105 105   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+106 106   [ ../../../../test/BaseTest/AssignStatement.sl:129] [Add] index:[0]
+107 107   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+108 108   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.arrayAssignTest
+    VirtualName: arrayAssignTest_Core.Object_0
+    Name: arrayAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=28487350 idx=0 name=_local[Core.AssignStatement.arrayAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=55059565 idx=0 name=arrayAssignTest_local[values] type=Core.Array<T><T><Core.Int32>
+      - #1 id=25774041 idx=1 name=arrayAssignTest_local[boxes] type=Core.Array<T><T><Core.AssignStatement.AssignBox>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:137] [LoadConstString] index:[517] val: string[----- arrayAssignTest -----] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:139] [LoadConstInt32] index:[0] val: int32[4] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:139] [LoadConstInt32] index:[0] val: int32[10] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/AssignStatement.sl:139] [LoadConstInt32] index:[0] val: int32[20] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/AssignStatement.sl:139] [LoadConstInt32] index:[0] val: int32[30] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/AssignStatement.sl:139] [LoadConstInt32] index:[0] val: int32[40] 
+16 16   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+17 17   [ :0] [StoreLocal] index:[0]
+18 18   [ ../../../../test/BaseTest/AssignStatement.sl:140] [LoadLocal] index:[0]
+19 19   [ ../../../../test/BaseTest/AssignStatement.sl:140] [LoadConstInt32] index:[0] val: int32[0] 
+20 20   [ ../../../../test/BaseTest/AssignStatement.sl:140] [LoadConstInt32] index:[0] val: int32[15] 
+21 21   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+22 22   [ ../../../../test/BaseTest/AssignStatement.sl:141] [LoadLocal] index:[0]
+23 23   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+24 24   [ :0] [Dup] index:[0] val: int32[2] 
+25 25   [ :0] [LoadArrayIndexField] index:[0]
+26 26   [ ../../../../test/BaseTest/AssignStatement.sl:141] [LoadConstInt32] index:[0] val: int32[5] 
+27 27   [ :0] [Add] index:[0]
+28 28   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+29 29   [ ../../../../test/BaseTest/AssignStatement.sl:142] [LoadLocal] index:[0]
+30 30   [ ../../../../test/BaseTest/AssignStatement.sl:142] [LoadConstInt32] index:[0] val: int32[2] 
+31 31   [ :0] [Dup] index:[0] val: int32[2] 
+32 32   [ :0] [LoadArrayIndexField] index:[0]
+33 33   [ ../../../../test/BaseTest/AssignStatement.sl:142] [LoadConstInt32] index:[0] val: int32[7] 
+34 34   [ :0] [Minus] index:[0]
+35 35   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+36 36   [ ../../../../test/BaseTest/AssignStatement.sl:143] [LoadLocal] index:[0]
+37 37   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+38 38   [ :0] [Dup] index:[0] val: int32[2] 
+39 39   [ :0] [LoadArrayIndexField] index:[0]
+40 40   [ ../../../../test/BaseTest/AssignStatement.sl:143] [LoadConstInt32] index:[0] val: int32[2] 
+41 41   [ :0] [Multiply] index:[0]
+42 42   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+43 43   [ ../../../../test/BaseTest/AssignStatement.sl:144] [LoadLocal] index:[0]
+44 44   [ ../../../../test/BaseTest/AssignStatement.sl:144] [LoadConstInt32] index:[0] val: int32[0] 
+45 45   [ :0] [Dup] index:[0] val: int32[2] 
+46 46   [ :0] [LoadArrayIndexField] index:[0]
+47 47   [ ../../../../test/BaseTest/AssignStatement.sl:144] [LoadConstInt32] index:[0] val: int32[3] 
+48 48   [ :0] [Divide] index:[0]
+49 49   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+50 50   [ ../../../../test/BaseTest/AssignStatement.sl:145] [LoadLocal] index:[0]
+51 51   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+52 52   [ :0] [Dup] index:[0] val: int32[2] 
+53 53   [ :0] [LoadArrayIndexField] index:[0]
+54 54   [ ../../../../test/BaseTest/AssignStatement.sl:145] [LoadConstInt32] index:[0] val: int32[6] 
+55 55   [ :0] [Modulo] index:[0]
+56 56   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+57 57   [ ../../../../test/BaseTest/AssignStatement.sl:146] [LoadLocal] index:[0]
+58 58   [ ../../../../test/BaseTest/AssignStatement.sl:146] [LoadConstInt32] index:[0] val: int32[2] 
+59 59   [ :0] [Dup] index:[0] val: int32[2] 
+60 60   [ :0] [LoadArrayIndexField] index:[0]
+61 61   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+62 62   [ :0] [Add] index:[0]
+63 63   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+64 64   [ ../../../../test/BaseTest/AssignStatement.sl:147] [LoadLocal] index:[0]
+65 65   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+66 66   [ :0] [Dup] index:[0] val: int32[2] 
+67 67   [ :0] [LoadArrayIndexField] index:[0]
+68 68   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+69 69   [ :0] [Minus] index:[0]
+70 70   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+71 71   [ ../../../../test/BaseTest/AssignStatement.sl:149] [LoadConstString] index:[518] val: string[values[0] -> ] 
+72 72   [ ../../../../test/BaseTest/AssignStatement.sl:149] [LoadLocal] index:[0]
+73 73   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+74 74   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+75 75   [ ../../../../test/BaseTest/AssignStatement.sl:149] [Add] index:[0]
+76 76   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+77 77   [ ../../../../test/BaseTest/AssignStatement.sl:150] [LoadConstString] index:[519] val: string[values.$1 -> ] 
+78 78   [ ../../../../test/BaseTest/AssignStatement.sl:150] [LoadLocal] index:[0]
+79 79   [ ../../../../test/BaseTest/AssignStatement.sl:150] [LoadArrayIndex] index:[1] val: int32[1] 
+80 80   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+81 81   [ ../../../../test/BaseTest/AssignStatement.sl:150] [Add] index:[0]
+82 82   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+83 83   [ ../../../../test/BaseTest/AssignStatement.sl:151] [LoadConstString] index:[520] val: string[values[2] -> ] 
+84 84   [ ../../../../test/BaseTest/AssignStatement.sl:151] [LoadLocal] index:[0]
+85 85   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+86 86   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+87 87   [ ../../../../test/BaseTest/AssignStatement.sl:151] [Add] index:[0]
+88 88   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+89 89   [ ../../../../test/BaseTest/AssignStatement.sl:152] [LoadConstString] index:[521] val: string[values.$3 -> ] 
+90 90   [ ../../../../test/BaseTest/AssignStatement.sl:152] [LoadLocal] index:[0]
+91 91   [ ../../../../test/BaseTest/AssignStatement.sl:152] [LoadArrayIndex] index:[3] val: int32[3] 
+92 92   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+93 93   [ ../../../../test/BaseTest/AssignStatement.sl:152] [Add] index:[0]
+94 94   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+95 95   [ ../../../../test/BaseTest/AssignStatement.sl:154] [LoadConstInt32] index:[0] val: int32[2] 
+96 96   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.AssignStatement.AssignBox>] 
+97 97   [ :0] [Dup] index:[0]
+98 98   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+99 99   [ :0] [Dup] index:[0]
+100 100   [ ../../../../test/BaseTest/AssignStatement.sl:154] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+101 101   [ :0] [Dup] index:[0]
+102 102   [ ../../../../test/BaseTest/AssignStatement.sl:154] [LoadConstInt32] index:[0] val: int32[1] 
+103 103   [ :0] [StoreNotStaticField2] index:[0]
+104 104   [ :0] [Dup] index:[0]
+105 105   [ ../../../../test/BaseTest/AssignStatement.sl:154] [LoadConstString] index:[522] val: string[left] 
+106 106   [ :0] [StoreNotStaticField2] index:[0]
+107 107   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+108 108   [ :0] [Dup] index:[0]
+109 109   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+110 110   [ :0] [Dup] index:[0]
+111 111   [ ../../../../test/BaseTest/AssignStatement.sl:154] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+112 112   [ :0] [Dup] index:[0]
+113 113   [ ../../../../test/BaseTest/AssignStatement.sl:154] [LoadConstInt32] index:[0] val: int32[2] 
+114 114   [ :0] [StoreNotStaticField2] index:[0]
+115 115   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+116 116   [ :0] [StoreLocal] index:[1]
+117 117   [ ../../../../test/BaseTest/AssignStatement.sl:155] [LoadLocal] index:[1]
+118 118   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+119 119   [ ../../../../test/BaseTest/AssignStatement.sl:155] [LoadConstInt32] index:[0] val: int32[100] 
+120 120   [ :0] [StoreNotStaticField2] index:[0]
+121 121   [ ../../../../test/BaseTest/AssignStatement.sl:156] [LoadLocal] index:[1]
+122 122   [ ../../../../test/BaseTest/AssignStatement.sl:156] [LoadArrayIndex] index:[0] val: int32[0] 
+123 123   [ ../../../../test/BaseTest/AssignStatement.sl:156] [LoadNotStaticField] index:[3]
+124 124   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+125 125   [ ../../../../test/BaseTest/AssignStatement.sl:156] [LoadConstInt32] index:[0] val: int32[222] 
+126 126   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+127 127   [ ../../../../test/BaseTest/AssignStatement.sl:157] [LoadLocal] index:[1]
+128 128   [ ../../../../test/BaseTest/AssignStatement.sl:157] [LoadConstInt32] index:[0] val: int32[1] 
+129 129   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+130 130   [ :0] [Dup] index:[0]
+131 131   [ ../../../../test/BaseTest/AssignStatement.sl:157] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+132 132   [ :0] [Dup] index:[0]
+133 133   [ ../../../../test/BaseTest/AssignStatement.sl:157] [LoadConstInt32] index:[0] val: int32[20] 
+134 134   [ :0] [StoreNotStaticField2] index:[0]
+135 135   [ :0] [Dup] index:[0]
+136 136   [ ../../../../test/BaseTest/AssignStatement.sl:157] [LoadConstString] index:[523] val: string[brace-rebind] 
+137 137   [ :0] [StoreNotStaticField2] index:[0]
+138 138   [ :0] [Dup] index:[0]
+139 139   [ ../../../../test/BaseTest/AssignStatement.sl:157] [LoadConstUInt8] index:[0] val:[15] 
+140 140   [ :0] [StoreNotStaticField2] index:[0]
+141 141   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+142 142   [ ../../../../test/BaseTest/AssignStatement.sl:158] [LoadLocal] index:[1]
+143 143   [ ../../../../test/BaseTest/AssignStatement.sl:158] [LoadArrayIndex] index:[1] val: int32[1] 
+144 144   [ :0] [Dup] index:[0]
+145 145   [ ../../../../test/BaseTest/AssignStatement.sl:158] [LoadNotStaticField] index:[0]
+146 146   [ ../../../../test/BaseTest/AssignStatement.sl:158] [LoadConstInt32] index:[0] val: int32[5] 
+147 147   [ :0] [Add] index:[0]
+148 148   [ :0] [StoreNotStaticField2] index:[0]
+149 149   [ ../../../../test/BaseTest/AssignStatement.sl:159] [LoadLocal] index:[1]
+150 150   [ ../../../../test/BaseTest/AssignStatement.sl:159] [LoadArrayIndex] index:[1] val: int32[1] 
+151 151   [ ../../../../test/BaseTest/AssignStatement.sl:159] [LoadNotStaticField] index:[3]
+152 152   [ ../../../../test/BaseTest/AssignStatement.sl:159] [LoadConstInt32] index:[0] val: int32[0] 
+153 153   [ ../../../../test/BaseTest/AssignStatement.sl:159] [LoadConstInt32] index:[0] val: int32[999] 
+154 154   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+155 155   [ ../../../../test/BaseTest/AssignStatement.sl:161] [LoadConstString] index:[524] val: string[boxes[0] -> ] 
+156 156   [ ../../../../test/BaseTest/AssignStatement.sl:161] [LoadLocal] index:[1]
+157 157   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+158 158   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+159 159   [ ../../../../test/BaseTest/AssignStatement.sl:161] [Add] index:[0]
+160 160   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+161 161   [ ../../../../test/BaseTest/AssignStatement.sl:162] [LoadConstString] index:[525] val: string[boxes.$1 -> ] 
+162 162   [ ../../../../test/BaseTest/AssignStatement.sl:162] [LoadLocal] index:[1]
+163 163   [ ../../../../test/BaseTest/AssignStatement.sl:162] [LoadArrayIndex] index:[1] val: int32[1] 
+164 164   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+165 165   [ ../../../../test/BaseTest/AssignStatement.sl:162] [Add] index:[0]
+166 166   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+167 167   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.objectInitAndReferenceAssignTest
+    VirtualName: objectInitAndReferenceAssignTest_Core.Object_0
+    Name: objectInitAndReferenceAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=23586666 idx=0 name=_local[Core.AssignStatement.objectInitAndReferenceAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=10953403 idx=0 name=objectInitAndReferenceAssignTest_local[left] type=Core.AssignStatement.AssignBox
+      - #1 id=31471768 idx=1 name=objectInitAndReferenceAssignTest_local[right] type=Core.AssignStatement.AssignBox
+      - #2 id=14810456 idx=2 name=objectInitAndReferenceAssignTest_local[alias] type=Core.AssignStatement.AssignBox
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:167] [LoadConstString] index:[526] val: string[----- objectInitAndReferenceAssignTest -----] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+4 4   [ :0] [Dup] index:[0]
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:169] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ :0] [Dup] index:[0]
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:169] [LoadConstInt32] index:[0] val: int32[11] 
+8 8   [ :0] [StoreNotStaticField2] index:[0]
+9 9   [ :0] [Dup] index:[0]
+10 10   [ ../../../../test/BaseTest/AssignStatement.sl:169] [LoadConstString] index:[527] val: string[left-init] 
+11 11   [ :0] [StoreNotStaticField2] index:[0]
+12 12   [ :0] [Dup] index:[0]
+13 13   [ ../../../../test/BaseTest/AssignStatement.sl:169] [LoadConstUInt8] index:[0] val:[1] 
+14 14   [ :0] [StoreNotStaticField2] index:[0]
+15 15   [ :0] [StoreLocal] index:[0]
+16 16   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/AssignStatement.sl:170] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ :0] [Dup] index:[0]
+20 20   [ ../../../../test/BaseTest/AssignStatement.sl:170] [LoadConstInt32] index:[0] val: int32[22] 
+21 21   [ :0] [StoreNotStaticField2] index:[0]
+22 22   [ :0] [Dup] index:[0]
+23 23   [ ../../../../test/BaseTest/AssignStatement.sl:170] [LoadConstString] index:[528] val: string[right-init] 
+24 24   [ :0] [StoreNotStaticField2] index:[0]
+25 25   [ :0] [Dup] index:[0]
+26 26   [ ../../../../test/BaseTest/AssignStatement.sl:170] [LoadConstUInt8] index:[0] val:[2] 
+27 27   [ :0] [StoreNotStaticField2] index:[0]
+28 28   [ :0] [StoreLocal] index:[1]
+29 29   [ ../../../../test/BaseTest/AssignStatement.sl:171] [LoadLocal] index:[0]
+30 30   [ :0] [StoreLocal] index:[2]
+31 31   [ ../../../../test/BaseTest/AssignStatement.sl:173] [LoadLocal] index:[2]
+32 32   [ ../../../../test/BaseTest/AssignStatement.sl:173] [LoadLocal] index:[1]
+33 33   [ ../../../../test/BaseTest/AssignStatement.sl:173] [LoadNotStaticField] index:[0]
+34 34   [ ../../../../test/BaseTest/AssignStatement.sl:173] [LoadConstInt32] index:[0] val: int32[100] 
+35 35   [ ../../../../test/BaseTest/AssignStatement.sl:173] [Add] index:[0]
+36 36   [ :0] [StoreNotStaticField2] index:[0]
+37 37   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ ../../../../test/BaseTest/AssignStatement.sl:174] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ :0] [Dup] index:[0]
+41 41   [ ../../../../test/BaseTest/AssignStatement.sl:174] [LoadConstInt32] index:[0] val: int32[33] 
+42 42   [ :0] [StoreNotStaticField2] index:[0]
+43 43   [ :0] [Dup] index:[0]
+44 44   [ ../../../../test/BaseTest/AssignStatement.sl:174] [LoadConstString] index:[529] val: string[brace-left] 
+45 45   [ :0] [StoreNotStaticField2] index:[0]
+46 46   [ :0] [Dup] index:[0]
+47 47   [ ../../../../test/BaseTest/AssignStatement.sl:174] [LoadConstUInt8] index:[0] val:[6] 
+48 48   [ :0] [StoreNotStaticField2] index:[0]
+49 49   [ :0] [StoreLocal] index:[0]
+50 50   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+51 51   [ :0] [Dup] index:[0]
+52 52   [ ../../../../test/BaseTest/AssignStatement.sl:175] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ :0] [Dup] index:[0]
+54 54   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadLocal] index:[0]
+55 55   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadNotStaticField] index:[0]
+56 56   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadLocal] index:[2]
+57 57   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadNotStaticField] index:[0]
+58 58   [ ../../../../test/BaseTest/AssignStatement.sl:175] [Add] index:[0]
+59 59   [ :0] [StoreNotStaticField2] index:[0]
+60 60   [ :0] [Dup] index:[0]
+61 61   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadConstString] index:[530] val: string[copied] 
+62 62   [ :0] [StoreNotStaticField2] index:[0]
+63 63   [ :0] [Dup] index:[0]
+64 64   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadLocal] index:[2]
+65 65   [ ../../../../test/BaseTest/AssignStatement.sl:175] [LoadNotStaticField] index:[2]
+66 66   [ :0] [StoreNotStaticField2] index:[0]
+67 67   [ :0] [StoreLocal] index:[1]
+68 68   [ ../../../../test/BaseTest/AssignStatement.sl:177] [LoadConstString] index:[531] val: string[left -> ] 
+69 69   [ ../../../../test/BaseTest/AssignStatement.sl:177] [LoadLocal] index:[0]
+70 70   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+71 71   [ ../../../../test/BaseTest/AssignStatement.sl:177] [Add] index:[0]
+72 72   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+73 73   [ ../../../../test/BaseTest/AssignStatement.sl:178] [LoadConstString] index:[532] val: string[right -> ] 
+74 74   [ ../../../../test/BaseTest/AssignStatement.sl:178] [LoadLocal] index:[1]
+75 75   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+76 76   [ ../../../../test/BaseTest/AssignStatement.sl:178] [Add] index:[0]
+77 77   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+78 78   [ ../../../../test/BaseTest/AssignStatement.sl:179] [LoadConstString] index:[533] val: string[alias -> ] 
+79 79   [ ../../../../test/BaseTest/AssignStatement.sl:179] [LoadLocal] index:[2]
+80 80   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+81 81   [ ../../../../test/BaseTest/AssignStatement.sl:179] [Add] index:[0]
+82 82   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+83 83   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.genericAssignTest
+    VirtualName: genericAssignTest_Core.Object_0
+    Name: genericAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=66185246 idx=0 name=_local[Core.AssignStatement.genericAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=58796306 idx=0 name=genericAssignTest_local[lv] type=Core.AssignStatement.Level<T><T><Core.Int32>
+      - #1 id=59404709 idx=1 name=genericAssignTest_local[wrapped] type=Core.AssignStatement.Level<T><T><Core.AssignStatement.AssignBox>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:184] [LoadConstString] index:[534] val: string[----- genericAssignTest -----] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.AssignStatement.Level<T><T><Core.Int32>] 
+4 4   [ :0] [Dup] index:[0]
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:186] [LoadConstInt32] index:[0] val: int32[42] 
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:186] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.AssignStatement.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ :0] [StoreLocal] index:[0]
+8 8   [ ../../../../test/BaseTest/AssignStatement.sl:187] [LoadLocal] index:[0]
+9 9   [ ../../../../test/BaseTest/AssignStatement.sl:187] [LoadConstInt32] index:[0] val: int32[84] 
+10 10   [ :0] [StoreNotStaticField2] index:[0]
+11 11   [ ../../../../test/BaseTest/AssignStatement.sl:188] [LoadConstString] index:[535] val: string[Level<int> -> ] 
+12 12   [ ../../../../test/BaseTest/AssignStatement.sl:188] [LoadLocal] index:[0]
+13 13   [ ../../../../test/BaseTest/AssignStatement.sl:37] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.Level<T><T>, StaticRuntimeTypeList=[], Method=Core.AssignStatement.Level<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ../../../../test/BaseTest/AssignStatement.sl:188] [Add] index:[0]
+15 15   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.AssignStatement.Level<T><T><Core.AssignStatement.AssignBox>] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+19 19   [ :0] [Dup] index:[0]
+20 20   [ ../../../../test/BaseTest/AssignStatement.sl:189] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ ../../../../test/BaseTest/AssignStatement.sl:189] [LoadConstInt32] index:[0] val: int32[5] 
+23 23   [ :0] [StoreNotStaticField2] index:[0]
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/AssignStatement.sl:189] [LoadConstString] index:[536] val: string[wrapped] 
+26 26   [ :0] [StoreNotStaticField2] index:[0]
+27 27   [ ../../../../test/BaseTest/AssignStatement.sl:189] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.Level<T><T><Core.AssignStatement.AssignBox>, StaticRuntimeTypeList=[Core.AssignStatement.AssignBox], Method=Core.AssignStatement.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+28 28   [ :0] [StoreLocal] index:[1]
+29 29   [ ../../../../test/BaseTest/AssignStatement.sl:190] [LoadLocal] index:[1]
+30 30   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[29397739] 
+31 31   [ :0] [Dup] index:[0]
+32 32   [ ../../../../test/BaseTest/AssignStatement.sl:190] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ :0] [Dup] index:[0]
+34 34   [ ../../../../test/BaseTest/AssignStatement.sl:190] [LoadLocal] index:[0]
+35 35   [ ../../../../test/BaseTest/AssignStatement.sl:190] [LoadNotStaticField] index:[0]
+36 36   [ :0] [StoreNotStaticField2] index:[0]
+37 37   [ :0] [Dup] index:[0]
+38 38   [ ../../../../test/BaseTest/AssignStatement.sl:190] [LoadConstString] index:[537] val: string[generic-reassign] 
+39 39   [ :0] [StoreNotStaticField2] index:[0]
+40 40   [ :0] [Dup] index:[0]
+41 41   [ ../../../../test/BaseTest/AssignStatement.sl:190] [LoadConstUInt8] index:[0] val:[4] 
+42 42   [ :0] [StoreNotStaticField2] index:[0]
+43 43   [ :0] [StoreNotStaticField2] index:[0]
+44 44   [ ../../../../test/BaseTest/AssignStatement.sl:191] [LoadLocal] index:[1]
+45 45   [ ../../../../test/BaseTest/AssignStatement.sl:191] [LoadNotStaticField] index:[0]
+46 46   [ ../../../../test/BaseTest/AssignStatement.sl:191] [LoadConstInt32] index:[0] val: int32[250] 
+47 47   [ ../../../../test/BaseTest/AssignStatement.sl:17] [CallVirt] index:[11] info:[CallVirt score] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.score_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+48 48   [ ../../../../test/BaseTest/AssignStatement.sl:192] [LoadLocal] index:[1]
+49 49   [ ../../../../test/BaseTest/AssignStatement.sl:192] [LoadNotStaticField] index:[0]
+50 50   [ ../../../../test/BaseTest/AssignStatement.sl:192] [LoadNotStaticField] index:[3]
+51 51   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+52 52   [ ../../../../test/BaseTest/AssignStatement.sl:192] [LoadConstInt32] index:[0] val: int32[333] 
+53 53   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+54 54   [ ../../../../test/BaseTest/AssignStatement.sl:194] [LoadConstString] index:[538] val: string[Level<AssignBox> -> ] 
+55 55   [ ../../../../test/BaseTest/AssignStatement.sl:194] [LoadLocal] index:[1]
+56 56   [ ../../../../test/BaseTest/AssignStatement.sl:37] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.Level<T><T>, StaticRuntimeTypeList=[], Method=Core.AssignStatement.Level<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ ../../../../test/BaseTest/AssignStatement.sl:194] [Add] index:[0]
+58 58   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+59 59   [ ../../../../test/BaseTest/AssignStatement.sl:195] [LoadConstString] index:[539] val: string[wrapped.t -> ] 
+60 60   [ ../../../../test/BaseTest/AssignStatement.sl:195] [LoadLocal] index:[1]
+61 61   [ ../../../../test/BaseTest/AssignStatement.sl:195] [LoadNotStaticField] index:[0]
+62 62   [ ../../../../test/BaseTest/AssignStatement.sl:22] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement.AssignBox, StaticRuntimeTypeList=[], Method=Core.AssignStatement.AssignBox.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+63 63   [ ../../../../test/BaseTest/AssignStatement.sl:195] [Add] index:[0]
+64 64   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+65 65   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.fun
+    VirtualName: fun_Core.Object_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=47052116 idx=0 name=_local[Core.AssignStatement.fun.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:200] [LoadConstString] index:[540] val: string[========== AssignStatement (start) ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:43] [CallStatic] index:[0] info:[CallStatic scalarAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement, StaticRuntimeTypeList=[], Method=Core.AssignStatement.scalarAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ../../../../test/BaseTest/AssignStatement.sl:105] [CallStatic] index:[0] info:[CallStatic memberAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement, StaticRuntimeTypeList=[], Method=Core.AssignStatement.memberAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:135] [CallStatic] index:[0] info:[CallStatic arrayAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement, StaticRuntimeTypeList=[], Method=Core.AssignStatement.arrayAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:165] [CallStatic] index:[0] info:[CallStatic objectInitAndReferenceAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement, StaticRuntimeTypeList=[], Method=Core.AssignStatement.objectInitAndReferenceAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:182] [CallStatic] index:[0] info:[CallStatic genericAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.AssignStatement, StaticRuntimeTypeList=[], Method=Core.AssignStatement.genericAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ../../../../test/BaseTest/AssignStatement.sl:208] [LoadConstString] index:[541] val: string[========== AssignStatement (end) ==========] 
+9 9   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ :0] [Label] index:[0]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=63575380 idx=0 name=_local[Core.Object.toString.return] type=Core.String
+    Arguments:
+      - #0 id=66716254 idx=0 name=_local[Core.Object.toString.this] type=Core.Object
+    Locals:
+      - #0 id=35307513 idx=0 name=toString_local[hc] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:65] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreLocal] index:[0]
+4 4   [ Object.sl:66] [LoadConstString] index:[61] val: string[Object:] 
+5 5   [ Object.sl:66] [LoadLocal] index:[0]
+6 6   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ Object.sl:66] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+Class: Core.AssignStatement.AssignBox
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals:
+      - #0 id=32242465 idx=0 name=Core.AssignStatement.AssignBox.value type=Core.Int32
+      - #1 id=21746729 idx=1 name=Core.AssignStatement.AssignBox.name type=Core.String
+      - #2 id=61502840 idx=2 name=Core.AssignStatement.AssignBox.flag type=Core.Int32
+      - #3 id=16654654 idx=3 name=Core.AssignStatement.AssignBox.numbers type=Core.Array<T><T><Core.Int32>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.AssignBox.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53125076 idx=0 name=_local[Core.AssignStatement.AssignBox.toString.return] type=Core.String
+    Arguments:
+      - #0 id=20815867 idx=0 name=_local[Core.AssignStatement.AssignBox.toString.this] type=Core.AssignStatement.AssignBox
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[542] val: string[AssignBox(value=] 
+2 2   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[0]
+4 4   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[543] val: string[, name=] 
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+8 8   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+9 9   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[1]
+10 10   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+11 11   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[544] val: string[, flag=] 
+12 12   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+13 13   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+14 14   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[2]
+15 15   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+17 17   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[545] val: string[, n0=] 
+18 18   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+19 19   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+20 20   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[3]
+21 21   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+22 22   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+24 24   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[546] val: string[, n1=] 
+25 25   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+26 26   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+27 27   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[3]
+28 28   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+29 29   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+31 31   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[547] val: string[, n2=] 
+32 32   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+33 33   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadArgument] index:[0]
+34 34   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadNotStaticField] index:[3]
+35 35   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+36 36   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+37 37   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+38 38   [ ../../../../test/BaseTest/AssignStatement.sl:24] [LoadConstString] index:[69] val: string[)] 
+39 39   [ ../../../../test/BaseTest/AssignStatement.sl:24] [Add] index:[0]
+40 40   [ :0] [StoreReturn] index:[0]
+41 41   [ :0] [BrLabel] index:[0] val:[42   [ :0] [Label] index:[0]] 
+42 42   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.AssignBox.total
+    VirtualName: total_Core.Object_0
+    Name: total
+    InterfaceMethod: False
+    Return:
+      - #0 id=8163917 idx=0 name=_local[Core.AssignStatement.AssignBox.total.return] type=Core.Object
+    Arguments:
+      - #0 id=8363642 idx=0 name=_local[Core.AssignStatement.AssignBox.total.this] type=Core.AssignStatement.AssignBox
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadNotStaticField] index:[0]
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadArgument] index:[0]
+4 4   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadNotStaticField] index:[3]
+5 5   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:14] [Add] index:[0]
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadArgument] index:[0]
+8 8   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadNotStaticField] index:[3]
+9 9   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+10 10   [ ../../../../test/BaseTest/AssignStatement.sl:14] [Add] index:[0]
+11 11   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadArgument] index:[0]
+12 12   [ ../../../../test/BaseTest/AssignStatement.sl:14] [LoadNotStaticField] index:[3]
+13 13   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+14 14   [ ../../../../test/BaseTest/AssignStatement.sl:14] [Add] index:[0]
+15 15   [ :0] [StoreReturn] index:[0]
+16 16   [ :0] [BrLabel] index:[0] val:[17   [ :0] [Label] index:[0]] 
+17 17   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.AssignBox.score_1_Core.Object
+    VirtualName: score_Core.Void_1_Core.Object
+    Name: score
+    InterfaceMethod: False
+    Return:
+      - #0 id=57297510 idx=0 name=_local[Core.AssignStatement.AssignBox.score.return] type=Core.Void
+    Arguments:
+      - #0 id=6366390 idx=0 name=_local[Core.AssignStatement.AssignBox.score.this] type=Core.AssignStatement.AssignBox
+      - #1 id=45915542 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:19] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/AssignStatement.sl:19] [LoadArgument] index:[1]
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:19] [CastClass] index:[0] info:[CastClass as Core.Int32] val irmt:[Core.Int32] 
+4 4   [ :0] [StoreNotStaticField2] index:[0]
+5 5   [ :0] [Label] index:[0]
+
+Class: Core.AssignStatement.Level<T><T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals:
+      - #0 id=15674164 idx=0 name=Core.AssignStatement.Level<T>.t type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.Level<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=28171394 idx=0 name=_local[Core.AssignStatement.Level<T>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=10586695 idx=0 name=_local[Core.AssignStatement.Level<T>.toString.this] type=Core.AssignStatement.Level<T><T><T[0]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:39] [LoadConstString] index:[486] val: string[Level<T>(] 
+2 2   [ ../../../../test/BaseTest/AssignStatement.sl:39] [LoadArgument] index:[0]
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:39] [LoadNotStaticField] index:[0]
+4 4   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/AssignStatement.sl:39] [Add] index:[0]
+6 6   [ ../../../../test/BaseTest/AssignStatement.sl:39] [LoadConstString] index:[69] val: string[)] 
+7 7   [ ../../../../test/BaseTest/AssignStatement.sl:39] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+  Method: Core.AssignStatement.Level<T>._init__1_Core.Object
+    VirtualName: _init__Core.Void_1_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=181603 idx=0 name=_local[Core.AssignStatement.Level<T>._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=52215961 idx=0 name=_local[Core.AssignStatement.Level<T>._init_.this] type=Core.AssignStatement.Level<T><T><T[0]>
+      - #1 id=1634435 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/AssignStatement.sl:34] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/AssignStatement.sl:34] [LoadArgument] index:[1]
+3 3   [ ../../../../test/BaseTest/AssignStatement.sl:34] [CastClass] index:[0] info:[CastClass as Core.Object] val irmt:[Core.Object[T:0]] 
+4 4   [ :0] [StoreNotStaticField2] index:[0]
+5 5   [ :0] [Label] index:[0]
+
+-------------------IR 文件显示 结束 : -----------------------

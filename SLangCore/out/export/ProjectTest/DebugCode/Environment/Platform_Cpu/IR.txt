@@ -1,0 +1,70 @@
+-------------------IR 文件显示 开始 : Path: Environment/Platform_Cpu.sl-----------------------
+Class: Core.Environment.Platform.arch
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-2096248984 idx=0 name=Core.Environment.Platform.arch.unknown type=Core.Member
+      - #1 id=1652387803 idx=1 name=Core.Environment.Platform.arch.x86 type=Core.Member
+      - #2 id=-2074163767 idx=2 name=Core.Environment.Platform.arch.x64 type=Core.Member
+      - #3 id=-475226077 idx=3 name=Core.Environment.Platform.arch.arm32 type=Core.Member
+      - #4 id=-640287661 idx=4 name=Core.Environment.Platform.arch.arm64 type=Core.Member
+      - #5 id=1186316062 idx=5 name=Core.Environment.Platform.arch.riscv64 type=Core.Member
+      - #6 id=1045117990 idx=6 name=Core.Environment.Platform.arch.loongArch64 type=Core.Member
+      - #7 id=1704285853 idx=7 name=Core.Environment.Platform.arch.mips64 type=Core.Member
+      - #8 id=-1284363239 idx=8 name=Core.Environment.Platform.arch.sw64 type=Core.Member
+      - #9 id=1926413745 idx=9 name=Core.Environment.Platform.arch.ppc64 type=Core.Member
+      - #10 id=-528083864 idx=10 name=Core.Environment.Platform.arch.sparc64 type=Core.Member
+      - #11 id=171236439 idx=11 name=Core.Environment.Platform.arch.wasm32 type=Core.Member
+      - #12 id=-974923582 idx=12 name=Core.Environment.Platform.arch.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.cpu
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-241143014 idx=0 name=Core.Environment.Platform.cpu.unknown type=Core.Member
+      - #1 id=1758950425 idx=1 name=Core.Environment.Platform.cpu.single type=Core.Member
+      - #2 id=-1966639302 idx=2 name=Core.Environment.Platform.cpu.smp type=Core.Member
+      - #3 id=-5573944 idx=3 name=Core.Environment.Platform.cpu.bigLittle type=Core.Member
+      - #4 id=-1223507270 idx=4 name=Core.Environment.Platform.cpu.hybrid type=Core.Member
+      - #5 id=1666121129 idx=5 name=Core.Environment.Platform.cpu.numa type=Core.Member
+      - #6 id=-1219597126 idx=6 name=Core.Environment.Platform.cpu.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.isa
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1393540328 idx=0 name=Core.Environment.Platform.isa.none type=Core.Member
+      - #1 id=-31537914 idx=1 name=Core.Environment.Platform.isa.sse type=Core.Member
+      - #2 id=1070033250 idx=2 name=Core.Environment.Platform.isa.sse2 type=Core.Member
+      - #3 id=519994544 idx=3 name=Core.Environment.Platform.isa.sse42 type=Core.Member
+      - #4 id=1172873214 idx=4 name=Core.Environment.Platform.isa.avx type=Core.Member
+      - #5 id=589194146 idx=5 name=Core.Environment.Platform.isa.avx2 type=Core.Member
+      - #6 id=1262573276 idx=6 name=Core.Environment.Platform.isa.avx512 type=Core.Member
+      - #7 id=-930613329 idx=7 name=Core.Environment.Platform.isa.fma type=Core.Member
+      - #8 id=1454327352 idx=8 name=Core.Environment.Platform.isa.neon type=Core.Member
+      - #9 id=1237293539 idx=9 name=Core.Environment.Platform.isa.sve type=Core.Member
+      - #10 id=1733451754 idx=10 name=Core.Environment.Platform.isa.sve2 type=Core.Member
+      - #11 id=1877161404 idx=11 name=Core.Environment.Platform.isa.rvv type=Core.Member
+      - #12 id=-1880875220 idx=12 name=Core.Environment.Platform.isa.lsx type=Core.Member
+      - #13 id=547051306 idx=13 name=Core.Environment.Platform.isa.lasx type=Core.Member
+      - #14 id=811914650 idx=14 name=Core.Environment.Platform.isa.mmi type=Core.Member
+      - #15 id=594375625 idx=15 name=Core.Environment.Platform.isa.altivec type=Core.Member
+      - #16 id=1701798987 idx=16 name=Core.Environment.Platform.isa.vsx type=Core.Member
+      - #17 id=-360193324 idx=17 name=Core.Environment.Platform.isa.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

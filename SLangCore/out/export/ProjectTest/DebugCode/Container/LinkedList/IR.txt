@@ -1,0 +1,567 @@
+-------------------IR 文件显示 开始 : Path: Container/LinkedList.sl-----------------------
+Class: Core.LinkedList<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=91993791 idx=0 name=Core.LinkedList<T>._head type=Core.LinkedList.Node
+      - #1 id=-714898596 idx=1 name=Core.LinkedList<T>._tail type=Core.LinkedList.Node
+      - #2 id=-161713836 idx=2 name=Core.LinkedList<T>._count type=Core.Int32
+      - #3 id=2075446111 idx=3 name=Core.LinkedList<T>._index type=Core.Int32
+      - #4 id=51452107 idx=4 name=Core.LinkedList<T>._iterNode type=Core.LinkedList.Node
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27773751 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=55281755 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=35081372 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=48637172 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=47296894 idx=0 name=showstr type=Core.String
+      - #1 id=23018869 idx=1 name=node type=Core.LinkedList.Node
+      - #2 id=5843233 idx=2 name=isFirst type=Core.Boolean
+      - #3 id=52589099 idx=3 name=autocreate_65445301 type=Core.Boolean
+      - #4 id=3539844 idx=4 name=autocreate_52136803 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=21433709 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=54577306 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=55917699 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58408860 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=33497244 idx=0 name=autocreate_11244347 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=61001774 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58973758 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=12145054 idx=0 name=autocreate_34090260 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.first
+    VirtualName: first_T_0
+    Name: first
+    InterfaceMethod: False
+    Return:
+      - #0 id=25478763 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=62483297 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=27982283 idx=0 name=autocreate_38376892 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.last
+    VirtualName: last_T_0
+    Name: last
+    InterfaceMethod: False
+    Return:
+      - #0 id=8065117 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=38178826 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=5477191 idx=0 name=autocreate_9847715 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.add_1_T
+    VirtualName: add_Core.Void_1_T
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=13567135 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8963999 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=54995351 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.addLast_1_T
+    VirtualName: addLast_Core.Void_1_T
+    Name: addLast
+    InterfaceMethod: False
+    Return:
+      - #0 id=25438431 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25196113 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=27619288 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=47247007 idx=0 name=node type=Core.LinkedList.Node
+    Instructions:
+
+  Method: Core.LinkedList<T>.addFirst_1_T
+    VirtualName: addFirst_Core.Void_1_T
+    Name: addFirst
+    InterfaceMethod: False
+    Return:
+      - #0 id=1802368 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=22569884 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=16221316 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=11774121 idx=0 name=node type=Core.LinkedList.Node
+    Instructions:
+
+  Method: Core.LinkedList<T>.addBefore_2_Core.Int32_T
+    VirtualName: addBefore_Core.Void_2_Core.Int32_T
+    Name: addBefore
+    InterfaceMethod: False
+    Return:
+      - #0 id=14179779 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38858233 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=60509154 idx=1 name=index type=Core.Int32
+      - #2 id=7711478 idx=2 name=item type=T[0]
+    Locals:
+      - #0 id=2294440 idx=0 name=node type=Core.LinkedList.Node
+    Instructions:
+
+  Method: Core.LinkedList<T>.addAfter_2_Core.Int32_T
+    VirtualName: addAfter_Core.Void_2_Core.Int32_T
+    Name: addAfter
+    InterfaceMethod: False
+    Return:
+      - #0 id=51631922 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=20649961 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=62034116 idx=1 name=index type=Core.Int32
+      - #2 id=21436136 idx=2 name=item type=T[0]
+    Locals:
+      - #0 id=58707504 idx=0 name=node type=Core.LinkedList.Node
+    Instructions:
+
+  Method: Core.LinkedList<T>.insert_2_Core.Int32_T
+    VirtualName: insert_Core.Void_2_Core.Int32_T
+    Name: insert
+    InterfaceMethod: False
+    Return:
+      - #0 id=57687380 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58605492 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=49424379 idx=1 name=index type=Core.Int32
+      - #2 id=42166233 idx=2 name=item type=T[0]
+    Locals:
+      - #0 id=43951783 idx=0 name=node type=Core.LinkedList.Node
+      - #1 id=60021735 idx=1 name=autocreate_21520579 type=Core.Boolean
+      - #2 id=3324704 idx=2 name=autocreate_59467483 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.remove_1_T
+    VirtualName: remove_Core.Void_1_T
+    Name: remove
+    InterfaceMethod: False
+    Return:
+      - #0 id=27052626 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3005847 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=42147045 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.removeFirst
+    VirtualName: removeFirst_Core.Void_0
+    Name: removeFirst
+    InterfaceMethod: False
+    Return:
+      - #0 id=58467488 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43779089 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.removeLast
+    VirtualName: removeLast_Core.Void_0
+    Name: removeLast
+    InterfaceMethod: False
+    Return:
+      - #0 id=38246063 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56445345 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.removeAt_1_Core.Int32
+    VirtualName: removeAt_Core.Void_1_Core.Int32
+    Name: removeAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=10923387 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8670250 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=31201619 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=44303172 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12379115 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.indexOf_1_T
+    VirtualName: indexOf_Core.Int32_1_T
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=31787174 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=63184231 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=17649112 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.lastIndexOf_1_T
+    VirtualName: lastIndexOf_Core.Int32_1_T
+    Name: lastIndexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=48410331 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=20292006 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=33039800 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=61041458 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58978167 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=12502218 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>._getItem__1_Core.Int32
+    VirtualName: _getItem__T_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=54420716 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=6046746 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=20024398 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>._setItem__2_Core.Int32_T
+    VirtualName: _setItem__Core.Void_2_Core.Int32_T
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=35162951 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11363535 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+      - #1 id=48031108 idx=1 name=index type=Core.Int32
+      - #2 id=29626789 idx=2 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.toArray
+    VirtualName: toArray_Core.Array<T>[-1]_0
+    Name: toArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=50959748 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=65314517 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=55984556 idx=0 name=arr type=Core.Array<T><T[0]>
+    Instructions:
+
+  Method: Core.LinkedList<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=10552036 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38455150 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=49408564 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27859461 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=48492497 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=42670757 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals:
+      - #0 id=33779294 idx=0 name=autocreate_66578044 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LinkedList<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=38075525 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=63882937 idx=0 name=this] type=Core.LinkedList<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.LinkedList.Node
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-948702277 idx=0 name=Core.LinkedList.Node._value type=Core.Object
+      - #1 id=678080079 idx=1 name=Core.LinkedList.Node._prev type=Core.LinkedList.Node
+      - #2 id=1750961304 idx=2 name=Core.LinkedList.Node._next type=Core.LinkedList.Node
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.LinkedList.Node._init__1_Core.Object
+    VirtualName: _init__Core.Void_1_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=41097577 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64218721 idx=0 name=this] type=Core.LinkedList.Node
+      - #1 id=34333880 idx=1 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList.Node.value
+    VirtualName: value_Core.Object_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=29580916 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=40569470 idx=0 name=this] type=Core.LinkedList.Node
+    Locals: []
+    Instructions:
+
+  Method: Core.LinkedList.Node.value_1_Core.Object
+    VirtualName: value_Core.Void_1_Core.Object
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=22543082 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47244029 idx=0 name=this] type=Core.LinkedList.Node
+      - #1 id=1561146 idx=1 name=val type=Core.Object
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

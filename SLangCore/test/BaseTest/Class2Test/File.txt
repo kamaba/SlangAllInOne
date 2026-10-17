@@ -1,0 +1,107 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/Class2Test.sl-----------------------
+import Application;
+import Std;
+namespace N1
+{
+namespace N2.N3
+{
+}
+namespace N3
+{
+    Class5 extends Class4
+    {
+        X52 = 100i
+        X53 = 100i
+        X54 = 100i
+
+        _public sumX( )
+        {
+            ret this.X41 + this.X42 + this.X52 + this.X53 + this.X54
+        }
+    }
+}
+    N2.Class1
+    {
+    }
+    Class4 extends N2.N3.Class3
+    {
+        X41 = 100i
+        X42 = 100i
+
+    }
+    Class6 extends N3.Class5
+    {
+        Class6Inner
+        {
+            innerValue = 61i
+
+        }
+
+        X61 = 6i
+
+        _public _init_( int value )
+        {
+            this.X61 = value;
+        }
+        _public string name( )
+        {
+            ret "Class6:" + this.X61.toString()
+        }
+        _public describe( )
+        {
+            ret this.name() + ":" + this.sumX().toString()
+        }
+    }
+}
+namespace N3
+{
+    Class5 extends Class4
+    {
+        X52 = 100i
+        X53 = 100i
+        X54 = 100i
+
+        _public sumX( )
+        {
+            ret this.X41 + this.X42 + this.X52 + this.X53 + this.X54
+        }
+    }
+}
+namespace N1.N4
+{
+    Class7 extends N1.Class6
+    {
+        X71 = 7i
+
+        _public _init_( int value,  int x71 )
+        {
+            base._init_(value);
+            this.X71 = x71;
+        }
+        _public total( )
+        {
+            ret this.X61 + this.X71 + this.sumX()
+        }
+    }
+}
+namespace N2.N3
+{
+}
+Class2TestSmoke
+{
+    _public static fun( )
+    {
+        global.println("========== Class2Test (start) ==========");
+        c5 = N1.N3.Class5();
+        global.println("N1.N3.Class5 X52 -> " + c5.X52.toString());
+        global.println("N1.N3.Class5 sumX -> " + c5.sumX().toString());
+        c6 = N1.Class6(66i);
+        inner = N1.Class6.Class6Inner();
+        global.println("N1.Class6 describe -> " + c6.describe());
+        global.println("N1.Class6 innerValue -> " + inner.innerValue.toString());
+        c7 = N1.N4.Class7(70i,71i);
+        global.println("N1.N4.Class7 total -> " + c7.total().toString());
+        global.println("========== Class2Test (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

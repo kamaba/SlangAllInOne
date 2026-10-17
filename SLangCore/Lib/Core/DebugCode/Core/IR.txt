@@ -1,0 +1,267 @@
+-------------------IR 文件显示 开始 : Path: Core.sp-----------------------
+Class: Core.Project
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 27717712
+      Mapping: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=10926182 idx=0 name=Core.Project.cpk type=Core.String
+      - #1 id=31226782 idx=1 name=Core.Project.Pi type=Core.Float32
+      - #2 id=12605589 idx=2 name=Core.Project.var1 type=Core.Int32
+      - #3 id=46341445 idx=3 name=Core.Project.arrvar1 type=Core.Array<T><T><Core.Int32>
+      - #4 id=14419821 idx=4 name=Core.Project.vardata2 type=___ProjectGlobalData_vardata2___
+  GlobalBindings: []
+
+  Method: Core.Project.print_1_Core.Object
+    VirtualName: print_Core.Object_1_Core.Object
+    Name: print
+    InterfaceMethod: False
+    Return:
+      - #0 id=6233535 idx=0 name=_local[Core.Project.print.return] type=Core.Object
+    Arguments:
+      - #0 id=56101816 idx=0 name=_local[str] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Project.println_1_Core.Object
+    VirtualName: println_Core.Object_1_Core.Object
+    Name: println
+    InterfaceMethod: False
+    Return:
+      - #0 id=35154304 idx=0 name=_local[Core.Project.println.return] type=Core.Object
+    Arguments:
+      - #0 id=47953287 idx=0 name=_local[str] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Project._main_
+    VirtualName: _main__Core.Object_0
+    Name: _main_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28926407 idx=0 name=_local[Core.Project._main_.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/NumberTest.sl:290] [CallStatic] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.NumberTest, StaticRuntimeTypeList=[], Method=Core.NumberTest.fun, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ :0] [Label] index:[0]
+
+  Method: Core.Project._test_
+    VirtualName: _test__Core.Object_0
+    Name: _test_
+    InterfaceMethod: False
+    Return:
+      - #0 id=59011071 idx=0 name=_local[Core.Project._test_.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Project.CompileBefore
+    VirtualName: CompileBefore_Core.Object_0
+    Name: CompileBefore
+    InterfaceMethod: False
+    Return:
+      - #0 id=61337593 idx=0 name=_local[Core.Project.CompileBefore.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Project.CompileAfter
+    VirtualName: CompileAfter_Core.Object_0
+    Name: CompileAfter
+    InterfaceMethod: False
+    Return:
+      - #0 id=15167431 idx=0 name=_local[Core.Project.CompileAfter.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43304686 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=42094334 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=18018639 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=54197854 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=50223649 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=27950026 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41583755 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=49359659 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=38709481 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=48460267 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=12841014 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=32967578 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=33489226 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=53128157 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=28272749 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=8413469 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=8391370 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=10402369 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=8612359 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=37285554 idx=0 name=_local[Core.Object.toString.return] type=Core.String
+    Arguments:
+      - #0 id=26512460 idx=0 name=_local[Core.Object.toString.this] type=Core.Object
+    Locals:
+      - #0 id=25666 idx=0 name=toString_local[hc] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreLocal] index:[0]
+4 4   [ Object.sl:67] [LoadConstString] index:[7] val: string[Object:] 
+5 5   [ :0] [LoadLocal] index:[0]
+6 6   [ Int32.sl:116] [CallVirt] index:[9] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ Object.sl:67] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+-------------------IR 文件显示 结束 : -----------------------

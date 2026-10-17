@@ -1,0 +1,166 @@
+-------------------IR 文件显示 开始 : Path: MyTest1.sl-----------------------
+Class: MyTest.MyTest1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: MyTest.MyTest1.WaitTimeaa
+    VirtualName: WaitTimeaa_Core.Void_0
+    Name: WaitTimeaa
+    InterfaceMethod: False
+    Return:
+      - #0 id=65300541 idx=0 name=_local[MyTest.MyTest1.WaitTimeaa.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=50833958 idx=0 name=WaitTimeaa_local[start1] type=Core.Int64
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest1.sl:8] [LoadConstString] index:[3] val: string[aaaaaaaaaaa] 
+2 2   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+3 3   [ MyTest1.sl:6] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+4 4   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+5 5   [ :0] [CallStatic] index:[0] info:[CallStatic clock] val:[RuntimeCall{StaticRuntimeType=Std.OS.Timer, StaticRuntimeTypeList=[], Method=Std.OS.Timer.clock, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ MyTest1.sl:6] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ MyTest1.sl:12] [LoadConstInt32] index:[0] val: int32[2000] 
+8 8   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ MyTest1.sl:14] [LoadConstString] index:[4] val: string[2222222222========] 
+10 10   [ :0] [CallStatic] index:[0] info:[CallStatic clock] val:[RuntimeCall{StaticRuntimeType=Std.OS.Timer, StaticRuntimeTypeList=[], Method=Std.OS.Timer.clock, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ MyTest1.sl:14] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MyTest1.sl:14] [Minus] index:[0]
+13 13   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int64, StaticRuntimeTypeList=[], Method=Core.Int64.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ MyTest1.sl:14] [Add] index:[0]
+15 15   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+16 16   [ MyTest1.sl:6] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+17 17   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+18 18   [ MyTest1.sl:6] [Label] index:[0] info:[FunEndLabel]
+
+  Method: MyTest.MyTest1.Waitimeabbb
+    VirtualName: Waitimeabbb_Core.Void_0
+    Name: Waitimeabbb
+    InterfaceMethod: False
+    Return:
+      - #0 id=54852443 idx=0 name=_local[MyTest.MyTest1.Waitimeabbb.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=23909939 idx=0 name=Waitimeabbb_local[start1] type=Core.Int64
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest1.sl:18] [LoadConstString] index:[5] val: string[bbbbbbbbbbbb] 
+2 2   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+3 3   [ MyTest1.sl:16] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+4 4   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+5 5   [ :0] [CallStatic] index:[0] info:[CallStatic clock] val:[RuntimeCall{StaticRuntimeType=Std.OS.Timer, StaticRuntimeTypeList=[], Method=Std.OS.Timer.clock, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ MyTest1.sl:16] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ MyTest1.sl:22] [LoadConstInt32] index:[0] val: int32[1500] 
+8 8   [ :0] [CallStatic] index:[1] info:[CallStatic delay] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.delay_1_Core.Int64, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ MyTest1.sl:24] [LoadConstString] index:[6] val: string[3333333333333========] 
+10 10   [ :0] [CallStatic] index:[0] info:[CallStatic clock] val:[RuntimeCall{StaticRuntimeType=Std.OS.Timer, StaticRuntimeTypeList=[], Method=Std.OS.Timer.clock, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ MyTest1.sl:24] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MyTest1.sl:24] [Minus] index:[0]
+13 13   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int64, StaticRuntimeTypeList=[], Method=Core.Int64.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ MyTest1.sl:24] [Add] index:[0]
+15 15   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+16 16   [ MyTest1.sl:16] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+17 17   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+18 18   [ MyTest1.sl:16] [Label] index:[0] info:[FunEndLabel]
+
+  Method: MyTest.MyTest1.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=13862865 idx=0 name=_local[MyTest.MyTest1.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=57656925 idx=0 name=fun_local[waitTimeaaFn] type=Core.Function
+      - #1 id=49150280 idx=1 name=_local[MyTest.MyTest1.fun.__closure_ctx__] type=Core.Object
+    Instructions:
+0 0   [ MyTest1.sl:26] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ MyTest1.sl:26] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ MyTest1.sl:28] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ MyTest1.sl:28] [NewClosure] index:[0] info:[NewClosure __closure_waitTimeaaFn_1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=MyTest.MyTest1.__closure_waitTimeaaFn_1_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ MyTest1.sl:26] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ MyTest1.sl:32] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ :0] [CallStatic] index:[1] info:[CallStatic spawnClosure0] val:[RuntimeCall{StaticRuntimeType=Core.Coroutine, StaticRuntimeTypeList=[], Method=Core.Coroutine.spawnClosure0_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+8 8   [ :0] [Pop] index:[0]
+9 9   [ MyTest1.sl:16] [CallStatic] index:[0] info:[CallStatic Waitimeabbb] val:[RuntimeCall{StaticRuntimeType=MyTest.MyTest1, StaticRuntimeTypeList=[], Method=MyTest.MyTest1.Waitimeabbb, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ MyTest1.sl:26] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

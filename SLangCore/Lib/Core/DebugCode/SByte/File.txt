@@ -1,0 +1,62 @@
+-------------------FileMeta 文件显示 开始 : Path: SByte.sl-----------------------
+public _partial class SByte extends Num
+{
+    publicSByte MaxValue = 0b1111111
+    publicSByte MinValue = 0b0000000
+    publicSByte _value = 0
+
+    _public override int size( )
+    {
+        ret 8
+    }
+    _public override int byteLength( )
+    {
+        ret 1
+    }
+    _public _init_( SByte _val )
+    {
+        this._value = _val;
+    }
+    public override Num abs( )
+    {
+        ret SystemConvertSInt8(SystemNumAbs(this))
+    }
+    public override Num floor( )
+    {
+        ret SystemNumFloor(this)
+    }
+    public override Num ceil( )
+    {
+        ret this
+    }
+    public override Int32 compareTo( Num other )
+    {
+        if other == null
+        {
+            ret 1
+        }
+        SByte ov = SystemConvertSInt8(other);
+        if this._value == ov
+        {
+            ret 0
+        }
+        ret this._value > ov ? 1 : - 1
+    }
+    public static SByte parse( string s )
+    {
+        ret SystemConvertSInt8(s)
+    }
+    _public override Int32 toInt32( )
+    {
+        ret SystemConvertInt32(this)
+    }
+    _public override Float64 toFloat64( )
+    {
+        ret SystemConvertFloat64(this)
+    }
+    _public override String toString( )
+    {
+        ret SystemConvertString(this)
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

@@ -1,0 +1,156 @@
+-------------------Meta 文件显示 开始 : Path: Type.sl-----------------------
+public class MetaClass extends Core.Object
+{
+private [Core.String]_namespaceName = "";
+private [Core.String]_className = "";
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  get Core.String className()
+{
+return [Core.MetaClass]Core.MetaClass.className.this  ->  [Core.String]_className;
+}
+
+}
+
+public class Type extends Core.Object
+{
+private [Core.UInt8]_eType = 0;
+private [Core.MetaClass]_metaClass = null;
+public [Core.Array<Core.Type>Core.Type
+]typelist = null;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+Core.Boolean autocreate_37685299 = ([Core.Type]Core.Type.toString.this  ->  [Core.MetaClass]_metaClass == null)
+if autocreate_37685299
+{
+return "no_meta_class";
+}
+[Core.String]str = [Core.Type]Core.Type.toString.this  ->  [Core.MetaClass]_metaClass.className();
+Core.Boolean autocreate_3623379 = ([Core.Type]Core.Type.toString.this  ->  [Array<Core.Type>[-1]]typelist != null)
+if autocreate_3623379
+{
+[Core.String]str = ([Core.String]str + "<");
+for 
+{
+    [Core.Object]i = 0;    [Core.Object]i = 1;
+
+    if ([Core.Object]i < [Core.Type]Core.Type.toString.this  ->  [Core.Array<Core.Type>]typelist.length()){break;}
+[Core.String]str = ([Core.String]str + [Core.Type]Core.Type.toString.this  ->  [Array<Core.Type>[-1]]typelist  ->  [Core.Type]Visit_i.toString());
+
+}
+[Core.String]str = ([Core.String]str + ">");
+
+
+}
+return [Core.String]str;
+}
+
+public  get Core.MetaClass metaClass()
+{
+return [Core.Type]Core.Type.metaClass.this  ->  [Core.MetaClass]_metaClass;
+}
+
+public  get Core.Int32 eType()
+{
+return [Core.Type]Core.Type.eType.this  ->  [Core.UInt8]_eType.toInt32();
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

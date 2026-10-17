@@ -1,0 +1,47 @@
+-------------------FileMeta 文件显示 开始 : Path: CallLinkTest.sl-----------------------
+namespace CallLinkTestNS
+{
+    Class1
+    {
+        c1_1 = 10i
+
+    }
+    Class2 extends Class1
+    {
+        c2_1 = 20i
+        Class1 Class1c2_2 = new()
+
+    }
+    Class3
+    {
+        c3_1 = Class2()
+
+        _public Class2 GetClass2( )
+        {
+            ret this.c3_1
+        }
+    }
+    Class4 extends Class3
+    {
+        Class3 Class3c4_1 = null
+        int intc4_2 = 0i
+        Class3 Class3c4_3 = new()
+
+    }
+    CallLinkTest
+    {
+        _public static fun( )
+        {
+            global.println("========== CallLinkTest (start) ========== 面向：成员访问链 obj.f().g.h 与赋值、中间返回引用的一致性。");
+            Class4 c4 = Class4();
+            c4.c4_1 = Class3();
+            c4.c4_3.GetClass2().c2_2.c1_1 = 40i;
+            c4.GetClass2().c2_1 = c4.c4_3.GetClass2().c2_2.c1_1;
+            newc1 = c4.GetClass2().c2_1;
+            global.println("GetClass2().c2_1 (应等于 40) -> " + newc1.toString());
+            global.println("末端 c1_1 -> " + c4.c4_3.GetClass2().c2_2.c1_1.toString());
+            global.println("========== CallLinkTest (end) ==========");
+        }
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

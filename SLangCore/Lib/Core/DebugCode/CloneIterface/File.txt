@@ -1,0 +1,7 @@
+-------------------FileMeta 文件显示 开始 : Path: CloneIterface.sl-----------------------
+public _partial _class Core.IClone
+{
+    _public clone( )
+
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

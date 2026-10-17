@@ -1,0 +1,19 @@
+Project
+{
+    Global()
+    {
+    }
+    _main_()
+    {
+    }
+    _test_()
+    {
+       #ETC1.ExtendsClass.fun()
+    }
+    _before_()
+    {        
+    }
+    _after_()
+    {        
+    }
+}

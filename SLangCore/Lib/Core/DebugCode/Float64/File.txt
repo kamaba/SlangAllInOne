@@ -1,0 +1,64 @@
+-------------------FileMeta 文件显示 开始 : Path: Float64.sl-----------------------
+ ;
+public _partial class Float64 extends Num
+{
+    public Epsilen = 4.91d
+    public MaxValue = 20
+    public MinValue = - 1
+    publicFloat64 _value = 0.00d
+
+    public void _init_( Float64 f )
+    {
+        this._value = f;
+    }
+    _public override int size( )
+    {
+        ret 64
+    }
+    _public override int byteLength( )
+    {
+        ret 8
+    }
+    public override Num abs( )
+    {
+        ret SystemNumAbs(this)
+    }
+    public override Num floor( )
+    {
+        ret SystemNumFloor(this)
+    }
+    public override Num ceil( )
+    {
+        ret this
+    }
+    public override Int32 compareTo( Num other )
+    {
+        if other == null
+        {
+            ret 1
+        }
+        Float64 ov = other.toFloat64();
+        if this._value == ov
+        {
+            ret 0
+        }
+        ret this._value > ov ? 1 : 0 - 1
+    }
+    public static bool isFinite( Float64 f )
+    {
+        ret false
+    }
+    public override Int32 toInt32( )
+    {
+        ret SystemConvertInt32(this)
+    }
+    public override Float64 toFloat64( )
+    {
+        ret SystemConvertFloat64(this)
+    }
+    _public override String toString( )
+    {
+        ret SystemConvertString(this)
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

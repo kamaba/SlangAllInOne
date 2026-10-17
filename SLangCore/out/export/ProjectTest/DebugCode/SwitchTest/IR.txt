@@ -1,0 +1,1884 @@
+-------------------IR 文件显示 开始 : Path: SwitchTest.sl-----------------------
+Class: ProjectTest.SwitchTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.SwitchTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=39626584 idx=0 name=_local[ProjectTest.SwitchTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:36] [LoadConstString] index:[2643] val: string[========== SwitchTest (start) ==========] 
+2 2   [ SwitchTest.sl:34] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:54] [CallStatic] index:[0] info:[CallStatic constIntTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.constIntTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ SwitchTest.sl:77] [CallStatic] index:[0] info:[CallStatic multiValueOrTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.multiValueOrTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ SwitchTest.sl:117] [CallStatic] index:[0] info:[CallStatic multiValueCommaTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.multiValueCommaTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ SwitchTest.sl:147] [CallStatic] index:[0] info:[CallStatic floatValueTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.floatValueTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ SwitchTest.sl:177] [CallStatic] index:[0] info:[CallStatic stringValueTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.stringValueTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ SwitchTest.sl:207] [CallStatic] index:[0] info:[CallStatic boolValueTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.boolValueTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ SwitchTest.sl:229] [CallStatic] index:[0] info:[CallStatic enumValueTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.enumValueTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ SwitchTest.sl:253] [CallStatic] index:[0] info:[CallStatic typePatternIsTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.typePatternIsTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ SwitchTest.sl:337] [CallStatic] index:[0] info:[CallStatic defaultValueTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.defaultValueTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ SwitchTest.sl:364] [CallStatic] index:[0] info:[CallStatic nextCaseTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.nextCaseTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ SwitchTest.sl:395] [CallStatic] index:[0] info:[CallStatic parenSourceTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.SwitchTest, StaticRuntimeTypeList=[], Method=ProjectTest.SwitchTest.parenSourceTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ SwitchTest.sl:50] [LoadConstString] index:[2644] val: string[========== SwitchTest (end) ==========] 
+19 19   [ SwitchTest.sl:34] [StoreLocal] index:[1] info:[LocalStatement]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+22 22   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+23 23   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+24 24   [ SwitchTest.sl:34] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.constIntTest
+    VirtualName: constIntTest_Core.Void_0
+    Name: constIntTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=21094941 idx=0 name=_local[ProjectTest.SwitchTest.constIntTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=55636749 idx=0 name=constIntTest_local[i] type=Core.Int32
+      - #1 id=30968695 idx=1 name=constIntTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:56] [LoadConstString] index:[2645] val: string[----- constIntTest -----] 
+2 2   [ SwitchTest.sl:54] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:58] [LoadConstInt32] index:[0] val: int32[2] 
+8 8   [ SwitchTest.sl:54] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:54] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:61] [LoadConstString] index:[2646] val: string[i=2 -> case 1 (unexpected)] 
+15 15   [ SwitchTest.sl:54] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[47]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:62] [LoadConstString] index:[2647] val: string[i=2 -> case 2 hit] 
+24 24   [ SwitchTest.sl:54] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[47]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:63] [LoadConstString] index:[2648] val: string[i=2 -> case 3 (unexpected)] 
+33 33   [ SwitchTest.sl:54] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Br] index:[47]
+39 39   [ :0] [Nop] index:[0]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ SwitchTest.sl:64] [LoadConstString] index:[2649] val: string[i=2 -> default (unexpected)] 
+42 42   [ SwitchTest.sl:54] [StoreLocal] index:[6] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ :0] [Label] index:[1]
+48 48   [ SwitchTest.sl:67] [LoadConstInt32] index:[0] val: int32[9] 
+49 49   [ SwitchTest.sl:54] [StoreLocal] index:[0] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0] info:[SwitchStart]
+51 51   [ SwitchTest.sl:54] [LoadLocal] index:[0] info:[LocalStatement]
+52 52   [ :0] [Switch] index:[0] info:[Switch]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:70] [LoadConstString] index:[2650] val: string[i=9 -> case 1 (unexpected)] 
+56 56   [ SwitchTest.sl:54] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[79]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:71] [LoadConstString] index:[2651] val: string[i=9 -> case 2 (unexpected)] 
+65 65   [ SwitchTest.sl:54] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Br] index:[79]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ :0] [Nop] index:[0]
+73 73   [ SwitchTest.sl:72] [LoadConstString] index:[2652] val: string[i=9 -> default hit] 
+74 74   [ SwitchTest.sl:54] [StoreLocal] index:[9] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ :0] [Label] index:[2]
+80 80   [ SwitchTest.sl:54] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.multiValueOrTest
+    VirtualName: multiValueOrTest_Core.Void_0
+    Name: multiValueOrTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=40639560 idx=0 name=_local[ProjectTest.SwitchTest.multiValueOrTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=30211727 idx=0 name=multiValueOrTest_local[i] type=Core.Int32
+      - #1 id=3470093 idx=1 name=multiValueOrTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:79] [LoadConstString] index:[2653] val: string[----- multiValueOrTest -----] 
+2 2   [ SwitchTest.sl:77] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:81] [LoadConstInt32] index:[0] val: int32[3] 
+8 8   [ SwitchTest.sl:77] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:84] [LoadConstString] index:[2654] val: string[i=3 -> case 1|2|3|4 hit] 
+15 15   [ SwitchTest.sl:77] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[38]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:85] [LoadConstString] index:[2655] val: string[i=3 -> case 5|6|7 (unexpected)] 
+24 24   [ SwitchTest.sl:77] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[38]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:86] [LoadConstString] index:[2656] val: string[i=3 -> default (unexpected)] 
+33 33   [ SwitchTest.sl:77] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Label] index:[1]
+39 39   [ SwitchTest.sl:89] [LoadConstInt32] index:[0] val: int32[7] 
+40 40   [ SwitchTest.sl:77] [StoreLocal] index:[0] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0] info:[SwitchStart]
+42 42   [ SwitchTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [Switch] index:[0] info:[Switch]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ SwitchTest.sl:92] [LoadConstString] index:[2657] val: string[i=7 -> case 1|2|3|4 (unexpected)] 
+47 47   [ SwitchTest.sl:77] [StoreLocal] index:[6] info:[LocalStatement]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+50 50   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+51 51   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+52 52   [ :0] [Br] index:[70]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:93] [LoadConstString] index:[2658] val: string[i=7 -> case 5|6|7 hit] 
+56 56   [ SwitchTest.sl:77] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[70]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:94] [LoadConstString] index:[2659] val: string[i=7 -> default (unexpected)] 
+65 65   [ SwitchTest.sl:77] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Label] index:[2]
+71 71   [ SwitchTest.sl:98] [LoadConstInt32] index:[0] val: int32[2] 
+72 72   [ SwitchTest.sl:77] [StoreLocal] index:[0] info:[LocalStatement]
+73 73   [ :0] [Nop] index:[0] info:[SwitchStart]
+74 74   [ SwitchTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+75 75   [ :0] [Switch] index:[0] info:[Switch]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ :0] [Nop] index:[0]
+78 78   [ SwitchTest.sl:101] [LoadConstString] index:[2660] val: string[i=2 -> first group hit (stops matching)] 
+79 79   [ SwitchTest.sl:77] [StoreLocal] index:[9] info:[LocalStatement]
+80 80   [ :0] [Nop] index:[0]
+81 81   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+82 82   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+83 83   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+84 84   [ :0] [Br] index:[102]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ :0] [Nop] index:[0]
+87 87   [ SwitchTest.sl:102] [LoadConstString] index:[2661] val: string[i=2 -> second group (unexpected: duplicate)] 
+88 88   [ SwitchTest.sl:77] [StoreLocal] index:[10] info:[LocalStatement]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+93 93   [ :0] [Br] index:[102]
+94 94   [ :0] [Nop] index:[0]
+95 95   [ :0] [Nop] index:[0]
+96 96   [ SwitchTest.sl:103] [LoadConstString] index:[2649] val: string[i=2 -> default (unexpected)] 
+97 97   [ SwitchTest.sl:77] [StoreLocal] index:[11] info:[LocalStatement]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+100 100   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+101 101   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+102 102   [ :0] [Label] index:[3]
+103 103   [ SwitchTest.sl:107] [LoadConstInt32] index:[0] val: int32[99] 
+104 104   [ SwitchTest.sl:77] [StoreLocal] index:[0] info:[LocalStatement]
+105 105   [ :0] [Nop] index:[0] info:[SwitchStart]
+106 106   [ SwitchTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+107 107   [ :0] [Switch] index:[0] info:[Switch]
+108 108   [ :0] [Nop] index:[0]
+109 109   [ :0] [Nop] index:[0]
+110 110   [ SwitchTest.sl:110] [LoadConstString] index:[2662] val: string[i=99 -> case 1|2|3|4 (unexpected)] 
+111 111   [ SwitchTest.sl:77] [StoreLocal] index:[12] info:[LocalStatement]
+112 112   [ :0] [Nop] index:[0]
+113 113   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+114 114   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+115 115   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+116 116   [ :0] [Br] index:[134]
+117 117   [ :0] [Nop] index:[0]
+118 118   [ :0] [Nop] index:[0]
+119 119   [ SwitchTest.sl:111] [LoadConstString] index:[2663] val: string[i=99 -> case 5|6|7 (unexpected)] 
+120 120   [ SwitchTest.sl:77] [StoreLocal] index:[13] info:[LocalStatement]
+121 121   [ :0] [Nop] index:[0]
+122 122   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+123 123   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+124 124   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+125 125   [ :0] [Br] index:[134]
+126 126   [ :0] [Nop] index:[0]
+127 127   [ :0] [Nop] index:[0]
+128 128   [ SwitchTest.sl:112] [LoadConstString] index:[2664] val: string[i=99 -> default hit] 
+129 129   [ SwitchTest.sl:77] [StoreLocal] index:[14] info:[LocalStatement]
+130 130   [ :0] [Nop] index:[0]
+131 131   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+132 132   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+133 133   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+134 134   [ :0] [Label] index:[4]
+135 135   [ SwitchTest.sl:77] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.multiValueCommaTest
+    VirtualName: multiValueCommaTest_Core.Void_0
+    Name: multiValueCommaTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=19958463 idx=0 name=_local[ProjectTest.SwitchTest.multiValueCommaTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=45408440 idx=0 name=multiValueCommaTest_local[i] type=Core.Int32
+      - #1 id=6022779 idx=1 name=multiValueCommaTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:119] [LoadConstString] index:[2665] val: string[----- multiValueCommaTest -----] 
+2 2   [ SwitchTest.sl:117] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:121] [LoadConstInt32] index:[0] val: int32[11] 
+8 8   [ SwitchTest.sl:117] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:117] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:124] [LoadConstString] index:[2666] val: string[i=11 -> case 10,11,12 hit] 
+15 15   [ SwitchTest.sl:117] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[38]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:125] [LoadConstString] index:[2667] val: string[i=11 -> case 13,14 (unexpected)] 
+24 24   [ SwitchTest.sl:117] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[38]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:126] [LoadConstString] index:[2668] val: string[i=11 -> default (unexpected)] 
+33 33   [ SwitchTest.sl:117] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Label] index:[1]
+39 39   [ SwitchTest.sl:129] [LoadConstInt32] index:[0] val: int32[14] 
+40 40   [ SwitchTest.sl:117] [StoreLocal] index:[0] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0] info:[SwitchStart]
+42 42   [ SwitchTest.sl:117] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [Switch] index:[0] info:[Switch]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ SwitchTest.sl:132] [LoadConstString] index:[2669] val: string[i=14 -> case 10,11,12 (unexpected)] 
+47 47   [ SwitchTest.sl:117] [StoreLocal] index:[6] info:[LocalStatement]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+50 50   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+51 51   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+52 52   [ :0] [Br] index:[70]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:133] [LoadConstString] index:[2670] val: string[i=14 -> case 13,14 hit] 
+56 56   [ SwitchTest.sl:117] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[70]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:134] [LoadConstString] index:[2671] val: string[i=14 -> default (unexpected)] 
+65 65   [ SwitchTest.sl:117] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Label] index:[2]
+71 71   [ SwitchTest.sl:137] [LoadConstInt32] index:[0] val: int32[20] 
+72 72   [ SwitchTest.sl:117] [StoreLocal] index:[0] info:[LocalStatement]
+73 73   [ :0] [Nop] index:[0] info:[SwitchStart]
+74 74   [ SwitchTest.sl:117] [LoadLocal] index:[0] info:[LocalStatement]
+75 75   [ :0] [Switch] index:[0] info:[Switch]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ :0] [Nop] index:[0]
+78 78   [ SwitchTest.sl:140] [LoadConstString] index:[2672] val: string[i=20 -> case 10,11,12 (unexpected)] 
+79 79   [ SwitchTest.sl:117] [StoreLocal] index:[9] info:[LocalStatement]
+80 80   [ :0] [Nop] index:[0]
+81 81   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+82 82   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+83 83   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+84 84   [ :0] [Br] index:[102]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ :0] [Nop] index:[0]
+87 87   [ SwitchTest.sl:141] [LoadConstString] index:[2673] val: string[i=20 -> case 13,14 (unexpected)] 
+88 88   [ SwitchTest.sl:117] [StoreLocal] index:[10] info:[LocalStatement]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+93 93   [ :0] [Br] index:[102]
+94 94   [ :0] [Nop] index:[0]
+95 95   [ :0] [Nop] index:[0]
+96 96   [ SwitchTest.sl:142] [LoadConstString] index:[2674] val: string[i=20 -> default hit] 
+97 97   [ SwitchTest.sl:117] [StoreLocal] index:[11] info:[LocalStatement]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+100 100   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+101 101   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+102 102   [ :0] [Label] index:[3]
+103 103   [ SwitchTest.sl:117] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.floatValueTest
+    VirtualName: floatValueTest_Core.Void_0
+    Name: floatValueTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=5067808 idx=0 name=_local[ProjectTest.SwitchTest.floatValueTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=45610274 idx=0 name=floatValueTest_local[f] type=Core.Num
+      - #1 id=7839285 idx=1 name=floatValueTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:149] [LoadConstString] index:[2675] val: string[----- floatValueTest -----] 
+2 2   [ SwitchTest.sl:147] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:151] [LoadConstFloat32] index:[0] val:[2.5] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ SwitchTest.sl:147] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ :0] [Nop] index:[0] info:[SwitchStart]
+11 11   [ SwitchTest.sl:147] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [Switch] index:[0] info:[Switch]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ SwitchTest.sl:154] [LoadConstString] index:[2676] val: string[f=2.5 -> case 1.5 (unexpected)] 
+16 16   [ SwitchTest.sl:147] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ :0] [Br] index:[39]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ SwitchTest.sl:155] [LoadConstString] index:[2677] val: string[f=2.5 -> case 2.5|3.5 hit] 
+25 25   [ SwitchTest.sl:147] [StoreLocal] index:[4] info:[LocalStatement]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+28 28   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+29 29   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+30 30   [ :0] [Br] index:[39]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ SwitchTest.sl:156] [LoadConstString] index:[2678] val: string[f=2.5 -> default (unexpected)] 
+34 34   [ SwitchTest.sl:147] [StoreLocal] index:[5] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ :0] [Label] index:[1]
+40 40   [ SwitchTest.sl:159] [LoadConstFloat32] index:[0] val:[3.5] 
+41 41   [ :0] [Nop] index:[0]
+42 42   [ SwitchTest.sl:147] [StoreLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0] info:[SwitchStart]
+44 44   [ SwitchTest.sl:147] [LoadLocal] index:[0] info:[LocalStatement]
+45 45   [ :0] [Switch] index:[0] info:[Switch]
+46 46   [ :0] [Nop] index:[0]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ SwitchTest.sl:162] [LoadConstString] index:[2679] val: string[f=3.5 -> case 1.5 (unexpected)] 
+49 49   [ SwitchTest.sl:147] [StoreLocal] index:[6] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0]
+51 51   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+52 52   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+53 53   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+54 54   [ :0] [Br] index:[72]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ :0] [Nop] index:[0]
+57 57   [ SwitchTest.sl:163] [LoadConstString] index:[2680] val: string[f=3.5 -> case 2.5|3.5 hit] 
+58 58   [ SwitchTest.sl:147] [StoreLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [Nop] index:[0]
+60 60   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+61 61   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+62 62   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+63 63   [ :0] [Br] index:[72]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ :0] [Nop] index:[0]
+66 66   [ SwitchTest.sl:164] [LoadConstString] index:[2681] val: string[f=3.5 -> default (unexpected)] 
+67 67   [ SwitchTest.sl:147] [StoreLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [Nop] index:[0]
+69 69   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+70 70   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+71 71   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+72 72   [ :0] [Label] index:[2]
+73 73   [ SwitchTest.sl:167] [LoadConstFloat32] index:[0] val:[9.5] 
+74 74   [ :0] [Nop] index:[0]
+75 75   [ SwitchTest.sl:147] [StoreLocal] index:[0] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0] info:[SwitchStart]
+77 77   [ SwitchTest.sl:147] [LoadLocal] index:[0] info:[LocalStatement]
+78 78   [ :0] [Switch] index:[0] info:[Switch]
+79 79   [ :0] [Nop] index:[0]
+80 80   [ :0] [Nop] index:[0]
+81 81   [ SwitchTest.sl:170] [LoadConstString] index:[2682] val: string[f=9.5 -> case 1.5 (unexpected)] 
+82 82   [ SwitchTest.sl:147] [StoreLocal] index:[9] info:[LocalStatement]
+83 83   [ :0] [Nop] index:[0]
+84 84   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+85 85   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+86 86   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+87 87   [ :0] [Br] index:[105]
+88 88   [ :0] [Nop] index:[0]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ SwitchTest.sl:171] [LoadConstString] index:[2683] val: string[f=9.5 -> case 2.5|3.5 (unexpected)] 
+91 91   [ SwitchTest.sl:147] [StoreLocal] index:[10] info:[LocalStatement]
+92 92   [ :0] [Nop] index:[0]
+93 93   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+94 94   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+95 95   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+96 96   [ :0] [Br] index:[105]
+97 97   [ :0] [Nop] index:[0]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ SwitchTest.sl:172] [LoadConstString] index:[2684] val: string[f=9.5 -> default hit] 
+100 100   [ SwitchTest.sl:147] [StoreLocal] index:[11] info:[LocalStatement]
+101 101   [ :0] [Nop] index:[0]
+102 102   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+103 103   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+104 104   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+105 105   [ :0] [Label] index:[3]
+106 106   [ SwitchTest.sl:147] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.stringValueTest
+    VirtualName: stringValueTest_Core.Void_0
+    Name: stringValueTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=24410221 idx=0 name=_local[ProjectTest.SwitchTest.stringValueTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=18365401 idx=0 name=stringValueTest_local[s] type=Core.String
+      - #1 id=31070885 idx=1 name=stringValueTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:179] [LoadConstString] index:[2685] val: string[----- stringValueTest -----] 
+2 2   [ SwitchTest.sl:177] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:181] [LoadConstString] index:[2686] val: string[green] 
+8 8   [ SwitchTest.sl:177] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:177] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:184] [LoadConstString] index:[2689] val: string[s=green -> case red (unexpected)] 
+15 15   [ SwitchTest.sl:177] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[38]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:185] [LoadConstString] index:[2690] val: string[s=green -> case green|blue hit] 
+24 24   [ SwitchTest.sl:177] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[38]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:186] [LoadConstString] index:[2691] val: string[s=green -> default (unexpected)] 
+33 33   [ SwitchTest.sl:177] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Label] index:[1]
+39 39   [ SwitchTest.sl:189] [LoadConstString] index:[2688] val: string[blue] 
+40 40   [ SwitchTest.sl:177] [StoreLocal] index:[0] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0] info:[SwitchStart]
+42 42   [ SwitchTest.sl:177] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [Switch] index:[0] info:[Switch]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ SwitchTest.sl:192] [LoadConstString] index:[2692] val: string[s=blue -> case red (unexpected)] 
+47 47   [ SwitchTest.sl:177] [StoreLocal] index:[6] info:[LocalStatement]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+50 50   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+51 51   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+52 52   [ :0] [Br] index:[70]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:193] [LoadConstString] index:[2693] val: string[s=blue -> case green|blue hit] 
+56 56   [ SwitchTest.sl:177] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[70]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:194] [LoadConstString] index:[2694] val: string[s=blue -> default (unexpected)] 
+65 65   [ SwitchTest.sl:177] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Label] index:[2]
+71 71   [ SwitchTest.sl:197] [LoadConstString] index:[2695] val: string[yellow] 
+72 72   [ SwitchTest.sl:177] [StoreLocal] index:[0] info:[LocalStatement]
+73 73   [ :0] [Nop] index:[0] info:[SwitchStart]
+74 74   [ SwitchTest.sl:177] [LoadLocal] index:[0] info:[LocalStatement]
+75 75   [ :0] [Switch] index:[0] info:[Switch]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ :0] [Nop] index:[0]
+78 78   [ SwitchTest.sl:200] [LoadConstString] index:[2696] val: string[s=yellow -> case red (unexpected)] 
+79 79   [ SwitchTest.sl:177] [StoreLocal] index:[9] info:[LocalStatement]
+80 80   [ :0] [Nop] index:[0]
+81 81   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+82 82   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+83 83   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+84 84   [ :0] [Br] index:[102]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ :0] [Nop] index:[0]
+87 87   [ SwitchTest.sl:201] [LoadConstString] index:[2697] val: string[s=yellow -> case green|blue (unexpected)] 
+88 88   [ SwitchTest.sl:177] [StoreLocal] index:[10] info:[LocalStatement]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+93 93   [ :0] [Br] index:[102]
+94 94   [ :0] [Nop] index:[0]
+95 95   [ :0] [Nop] index:[0]
+96 96   [ SwitchTest.sl:202] [LoadConstString] index:[2698] val: string[s=yellow -> default hit] 
+97 97   [ SwitchTest.sl:177] [StoreLocal] index:[11] info:[LocalStatement]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+100 100   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+101 101   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+102 102   [ :0] [Label] index:[3]
+103 103   [ SwitchTest.sl:177] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.boolValueTest
+    VirtualName: boolValueTest_Core.Void_0
+    Name: boolValueTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=23543901 idx=0 name=_local[ProjectTest.SwitchTest.boolValueTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=10568524 idx=0 name=boolValueTest_local[b] type=Core.Boolean
+      - #1 id=28007858 idx=1 name=boolValueTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:209] [LoadConstString] index:[2699] val: string[----- boolValueTest -----] 
+2 2   [ SwitchTest.sl:207] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:211] [LoadConstBoolean] index:[0] val:[True] 
+8 8   [ SwitchTest.sl:207] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:207] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:214] [LoadConstString] index:[2700] val: string[b=true -> case true hit] 
+15 15   [ SwitchTest.sl:207] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[38]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:215] [LoadConstString] index:[2701] val: string[b=true -> case false (unexpected)] 
+24 24   [ SwitchTest.sl:207] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[38]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:216] [LoadConstString] index:[2702] val: string[b=true -> default (unexpected)] 
+33 33   [ SwitchTest.sl:207] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Label] index:[1]
+39 39   [ SwitchTest.sl:219] [LoadConstBoolean] index:[0] val:[False] 
+40 40   [ SwitchTest.sl:207] [StoreLocal] index:[0] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0] info:[SwitchStart]
+42 42   [ SwitchTest.sl:207] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [Switch] index:[0] info:[Switch]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ SwitchTest.sl:222] [LoadConstString] index:[2703] val: string[b=false -> case true (unexpected)] 
+47 47   [ SwitchTest.sl:207] [StoreLocal] index:[6] info:[LocalStatement]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+50 50   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+51 51   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+52 52   [ :0] [Br] index:[70]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:223] [LoadConstString] index:[2704] val: string[b=false -> case false hit] 
+56 56   [ SwitchTest.sl:207] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[70]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:224] [LoadConstString] index:[2705] val: string[b=false -> default (unexpected)] 
+65 65   [ SwitchTest.sl:207] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Label] index:[2]
+71 71   [ SwitchTest.sl:207] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.enumValueTest
+    VirtualName: enumValueTest_Core.Void_0
+    Name: enumValueTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=10952902 idx=0 name=_local[ProjectTest.SwitchTest.enumValueTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=31467258 idx=0 name=enumValueTest_local[color] type=Core.Member
+      - #1 id=14769873 idx=1 name=enumValueTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:231] [LoadConstString] index:[2706] val: string[----- enumValueTest -----] 
+2 2   [ SwitchTest.sl:229] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:233] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.SwitchColor] staticOwner:[ProjectTest.SwitchTest] 
+8 8   [ SwitchTest.sl:229] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:229] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:236] [LoadConstString] index:[2707] val: string[color=Red -> case SwitchColor.Red hit] 
+15 15   [ SwitchTest.sl:229] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[47]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:237] [LoadConstString] index:[2708] val: string[color=Red -> case Green (unexpected)] 
+24 24   [ SwitchTest.sl:229] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[47]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:238] [LoadConstString] index:[2709] val: string[color=Red -> case Blue (unexpected)] 
+33 33   [ SwitchTest.sl:229] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Br] index:[47]
+39 39   [ :0] [Nop] index:[0]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ SwitchTest.sl:239] [LoadConstString] index:[2710] val: string[color=Red -> default (unexpected)] 
+42 42   [ SwitchTest.sl:229] [StoreLocal] index:[6] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ :0] [Label] index:[1]
+48 48   [ SwitchTest.sl:242] [LoadStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.SwitchColor] staticOwner:[ProjectTest.SwitchTest] 
+49 49   [ SwitchTest.sl:229] [StoreLocal] index:[0] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0] info:[SwitchStart]
+51 51   [ SwitchTest.sl:229] [LoadLocal] index:[0] info:[LocalStatement]
+52 52   [ :0] [Switch] index:[0] info:[Switch]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ SwitchTest.sl:245] [LoadConstString] index:[2711] val: string[color=Blue -> case Red (unexpected)] 
+56 56   [ SwitchTest.sl:229] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ :0] [Br] index:[88]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ SwitchTest.sl:246] [LoadConstString] index:[2712] val: string[color=Blue -> case Green (unexpected)] 
+65 65   [ SwitchTest.sl:229] [StoreLocal] index:[8] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ :0] [Br] index:[88]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ :0] [Nop] index:[0]
+73 73   [ SwitchTest.sl:247] [LoadConstString] index:[2713] val: string[color=Blue -> case SwitchColor.Blue hit] 
+74 74   [ SwitchTest.sl:229] [StoreLocal] index:[9] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ :0] [Br] index:[88]
+80 80   [ :0] [Nop] index:[0]
+81 81   [ :0] [Nop] index:[0]
+82 82   [ SwitchTest.sl:248] [LoadConstString] index:[2714] val: string[color=Blue -> default (unexpected)] 
+83 83   [ SwitchTest.sl:229] [StoreLocal] index:[10] info:[LocalStatement]
+84 84   [ :0] [Nop] index:[0]
+85 85   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+86 86   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+87 87   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+88 88   [ :0] [Label] index:[2]
+89 89   [ SwitchTest.sl:229] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.typePatternIsTest
+    VirtualName: typePatternIsTest_Core.Void_0
+    Name: typePatternIsTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=15590249 idx=0 name=_local[ProjectTest.SwitchTest.typePatternIsTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=6094519 idx=0 name=typePatternIsTest_local[obj] type=ProjectTest.SwitchTest.Class3
+      - #1 id=54850676 idx=1 name=typePatternIsTest_local[boolCondition] type=Core.Boolean
+      - #2 id=23894041 idx=2 name=typePatternIsTest_local[obj2] type=ProjectTest.SwitchTest.Class4
+      - #3 id=13719784 idx=3 name=typePatternIsTest_local[obj3] type=ProjectTest.SwitchTest.Class3
+      - #4 id=56369192 idx=4 name=typePatternIsTest_local[n] type=Core.Int32
+      - #5 id=37560683 idx=5 name=typePatternIsTest_local[s] type=Core.String
+      - #6 id=2501835 idx=6 name=typePatternIsTest_local[mixed] type=ProjectTest.SwitchTest.Class4
+      - #7 id=22516520 idx=7 name=typePatternIsTest_local[c3] type=ProjectTest.SwitchTest.Class3
+      - #8 id=1322091 idx=8 name=typePatternIsTest_local[c4] type=ProjectTest.SwitchTest.Class4
+      - #9 id=11898821 idx=9 name=typePatternIsTest_local[c2] type=ProjectTest.SwitchTest.Class2
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=37952469 idx=16 name=_local[txt] type=Core.Object
+      - #17 id=37952469 idx=17 name=_local[txt] type=Core.Object
+      - #18 id=37952469 idx=18 name=_local[txt] type=Core.Object
+      - #19 id=37952469 idx=19 name=_local[txt] type=Core.Object
+      - #20 id=37952469 idx=20 name=_local[txt] type=Core.Object
+      - #21 id=37952469 idx=21 name=_local[txt] type=Core.Object
+      - #22 id=37952469 idx=22 name=_local[txt] type=Core.Object
+      - #23 id=37952469 idx=23 name=_local[txt] type=Core.Object
+      - #24 id=37952469 idx=24 name=_local[txt] type=Core.Object
+      - #25 id=37952469 idx=25 name=_local[txt] type=Core.Object
+      - #26 id=37952469 idx=26 name=_local[txt] type=Core.Object
+      - #27 id=37952469 idx=27 name=_local[txt] type=Core.Object
+      - #28 id=37952469 idx=28 name=_local[txt] type=Core.Object
+      - #29 id=37952469 idx=29 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:255] [LoadConstString] index:[2715] val: string[----- typePatternIsTest -----] 
+2 2   [ SwitchTest.sl:253] [StoreLocal] index:[10] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:253] [NewObject] index:[0] info:[IRNew] val: int32[-1467456277] 
+8 8   [ SwitchTest.sl:258] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ SwitchTest.sl:253] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ :0] [Nop] index:[0] info:[SwitchStart]
+11 11   [ SwitchTest.sl:253] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [Switch] index:[0] info:[Switch]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:253] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ :0] [CastClass] index:[0] info:[SwitchCaseCast Class3] val irmt:[ProjectTest.SwitchTest.Class3] 
+16 16   [ SwitchTest.sl:253] [StoreLocal] index:[7] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ SwitchTest.sl:263] [LoadLocal] index:[7] info:[LocalStatement]
+19 19   [ SwitchTest.sl:263] [LoadConstInt32] index:[0] val: int32[300] 
+20 20   [ SwitchTest.sl:253] [StoreNotStaticField2] index:[1] info:[Member]
+21 21   [ SwitchTest.sl:264] [LoadConstString] index:[2716] val: string[obj(Class3) -> case is Class3 c3 hit, c3_val=] 
+22 22   [ SwitchTest.sl:264] [LoadLocal] index:[7] info:[LocalStatement]
+23 23   [ SwitchTest.sl:264] [LoadNotStaticField] index:[1] info:[Member]
+24 24   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+25 25   [ SwitchTest.sl:264] [Add] index:[0]
+26 26   [ SwitchTest.sl:253] [StoreLocal] index:[11] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ :0] [Br] index:[49]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ SwitchTest.sl:268] [LoadConstString] index:[2717] val: string[obj(Class3) -> case is Class4 (unexpected)] 
+35 35   [ SwitchTest.sl:253] [StoreLocal] index:[12] info:[LocalStatement]
+36 36   [ :0] [Nop] index:[0]
+37 37   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+38 38   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+39 39   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+40 40   [ :0] [Br] index:[49]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ :0] [Nop] index:[0]
+43 43   [ SwitchTest.sl:270] [LoadConstString] index:[2718] val: string[obj(Class3) -> default (unexpected)] 
+44 44   [ SwitchTest.sl:253] [StoreLocal] index:[13] info:[LocalStatement]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+47 47   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+48 48   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+49 49   [ :0] [Label] index:[1]
+50 50   [ SwitchTest.sl:253] [NewObject] index:[0] info:[IRNew] val: int32[-1383568182] 
+51 51   [ SwitchTest.sl:274] [ArcRetain] index:[0] info:[ARC claim owned new local: obj2]
+52 52   [ SwitchTest.sl:253] [StoreLocal] index:[2] info:[LocalStatement]
+53 53   [ :0] [Nop] index:[0] info:[SwitchStart]
+54 54   [ SwitchTest.sl:253] [LoadLocal] index:[2] info:[LocalStatement]
+55 55   [ :0] [Switch] index:[0] info:[Switch]
+56 56   [ :0] [Nop] index:[0]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ SwitchTest.sl:279] [LoadConstString] index:[2719] val: string[obj2(Class4) -> case is Class3 (unexpected)] 
+59 59   [ SwitchTest.sl:253] [StoreLocal] index:[14] info:[LocalStatement]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+62 62   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+63 63   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+64 64   [ :0] [Br] index:[89]
+65 65   [ :0] [Nop] index:[0]
+66 66   [ SwitchTest.sl:253] [LoadLocal] index:[2] info:[LocalStatement]
+67 67   [ :0] [CastClass] index:[0] info:[SwitchCaseCast Class4] val irmt:[ProjectTest.SwitchTest.Class4] 
+68 68   [ SwitchTest.sl:253] [StoreLocal] index:[8] info:[LocalStatement]
+69 69   [ :0] [Nop] index:[0]
+70 70   [ SwitchTest.sl:283] [LoadConstString] index:[2720] val: string[obj2(Class4) -> case is Class4 c4 hit, c4_val=] 
+71 71   [ SwitchTest.sl:283] [LoadLocal] index:[8] info:[LocalStatement]
+72 72   [ SwitchTest.sl:283] [LoadNotStaticField] index:[1] info:[Member]
+73 73   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+74 74   [ SwitchTest.sl:283] [Add] index:[0]
+75 75   [ SwitchTest.sl:253] [StoreLocal] index:[15] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ ProjectTest.sp:8] [LoadLocal] index:[15] info:[LocalStatement]
+78 78   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+79 79   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+80 80   [ :0] [Br] index:[89]
+81 81   [ :0] [Nop] index:[0]
+82 82   [ :0] [Nop] index:[0]
+83 83   [ SwitchTest.sl:285] [LoadConstString] index:[2721] val: string[obj2(Class4) -> default (unexpected)] 
+84 84   [ SwitchTest.sl:253] [StoreLocal] index:[16] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ProjectTest.sp:8] [LoadLocal] index:[16] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+89 89   [ :0] [Label] index:[2]
+90 90   [ SwitchTest.sl:253] [NewObject] index:[0] info:[IRNew] val: int32[-1467456277] 
+91 91   [ SwitchTest.sl:289] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+92 92   [ SwitchTest.sl:253] [StoreLocal] index:[3] info:[LocalStatement]
+93 93   [ :0] [Nop] index:[0] info:[SwitchStart]
+94 94   [ SwitchTest.sl:253] [LoadLocal] index:[3] info:[LocalStatement]
+95 95   [ :0] [Switch] index:[0] info:[Switch]
+96 96   [ :0] [Nop] index:[0]
+97 97   [ :0] [Nop] index:[0]
+98 98   [ SwitchTest.sl:292] [LoadConstString] index:[2722] val: string[obj3(Class3) -> case is Class4 (unexpected)] 
+99 99   [ SwitchTest.sl:253] [StoreLocal] index:[17] info:[LocalStatement]
+100 100   [ :0] [Nop] index:[0]
+101 101   [ ProjectTest.sp:8] [LoadLocal] index:[17] info:[LocalStatement]
+102 102   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+103 103   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+104 104   [ :0] [Br] index:[132]
+105 105   [ :0] [Nop] index:[0]
+106 106   [ SwitchTest.sl:253] [LoadLocal] index:[3] info:[LocalStatement]
+107 107   [ :0] [CastClass] index:[0] info:[SwitchCaseCast Class2] val irmt:[ProjectTest.SwitchTest.Class2] 
+108 108   [ SwitchTest.sl:253] [StoreLocal] index:[9] info:[LocalStatement]
+109 109   [ :0] [Nop] index:[0]
+110 110   [ SwitchTest.sl:295] [LoadLocal] index:[9] info:[LocalStatement]
+111 111   [ SwitchTest.sl:295] [LoadConstInt32] index:[0] val: int32[33] 
+112 112   [ SwitchTest.sl:253] [StoreNotStaticField2] index:[0] info:[Member]
+113 113   [ SwitchTest.sl:296] [LoadConstString] index:[2723] val: string[obj3(Class3) -> case is Class2 hit (extends relation), v=] 
+114 114   [ SwitchTest.sl:296] [LoadLocal] index:[9] info:[LocalStatement]
+115 115   [ SwitchTest.sl:296] [LoadNotStaticField] index:[0] info:[Member]
+116 116   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+117 117   [ SwitchTest.sl:296] [Add] index:[0]
+118 118   [ SwitchTest.sl:253] [StoreLocal] index:[18] info:[LocalStatement]
+119 119   [ :0] [Nop] index:[0]
+120 120   [ ProjectTest.sp:8] [LoadLocal] index:[18] info:[LocalStatement]
+121 121   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+122 122   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+123 123   [ :0] [Br] index:[132]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ :0] [Nop] index:[0]
+126 126   [ SwitchTest.sl:298] [LoadConstString] index:[2724] val: string[obj3(Class3) -> default (unexpected)] 
+127 127   [ SwitchTest.sl:253] [StoreLocal] index:[19] info:[LocalStatement]
+128 128   [ :0] [Nop] index:[0]
+129 129   [ ProjectTest.sp:8] [LoadLocal] index:[19] info:[LocalStatement]
+130 130   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+131 131   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+132 132   [ :0] [Label] index:[3]
+133 133   [ SwitchTest.sl:302] [LoadConstInt32] index:[0] val: int32[10] 
+134 134   [ SwitchTest.sl:253] [StoreLocal] index:[4] info:[LocalStatement]
+135 135   [ :0] [Nop] index:[0] info:[SwitchStart]
+136 136   [ SwitchTest.sl:253] [LoadLocal] index:[4] info:[LocalStatement]
+137 137   [ :0] [Switch] index:[0] info:[Switch]
+138 138   [ :0] [Nop] index:[0]
+139 139   [ :0] [Nop] index:[0]
+140 140   [ SwitchTest.sl:307] [LoadConstString] index:[2725] val: string[n(int 10) -> case is int hit] 
+141 141   [ SwitchTest.sl:253] [StoreLocal] index:[20] info:[LocalStatement]
+142 142   [ :0] [Nop] index:[0]
+143 143   [ ProjectTest.sp:8] [LoadLocal] index:[20] info:[LocalStatement]
+144 144   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+145 145   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+146 146   [ :0] [Br] index:[164]
+147 147   [ :0] [Nop] index:[0]
+148 148   [ :0] [Nop] index:[0]
+149 149   [ SwitchTest.sl:309] [LoadConstString] index:[2726] val: string[n(int 10) -> case is string (unexpected)] 
+150 150   [ SwitchTest.sl:253] [StoreLocal] index:[21] info:[LocalStatement]
+151 151   [ :0] [Nop] index:[0]
+152 152   [ ProjectTest.sp:8] [LoadLocal] index:[21] info:[LocalStatement]
+153 153   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+154 154   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+155 155   [ :0] [Br] index:[164]
+156 156   [ :0] [Nop] index:[0]
+157 157   [ :0] [Nop] index:[0]
+158 158   [ SwitchTest.sl:310] [LoadConstString] index:[2727] val: string[n(int 10) -> default (unexpected)] 
+159 159   [ SwitchTest.sl:253] [StoreLocal] index:[22] info:[LocalStatement]
+160 160   [ :0] [Nop] index:[0]
+161 161   [ ProjectTest.sp:8] [LoadLocal] index:[22] info:[LocalStatement]
+162 162   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+163 163   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+164 164   [ :0] [Label] index:[4]
+165 165   [ SwitchTest.sl:314] [LoadConstString] index:[791] val: string[abc] 
+166 166   [ SwitchTest.sl:253] [StoreLocal] index:[5] info:[LocalStatement]
+167 167   [ :0] [Nop] index:[0] info:[SwitchStart]
+168 168   [ SwitchTest.sl:253] [LoadLocal] index:[5] info:[LocalStatement]
+169 169   [ :0] [Switch] index:[0] info:[Switch]
+170 170   [ :0] [Nop] index:[0]
+171 171   [ :0] [Nop] index:[0]
+172 172   [ SwitchTest.sl:317] [LoadConstString] index:[2728] val: string[s(string) -> case is int (unexpected)] 
+173 173   [ SwitchTest.sl:253] [StoreLocal] index:[23] info:[LocalStatement]
+174 174   [ :0] [Nop] index:[0]
+175 175   [ ProjectTest.sp:8] [LoadLocal] index:[23] info:[LocalStatement]
+176 176   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+177 177   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+178 178   [ :0] [Br] index:[196]
+179 179   [ :0] [Nop] index:[0]
+180 180   [ :0] [Nop] index:[0]
+181 181   [ SwitchTest.sl:320] [LoadConstString] index:[2729] val: string[s(string abc) -> case is string hit] 
+182 182   [ SwitchTest.sl:253] [StoreLocal] index:[24] info:[LocalStatement]
+183 183   [ :0] [Nop] index:[0]
+184 184   [ ProjectTest.sp:8] [LoadLocal] index:[24] info:[LocalStatement]
+185 185   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+186 186   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+187 187   [ :0] [Br] index:[196]
+188 188   [ :0] [Nop] index:[0]
+189 189   [ :0] [Nop] index:[0]
+190 190   [ SwitchTest.sl:322] [LoadConstString] index:[2730] val: string[s(string) -> default (unexpected)] 
+191 191   [ SwitchTest.sl:253] [StoreLocal] index:[25] info:[LocalStatement]
+192 192   [ :0] [Nop] index:[0]
+193 193   [ ProjectTest.sp:8] [LoadLocal] index:[25] info:[LocalStatement]
+194 194   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+195 195   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+196 196   [ :0] [Label] index:[5]
+197 197   [ SwitchTest.sl:253] [NewObject] index:[0] info:[IRNew] val: int32[-1383568182] 
+198 198   [ SwitchTest.sl:326] [ArcRetain] index:[0] info:[ARC claim owned new local: mixed]
+199 199   [ SwitchTest.sl:253] [StoreLocal] index:[6] info:[LocalStatement]
+200 200   [ :0] [Nop] index:[0] info:[SwitchStart]
+201 201   [ SwitchTest.sl:253] [LoadLocal] index:[6] info:[LocalStatement]
+202 202   [ :0] [Switch] index:[0] info:[Switch]
+203 203   [ :0] [Nop] index:[0]
+204 204   [ :0] [Nop] index:[0]
+205 205   [ SwitchTest.sl:329] [LoadConstString] index:[2731] val: string[mixed(Class4) -> case 1 (unexpected)] 
+206 206   [ SwitchTest.sl:253] [StoreLocal] index:[26] info:[LocalStatement]
+207 207   [ :0] [Nop] index:[0]
+208 208   [ ProjectTest.sp:8] [LoadLocal] index:[26] info:[LocalStatement]
+209 209   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+210 210   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+211 211   [ :0] [Br] index:[238]
+212 212   [ :0] [Nop] index:[0]
+213 213   [ :0] [Nop] index:[0]
+214 214   [ SwitchTest.sl:330] [LoadConstString] index:[2732] val: string[mixed(Class4) -> case is Class3 (unexpected)] 
+215 215   [ SwitchTest.sl:253] [StoreLocal] index:[27] info:[LocalStatement]
+216 216   [ :0] [Nop] index:[0]
+217 217   [ ProjectTest.sp:8] [LoadLocal] index:[27] info:[LocalStatement]
+218 218   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+219 219   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+220 220   [ :0] [Br] index:[238]
+221 221   [ :0] [Nop] index:[0]
+222 222   [ :0] [Nop] index:[0]
+223 223   [ SwitchTest.sl:331] [LoadConstString] index:[2733] val: string[mixed(Class4) -> mixed: case is Class4 hit] 
+224 224   [ SwitchTest.sl:253] [StoreLocal] index:[28] info:[LocalStatement]
+225 225   [ :0] [Nop] index:[0]
+226 226   [ ProjectTest.sp:8] [LoadLocal] index:[28] info:[LocalStatement]
+227 227   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+228 228   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+229 229   [ :0] [Br] index:[238]
+230 230   [ :0] [Nop] index:[0]
+231 231   [ :0] [Nop] index:[0]
+232 232   [ SwitchTest.sl:332] [LoadConstString] index:[2734] val: string[mixed(Class4) -> default (unexpected)] 
+233 233   [ SwitchTest.sl:253] [StoreLocal] index:[29] info:[LocalStatement]
+234 234   [ :0] [Nop] index:[0]
+235 235   [ ProjectTest.sp:8] [LoadLocal] index:[29] info:[LocalStatement]
+236 236   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+237 237   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+238 238   [ :0] [Label] index:[6]
+239 239   [ SwitchTest.sl:253] [Label] index:[0] info:[FunEndLabel]
+240 240   [ SwitchTest.sl:253] [LoadLocal] index:[0] info:[ARC release: LoadLocal typePatternIsTest_local[obj]]
+241 241   [ SwitchTest.sl:253] [ArcRelease] index:[0] info:[ARC release owned local: typePatternIsTest_local[obj]]
+242 242   [ SwitchTest.sl:253] [StoreLocal] index:[0] info:[ARC release: StoreLocal typePatternIsTest_local[obj]]
+243 243   [ SwitchTest.sl:253] [LoadLocal] index:[2] info:[ARC release: LoadLocal typePatternIsTest_local[obj2]]
+244 244   [ SwitchTest.sl:253] [ArcRelease] index:[0] info:[ARC release owned local: typePatternIsTest_local[obj2]]
+245 245   [ SwitchTest.sl:253] [StoreLocal] index:[2] info:[ARC release: StoreLocal typePatternIsTest_local[obj2]]
+246 246   [ SwitchTest.sl:253] [LoadLocal] index:[3] info:[ARC release: LoadLocal typePatternIsTest_local[obj3]]
+247 247   [ SwitchTest.sl:253] [ArcRelease] index:[0] info:[ARC release owned local: typePatternIsTest_local[obj3]]
+248 248   [ SwitchTest.sl:253] [StoreLocal] index:[3] info:[ARC release: StoreLocal typePatternIsTest_local[obj3]]
+249 249   [ SwitchTest.sl:253] [LoadLocal] index:[6] info:[ARC release: LoadLocal typePatternIsTest_local[mixed]]
+250 250   [ SwitchTest.sl:253] [ArcRelease] index:[0] info:[ARC release owned local: typePatternIsTest_local[mixed]]
+251 251   [ SwitchTest.sl:253] [StoreLocal] index:[6] info:[ARC release: StoreLocal typePatternIsTest_local[mixed]]
+
+  Method: ProjectTest.SwitchTest.defaultValueTest
+    VirtualName: defaultValueTest_Core.Void_0
+    Name: defaultValueTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=26431778 idx=0 name=_local[ProjectTest.SwitchTest.defaultValueTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=36559414 idx=0 name=defaultValueTest_local[i] type=Core.Int32
+      - #1 id=60599278 idx=1 name=defaultValueTest_local[r] type=Core.Int32
+      - #2 id=8522594 idx=2 name=defaultValueTest_local[boolCondition] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:339] [LoadConstString] index:[2735] val: string[----- defaultValueTest -----] 
+2 2   [ SwitchTest.sl:337] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:342] [LoadConstInt32] index:[0] val: int32[500] 
+8 8   [ SwitchTest.sl:337] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ SwitchTest.sl:343] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ :0] [Nop] index:[0] info:[SwitchStart]
+12 12   [ SwitchTest.sl:337] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ :0] [Switch] index:[0] info:[Switch]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ :0] [Nop] index:[0]
+16 16   [ SwitchTest.sl:346] [LoadConstInt32] index:[0] val: int32[1] 
+17 17   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+18 18   [ :0] [Br] index:[29]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ SwitchTest.sl:347] [LoadConstInt32] index:[0] val: int32[2] 
+22 22   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+23 23   [ :0] [Br] index:[29]
+24 24   [ :0] [Nop] index:[0]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ SwitchTest.sl:348] [LoadConstInt32] index:[0] val: int32[1] 
+27 27   [ SwitchTest.sl:348] [Neg] index:[0]
+28 28   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+29 29   [ :0] [Label] index:[1]
+30 30   [ SwitchTest.sl:350] [LoadConstString] index:[2736] val: string[i=500 -> default r=] 
+31 31   [ SwitchTest.sl:350] [LoadLocal] index:[1] info:[LocalStatement]
+32 32   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ SwitchTest.sl:350] [Add] index:[0]
+34 34   [ SwitchTest.sl:337] [StoreLocal] index:[4] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ SwitchTest.sl:353] [LoadConstInt32] index:[0] val: int32[500] 
+40 40   [ SwitchTest.sl:337] [StoreLocal] index:[0] info:[LocalStatement]
+41 41   [ SwitchTest.sl:354] [LoadConstInt32] index:[0] val: int32[0] 
+42 42   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0] info:[SwitchStart]
+44 44   [ SwitchTest.sl:337] [LoadLocal] index:[0] info:[LocalStatement]
+45 45   [ :0] [Switch] index:[0] info:[Switch]
+46 46   [ :0] [Nop] index:[0]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ SwitchTest.sl:357] [LoadConstInt32] index:[0] val: int32[1] 
+49 49   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+50 50   [ :0] [Br] index:[56]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ SwitchTest.sl:358] [LoadConstInt32] index:[0] val: int32[2] 
+54 54   [ SwitchTest.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+55 55   [ :0] [Br] index:[56]
+56 56   [ :0] [Label] index:[2]
+57 57   [ SwitchTest.sl:360] [LoadConstString] index:[2737] val: string[i=500 no default -> r=] 
+58 58   [ SwitchTest.sl:360] [LoadLocal] index:[1] info:[LocalStatement]
+59 59   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+60 60   [ SwitchTest.sl:360] [Add] index:[0]
+61 61   [ SwitchTest.sl:360] [LoadConstString] index:[2738] val: string[ (fall through switch)] 
+62 62   [ SwitchTest.sl:360] [Add] index:[0]
+63 63   [ SwitchTest.sl:337] [StoreLocal] index:[5] info:[LocalStatement]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+66 66   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+67 67   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+68 68   [ SwitchTest.sl:337] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.nextCaseTest
+    VirtualName: nextCaseTest_Core.Void_0
+    Name: nextCaseTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=66260603 idx=0 name=_local[ProjectTest.SwitchTest.nextCaseTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=59474521 idx=0 name=nextCaseTest_local[m] type=Core.Int32
+      - #1 id=65508645 idx=1 name=nextCaseTest_local[boolCondition] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:366] [LoadConstString] index:[2739] val: string[----- nextCaseTest -----] 
+2 2   [ SwitchTest.sl:364] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:368] [LoadConstInt32] index:[0] val: int32[1] 
+8 8   [ SwitchTest.sl:364] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:364] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:373] [LoadConstString] index:[2740] val: string[m=1 -> case 1 hit, then next] 
+15 15   [ SwitchTest.sl:364] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ SwitchTest.sl:364] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ :0] [Switch] index:[0] info:[Switch]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ SwitchTest.sl:376] [LoadConstString] index:[2741] val: string[m=1 -> case 1 (second) hit via next] 
+25 25   [ SwitchTest.sl:364] [StoreLocal] index:[4] info:[LocalStatement]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+28 28   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+29 29   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+30 30   [ :0] [Br] index:[48]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ SwitchTest.sl:377] [LoadConstString] index:[2742] val: string[m=1 -> case 2 (unexpected)] 
+34 34   [ SwitchTest.sl:364] [StoreLocal] index:[5] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ :0] [Br] index:[48]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ SwitchTest.sl:378] [LoadConstString] index:[2743] val: string[m=1 -> default (unexpected)] 
+43 43   [ SwitchTest.sl:364] [StoreLocal] index:[6] info:[LocalStatement]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+46 46   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+47 47   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+48 48   [ :0] [Label] index:[1]
+49 49   [ SwitchTest.sl:382] [LoadConstInt32] index:[0] val: int32[2] 
+50 50   [ SwitchTest.sl:364] [StoreLocal] index:[0] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0] info:[SwitchStart]
+52 52   [ SwitchTest.sl:364] [LoadLocal] index:[0] info:[LocalStatement]
+53 53   [ :0] [Switch] index:[0] info:[Switch]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ SwitchTest.sl:387] [LoadConstString] index:[2744] val: string[m=2 -> case 2 hit (no next, stops)] 
+57 57   [ SwitchTest.sl:364] [StoreLocal] index:[7] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ :0] [Br] index:[80]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ SwitchTest.sl:389] [LoadConstString] index:[2745] val: string[m=2 -> case 2 (second) (unexpected: no next)] 
+66 66   [ SwitchTest.sl:364] [StoreLocal] index:[8] info:[LocalStatement]
+67 67   [ :0] [Nop] index:[0]
+68 68   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+69 69   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+70 70   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+71 71   [ :0] [Br] index:[80]
+72 72   [ :0] [Nop] index:[0]
+73 73   [ :0] [Nop] index:[0]
+74 74   [ SwitchTest.sl:390] [LoadConstString] index:[2746] val: string[m=2 -> default (unexpected)] 
+75 75   [ SwitchTest.sl:364] [StoreLocal] index:[9] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+78 78   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+79 79   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+80 80   [ :0] [Label] index:[2]
+81 81   [ SwitchTest.sl:364] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.SwitchTest.parenSourceTest
+    VirtualName: parenSourceTest_Core.Void_0
+    Name: parenSourceTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=48354649 idx=0 name=_local[ProjectTest.SwitchTest.parenSourceTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=32538658 idx=0 name=parenSourceTest_local[i] type=Core.Int32
+      - #1 id=24412469 idx=1 name=parenSourceTest_local[boolCondition] type=Core.Boolean
+      - #2 id=18385636 idx=2 name=parenSourceTest_local[x] type=Core.Int32
+      - #3 id=31252998 idx=3 name=parenSourceTest_local[y] type=Core.Int32
+      - #4 id=12841534 idx=4 name=parenSourceTest_local[#switchSrc] type=Core.Int32
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ SwitchTest.sl:397] [LoadConstString] index:[2747] val: string[----- parenSourceTest -----] 
+2 2   [ SwitchTest.sl:395] [StoreLocal] index:[5] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ SwitchTest.sl:399] [LoadConstInt32] index:[0] val: int32[6] 
+8 8   [ SwitchTest.sl:395] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0] info:[SwitchStart]
+10 10   [ SwitchTest.sl:395] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [Switch] index:[0] info:[Switch]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ SwitchTest.sl:402] [LoadConstString] index:[2748] val: string[switch(i) i=6 -> case 1|2|3|4 (unexpected)] 
+15 15   [ SwitchTest.sl:395] [StoreLocal] index:[6] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ :0] [Br] index:[38]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ SwitchTest.sl:403] [LoadConstString] index:[2749] val: string[switch(i) i=6 -> case 5|6|7 hit] 
+24 24   [ SwitchTest.sl:395] [StoreLocal] index:[7] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ :0] [Br] index:[38]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ SwitchTest.sl:404] [LoadConstString] index:[2750] val: string[switch(i) i=6 -> default (unexpected)] 
+33 33   [ SwitchTest.sl:395] [StoreLocal] index:[8] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ :0] [Label] index:[1]
+39 39   [ SwitchTest.sl:408] [LoadConstInt32] index:[0] val: int32[3] 
+40 40   [ SwitchTest.sl:395] [StoreLocal] index:[2] info:[LocalStatement]
+41 41   [ SwitchTest.sl:409] [LoadConstInt32] index:[0] val: int32[4] 
+42 42   [ SwitchTest.sl:395] [StoreLocal] index:[3] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0] info:[SwitchStart]
+44 44   [ SwitchTest.sl:410] [LoadLocal] index:[2] info:[LocalStatement]
+45 45   [ SwitchTest.sl:410] [LoadLocal] index:[3] info:[LocalStatement]
+46 46   [ SwitchTest.sl:410] [Add] index:[0]
+47 47   [ SwitchTest.sl:395] [StoreLocal] index:[4] info:[LocalStatement]
+48 48   [ SwitchTest.sl:395] [LoadLocal] index:[4] info:[LocalStatement]
+49 49   [ :0] [Switch] index:[0] info:[Switch]
+50 50   [ :0] [Nop] index:[0]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ SwitchTest.sl:412] [LoadConstString] index:[2751] val: string[switch(x+y) =7 -> case 6|7 hit] 
+53 53   [ SwitchTest.sl:395] [StoreLocal] index:[9] info:[LocalStatement]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+56 56   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+57 57   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+58 58   [ :0] [Br] index:[67]
+59 59   [ :0] [Nop] index:[0]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ SwitchTest.sl:413] [LoadConstString] index:[2752] val: string[switch(x+y) =7 -> default (unexpected)] 
+62 62   [ SwitchTest.sl:395] [StoreLocal] index:[10] info:[LocalStatement]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+65 65   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+66 66   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+67 67   [ :0] [Label] index:[2]
+68 68   [ SwitchTest.sl:395] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.SwitchTest.Class2
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=28932175 idx=0 name=ProjectTest.SwitchTest.Class2.v type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.SwitchTest.Class3
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1484233896
+      Mapping: []
+  ClassLocals:
+      - #0 id=28932175 idx=0 name=ProjectTest.SwitchTest.Class2.v type=Core.Int32
+      - #1 id=33040847 idx=1 name=ProjectTest.SwitchTest.Class3.c3_val type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.SwitchTest.Class4
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1484233896
+      Mapping: []
+  ClassLocals:
+      - #0 id=28932175 idx=0 name=ProjectTest.SwitchTest.Class2.v type=Core.Int32
+      - #1 id=6366390 idx=1 name=ProjectTest.SwitchTest.Class4.c4_val type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.SwitchColor
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=7744859 idx=0 name=ProjectTest.SwitchColor.Red type=Core.Member
+      - #1 id=2594873 idx=1 name=ProjectTest.SwitchColor.Green type=Core.Member
+      - #2 id=23353865 idx=2 name=ProjectTest.SwitchColor.Blue type=Core.Member
+      - #3 id=8858194 idx=3 name=ProjectTest.SwitchColor.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

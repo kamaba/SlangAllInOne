@@ -1,0 +1,94 @@
+-------------------FileMeta 文件显示 开始 : Path: ClassAs_Is.sl-----------------------
+namespace ClassAs_IsNS
+{
+    Level1
+    {
+        Level1_var1 = 20i
+
+    }
+    Level2 extends Level1
+    {
+        Level2_var1 = 30i
+
+    }
+    Level3 extends Level2
+    {
+        Level3_var3 = 40i
+
+    }
+    LevelT<T1>
+    {
+        T1 T1levelT1_var1 = new()
+
+    }
+    LevelT2<T21,T22> extends LevelT<T22>
+    {
+        T22 T22levelT2_var1 = new()
+
+    }
+    LevelT3<T31,T32> extends LevelT2<T32,T31>
+    {
+        T31 T31levelT3_var1 = new()
+
+    }
+    ClassAs_Is
+    {
+        _public static fun( )
+        {
+            global.println("========== ClassAs_Is (start) ==========");
+            int a = 100i;
+            b = "abc";
+            if ais int str
+            {
+                global.println("_int is  " + str);
+            }
+            elif bis string str2
+            {
+                global.println("_int is2  " + str2);
+            }
+            LevelT3<int,string> levelt3 = new();
+            levelt3.levelT3_var1 = 100i;
+            levelt3_2 = levelt3as LevelT3<int,string>;
+            if levelt3_2 != null
+            {
+                global.println("_this_——————————————————————————————  " + levelt3_2.levelT3_var1);
+            }
+            else
+            {
+                global.println("aanonnnhooooooooo  ");
+            }
+            LevelT2<int,int> levelt2 = new();
+            levelt2.levelT2_var1 = 1112i;
+            if levelt2is LevelT2<int,int> levelt3_22
+            {
+                global.println("_this_——————————2222222222  " + levelt3_22.levelT2_var1);
+            }
+            Level3 level3 = new();
+            Level1 level1 = level3;
+            level2 = level1as Level2;
+            if level2 != null
+            {
+                global.println("_this_——————————————————————————————  " + level2.Level2_var1);
+            }
+            else
+            {
+                global.println("aanonnnhooooooooo  " + level1.Level1_var1);
+            }
+            bool flag = level2is Level3 level3ttt;
+            if flag
+            {
+                global.println("is ok  " + level3ttt.Level3_var3);
+            }
+            else
+            {
+                global.println("is No  ");
+            }
+            if level1is Level3 ll3if
+            {
+                global.println("yes l3 =" + ll3if.Level3_var3);
+            }
+            global.println("========== ClassAs_Is (end) ==========");
+        }
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

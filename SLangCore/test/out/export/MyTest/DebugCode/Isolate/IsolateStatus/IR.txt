@@ -1,0 +1,87 @@
+-------------------IR 文件显示 开始 : Path: Isolate/IsolateStatus.sl-----------------------
+Class: Std.IsolateStatus
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1424644941 idx=0 name=Std.IsolateStatus.Created type=Core.Int32
+      - #1 id=554995697 idx=1 name=Std.IsolateStatus.Ready type=Core.Int32
+      - #2 id=1259278054 idx=2 name=Std.IsolateStatus.Running type=Core.Int32
+      - #3 id=766475867 idx=3 name=Std.IsolateStatus.Paused type=Core.Int32
+      - #4 id=-1327758729 idx=4 name=Std.IsolateStatus.Exiting type=Core.Int32
+      - #5 id=-1193137469 idx=5 name=Std.IsolateStatus.Dead type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,449 @@
+-------------------IR 文件显示 开始 : Path: Monitor.sl-----------------------
+Class: Core.Monitor
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.watch_2_Core.Object_Core.String
+    VirtualName: watch_Core.Void_2_Core.Object_Core.String
+    Name: watch
+    InterfaceMethod: False
+    Return:
+      - #0 id=38518068 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11118299 idx=0 name=value type=Core.Object
+      - #1 id=32955827 idx=1 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.watch_3_Core.Object_Core.String_Core.String
+    VirtualName: watch_Core.Void_3_Core.Object_Core.String_Core.String
+    Name: watch
+    InterfaceMethod: False
+    Return:
+      - #0 id=28166990 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52176326 idx=0 name=target type=Core.Object
+      - #1 id=66933755 idx=1 name=member type=Core.String
+      - #2 id=65532886 idx=2 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.watch_3_Core.Object_Core.String_Core.Object
+    VirtualName: watch_Core.Void_3_Core.Object_Core.String_Core.Object
+    Name: watch
+    InterfaceMethod: False
+    Return:
+      - #0 id=52925064 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6563530 idx=0 name=value type=Core.Object
+      - #1 id=59071773 idx=1 name=tag type=Core.String
+      - #2 id=61883915 idx=2 name=callback type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.frameCount
+    VirtualName: frameCount_Core.Int32_0
+    Name: frameCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=20084323 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.getFrame_1_Core.Int32
+    VirtualName: getFrame_Core.String_1_Core.Int32
+    Name: getFrame
+    InterfaceMethod: False
+    Return:
+      - #0 id=16217473 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11739537 idx=0 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.lastFrame
+    VirtualName: lastFrame_Core.String_0
+    Name: lastFrame
+    InterfaceMethod: False
+    Return:
+      - #0 id=11378472 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.setMaxTextLength_1_Core.Int32
+    VirtualName: setMaxTextLength_Core.Void_1_Core.Int32
+    Name: setMaxTextLength
+    InterfaceMethod: False
+    Return:
+      - #0 id=49241002 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40515840 idx=0 name=maxLength type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.begin_1_Core.String
+    VirtualName: begin_Core.Void_1_Core.String
+    Name: begin
+    InterfaceMethod: False
+    Return:
+      - #0 id=29098241 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60557584 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.end_1_Core.String
+    VirtualName: end_Core.Void_1_Core.String
+    Name: end
+    InterfaceMethod: False
+    Return:
+      - #0 id=8147349 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6217281 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.mark_1_Core.String
+    VirtualName: mark_Core.Void_1_Core.String
+    Name: mark
+    InterfaceMethod: False
+    Return:
+      - #0 id=55955533 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33837754 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.setSkip_1_Core.Int32
+    VirtualName: setSkip_Core.Void_1_Core.Int32
+    Name: setSkip
+    InterfaceMethod: False
+    Return:
+      - #0 id=36104338 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56503588 idx=0 name=n type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.pause
+    VirtualName: pause_Core.Void_0
+    Name: pause
+    InterfaceMethod: False
+    Return:
+      - #0 id=38770251 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.resume
+    VirtualName: resume_Core.Void_0
+    Name: resume
+    InterfaceMethod: False
+    Return:
+      - #0 id=13387943 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.enable_1_Core.String
+    VirtualName: enable_Core.Void_1_Core.String
+    Name: enable
+    InterfaceMethod: False
+    Return:
+      - #0 id=53382625 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10681578 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.disable_1_Core.String
+    VirtualName: disable_Core.Void_1_Core.String
+    Name: disable
+    InterfaceMethod: False
+    Return:
+      - #0 id=29025339 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59901461 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.diff_1_Core.Int32
+    VirtualName: diff_Core.String_1_Core.Int32
+    Name: diff
+    InterfaceMethod: False
+    Return:
+      - #0 id=2242241 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=20180177 idx=0 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.find_2_Core.String_Core.String
+    VirtualName: find_Core.Array<Core.Int32>[-1]_2_Core.String_Core.String
+    Name: find
+    InterfaceMethod: False
+    Return:
+      - #0 id=23981637 idx=0 name=return] type=Core.Array<T><Core.Int32>
+    Arguments:
+      - #0 id=14508148 idx=0 name=tag type=Core.String
+      - #1 id=63464474 idx=1 name=scope type=Core.String
+    Locals:
+      - #0 id=34309360 idx=0 name=r type=Core.Array<T><Core.Int32>
+    Instructions:
+
+  Method: Core.Monitor.series_1_Core.String
+    VirtualName: series_Core.Array<Core.String>[-1]_1_Core.String
+    Name: series
+    InterfaceMethod: False
+    Return:
+      - #0 id=27594809 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=47026694 idx=0 name=tag type=Core.String
+    Locals:
+      - #0 id=20587062 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Monitor.stats_1_Core.String
+    VirtualName: stats_Core.String_1_Core.String
+    Name: stats
+    InterfaceMethod: False
+    Return:
+      - #0 id=56939344 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42692051 idx=0 name=tag type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.scopeChain
+    VirtualName: scopeChain_Core.String_0
+    Name: scopeChain
+    InterfaceMethod: False
+    Return:
+      - #0 id=35504098 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.watchAssert_3_Core.Object_Core.String_Core.Boolean
+    VirtualName: watchAssert_Core.Void_3_Core.Object_Core.String_Core.Boolean
+    Name: watchAssert
+    InterfaceMethod: False
+    Return:
+      - #0 id=57259714 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45575384 idx=0 name=value type=Core.Object
+      - #1 id=7525275 idx=1 name=tag type=Core.String
+      - #2 id=618612 idx=2 name=cond type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.watchIn_3_Core.Object_Core.String_Core.String
+    VirtualName: watchIn_Core.Void_3_Core.Object_Core.String_Core.String
+    Name: watchIn
+    InterfaceMethod: False
+    Return:
+      - #0 id=5567508 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50107572 idx=0 name=value type=Core.Object
+      - #1 id=48314965 idx=1 name=tag type=Core.String
+      - #2 id=32181504 idx=2 name=caller type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.assertViolations
+    VirtualName: assertViolations_Core.Int32_0
+    Name: assertViolations
+    InterfaceMethod: False
+    Return:
+      - #0 id=21198087 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.listen_1_Core.Object
+    VirtualName: listen_Core.Int32_1_Core.Object
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=39323473 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=18366943 idx=0 name=callback type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.listen_2_Core.String_Core.Object
+    VirtualName: listen_Core.Int32_2_Core.String_Core.Object
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=11327425 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34837968 idx=0 name=tag type=Core.String
+      - #1 id=45106256 idx=1 name=callback type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.unlisten_1_Core.Int32
+    VirtualName: unlisten_Core.Boolean_1_Core.Int32
+    Name: unlisten
+    InterfaceMethod: False
+    Return:
+      - #0 id=29728115 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66226448 idx=0 name=id type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.stackView
+    VirtualName: stackView_Core.String_0
+    Name: stackView
+    InterfaceMethod: False
+    Return:
+      - #0 id=62742061 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.frames
+    VirtualName: frames_Core.String_0
+    Name: frames
+    InterfaceMethod: False
+    Return:
+      - #0 id=48942162 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.frameData_1_Core.Int32
+    VirtualName: frameData_Core.String_1_Core.Int32
+    Name: frameData
+    InterfaceMethod: False
+    Return:
+      - #0 id=4892200 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=44029805 idx=0 name=depth type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.frameVar_2_Core.Int32_Core.String
+    VirtualName: frameVar_Core.String_2_Core.Int32_Core.String
+    Name: frameVar
+    InterfaceMethod: False
+    Return:
+      - #0 id=9644430 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=19691013 idx=0 name=depth type=Core.Int32
+      - #1 id=43001397 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.log_1_Core.String
+    VirtualName: log_Core.Void_1_Core.String
+    Name: log
+    InterfaceMethod: False
+    Return:
+      - #0 id=60561095 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8178949 idx=0 name=msg type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.getTraceLog
+    VirtualName: getTraceLog_Core.String_0
+    Name: getTraceLog
+    InterfaceMethod: False
+    Return:
+      - #0 id=6501678 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Monitor.frameTable_1_Core.Array<Core.String>[-1]
+    VirtualName: frameTable_Core.String_1_Core.Array<Core.String>[-1]
+    Name: frameTable
+    InterfaceMethod: False
+    Return:
+      - #0 id=56873938 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42103398 idx=0 name=labels type=Core.Array<T><Core.String>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

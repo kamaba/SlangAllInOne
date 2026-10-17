@@ -1,0 +1,24 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/GlobalTest.sl-----------------------
+import Std;
+import CSharp.System;
+GlobalTest
+{
+    _public static fun( )
+    {
+        global.println("========== GlobalTest (start) ==========");
+        global.print("project static function print -> ok");
+        global.println("");
+        Int32 gv1 = global.var1;
+        aa = global.vardata2.a;
+        global.println("jsonc global.var1 -> " + gv1.toString());
+        global.println("jsonc global.vardata2.a -> " + aa.toString());
+        arrRef = global.arrvar1;
+        global.println("global.arrvar1 != null -> " + arrRef.toString());
+        bb = global.vardata2.b;
+        global.println("global.vardata2.a -> " + aa.toString());
+        global.println("global.vardata2.b -> " + bb.toString());
+        global.println("config data (vardata2.a+b) -> " + ((aa + bb).toString());
+        global.println("========== GlobalTest (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

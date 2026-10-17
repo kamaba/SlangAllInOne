@@ -1,0 +1,7 @@
+[slgpu] running CRT init entry
+[slgpu] loading nvcuda.dll
+[slgpu] calling cuInit
+[slgpu] cuInit ok
+[slgpu] retaining primary ctx
+[slgpu] primary ctx retained
+[slgpu] cuModuleLoadData ok

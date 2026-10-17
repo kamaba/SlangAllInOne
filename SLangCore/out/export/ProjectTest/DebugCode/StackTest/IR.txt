@@ -1,0 +1,1289 @@
+-------------------IR 文件显示 开始 : Path: StackTest.sl-----------------------
+Class: ProjectTest.StackTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.StackTest.testBasicPushPop
+    VirtualName: testBasicPushPop_Core.Void_0
+    Name: testBasicPushPop
+    InterfaceMethod: False
+    Return:
+      - #0 id=1683025 idx=0 name=_local[ProjectTest.StackTest.testBasicPushPop.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=15147232 idx=0 name=testBasicPushPop_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:7] [LoadConstString] index:[3260] val: string[===== testBasicPushPop =====] 
+2 2   [ StackTest.sl:5] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:5] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:8] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:5] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:9] [LoadConstString] index:[3054] val: string[isEmpty = ] 
+11 11   [ StackTest.sl:9] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [CallVirt] index:[10] info:[CallVirt isEmpty] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.isEmpty, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ StackTest.sl:9] [Add] index:[0]
+15 15   [ StackTest.sl:5] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ StackTest.sl:10] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ StackTest.sl:10] [LoadConstInt32] index:[0] val: int32[1] 
+22 22   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+23 23   [ StackTest.sl:11] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ StackTest.sl:11] [LoadConstInt32] index:[0] val: int32[2] 
+25 25   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ StackTest.sl:12] [LoadLocal] index:[0] info:[LocalStatement]
+27 27   [ StackTest.sl:12] [LoadConstInt32] index:[0] val: int32[3] 
+28 28   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+29 29   [ StackTest.sl:13] [LoadConstString] index:[3059] val: string[length = ] 
+30 30   [ StackTest.sl:13] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+32 32   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ StackTest.sl:13] [Add] index:[0]
+34 34   [ StackTest.sl:5] [StoreLocal] index:[3] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ StackTest.sl:14] [LoadConstString] index:[3261] val: string[peek = ] 
+40 40   [ StackTest.sl:14] [LoadLocal] index:[0] info:[LocalStatement]
+41 41   [ :0] [CallVirt] index:[20] info:[CallVirt peek] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.peek, MethodRuntimeTypeList=[], ParamCount=0}] 
+42 42   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+43 43   [ StackTest.sl:14] [Add] index:[0]
+44 44   [ StackTest.sl:5] [StoreLocal] index:[4] info:[LocalStatement]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+47 47   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+48 48   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+49 49   [ StackTest.sl:15] [LoadConstString] index:[3262] val: string[bottom = ] 
+50 50   [ StackTest.sl:15] [LoadLocal] index:[0] info:[LocalStatement]
+51 51   [ :0] [CallVirt] index:[21] info:[CallVirt bottom] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.bottom, MethodRuntimeTypeList=[], ParamCount=0}] 
+52 52   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ StackTest.sl:15] [Add] index:[0]
+54 54   [ StackTest.sl:5] [StoreLocal] index:[5] info:[LocalStatement]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+57 57   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+58 58   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+59 59   [ StackTest.sl:16] [LoadConstString] index:[3263] val: string[pop = ] 
+60 60   [ StackTest.sl:16] [LoadLocal] index:[0] info:[LocalStatement]
+61 61   [ :0] [CallVirt] index:[19] info:[CallVirt pop] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.pop, MethodRuntimeTypeList=[], ParamCount=0}] 
+62 62   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+63 63   [ StackTest.sl:16] [Add] index:[0]
+64 64   [ StackTest.sl:5] [StoreLocal] index:[6] info:[LocalStatement]
+65 65   [ :0] [Nop] index:[0]
+66 66   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+67 67   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+68 68   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+69 69   [ StackTest.sl:17] [LoadConstString] index:[3263] val: string[pop = ] 
+70 70   [ StackTest.sl:17] [LoadLocal] index:[0] info:[LocalStatement]
+71 71   [ :0] [CallVirt] index:[19] info:[CallVirt pop] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.pop, MethodRuntimeTypeList=[], ParamCount=0}] 
+72 72   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+73 73   [ StackTest.sl:17] [Add] index:[0]
+74 74   [ StackTest.sl:5] [StoreLocal] index:[7] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ StackTest.sl:18] [LoadConstString] index:[3059] val: string[length = ] 
+80 80   [ StackTest.sl:18] [LoadLocal] index:[0] info:[LocalStatement]
+81 81   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+82 82   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+83 83   [ StackTest.sl:18] [Add] index:[0]
+84 84   [ StackTest.sl:5] [StoreLocal] index:[8] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+89 89   [ StackTest.sl:19] [LoadConstString] index:[3261] val: string[peek = ] 
+90 90   [ StackTest.sl:19] [LoadLocal] index:[0] info:[LocalStatement]
+91 91   [ :0] [CallVirt] index:[20] info:[CallVirt peek] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.peek, MethodRuntimeTypeList=[], ParamCount=0}] 
+92 92   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+93 93   [ StackTest.sl:19] [Add] index:[0]
+94 94   [ StackTest.sl:5] [StoreLocal] index:[9] info:[LocalStatement]
+95 95   [ :0] [Nop] index:[0]
+96 96   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+97 97   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+98 98   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+99 99   [ StackTest.sl:20] [LoadConstString] index:[3054] val: string[isEmpty = ] 
+100 100   [ StackTest.sl:20] [LoadLocal] index:[0] info:[LocalStatement]
+101 101   [ :0] [CallVirt] index:[10] info:[CallVirt isEmpty] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.isEmpty, MethodRuntimeTypeList=[], ParamCount=0}] 
+102 102   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+103 103   [ StackTest.sl:20] [Add] index:[0]
+104 104   [ StackTest.sl:5] [StoreLocal] index:[10] info:[LocalStatement]
+105 105   [ :0] [Nop] index:[0]
+106 106   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+107 107   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+108 108   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+109 109   [ StackTest.sl:21] [LoadConstString] index:[3263] val: string[pop = ] 
+110 110   [ StackTest.sl:21] [LoadLocal] index:[0] info:[LocalStatement]
+111 111   [ :0] [CallVirt] index:[19] info:[CallVirt pop] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.pop, MethodRuntimeTypeList=[], ParamCount=0}] 
+112 112   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+113 113   [ StackTest.sl:21] [Add] index:[0]
+114 114   [ StackTest.sl:5] [StoreLocal] index:[11] info:[LocalStatement]
+115 115   [ :0] [Nop] index:[0]
+116 116   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+117 117   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+118 118   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+119 119   [ StackTest.sl:22] [LoadConstString] index:[3054] val: string[isEmpty = ] 
+120 120   [ StackTest.sl:22] [LoadLocal] index:[0] info:[LocalStatement]
+121 121   [ :0] [CallVirt] index:[10] info:[CallVirt isEmpty] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.isEmpty, MethodRuntimeTypeList=[], ParamCount=0}] 
+122 122   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+123 123   [ StackTest.sl:22] [Add] index:[0]
+124 124   [ StackTest.sl:5] [StoreLocal] index:[12] info:[LocalStatement]
+125 125   [ :0] [Nop] index:[0]
+126 126   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+127 127   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+128 128   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+129 129   [ StackTest.sl:23] [LoadConstString] index:[3264] val: string[pop on empty is null = ] 
+130 130   [ StackTest.sl:23] [LoadLocal] index:[0] info:[LocalStatement]
+131 131   [ :0] [CallVirt] index:[19] info:[CallVirt pop] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.pop, MethodRuntimeTypeList=[], ParamCount=0}] 
+132 132   [ StackTest.sl:23] [LoadConstNull] index:[0] val:[null] 
+133 133   [ StackTest.sl:23] [Ceq] index:[0]
+134 134   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+135 135   [ StackTest.sl:23] [Add] index:[0]
+136 136   [ StackTest.sl:5] [StoreLocal] index:[13] info:[LocalStatement]
+137 137   [ :0] [Nop] index:[0]
+138 138   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+139 139   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+140 140   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+141 141   [ StackTest.sl:24] [LoadConstString] index:[3265] val: string[peek on empty is null = ] 
+142 142   [ StackTest.sl:24] [LoadLocal] index:[0] info:[LocalStatement]
+143 143   [ :0] [CallVirt] index:[20] info:[CallVirt peek] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.peek, MethodRuntimeTypeList=[], ParamCount=0}] 
+144 144   [ StackTest.sl:24] [LoadConstNull] index:[0] val:[null] 
+145 145   [ StackTest.sl:24] [Ceq] index:[0]
+146 146   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+147 147   [ StackTest.sl:24] [Add] index:[0]
+148 148   [ StackTest.sl:5] [StoreLocal] index:[14] info:[LocalStatement]
+149 149   [ :0] [Nop] index:[0]
+150 150   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+151 151   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+152 152   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+153 153   [ StackTest.sl:5] [Label] index:[0] info:[FunEndLabel]
+154 154   [ StackTest.sl:5] [LoadLocal] index:[0] info:[ARC release: LoadLocal testBasicPushPop_local[s]]
+155 155   [ StackTest.sl:5] [ArcRelease] index:[0] info:[ARC release owned local: testBasicPushPop_local[s]]
+156 156   [ StackTest.sl:5] [StoreLocal] index:[0] info:[ARC release: StoreLocal testBasicPushPop_local[s]]
+
+  Method: ProjectTest.StackTest.testConstructors
+    VirtualName: testConstructors_Core.Void_0
+    Name: testConstructors
+    InterfaceMethod: False
+    Return:
+      - #0 id=2107364 idx=0 name=_local[ProjectTest.StackTest.testConstructors.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=18966278 idx=0 name=testConstructors_local[s1] type=Core.Stack<T><Core.Int32>
+      - #1 id=36478775 idx=1 name=testConstructors_local[arr] type=Core.Array<T><Core.Int32>
+      - #2 id=59873520 idx=2 name=testConstructors_local[s2] type=Core.Stack<T><Core.Int32>
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:30] [LoadConstString] index:[3061] val: string[===== testConstructors =====] 
+2 2   [ StackTest.sl:28] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:28] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ StackTest.sl:31] [LoadConstInt32] index:[0] val: int32[8] 
+10 10   [ StackTest.sl:31] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stack<T>._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ StackTest.sl:28] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ StackTest.sl:32] [LoadConstString] index:[3062] val: string[capacity(s1) = ] 
+13 13   [ StackTest.sl:32] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ StackTest.sl:32] [Add] index:[0]
+17 17   [ StackTest.sl:28] [StoreLocal] index:[4] info:[LocalStatement]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+20 20   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+21 21   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+22 22   [ StackTest.sl:34] [LoadConstInt32] index:[0] val: int32[3] 
+23 23   [ StackTest.sl:28] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+24 24   [ StackTest.sl:34] [ArcRetain] index:[0] info:[ARC claim owned new local: arr]
+25 25   [ StackTest.sl:28] [StoreLocal] index:[1] info:[LocalStatement]
+26 26   [ StackTest.sl:35] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ StackTest.sl:35] [LoadConstInt32] index:[0] val: int32[0] 
+28 28   [ StackTest.sl:35] [LoadConstInt32] index:[0] val: int32[10] 
+29 29   [ StackTest.sl:28] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+30 30   [ StackTest.sl:36] [LoadLocal] index:[1] info:[LocalStatement]
+31 31   [ StackTest.sl:36] [LoadConstInt32] index:[0] val: int32[1] 
+32 32   [ StackTest.sl:36] [LoadConstInt32] index:[0] val: int32[20] 
+33 33   [ StackTest.sl:28] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+34 34   [ StackTest.sl:37] [LoadLocal] index:[1] info:[LocalStatement]
+35 35   [ StackTest.sl:37] [LoadConstInt32] index:[0] val: int32[2] 
+36 36   [ StackTest.sl:37] [LoadConstInt32] index:[0] val: int32[30] 
+37 37   [ StackTest.sl:28] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+38 38   [ StackTest.sl:28] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+39 39   [ :0] [Dup] index:[0]
+40 40   [ StackTest.sl:38] [LoadLocal] index:[1] info:[LocalStatement]
+41 41   [ StackTest.sl:38] [CallVirt] index:[8] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stack<T>._init__1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+42 42   [ StackTest.sl:28] [StoreLocal] index:[2] info:[LocalStatement]
+43 43   [ StackTest.sl:39] [LoadConstString] index:[3063] val: string[s2.length = ] 
+44 44   [ StackTest.sl:39] [LoadLocal] index:[2] info:[LocalStatement]
+45 45   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+46 46   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ StackTest.sl:39] [Add] index:[0]
+48 48   [ StackTest.sl:28] [StoreLocal] index:[5] info:[LocalStatement]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+51 51   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+52 52   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+53 53   [ StackTest.sl:40] [LoadConstString] index:[3266] val: string[s2.bottom = ] 
+54 54   [ StackTest.sl:40] [LoadLocal] index:[2] info:[LocalStatement]
+55 55   [ :0] [CallVirt] index:[21] info:[CallVirt bottom] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.bottom, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ StackTest.sl:40] [Add] index:[0]
+58 58   [ StackTest.sl:28] [StoreLocal] index:[6] info:[LocalStatement]
+59 59   [ :0] [Nop] index:[0]
+60 60   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+61 61   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+62 62   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+63 63   [ StackTest.sl:41] [LoadConstString] index:[3267] val: string[s2.peek = ] 
+64 64   [ StackTest.sl:41] [LoadLocal] index:[2] info:[LocalStatement]
+65 65   [ :0] [CallVirt] index:[20] info:[CallVirt peek] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.peek, MethodRuntimeTypeList=[], ParamCount=0}] 
+66 66   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+67 67   [ StackTest.sl:41] [Add] index:[0]
+68 68   [ StackTest.sl:28] [StoreLocal] index:[7] info:[LocalStatement]
+69 69   [ :0] [Nop] index:[0]
+70 70   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+71 71   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+72 72   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+73 73   [ StackTest.sl:42] [LoadConstString] index:[3064] val: string[s2.toString = ] 
+74 74   [ StackTest.sl:42] [LoadLocal] index:[2] info:[LocalStatement]
+75 75   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+76 76   [ StackTest.sl:42] [Add] index:[0]
+77 77   [ StackTest.sl:28] [StoreLocal] index:[8] info:[LocalStatement]
+78 78   [ :0] [Nop] index:[0]
+79 79   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+80 80   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+81 81   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+82 82   [ StackTest.sl:28] [Label] index:[0] info:[FunEndLabel]
+83 83   [ StackTest.sl:28] [LoadLocal] index:[1] info:[ARC release: LoadLocal testConstructors_local[arr]]
+84 84   [ StackTest.sl:28] [ArcRelease] index:[0] info:[ARC release owned local: testConstructors_local[arr]]
+85 85   [ StackTest.sl:28] [StoreLocal] index:[1] info:[ARC release: StoreLocal testConstructors_local[arr]]
+
+  Method: ProjectTest.StackTest.testSearchAndPushRange
+    VirtualName: testSearchAndPushRange_Core.Void_0
+    Name: testSearchAndPushRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=41985586 idx=0 name=_local[ProjectTest.StackTest.testSearchAndPushRange.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=42325954 idx=0 name=testSearchAndPushRange_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=45389273 idx=1 name=testSearchAndPushRange_local[more] type=Core.Array<T><Core.Int32>
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:48] [LoadConstString] index:[3268] val: string[===== testSearchAndPushRange =====] 
+2 2   [ StackTest.sl:46] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:46] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:49] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:46] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:50] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:50] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ StackTest.sl:51] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ StackTest.sl:51] [LoadConstInt32] index:[0] val: int32[2] 
+15 15   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ StackTest.sl:52] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ StackTest.sl:52] [LoadConstInt32] index:[0] val: int32[3] 
+18 18   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+19 19   [ StackTest.sl:53] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ StackTest.sl:53] [LoadConstInt32] index:[0] val: int32[2] 
+21 21   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+22 22   [ StackTest.sl:54] [LoadConstString] index:[3074] val: string[contains(2) = ] 
+23 23   [ StackTest.sl:54] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ StackTest.sl:54] [LoadConstInt32] index:[0] val: int32[2] 
+25 25   [ :0] [CallVirt] index:[22] info:[CallVirt contains] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.contains_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ StackTest.sl:54] [Add] index:[0]
+28 28   [ StackTest.sl:46] [StoreLocal] index:[3] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ StackTest.sl:55] [LoadConstString] index:[3067] val: string[contains(9) = ] 
+34 34   [ StackTest.sl:55] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ StackTest.sl:55] [LoadConstInt32] index:[0] val: int32[9] 
+36 36   [ :0] [CallVirt] index:[22] info:[CallVirt contains] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.contains_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+38 38   [ StackTest.sl:55] [Add] index:[0]
+39 39   [ StackTest.sl:46] [StoreLocal] index:[4] info:[LocalStatement]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+42 42   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+43 43   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+44 44   [ StackTest.sl:56] [LoadConstString] index:[3269] val: string[indexOf(2) = ] 
+45 45   [ StackTest.sl:56] [LoadLocal] index:[0] info:[LocalStatement]
+46 46   [ StackTest.sl:56] [LoadConstInt32] index:[0] val: int32[2] 
+47 47   [ :0] [CallVirt] index:[23] info:[CallVirt indexOf] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.indexOf_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+48 48   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+49 49   [ StackTest.sl:56] [Add] index:[0]
+50 50   [ StackTest.sl:46] [StoreLocal] index:[5] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+53 53   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+54 54   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+55 55   [ StackTest.sl:57] [LoadConstString] index:[3270] val: string[lastIndexOf(2) = ] 
+56 56   [ StackTest.sl:57] [LoadLocal] index:[0] info:[LocalStatement]
+57 57   [ StackTest.sl:57] [LoadConstInt32] index:[0] val: int32[2] 
+58 58   [ :0] [CallVirt] index:[24] info:[CallVirt lastIndexOf] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.lastIndexOf_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+59 59   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+60 60   [ StackTest.sl:57] [Add] index:[0]
+61 61   [ StackTest.sl:46] [StoreLocal] index:[6] info:[LocalStatement]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+64 64   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+65 65   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+66 66   [ StackTest.sl:58] [LoadConstString] index:[3271] val: string[indexOf(9) = ] 
+67 67   [ StackTest.sl:58] [LoadLocal] index:[0] info:[LocalStatement]
+68 68   [ StackTest.sl:58] [LoadConstInt32] index:[0] val: int32[9] 
+69 69   [ :0] [CallVirt] index:[23] info:[CallVirt indexOf] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.indexOf_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+70 70   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+71 71   [ StackTest.sl:58] [Add] index:[0]
+72 72   [ StackTest.sl:46] [StoreLocal] index:[7] info:[LocalStatement]
+73 73   [ :0] [Nop] index:[0]
+74 74   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+75 75   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+76 76   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+77 77   [ StackTest.sl:60] [LoadConstInt32] index:[0] val: int32[3] 
+78 78   [ StackTest.sl:46] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+79 79   [ StackTest.sl:60] [ArcRetain] index:[0] info:[ARC claim owned new local: more]
+80 80   [ StackTest.sl:46] [StoreLocal] index:[1] info:[LocalStatement]
+81 81   [ StackTest.sl:61] [LoadLocal] index:[1] info:[LocalStatement]
+82 82   [ StackTest.sl:61] [LoadConstInt32] index:[0] val: int32[0] 
+83 83   [ StackTest.sl:61] [LoadConstInt32] index:[0] val: int32[4] 
+84 84   [ StackTest.sl:46] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+85 85   [ StackTest.sl:62] [LoadLocal] index:[1] info:[LocalStatement]
+86 86   [ StackTest.sl:62] [LoadConstInt32] index:[0] val: int32[1] 
+87 87   [ StackTest.sl:62] [LoadConstInt32] index:[0] val: int32[5] 
+88 88   [ StackTest.sl:46] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+89 89   [ StackTest.sl:63] [LoadLocal] index:[1] info:[LocalStatement]
+90 90   [ StackTest.sl:63] [LoadConstInt32] index:[0] val: int32[2] 
+91 91   [ StackTest.sl:63] [LoadConstInt32] index:[0] val: int32[6] 
+92 92   [ StackTest.sl:46] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+93 93   [ StackTest.sl:64] [LoadLocal] index:[0] info:[LocalStatement]
+94 94   [ StackTest.sl:64] [LoadLocal] index:[1] info:[LocalStatement]
+95 95   [ :0] [CallVirt] index:[18] info:[CallVirt pushRange] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.pushRange_1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+96 96   [ StackTest.sl:65] [LoadConstString] index:[3272] val: string[after pushRange, length = ] 
+97 97   [ StackTest.sl:65] [LoadLocal] index:[0] info:[LocalStatement]
+98 98   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+99 99   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+100 100   [ StackTest.sl:65] [Add] index:[0]
+101 101   [ StackTest.sl:46] [StoreLocal] index:[8] info:[LocalStatement]
+102 102   [ :0] [Nop] index:[0]
+103 103   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+104 104   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+105 105   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+106 106   [ StackTest.sl:66] [LoadConstString] index:[3069] val: string[s.toString = ] 
+107 107   [ StackTest.sl:66] [LoadLocal] index:[0] info:[LocalStatement]
+108 108   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+109 109   [ StackTest.sl:66] [Add] index:[0]
+110 110   [ StackTest.sl:46] [StoreLocal] index:[9] info:[LocalStatement]
+111 111   [ :0] [Nop] index:[0]
+112 112   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+113 113   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+114 114   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+115 115   [ StackTest.sl:46] [Label] index:[0] info:[FunEndLabel]
+116 116   [ StackTest.sl:46] [LoadLocal] index:[0] info:[ARC release: LoadLocal testSearchAndPushRange_local[s]]
+117 117   [ StackTest.sl:46] [ArcRelease] index:[0] info:[ARC release owned local: testSearchAndPushRange_local[s]]
+118 118   [ StackTest.sl:46] [StoreLocal] index:[0] info:[ARC release: StoreLocal testSearchAndPushRange_local[s]]
+119 119   [ StackTest.sl:46] [LoadLocal] index:[1] info:[ARC release: LoadLocal testSearchAndPushRange_local[more]]
+120 120   [ StackTest.sl:46] [ArcRelease] index:[0] info:[ARC release owned local: testSearchAndPushRange_local[more]]
+121 121   [ StackTest.sl:46] [StoreLocal] index:[1] info:[ARC release: StoreLocal testSearchAndPushRange_local[more]]
+
+  Method: ProjectTest.StackTest.testGrow
+    VirtualName: testGrow_Core.Void_0
+    Name: testGrow
+    InterfaceMethod: False
+    Return:
+      - #0 id=36995518 idx=0 name=_local[ProjectTest.StackTest.testGrow.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=64524211 idx=0 name=testGrow_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=43846987 idx=1 name=testGrow_local[i] type=Core.Int32
+      - #2 id=59078569 idx=2 name=testGrow_local[i] type=Core.Int32
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=37952469 idx=16 name=_local[txt] type=Core.Object
+      - #17 id=37952469 idx=17 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:72] [LoadConstString] index:[3077] val: string[===== testGrow =====] 
+2 2   [ StackTest.sl:70] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:70] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:73] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:70] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:74] [LoadConstString] index:[3078] val: string[initial capacity = ] 
+11 11   [ StackTest.sl:74] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ StackTest.sl:74] [Add] index:[0]
+15 15   [ StackTest.sl:70] [StoreLocal] index:[4] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ StackTest.sl:75] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ StackTest.sl:75] [LoadConstInt32] index:[0] val: int32[1] 
+22 22   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+23 23   [ StackTest.sl:76] [LoadConstString] index:[3273] val: string[after 1 push, capacity = ] 
+24 24   [ StackTest.sl:76] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ StackTest.sl:76] [Add] index:[0]
+28 28   [ StackTest.sl:70] [StoreLocal] index:[5] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ StackTest.sl:77] [LoadConstInt32] index:[0] val: int32[2] 
+34 34   [ StackTest.sl:70] [StoreLocal] index:[1] info:[LocalStatement]
+35 35   [ :0] [Label] index:[2]
+36 36   [ StackTest.sl:77] [LoadLocal] index:[1] info:[LocalStatement]
+37 37   [ StackTest.sl:77] [LoadConstInt32] index:[0] val: int32[4] 
+38 38   [ StackTest.sl:77] [Cle] index:[0]
+39 39   [ :0] [BrFalse] index:[51]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ StackTest.sl:79] [LoadLocal] index:[0] info:[LocalStatement]
+42 42   [ StackTest.sl:79] [LoadLocal] index:[1] info:[LocalStatement]
+43 43   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+44 44   [ :0] [Nop] index:[0]
+45 45   [ StackTest.sl:77] [LoadLocal] index:[1] info:[LocalStatement]
+46 46   [ :0] [LoadConstInt8] index:[0] val:[1] 
+47 47   [ :0] [Convert_I32] index:[0]
+48 48   [ :0] [Add] index:[0]
+49 49   [ StackTest.sl:70] [StoreLocal] index:[1] info:[LocalStatement]
+50 50   [ :0] [Br] index:[35]
+51 51   [ :0] [Label] index:[1]
+52 52   [ StackTest.sl:81] [LoadConstString] index:[3274] val: string[after 4 pushes, capacity = ] 
+53 53   [ StackTest.sl:81] [LoadLocal] index:[0] info:[LocalStatement]
+54 54   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+55 55   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ StackTest.sl:81] [Add] index:[0]
+57 57   [ StackTest.sl:70] [StoreLocal] index:[12] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ StackTest.sl:82] [LoadLocal] index:[0] info:[LocalStatement]
+63 63   [ StackTest.sl:82] [LoadConstInt32] index:[0] val: int32[5] 
+64 64   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+65 65   [ StackTest.sl:83] [LoadConstString] index:[3275] val: string[after 5 pushes, capacity = ] 
+66 66   [ StackTest.sl:83] [LoadLocal] index:[0] info:[LocalStatement]
+67 67   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+68 68   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+69 69   [ StackTest.sl:83] [Add] index:[0]
+70 70   [ StackTest.sl:70] [StoreLocal] index:[13] info:[LocalStatement]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+73 73   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+74 74   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+75 75   [ StackTest.sl:84] [LoadConstInt32] index:[0] val: int32[6] 
+76 76   [ StackTest.sl:70] [StoreLocal] index:[2] info:[LocalStatement]
+77 77   [ :0] [Label] index:[4]
+78 78   [ StackTest.sl:84] [LoadLocal] index:[2] info:[LocalStatement]
+79 79   [ StackTest.sl:84] [LoadConstInt32] index:[0] val: int32[16] 
+80 80   [ StackTest.sl:84] [Cle] index:[0]
+81 81   [ :0] [BrFalse] index:[93]
+82 82   [ :0] [Nop] index:[0]
+83 83   [ StackTest.sl:86] [LoadLocal] index:[0] info:[LocalStatement]
+84 84   [ StackTest.sl:86] [LoadLocal] index:[2] info:[LocalStatement]
+85 85   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+86 86   [ :0] [Nop] index:[0]
+87 87   [ StackTest.sl:84] [LoadLocal] index:[2] info:[LocalStatement]
+88 88   [ :0] [LoadConstInt8] index:[0] val:[1] 
+89 89   [ :0] [Convert_I32] index:[0]
+90 90   [ :0] [Add] index:[0]
+91 91   [ StackTest.sl:70] [StoreLocal] index:[2] info:[LocalStatement]
+92 92   [ :0] [Br] index:[77]
+93 93   [ :0] [Label] index:[3]
+94 94   [ StackTest.sl:88] [LoadConstString] index:[3276] val: string[after 16 pushes, capacity = ] 
+95 95   [ StackTest.sl:88] [LoadLocal] index:[0] info:[LocalStatement]
+96 96   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+97 97   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+98 98   [ StackTest.sl:88] [Add] index:[0]
+99 99   [ StackTest.sl:70] [StoreLocal] index:[16] info:[LocalStatement]
+100 100   [ :0] [Nop] index:[0]
+101 101   [ ProjectTest.sp:8] [LoadLocal] index:[16] info:[LocalStatement]
+102 102   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+103 103   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+104 104   [ StackTest.sl:89] [LoadConstString] index:[3059] val: string[length = ] 
+105 105   [ StackTest.sl:89] [LoadLocal] index:[0] info:[LocalStatement]
+106 106   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+107 107   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+108 108   [ StackTest.sl:89] [Add] index:[0]
+109 109   [ StackTest.sl:70] [StoreLocal] index:[17] info:[LocalStatement]
+110 110   [ :0] [Nop] index:[0]
+111 111   [ ProjectTest.sp:8] [LoadLocal] index:[17] info:[LocalStatement]
+112 112   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+113 113   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+114 114   [ StackTest.sl:70] [Label] index:[0] info:[FunEndLabel]
+115 115   [ StackTest.sl:70] [LoadLocal] index:[0] info:[ARC release: LoadLocal testGrow_local[s]]
+116 116   [ StackTest.sl:70] [ArcRelease] index:[0] info:[ARC release owned local: testGrow_local[s]]
+117 117   [ StackTest.sl:70] [StoreLocal] index:[0] info:[ARC release: StoreLocal testGrow_local[s]]
+
+  Method: ProjectTest.StackTest.testEnsureCapacity
+    VirtualName: testEnsureCapacity_Core.Void_0
+    Name: testEnsureCapacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=10372286 idx=0 name=_local[ProjectTest.StackTest.testEnsureCapacity.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=26241711 idx=0 name=testEnsureCapacity_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:95] [LoadConstString] index:[3083] val: string[===== testEnsureCapacity =====] 
+2 2   [ StackTest.sl:93] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:93] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:96] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:93] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:97] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:97] [LoadConstInt32] index:[0] val: int32[100] 
+12 12   [ :0] [CallVirt] index:[14] info:[CallVirt ensureCapacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.ensureCapacity_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ StackTest.sl:98] [LoadConstString] index:[3084] val: string[after ensureCapacity(100), capacity = ] 
+14 14   [ StackTest.sl:98] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ StackTest.sl:98] [Add] index:[0]
+18 18   [ StackTest.sl:93] [StoreLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+22 22   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+23 23   [ StackTest.sl:99] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ StackTest.sl:99] [LoadConstInt32] index:[0] val: int32[1] 
+25 25   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ StackTest.sl:100] [LoadConstString] index:[3273] val: string[after 1 push, capacity = ] 
+27 27   [ StackTest.sl:100] [LoadLocal] index:[0] info:[LocalStatement]
+28 28   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ StackTest.sl:100] [Add] index:[0]
+31 31   [ StackTest.sl:93] [StoreLocal] index:[3] info:[LocalStatement]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+34 34   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+35 35   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+36 36   [ StackTest.sl:93] [Label] index:[0] info:[FunEndLabel]
+37 37   [ StackTest.sl:93] [LoadLocal] index:[0] info:[ARC release: LoadLocal testEnsureCapacity_local[s]]
+38 38   [ StackTest.sl:93] [ArcRelease] index:[0] info:[ARC release owned local: testEnsureCapacity_local[s]]
+39 39   [ StackTest.sl:93] [StoreLocal] index:[0] info:[ARC release: StoreLocal testEnsureCapacity_local[s]]
+
+  Method: ProjectTest.StackTest.testClear
+    VirtualName: testClear_Core.Void_0
+    Name: testClear
+    InterfaceMethod: False
+    Return:
+      - #0 id=34848813 idx=0 name=_local[ProjectTest.StackTest.testClear.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=45203864 idx=0 name=testClear_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:106] [LoadConstString] index:[3277] val: string[===== testClear =====] 
+2 2   [ StackTest.sl:104] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:104] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:107] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:104] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:108] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:108] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ StackTest.sl:109] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ StackTest.sl:109] [LoadConstInt32] index:[0] val: int32[2] 
+15 15   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ StackTest.sl:110] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ StackTest.sl:110] [LoadConstInt32] index:[0] val: int32[3] 
+18 18   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+19 19   [ StackTest.sl:111] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ :0] [CallVirt] index:[25] info:[CallVirt clear] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.clear, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ StackTest.sl:112] [LoadConstString] index:[3075] val: string[after clear, length = ] 
+22 22   [ StackTest.sl:112] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+25 25   [ StackTest.sl:112] [Add] index:[0]
+26 26   [ StackTest.sl:104] [StoreLocal] index:[2] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ StackTest.sl:113] [LoadConstString] index:[3076] val: string[after clear, isEmpty = ] 
+32 32   [ StackTest.sl:113] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ :0] [CallVirt] index:[10] info:[CallVirt isEmpty] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.isEmpty, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ StackTest.sl:113] [Add] index:[0]
+36 36   [ StackTest.sl:104] [StoreLocal] index:[3] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ StackTest.sl:114] [LoadConstString] index:[3278] val: string[after clear, capacity = ] 
+42 42   [ StackTest.sl:114] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ :0] [CallVirt] index:[12] info:[CallVirt capacity] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.capacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ StackTest.sl:114] [Add] index:[0]
+46 46   [ StackTest.sl:104] [StoreLocal] index:[4] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+49 49   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+50 50   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+51 51   [ StackTest.sl:115] [LoadLocal] index:[0] info:[LocalStatement]
+52 52   [ StackTest.sl:115] [LoadConstInt32] index:[0] val: int32[9] 
+53 53   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+54 54   [ StackTest.sl:116] [LoadConstString] index:[3279] val: string[push after clear works, length = ] 
+55 55   [ StackTest.sl:116] [LoadLocal] index:[0] info:[LocalStatement]
+56 56   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+58 58   [ StackTest.sl:116] [Add] index:[0]
+59 59   [ StackTest.sl:104] [StoreLocal] index:[5] info:[LocalStatement]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+62 62   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+63 63   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+64 64   [ StackTest.sl:104] [Label] index:[0] info:[FunEndLabel]
+65 65   [ StackTest.sl:104] [LoadLocal] index:[0] info:[ARC release: LoadLocal testClear_local[s]]
+66 66   [ StackTest.sl:104] [ArcRelease] index:[0] info:[ARC release owned local: testClear_local[s]]
+67 67   [ StackTest.sl:104] [StoreLocal] index:[0] info:[ARC release: StoreLocal testClear_local[s]]
+
+  Method: ProjectTest.StackTest.testConvert
+    VirtualName: testConvert_Core.Void_0
+    Name: testConvert
+    InterfaceMethod: False
+    Return:
+      - #0 id=4181593 idx=0 name=_local[ProjectTest.StackTest.testConvert.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37634337 idx=0 name=testConvert_local[arr] type=Core.Array<T><Core.Int32>
+      - #1 id=3164713 idx=1 name=testConvert_local[s] type=Core.Stack<T><Core.Int32>
+      - #2 id=28482418 idx=2 name=testConvert_local[outArr] type=Core.Array<T><Core.Int32>
+      - #3 id=55015173 idx=3 name=testConvert_local[list] type=Core.List<T><Core.Int32>
+      - #4 id=25374516 idx=4 name=testConvert_local[c] type=Core.Stack<T><Core.Int32>
+      - #5 id=22483156 idx=5 name=testConvert_local[i] type=Core.Int32
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=37952469 idx=16 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:122] [LoadConstString] index:[3109] val: string[===== testConvert =====] 
+2 2   [ StackTest.sl:120] [StoreLocal] index:[6] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:123] [LoadConstInt32] index:[0] val: int32[3] 
+8 8   [ StackTest.sl:120] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+9 9   [ StackTest.sl:123] [ArcRetain] index:[0] info:[ARC claim owned new local: arr]
+10 10   [ StackTest.sl:120] [StoreLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:124] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ StackTest.sl:124] [LoadConstInt32] index:[0] val: int32[0] 
+13 13   [ StackTest.sl:124] [LoadConstInt32] index:[0] val: int32[10] 
+14 14   [ StackTest.sl:120] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+15 15   [ StackTest.sl:125] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ StackTest.sl:125] [LoadConstInt32] index:[0] val: int32[1] 
+17 17   [ StackTest.sl:125] [LoadConstInt32] index:[0] val: int32[20] 
+18 18   [ StackTest.sl:120] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+19 19   [ StackTest.sl:126] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ StackTest.sl:126] [LoadConstInt32] index:[0] val: int32[2] 
+21 21   [ StackTest.sl:126] [LoadConstInt32] index:[0] val: int32[30] 
+22 22   [ StackTest.sl:120] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+23 23   [ StackTest.sl:120] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ StackTest.sl:127] [LoadLocal] index:[0] info:[LocalStatement]
+26 26   [ StackTest.sl:127] [CallVirt] index:[8] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stack<T>._init__1_Core.Array<T>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+27 27   [ StackTest.sl:120] [StoreLocal] index:[1] info:[LocalStatement]
+28 28   [ StackTest.sl:128] [LoadLocal] index:[1] info:[LocalStatement]
+29 29   [ :0] [CallVirt] index:[26] info:[CallVirt toArray] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toArray, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ StackTest.sl:120] [StoreLocal] index:[2] info:[LocalStatement]
+31 31   [ StackTest.sl:129] [LoadConstString] index:[3110] val: string[toArray.length = ] 
+32 32   [ StackTest.sl:129] [LoadLocal] index:[2] info:[LocalStatement]
+33 33   [ :0] [CallVirt] index:[8] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ StackTest.sl:129] [Add] index:[0]
+36 36   [ StackTest.sl:120] [StoreLocal] index:[7] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ StackTest.sl:130] [LoadConstInt32] index:[0] val: int32[0] 
+42 42   [ StackTest.sl:120] [StoreLocal] index:[5] info:[LocalStatement]
+43 43   [ :0] [Label] index:[2]
+44 44   [ StackTest.sl:130] [LoadLocal] index:[5] info:[LocalStatement]
+45 45   [ StackTest.sl:130] [LoadLocal] index:[2] info:[LocalStatement]
+46 46   [ :0] [CallVirt] index:[8] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ StackTest.sl:130] [Clt] index:[0]
+48 48   [ :0] [BrFalse] index:[73]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ StackTest.sl:132] [LoadConstString] index:[3280] val: string[outArr[] 
+51 51   [ StackTest.sl:132] [LoadLocal] index:[5] info:[LocalStatement]
+52 52   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ StackTest.sl:132] [Add] index:[0]
+54 54   [ StackTest.sl:132] [LoadConstString] index:[3112] val: string[] = ] 
+55 55   [ StackTest.sl:132] [Add] index:[0]
+56 56   [ StackTest.sl:132] [LoadLocal] index:[2] info:[LocalStatement]
+57 57   [ StackTest.sl:120] [LoadLocal] index:[5] info:[LocalStatement]
+58 58   [ :0] [LoadArrayIndexField] index:[0]
+59 59   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+60 60   [ StackTest.sl:132] [Add] index:[0]
+61 61   [ StackTest.sl:120] [StoreLocal] index:[8] info:[LocalStatement]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+64 64   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+65 65   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ StackTest.sl:130] [LoadLocal] index:[5] info:[LocalStatement]
+68 68   [ :0] [LoadConstInt8] index:[0] val:[1] 
+69 69   [ :0] [Convert_I32] index:[0]
+70 70   [ :0] [Add] index:[0]
+71 71   [ StackTest.sl:120] [StoreLocal] index:[5] info:[LocalStatement]
+72 72   [ :0] [Br] index:[43]
+73 73   [ :0] [Label] index:[1]
+74 74   [ StackTest.sl:134] [LoadLocal] index:[1] info:[LocalStatement]
+75 75   [ :0] [CallVirt] index:[27] info:[CallVirt toList] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toList, MethodRuntimeTypeList=[], ParamCount=0}] 
+76 76   [ StackTest.sl:120] [StoreLocal] index:[3] info:[LocalStatement]
+77 77   [ StackTest.sl:135] [LoadConstString] index:[3113] val: string[toList.length = ] 
+78 78   [ StackTest.sl:135] [LoadLocal] index:[3] info:[LocalStatement]
+79 79   [ :0] [CallVirt] index:[11] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.List<T>, StaticRuntimeTypeList=[], Method=Core.List<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+80 80   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+81 81   [ StackTest.sl:135] [Add] index:[0]
+82 82   [ StackTest.sl:120] [StoreLocal] index:[13] info:[LocalStatement]
+83 83   [ :0] [Nop] index:[0]
+84 84   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+85 85   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+86 86   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+87 87   [ StackTest.sl:136] [LoadLocal] index:[1] info:[LocalStatement]
+88 88   [ :0] [CallVirt] index:[28] info:[CallVirt copy] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.copy, MethodRuntimeTypeList=[], ParamCount=0}] 
+89 89   [ StackTest.sl:120] [StoreLocal] index:[4] info:[LocalStatement]
+90 90   [ StackTest.sl:137] [LoadConstString] index:[3281] val: string[copy.length = ] 
+91 91   [ StackTest.sl:137] [LoadLocal] index:[4] info:[LocalStatement]
+92 92   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+93 93   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+94 94   [ StackTest.sl:137] [Add] index:[0]
+95 95   [ StackTest.sl:120] [StoreLocal] index:[14] info:[LocalStatement]
+96 96   [ :0] [Nop] index:[0]
+97 97   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+98 98   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+99 99   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+100 100   [ StackTest.sl:138] [LoadConstString] index:[3282] val: string[copy.peek = ] 
+101 101   [ StackTest.sl:138] [LoadLocal] index:[4] info:[LocalStatement]
+102 102   [ :0] [CallVirt] index:[20] info:[CallVirt peek] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.peek, MethodRuntimeTypeList=[], ParamCount=0}] 
+103 103   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+104 104   [ StackTest.sl:138] [Add] index:[0]
+105 105   [ StackTest.sl:120] [StoreLocal] index:[15] info:[LocalStatement]
+106 106   [ :0] [Nop] index:[0]
+107 107   [ ProjectTest.sp:8] [LoadLocal] index:[15] info:[LocalStatement]
+108 108   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+109 109   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+110 110   [ StackTest.sl:139] [LoadConstString] index:[3283] val: string[copy.toString = ] 
+111 111   [ StackTest.sl:139] [LoadLocal] index:[4] info:[LocalStatement]
+112 112   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+113 113   [ StackTest.sl:139] [Add] index:[0]
+114 114   [ StackTest.sl:120] [StoreLocal] index:[16] info:[LocalStatement]
+115 115   [ :0] [Nop] index:[0]
+116 116   [ ProjectTest.sp:8] [LoadLocal] index:[16] info:[LocalStatement]
+117 117   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+118 118   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+119 119   [ StackTest.sl:120] [Label] index:[0] info:[FunEndLabel]
+120 120   [ StackTest.sl:120] [LoadLocal] index:[0] info:[ARC release: LoadLocal testConvert_local[arr]]
+121 121   [ StackTest.sl:120] [ArcRelease] index:[0] info:[ARC release owned local: testConvert_local[arr]]
+122 122   [ StackTest.sl:120] [StoreLocal] index:[0] info:[ARC release: StoreLocal testConvert_local[arr]]
+
+  Method: ProjectTest.StackTest.testIterator
+    VirtualName: testIterator_Core.Void_0
+    Name: testIterator
+    InterfaceMethod: False
+    Return:
+      - #0 id=1874221 idx=0 name=_local[ProjectTest.StackTest.testIterator.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=16867989 idx=0 name=testIterator_local[s] type=Core.Stack<T><Core.String>
+      - #1 id=17594176 idx=1 name=testIterator_local[count] type=Core.Int32
+      - #2 id=24129864 idx=2 name=testIterator_local[for_iterator_1021814] type=Core.IIterator<T><Core.String>
+      - #3 id=15842189 idx=3 name=testIterator_local[item] type=Core.String
+      - #4 id=8361976 idx=4 name=testIterator_local[for_iterator_9196329] type=Core.IIterator<T><Core.String>
+      - #5 id=8148922 idx=5 name=testIterator_local[item] type=Core.String
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:145] [LoadConstString] index:[3116] val: string[===== testIterator =====] 
+2 2   [ StackTest.sl:143] [StoreLocal] index:[6] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:143] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.String>] 
+8 8   [ StackTest.sl:146] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:143] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:147] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:147] [LoadConstString] index:[163] val: string[a] 
+12 12   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ StackTest.sl:148] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ StackTest.sl:148] [LoadConstString] index:[164] val: string[b] 
+15 15   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ StackTest.sl:149] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ StackTest.sl:149] [LoadConstString] index:[2889] val: string[c] 
+18 18   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+19 19   [ StackTest.sl:150] [LoadConstInt32] index:[0] val: int32[0] 
+20 20   [ StackTest.sl:143] [StoreLocal] index:[1] info:[LocalStatement]
+21 21   [ StackTest.sl:143] [LoadLocal] index:[0] info:[LocalStatement]
+22 22   [ StackTest.sl:151] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.Stack<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ StackTest.sl:143] [StoreLocal] index:[2] info:[LocalStatement]
+24 24   [ StackTest.sl:143] [LoadLocal] index:[2] info:[LocalStatement]
+25 25   [ StackTest.sl:151] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ StackTest.sl:151] [Label] index:[2] info:[for-in: Nop loop head]
+27 27   [ StackTest.sl:143] [LoadLocal] index:[2] info:[LocalStatement]
+28 28   [ StackTest.sl:151] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ StackTest.sl:151] [BrFalse] index:[48] info:[for-in: BrFalse exit when !moveNext()]
+30 30   [ StackTest.sl:143] [LoadLocal] index:[2] info:[LocalStatement]
+31 31   [ StackTest.sl:151] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+32 32   [ StackTest.sl:143] [StoreLocal] index:[3] info:[LocalStatement]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ StackTest.sl:153] [LoadConstString] index:[3117] val: string[foreach item = ] 
+35 35   [ StackTest.sl:153] [LoadLocal] index:[3] info:[LocalStatement]
+36 36   [ StackTest.sl:153] [Add] index:[0]
+37 37   [ StackTest.sl:143] [StoreLocal] index:[7] info:[LocalStatement]
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+40 40   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+41 41   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+42 42   [ StackTest.sl:154] [LoadLocal] index:[1] info:[LocalStatement]
+43 43   [ :0] [LoadConstInt8] index:[0] val:[1] 
+44 44   [ :0] [Convert_I32] index:[0]
+45 45   [ :0] [Add] index:[0]
+46 46   [ StackTest.sl:143] [StoreLocal] index:[1] info:[LocalStatement]
+47 47   [ StackTest.sl:151] [Br] index:[26] info:[for-in: Br to loop head]
+48 48   [ StackTest.sl:151] [Label] index:[1] info:[for-in: Nop end]
+49 49   [ StackTest.sl:156] [LoadConstString] index:[3118] val: string[iterated count = ] 
+50 50   [ StackTest.sl:156] [LoadLocal] index:[1] info:[LocalStatement]
+51 51   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+52 52   [ StackTest.sl:156] [Add] index:[0]
+53 53   [ StackTest.sl:143] [StoreLocal] index:[10] info:[LocalStatement]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+56 56   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+57 57   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+58 58   [ StackTest.sl:143] [LoadLocal] index:[0] info:[LocalStatement]
+59 59   [ StackTest.sl:158] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.Stack<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+60 60   [ StackTest.sl:143] [StoreLocal] index:[4] info:[LocalStatement]
+61 61   [ StackTest.sl:143] [LoadLocal] index:[4] info:[LocalStatement]
+62 62   [ StackTest.sl:158] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+63 63   [ StackTest.sl:158] [Label] index:[4] info:[for-in: Nop loop head]
+64 64   [ StackTest.sl:143] [LoadLocal] index:[4] info:[LocalStatement]
+65 65   [ StackTest.sl:158] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+66 66   [ StackTest.sl:158] [BrFalse] index:[80] info:[for-in: BrFalse exit when !moveNext()]
+67 67   [ StackTest.sl:143] [LoadLocal] index:[4] info:[LocalStatement]
+68 68   [ StackTest.sl:158] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.String>, StaticRuntimeTypeList=[Core.String], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+69 69   [ StackTest.sl:143] [StoreLocal] index:[5] info:[LocalStatement]
+70 70   [ :0] [Nop] index:[0]
+71 71   [ StackTest.sl:160] [LoadConstString] index:[3284] val: string[foreach again item = ] 
+72 72   [ StackTest.sl:160] [LoadLocal] index:[5] info:[LocalStatement]
+73 73   [ StackTest.sl:160] [Add] index:[0]
+74 74   [ StackTest.sl:143] [StoreLocal] index:[11] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ StackTest.sl:158] [Br] index:[63] info:[for-in: Br to loop head]
+80 80   [ StackTest.sl:158] [Label] index:[3] info:[for-in: Nop end]
+81 81   [ StackTest.sl:143] [Label] index:[0] info:[FunEndLabel]
+82 82   [ StackTest.sl:143] [LoadLocal] index:[0] info:[ARC release: LoadLocal testIterator_local[s]]
+83 83   [ StackTest.sl:143] [ArcRelease] index:[0] info:[ARC release owned local: testIterator_local[s]]
+84 84   [ StackTest.sl:143] [StoreLocal] index:[0] info:[ARC release: StoreLocal testIterator_local[s]]
+
+  Method: ProjectTest.StackTest.testStringElements
+    VirtualName: testStringElements_Core.Void_0
+    Name: testStringElements
+    InterfaceMethod: False
+    Return:
+      - #0 id=15156098 idx=0 name=_local[ProjectTest.StackTest.testStringElements.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=2187155 idx=0 name=testStringElements_local[s] type=Core.Stack<T><Core.String>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:167] [LoadConstString] index:[3119] val: string[===== testStringElements =====] 
+2 2   [ StackTest.sl:165] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:165] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.String>] 
+8 8   [ StackTest.sl:168] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:165] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:169] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ StackTest.sl:169] [LoadConstString] index:[3120] val: string[apple] 
+12 12   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ StackTest.sl:170] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ StackTest.sl:170] [LoadConstString] index:[3121] val: string[banana] 
+15 15   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ StackTest.sl:171] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ StackTest.sl:171] [LoadConstString] index:[3285] val: string[cherry] 
+18 18   [ :0] [CallVirt] index:[17] info:[CallVirt push] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.push_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+19 19   [ StackTest.sl:172] [LoadConstString] index:[3059] val: string[length = ] 
+20 20   [ StackTest.sl:172] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+22 22   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ StackTest.sl:172] [Add] index:[0]
+24 24   [ StackTest.sl:165] [StoreLocal] index:[2] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ StackTest.sl:173] [LoadConstString] index:[3122] val: string[contains(banana) = ] 
+30 30   [ StackTest.sl:173] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ StackTest.sl:173] [LoadConstString] index:[3121] val: string[banana] 
+32 32   [ :0] [CallVirt] index:[22] info:[CallVirt contains] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.contains_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+33 33   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ StackTest.sl:173] [Add] index:[0]
+35 35   [ StackTest.sl:165] [StoreLocal] index:[3] info:[LocalStatement]
+36 36   [ :0] [Nop] index:[0]
+37 37   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+38 38   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+39 39   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+40 40   [ StackTest.sl:174] [LoadConstString] index:[3060] val: string[toString = ] 
+41 41   [ StackTest.sl:174] [LoadLocal] index:[0] info:[LocalStatement]
+42 42   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+43 43   [ StackTest.sl:174] [Add] index:[0]
+44 44   [ StackTest.sl:165] [StoreLocal] index:[4] info:[LocalStatement]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+47 47   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+48 48   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+49 49   [ StackTest.sl:165] [Label] index:[0] info:[FunEndLabel]
+50 50   [ StackTest.sl:165] [LoadLocal] index:[0] info:[ARC release: LoadLocal testStringElements_local[s]]
+51 51   [ StackTest.sl:165] [ArcRelease] index:[0] info:[ARC release owned local: testStringElements_local[s]]
+52 52   [ StackTest.sl:165] [StoreLocal] index:[0] info:[ARC release: StoreLocal testStringElements_local[s]]
+
+  Method: ProjectTest.StackTest.testEmptyEdge
+    VirtualName: testEmptyEdge_Core.Void_0
+    Name: testEmptyEdge
+    InterfaceMethod: False
+    Return:
+      - #0 id=19684403 idx=0 name=_local[ProjectTest.StackTest.testEmptyEdge.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=42941906 idx=0 name=testEmptyEdge_local[s] type=Core.Stack<T><Core.Int32>
+      - #1 id=50932842 idx=1 name=testEmptyEdge_local[for_iterator_15658103] type=Core.IIterator<T><Core.Int32>
+      - #2 id=55742394 idx=2 name=testEmptyEdge_local[item] type=Core.Int32
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:180] [LoadConstString] index:[3126] val: string[===== testEmptyEdge =====] 
+2 2   [ StackTest.sl:178] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:178] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Stack<T><Core.Int32>] 
+8 8   [ StackTest.sl:181] [ArcRetain] index:[0] info:[ARC claim owned new local: s]
+9 9   [ StackTest.sl:178] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ StackTest.sl:182] [LoadConstString] index:[3110] val: string[toArray.length = ] 
+11 11   [ StackTest.sl:182] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [CallVirt] index:[26] info:[CallVirt toArray] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toArray, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [CallVirt] index:[8] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ StackTest.sl:182] [Add] index:[0]
+16 16   [ StackTest.sl:178] [StoreLocal] index:[4] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ StackTest.sl:183] [LoadConstString] index:[3286] val: string[bottom is null = ] 
+22 22   [ StackTest.sl:183] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ :0] [CallVirt] index:[21] info:[CallVirt bottom] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.bottom, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ StackTest.sl:183] [LoadConstNull] index:[0] val:[null] 
+25 25   [ StackTest.sl:183] [Ceq] index:[0]
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ StackTest.sl:183] [Add] index:[0]
+28 28   [ StackTest.sl:178] [StoreLocal] index:[5] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ StackTest.sl:184] [LoadConstString] index:[3060] val: string[toString = ] 
+34 34   [ StackTest.sl:184] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+36 36   [ StackTest.sl:184] [Add] index:[0]
+37 37   [ StackTest.sl:178] [StoreLocal] index:[6] info:[LocalStatement]
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+40 40   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+41 41   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+42 42   [ StackTest.sl:185] [LoadConstString] index:[3066] val: string[contains(1) = ] 
+43 43   [ StackTest.sl:185] [LoadLocal] index:[0] info:[LocalStatement]
+44 44   [ StackTest.sl:185] [LoadConstInt32] index:[0] val: int32[1] 
+45 45   [ :0] [CallVirt] index:[22] info:[CallVirt contains] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.contains_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+46 46   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ StackTest.sl:185] [Add] index:[0]
+48 48   [ StackTest.sl:178] [StoreLocal] index:[7] info:[LocalStatement]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+51 51   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+52 52   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+53 53   [ StackTest.sl:186] [LoadConstString] index:[3287] val: string[indexOf(1) = ] 
+54 54   [ StackTest.sl:186] [LoadLocal] index:[0] info:[LocalStatement]
+55 55   [ StackTest.sl:186] [LoadConstInt32] index:[0] val: int32[1] 
+56 56   [ :0] [CallVirt] index:[23] info:[CallVirt indexOf] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T>, StaticRuntimeTypeList=[], Method=Core.Stack<T>.indexOf_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+57 57   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+58 58   [ StackTest.sl:186] [Add] index:[0]
+59 59   [ StackTest.sl:178] [StoreLocal] index:[8] info:[LocalStatement]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+62 62   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+63 63   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+64 64   [ StackTest.sl:178] [LoadLocal] index:[0] info:[LocalStatement]
+65 65   [ StackTest.sl:187] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Stack<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Stack<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+66 66   [ StackTest.sl:178] [StoreLocal] index:[1] info:[LocalStatement]
+67 67   [ StackTest.sl:178] [LoadLocal] index:[1] info:[LocalStatement]
+68 68   [ StackTest.sl:187] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+69 69   [ StackTest.sl:187] [Label] index:[2] info:[for-in: Nop loop head]
+70 70   [ StackTest.sl:178] [LoadLocal] index:[1] info:[LocalStatement]
+71 71   [ StackTest.sl:187] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+72 72   [ StackTest.sl:187] [BrFalse] index:[84] info:[for-in: BrFalse exit when !moveNext()]
+73 73   [ StackTest.sl:178] [LoadLocal] index:[1] info:[LocalStatement]
+74 74   [ StackTest.sl:187] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+75 75   [ StackTest.sl:178] [StoreLocal] index:[2] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ StackTest.sl:189] [LoadConstString] index:[3288] val: string[should not reach here] 
+78 78   [ StackTest.sl:178] [StoreLocal] index:[9] info:[LocalStatement]
+79 79   [ :0] [Nop] index:[0]
+80 80   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+81 81   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+82 82   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+83 83   [ StackTest.sl:187] [Br] index:[69] info:[for-in: Br to loop head]
+84 84   [ StackTest.sl:187] [Label] index:[1] info:[for-in: Nop end]
+85 85   [ StackTest.sl:191] [LoadConstString] index:[3289] val: string[empty foreach done] 
+86 86   [ StackTest.sl:178] [StoreLocal] index:[11] info:[LocalStatement]
+87 87   [ :0] [Nop] index:[0]
+88 88   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+89 89   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+90 90   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+91 91   [ StackTest.sl:178] [Label] index:[0] info:[FunEndLabel]
+92 92   [ StackTest.sl:178] [LoadLocal] index:[0] info:[ARC release: LoadLocal testEmptyEdge_local[s]]
+93 93   [ StackTest.sl:178] [ArcRelease] index:[0] info:[ARC release owned local: testEmptyEdge_local[s]]
+94 94   [ StackTest.sl:178] [StoreLocal] index:[0] info:[ARC release: StoreLocal testEmptyEdge_local[s]]
+
+  Method: ProjectTest.StackTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=35342723 idx=0 name=_local[ProjectTest.StackTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ StackTest.sl:196] [LoadConstString] index:[3290] val: string[===== StackTest =====] 
+2 2   [ StackTest.sl:194] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ StackTest.sl:5] [CallStatic] index:[0] info:[CallStatic testBasicPushPop] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testBasicPushPop, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ StackTest.sl:28] [CallStatic] index:[0] info:[CallStatic testConstructors] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testConstructors, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ StackTest.sl:46] [CallStatic] index:[0] info:[CallStatic testSearchAndPushRange] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testSearchAndPushRange, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ StackTest.sl:70] [CallStatic] index:[0] info:[CallStatic testGrow] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testGrow, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ StackTest.sl:93] [CallStatic] index:[0] info:[CallStatic testEnsureCapacity] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testEnsureCapacity, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ StackTest.sl:104] [CallStatic] index:[0] info:[CallStatic testClear] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testClear, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ StackTest.sl:120] [CallStatic] index:[0] info:[CallStatic testConvert] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testConvert, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ StackTest.sl:143] [CallStatic] index:[0] info:[CallStatic testIterator] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testIterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ StackTest.sl:165] [CallStatic] index:[0] info:[CallStatic testStringElements] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testStringElements, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ StackTest.sl:178] [CallStatic] index:[0] info:[CallStatic testEmptyEdge] val:[RuntimeCall{StaticRuntimeType=ProjectTest.StackTest, StaticRuntimeTypeList=[], Method=ProjectTest.StackTest.testEmptyEdge, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ StackTest.sl:194] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

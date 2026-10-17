@@ -1,0 +1,443 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/NumberTest.sl-----------------------
+public class NumberTest extends Core.Object
+{
+    public  static Core.Object baseArithmeticTest()
+    {
+        println("----- baseArithmeticTest -----")
+        [Core.Int32]a = 20i;
+        [Core.Int32]b = 7i;
+        println("a = " + a.toString() + ", b = " + b.toString())
+        println("a + b = " + ((a + b).toString())
+        println("a - b = " + ((a - b).toString())
+        println("a * b = " + ((a * b).toString())
+        println("a / b = " + ((a / b).toString())
+        println("a % b = " + ((a % b).toString())
+        [Core.Num]n1 = 1.5f;
+        [Core.Num]n2 = 2i;
+        println("n1 = " + n1.toString() + ", n2 = " + n2.toString())
+        println("n1 + n2 = " + ((n1 + n2).toString())
+        println("n1 - n2 = " + ((n1 - n2).toString())
+        println("n1 * n2 = " + ((n1 * n2).toString())
+        println("n1 / n2 = " + ((n1 / n2).toString())
+        [Core.Num]neg = -[Core.Num]n1;
+        println("-n1 = " + neg.toString())
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object integerTypeTest()
+    {
+        println("----- integerTypeTest -----")
+        [Core.UInt8]b8 = 250i;
+        [Core.Int8]sb8 = -12i;
+        [Core.Int16]i16 = 32000i;
+        [Core.UInt16]u16 = 65000i;
+        [Core.Int32]i32 = 2000000000i;
+        [Core.UInt32]u32 = 4000000000L;
+        [Core.Int64]i64 = 900000000000L;
+        [Core.UInt64]u64 = 1800000000000L;
+        println("byte   = " + b8.toString())
+        println("sbyte  = " + sb8.toString())
+        println("int16  = " + i16.toString())
+        println("uint16 = " + u16.toString())
+        println("int32  = " + i32.toString())
+        println("uint32 = " + u32.toString())
+        println("int64  = " + i64.toString())
+        println("uint64 = " + u64.toString())
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object bitOpTest()
+    {
+        println("----- bitOpTest -----")
+        [Core.Int32]x = 13i;
+        [Core.Int32]y = 6i;
+        [Core.Object]b1 = 12;
+        [Core.Object]b2 = 3;
+        println("x = " + x.toString() + ", y = " + y.toString())
+        println("x & y = " + ((x & y).toString())
+        println("x | y = " + ((x | y).toString())
+        println("x << 2 = " + ((x << 2i).toString())
+        println("y >> 1 = " + ((y >> 1i).toString())
+        println("^b1= " + ((b1 ^ b2).toString())
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object compareTest()
+    {
+        println("----- compareTest -----")
+        [Core.Num]a = 3.14f;
+        [Core.Num]b = 2.5f;
+        println("a > b  = " + ((a > b).toString())
+        println("a < b  = " + ((a < b).toString())
+        println("a == b = " + ((a == b).toString())
+        println("a != b = " + ((a != b).toString())
+        println("a >= b = " + ((a >= b).toString())
+        println("a <= b = " + ((a <= b).toString())
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object convertAndTypeTest()
+    {
+        println("----- convertAndTypeTest -----")
+        [Core.Num]f = 12.75f;
+        [Core.Int32]i = [Core.Num]f as Core.Int32 ;
+        [Core.String]s = [Core.Num]f  ->  [Core.Object]f.toString();
+        println("f = " + f.toString())
+        println("f as int = " + i.toString())
+        println("f.toString = " + s)
+        [Core.Object]t1 = [Core.Num]f  ->  [Core.Object]f.type();
+        [Core.Object]t2 = [Core.Int32]i  ->  [Core.Object]i.type();
+        println("f.type = " + t1.toString())
+        println("i.type = " + t2.toString())
+        println("f.type == i.type -> " + ((t1 == t2).toString())
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object suffixLiteralTest()
+    {
+        println("----- suffixLiteralTest -----")
+        [Core.UInt8]vint8 = 250;
+        [Core.Object]vI = 123i;
+        [Core.Object]vUI = 123ui;
+        [Core.Object]vL = 123L;
+        [Core.Object]vUL = 123uL;
+        [Core.Object]vS = 123s;
+        [Core.Object]vUS = 123us;
+        [Core.Object]vF = 1.25f;
+        [Core.Object]vD = 1.25d;
+        println("0xfa  -> " + vint8.toString() + " ; type=" + vint8.type.toString())
+        println("123i  -> " + vI.toString() + " ; type=" + vI.type.toString())
+        println("123ui -> " + vUI.toString() + " ; type=" + vUI.type.toString())
+        println("123L  -> " + vL.toString() + " ; type=" + vL.type.toString())
+        println("123uL -> " + vUL.toString() + " ; type=" + vUL.type.toString())
+        println("123s  -> " + vS.toString() + " ; type=" + vS.type.toString())
+        println("123us -> " + vUS.toString() + " ; type=" + vUS.type.toString())
+        println("1.25f -> " + vF.toString() + " ; type=" + vF.type.toString())
+        println("1.25d -> " + vD.toString() + " ; type=" + vD.type.toString())
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object radixLiteralTest()
+    {
+        println("----- radixLiteralTest -----")
+        [Core.Object]hx = 26;
+        [Core.Object]oc = 15;
+        [Core.Object]bn = 165;
+        println("0x1A -> " + hx.toString() + " ; type=" + hx.type.toString())
+        println("0o17 -> " + oc.toString() + " ; type=" + oc.type.toString())
+        println("0b1010_0101 -> " + bn.toString() + " ; type=" + bn.type.toString())
+
+
+
+
+    }
+
+    public  static Core.Object inferTypeByComputeTest()
+    {
+        println("----- inferTypeByComputeTest -----")
+        [Core.Object]a = (1i + 2i);
+        [Core.Object]itbct_b = (1i + 2.2f);
+        [Core.Object]c = (1i + 2ui);
+        [Core.Object]d = (1L + 2i);
+        [Core.Object]e = ((1i + 2i) * 3i);
+        [Core.Object]f = (5i / 2i);
+        [Core.Object]g = (5i % 2i);
+        println("a = 1 + 2 -> " + a.toString() + " ; type=" + a.type.toString())
+        println("itbct_b = 1 + 2.2 -> " + itbct_b.toString() + " ; type=" + itbct_b.type.toString())
+        println("c = 1i + 2ui -> " + c.toString() + " ; type=" + c.type.toString())
+        println("d = 1L + 2 -> " + d.toString() + " ; type=" + d.type.toString())
+        println("e = (1 + 2) * 3 -> " + e.toString() + " ; type=" + e.type.toString())
+        println("f = 5 / 2 -> " + f.toString() + " ; type=" + f.type.toString())
+        println("g = 5 % 2 -> " + g.toString() + " ; type=" + g.type.toString())
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object dartStyleNumberApiTest()
+    {
+        println("----- dartStyleNumberApiTest -----")
+        [Core.Num]n = 3.75f;
+        [Core.Num]neg = -7i;
+        [Core.Int32]baseNum = 9i;
+        println("n = " + n.toString() + " ; type=" + n.type.toString())
+        println("neg = " + neg.toString() + " ; type=" + neg.type.toString())
+        println("neg.toBool() = " + neg.toBool().toString())
+        println("n.toInt32() = " + n.toInt32().toString() + " ; type=" + n.toInt32().type.toString())
+        println("baseNum.toFloat64() = " + baseNum.toFloat64().toString() + " ; type=" + baseNum.toFloat64().type.toString())
+        println("baseNum.isEven() = " + baseNum.isEven().toString())
+        println("baseNum.isOdd() = " + baseNum.isOdd().toString())
+        println("baseNum.sign() = " + baseNum.sign().toString())
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object mixedNumericPromotionTest()
+    {
+        println("----- mixedNumericPromotionTest -----")
+        [Core.Object]m1 = (250i + 10i);
+        [Core.Object]m2 = (250i + 10.5f);
+        [Core.Object]m3 = ((1i + 2ui) + 3L);
+        [Core.Object]m4 = (((1i + 2i) * (3i + 4i)) - 5i);
+        [Core.Object]m5 = ((15 NoSign 5) NoSign 8);
+        println("m1 = 250 + 10 -> " + m1.toString() + " ; type=" + m1.type.toString())
+        println("m2 = 250 + 10.5 -> " + m2.toString() + " ; type=" + m2.type.toString())
+        println("m3 = 1i + 2ui + 3L -> " + m3.toString() + " ; type=" + m3.type.toString())
+        println("m4 = (1 + 2) * (3 + 4) - 5 -> " + m4.toString() + " ; type=" + m4.type.toString())
+        println("m5 = (0b1111 & 0b0101) | 0b1000 -> " + m5.toString() + " ; type=" + m5.type.toString())
+
+
+
+
+
+
+    }
+
+    public  static Core.Object compoundAssignTest()
+    {
+        println("----- compoundAssignTest -----")
+        [Core.Int32]a = 10i;
+        [Core.Int32]b = 3i;
+        [Core.Int32]c = 0i;
+        [Core.Int32]c = ([Core.Int32]a + [Core.Int32]b);
+        println("c = a + b -> " + c.toString())
+        [Core.Int32]p = 100i;
+        [Core.Int32]p = 5i;
+        println("p += 5 -> " + p.toString())
+        [Core.Int32]q = 50i;
+        [Core.Int32]q = 12i;
+        println("q -= 12 -> " + q.toString())
+        [Core.Int32]r = 6i;
+        [Core.Int32]r = 7i;
+        println("r *= 7 -> " + r.toString())
+        [Core.Int32]s = 47i;
+        [Core.Int32]s = 5i;
+        println("s /= 5 -> " + s.toString())
+        [Core.Int32]t = 23i;
+        [Core.Int32]t = 5i;
+        println("t %= 5 -> " + t.toString())
+        [Core.Int32]u = 3i;
+        [Core.Int32]u = 2i;
+        println("u <<= 2 -> " + u.toString())
+        [Core.Int32]v = -16i;
+        [Core.Int32]v = 2i;
+        println("v >>= 2 -> " + v.toString())
+        [Core.Int32]w = 12;
+        [Core.Int32]w = 10;
+        println("w &= 0b1010 -> " + w.toString())
+        [Core.Int32]x = 10;
+        [Core.Int32]x = 12;
+        println("x ^= 0b1100 -> " + x.toString())
+        [Core.Int32]y = 2;
+        [Core.Int32]y = 4;
+        println("y |= 0b0100 -> " + y.toString())
+        [Core.Num]n = 10f;
+        [Core.Num]n = 2.5f;
+        println("Num n += 2.5 -> " + n.toString())
+        [Core.Num]n = 1.5f;
+        println("Num n -= 1.5 -> " + n.toString())
+        [Core.Num]n = 2i;
+        println("Num n *= 2 -> " + n.toString())
+        [Core.Num]n = 4i;
+        println("Num n /= 4 -> " + n.toString())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object operatorPrecedenceTest()
+    {
+        println("----- operatorPrecedenceTest -----")
+        println("2 + 3 * 4 -> " + ((2i + 3i * 4i).toString())
+        println("(2 + 3) * 4 -> " + ((2i + 3i * 4i).toString())
+        println("10 - 6 / 2 -> " + ((10i - 6i / 2i).toString())
+        println("100 % 7 * 2 -> " + ((100i % 7i * 2i).toString())
+        println("1 + 2 << 2 -> " + ((1i + 2i << 2i).toString())
+        println("2 << 1 + 2 -> " + ((2i << 1i + 2i).toString())
+        println("1 + 2 & 7 -> " + ((1i + 2i & 7i).toString())
+        println("1 & 1 + 2 -> " + ((1i & 1i + 2i).toString())
+        println("1 & 2 ^ 7 -> " + ((1i & 2i ^ 7i).toString())
+        println("0b1100 ^ 0b1010 | 0b0001 -> " + ((0b1100 ^ 0b1010 | 0b0001).toString())
+        println("1 + 2 > 2 -> " + ((1i + 2i > 2i).toString())
+        println("6 == 2 + 4 -> " + ((6i == 2i + 4i).toString())
+        println("3 + 4 == 5 + 2 -> " + ((3i + 4i == 5i + 2i).toString())
+        println("true || false && false -> " + ((true || false && false).toString())
+        [Core.Int32]u = 2i;
+        println("-u * 3 -> " + ((- - u * 3i).toString())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== NumberTest (start) ==========")
+        baseArithmeticTest()
+        integerTypeTest()
+        bitOpTest()
+        compareTest()
+        convertAndTypeTest()
+        suffixLiteralTest()
+        radixLiteralTest()
+        inferTypeByComputeTest()
+        dartStyleNumberApiTest()
+        mixedNumericPromotionTest()
+        compoundAssignTest()
+        operatorPrecedenceTest()
+        println("========== NumberTest (end) ==========")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,73 @@
+-------------------Meta 文件显示 开始 : Path: Object.sl-----------------------
+public class Object
+{
+public  static Core.Boolean objectEquals([Core.Object]objA,[Core.Object]objB)
+{
+return SystemEqualObject(objA,objB);
+}
+
+public  static Core.Boolean refEquals([Core.Object]objA,[Core.Object]objB)
+{
+Core.Boolean autocreate_13858403 = (([Core.Object]objA == null) || ([Core.Object]objB == null))
+if autocreate_13858403
+{
+return False;
+}
+return ([Core.Object]objA.refWeak() == [Core.Object]objB.refWeak());
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

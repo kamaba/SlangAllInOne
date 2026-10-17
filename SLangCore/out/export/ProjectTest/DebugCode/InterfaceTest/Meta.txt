@@ -1,0 +1,63 @@
+-------------------Meta 文件显示 开始 : Path: InterfaceTest.sl-----------------------
+interface InterfaceClass1
+{
+    _public string interfaceFun1( )
+
+}
+interface InterfaceClass2
+{
+    _public int interfaceFun2( )
+
+}
+interface InterfaceClass3
+{
+    _public interface3( )
+    {
+    }
+}
+ImmplementClass1_1  interface InterfaceClass1, InterfaceClass2, InterfaceClass3
+{
+    x1 = 0i
+    y1 = 0i
+    z1 = 0i
+
+    _public _init_( int _x1,  int _y1 )
+    {
+        this._init_(_x1 + 1i);
+    }
+    _public _init_( int _z1 )
+    {
+        this.z1 = _z1;
+    }
+    _public override string interfaceFun1( )
+    {
+        ret ((this.x1 + this.y1 + this.z1).toString()
+    }
+    _public override int interfaceFun2( )
+    {
+        ret int(this.x1 * this.y1 + this.z1)
+    }
+    _public string fun2( )
+    {
+        ret "fun1"
+    }
+    _public override void interface3( )
+    {
+    }
+}
+InterfaceTest
+{
+    _public static fun( )
+    {
+        InterfaceClass1 c1 = ImmplementClass1_1(1i,2i);
+        v1 = c1.interfaceFun1();
+        global.println("-------------" + v1);
+        InterfaceClass2 c2 = ImmplementClass1_1(100i);
+        v2 = c2.interfaceFun2();
+        global.println("-------------" + v2);
+        ImmplementClass1_1 c3 = ImmplementClass1_1(1i,2i);
+        v2 = c3.interfaceFun2();
+        global.println("-------------" + v2);
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,107 @@
+-------------------FileMeta 文件显示 开始 : Path: Array.sl-----------------------
+public _partial class Array<T>  interface IIterable<T>, IIterator<T>
+{
+    publicint _length = 0
+    publicType _type = null
+    publicint _index = 0
+    publicT _current = null
+    publiclong _ptr = 0
+
+    public static Array<T> create( int length )
+    {
+        arr = Array<T(length)>;
+        ret arr
+    }
+    _public _init_( int __len )
+    {
+        this._length = __len;
+    }
+    _public int length( )
+    {
+        ret this._length
+    }
+    public void fill( T value )
+    {
+        
+        for i = 0, i < this._length, i ++ 
+        {
+            SystemArraySetValueThis(this,i,value);
+        }
+    }
+    _public override void reset( )
+    {
+        this._index = 0;
+    }
+    _public override bool moveNext( )
+    {
+        bool hasNext_var = this._index < this._length;
+        if hasNext_var
+        {
+            this._current = SystemArrayGetValueThis(this,this._index) as T;
+        }
+        else
+        {
+            this._current = null;
+        }
+        this._index ++ 
+        global.println(" Array.moveNext-----" + this._index);
+        ret hasNext_var
+    }
+    _public override T current( )
+    {
+        ret this._current
+    }
+    _public override void current( T val )
+    {
+        SystemArraySetValueThis(this,this._index,val);
+        this._current = val;
+    }
+    _public override IIterator<T> iterator( )
+    {
+        ret this
+    }
+    _public int index( )
+    {
+        ret this._index
+    }
+    _public void index( int ind )
+    {
+        if ind < 0
+        {
+            ret 
+        }
+        if ind >= this._length
+        {
+            ret 
+        }
+        this._index = ind;
+        this._current = SystemArrayGetValueThis(this,ind) as T;
+    }
+    _public setValue( int __index,  T val )
+    {
+        SystemArraySetValueThis(this,__index,val);
+    }
+    _public T getValue( int __index )
+    {
+        ret SystemArrayGetValueThis(this,__index) as T
+    }
+    _public setValues( Int64 valPtr,  int len )
+    {
+    }
+    _public override string toString( )
+    {
+        string showstr = "[";
+        
+        for i = 0, i < this._length, i ++ 
+        {
+            cur = SystemArrayGetValueThis(this,i);
+            showstr = showstr + cur.toString();
+            if i < this._length - 1
+            {
+                showstr += ","
+            }
+        }
+        ret showstr + "]"
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

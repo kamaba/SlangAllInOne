@@ -1,0 +1,603 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/DataTest.sl-----------------------
+public class ClassHolder extends Core.Object
+{
+    public [Core.Object]value = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+public class ClassHolder2 extends Core.Object
+{
+    public [Core.Object]ok = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+public class DataTest extends Core.Object
+{
+    public  static Core.Object constDataReadOnlyTest()
+    {
+        println(ScoreRule.passLine.toString())
+
+    }
+
+    public  static Core.Object staticDataDirectUseTest()
+    {
+        println("----- staticDataDirectUseTest -----")
+        println("data GlobalCounter declared (direct static access case placeholder)")
+        GlobalCounter  ->  totalExamCount = 0i = 10i;
+        GlobalCounter  ->  totalScore = 0i = 200i;
+        println(GlobalCounter.totalExamCount.toString())
+        println(GlobalCounter.totalScore)
+        println(GlobalCounter)
+
+
+
+
+
+    }
+
+    public  static Core.Object newDataInstanceTest()
+    {
+        println("----- newDataInstanceTest1111 -----")
+        [Core.ScoreData]s1 = Core.ScoreData{}
+        [Core.ScoreData]s2 = Core.ScoreData{}
+        [Core.ScoreData]s3 = Core.ScoreData{id=1i,math=10i,english=20i,physics=30i}
+        [Core.ScoreData]s1  ->  id = 0i = 10i;
+        [Core.ScoreData]s1  ->  math = 0i = 99i;
+        [Core.ScoreData]s1 = Core.ScoreData{id=11i,math=98i,english=97i,physics=96i};
+        [Core.ScoreData]s2 = Core.ScoreData{id=12i,math=88i,english=87i,physics=86i};
+        println("----- newDataInstanceTest2222 -----")
+        println(s1)
+        println(s2)
+        Core.Boolean autocreate_52058165 = ([Core.ScoreData]s1 == [Core.ScoreData]s2)
+        if autocreate_52058165
+        {
+            println("scoreData is same")
+
+        }
+        else
+        {
+            println("scoreData isnot same")
+
+        }
+        Core.Boolean autocreate_65870306 = ([Core.ScoreData]s1 == [Core.ScoreData]s3)
+        if autocreate_65870306
+        {
+            println("scoreData unexpected same")
+
+        }
+        else
+        {
+            println("scoreData value diff detected")
+
+        }
+
+
+
+
+
+    }
+
+    public  static Core.Object memberShapeCoverageTest()
+    {
+        println("----- memberShapeCoverageTest -----")
+        println(StructMatrix)
+        println(AnonymousNestedDataSample)
+        println(ClassDataEnumSample)
+        println(MixedArrayElementSample)
+        println(StructMatrix.profile.address.city)
+        println(StructMatrix.profile.rank.toString())
+        println(StudentRecord.meta.level.toString())
+        println(ClassDataEnumSample.cc.value.toString())
+        println(ClassDataEnumSample.kind.toString())
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object dataIfCompareTest()
+    {
+        println("----- dataIfCompareTest -----")
+        [Core.ScoreData]sameA = Core.ScoreData{id=1i,math=10i,english=20i,physics=30i}
+        [Core.ScoreData]sameB = Core.ScoreData{id=1i,math=10i,english=20i,physics=30i}
+        [Core.ScoreData]diffC = Core.ScoreData{id=2i,math=10i,english=20i,physics=30i}
+        [Core.ScoreData]diffD = Core.ScoreData{}
+        Core.Boolean autocreate_36019552 = ([Core.ScoreData]sameA == [Core.ScoreData]sameB)
+        if autocreate_36019552
+        {
+            println("if (sameA == sameB) -> equal")
+
+        }
+        else
+        {
+            println("if (sameA == sameB) unexpected not equal")
+
+        }
+        Core.Boolean autocreate_55740512 = ([Core.ScoreData]sameA != [Core.ScoreData]diffC)
+        if autocreate_55740512
+        {
+            println(" if (sameA != diffC) ScoreData: id differs -> not equal")
+
+        }
+        else
+        {
+            println(" if (sameA != diffC) ScoreData: id differs -> unexpected equal")
+
+        }
+        Core.Boolean autocreate_31902563 = (([Core.ScoreData]sameA  ->  id = 0i == [Core.ScoreData]sameB  ->  id = 0i) && ([Core.ScoreData]sameA  ->  math = 0i == [Core.ScoreData]sameB  ->  math = 0i))
+        if autocreate_31902563
+        {
+            println("if (sameA.id == sameB.id && sameA.math == sameB.math) ScoreData: id+math match")
+
+        }
+        else
+        {
+            println("if (sameA.id == sameB.id && sameA.math == sameB.math) ScoreData: id+math mismatch")
+
+        }
+        Core.Boolean autocreate_18687619 = ([Core.ScoreData]sameA  ->  physics = 0i == 30i)
+        if autocreate_18687619
+        {
+            println("if (sameA.physics == 30) ScoreData: physics literal ok")
+
+        }
+        Core.Boolean autocreate_33970848 = ([Core.ScoreData]sameA  ->  id = 0i != [Core.ScoreData]diffC  ->  id = 0i)
+        if autocreate_33970848
+        {
+            println(" if (sameA.id != diffC.id) ScoreData: id diff detected")
+
+        }
+        [Core.MetaInfo]metaA = Core.MetaInfo{level=2i,passed=True}
+        [Core.MetaInfo]metaB = Core.MetaInfo{level=2i,passed=True}
+        [Core.MetaInfo]metaC = Core.MetaInfo{level=3i,passed=False}
+        Core.Boolean autocreate_37302179 = ([Core.MetaInfo]metaA == [Core.MetaInfo]metaB)
+        if autocreate_37302179
+        {
+            println(" if (metaA == metaB) MetaInfo: equal")
+
+        }
+        Core.Boolean autocreate_175293 = ([Core.MetaInfo]metaA != [Core.MetaInfo]metaC)
+        if autocreate_175293
+        {
+            println("if (metaA != metaC) MetaInfo: level/passed diff -> not equal")
+
+        }
+        Core.Boolean autocreate_1577639 = (([Core.MetaInfo]metaA  ->  level = 1i == [Core.MetaInfo]metaB  ->  level = 1i) && ([Core.MetaInfo]metaA  ->  passed = False == [Core.MetaInfo]metaB  ->  passed = False))
+        if autocreate_1577639
+        {
+            println(" if (metaA.level == metaB.level && metaA.passed == metaB.passed) MetaInfo: level+passed match")
+
+        }
+        [Core.Object]anonSame1 = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _{7i,"ok"};
+        [Core.Object]anonSame2 = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _{7i,"ok"};
+        [Core.Object]anonDiff = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _{8i,"ok"};
+        Core.Boolean autocreate_14198754 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame1 == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame2)
+        if autocreate_14198754
+        {
+            println(" if (anonSame1 == anonSame2) whole anonymous data: same shape+values -> equal")
+
+        }
+        else
+        {
+            println(" if (anonSame1 == anonSame2) whole anonymous data: same shape+values -> unexpected not equal")
+
+        }
+        Core.Boolean autocreate_60679928 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame1 != [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonDiff)
+        if autocreate_60679928
+        {
+            println("if (anonSame1 != anonDiff) whole anonymous data: code differs -> not equal")
+
+        }
+        Core.Boolean autocreate_9248440 = (([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame1  ->  code = 7i == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame2  ->  code = 7i) && ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame1  ->  title = "ok" == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 72 Pos: 8  _]anonSame2  ->  title = "ok"))
+        if autocreate_9248440
+        {
+            println(" if (anonSame1.code == anonSame2.code && anonSame1.title == anonSame2.title) field anonymous data: code+title match")
+
+        }
+        Core.Boolean autocreate_16127101 = DataAllEqual(sameA,sameB)
+        if autocreate_16127101
+        {
+            println("builtin DataAllEqual(sameA,sameB) -> true")
+
+        }
+        Core.Boolean autocreate_10926182 = (DataAllEqual(sameA,diffC) == False)
+        if autocreate_10926182
+        {
+            println("builtin DataAllEqual(sameA,diffC) -> false")
+
+        }
+        Core.Boolean autocreate_31226782 = DataTypeEqual(sameA,sameB)
+        if autocreate_31226782
+        {
+            println("builtin DataTypeEqual(sameA,sameB) -> true")
+
+        }
+        Core.Boolean autocreate_12605589 = DataNameAndTypeEqual(sameA,sameB)
+        if autocreate_12605589
+        {
+            println("builtin DataNameAndTypeEqual(sameA,sameB) -> true")
+
+        }
+        Core.Boolean autocreate_46341445 = DataDataEqual(sameA,sameB)
+        if autocreate_46341445
+        {
+            println("builtin DataDataEqual(sameA,sameB) -> true")
+
+        }
+        Core.Boolean autocreate_14419821 = (DataDataEqual(sameA,diffC) == False)
+        if autocreate_14419821
+        {
+            println("builtin DataDataEqual(sameA,diffC) -> false")
+
+        }
+        Core.Boolean autocreate_62669527 = DataTypeEqual(anonSame1,anonSame2)
+        if autocreate_62669527
+        {
+            println("builtin DataTypeEqual(anon) -> true")
+
+        }
+        Core.Boolean autocreate_27154837 = DataDataEqual(anonSame1,anonSame2)
+        if autocreate_27154837
+        {
+            println("builtin DataDataEqual(anon) -> true")
+
+        }
+        Core.Boolean autocreate_43066942 = (DataDataEqual(anonSame1,anonDiff) == False)
+        if autocreate_43066942
+        {
+            println("builtin DataDataEqual(anon diff) -> false")
+
+        }
+
+
+    }
+
+    public  static Core.Object systemDataCompare()
+    {
+        println("----- systemDataCompare -----")
+        [Core.Object]nestedA = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA{AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i},"pair"};
+        [Core.Object]nestedB = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA{AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i},"pair"};
+        [Core.Object]nestedC = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA{AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{21i,30i},"pair"};
+        println("NA=" + nestedA.toString())
+        println("NB=" + nestedB.toString())
+        println("NC=" + nestedC.toString())
+        Core.Boolean autocreate_64515557 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedB)
+        if autocreate_64515557
+        {
+            println("whole nested anonymous data: equal")
+
+        }
+        Core.Boolean autocreate_43769104 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA != [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedC)
+        if autocreate_43769104
+        {
+            println("whole nested anonymous data: nested.a differs -> not equal")
+
+        }
+        Core.Boolean autocreate_58377623 = (([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  a = 111i == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedB  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  a = 111i) && ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA  ->  "pair" == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedB  ->  "pair"))
+        if autocreate_58377623
+        {
+            println("field nested anonymous data: nested.a+tag match")
+
+        }
+        Core.Boolean autocreate_55636561 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  a = 111i != [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedC  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  a = 111i)
+        if autocreate_55636561
+        {
+            println("field nested anonymous data: nested.a diff ok")
+
+        }
+        Core.Boolean autocreate_30967009 = ([AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedA  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  b = 222i == [AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA]nestedC  ->  AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i}  ->  b = 222i)
+        if autocreate_30967009
+        {
+            println("field nested anonymous data: nested.b still equal when only a differs")
+
+        }
+        [Core.Object]typedA = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 424 Pos: 22  _typedA{7i,"ok"};
+        [Core.Object]typedB = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 424 Pos: 22  _typedA{7i,"ok"};
+        Core.Boolean autocreate_10267631 = DataTypeEqual(typedA,typedB)
+        if autocreate_10267631
+        {
+            println("builtin DataTypeEqual(typed anon pair) -> true")
+
+        }
+        Core.Boolean autocreate_25299820 = DataDataEqual(typedA,typedB)
+        if autocreate_25299820
+        {
+            println("builtin DataDataEqual(typed anon pair) -> true")
+
+        }
+        Core.Boolean autocreate_26371793 = !DataAllEqual(typedA,typedB)
+        if autocreate_26371793
+        {
+            println("builtin DataAllEqual(typed anon, diff type id) -> false expected")
+
+        }
+
+
+
+
+
+    }
+
+    public  static Core.Object dataAsCastTest()
+    {
+        println("----- dataAsCastTest -----")
+        [Core.Object]anyScore = Core.ScoreData{id=77i,math=88i,english=99i,physics=66i};
+        [Core.ScoreData]scoreOk = [Core.ScoreData]anyScore as Core.ScoreData 
+        Core.Boolean autocreate_42526340 = ([Core.ScoreData]scoreOk != null)
+        if autocreate_42526340
+        {
+            println("as ScoreData success -> " + scoreOk.toString())
+
+        }
+        [Core.MetaInfo]metaFail = [Core.ScoreData]anyScore as Core.MetaInfo 
+        Core.Boolean autocreate_47192740 = ([Core.MetaInfo]metaFail == null)
+        if autocreate_47192740
+        {
+            println("as MetaInfo from ScoreData -> null (expected)")
+
+        }
+        [Core.Object]anonScore = Core.ScoreData{18i,60i,70i,80i};
+        [Core.ScoreData]castFromAnon = [Core.ScoreData]anonScore as Core.ScoreData 
+        Core.Boolean autocreate_22081476 = ([Core.ScoreData]castFromAnon != null)
+        if autocreate_22081476
+        {
+            println("as ScoreData from anonymous data -> " + castFromAnon.toString())
+
+        }
+        else
+        {
+            println("as ScoreData from anonymous data -> null")
+
+        }
+
+
+    }
+
+    public  static Core.Object calcScoreTotalByParam([Core.ScoreData]sd)
+    {
+        return (([Core.ScoreData]sd  ->  math = 0i + [Core.ScoreData]sd  ->  english = 0i) + [Core.ScoreData]sd  ->  physics = 0i);
+    }
+
+    public  static Core.Object dataArgumentUsageTest()
+    {
+        println("----- dataArgumentUsageTest -----")
+        [Core.ScoreData]s = Core.ScoreData{id=301i,math=91i,english=92i,physics=93i}
+        [Core.Object]sum = calcScoreTotalByParam(s);
+        println("typed data arg total = " + sum.toString())
+        [Core.Object]pair = AnonData_Lex: { Path:../../../../test/BaseTest/DataTest.sl Line: 386 Pos: 53  _nestedA{AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{20i,30i},"pair"};
+        println("pair after call = " + pair.toString())
+
+
+
+    }
+
+    public  static Core.Object dataVariableReadWriteTest()
+    {
+        println("----- dataVariableReadWriteTest -----")
+        [Core.ScoreData]rw = Core.ScoreData{}
+        [Core.ScoreData]rw  ->  id = 0i = 1001i;
+        [Core.ScoreData]rw  ->  math = 0i = 95i;
+        [Core.ScoreData]rw  ->  english = 0i = 86i;
+        [Core.ScoreData]rw  ->  physics = 0i = 88i;
+        [Core.Object]readMath = [Core.ScoreData]rw  ->  math = 0i;
+        [Core.Object]readEnglish = [Core.ScoreData]rw  ->  english = 0i;
+        println("read math = " + readMath.toString())
+        println("read english = " + readEnglish.toString())
+        [Core.ScoreData]rw  ->  math = 0i = ([Core.Int32]readMath + 1i);
+        [Core.ScoreData]rw  ->  english = 0i = ([Core.Int32]readEnglish + 2i);
+        println("rw after write-back = " + rw.toString())
+        [Core.StudentRecord]sr = Core.StudentRecord{}
+        [Core.StudentRecord]sr  ->  sid = 7i = 900i;
+        [Core.StudentRecord]sr  ->  name = "StudentRecord Name" = "rw-name";
+        [Core.StudentRecord]sr  ->  anondatax = AnonData_Lex: anondatax Path:../../../../test/BaseTest/DataTest.sl Line: 104 Pos: 12  _{111i,222i}  ->  a = 111i = 515i;
+        println("StudentRecord sid read = " + sr.sid.toString())
+        println("StudentRecord anondatax.a read = " + sr.anondatax.a.toString())
+
+
+
+
+
+
+    }
+
+    public  static Core.Object staticDataMisuseErrorDemo()
+    {
+        println("----- staticDataMisuseErrorDemo -----")
+        println("StudentRecord static access demo: " + StudentRecord.toString())
+        println("StudentRecord.sid = " + StudentRecord.sid.toString())
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== DataTest (start) ==========")
+        constDataReadOnlyTest()
+        dataIfCompareTest()
+        systemDataCompare()
+        dataAsCastTest()
+        dataArgumentUsageTest()
+        dataVariableReadWriteTest()
+        staticDataMisuseErrorDemo()
+        staticDataDirectUseTest()
+        memberShapeCoverageTest()
+        newDataInstanceTest()
+        println("========== DataTest (end) ==========")
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

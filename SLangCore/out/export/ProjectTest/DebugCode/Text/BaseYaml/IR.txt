@@ -1,0 +1,475 @@
+-------------------IR 文件显示 开始 : Path: Text/BaseYaml.sl-----------------------
+Class: Core.BaseYaml
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1718928423 idx=0 name=Core.BaseYaml._tree type=Core.Tree<T><Core.String>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.parse_1_Core.String
+    VirtualName: parse_Core.BaseYaml_1_Core.String
+    Name: parse
+    InterfaceMethod: False
+    Return:
+      - #0 id=28329695 idx=0 name=return] type=Core.BaseYaml
+    Arguments:
+      - #0 id=53640668 idx=0 name=yamlText type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.fromTree_1_Core.Tree<Core.String>
+    VirtualName: fromTree_Core.BaseYaml_1_Core.Tree<Core.String>
+    Name: fromTree
+    InterfaceMethod: False
+    Return:
+      - #0 id=49926818 idx=0 name=return] type=Core.BaseYaml
+    Arguments:
+      - #0 id=46688182 idx=0 name=tree type=Core.Tree<T><Core.String>
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.isObject_1_Core.TreeNode<Core.String>
+    VirtualName: isObject_Core.Boolean_1_Core.TreeNode<Core.String>
+    Name: isObject
+    InterfaceMethod: False
+    Return:
+      - #0 id=23646388 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=11490904 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=36309279 idx=0 name=autocreate_1658455 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.isArray_1_Core.TreeNode<Core.String>
+    VirtualName: isArray_Core.Boolean_1_Core.TreeNode<Core.String>
+    Name: isArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=37866150 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=5251037 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=47259335 idx=0 name=autocreate_14926099 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.isNull_1_Core.TreeNode<Core.String>
+    VirtualName: isNull_Core.Boolean_1_Core.TreeNode<Core.String>
+    Name: isNull
+    InterfaceMethod: False
+    Return:
+      - #0 id=6261369 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=56352326 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=37408889 idx=0 name=autocreate_117163 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42625947 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12192756 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=30149715 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=48089211 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=34543924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26207835 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=42459867 idx=1 name=yamlText type=Core.String
+    Locals:
+      - #0 id=46594488 idx=0 name=autocreate_44041463 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml._init__1_Core.Tree<Core.String>
+    VirtualName: _init__Core.Void_1_Core.Tree<Core.String>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=21873125 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17343428 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=62640398 idx=1 name=tree type=Core.Tree<T><Core.String>
+    Locals:
+      - #0 id=26892672 idx=0 name=autocreate_60828848 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.parseText_1_Core.String
+    VirtualName: parseText_Core.Boolean_1_Core.String
+    Name: parseText
+    InterfaceMethod: False
+    Return:
+      - #0 id=46380963 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=64805763 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=14775484 idx=1 name=yamlText type=Core.String
+    Locals:
+      - #0 id=65870497 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+      - #1 id=55963561 idx=1 name=root type=Core.TreeNode<T><Core.String>
+      - #2 id=33910007 idx=2 name=autocreate_10588721 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.tree
+    VirtualName: tree_Core.Tree<Core.String>_0
+    Name: tree
+    InterfaceMethod: False
+    Return:
+      - #0 id=11530135 idx=0 name=return] type=Core.Tree<T><Core.String>
+    Arguments:
+      - #0 id=1281126 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.root
+    VirtualName: root_Core.TreeNode<Core.String>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=16860416 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=61525703 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=10321460 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23516450 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=8152279 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=30731970 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.memberCount
+    VirtualName: memberCount_Core.Int32_0
+    Name: memberCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=37431827 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=56354875 idx=0 name=this] type=Core.BaseYaml
+    Locals:
+      - #0 id=1342126 idx=0 name=root type=Core.TreeNode<T><Core.String>
+      - #1 id=12079142 idx=1 name=autocreate_28189627 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.nodeCount
+    VirtualName: nodeCount_Core.Int32_0
+    Name: nodeCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=18868961 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17009632 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=65265032 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=51990912 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.setRoot_1_Core.TreeNode<Core.String>
+    VirtualName: setRoot_Core.Void_1_Core.TreeNode<Core.String>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=65132640 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=51976202 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=49322849 idx=1 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=41252464 idx=0 name=autocreate_52380055 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.select_1_Core.String
+    VirtualName: select_Core.TreeNode<Core.String>_1_Core.String
+    Name: select
+    InterfaceMethod: False
+    Return:
+      - #0 id=29498945 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=48016903 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=64163914 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.findByName_1_Core.String
+    VirtualName: findByName_Core.TreeNode<Core.String>_1_Core.String
+    Name: findByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=615201 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=29894517 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=5536817 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=9808084 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=45829029 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=21163898 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=60552345 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36554200 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.getStr_1_Core.String
+    VirtualName: getStr_Core.String_1_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=5792918 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=8100198 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=52136268 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.getStr_2_Core.String_Core.String
+    VirtualName: getStr_Core.String_2_Core.String_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=23722702 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=62288179 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=12177730 idx=1 name=path type=Core.String
+      - #2 id=42490713 idx=2 name=defaultValue type=Core.String
+    Locals:
+      - #0 id=46872098 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=19195704 idx=1 name=autocreate_1054474 type=Core.Boolean
+      - #2 id=38543611 idx=2 name=autocreate_9490272 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.getBool_1_Core.String
+    VirtualName: getBool_Core.Boolean_1_Core.String
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=30640083 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=40687155 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=7325296 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.getBool_2_Core.String_Core.Boolean
+    VirtualName: getBool_Core.Boolean_2_Core.String_Core.Boolean
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=38540791 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=56478093 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=11322802 idx=1 name=path type=Core.String
+      - #2 id=34796360 idx=2 name=defaultValue type=Core.Boolean
+    Locals:
+      - #0 id=44731784 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=67041741 idx=1 name=autocreate_18303590 type=Core.Boolean
+      - #2 id=66504758 idx=2 name=autocreate_30514590 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.getInt_1_Core.String
+    VirtualName: getInt_Core.Int32_1_Core.String
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=23671576 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47369417 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=11717596 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.getInt_2_Core.String_Core.Int32
+    VirtualName: getInt_Core.Int32_2_Core.String_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=19301928 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=9601199 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=39499626 idx=1 name=path type=Core.String
+      - #2 id=19952318 idx=2 name=defaultValue type=Core.Int32
+    Locals:
+      - #0 id=45353142 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=5525098 idx=1 name=autocreate_6195855 type=Core.Boolean
+      - #2 id=49725882 idx=2 name=autocreate_55762700 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.getFloat_1_Core.String
+    VirtualName: getFloat_Core.Float64_1_Core.String
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=50926693 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=42941223 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=55687056 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.getFloat_2_Core.String_Core.Float64
+    VirtualName: getFloat_Core.Float64_2_Core.String_Core.Float64
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=62110049 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=14357657 idx=0 name=this] type=Core.BaseYaml
+      - #1 id=22119530 idx=1 name=path type=Core.String
+      - #2 id=64858045 idx=2 name=defaultValue type=Core.Float64
+    Locals:
+      - #0 id=46851500 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=19010318 idx=1 name=autocreate_32102252 type=Core.Boolean
+      - #2 id=36875142 idx=2 name=autocreate_20484818 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseYaml.toYaml
+    VirtualName: toYaml_Core.String_0
+    Name: toYaml
+    InterfaceMethod: False
+    Return:
+      - #0 id=23812538 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=2645837 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseYaml.toYamlPretty
+    VirtualName: toYamlPretty_Core.String_0
+    Name: toYamlPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=45253450 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49767403 idx=0 name=this] type=Core.BaseYaml
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

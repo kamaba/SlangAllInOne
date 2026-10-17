@@ -1,0 +1,259 @@
+-------------------Meta 文件显示 开始 : Path: IteratorInterface.sl-----------------------
+public class IIterator extends Core.Object
+{
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  Core.Void reset()
+{
+}
+
+public  Core.Boolean moveNext()
+{
+}
+
+public  get Core.Object current()
+{
+}
+
+}
+
+public class IIterable extends Core.Object
+{
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  Core.IIterator iterator()
+{
+}
+
+}
+
+public class IIterator<T extends Core.Object> extends Core.Object
+{
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  Core.Void reset()
+{
+}
+
+public  Core.Boolean moveNext()
+{
+}
+
+public  get Core.Object current()
+{
+}
+
+}
+
+public class IIterable<T extends Core.Object> extends Core.Object
+{
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  Core.IIterator<T>T
+ iterator()
+{
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,26 @@
+-------------------FileMeta 文件显示 开始 : Path: NullConditionalTest.sl-----------------------
+NCTestClass
+{
+    int intval = 100i
+
+    _public _init_( int v )
+    {
+        this.val = v;
+    }
+    _public int GetVal( )
+    {
+        ret this.val
+    }
+}
+NCTest
+{
+    _public static fun( )
+    {
+        global.println("=== Null Conditional Test ===");
+        NCTestClass obj = NCTestClass(42i);
+        int v1 = objval;
+        global.println("obj?.val = " + v1);
+        global.println("Test passed!");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

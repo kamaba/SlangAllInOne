@@ -1,0 +1,97 @@
+-------------------IR 文件显示 开始 : Path: Environment/Platform_OS.sl-----------------------
+Class: Core.Environment.Platform.os
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1114551096 idx=0 name=Core.Environment.Platform.os.unknown type=Core.Member
+      - #1 id=1641365387 idx=1 name=Core.Environment.Platform.os.window type=Core.Member
+      - #2 id=349153631 idx=2 name=Core.Environment.Platform.os.linux type=Core.Member
+      - #3 id=1027315885 idx=3 name=Core.Environment.Platform.os.mac type=Core.Member
+      - #4 id=1671449157 idx=4 name=Core.Environment.Platform.os.unix type=Core.Member
+      - #5 id=-1116555188 idx=5 name=Core.Environment.Platform.os.freeBSD type=Core.Member
+      - #6 id=-271138693 idx=6 name=Core.Environment.Platform.os.android type=Core.Member
+      - #7 id=1834879549 idx=7 name=Core.Environment.Platform.os.ios type=Core.Member
+      - #8 id=-1533211045 idx=8 name=Core.Environment.Platform.os.ps4 type=Core.Member
+      - #9 id=684273514 idx=9 name=Core.Environment.Platform.os.ps5 type=Core.Member
+      - #10 id=-1737584173 idx=10 name=Core.Environment.Platform.os.xboxOne type=Core.Member
+      - #11 id=-21252185 idx=11 name=Core.Environment.Platform.os.xboxSeries type=Core.Member
+      - #12 id=1503679224 idx=12 name=Core.Environment.Platform.os.nintendoSwitch type=Core.Member
+      - #13 id=1967398038 idx=13 name=Core.Environment.Platform.os.browser type=Core.Member
+      - #14 id=1546239378 idx=14 name=Core.Environment.Platform.os.wasi type=Core.Member
+      - #15 id=105767033 idx=15 name=Core.Environment.Platform.os.bareMetal type=Core.Member
+      - #16 id=-703096086 idx=16 name=Core.Environment.Platform.os.rtos type=Core.Member
+      - #17 id=1511372276 idx=17 name=Core.Environment.Platform.os.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.osVersion
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1775606244 idx=0 name=Core.Environment.Platform.osVersion.unknown type=Core.Member
+      - #1 id=709081456 idx=1 name=Core.Environment.Platform.osVersion.window7 type=Core.Member
+      - #2 id=1788919109 idx=2 name=Core.Environment.Platform.osVersion.window8 type=Core.Member
+      - #3 id=-566479693 idx=3 name=Core.Environment.Platform.osVersion.window10 type=Core.Member
+      - #4 id=-1435294522 idx=4 name=Core.Environment.Platform.osVersion.window11 type=Core.Member
+      - #5 id=1956643698 idx=5 name=Core.Environment.Platform.osVersion.windowServer2019 type=Core.Member
+      - #6 id=-944854414 idx=6 name=Core.Environment.Platform.osVersion.windowServer2022 type=Core.Member
+      - #7 id=-1228957211 idx=7 name=Core.Environment.Platform.osVersion.linuxGeneric type=Core.Member
+      - #8 id=-879372128 idx=8 name=Core.Environment.Platform.osVersion.linuxDebian type=Core.Member
+      - #9 id=-578085105 idx=9 name=Core.Environment.Platform.osVersion.linuxUbuntu type=Core.Member
+      - #10 id=-1455209957 idx=10 name=Core.Environment.Platform.osVersion.linuxArch type=Core.Member
+      - #11 id=-1149564960 idx=11 name=Core.Environment.Platform.osVersion.linuxAlpine type=Core.Member
+      - #12 id=-251277569 idx=12 name=Core.Environment.Platform.osVersion.linuxCentos type=Core.Member
+      - #13 id=770914292 idx=13 name=Core.Environment.Platform.osVersion.linuxRhel type=Core.Member
+      - #14 id=-1605298527 idx=14 name=Core.Environment.Platform.osVersion.linuxFedora type=Core.Member
+      - #15 id=-306284647 idx=15 name=Core.Environment.Platform.osVersion.linuxOpenSuse type=Core.Member
+      - #16 id=-1874520925 idx=16 name=Core.Environment.Platform.osVersion.linuxGentoo type=Core.Member
+      - #17 id=-259236681 idx=17 name=Core.Environment.Platform.osVersion.linuxKali type=Core.Member
+      - #18 id=735062679 idx=18 name=Core.Environment.Platform.osVersion.linuxKeil type=Core.Member
+      - #19 id=-642314722 idx=19 name=Core.Environment.Platform.osVersion.linuxYocto type=Core.Member
+      - #20 id=-1452551201 idx=20 name=Core.Environment.Platform.osVersion.linuxBuildroot type=Core.Member
+      - #21 id=145393330 idx=21 name=Core.Environment.Platform.osVersion.linuxOpenWrt type=Core.Member
+      - #22 id=1910815021 idx=22 name=Core.Environment.Platform.osVersion.macos13 type=Core.Member
+      - #23 id=701640095 idx=23 name=Core.Environment.Platform.osVersion.macos14 type=Core.Member
+      - #24 id=1558877813 idx=24 name=Core.Environment.Platform.osVersion.macos15 type=Core.Member
+      - #25 id=-1136113506 idx=25 name=Core.Environment.Platform.osVersion.ios16 type=Core.Member
+      - #26 id=1488112758 idx=26 name=Core.Environment.Platform.osVersion.ios17 type=Core.Member
+      - #27 id=1211931093 idx=27 name=Core.Environment.Platform.osVersion.ios18 type=Core.Member
+      - #28 id=2065196048 idx=28 name=Core.Environment.Platform.osVersion.androidApi31 type=Core.Member
+      - #29 id=856636452 idx=29 name=Core.Environment.Platform.osVersion.androidApi33 type=Core.Member
+      - #30 id=-87794554 idx=30 name=Core.Environment.Platform.osVersion.androidApi34 type=Core.Member
+      - #31 id=-1793548297 idx=31 name=Core.Environment.Platform.osVersion.ps4Sdk type=Core.Member
+      - #32 id=2013388248 idx=32 name=Core.Environment.Platform.osVersion.ps5Sdk type=Core.Member
+      - #33 id=-1258993275 idx=33 name=Core.Environment.Platform.osVersion.xboxGdk type=Core.Member
+      - #34 id=-2120863440 idx=34 name=Core.Environment.Platform.osVersion.switchSdk type=Core.Member
+      - #35 id=79967659 idx=35 name=Core.Environment.Platform.osVersion.wasiPreview1 type=Core.Member
+      - #36 id=-1176398654 idx=36 name=Core.Environment.Platform.osVersion.wasiP2 type=Core.Member
+      - #37 id=1907269404 idx=37 name=Core.Environment.Platform.osVersion.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.form
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-547008724 idx=0 name=Core.Environment.Platform.form.unknown type=Core.Member
+      - #1 id=-826312081 idx=1 name=Core.Environment.Platform.form.desktop type=Core.Member
+      - #2 id=1375152263 idx=2 name=Core.Environment.Platform.form.server type=Core.Member
+      - #3 id=973021349 idx=3 name=Core.Environment.Platform.form.mobile type=Core.Member
+      - #4 id=770285068 idx=4 name=Core.Environment.Platform.form.embedded type=Core.Member
+      - #5 id=-97019782 idx=5 name=Core.Environment.Platform.form.web type=Core.Member
+      - #6 id=536195073 idx=6 name=Core.Environment.Platform.form.console type=Core.Member
+      - #7 id=925241535 idx=7 name=Core.Environment.Platform.form.container type=Core.Member
+      - #8 id=-954316295 idx=8 name=Core.Environment.Platform.form.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

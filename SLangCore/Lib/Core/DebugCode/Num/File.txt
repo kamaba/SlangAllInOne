@@ -1,0 +1,61 @@
+-------------------FileMeta 文件显示 开始 : Path: Num.sl-----------------------
+public _partial class Num extends Object
+{
+    _public int size( )
+
+    _public int byteLength( )
+
+    public Num abs( )
+
+    public Num floor( )
+
+    public Num ceil( )
+
+    public Byte compareTo( Num other )
+
+    _public bool toBool( )
+    {
+        ret SystemConvertBool(this)
+    }
+    _public Int8 toInt8( byte index = 0 )
+    {
+        ret SystemConvertInt8(this,index)
+    }
+    _public UInt8 toUInt8( byte index = 0 )
+    {
+        ret SystemConvertUInt8(this,index)
+    }
+    _public Int16 toInt16( )
+    {
+        ret SystemConvertInt16(this)
+    }
+    _public UInt16 toUInt16( )
+    {
+        ret SystemConvertUInt16(this)
+    }
+    _public Int32 toInt32( )
+    {
+        ret SystemConvertInt32(this)
+    }
+    _public UInt32 toUInt32( )
+    {
+        ret SystemConvertUInt32(this)
+    }
+    _public Int64 toInt64( )
+    {
+        ret SystemConvertInt64(this)
+    }
+    _public Int64 toUInt64( )
+    {
+        ret SystemConvertUInt64(this)
+    }
+    _public Float32 toFloat32( )
+    {
+        ret SystemConvertFloat32(this)
+    }
+    _public Float64 toFloat64( )
+    {
+        ret SystemConvertFloat64(this)
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

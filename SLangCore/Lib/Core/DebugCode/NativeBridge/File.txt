@@ -1,0 +1,66 @@
+-------------------FileMeta 文件显示 开始 : Path: NativeBridge.sl-----------------------
+enum BridgeKind
+{
+    public SELF = 0
+    public没有差别MemberDataType
+    public没有差别MemberDataType
+    public没有差别MemberDataType
+
+}
+public _partial class BridgeObject extends Object
+{
+    publicbool boolvalue = false
+    publicInt32 int32value = 0
+    publicInt64 int64value = 0uL
+    publicFloat64 float64value = 0.00d
+    publicstring stringvalue = ""
+    publicint valuetype = 0
+
+    _public _init_( bool _value )
+    {
+        this.boolvalue = _value;
+        this.valuetype = 0;
+    }
+    _public _init_( Int32 _value )
+    {
+        this.int32value = _value;
+        this.valuetype = 1;
+    }
+    _public _init_( Int64 _value )
+    {
+        this.int64value = _value;
+        this.valuetype = 2;
+    }
+    _public _init_( Float64 _value )
+    {
+        this.float64value = _value;
+        this.valuetype = 3;
+    }
+    _public _init_( string _value )
+    {
+        this.stringvalue = _value;
+        this.valuetype = 4;
+    }
+}
+public _partial class NativeBridge extends Object
+{
+    public staticBridgeKind _kind = BridgeKind.SELF
+
+    _public static bool Call( BridgeKind kind,  string dllName,  string className,  string method,  BridgeObject retObj,  Array<BridgeObject> arrParams )
+    {
+        if kind == BridgeKind.CLR
+        {
+            SystemCallCLRMethod(dllName,className,method,retObj,arrParams);
+        }
+        elif kind == BridgeKind.NATIVE
+        {
+            SystemCallNativeMethod(dllName,className,method,retObj,arrParams);
+        }
+        elif kind == BridgeKind.JVM
+        {
+            SystemCallJVMMethod(dllName,className,method,retObj,arrParams);
+        }
+        ret true
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

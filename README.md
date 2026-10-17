@@ -3,16 +3,30 @@
 一个 .NET 8 进程内完成「Front 编译 → SLIR 包内存直传 → C VM 运行」：
 `slang run <工程>` 即**编译即运行**，`module.json` 不落盘。
 
+> 🔥 **全仓开发入口 = [SlangAllInOne.sln](SlangAllInOne.sln)**（2026-10-17 仓库重组后）：
+> 24 个工程覆盖宿主 / Front（simple_language）/ 标准库编译器 / 测试宿主 / C VM（csimple_lang
+> vcxproj）/ 插件 / 工具——VS 打开这一个 sln 即可构建全仓；`simple_language\SimpleLanguage.sln`
+> 已废弃（引用大量已迁移工程）。本目录同时承载标准库源码（`SLangCore\Lib`）、测试用例集
+> （`SLangCore\test`）、用户文档（`md\`）与工具（`tools\`）；标准库编译产物统一落
+> `SlangAllInOne\out\export\`（`Project\Compile*` 三驱动工程）。
+
 ## 定位与结构
 
 ```
 SlangAllInOne/
-├── SlangAllInOne.csproj          net8.0 Exe；ProjectReference → simple_language\source\Front\SimpleLanguageFront.csproj
+├── SlangAllInOne.sln             ★ 全仓统一入口（宿主/Front/编译器/测试宿主/C VM vcxproj/插件/工具）
+├── SlangAllInOne.csproj          net8.0 Exe；ProjectReference → simple_language\source\SimpleLanguageFront.csproj
 ├── Program.cs                    统合 CLI（命令解析 + help）
 ├── FrontEnd/FrontendService.cs   进程内调用 Front CommandExecutor（compile -e ir [--in-memory]）
-└── Backend/
-    ├── CvmInterop.cs             P/Invoke：cli_main / cli_run_module_in_memory + SLVM_MEM_FLAG_* 常量 + 手动 UTF-8 组参
-    └── CvmBackend.cs             定位 C VM 运行时（发布包 bin\ 优先，回退构建树）+ RunInMemory / RunCli
+├── Backend/
+│   ├── CvmInterop.cs             P/Invoke：cli_main / cli_run_module_in_memory + SLVM_MEM_FLAG_* 常量 + 手动 UTF-8 组参
+│   └── CvmBackend.cs             定位 C VM 运行时（发布包 bin\ 优先，回退构建树）+ RunInMemory / RunCli
+├── Project\                      编译/测试/native 工程（Compile*、CSimpleVM*Test、cvm_math_lib…）
+├── SLangCore\Lib\                标准库源码（Core/Math/Std/SLang：Server/Render/Mysql/Tensora）
+├── SLangCore\test\               测试用例集（BaseTest/ExpendTest/MathTest/SpecialTest/BenchMark…）
+├── md\                           全部用户文档（syntax/lib/project/log/plugins + ai 内部文档）
+├── tools\                        LidIndexer / ExtractLogs / SLBRoundTrip
+└── out\export\                   标准库与测试工程编译产物根（module.json/slb + Logs/DebugCode）
 ```
 
 - **FrontEnd**：不派生 `dotnet run SimpleLanguageFront.csproj` 子进程，直接进程内调 `CommandExecutor.Execute`；
@@ -187,10 +201,20 @@ Debug 包保留 publish 原始产物（现场调试用），不做这两步。
 # Release 包：跑已编译模块 —— 用户 slb 放包内 module\ 即可
 slang.exe run-disk module\MyProj.module.slb
 
-# Debug 包：编译 + 运行用户工程 —— 工程 jsonc 的 references 指向包内 module\
-# （例：工程放 <pkg>\test\MyProj\，references 写 { "path": "../../module", "name": "Core.module.json" }）
+# 编译 + 运行用户工程：工程放包内任意位置（甚至包外），jsonc 的 references
+# 直接写官方库名即可（2026-10-17 官方库直查）——Core/Std/Math 及任何放进
+# module\ 的官方库都按名字在 <slang 目录>\module\ 直查，无需易碎的相对路径：
+#   "references": [ { "path": "Core", "name": "Core.module.json" },
+#                   { "path": "Std", "name": "Std.module.json" } ]
+# 开箱示例：包内 test\RefProbe\（纯名引用 Core/Std 的最小工程），直接
+slang.exe run test\RefProbe\RefProbe
 slang.exe run test\MyProj\MyProj
 ```
+
+官方库引用解析链（Front 编译期与 C VM 运行期双侧一致）：常规相对路径 →
+`<slang 目录>\module\<名>.module.slb|json`（slb 优先；工程跨盘/包外时 C VM
+侧再兜底 `<exe 目录>\module\` 直查）。开发布局（`bin\` 下无 `module\`）
+自然落空，不影响仓库内开发。
 
 注意：**用户模块必须与包内标准库同源编译**（引用装载有 uuid 校验，旧模块配新
 标准库仅 Warning 但类装配可能错位）；标准库更新后用户模块需重新 compile。

@@ -1,0 +1,493 @@
+-------------------IR 文件显示 开始 : Path: InterfaceDataAndBindData.sl-----------------------
+Class: ProjectTest.IVector2
+  metaClassKind: Interface
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: ProjectTest.IVector2.addVector_1_ProjectTest.VecData2
+    VirtualName: addVector_Core.Float32_1_ProjectTest.VecData2
+    Name: addVector
+    InterfaceMethod: True
+    Return:
+      - #0 id=15228435 idx=0 name=_local[ProjectTest.IVector2.addVector.return] type=Core.Float32
+    Arguments:
+      - #0 id=24061669 idx=0 name=_local[ProjectTest.IVector2.addVector.this] type=ProjectTest.IVector2
+      - #1 id=2838193 idx=1 name=_local[other] type=ProjectTest.VecData2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:32] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.IVector2.length
+    VirtualName: length_Core.Float32_0
+    Name: length
+    InterfaceMethod: True
+    Return:
+      - #0 id=28567114 idx=0 name=_local[ProjectTest.IVector2.length.return] type=Core.Float32
+    Arguments:
+      - #0 id=25543745 idx=0 name=_local[ProjectTest.IVector2.length.this] type=ProjectTest.IVector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:33] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.IVector2.x
+    VirtualName: x_Core.Float32_0
+    Name: x
+    InterfaceMethod: True
+    Return:
+      - #0 id=32234903 idx=0 name=_local[ProjectTest.IVector2.x.return] type=Core.Float32
+    Arguments:
+      - #0 id=55777439 idx=0 name=_local[ProjectTest.IVector2.x.this] type=ProjectTest.IVector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.IVector2.x_1_Core.Float32
+    VirtualName: x_Core.Void_1_Core.Float32
+    Name: x
+    InterfaceMethod: True
+    Return:
+      - #0 id=60890369 idx=0 name=_local[ProjectTest.IVector2.x.return] type=Core.Void
+    Arguments:
+      - #0 id=21678677 idx=0 name=_local[ProjectTest.IVector2.x.this] type=ProjectTest.IVector2
+      - #1 id=11142412 idx=1 name=_local[_x] type=Core.Float32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:4] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.IVector2.y
+    VirtualName: y_Core.Float32_0
+    Name: y
+    InterfaceMethod: True
+    Return:
+      - #0 id=30120171 idx=0 name=_local[ProjectTest.IVector2.y.return] type=Core.Float32
+    Arguments:
+      - #0 id=33172847 idx=0 name=_local[ProjectTest.IVector2.y.this] type=ProjectTest.IVector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:5] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.IVector2.y_1_Core.Float32
+    VirtualName: y_Core.Void_1_Core.Float32
+    Name: y
+    InterfaceMethod: True
+    Return:
+      - #0 id=23814811 idx=0 name=_local[ProjectTest.IVector2.y.return] type=Core.Void
+    Arguments:
+      - #0 id=2646090 idx=0 name=_local[ProjectTest.IVector2.y.this] type=ProjectTest.IVector2
+      - #1 id=13006713 idx=1 name=_local[_y] type=Core.Float32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:6] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.Vector2
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+    RelatedClassId: 1320141142
+      Mapping: []
+  ClassLocals:
+      - #0 id=33246944 idx=0 name=ProjectTest.Vector2.VecData2 type=ProjectTest.VecData2
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.Vector2.addVector_1_ProjectTest.VecData2
+    VirtualName: addVector_Core.Float32_1_ProjectTest.VecData2
+    Name: addVector
+    InterfaceMethod: True
+    Return:
+      - #0 id=46910821 idx=0 name=_local[ProjectTest.Vector2.addVector.return] type=Core.Float32
+    Arguments:
+      - #0 id=49951556 idx=0 name=_local[ProjectTest.Vector2.addVector.this] type=ProjectTest.Vector2
+      - #1 id=19544205 idx=1 name=_local[other] type=ProjectTest.VecData2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:40] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:4] [CallDynamic] index:[1] info:[CallDynamic x] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.x, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ InterfaceDataAndBindData.sl:40] [LoadArgument] index:[1] info:[Argument]
+4 4   [ InterfaceDataAndBindData.sl:40] [LoadNotStaticField] index:[0] info:[Member]
+5 5   [ InterfaceDataAndBindData.sl:40] [Add] index:[0]
+6 6   [ InterfaceDataAndBindData.sl:40] [LoadArgument] index:[0] info:[Argument]
+7 7   [ InterfaceDataAndBindData.sl:6] [CallDynamic] index:[1] info:[CallDynamic y] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.y, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ InterfaceDataAndBindData.sl:40] [Add] index:[0]
+9 9   [ InterfaceDataAndBindData.sl:40] [LoadArgument] index:[1] info:[Argument]
+10 10   [ InterfaceDataAndBindData.sl:40] [LoadNotStaticField] index:[1] info:[Member]
+11 11   [ InterfaceDataAndBindData.sl:40] [Add] index:[0]
+12 12   [ InterfaceDataAndBindData.sl:40] [StoreReturn] index:[0] info:[StoreReturn]
+13 13   [ :0] [BrLabel] index:[14]
+14 14   [ InterfaceDataAndBindData.sl:38] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.length
+    VirtualName: length_Core.Float32_0
+    Name: length
+    InterfaceMethod: True
+    Return:
+      - #0 id=20646289 idx=0 name=_local[ProjectTest.Vector2.length.return] type=Core.Float32
+    Arguments:
+      - #0 id=39576734 idx=0 name=_local[ProjectTest.Vector2.length.this] type=ProjectTest.Vector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:45] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:4] [CallDynamic] index:[1] info:[CallDynamic x] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.x, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ InterfaceDataAndBindData.sl:45] [LoadArgument] index:[0] info:[Argument]
+4 4   [ InterfaceDataAndBindData.sl:4] [CallDynamic] index:[1] info:[CallDynamic x] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.x, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ InterfaceDataAndBindData.sl:45] [Multiply] index:[0]
+6 6   [ InterfaceDataAndBindData.sl:45] [LoadArgument] index:[0] info:[Argument]
+7 7   [ InterfaceDataAndBindData.sl:6] [CallDynamic] index:[1] info:[CallDynamic y] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.y, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ InterfaceDataAndBindData.sl:45] [LoadArgument] index:[0] info:[Argument]
+9 9   [ InterfaceDataAndBindData.sl:6] [CallDynamic] index:[1] info:[CallDynamic y] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Vector2, StaticRuntimeTypeList=[], Method=ProjectTest.Vector2.y, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ InterfaceDataAndBindData.sl:45] [Multiply] index:[0]
+11 11   [ InterfaceDataAndBindData.sl:45] [Add] index:[0]
+12 12   [ InterfaceDataAndBindData.sl:45] [StoreReturn] index:[0] info:[StoreReturn]
+13 13   [ :0] [BrLabel] index:[14]
+14 14   [ InterfaceDataAndBindData.sl:43] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.x
+    VirtualName: x_Core.Float32_0
+    Name: x
+    InterfaceMethod: True
+    Return:
+      - #0 id=18759738 idx=0 name=_local[ProjectTest.Vector2.x.return] type=Core.Float32
+    Arguments:
+      - #0 id=61736738 idx=0 name=_local[ProjectTest.Vector2.x.this] type=ProjectTest.Vector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:4] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:4] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ InterfaceDataAndBindData.sl:4] [LoadNotStaticField] index:[0] info:[Member]
+4 4   [ InterfaceDataAndBindData.sl:4] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ InterfaceDataAndBindData.sl:4] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.x_1_Core.Float32
+    VirtualName: x_Core.Void_1_Core.Float32
+    Name: x
+    InterfaceMethod: True
+    Return:
+      - #0 id=52750146 idx=0 name=_local[ProjectTest.Vector2.x.return] type=Core.Void
+    Arguments:
+      - #0 id=43143829 idx=0 name=_local[ProjectTest.Vector2.x.this] type=ProjectTest.Vector2
+      - #1 id=4989273 idx=1 name=_local[_x] type=Core.Float32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:5] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:5] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ InterfaceDataAndBindData.sl:5] [LoadArgument] index:[1] info:[Argument]
+4 4   [ InterfaceDataAndBindData.sl:5] [StoreNotStaticField2] index:[0] info:[Member]
+5 5   [ InterfaceDataAndBindData.sl:5] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.y
+    VirtualName: y_Core.Float32_0
+    Name: y
+    InterfaceMethod: True
+    Return:
+      - #0 id=1477932 idx=0 name=_local[ProjectTest.Vector2.y.return] type=Core.Float32
+    Arguments:
+      - #0 id=44903457 idx=0 name=_local[ProjectTest.Vector2.y.this] type=ProjectTest.Vector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:6] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:6] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ InterfaceDataAndBindData.sl:6] [LoadNotStaticField] index:[1] info:[Member]
+4 4   [ InterfaceDataAndBindData.sl:6] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ InterfaceDataAndBindData.sl:6] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.y_1_Core.Float32
+    VirtualName: y_Core.Void_1_Core.Float32
+    Name: y
+    InterfaceMethod: True
+    Return:
+      - #0 id=3671300 idx=0 name=_local[ProjectTest.Vector2.y.return] type=Core.Void
+    Arguments:
+      - #0 id=52603705 idx=0 name=_local[ProjectTest.Vector2.y.this] type=ProjectTest.Vector2
+      - #1 id=33041702 idx=1 name=_local[_y] type=Core.Float32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:7] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:7] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ InterfaceDataAndBindData.sl:7] [LoadArgument] index:[1] info:[Argument]
+4 4   [ InterfaceDataAndBindData.sl:7] [StoreNotStaticField2] index:[1] info:[Member]
+5 5   [ InterfaceDataAndBindData.sl:7] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.VecData2Data
+    VirtualName: VecData2Data_ProjectTest.VecData2_0
+    Name: VecData2Data
+    InterfaceMethod: False
+    Return:
+      - #0 id=59132187 idx=0 name=_local[ProjectTest.Vector2.VecData2Data.return] type=ProjectTest.VecData2
+    Arguments:
+      - #0 id=28939864 idx=0 name=_local[ProjectTest.Vector2.VecData2Data.this] type=ProjectTest.Vector2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:8] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:8] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ InterfaceDataAndBindData.sl:8] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ InterfaceDataAndBindData.sl:8] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2.VecData2Data_1_ProjectTest.VecData2
+    VirtualName: VecData2Data_Core.Void_1_ProjectTest.VecData2
+    Name: VecData2Data
+    InterfaceMethod: False
+    Return:
+      - #0 id=23474126 idx=0 name=_local[ProjectTest.Vector2.VecData2Data.return] type=Core.Void
+    Arguments:
+      - #0 id=24977857 idx=0 name=_local[ProjectTest.Vector2.VecData2Data.this] type=ProjectTest.Vector2
+      - #1 id=9940543 idx=1 name=_local[_vecData2] type=ProjectTest.VecData2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:9] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:9] [LoadArgument] index:[1] info:[Argument]
+3 3   [ InterfaceDataAndBindData.sl:9] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ InterfaceDataAndBindData.sl:9] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Vector2._init__1_ProjectTest.VecData2
+    VirtualName: _init__Core.Void_1_ProjectTest.VecData2
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=66986558 idx=0 name=_local[ProjectTest.Vector2._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=22356031 idx=0 name=_local[ProjectTest.Vector2._init_.this] type=ProjectTest.Vector2
+      - #1 id=66008118 idx=1 name=_local[_vecData2] type=ProjectTest.VecData2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InterfaceDataAndBindData.sl:10] [LoadArgument] index:[0] info:[Argument]
+2 2   [ InterfaceDataAndBindData.sl:10] [LoadArgument] index:[1] info:[Argument]
+3 3   [ InterfaceDataAndBindData.sl:10] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ InterfaceDataAndBindData.sl:10] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.VecData2
+  metaClassKind: Data
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 184775704
+      Mapping: []
+  ClassLocals:
+      - #0 id=33489226 idx=0 name=ProjectTest.VecData2.x type=Core.Float32
+      - #1 id=32967578 idx=1 name=ProjectTest.VecData2.y type=Core.Float32
+  ClassStatics:
+      - #0 id=33489226 idx=0 name=ProjectTest.VecData2.x type=Core.Float32
+      - #1 id=32967578 idx=1 name=ProjectTest.VecData2.y type=Core.Float32
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19386696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9610617 idx=0 name=this] type=Core.Data
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=40040492 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=26818564 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=24820109 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Data.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41575456 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64271818 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=38634788 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

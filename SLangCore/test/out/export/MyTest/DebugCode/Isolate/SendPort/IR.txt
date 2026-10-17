@@ -1,0 +1,117 @@
+-------------------IR 文件显示 开始 : Path: Isolate/SendPort.sl-----------------------
+Class: Std.SendPort
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1318124124 idx=0 name=Std.SendPort._portId type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Std.SendPort._init__1_Core.Int64
+    VirtualName: _init__Core.Void_1_Core.Int64
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=6774674 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38035443 idx=0 name=this] type=Std.SendPort
+      - #1 id=60972066 idx=1 name=portId type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Std.SendPort.send_1_Core.Object
+    VirtualName: send_Core.Void_1_Core.Object
+    Name: send
+    InterfaceMethod: False
+    Return:
+      - #0 id=39790309 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11877685 idx=0 name=this] type=Std.SendPort
+      - #1 id=22568466 idx=1 name=message type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.SendPort.portId
+    VirtualName: portId_Core.Int64_0
+    Name: portId
+    InterfaceMethod: False
+    Return:
+      - #0 id=16106447 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=1789605 idx=0 name=this] type=Std.SendPort
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

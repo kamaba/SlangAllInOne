@@ -1,0 +1,346 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/EnumTest.sl-----------------------
+public class XC extends Core.Object
+{
+    public [Core.Object]a = 10i;
+    public [Core.Object]b = 10i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+public class OK extends Core.Object
+{
+    public [Core.Object]code = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+public class Error extends Core.Object
+{
+    public [Core.Object]code = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+public class EnumTest extends Core.Object
+{
+    public  static Core.Object fun()
+    {
+        println("========== EnumTest (start) ==========")
+        [Core.BridgeKind]kind222 = 
+        [Core.Object]kind111 = public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};;
+        Core.Boolean autocreate_63830089 = ([Core.BridgeKind]kind222 == [SELF]kind111)
+        if autocreate_63830089
+        {
+            println("BridgeKind--------------SELF11111111111")
+
+        }
+        Core.Boolean autocreate_37599894 = ([Core.BridgeKind]kind222 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};)
+        if autocreate_37599894
+        {
+            println("BridgeKind--------------SELF1")
+
+        }
+        Core.Boolean autocreate_2854726 = ([Core.BridgeKind]kind222 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};)
+        elif autocreate_2854726
+        {
+            println("BridgeKind--------------JVM1")
+
+        }
+        else
+        {
+            println("BridgeKind--------------OTHER1")
+
+        }
+        [SELF]kind111 = public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};;
+        Core.Boolean autocreate_25692540 = ([SELF]kind111 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};)
+        if autocreate_25692540
+        {
+            println("BridgeKind--------------SELF2")
+
+        }
+        Core.Boolean autocreate_29906272 = ([SELF]kind111 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]SELF = NewObjectExpressNode: Core.Member().{"SELF", 0i, 0i, 0i};, public const [Core.Member]CLR = NewObjectExpressNode: Core.Member().{"CLR", 1i, 1, 1};, public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};, public const [Core.Member]NATIVE = NewObjectExpressNode: Core.Member().{"NATIVE", 3i, 3, 3};};  ->  public const [Core.Member]JVM = NewObjectExpressNode: Core.Member().{"JVM", 2i, 2, 2};)
+        elif autocreate_29906272
+        {
+            println("BridgeKind--------------JVM2")
+
+        }
+        else
+        {
+            println("BridgeKind--------------OTHER2")
+
+        }
+        [Core.EShape]shape123 = 
+        Core.Boolean autocreate_720995 = ([Core.EShape]shape123 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]r1 = NewObjectExpressNode: Core.Member().{"r1", 0i, Core.RectShape{}};, public const [Core.Member]r2 = NewObjectExpressNode: Core.Member().{"r2", 1i, Core.RectShape{}};, public const [Core.Member]c1 = NewObjectExpressNode: Core.Member().{"c1", 2i, Core.CircleShape{}};, public const [Core.Member]c2 = NewObjectExpressNode: Core.Member().{"c2", 3i, Core.CircleShape{}};, public [Core.Member]cd = NewObjectExpressNode: Core.Member().{"cd", 4i, Core.CircleShape{}};};  ->  public const [Core.Member]r1 = NewObjectExpressNode: Core.Member().{"r1", 0i, Core.RectShape{}};)
+        if autocreate_720995
+        {
+            println("EShape default branch: r1")
+
+        }
+        Core.Boolean autocreate_6488958 = ([Core.EShape]shape123 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]r1 = NewObjectExpressNode: Core.Member().{"r1", 0i, Core.RectShape{}};, public const [Core.Member]r2 = NewObjectExpressNode: Core.Member().{"r2", 1i, Core.RectShape{}};, public const [Core.Member]c1 = NewObjectExpressNode: Core.Member().{"c1", 2i, Core.CircleShape{}};, public const [Core.Member]c2 = NewObjectExpressNode: Core.Member().{"c2", 3i, Core.CircleShape{}};, public [Core.Member]cd = NewObjectExpressNode: Core.Member().{"cd", 4i, Core.CircleShape{}};};  ->  public [Core.Member]cd = NewObjectExpressNode: Core.Member().{"cd", 4i, Core.CircleShape{}};)
+        elif autocreate_6488958
+        {
+            println("EShape branch: cd")
+
+        }
+for b3 in values
+{
+            println("ESeason value: " + b3.toString())
+
+}
+for b4 in values
+{
+            Core.Boolean autocreate_32830290 = (b4 == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]Spring = NewObjectExpressNode: Core.Member().{"Spring", 0i, "春天"};, public const [Core.Member]Summer = NewObjectExpressNode: Core.Member().{"Summer", 1i, "夏天"};, public const [Core.Member]Autumn = NewObjectExpressNode: Core.Member().{"Autumn", 2i, "秋天"};, public const [Core.Member]Winter = NewObjectExpressNode: Core.Member().{"Winter", 3i, "冬天"};};  ->  public const [Core.Member]Spring = NewObjectExpressNode: Core.Member().{"Spring", 0i, "春天"};)
+            if autocreate_32830290
+            {
+                println(" if b4 == ESeason.Spring")
+
+            }
+            else
+            {
+                println("ESeason value: " + b4.toString())
+
+            }
+
+}
+        println("----- mut enum member modify -----")
+        println("Book.Str before# Test both separator styles -> " + Book.Str.toString())
+        public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]B1 = NewObjectExpressNode: Core.Member().{"B1", 0i, 1i};, public const [Core.Member]B2 = NewObjectExpressNode: Core.Member().{"B2", 1i, 2i};, public const [Core.Member]C1 = NewObjectExpressNode: Core.Member().{"C1", 2i};, public [Core.Member]Str = NewObjectExpressNode: Core.Member().{"Str", 3i, ""};, public [Core.Member]c4 = NewObjectExpressNode: Core.Member().{"c4", 4i, 10i};};  ->  public [Core.Member]Str = NewObjectExpressNode: Core.Member().{"Str", 3i, ""}; = "runtime string";
+        println("Book.Str after -> " + Book.Str.toString())
+        println("Book.c4 front -> " + Book.c4.toString())
+        public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]B1 = NewObjectExpressNode: Core.Member().{"B1", 0i, 1i};, public const [Core.Member]B2 = NewObjectExpressNode: Core.Member().{"B2", 1i, 2i};, public const [Core.Member]C1 = NewObjectExpressNode: Core.Member().{"C1", 2i};, public [Core.Member]Str = NewObjectExpressNode: Core.Member().{"Str", 3i, ""};, public [Core.Member]c4 = NewObjectExpressNode: Core.Member().{"c4", 4i, 10i};};  ->  public [Core.Member]c4 = NewObjectExpressNode: Core.Member().{"c4", 4i, 10i}; = 20i;
+        println("Book.c4 after -> " + Book.c4.toString())
+        public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]r1 = NewObjectExpressNode: Core.Member().{"r1", 0i, Core.RectShape{}};, public const [Core.Member]r2 = NewObjectExpressNode: Core.Member().{"r2", 1i, Core.RectShape{}};, public const [Core.Member]c1 = NewObjectExpressNode: Core.Member().{"c1", 2i, Core.CircleShape{}};, public const [Core.Member]c2 = NewObjectExpressNode: Core.Member().{"c2", 3i, Core.CircleShape{}};, public [Core.Member]cd = NewObjectExpressNode: Core.Member().{"cd", 4i, Core.CircleShape{}};};  ->  public [Core.Member]cd = NewObjectExpressNode: Core.Member().{"cd", 4i, Core.CircleShape{}}; = Core.RectShape{};
+        println("EErr.First ordinal smoke -> " + EErr.First.value.toString())
+        println("========== EnumTest (end) ==========")
+        [Core.Object]states = Core.Array<T>().{public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};, public const [Core.Member]Begin = NewObjectExpressNode: Core.Member().{"Begin", 1i, 2i};, public const [Core.Member]End = NewObjectExpressNode: Core.Member().{"End", 2i, 3i};};  ->  public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};, public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};, public const [Core.Member]Begin = NewObjectExpressNode: Core.Member().{"Begin", 1i, 2i};, public const [Core.Member]End = NewObjectExpressNode: Core.Member().{"End", 2i, 3i};};  ->  public const [Core.Member]Begin = NewObjectExpressNode: Core.Member().{"Begin", 1i, 2i};, public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};, public const [Core.Member]Begin = NewObjectExpressNode: Core.Member().{"Begin", 1i, 2i};, public const [Core.Member]End = NewObjectExpressNode: Core.Member().{"End", 2i, 3i};};  ->  public const [Core.Member]End = NewObjectExpressNode: Core.Member().{"End", 2i, 3i};};
+for s in states
+{
+            Core.Boolean autocreate_42007851 = (s == public [Core.Array<T><Core.Member>[-1]]values = NewObjectExpressNode: Core.Array<T>().{public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};, public const [Core.Member]Begin = NewObjectExpressNode: Core.Member().{"Begin", 1i, 2i};, public const [Core.Member]End = NewObjectExpressNode: Core.Member().{"End", 2i, 3i};};  ->  public const [Core.Member]Init = NewObjectExpressNode: Core.Member().{"Init", 0i, 1i};)
+            if autocreate_42007851
+            {
+                println("GameState.Init")
+                continue;
+
+            }
+            println("State: " + s.name)
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,29 @@
+-------------------Meta 文件显示 开始 : Path: NestedPlatformTest.sl-----------------------
+NestedPlatformTest
+{
+    _public static fun( )
+    {
+        SystemPrintln("========== NestedPlatformTest (start) ==========");
+        SystemPrintln("kind.one.value = " + NestedNS.Inner.kind.one.value.toString());
+        SystemPrintln("kind.two.value = " + NestedNS.Inner.kind.two.value.toString());
+        SystemPrintln("cur.os = " + NestedNS.cur.os.toString());
+        SystemPrintln("cur.note = " + NestedNS.cur.note);
+        if NestedNS.cur.os == NestedNS.Inner.kind.two
+        {
+            SystemPrintln("compare: cur.os == kind.two OK");
+        }
+        else
+        {
+            SystemPrintln("compare: cur.os != kind.two FAIL");
+        }
+        NestedPlatformTest.echo(NestedNS.Inner.kind.one);
+        Int32 twoValue = NestedNS.Inner.kind.two.value;
+        NestedPlatformTest.echo(twoValue);
+        SystemPrintln("========== NestedPlatformTest (end) ==========");
+    }
+    _public static echo( Int32 v )
+    {
+        SystemPrintln("echo v = " + v.toString());
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

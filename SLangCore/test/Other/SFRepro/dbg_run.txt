@@ -1,0 +1,43 @@
+﻿repro begin
+
+..\..\..\csimple_lang\build\Debug\bin\csimple_lang.exe : [FS-DBG] open path=sf_repro_a.txt mode=9 fmode=w+b
+At line:15 char:5881
++ ... lyContinue; ..\..\..\csimple_lang\build\Debug\bin\csimple_lang.exe ru ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([FS-DBG] open p...ode=9 fmode=w+b:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[FS-DBG] open ok slot=0 handle=1
+open ok
+
+srcBuf readable = 17
+
+srcBuf handle = 2
+
+srcBuf writerIndex = 17
+
+[VM-DBG] file_write handle=1 buf_id=2
+[FS-DBG] write handle=1 len=17 f=000001EC558E6070
+[FS-DBG] write ret=17
+write n = 
+
+srcBuf readable after = 0
+
+[FS-DBG] flush handle=1 f=000001EC558E6070
+[FS-DBG] close handle=1 f=000001EC558E6070
+write done
+
+[FS-DBG] open path=sf_repro_a.txt mode=2 fmode=wb
+[FS-DBG] open ok slot=0 handle=1
+A1 length = 0
+
+A2 position = 0
+
+pre ByteBuffer(32)
+
+post ByteBuffer(32) writable = 32 handle = 3
+
+pre read
+
+[VM-DBG] file_read handle=1 buf_id=3 count=32
+[FS-DBG] read handle=1 len=32 f=000001EC558E6070

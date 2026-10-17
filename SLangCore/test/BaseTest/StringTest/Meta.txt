@@ -1,0 +1,299 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/StringTest.sl-----------------------
+public class StringTest extends Core.Object
+{
+    public class Class2 extends Core.Object
+    {
+        public [Core.Int32]a = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    }
+    public class Class1 extends Core.Object
+    {
+        public [Core.Object]a1 = 20i;
+        public [Core.StringTest.Class2]c2 = null;
+        public  static Core.String printf([Core.String]x)
+        {
+            println("StringTest.printf: " + x)
+            return "m";
+
+        }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    }
+    public class ClassT extends Core.Object
+    {
+        public [Core.String]name = "xxx";
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    }
+    public  static Core.Object literalAndFormatSmoke()
+    {
+        println("----- literalAndFormatSmoke -----")
+        [Core.Object]a3 = ("{"name":"okr","age":13}" + 3i);
+          ->  printf(a3)
+        [Core.Object]a41 = Error MetaVisitCall Default Parse!  ->  format("mum","skirt","big");
+          ->  printf(a41)
+        [Core.StringTest.Class1]c1 = Core.StringTest.Class1().;
+        [Core.Object]a7 = ("c1.a1 as concat -> " + [Core.StringTest.Class1]c1  ->  public [Core.Int32]a1 = ConstExpressNode: [Int32] 20i;  ->  [Core.Int32]a1.toString());
+          ->  printf(a7)
+        [Core.Object]c4 = ("a" + "b");
+        println("char-like + -> " + c4.toString())
+        [Core.Object]c6 = "aaaaaa";
+          ->  printf(c6)
+        [Core.Object]fstr = "prefix";
+        println("f-string sample -> " + fstr)
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object dollarAndFormatSmoke()
+    {
+        println("----- dollarAndFormatSmoke -----")
+        [Core.Object]name = "QuTa";
+        [Core.Object]score = 55i;
+        [Core.Object]a = 100i;
+        [Core.Object]b = 300i;
+        [Core.Object]ct = Core.StringTest.ClassT().{name="mmm"};
+        [Core.Object]str3 = (((((("{} Name:" + [Core.StringTest.ClassT]ct  ->  public [Core.String]name = ConstExpressNode: [String] "xxx";) + " {} Score:") + [Core.Int32]score) + " a+b=") + Error MetaVisitCall Default Parse!  ->  toString()) + " bb = {}");
+        [Core.Object]str33 = [Core.String]str3  ->  [Core.String]str3.format(name,score,"bb");
+        println(str3.format(name + "---",score - 50i,"bbxxxx"))
+        println(str33)
+        [Core.Object]str4 = Error MetaVisitCall Default Parse!  ->  format(a,b);
+        println(str4)
+        [Core.Object]str5 = "Name:'$name' NickName="AQ" Score=$score a{}+b{}=${(a + b).toString()}";
+        println(str5)
+        [Core.Object]str6 = (((("我是一段话 我叫" + [Core.String]name) + "
+        我\n今天 考了") + [Core.Int32]score) + "分 "大Q$name QQ" 'xml' " \t
+        End");
+        println("verbatim f-triple: " + str6)
+
+
+
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== StringTest (start) ==========")
+        literalAndFormatSmoke()
+        dollarAndFormatSmoke()
+        println("========== StringTest (end) ==========")
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

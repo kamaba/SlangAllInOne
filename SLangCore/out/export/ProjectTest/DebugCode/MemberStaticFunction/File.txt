@@ -1,0 +1,464 @@
+-------------------FileMeta 文件显示 开始 : Path: MemberStaticFunction.sl-----------------------
+VClass
+{
+    _public fun( )
+    {
+        global.println("vclass fun");
+    }
+    _public override int hashCode( )
+    {
+        ret 100i
+    }
+    _public override string toString( )
+    {
+        ret "VClass.toString()"
+    }
+    _public static staticFun( )
+    {
+        global.println("VClass.staticFun called");
+    }
+    _public finalFun( )
+    {
+    }
+}
+OClass extends VClass
+{
+    _public override fun( )
+    {
+        global.println("oclass fun");
+    }
+    _public override int hashCode( )
+    {
+        ret 1001i
+    }
+    _public override string toString( )
+    {
+        ret "OClass.toString()"
+    }
+    _public static staticFun( )
+    {
+        global.println("OClass.staticFun called");
+    }
+}
+class StaticBasic
+{
+     staticint intcount = 0i
+
+    _public static void greet( )
+    {
+        global.println("Hello from StaticBasic!");
+    }
+    _public static int getCount( )
+    {
+        ret StaticBasic.count
+    }
+    _public static int square( int n )
+    {
+        ret n * n
+    }
+    _public static int add( int a,  int b )
+    {
+        ret a + b
+    }
+    _public static string repeat( string s,  int n )
+    {
+        string result = "";
+        int i = 0i;
+        while i < n
+        {
+            result = result + s;
+            i = i + 1i;
+        }
+        ret result
+    }
+    _public static bool isPositive( int n )
+    {
+        ret n > 0i
+    }
+    _public static double circleArea( double r )
+    {
+        ret 3.14d * r * r
+    }
+    _public static void increment( )
+    {
+        StaticBasic.count = StaticBasic.count + 1i;
+    }
+    _public static void reset( )
+    {
+        StaticBasic.count = 0i;
+    }
+}
+class StaticOverload
+{
+    _public static string format( )
+    {
+        ret "[empty]"
+    }
+    _public static string format( int n )
+    {
+        ret "[int:" + n.toString() + "]"
+    }
+    _public static string format( string s )
+    {
+        ret "[str:" + s + "]"
+    }
+    _public static string format( int n,  string s )
+    {
+        ret "[" + n.toString() + ":" + s + "]"
+    }
+    _public static string format( string s,  int n )
+    {
+        ret "[" + s + ":" + n.toString() + "]"
+    }
+    _public static string format( int a,  int b,  int c )
+    {
+        ret "[" + ((a + b + c).toString() + "]"
+    }
+}
+class StaticDefault
+{
+    _public static int inc( int n = 1i )
+    {
+        ret n + 1i
+    }
+    _public static int muladd( int a = 1i,  int b = 2i,  int c = 3i )
+    {
+        ret a * b + c
+    }
+    _public static string greet( string name,  string greeting = "Hello" )
+    {
+        ret greeting + ", " + name + "!"
+    }
+    _public static int calc( int x = 5i + 5i,  int y = 2i * 3i )
+    {
+        ret x - y
+    }
+    _public static string format( int n,  bool hex = false )
+    {
+        if hex
+        {
+            ret "0x" + n.toString()
+        }
+        else
+        {
+            ret n.toString()
+        }
+    }
+    _public static string config( string host = "localhost",  int port = 8080i,  bool ssl = false )
+    {
+        string proto = "http";
+        if ssl
+        {
+            proto = "https";
+        }
+        ret proto + "://" + host + ":" + port.toString()
+    }
+}
+class StaticKeyword
+{
+    _public static int add( int a,  int b,  int c )
+    {
+        ret a + b + c
+    }
+    _public static int subtract( int a,  int b )
+    {
+        ret a - b
+    }
+    _public static int compute( int x,  int y = 10i,  int z = 20i )
+    {
+        ret x * 100i + y * 10i + z
+    }
+    _public static string greet( string greeting = "Hello",  string name = "World",  string punct = "!" )
+    {
+        ret greeting + ", " + name + punct
+    }
+    _public static int calc( int base111,  int tax = 0i,  int discount = 0i )
+    {
+        ret StaticKeyword.add(a = base111,b = tax,c = - - discount)
+    }
+    _public static int processObj( StaticBasic obj,  int multiplier = 1i )
+    {
+        ret obj.square(multiplier)
+    }
+}
+class StaticBase
+{
+     staticint intbaseVal = 100i
+
+    _public static int getBase( )
+    {
+        ret StaticBase.baseVal
+    }
+    _public static string tag( )
+    {
+        ret "StaticBase"
+    }
+    _public static int doubled( int n )
+    {
+        ret n * 2i
+    }
+}
+class StaticChild extends StaticBase
+{
+     staticint intchildVal = 200i
+
+    _public static string tag( )
+    {
+        ret "StaticChild"
+    }
+    _public static int getCombined( )
+    {
+        ret StaticBase.getBase() + StaticChild.childVal
+    }
+    _public static int quadruple( int n )
+    {
+        ret StaticBase.doubled(StaticBase.doubled(n))
+    }
+}
+data ProductData
+{
+    id = 0i
+    name = ""
+    price = 0.00d
+}
+class ProductFactory
+{
+    _public static ProductData create( )
+    {
+        ret ProductData()
+    }
+    _public static ProductData create( int id )
+    {
+        ProductData p = ProductData();
+        p.id = id;
+        ret p
+    }
+    _public static ProductData create( int id,  string name,  double price )
+    {
+        ProductData p = ProductData();
+        p.id = id;
+        p.name = name;
+        p.price = price;
+        ret p
+    }
+    _public static ProductData make( int id = 0i,  string name = "default",  double price = 0.00d )
+    {
+        ret ProductData()
+    }
+    _public static ProductData build( int id,  string name,  string category )
+    {
+        ProductData p = ProductData();
+        p.id = id;
+        p.name = "[" + category + "] " + name;
+        ret p
+    }
+}
+class StaticCounter
+{
+     staticint inttotal = 0i
+     staticint intmax = 0i
+
+    _public static void add( int n )
+    {
+        StaticCounter.total = StaticCounter.total + n;
+        if StaticCounter.total > StaticCounter.max
+        {
+            StaticCounter.max = StaticCounter.total;
+        }
+    }
+    _public static int getTotal( )
+    {
+        ret StaticCounter.total
+    }
+    _public static int getMax( )
+    {
+        ret StaticCounter.max
+    }
+    _public static void reset( )
+    {
+        StaticCounter.total = 0i;
+        StaticCounter.max = 0i;
+    }
+}
+class StaticMath
+{
+    _public static int factorial( int n )
+    {
+        if n <= 1i
+        {
+            ret 1i
+        }
+        ret n * StaticMath.factorial(n - 1i)
+    }
+    _public static int fib( int n )
+    {
+        if n <= 0i
+        {
+            ret 0i
+        }
+        if n == 1i
+        {
+            ret 1i
+        }
+        ret StaticMath.fib(n - 1i) + StaticMath.fib(n - 2i)
+    }
+    _public static int gcd( int a,  int b )
+    {
+        if b == 0i
+        {
+            ret a
+        }
+        ret StaticMath.gcd(b,a % b)
+    }
+    _public static int lcm( int a,  int b )
+    {
+        if a == 0i || b == 0i
+        {
+            ret 0i
+        }
+        ret a / StaticMath.gcd(a,b) * b
+    }
+}
+MemberStaticFunction
+{
+    _public static testOverride( )
+    {
+        global.println("----- testOverride -----");
+        VClass oclass = OClass();
+        oclass.fun();
+        global.println("");
+        oc2 = OClass();
+        global.println("oc2.toString -> " + oc2.toString());
+        global.println("oc2.hashCode -> " + oc2.hashCode.toString());
+        VClass.staticFun();
+        OClass.staticFun();
+    }
+    _public static testBasic( )
+    {
+        global.println("----- testBasic -----");
+        StaticBasic.greet();
+        StaticBasic.reset();
+        StaticBasic.increment();
+        StaticBasic.increment();
+        StaticBasic.increment();
+        global.println("count -> " + StaticBasic.getCount().toString());
+        global.println("square(7) -> " + StaticBasic.square(7i).toString());
+        global.println("add(3,5) -> " + StaticBasic.add(3i,5i).toString());
+        global.println("repeat('ab',3) -> " + StaticBasic.repeat("ab",3i));
+        global.println("isPositive(-5) -> " + StaticBasic.isPositive(- - 5i).toString());
+        global.println("circleArea(2.0d) -> " + StaticBasic.circleArea(2.00d).toString());
+    }
+    _public static testOverload( )
+    {
+        global.println("----- testOverload -----");
+        global.println(StaticOverload.format());
+        global.println(StaticOverload.format(42i));
+        global.println(StaticOverload.format("hello"));
+        global.println(StaticOverload.format(1i,"two"));
+        global.println(StaticOverload.format("three",3i));
+        global.println(StaticOverload.format(4i,5i,6i));
+    }
+    _public static testDefault( )
+    {
+        global.println("----- testDefault -----");
+        global.println("inc() -> " + StaticDefault.inc().toString());
+        global.println("inc(10) -> " + StaticDefault.inc(10i).toString());
+        global.println("muladd() -> " + StaticDefault.muladd().toString());
+        global.println("muladd(5) -> " + StaticDefault.muladd(5i).toString());
+        global.println("muladd(5,10) -> " + StaticDefault.muladd(5i,10i).toString());
+        global.println("muladd(1,2,3) -> " + StaticDefault.muladd(1i,2i,3i).toString());
+        global.println("greet('SLang') -> " + StaticDefault.greet("SLang"));
+        global.println("greet('SLang','Hi') -> " + StaticDefault.greet("SLang","Hi"));
+        global.println("calc() -> " + StaticDefault.calc().toString());
+        global.println("calc(20) -> " + StaticDefault.calc(20i).toString());
+        global.println("format(255, true) -> " + StaticDefault.format(255i,true));
+        global.println("format(255, false) -> " + StaticDefault.format(255i,false));
+        global.println("config() -> " + StaticDefault.config());
+        global.println("config('example.com') -> " + StaticDefault.config("example.com"));
+        global.println("config('api.com', 443, true) -> " + StaticDefault.config("api.com",443i,true));
+    }
+    _public static testKeyword( )
+    {
+        global.println("----- testKeyword -----");
+        global.println("add(c=3, a=1, b=2) -> " + StaticKeyword.add(c = 3i,a = 1i,b = 2i).toString());
+        global.println("add(b=20, c=30, a=10) -> " + StaticKeyword.add(b = 20i,c = 30i,a = 10i).toString());
+        global.println("subtract(b=5, a=10) -> " + StaticKeyword.subtract(b = 5i,a = 10i).toString());
+        global.println("add(1, b=2, c=3) -> " + StaticKeyword.add(1i,b = 2i,c = 3i).toString());
+        global.println("add(1, 2, c=3) -> " + StaticKeyword.add(1i,2i,c = 3i).toString());
+        global.println("subtract(10, b=3) -> " + StaticKeyword.subtract(10i,b = 3i).toString());
+        global.println("compute(x=5) -> " + StaticKeyword.compute(x = 5i).toString());
+        global.println("compute(x=5, z=0) -> " + StaticKeyword.compute(x = 5i,z = 0i).toString());
+        global.println("compute(x=1, y=2, z=3) -> " + StaticKeyword.compute(x = 1i,y = 2i,z = 3i).toString());
+        global.println("compute(z=9, x=1, y=2) -> " + StaticKeyword.compute(z = 9i,x = 1i,y = 2i).toString());
+        global.println("greet(name='SLang') -> " + StaticKeyword.greet(name = "SLang"));
+        global.println("greet(greeting='Hi') -> " + StaticKeyword.greet(greeting = "Hi"));
+        global.println("greet(punct='?', name='World') -> " + StaticKeyword.greet(punct = "?",name = "World"));
+        global.println("compute(1, z=5) -> " + StaticKeyword.compute(1i,z = 5i).toString());
+        global.println("compute(1, y=2) -> " + StaticKeyword.compute(1i,y = 2i).toString());
+        global.println("calc(base=100, tax=10, discount=5) -> " + StaticKeyword.calc(base111 = 100i,tax = 10i,discount = 5i).toString());
+        global.println("calc(discount=50, base=200) -> " + StaticKeyword.calc(discount = 50i,base111 = 200i).toString());
+        StaticBasic obj = StaticBasic();
+        global.println("processObj(obj, multiplier=5) -> " + StaticKeyword.processObj(obj,multiplier = 5i).toString());
+    }
+    _public static testInherit( )
+    {
+        global.println("----- testInherit -----");
+        global.println("StaticBase.getBase -> " + StaticBase.getBase().toString());
+        global.println("StaticBase.tag -> " + StaticBase.tag());
+        global.println("StaticChild.tag -> " + StaticChild.tag());
+        global.println("StaticChild.getCombined -> " + StaticChild.getCombined().toString());
+        global.println("StaticChild.quadruple(3) -> " + StaticChild.quadruple(3i).toString());
+        global.println("StaticBase.doubled(5) -> " + StaticBase.doubled(5i).toString());
+    }
+    _public static testFactory( )
+    {
+        global.println("----- testFactory -----");
+        ProductData p1 = ProductFactory.create();
+        global.println("create() -> id=" + p1.id.toString() + " name=" + p1.name);
+        ProductData p2 = ProductFactory.create(5i);
+        global.println("create(5) -> id=" + p2.id.toString());
+        ProductData p3 = ProductFactory.create(10i,"Widget",9.99d);
+        global.println("create(10,'Widget',9.99) -> id=" + p3.id.toString() + " name=" + p3.name + " price=" + p3.price.toString());
+        ProductData p4 = ProductFactory.make();
+        global.println("make() -> id=" + p4.id.toString() + " name=" + p4.name);
+        ProductData p5 = ProductFactory.make(20i,"Gadget",14.50d);
+        global.println("make(20,'Gadget') -> id=" + p5.id.toString() + " name=" + p5.name);
+        ProductData p6 = ProductFactory.build(name = "Thing",id = 99i,category = "CAT");
+        global.println("build(name='Thing', id=99, category='CAT') -> " + p6.name);
+        ProductData p7 = ProductFactory.build(id = 1i,name = "Item",category = "NEW");
+        global.println("build(id=1, name='Item', category='NEW') -> " + p7.name);
+    }
+    _public static testStaticState( )
+    {
+        global.println("----- testStaticState -----");
+        StaticCounter.reset();
+        StaticCounter.add(5i);
+        StaticCounter.add(3i);
+        StaticCounter.add(10i);
+        global.println("total -> " + StaticCounter.getTotal().toString());
+        global.println("max -> " + StaticCounter.getMax().toString());
+    }
+    _public static testStaticMath( )
+    {
+        global.println("----- testStaticMath -----");
+        global.println("factorial(6) -> " + StaticMath.factorial(6i).toString());
+        global.println("fib(12) -> " + StaticMath.fib(12i).toString());
+        global.println("gcd(48, 36) -> " + StaticMath.gcd(48i,36i).toString());
+        global.println("lcm(4, 6) -> " + StaticMath.lcm(4i,6i).toString());
+    }
+    _public static fun( )
+    {
+        global.println("========== MemberStaticFunction (start) ==========");
+        MemberStaticFunction.testOverride();
+        MemberStaticFunction.testBasic();
+        MemberStaticFunction.testOverload();
+        MemberStaticFunction.testDefault();
+        MemberStaticFunction.testKeyword();
+        MemberStaticFunction.testInherit();
+        MemberStaticFunction.testFactory();
+        MemberStaticFunction.testStaticState();
+        MemberStaticFunction.testStaticMath();
+        global.println("========== MemberStaticFunction (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

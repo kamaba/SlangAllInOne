@@ -1,0 +1,167 @@
+-------------------Meta 文件显示 开始 : Path: SByte.sl-----------------------
+public class SByte extends Core.Num
+{
+public const [Core.SByte]MaxValue = 127;
+public const [Core.SByte]MinValue = 0;
+private [Core.SByte]_value = 0;
+public  static Core.SByte parse([Core.String]s)
+{
+return SystemConvertSInt8(s);
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return SystemConvertString(this);
+}
+
+public  override get Core.Int32 size()
+{
+return 8;
+}
+
+public  override get Core.Int32 byteLength()
+{
+return 1;
+}
+
+public  override Core.Num abs()
+{
+return SystemConvertSInt8(SystemNumAbs(this));
+}
+
+public  override Core.Num floor()
+{
+return SystemNumFloor(this);
+}
+
+public  override Core.Num ceil()
+{
+return [Core.SByte]Core.SByte.ceil.this;
+}
+
+public  override Core.Int32 compareTo([Core.Num]other)
+{
+Core.Boolean autocreate_48788849 = ([Core.Num]other == null)
+if autocreate_48788849
+{
+return 1;
+}
+[Core.SByte]ov = SystemConvertSInt8(other);
+Core.Boolean autocreate_36446461 = ([Core.SByte]Core.SByte.compareTo.this  ->  [Core.SByte]_value == [Core.SByte]ov)
+if autocreate_36446461
+{
+return 0;
+}
+return ([Core.SByte]Core.SByte.compareTo.this  ->  [Core.SByte]_value > [Core.SByte]ov)  ?  1  :  -1;
+}
+
+public  Core.Boolean toBool()
+{
+return SystemConvertBool(this);
+}
+
+public  Core.Byte toByte([Core.Byte]index)
+{
+return SystemConvertInt8(this);
+}
+
+public  Core.Byte toSByte([Core.Byte]index)
+{
+return SystemConvertSInt8(this);
+}
+
+public  Core.Int16 toInt16()
+{
+return SystemConvertInt16(this);
+}
+
+public  Core.UInt16 toUInt16()
+{
+return SystemConvertUInt16(this);
+}
+
+public  override Core.Int32 toInt32()
+{
+return SystemConvertInt32(this);
+}
+
+public  Core.UInt32 toUInt32()
+{
+return SystemConvertUInt32(this);
+}
+
+public  Core.Int64 toInt64()
+{
+return SystemConvertInt64(this);
+}
+
+public  Core.Int64 toUInt64()
+{
+return SystemConvertUInt64(this);
+}
+
+public  Core.Float32 toFloat32()
+{
+return SystemConvertFloat32(this);
+}
+
+public  override Core.Float64 toFloat64()
+{
+return SystemConvertFloat64(this);
+}
+
+public  Core.Void _init_([Core.SByte]_val)
+{
+[Core.SByte]Core.SByte._init_.this  ->  [Core.SByte]_value = [Core.SByte]_val;
+
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

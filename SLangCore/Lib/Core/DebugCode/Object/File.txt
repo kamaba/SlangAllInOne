@@ -1,0 +1,57 @@
+-------------------FileMeta 文件显示 开始 : Path: Object.sl-----------------------
+public _partial class Object
+{
+    _public void _init_( )
+    {
+    }
+    _public Type type( )
+    {
+        ret SystemObjectGetType(this)
+    }
+    public static bool objectEquals( object objA,  object objB )
+    {
+        ret SystemEqualObject(objA,objB)
+    }
+    public static bool refEquals( object objA,  object objB )
+    {
+        if objA == null || objB == null
+        {
+            ret false
+        }
+        ret objA.refWeak == objB.refWeak
+    }
+    public Int32 hashCode( )
+    {
+        ret SystemObjectGetHashCode(this)
+    }
+    public bool equals( object obj )
+    {
+        ret SystemEqualObject(this,obj)
+    }
+    _public object ref( )
+    {
+        ret SystemObjectRef(this)
+    }
+    _public object refWeak( )
+    {
+        ret SystemObjectRefWeak(this)
+    }
+    public Int32 refCount( )
+    {
+        ret SystemObjectRefCount(this)
+    }
+    public void free( )
+    {
+        SystemObjectFree(this);
+    }
+    public void release( )
+    {
+        SystemObjectRelease(this);
+    }
+    public string toString( )
+    {
+        hc = SystemObjectGetHashCode(this);
+        ret "Object:" + hc.toString()
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

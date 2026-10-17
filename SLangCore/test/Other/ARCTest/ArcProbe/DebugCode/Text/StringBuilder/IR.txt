@@ -1,0 +1,316 @@
+-------------------IR 文件显示 开始 : Path: Text/StringBuilder.sl-----------------------
+Class: Core.StringBuilder
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-2108230348 idx=0 name=Core.StringBuilder._buf type=Core.ByteBuffer
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.fromString_1_Core.String
+    VirtualName: fromString_Core.StringBuilder_1_Core.String
+    Name: fromString
+    InterfaceMethod: False
+    Return:
+      - #0 id=29463315 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=63843251 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=35287558 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3920839 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=39719970 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49152572 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=31938408 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63201035 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=19010216 idx=1 name=text type=Core.String
+    Locals:
+      - #0 id=27486043 idx=0 name=text type=Core.String
+      - #1 id=46047796 idx=1 name=b type=Core.ByteBuffer
+      - #2 id=36874222 idx=2 name=result] type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.StringBuilder._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=37762592 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=34022005 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=4319012 idx=1 name=initialCapacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.String
+    VirtualName: append_Core.StringBuilder_1_Core.String
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=14295716 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=38871115 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=61552586 idx=1 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.Boolean
+    VirtualName: append_Core.StringBuilder_1_Core.Boolean
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=43114294 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=19703558 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=52484326 idx=1 name=value type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.Int32
+    VirtualName: append_Core.StringBuilder_1_Core.Int32
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=9021289 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=23371986 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=14082739 idx=1 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.Int64
+    VirtualName: append_Core.StringBuilder_1_Core.Int64
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=65770110 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=66960113 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=55060083 idx=1 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.Float64
+    VirtualName: append_Core.StringBuilder_1_Core.Float64
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=7700405 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=30681762 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=2194789 idx=1 name=value type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.append_1_Core.Object
+    VirtualName: append_Core.StringBuilder_1_Core.Object
+    Name: append
+    InterfaceMethod: False
+    Return:
+      - #0 id=56497743 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=43560229 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=38717641 idx=1 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.appendLine
+    VirtualName: appendLine_Core.StringBuilder_0
+    Name: appendLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=39437706 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=49121210 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.appendLine_1_Core.String
+    VirtualName: appendLine_Core.StringBuilder_1_Core.String
+    Name: appendLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=27494304 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=40337624 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=46122151 idx=1 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.appendFormat_2_Core.String_Core.Array<Core.Object>[-1]
+    VirtualName: appendFormat_Core.StringBuilder_2_Core.String_Core.Array<Core.Object>[-1]
+    Name: appendFormat
+    InterfaceMethod: False
+    Return:
+      - #0 id=1507865 idx=0 name=return] type=Core.StringBuilder
+    Arguments:
+      - #0 id=44906783 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=13570791 idx=1 name=format type=Core.String
+      - #2 id=55028256 idx=2 name=args type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.write_1_Core.String
+    VirtualName: write_Core.Void_1_Core.String
+    Name: write
+    InterfaceMethod: False
+    Return:
+      - #0 id=51607432 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=28103780 idx=0 name=this] type=Core.StringBuilder
+      - #1 id=61813708 idx=1 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=40854465 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=19452465 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=53678462 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=20877354 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=7131258 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=52988145 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=31304760 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=40761008 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.toUInt8Array
+    VirtualName: toUInt8Array_Core.Array<Core.UInt8>[-1]_0
+    Name: toUInt8Array
+    InterfaceMethod: False
+    Return:
+      - #0 id=4156611 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=52657628 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=10271087 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=1141231 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+  Method: Core.StringBuilder.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=26651693 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25330920 idx=0 name=this] type=Core.StringBuilder
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

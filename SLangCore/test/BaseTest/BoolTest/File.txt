@@ -1,0 +1,84 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/BoolTest.sl-----------------------
+BoolTest
+{
+    _public static compareTest( )
+    {
+        global.println("----- compareTest -----");
+        Num a = 3.1f;
+        Num b = 2.5f;
+        global.println("a > b  = " + ((a > b).toString());
+        global.println("a < b  = " + ((a < b).toString());
+        global.println("a == b = " + ((a == b).toString());
+        global.println("a != b = " + ((a != b).toString());
+        global.println("a >= b = " + ((a >= b).toString());
+        global.println("a <= b = " + ((a <= b).toString());
+    }
+    _public static boolLiteralAndNotTest( )
+    {
+        global.println("----- boolLiteralAndNotTest -----");
+        bool t = true;
+        bool f = false;
+        bool nt = ! ! t;
+        bool nf = ! ! f;
+        global.println("true  -> " + t.toString());
+        global.println("false -> " + f.toString());
+        global.println("!true -> " + nt.toString());
+        global.println("!false -> " + nf.toString());
+    }
+    _public static logicOperatorTest( )
+    {
+        global.println("----- logicOperatorTest -----");
+        bool a = true;
+        bool b = false;
+        global.println("a && b -> " + ((a && b).toString());
+        global.println("a || b -> " + ((a || b).toString());
+        global.println("(a && !b) || (b && !a) -> " + ((a && ! ! b || b && ! ! a).toString());
+        global.println("true || false && false -> " + ((true || false && false).toString());
+        global.println("(true || false) && false -> " + ((true || false && false).toString());
+    }
+    _public static boolFromCompareAndConditionTest( )
+    {
+        global.println("----- boolFromCompareAndConditionTest -----");
+        Int32 x = 12i;
+        Int32 y = 7i;
+        bool c1 = x > y;
+        bool c2 = x == y;
+        bool c3 = x >= 10i && x <= 20i;
+        global.println("x > y -> " + c1.toString());
+        global.println("x == y -> " + c2.toString());
+        global.println("x in [10,20] -> " + c3.toString());
+        if c3 && ! ! c2
+        {
+            global.println("if(c3 && !c2) -> true branch");
+        }
+        else
+        {
+            global.println("if(c3 && !c2) -> false branch");
+        }
+    }
+    _public static boolAssignFlowTest( )
+    {
+        global.println("----- boolAssignFlowTest -----");
+        bool ok = false;
+        Int32 score = 86i;
+        ok = score >= 60i;
+        global.println("ok = score >= 60 -> " + ok.toString());
+        ok = ok && score < 100i;
+        global.println("ok = ok && score < 100 -> " + ok.toString());
+        ok = ! ! ok;
+        global.println("ok = !ok -> " + ok.toString());
+        ok = ! ! ok || false;
+        global.println("ok = !ok || false -> " + ok.toString());
+    }
+    _public static fun( )
+    {
+        global.println("========== BoolTest (start) ==========");
+        compareTest();
+        boolLiteralAndNotTest();
+        logicOperatorTest();
+        boolFromCompareAndConditionTest();
+        boolAssignFlowTest();
+        global.println("========== BoolTest (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

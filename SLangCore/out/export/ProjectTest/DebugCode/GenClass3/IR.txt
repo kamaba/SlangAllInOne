@@ -1,0 +1,1704 @@
+-------------------IR 文件显示 开始 : Path: GenClass3.sl-----------------------
+Class: ProjectTest.GC3.LT
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.LT._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=64283975 idx=0 name=_local[ProjectTest.GC3.LT._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=51881906 idx=0 name=_local[ProjectTest.GC3.LT._init_.this] type=ProjectTest.GC3.LT
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:6] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.GC3.LT._init__1_Core.Object
+    VirtualName: _init__Core.Void_1_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=39619499 idx=0 name=_local[ProjectTest.GC3.LT._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=41684868 idx=0 name=_local[ProjectTest.GC3.LT._init_.this] type=ProjectTest.GC3.LT
+      - #1 id=21031171 idx=1 name=_local[string1] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:10] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.Level1<LT11,LT12>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=4281684 idx=0 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t1 type=T[0]
+      - #1 id=38535158 idx=1 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t2 type=T[1]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun_2_LT11_LT12
+    VirtualName: level1staticFun_LT12_2_LT11_LT12
+    Name: level1staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=55062814 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=25803286 idx=0 name=_local[t1] type=T[0]
+      - #1 id=30902987 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=9691430 idx=0 name=level1staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:31] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:31] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:31] [Add] index:[0]
+5 5   [ GenClass3.sl:29] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:33] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:29] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:35] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:35] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:29] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=18621933 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=46808346 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.toString.this] type=ProjectTest.GC3.Level1<LT11,LT12><T[0], T[1]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:40] [LoadConstString] index:[1288] val: string[  Level1_t1=] 
+2 2   [ GenClass3.sl:40] [LoadArgument] index:[0] info:[Argument]
+3 3   [ GenClass3.sl:40] [LoadNotStaticField] index:[0] info:[Member]
+4 4   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ GenClass3.sl:40] [Add] index:[0]
+6 6   [ GenClass3.sl:40] [LoadConstString] index:[1289] val: string[  Level1_t2=] 
+7 7   [ GenClass3.sl:40] [Add] index:[0]
+8 8   [ GenClass3.sl:40] [LoadArgument] index:[0] info:[Argument]
+9 9   [ GenClass3.sl:40] [LoadNotStaticField] index:[1] info:[Member]
+10 10   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ GenClass3.sl:40] [Add] index:[0]
+12 12   [ GenClass3.sl:40] [StoreReturn] index:[0] info:[StoreReturn]
+13 13   [ :0] [BrLabel] index:[14]
+14 14   [ GenClass3.sl:38] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1Fun_2_LT11_LT12
+    VirtualName: level1Fun_LT12_2_LT11_LT12
+    Name: level1Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=19399120 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.return] type=T[1]
+    Arguments:
+      - #0 id=31981619 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.this] type=ProjectTest.GC3.Level1<LT11,LT12><T[0], T[1]>
+      - #1 id=40374353 idx=1 name=_local[t1] type=T[0]
+      - #2 id=27824865 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=49097200 idx=0 name=level1Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:23] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:23] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:23] [Add] index:[0]
+5 5   [ GenClass3.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:25] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:27] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:27] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.Interface1<IT1>
+  metaClassKind: Interface
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: ProjectTest.GC3.Interface1<IT1>.add_1_IT1
+    VirtualName: add_IT1_1_IT1
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=22834938 idx=0 name=_local[ProjectTest.GC3.Interface1<IT1>.add.return] type=T[0]
+    Arguments:
+      - #0 id=17450296 idx=0 name=_local[ProjectTest.GC3.Interface1<IT1>.add.this] type=ProjectTest.GC3.Interface1<IT1><T[0]>
+      - #1 id=4187856 idx=1 name=_local[t] type=T[0]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:45] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.Level2<LT21,LT22,LT23>
+  metaClassKind: Class
+  TemplateCount: 3
+  TemplateParameterCount: 3
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -239777109
+      - TIndex 0 => Core.Object[T:2]
+      - TIndex 1 => Core.Object[T:1]
+    RelatedClassId: 635660537
+      - TIndex 0 => Core.Object[T:2]
+  ClassLocals:
+      - #0 id=4281684 idx=0 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t1 type=T[0]
+      - #1 id=38535158 idx=1 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t2 type=T[1]
+      - #2 id=11272110 idx=2 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>.Level21_t type=T[1]
+  ClassStatics:
+      - #0 id=50930930 idx=0 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>._test type=T[2]
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun_2_LT11_LT12
+    VirtualName: level1staticFun_LT12_2_LT11_LT12
+    Name: level1staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=55062814 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=25803286 idx=0 name=_local[t1] type=T[0]
+      - #1 id=30902987 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=9691430 idx=0 name=level1staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:31] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:31] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:31] [Add] index:[0]
+5 5   [ GenClass3.sl:29] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:33] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:29] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:35] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:35] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:29] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest_1_LT23
+    VirtualName: getTest_LT23_1_LT23
+    Name: getTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=37690705 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest.return] type=T[2]
+    Arguments:
+      - #0 id=3672032 idx=0 name=_local[lt23] type=T[2]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:70] [LoadArgument] index:[0] info:[Argument]
+2 2   [ GenClass3.sl:68] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+3 3   [ GenClass3.sl:72] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+4 4   [ GenClass3.sl:72] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ GenClass3.sl:68] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=59666077 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=28999185 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.toString.this] type=ProjectTest.GC3.Level2<LT21,LT22,LT23><T[0], T[1], T[2]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:76] [LoadConstString] index:[1290] val: string[Level21_t=] 
+2 2   [ GenClass3.sl:76] [LoadArgument] index:[0] info:[Argument]
+3 3   [ GenClass3.sl:76] [LoadNotStaticField] index:[2] info:[Member]
+4 4   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ GenClass3.sl:76] [Add] index:[0]
+6 6   [ GenClass3.sl:76] [LoadConstString] index:[1291] val: string[\n] 
+7 7   [ GenClass3.sl:76] [Add] index:[0]
+8 8   [ GenClass3.sl:76] [LoadArgument] index:[0] info:[Argument]
+9 9   [ GenClass3.sl:38] [CallStatic] index:[0] info:[CallStatic toString] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level1<LT11,LT12><Core.Object[T:2], Core.Object[T:1]>, StaticRuntimeTypeList=[Core.Object[T:2], Core.Object[T:1]], Method=ProjectTest.GC3.Level1<LT11,LT12>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ GenClass3.sl:76] [Add] index:[0]
+11 11   [ GenClass3.sl:76] [StoreReturn] index:[0] info:[StoreReturn]
+12 12   [ :0] [BrLabel] index:[13]
+13 13   [ GenClass3.sl:74] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1Fun_2_LT11_LT12
+    VirtualName: level1Fun_LT12_2_LT11_LT12
+    Name: level1Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=19399120 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.return] type=T[1]
+    Arguments:
+      - #0 id=31981619 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.this] type=ProjectTest.GC3.Level1<LT11,LT12><T[0], T[1]>
+      - #1 id=40374353 idx=1 name=_local[t1] type=T[0]
+      - #2 id=27824865 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=49097200 idx=0 name=level1Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:23] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:23] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:23] [Add] index:[0]
+5 5   [ GenClass3.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:25] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:27] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:27] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.add_1_LT23
+    VirtualName: add_LT23_1_LT23
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=10026740 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.add.return] type=T[2]
+    Arguments:
+      - #0 id=1114082 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.add.this] type=ProjectTest.GC3.Level2<LT21,LT22,LT23><T[0], T[1], T[2]>
+      - #1 id=23131803 idx=1 name=_local[tttt] type=T[2]
+    Locals:
+      - #0 id=6859639 idx=0 name=add_local[llevel11sx] type=T[2]
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:51] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.Object[T:2]] 
+2 2   [ GenClass3.sl:53] [ArcRetain] index:[0] info:[ARC claim owned new local: llevel11sx]
+3 3   [ GenClass3.sl:51] [StoreLocal] index:[0] info:[LocalStatement]
+4 4   [ GenClass3.sl:55] [LoadArgument] index:[1] info:[Argument]
+5 5   [ GenClass3.sl:55] [StoreReturn] index:[0] info:[StoreReturn]
+6 6   [ :0] [BrLabel] index:[7]
+7 7   [ GenClass3.sl:51] [Label] index:[0] info:[FunEndLabel]
+8 8   [ GenClass3.sl:51] [LoadLocal] index:[0] info:[ARC release: LoadLocal add_local[llevel11sx]]
+9 9   [ GenClass3.sl:51] [ArcRelease] index:[0] info:[ARC release owned local: add_local[llevel11sx]]
+10 10   [ GenClass3.sl:51] [StoreLocal] index:[0] info:[ARC release: StoreLocal add_local[llevel11sx]]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un_3_LT21_LT22_LT23
+    VirtualName: level2un_LT23_3_LT21_LT22_LT23
+    Name: level2un
+    InterfaceMethod: False
+    Return:
+      - #0 id=34621067 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.return] type=T[2]
+    Arguments:
+      - #0 id=18759866 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.this] type=ProjectTest.GC3.Level2<LT21,LT22,LT23><T[0], T[1], T[2]>
+      - #1 id=43154149 idx=1 name=_local[t1] type=T[0]
+      - #2 id=52843025 idx=2 name=_local[t2] type=T[1]
+      - #3 id=5825185 idx=3 name=_local[t3] type=T[2]
+    Locals:
+      - #0 id=52426669 idx=0 name=level2un_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:60] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:60] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:60] [Add] index:[0]
+5 5   [ GenClass3.sl:58] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:62] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:58] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:64] [LoadArgument] index:[3] info:[Argument]
+13 13   [ GenClass3.sl:64] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:58] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.Level3<LT31,LT32>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1334883849
+      - TIndex 0 => Core.Object[T:1]
+      - TIndex 1 => Core.Object[T:1]
+      - TIndex 2 => Core.Object[T:0]
+    RelatedClassId: -239777109
+      - TIndex 0 => Core.Object[T:0]
+      - TIndex 1 => Core.Object[T:1]
+  ClassLocals:
+      - #0 id=4281684 idx=0 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t1 type=T[0]
+      - #1 id=38535158 idx=1 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t2 type=T[1]
+      - #2 id=11272110 idx=2 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>.Level21_t type=T[1]
+      - #3 id=55725192 idx=3 name=ProjectTest.GC3.Level3<LT31,LT32>.Level3_t type=T[0]
+  ClassStatics:
+      - #0 id=50930930 idx=0 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>._test type=T[2]
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun_2_LT11_LT12
+    VirtualName: level1staticFun_LT12_2_LT11_LT12
+    Name: level1staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=55062814 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=25803286 idx=0 name=_local[t1] type=T[0]
+      - #1 id=30902987 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=9691430 idx=0 name=level1staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:31] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:31] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:31] [Add] index:[0]
+5 5   [ GenClass3.sl:29] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:33] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:29] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:35] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:35] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:29] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest_1_LT23
+    VirtualName: getTest_LT23_1_LT23
+    Name: getTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=37690705 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest.return] type=T[2]
+    Arguments:
+      - #0 id=3672032 idx=0 name=_local[lt23] type=T[2]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:70] [LoadArgument] index:[0] info:[Argument]
+2 2   [ GenClass3.sl:68] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+3 3   [ GenClass3.sl:72] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+4 4   [ GenClass3.sl:72] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ GenClass3.sl:68] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.level3staticFun_2_LT31_LT32
+    VirtualName: level3staticFun_LT32_2_LT31_LT32
+    Name: level3staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=18701764 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=34098154 idx=0 name=_local[t1] type=T[0]
+      - #1 id=38447936 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=10487112 idx=0 name=level3staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:104] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:104] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:104] [Add] index:[0]
+5 5   [ GenClass3.sl:102] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:106] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:102] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:108] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:108] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:102] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=61803142 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=44149718 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.toString.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:113] [LoadConstString] index:[1292] val: string[Level3_t=] 
+2 2   [ GenClass3.sl:113] [LoadArgument] index:[0] info:[Argument]
+3 3   [ GenClass3.sl:113] [LoadNotStaticField] index:[3] info:[Member]
+4 4   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ GenClass3.sl:113] [Add] index:[0]
+6 6   [ GenClass3.sl:113] [LoadConstString] index:[1291] val: string[\n] 
+7 7   [ GenClass3.sl:113] [Add] index:[0]
+8 8   [ GenClass3.sl:113] [LoadArgument] index:[0] info:[Argument]
+9 9   [ GenClass3.sl:74] [CallStatic] index:[0] info:[CallStatic toString] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:1], Core.Object[T:1], Core.Object[T:0]>, StaticRuntimeTypeList=[Core.Object[T:1], Core.Object[T:1], Core.Object[T:0]], Method=ProjectTest.GC3.Level2<LT21,LT22,LT23>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ GenClass3.sl:113] [Add] index:[0]
+11 11   [ GenClass3.sl:113] [StoreReturn] index:[0] info:[StoreReturn]
+12 12   [ :0] [BrLabel] index:[13]
+13 13   [ GenClass3.sl:111] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1Fun_2_LT11_LT12
+    VirtualName: level1Fun_LT12_2_LT11_LT12
+    Name: level1Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=19399120 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.return] type=T[1]
+    Arguments:
+      - #0 id=31981619 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.this] type=ProjectTest.GC3.Level1<LT11,LT12><T[0], T[1]>
+      - #1 id=40374353 idx=1 name=_local[t1] type=T[0]
+      - #2 id=27824865 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=49097200 idx=0 name=level1Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:23] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:23] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:23] [Add] index:[0]
+5 5   [ GenClass3.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:25] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:27] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:27] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.add_1_LT31
+    VirtualName: add_LT31_1_LT31
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=24443299 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.add.return] type=T[0]
+    Arguments:
+      - #0 id=39998624 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.add.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+      - #1 id=18663102 idx=1 name=_local[tttt] type=T[0]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:88] [LoadArgument] index:[1] info:[Argument]
+2 2   [ GenClass3.sl:88] [StoreReturn] index:[0] info:[StoreReturn]
+3 3   [ :0] [BrLabel] index:[4]
+4 4   [ GenClass3.sl:86] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un_3_LT21_LT22_LT23
+    VirtualName: level2un_LT23_3_LT21_LT22_LT23
+    Name: level2un
+    InterfaceMethod: False
+    Return:
+      - #0 id=34621067 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.return] type=T[2]
+    Arguments:
+      - #0 id=18759866 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.this] type=ProjectTest.GC3.Level2<LT21,LT22,LT23><T[0], T[1], T[2]>
+      - #1 id=43154149 idx=1 name=_local[t1] type=T[0]
+      - #2 id=52843025 idx=2 name=_local[t2] type=T[1]
+      - #3 id=5825185 idx=3 name=_local[t3] type=T[2]
+    Locals:
+      - #0 id=52426669 idx=0 name=level2un_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:60] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:60] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:60] [Add] index:[0]
+5 5   [ GenClass3.sl:58] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:62] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:58] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:64] [LoadArgument] index:[3] info:[Argument]
+13 13   [ GenClass3.sl:64] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:58] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31
+    VirtualName: _init__Core.Void_1_LT31
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49411218 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=35316297 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>._init_.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+      - #1 id=42047784 idx=1 name=_local[lt31] type=T[0]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:84] [LoadArgument] index:[0] info:[Argument]
+2 2   [ GenClass3.sl:84] [LoadArgument] index:[1] info:[Argument]
+3 3   [ GenClass3.sl:82] [StoreNotStaticField2] index:[3] info:[Member]
+4 4   [ GenClass3.sl:82] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.level3Fun_2_LT31_LT32
+    VirtualName: level3Fun_LT32_2_LT31_LT32
+    Name: level3Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=50427332 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3Fun.return] type=T[1]
+    Arguments:
+      - #0 id=42885739 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3Fun.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+      - #1 id=51192804 idx=1 name=_local[t1] type=T[0]
+      - #2 id=58082052 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=52976421 idx=0 name=level3Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:93] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:93] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:93] [Add] index:[0]
+5 5   [ GenClass3.sl:91] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:95] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:91] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:97] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:97] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:91] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.Level4<LT41,LT42>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -763563423
+      - TIndex 0 => Core.Object[T:1]
+      - TIndex 1 => Core.Object[T:0]
+    RelatedClassId: -1334883849
+      - TIndex 0 => Core.Object[T:0]
+      - TIndex 1 => Core.Object[T:0]
+      - TIndex 2 => Core.Object[T:1]
+    RelatedClassId: -239777109
+      - TIndex 0 => Core.Object[T:1]
+      - TIndex 1 => Core.Object[T:0]
+  ClassLocals:
+      - #0 id=4281684 idx=0 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t1 type=T[0]
+      - #1 id=38535158 idx=1 name=ProjectTest.GC3.Level1<LT11,LT12>.Level1_t2 type=T[1]
+      - #2 id=11272110 idx=2 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>.Level21_t type=T[1]
+      - #3 id=55725192 idx=3 name=ProjectTest.GC3.Level3<LT31,LT32>.Level3_t type=T[0]
+  ClassStatics:
+      - #0 id=50930930 idx=0 name=ProjectTest.GC3.Level2<LT21,LT22,LT23>._test type=T[2]
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun_2_LT11_LT12
+    VirtualName: level1staticFun_LT12_2_LT11_LT12
+    Name: level1staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=55062814 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=25803286 idx=0 name=_local[t1] type=T[0]
+      - #1 id=30902987 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=9691430 idx=0 name=level1staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:31] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:31] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:31] [Add] index:[0]
+5 5   [ GenClass3.sl:29] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:33] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:29] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:35] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:35] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:29] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest_1_LT23
+    VirtualName: getTest_LT23_1_LT23
+    Name: getTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=37690705 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.getTest.return] type=T[2]
+    Arguments:
+      - #0 id=3672032 idx=0 name=_local[lt23] type=T[2]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:70] [LoadArgument] index:[0] info:[Argument]
+2 2   [ GenClass3.sl:68] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+3 3   [ GenClass3.sl:72] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.Level2<LT21,LT22,LT23>]  field:[ProjectTest.GC3.Level2<LT21,LT22,LT23>._test]
+4 4   [ GenClass3.sl:72] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ GenClass3.sl:68] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.level3staticFun_2_LT31_LT32
+    VirtualName: level3staticFun_LT32_2_LT31_LT32
+    Name: level3staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=18701764 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=34098154 idx=0 name=_local[t1] type=T[0]
+      - #1 id=38447936 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=10487112 idx=0 name=level3staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:104] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:104] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:104] [Add] index:[0]
+5 5   [ GenClass3.sl:102] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:106] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:102] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:108] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:108] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:102] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level4<LT41,LT42>.level4staticFun_2_LT41_LT42
+    VirtualName: level4staticFun_LT42_2_LT41_LT42
+    Name: level4staticFun
+    InterfaceMethod: False
+    Return:
+      - #0 id=63231703 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.level4staticFun.return] type=T[1]
+    Arguments:
+      - #0 id=32214417 idx=0 name=_local[t1] type=T[0]
+      - #1 id=21494305 idx=1 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=59231023 idx=0 name=level4staticFun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:134] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:134] [LoadArgument] index:[0] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:134] [Add] index:[0]
+5 5   [ GenClass3.sl:132] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:136] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:132] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:138] [LoadArgument] index:[1] info:[Argument]
+13 13   [ GenClass3.sl:138] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:132] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.Level4<LT41,LT42>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=28416672 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=32983569 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.toString.this] type=ProjectTest.GC3.Level4<LT41,LT42><T[0], T[1]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:143] [LoadConstString] index:[1293] val: string[Level4] 
+2 2   [ GenClass3.sl:143] [LoadConstString] index:[1291] val: string[\n] 
+3 3   [ GenClass3.sl:143] [Add] index:[0]
+4 4   [ GenClass3.sl:143] [LoadArgument] index:[0] info:[Argument]
+5 5   [ GenClass3.sl:111] [CallStatic] index:[0] info:[CallStatic toString] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level3<LT31,LT32><Core.Object[T:1], Core.Object[T:0]>, StaticRuntimeTypeList=[Core.Object[T:1], Core.Object[T:0]], Method=ProjectTest.GC3.Level3<LT31,LT32>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ GenClass3.sl:143] [Add] index:[0]
+7 7   [ GenClass3.sl:143] [StoreReturn] index:[0] info:[StoreReturn]
+8 8   [ :0] [BrLabel] index:[9]
+9 9   [ GenClass3.sl:141] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level1<LT11,LT12>.level1Fun_2_LT11_LT12
+    VirtualName: level1Fun_LT12_2_LT11_LT12
+    Name: level1Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=19399120 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.return] type=T[1]
+    Arguments:
+      - #0 id=31981619 idx=0 name=_local[ProjectTest.GC3.Level1<LT11,LT12>.level1Fun.this] type=ProjectTest.GC3.Level1<LT11,LT12><T[0], T[1]>
+      - #1 id=40374353 idx=1 name=_local[t1] type=T[0]
+      - #2 id=27824865 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=49097200 idx=0 name=level1Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:23] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:23] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:23] [Add] index:[0]
+5 5   [ GenClass3.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:25] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:27] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:27] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level4<LT41,LT42>.add_1_LT42
+    VirtualName: add_LT42_1_LT42
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=46223811 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.add.return] type=T[1]
+    Arguments:
+      - #0 id=20049059 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.add.this] type=ProjectTest.GC3.Level4<LT41,LT42><T[0], T[1]>
+      - #1 id=13361120 idx=1 name=_local[tttt] type=T[1]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:121] [LoadArgument] index:[1] info:[Argument]
+2 2   [ GenClass3.sl:121] [StoreReturn] index:[0] info:[StoreReturn]
+3 3   [ :0] [BrLabel] index:[4]
+4 4   [ GenClass3.sl:119] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un_3_LT21_LT22_LT23
+    VirtualName: level2un_LT23_3_LT21_LT22_LT23
+    Name: level2un
+    InterfaceMethod: False
+    Return:
+      - #0 id=34621067 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.return] type=T[2]
+    Arguments:
+      - #0 id=18759866 idx=0 name=_local[ProjectTest.GC3.Level2<LT21,LT22,LT23>.level2un.this] type=ProjectTest.GC3.Level2<LT21,LT22,LT23><T[0], T[1], T[2]>
+      - #1 id=43154149 idx=1 name=_local[t1] type=T[0]
+      - #2 id=52843025 idx=2 name=_local[t2] type=T[1]
+      - #3 id=5825185 idx=3 name=_local[t3] type=T[2]
+    Locals:
+      - #0 id=52426669 idx=0 name=level2un_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:60] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:60] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:60] [Add] index:[0]
+5 5   [ GenClass3.sl:58] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:62] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:58] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:64] [LoadArgument] index:[3] info:[Argument]
+13 13   [ GenClass3.sl:64] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:58] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31
+    VirtualName: _init__Core.Void_1_LT31
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49411218 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=35316297 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>._init_.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+      - #1 id=42047784 idx=1 name=_local[lt31] type=T[0]
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:84] [LoadArgument] index:[0] info:[Argument]
+2 2   [ GenClass3.sl:84] [LoadArgument] index:[1] info:[Argument]
+3 3   [ GenClass3.sl:82] [StoreNotStaticField2] index:[3] info:[Member]
+4 4   [ GenClass3.sl:82] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level3<LT31,LT32>.level3Fun_2_LT31_LT32
+    VirtualName: level3Fun_LT32_2_LT31_LT32
+    Name: level3Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=50427332 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3Fun.return] type=T[1]
+    Arguments:
+      - #0 id=42885739 idx=0 name=_local[ProjectTest.GC3.Level3<LT31,LT32>.level3Fun.this] type=ProjectTest.GC3.Level3<LT31,LT32><T[0], T[1]>
+      - #1 id=51192804 idx=1 name=_local[t1] type=T[0]
+      - #2 id=58082052 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=52976421 idx=0 name=level3Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:93] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:93] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:93] [Add] index:[0]
+5 5   [ GenClass3.sl:91] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:95] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:91] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:97] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:97] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:91] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.Level4<LT41,LT42>.level4Fun_2_LT41_LT42
+    VirtualName: level4Fun_LT42_2_LT41_LT42
+    Name: level4Fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=9471463 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.level4Fun.return] type=T[1]
+    Arguments:
+      - #0 id=8508925 idx=0 name=_local[ProjectTest.GC3.Level4<LT41,LT42>.level4Fun.this] type=ProjectTest.GC3.Level4<LT41,LT42><T[0], T[1]>
+      - #1 id=18134306 idx=1 name=_local[t1] type=T[0]
+      - #2 id=28991032 idx=2 name=_local[t2] type=T[1]
+    Locals:
+      - #0 id=59592696 idx=0 name=level4Fun_local[ret1] type=Core.String
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:126] [LoadConstString] index:[1287] val: string[  t1=] 
+2 2   [ GenClass3.sl:126] [LoadArgument] index:[1] info:[Argument]
+3 3   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:126] [Add] index:[0]
+5 5   [ GenClass3.sl:124] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ GenClass3.sl:128] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ GenClass3.sl:124] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+12 12   [ GenClass3.sl:130] [LoadArgument] index:[2] info:[Argument]
+13 13   [ GenClass3.sl:130] [StoreReturn] index:[0] info:[StoreReturn]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:124] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.GC3.GenClass3
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GC3.GenClass3.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=62279078 idx=0 name=_local[ProjectTest.GC3.GenClass3.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:168] [CallStatic] index:[0] info:[CallStatic testConstruct] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testConstruct, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ GenClass3.sl:176] [CallStatic] index:[0] info:[CallStatic testAdd] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testAdd, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ GenClass3.sl:184] [CallStatic] index:[0] info:[CallStatic testGetTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testGetTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ GenClass3.sl:190] [CallStatic] index:[0] info:[CallStatic testFields] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testFields, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ GenClass3.sl:158] [LoadConstString] index:[1294] val: string[====== [11] testTemplate ======] 
+6 6   [ GenClass3.sl:148] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ :0] [Nop] index:[0]
+8 8   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+10 10   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+11 11   [ GenClass3.sl:159] [LoadConstInt32] index:[0] val: int32[300] 
+12 12   [ GenClass3.sl:204] [CallStatic] index:[1] info:[CallStatic testTemplate] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testTemplate<TT1,TT2>_1_TT1, MethodRuntimeTypeList=[Core.Int32, Core.Int32], ParamCount=1}] 
+13 13   [ GenClass3.sl:161] [LoadConstString] index:[1295] val: string[====== [12] testTemplate ======] 
+14 14   [ GenClass3.sl:148] [StoreLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [Nop] index:[0]
+16 16   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+18 18   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+19 19   [ GenClass3.sl:162] [LoadConstFloat32] index:[0] val:[123.45] 
+20 20   [ GenClass3.sl:204] [CallStatic] index:[1] info:[CallStatic testTemplate] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testTemplate<TT1,TT2>_1_TT1, MethodRuntimeTypeList=[Core.Float32, Core.Int32], ParamCount=1}] 
+21 21   [ GenClass3.sl:164] [LoadConstString] index:[1296] val: string[====== [13] testTemplate ======] 
+22 22   [ GenClass3.sl:148] [StoreLocal] index:[2] info:[LocalStatement]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+25 25   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+26 26   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+27 27   [ GenClass3.sl:165] [LoadConstString] index:[1297] val: string[string___string] 
+28 28   [ GenClass3.sl:204] [CallStatic] index:[1] info:[CallStatic testTemplate] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.GenClass3, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.GenClass3.testTemplate<TT1,TT2>_1_TT1, MethodRuntimeTypeList=[Core.String, Core.String], ParamCount=1}] 
+29 29   [ GenClass3.sl:148] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.GenClass3.testConstruct
+    VirtualName: testConstruct_Core.Void_0
+    Name: testConstruct
+    InterfaceMethod: False
+    Return:
+      - #0 id=23640798 idx=0 name=_local[ProjectTest.GC3.GenClass3.testConstruct.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=11440597 idx=0 name=testConstruct_local[llll3333] type=ProjectTest.GC3.Level4<LT41,LT42><Core.String, Core.Int32>
+      - #1 id=35856517 idx=1 name=testConstruct_local[llll4444] type=ProjectTest.GC3.Level4<LT41,LT42><Core.Int32, Core.String>
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:170] [LoadConstString] index:[1298] val: string[====== [1] Level4<string,int> 构造与 Level3_t ======] 
+2 2   [ GenClass3.sl:168] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GenClass3.sl:168] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[ProjectTest.GC3.Level4<LT41,LT42><Core.String,Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ GenClass3.sl:171] [LoadConstInt32] index:[0] val: int32[300] 
+10 10   [ GenClass3.sl:171] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42><Core.String, Core.Int32>, StaticRuntimeTypeList=[Core.String, Core.Int32], Method=ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ GenClass3.sl:168] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ GenClass3.sl:172] [LoadConstString] index:[1299] val: string[llll3333 期望: 300  实际: ] 
+13 13   [ GenClass3.sl:172] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ GenClass3.sl:172] [LoadNotStaticField] index:[3] info:[Member]
+15 15   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ GenClass3.sl:172] [Add] index:[0]
+17 17   [ GenClass3.sl:168] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+21 21   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+22 22   [ GenClass3.sl:168] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[ProjectTest.GC3.Level4<LT41,LT42><Core.Int32,Core.String>] 
+23 23   [ :0] [Dup] index:[0]
+24 24   [ GenClass3.sl:173] [LoadConstString] index:[1300] val: string[stringtest] 
+25 25   [ GenClass3.sl:173] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42><Core.Int32, Core.String>, StaticRuntimeTypeList=[Core.Int32, Core.String], Method=ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ GenClass3.sl:168] [StoreLocal] index:[1] info:[LocalStatement]
+27 27   [ GenClass3.sl:174] [LoadConstString] index:[1301] val: string[llll4444 期望: stringtest  实际: ] 
+28 28   [ GenClass3.sl:174] [LoadLocal] index:[1] info:[LocalStatement]
+29 29   [ GenClass3.sl:174] [LoadNotStaticField] index:[3] info:[Member]
+30 30   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.String, StaticRuntimeTypeList=[], Method=Core.String.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+31 31   [ GenClass3.sl:174] [Add] index:[0]
+32 32   [ GenClass3.sl:168] [StoreLocal] index:[4] info:[LocalStatement]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+35 35   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+36 36   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+37 37   [ GenClass3.sl:168] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.GenClass3.testAdd
+    VirtualName: testAdd_Core.Void_0
+    Name: testAdd
+    InterfaceMethod: False
+    Return:
+      - #0 id=54273197 idx=0 name=_local[ProjectTest.GC3.GenClass3.testAdd.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=18696727 idx=0 name=testAdd_local[llll3333] type=ProjectTest.GC3.Level4<LT41,LT42><Core.String, Core.Int32>
+      - #1 id=34052821 idx=1 name=testAdd_local[addval] type=Core.Int32
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:178] [LoadConstString] index:[1302] val: string[====== [2] add 方法返回值 ======] 
+2 2   [ GenClass3.sl:176] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GenClass3.sl:176] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[ProjectTest.GC3.Level4<LT41,LT42><Core.String,Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ GenClass3.sl:179] [LoadConstInt32] index:[0] val: int32[300] 
+10 10   [ GenClass3.sl:179] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42><Core.String, Core.Int32>, StaticRuntimeTypeList=[Core.String, Core.Int32], Method=ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ GenClass3.sl:176] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ GenClass3.sl:181] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ GenClass3.sl:181] [LoadConstInt32] index:[0] val: int32[1000] 
+14 14   [ GenClass3.sl:119] [CallVirt] index:[8] info:[CallVirt add] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42>, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.Level4<LT41,LT42>.add_1_LT42, MethodRuntimeTypeList=[], ParamCount=1}] 
+15 15   [ GenClass3.sl:176] [StoreLocal] index:[1] info:[LocalStatement]
+16 16   [ GenClass3.sl:182] [LoadConstString] index:[1303] val: string[add(1000) 返回值 期望: 1000  实际: ] 
+17 17   [ GenClass3.sl:182] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ GenClass3.sl:182] [Add] index:[0]
+20 20   [ GenClass3.sl:176] [StoreLocal] index:[3] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ GenClass3.sl:176] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.GenClass3.testGetTest
+    VirtualName: testGetTest_Core.Void_0
+    Name: testGetTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=38039934 idx=0 name=_local[ProjectTest.GC3.GenClass3.testGetTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=6815093 idx=0 name=testGetTest_local[addval2] type=Core.Int32
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=3672032 idx=2 name=_local[lt23] type=T[2]
+      - #3 id=61335842 idx=3 name=_local[ProjectTest.GC3.GenClass3.testGetTest.inline.getTest.result] type=T[2]
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:186] [LoadConstString] index:[1304] val: string[====== [3] Level2<string,int,int> 静态 getTest ======] 
+2 2   [ GenClass3.sl:184] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GenClass3.sl:187] [LoadConstInt32] index:[0] val: int32[2000] 
+8 8   [ GenClass3.sl:184] [StoreLocal] index:[2] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0]
+10 10   [ GenClass3.sl:70] [LoadLocal] index:[2] info:[LocalStatement]
+11 11   [ GenClass3.sl:184] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.GenClass3] 
+12 12   [ GenClass3.sl:72] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.GC3.Level2<LT21,LT22,LT23><Core.Object[T:0],Core.Object[T:1],Core.Object[T:2]>] staticOwner:[ProjectTest.GC3.GenClass3] 
+13 13   [ GenClass3.sl:184] [StoreLocal] index:[3] info:[LocalStatement]
+14 14   [ :0] [BrLabel] index:[15]
+15 15   [ GenClass3.sl:68] [Label] index:[1] info:[inline end: getTest]
+16 16   [ GenClass3.sl:184] [LoadLocal] index:[3] info:[LocalStatement]
+17 17   [ GenClass3.sl:184] [StoreLocal] index:[0] info:[LocalStatement]
+18 18   [ GenClass3.sl:188] [LoadConstString] index:[1305] val: string[getTest(2000) 返回值 期望: 2000  实际: ] 
+19 19   [ GenClass3.sl:188] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ GenClass3.sl:188] [Add] index:[0]
+22 22   [ GenClass3.sl:184] [StoreLocal] index:[4] info:[LocalStatement]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+26 26   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+27 27   [ GenClass3.sl:184] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.GenClass3.testFields
+    VirtualName: testFields_Core.Void_0
+    Name: testFields
+    InterfaceMethod: False
+    Return:
+      - #0 id=2147306 idx=0 name=_local[ProjectTest.GC3.GenClass3.testFields.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=19325759 idx=0 name=testFields_local[llll3333] type=ProjectTest.GC3.Level4<LT41,LT42><Core.Int32, Core.Int32>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:192] [LoadConstString] index:[1306] val: string[====== [4] 字段赋值与读取 ======] 
+2 2   [ GenClass3.sl:190] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GenClass3.sl:190] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[ProjectTest.GC3.Level4<LT41,LT42><Core.Int32,Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ GenClass3.sl:193] [LoadConstInt32] index:[0] val: int32[300] 
+10 10   [ GenClass3.sl:193] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42><Core.Int32, Core.Int32>, StaticRuntimeTypeList=[Core.Int32, Core.Int32], Method=ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ GenClass3.sl:190] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ GenClass3.sl:195] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ GenClass3.sl:195] [LoadConstInt32] index:[0] val: int32[999] 
+14 14   [ GenClass3.sl:190] [StoreNotStaticField2] index:[3] info:[Member]
+15 15   [ GenClass3.sl:196] [LoadConstString] index:[1307] val: string[Level3_t 期望: 999  实际: ] 
+16 16   [ GenClass3.sl:196] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ GenClass3.sl:196] [LoadNotStaticField] index:[3] info:[Member]
+18 18   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ GenClass3.sl:196] [Add] index:[0]
+20 20   [ GenClass3.sl:190] [StoreLocal] index:[2] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ GenClass3.sl:199] [LoadLocal] index:[0] info:[LocalStatement]
+26 26   [ GenClass3.sl:199] [LoadConstInt32] index:[0] val: int32[888] 
+27 27   [ GenClass3.sl:190] [StoreNotStaticField2] index:[1] info:[Member]
+28 28   [ GenClass3.sl:200] [LoadLocal] index:[0] info:[LocalStatement]
+29 29   [ GenClass3.sl:200] [LoadConstInt32] index:[0] val: int32[777] 
+30 30   [ GenClass3.sl:190] [StoreNotStaticField2] index:[2] info:[Member]
+31 31   [ GenClass3.sl:201] [LoadConstString] index:[1308] val: string[Level1_t2 读取 期望: 888 (默认值)  实际: ] 
+32 32   [ GenClass3.sl:201] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ GenClass3.sl:201] [LoadNotStaticField] index:[1] info:[Member]
+34 34   [ :0] [BrIsNullPeek] index:[37]
+35 35   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+36 36   [ :0] [Br] index:[40]
+37 37   [ :0] [Label] index:[1]
+38 38   [ GenClass3.sl:201] [Pop] index:[0] info:[?. pop receiver, null path]
+39 39   [ GenClass3.sl:201] [LoadConstNull] index:[0] info:[?. result null]
+40 40   [ :0] [Label] index:[2]
+41 41   [ GenClass3.sl:201] [Add] index:[0]
+42 42   [ GenClass3.sl:190] [StoreLocal] index:[3] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ GenClass3.sl:202] [LoadConstString] index:[1309] val: string[Level21_t 读取 期望: 777 (默认值)  实际: ] 
+48 48   [ GenClass3.sl:202] [LoadLocal] index:[0] info:[LocalStatement]
+49 49   [ GenClass3.sl:202] [LoadNotStaticField] index:[2] info:[Member]
+50 50   [ :0] [BrIsNullPeek] index:[53]
+51 51   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+52 52   [ :0] [Br] index:[56]
+53 53   [ :0] [Label] index:[3]
+54 54   [ GenClass3.sl:202] [Pop] index:[0] info:[?. pop receiver, null path]
+55 55   [ GenClass3.sl:202] [LoadConstNull] index:[0] info:[?. result null]
+56 56   [ :0] [Label] index:[4]
+57 57   [ GenClass3.sl:202] [Add] index:[0]
+58 58   [ GenClass3.sl:190] [StoreLocal] index:[4] info:[LocalStatement]
+59 59   [ :0] [Nop] index:[0]
+60 60   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+61 61   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+62 62   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+63 63   [ GenClass3.sl:190] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GC3.GenClass3.testTemplate<TT1,TT2>_1_TT1
+    VirtualName: testTemplate_Core.Void_1_TT1
+    Name: testTemplate
+    InterfaceMethod: False
+    Return:
+      - #0 id=17753217 idx=0 name=_local[ProjectTest.GC3.GenClass3.testTemplate.return] type=Core.Void
+    Arguments:
+      - #0 id=25561231 idx=0 name=_local[t1] type=T[0]
+    Locals:
+      - #0 id=28724493 idx=0 name=testTemplate_local[llll3333] type=ProjectTest.GC3.Level4<LT41,LT42><T[1], T[0]>
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GenClass3.sl:206] [LoadConstString] index:[1310] val: string[====== [5] 模板类 ======] 
+2 2   [ GenClass3.sl:204] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GenClass3.sl:204] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[ProjectTest.GC3.Level4<LT41,LT42><Core.Object[T:1],Core.Object[T:0]>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ GenClass3.sl:207] [LoadArgument] index:[0] info:[Argument]
+10 10   [ GenClass3.sl:207] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42><Core.Object[T:1], Core.Object[T:0]>, StaticRuntimeTypeList=[Core.Object[T:1], Core.Object[T:0]], Method=ProjectTest.GC3.Level3<LT31,LT32>._init__1_LT31, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ GenClass3.sl:204] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ GenClass3.sl:208] [LoadConstString] index:[1311] val: string[llll3333 模板类 输出: ] 
+13 13   [ GenClass3.sl:208] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ GenClass3.sl:141] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GC3.Level4<LT41,LT42>, StaticRuntimeTypeList=[], Method=ProjectTest.GC3.Level4<LT41,LT42>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ GenClass3.sl:208] [Add] index:[0]
+16 16   [ GenClass3.sl:204] [StoreLocal] index:[2] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ GenClass3.sl:204] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

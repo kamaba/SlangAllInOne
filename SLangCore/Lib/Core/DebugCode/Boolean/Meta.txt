@@ -1,0 +1,64 @@
+-------------------Meta 文件显示 开始 : Path: Boolean.sl-----------------------
+public class Boolean extends Core.Object
+{
+private [Core.Boolean]_value = False;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return [Core.Boolean]Core.Boolean.toString.this  ->  [Core.Boolean]_value  ?  "True"  :  "False";
+}
+
+public  Core.Void _init_([Core.Boolean]b)
+{
+[Core.Boolean]Core.Boolean._init_.this  ->  [Core.Boolean]_value = [Core.Boolean]b;
+
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

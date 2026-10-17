@@ -1,0 +1,198 @@
+-------------------Meta 文件显示 开始 : Path: Range.sl-----------------------
+public class Range<T extends Core.Num> extends Core.Object interface Core.IIterable<T>T
+,Core.IIterator<T>T
+
+{
+private [Core.Num]_start = null;
+private [Core.Num]_end = null;
+private [Core.Num]_step = null;
+private [Core.Num]_iteratorValue = 0;
+private [Core.Num]_current = null;
+private [Core.Array<T>T
+]_toArrayCache = null;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return (((((("Range(" + [Core.Range<T><T>]Core.Range<T:Core.Num>.toString.this  ->  [T]_start) + ",") + [Core.Range<T><T>]Core.Range<T:Core.Num>.toString.this  ->  [T]_end) + ",") + [Core.Range<T><T>]Core.Range<T:Core.Num>.toString.this  ->  [T]_step) + ")");
+}
+
+public  Core.Void _init_([Core.Num]_end)
+{
+[Core.Range<T>]Core.Range<T:Core.Num>._init_.this._init_(0,_end,1)
+
+}
+
+public  Core.Void _init_([Core.Num]_start,[Core.Num]_end)
+{
+[Core.Range<T>]Core.Range<T:Core.Num>._init_.this._init_(_start,_end,1)
+
+}
+
+public  Core.Void _init_([Core.Num]_start,[Core.Num]_end,[Core.Num]_step)
+{
+[Core.Range<T><T>]Core.Range<T:Core.Num>._init_.this  ->  [T]_start = [T]_start;
+[Core.Range<T><T>]Core.Range<T:Core.Num>._init_.this  ->  [T]_end = [T]_end;
+[Core.Range<T><T>]Core.Range<T:Core.Num>._init_.this  ->  [T]_step = [T]_step;
+[Core.Range<T><T>]Core.Range<T:Core.Num>._init_.this  ->  [Core.Array<T><T>[-1]]_toArrayCache = null;
+[Core.Range<T>]Core.Range<T:Core.Num>._init_.this.reset()
+
+}
+
+public  override Core.Void reset()
+{
+[Core.Range<T><T>]Core.Range<T:Core.Num>.reset.this  ->  [T]_iteratorValue = 0;
+[Core.Range<T><T>]Core.Range<T:Core.Num>.reset.this  ->  [T]_current = null;
+
+}
+
+public  override Core.Boolean moveNext()
+{
+Core.Boolean autocreate_32089967 = ([Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_step == 0)
+if autocreate_32089967
+{
+[Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_current = null;
+return False;
+}
+[Core.Num]nextValue = ([Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_start + [Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_iteratorValue);
+[Core.Boolean]hasNext_var = False;
+Core.Boolean autocreate_20374254 = ([Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_step > 0)
+if autocreate_20374254
+{
+[Core.Boolean]hasNext_var = ([T]nextValue < [Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_end);
+
+}
+else
+{
+[Core.Boolean]hasNext_var = ([T]nextValue > [Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_end);
+
+}
+Core.Boolean hasNext_var = [Core.Boolean]hasNext_var
+if hasNext_var
+{
+[Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_current = [T]nextValue;
+[Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_iteratorValue = [Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_step;
+
+}
+else
+{
+[Core.Range<T><T>]Core.Range<T:Core.Num>.moveNext.this  ->  [T]_current = null;
+
+}
+return [Core.Boolean]hasNext_var;
+}
+
+public  Core.Boolean isContain([Core.Num]t)
+{
+Core.Boolean autocreate_22689808 = ([T]t > [Core.Range<T><T>]Core.Range<T:Core.Num>.isContain.this  ->  [T]_start)
+if autocreate_22689808
+{
+Core.Boolean autocreate_2881685 = ([T]t < [Core.Range<T><T>]Core.Range<T:Core.Num>.isContain.this  ->  [T]_end)
+if autocreate_2881685
+{
+return True;
+}
+
+}
+else
+{
+Core.Boolean autocreate_25935173 = ([T]t > [Core.Range<T><T>]Core.Range<T:Core.Num>.isContain.this  ->  [T]_end)
+if autocreate_25935173
+{
+return True;
+}
+return False;
+}
+
+}
+
+public  override Core.Num current()
+{
+return [Core.Range<T><T>]Core.Range<T:Core.Num>.current.this  ->  [T]_current;
+}
+
+public  override Core.IIterator<T>T
+ iterator()
+{
+return [Core.Range<T><T>]Core.Range<T:Core.Num>.iterator.this;
+}
+
+public  Core.Array<T>T
+ toArray()
+{
+Core.Boolean autocreate_39701876 = ([Core.Range<T><T>]Core.Range<T:Core.Num>.toArray.this  ->  [Core.Array<T><T>[-1]]_toArrayCache != null)
+if autocreate_39701876
+{
+return [Core.Range<T><T>]Core.Range<T:Core.Num>.toArray.this  ->  [Core.Array<T><T>[-1]]_toArrayCache;
+}
+[Core.Range<T>]Core.Range<T:Core.Num>.toArray.this.reset()
+[Core.Int32]cnt = 0i;
+{
+[Core.Int32]cnt = 1i;
+
+}
+[Core.Range<T>]Core.Range<T:Core.Num>.toArray.this.reset()
+[Core.Array<T>T
+]arr = ;
+[Core.Int32]idx = 0i;
+{
+[Core.Array<T>]arr.setValue(idx,this.current())
+[Core.Int32]idx = 1i;
+
+
+}
+[Core.Range<T><T>]Core.Range<T:Core.Num>.toArray.this  ->  [Core.Array<T><T>[-1]]_toArrayCache = [Core.Array<T><T>[-1]]arr;
+return [Core.Array<T><T>[-1]]arr;
+
+
+
+
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

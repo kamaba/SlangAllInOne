@@ -1,0 +1,30 @@
+-------------------FileMeta 文件显示 开始 : Path: IteratorInterface.sl-----------------------
+public _partial _class IIterator
+{
+    _public void reset( )
+
+    _public bool moveNext( )
+
+    _public object current( )
+
+}
+public _partial _class IIterable
+{
+    _public IIterator iterator( )
+
+}
+public _partial _class IIterator<T>
+{
+    _public void reset( )
+
+    _public bool moveNext( )
+
+    _public T current( )
+
+}
+public _partial _class IIterable<T>
+{
+    _public IIterator<T> iterator( )
+
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

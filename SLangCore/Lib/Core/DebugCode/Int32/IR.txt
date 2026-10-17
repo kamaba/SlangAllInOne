@@ -1,0 +1,686 @@
+-------------------IR 文件显示 开始 : Path: Int32.sl-----------------------
+Class: Core.Int32
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 48132822
+      Mapping: []
+  ClassLocals:
+      - #0 id=20800170 idx=0 name=Core.Int32._value type=Core.Int32
+  ClassStatics:
+      - #0 id=52983808 idx=0 name=Core.Int32.MaxValue type=Core.Int32
+      - #1 id=7092232 idx=1 name=Core.Int32.MinValue type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43304686 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=42094334 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=18018639 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=54197854 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=50223649 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=27950026 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41583755 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=49359659 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=38709481 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=48460267 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=12841014 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=32967578 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=33489226 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=53128157 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=28272749 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=8413469 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=8391370 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=10402369 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=8612359 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=34731002 idx=0 name=_local[Core.Int32.toString.return] type=Core.String
+    Arguments:
+      - #0 id=48598242 idx=0 name=_local[Core.Int32.toString.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.size
+    VirtualName: size_Core.Int32_0
+    Name: size
+    InterfaceMethod: False
+    Return:
+      - #0 id=61747774 idx=0 name=_local[Core.Int32.size.return] type=Core.Int32
+    Arguments:
+      - #0 id=44143566 idx=0 name=_local[Core.Int32.size.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Int32.sl:15] [LoadConstInt8] index:[0] val:[32] 
+2 2   [ :0] [StoreReturn] index:[0]
+3 3   [ :0] [BrLabel] index:[0] val:[4   [ :0] [Label] index:[0]] 
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.byteLength
+    VirtualName: byteLength_Core.Int32_0
+    Name: byteLength
+    InterfaceMethod: False
+    Return:
+      - #0 id=35513827 idx=0 name=_local[Core.Int32.byteLength.return] type=Core.Int32
+    Arguments:
+      - #0 id=18859061 idx=0 name=_local[Core.Int32.byteLength.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Int32.sl:16] [LoadConstInt8] index:[0] val:[4] 
+2 2   [ :0] [StoreReturn] index:[0]
+3 3   [ :0] [BrLabel] index:[0] val:[4   [ :0] [Label] index:[0]] 
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.abs
+    VirtualName: abs_Core.Int32_0
+    Name: abs
+    InterfaceMethod: False
+    Return:
+      - #0 id=58047761 idx=0 name=_local[Core.Int32.abs.return] type=Core.Int32
+    Arguments:
+      - #0 id=51188993 idx=0 name=_local[Core.Int32.abs.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.floor
+    VirtualName: floor_Core.Num_0
+    Name: floor
+    InterfaceMethod: False
+    Return:
+      - #0 id=4248175 idx=0 name=_local[Core.Int32.floor.return] type=Core.Num
+    Arguments:
+      - #0 id=52667802 idx=0 name=_local[Core.Int32.floor.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.ceil
+    VirtualName: ceil_Core.Num_0
+    Name: ceil
+    InterfaceMethod: False
+    Return:
+      - #0 id=8557861 idx=0 name=_local[Core.Int32.ceil.return] type=Core.Num
+    Arguments:
+      - #0 id=38233575 idx=0 name=_local[Core.Int32.ceil.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [StoreReturn] index:[0]
+3 3   [ :0] [BrLabel] index:[0] val:[4   [ :0] [Label] index:[0]] 
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.compareTo_1_Core.Num
+    VirtualName: compareTo_Core.UInt8_1_Core.Num
+    Name: compareTo
+    InterfaceMethod: False
+    Return:
+      - #0 id=22098140 idx=0 name=_local[Core.Int32.compareTo.return] type=Core.UInt8
+    Arguments:
+      - #0 id=9911889 idx=0 name=_local[Core.Int32.compareTo.this] type=Core.Int32
+      - #1 id=64665535 idx=1 name=_local[value] type=Core.Num
+    Locals:
+      - #0 id=45118907 idx=0 name=compareTo_local[autocreate_66482253] type=Core.Boolean
+      - #1 id=3416986 idx=1 name=compareTo_local[autocreate_61469371] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Nop] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ Int32.sl:36] [LoadConstNull] index:[0] val:[null] 
+4 4   [ Int32.sl:36] [Ceq] index:[0]
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ :0] [LoadLocal] index:[0]
+7 7   [ :0] [BrFalse] index:[13] val:[13   [ :0] [Nop] index:[0]] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ Int32.sl:38] [LoadConstInt8] index:[0] val:[1] 
+10 10   [ :0] [StoreReturn] index:[0]
+11 11   [ :0] [BrLabel] index:[0] val:[43   [ :0] [Label] index:[0]] 
+12 12   [ :0] [Br] index:[13] val:[13   [ :0] [Nop] index:[0]] 
+13 13   [ :0] [Nop] index:[0]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ :0] [LoadArgument] index:[0]
+16 16   [ :0] [LoadNotStaticField] index:[0]
+17 17   [ :0] [LoadArgument] index:[1]
+18 18   [ Int32.sl:40] [Ceq] index:[0]
+19 19   [ :0] [StoreLocal] index:[1]
+20 20   [ :0] [LoadLocal] index:[1]
+21 21   [ :0] [BrFalse] index:[27] val:[27   [ :0] [Nop] index:[0]] 
+22 22   [ :0] [Nop] index:[0]
+23 23   [ Int32.sl:40] [LoadConstInt8] index:[0] val:[0] 
+24 24   [ :0] [StoreReturn] index:[0]
+25 25   [ :0] [BrLabel] index:[0] val:[43   [ :0] [Label] index:[0]] 
+26 26   [ :0] [Br] index:[27] val:[27   [ :0] [Nop] index:[0]] 
+27 27   [ :0] [Nop] index:[0]
+28 28   [ :0] [LoadArgument] index:[0]
+29 29   [ :0] [LoadNotStaticField] index:[0]
+30 30   [ :0] [LoadArgument] index:[0]
+31 31   [ :0] [LoadNotStaticField] index:[0]
+32 32   [ Int32.sl:41] [Cgt] index:[0]
+33 33   [ :0] [BrFalse] index:[36] val:[36   [ :0] [Nop] index:[0]] 
+34 34   [ Int32.sl:41] [LoadConstInt8] index:[0] val:[1] 
+35 35   [ :0] [Br] index:[40] val:[40   [ :0] [Nop] index:[0]] 
+36 36   [ :0] [Nop] index:[0]
+37 37   [ Int32.sl:41] [LoadConstInt8] index:[0] val:[0] 
+38 38   [ Int32.sl:41] [LoadConstInt8] index:[0] val:[1] 
+39 39   [ Int32.sl:41] [Minus] index:[0]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ :0] [StoreReturn] index:[0]
+42 42   [ :0] [BrLabel] index:[0] val:[43   [ :0] [Label] index:[0]] 
+43 43   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toBool
+    VirtualName: toBool_Core.Boolean_0
+    Name: toBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=8340425 idx=0 name=_local[Core.Int32.toBool.return] type=Core.Boolean
+    Arguments:
+      - #0 id=30752875 idx=0 name=_local[Core.Int32.toBool.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toInt8_1_Core.UInt8
+    VirtualName: toInt8_Core.Int8_1_Core.UInt8
+    Name: toInt8
+    InterfaceMethod: False
+    Return:
+      - #0 id=4485813 idx=0 name=_local[Core.Int32.toInt8.return] type=Core.Int8
+    Arguments:
+      - #0 id=7954964 idx=0 name=_local[Core.Int32.toInt8.this] type=Core.Int32
+      - #1 id=40372317 idx=1 name=_local[index] type=Core.UInt8
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toUInt8_1_Core.UInt8
+    VirtualName: toUInt8_Core.UInt8_1_Core.UInt8
+    Name: toUInt8
+    InterfaceMethod: False
+    Return:
+      - #0 id=48932206 idx=0 name=_local[Core.Int32.toUInt8.return] type=Core.UInt8
+    Arguments:
+      - #0 id=27806533 idx=0 name=_local[Core.Int32.toUInt8.this] type=Core.Int32
+      - #1 id=37736673 idx=1 name=_local[index] type=Core.UInt8
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toInt16
+    VirtualName: toInt16_Core.Int16_0
+    Name: toInt16
+    InterfaceMethod: False
+    Return:
+      - #0 id=36771698 idx=0 name=_local[Core.Int32.toInt16.return] type=Core.Int16
+    Arguments:
+      - #0 id=4085744 idx=0 name=_local[Core.Int32.toInt16.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toUInt16
+    VirtualName: toUInt16_Core.UInt16_0
+    Name: toUInt16
+    InterfaceMethod: False
+    Return:
+      - #0 id=25717600 idx=0 name=_local[Core.Int32.toUInt16.return] type=Core.UInt16
+    Arguments:
+      - #0 id=62509834 idx=0 name=_local[Core.Int32.toUInt16.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toInt32
+    VirtualName: toInt32_Core.Int32_0
+    Name: toInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=2750866 idx=0 name=_local[Core.Int32.toInt32.return] type=Core.Int32
+    Arguments:
+      - #0 id=30131813 idx=0 name=_local[Core.Int32.toInt32.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadNotStaticField] index:[0]
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toUInt32
+    VirtualName: toUInt32_Core.UInt32_0
+    Name: toUInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=21493617 idx=0 name=_local[Core.Int32.toUInt32.return] type=Core.UInt32
+    Arguments:
+      - #0 id=24757801 idx=0 name=_local[Core.Int32.toUInt32.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toInt64
+    VirtualName: toInt64_Core.Int64_0
+    Name: toInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=63261412 idx=0 name=_local[Core.Int32.toInt64.return] type=Core.Int64
+    Arguments:
+      - #0 id=59224828 idx=0 name=_local[Core.Int32.toInt64.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toUInt64
+    VirtualName: toUInt64_Core.Int64_0
+    Name: toUInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=23900756 idx=0 name=_local[Core.Int32.toUInt64.return] type=Core.Int64
+    Arguments:
+      - #0 id=32481801 idx=0 name=_local[Core.Int32.toUInt64.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toFloat32
+    VirtualName: toFloat32_Core.Float32_0
+    Name: toFloat32
+    InterfaceMethod: False
+    Return:
+      - #0 id=56913064 idx=0 name=_local[Core.Int32.toFloat32.return] type=Core.Float32
+    Arguments:
+      - #0 id=13780214 idx=0 name=_local[Core.Int32.toFloat32.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toFloat64
+    VirtualName: toFloat64_Core.Float64_0
+    Name: toFloat64
+    InterfaceMethod: False
+    Return:
+      - #0 id=46555465 idx=0 name=_local[Core.Int32.toFloat64.return] type=Core.Float64
+    Arguments:
+      - #0 id=42455531 idx=0 name=_local[Core.Int32.toFloat64.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=12896286 idx=0 name=_local[Core.Int32._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=16346001 idx=0 name=_local[Core.Int32._init_.this] type=Core.Int32
+      - #1 id=48957711 idx=1 name=_local[_val] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadArgument] index:[1]
+3 3   [ :0] [StoreNotStaticField2] index:[0]
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.parse_1_Core.String
+    VirtualName: parse_Core.Int32_1_Core.String
+    Name: parse
+    InterfaceMethod: False
+    Return:
+      - #0 id=6151694 idx=0 name=_local[Core.Int32.parse.return] type=Core.Int32
+    Arguments:
+      - #0 id=37966223 idx=0 name=_local[Core.Int32.parse.this] type=Core.Int32
+      - #1 id=55365254 idx=1 name=_local[s] type=Core.String
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[1]
+2 2   [ :0] [CallSystemMethod] index:[1] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.sign
+    VirtualName: sign_Core.Int32_0
+    Name: sign
+    InterfaceMethod: False
+    Return:
+      - #0 id=55400552 idx=0 name=_local[Core.Int32.sign.return] type=Core.Int32
+    Arguments:
+      - #0 id=28525238 idx=0 name=_local[Core.Int32.sign.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadNotStaticField] index:[0]
+3 3   [ Int32.sl:90] [LoadConstInt8] index:[0] val:[0] 
+4 4   [ Int32.sl:90] [Cgt] index:[0]
+5 5   [ :0] [BrFalse] index:[8] val:[8   [ :0] [Nop] index:[0]] 
+6 6   [ Int32.sl:90] [LoadConstInt8] index:[0] val:[1] 
+7 7   [ :0] [Br] index:[12] val:[12   [ :0] [Nop] index:[0]] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ Int32.sl:90] [LoadConstInt8] index:[0] val:[0] 
+10 10   [ Int32.sl:90] [LoadConstInt8] index:[0] val:[1] 
+11 11   [ Int32.sl:90] [Minus] index:[0]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ :0] [StoreReturn] index:[0]
+14 14   [ :0] [BrLabel] index:[0] val:[15   [ :0] [Label] index:[0]] 
+15 15   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.isEven
+    VirtualName: isEven_Core.Boolean_0
+    Name: isEven
+    InterfaceMethod: False
+    Return:
+      - #0 id=58259743 idx=0 name=_local[Core.Int32.isEven.return] type=Core.Boolean
+    Arguments:
+      - #0 id=28842926 idx=0 name=_local[Core.Int32.isEven.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadNotStaticField] index:[0]
+3 3   [ Int32.sl:94] [LoadConstInt8] index:[0] val:[1] 
+4 4   [ Int32.sl:94] [Combine] index:[0]
+5 5   [ Int32.sl:94] [LoadConstInt8] index:[0] val:[0] 
+6 6   [ Int32.sl:94] [Ceq] index:[0]
+7 7   [ :0] [StoreReturn] index:[0]
+8 8   [ :0] [BrLabel] index:[0] val:[9   [ :0] [Label] index:[0]] 
+9 9   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.isOdd
+    VirtualName: isOdd_Core.Boolean_0
+    Name: isOdd
+    InterfaceMethod: False
+    Return:
+      - #0 id=21418771 idx=0 name=_local[Core.Int32.isOdd.return] type=Core.Boolean
+    Arguments:
+      - #0 id=54575646 idx=0 name=_local[Core.Int32.isOdd.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ :0] [LoadNotStaticField] index:[0]
+3 3   [ Int32.sl:98] [LoadConstInt8] index:[0] val:[1] 
+4 4   [ Int32.sl:98] [Combine] index:[0]
+5 5   [ Int32.sl:98] [LoadConstInt8] index:[0] val:[0] 
+6 6   [ Int32.sl:98] [Cne] index:[0]
+7 7   [ :0] [StoreReturn] index:[0]
+8 8   [ :0] [BrLabel] index:[0] val:[9   [ :0] [Label] index:[0]] 
+9 9   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toRadixString_1_Core.Int32
+    VirtualName: toRadixString_Core.String_1_Core.Int32
+    Name: toRadixString
+    InterfaceMethod: False
+    Return:
+      - #0 id=57198891 idx=0 name=_local[Core.Int32.toRadixString.return] type=Core.String
+    Arguments:
+      - #0 id=58551215 idx=0 name=_local[Core.Int32.toRadixString.this] type=Core.Int32
+      - #1 id=45027976 idx=1 name=_local[radix] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Int32.sl:102] [LoadConstString] index:[1] val: string[] 
+2 2   [ :0] [StoreReturn] index:[0]
+3 3   [ :0] [BrLabel] index:[0] val:[4   [ :0] [Label] index:[0]] 
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toBinaryString
+    VirtualName: toBinaryString_Core.String_0
+    Name: toBinaryString
+    InterfaceMethod: False
+    Return:
+      - #0 id=23387474 idx=0 name=_local[Core.Int32.toBinaryString.return] type=Core.String
+    Arguments:
+      - #0 id=2598608 idx=0 name=_local[Core.Int32.toBinaryString.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ Int32.sl:106] [LoadConstInt8] index:[0] val:[2] 
+3 3   [ Int32.sl:100] [CallVirt] index:[32] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toRadixString_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toHexString
+    VirtualName: toHexString_Core.String_0
+    Name: toHexString
+    InterfaceMethod: False
+    Return:
+      - #0 id=15337269 idx=0 name=_local[Core.Int32.toHexString.return] type=Core.String
+    Arguments:
+      - #0 id=9160681 idx=0 name=_local[Core.Int32.toHexString.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ Int32.sl:110] [LoadConstInt8] index:[0] val:[16] 
+3 3   [ Int32.sl:100] [CallVirt] index:[32] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toRadixString_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Int32.toOctalString
+    VirtualName: toOctalString_Core.String_0
+    Name: toOctalString
+    InterfaceMethod: False
+    Return:
+      - #0 id=34359256 idx=0 name=_local[Core.Int32.toOctalString.return] type=Core.String
+    Arguments:
+      - #0 id=3817695 idx=0 name=_local[Core.Int32.toOctalString.this] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [LoadArgument] index:[0]
+2 2   [ Int32.sl:114] [LoadConstInt8] index:[0] val:[8] 
+3 3   [ Int32.sl:100] [CallVirt] index:[32] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toRadixString_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+-------------------IR 文件显示 结束 : -----------------------

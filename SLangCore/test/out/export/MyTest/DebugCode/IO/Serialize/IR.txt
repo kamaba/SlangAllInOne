@@ -1,0 +1,219 @@
+-------------------IR 文件显示 开始 : Path: IO/Serialize.sl-----------------------
+Class: Core.Serialize
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Serialize.toBytes<T>_2_T_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: toBytes_Core.ByteBuffer_2_T_Core.Codec<T,Core.ByteBuffer>
+    Name: toBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=42558925 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=47486005 idx=0 name=obj type=T[0]
+      - #1 id=24720863 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=21161181 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.Serialize.fromBytes<T>_2_Core.ByteBuffer_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: fromBytes_T_2_Core.ByteBuffer_Core.Codec<T,Core.ByteBuffer>
+    Name: fromBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=36334077 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=58571242 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=57379134 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=46650162 idx=0 name=obj type=T[0]
+    Instructions:
+
+  Method: Core.Serialize.toText<T>_2_T_Core.Codec<T,Core.String>
+    VirtualName: toText_Core.String_2_T_Core.Codec<T,Core.String>
+    Name: toText
+    InterfaceMethod: False
+    Return:
+      - #0 id=20566791 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=50883393 idx=0 name=obj type=T[0]
+      - #1 id=55297360 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.String>
+    Locals:
+      - #0 id=27914196 idx=0 name=s type=Core.String
+    Instructions:
+
+  Method: Core.Serialize.fromText<T>_2_Core.String_Core.Codec<T,Core.String>
+    VirtualName: fromText_T_2_Core.String_Core.Codec<T,Core.String>
+    Name: fromText
+    InterfaceMethod: False
+    Return:
+      - #0 id=46457383 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=15463264 idx=0 name=s type=Core.String
+      - #1 id=4951650 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.String>
+    Locals:
+      - #0 id=44564854 idx=0 name=obj type=T[0]
+    Instructions:
+
+  Method: Core.Serialize.toStream<T>_3_T_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: toStream_Core.Task_3_T_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: toStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=52983458 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=7089074 idx=0 name=obj type=T[0]
+      - #1 id=52260639 idx=1 name=dst type=Core.ByteStream
+      - #2 id=63801673 idx=2 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=583706 idx=0 name=payload type=Core.ByteBuffer
+      - #1 id=37344151 idx=1 name=f type=Core.Function
+      - #2 id=553045 idx=2 name=__closure_ctx__] type=Core.Object
+      - #3 id=4977413 idx=3 name=t type=Core.Task
+      - #4 id=52544597 idx=4 name=closure type=Core.Object
+      - #5 id=44796718 idx=5 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core.Serialize.fromStream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: fromStream_Core.Task_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: fromStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=41899929 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=5253358 idx=0 name=src type=Core.ByteStream
+      - #1 id=4493316 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=41555045 idx=0 name=f type=Core.Function
+      - #1 id=38451088 idx=1 name=__closure_ctx__] type=Core.Object
+      - #2 id=10515475 idx=2 name=t type=Core.Task
+      - #3 id=52544597 idx=3 name=closure type=Core.Object
+      - #4 id=27530415 idx=4 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core.Serialize.toElementStream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: toElementStream_Core.Stream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: toElementStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=4122781 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=37105032 idx=0 name=src type=Core.ByteStream
+      - #1 id=65509833 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals: []
+    Instructions:
+
+  Method: Core.Serialize.toJson<T>_1_T
+    VirtualName: toJson_Core.String_1_T
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=4696217 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42265954 idx=0 name=obj type=T[0]
+    Locals:
+      - #0 id=44849269 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Serialize.toJsonPretty<T>_1_T
+    VirtualName: toJsonPretty_Core.String_1_T
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=8912198 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=13100926 idx=0 name=obj type=T[0]
+    Locals:
+      - #0 id=50799476 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Serialize.fromJson<T>_1_Core.String
+    VirtualName: fromJson_T_1_Core.String
+    Name: fromJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=21116902 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=55834397 idx=0 name=json type=Core.String
+    Locals:
+      - #0 id=32747525 idx=0 name=bj type=Core.BaseJson
+      - #1 id=27142108 idx=1 name=jsonText type=Core.String
+      - #2 id=26292272 idx=2 name=result] type=Core.BaseJson
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,94 @@
+-------------------Meta 文件显示 开始 : Path: Core.sp-----------------------
+public class Project extends Core.Object
+{
+public const static [Core.String]cpk = "cpkkk";
+public const static [Core.Float32]Pi = 3.14f;
+public const static [Core.Int32]var1 = 12i;
+public static [Core.Array<Core.Int32>Core.Int32
+]arrvar1 = Core.Array<Core.Int32>().{1i, 2i, 3i, 4i, 5i};
+public static [___ProjectGlobalData_vardata2___]vardata2 = ___ProjectGlobalData_vardata2___{};
+public  static Core.Object print([Core.Object]str)
+{
+SystemPrint(str)
+
+}
+
+public  static Core.Object println([Core.Object]str)
+{
+SystemPrintln(str)
+
+}
+
+public  static Core.Object _main_()
+{
+  ->  fun()
+
+}
+
+public  static Core.Object _test_()
+{
+}
+
+public  static Core.Object CompileBefore()
+{
+}
+
+public  static Core.Object CompileAfter()
+{
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

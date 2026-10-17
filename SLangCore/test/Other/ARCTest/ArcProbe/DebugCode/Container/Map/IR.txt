@@ -1,0 +1,727 @@
+-------------------IR 文件显示 开始 : Path: Container/Map.sl-----------------------
+Class: Core.MapEntity<TKey,TValue>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1652731675 idx=0 name=Core.MapEntity<TKey,TValue>.hashId type=Core.Int32
+      - #1 id=1584829471 idx=1 name=Core.MapEntity<TKey,TValue>.key type=T[0]
+      - #2 id=-346623370 idx=2 name=Core.MapEntity<TKey,TValue>.value type=T[1]
+      - #3 id=-1213792393 idx=3 name=Core.MapEntity<TKey,TValue>.link type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.MapEntity<TKey,TValue>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=13760664 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=38811664 idx=0 name=this] type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+Class: Core.Map<TKey,TValue>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1460023986 idx=0 name=Core.Map<TKey,TValue>._buckets type=Core.Array<T><Core.Int32>
+      - #1 id=-387477131 idx=1 name=Core.Map<TKey,TValue>._entries type=Core.Array<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+      - #2 id=420482688 idx=2 name=Core.Map<TKey,TValue>._count type=Core.Int32
+      - #3 id=108085485 idx=3 name=Core.Map<TKey,TValue>._freeList type=Core.Int32
+      - #4 id=1985142875 idx=4 name=Core.Map<TKey,TValue>._freeCount type=Core.Int32
+      - #5 id=14674349 idx=5 name=Core.Map<TKey,TValue>._index type=Core.Int32
+      - #6 id=-386942748 idx=6 name=Core.Map<TKey,TValue>._current type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=32303446 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40871974 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=66442352 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=22295564 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=61110259 idx=0 name=showstr type=Core.String
+      - #1 id=13121422 idx=1 name=first type=Core.Int32
+      - #2 id=50983938 idx=2 name=autocreate_11177013 type=Core.Boolean
+      - #3 id=56202265 idx=3 name=i type=Core.Int32
+      - #4 id=36058338 idx=4 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #5 id=56089592 idx=5 name=autocreate_33484259 type=Core.Boolean
+      - #6 id=35044283 idx=6 name=kstr type=Core.String
+      - #7 id=46963092 idx=7 name=vstr type=Core.String
+      - #8 id=20014644 idx=8 name=autocreate_32922880 type=Core.Boolean
+      - #9 id=45914068 idx=9 name=autocreate_27870469 type=Core.Boolean
+      - #10 id=10573429 idx=10 name=autocreate_49507636 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: True
+    Return:
+      - #0 id=1501989 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=166887 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=13517902 idx=1 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=54552261 idx=0 name=autocreate_32368095 type=Core.Boolean
+      - #1 id=21208306 idx=1 name=autocreate_22877402 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=31023887 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=25816719 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=726684 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=29906904 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=6540158 idx=0 name=autocreate_4570028 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=27413374 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3045930 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=45393782 idx=0 name=autocreate_41130254 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=66577119 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=7397457 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=62323165 idx=0 name=autocreate_34627969 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=25646199 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32675739 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=29489206 idx=1 name=value type=Core.Int32
+    Locals:
+      - #0 id=64076263 idx=0 name=autocreate_43216271 type=Core.Boolean
+      - #1 id=39815461 idx=1 name=autocreate_53402119 type=Core.Boolean
+      - #2 id=22794832 idx=2 name=autocreate_10857028 type=Core.Boolean
+      - #3 id=3826897 idx=3 name=autocreate_30604389 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.grow
+    VirtualName: grow_Core.Void_0
+    Name: grow
+    InterfaceMethod: False
+    Return:
+      - #0 id=25551373 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62491365 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=28635768 idx=0 name=newCapacity type=Core.Int32
+      - #1 id=56395328 idx=1 name=autocreate_7004053 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=41569778 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=4618864 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=38583684 idx=1 name=min type=Core.Int32
+    Locals:
+      - #0 id=11708839 idx=0 name=curCap type=Core.Int32
+      - #1 id=38270693 idx=1 name=autocreate_63036484 type=Core.Boolean
+      - #2 id=8891917 idx=2 name=autocreate_30457452 type=Core.Boolean
+      - #3 id=12918394 idx=3 name=newCapacity type=Core.Int32
+      - #4 id=49156683 idx=4 name=autocreate_5681612 type=Core.Boolean
+      - #5 id=39756971 idx=5 name=autocreate_51134510 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.resize_1_Core.Int32
+    VirtualName: resize_Core.Void_1_Core.Int32
+    Name: resize
+    InterfaceMethod: False
+    Return:
+      - #0 id=42815556 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64409607 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=49795692 idx=1 name=newSize type=Core.Int32
+    Locals:
+      - #0 id=45508046 idx=0 name=newBuckets type=Core.Array<T><Core.Int32>
+      - #1 id=6919237 idx=1 name=newEntries type=Core.Array<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+      - #2 id=62273137 idx=2 name=autocreate_57557412 type=Core.Boolean
+      - #3 id=23587323 idx=3 name=i type=Core.Int32
+      - #4 id=10959316 idx=4 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #5 id=31524981 idx=5 name=autocreate_48254661 type=Core.Boolean
+      - #6 id=15289375 idx=6 name=bucket type=Core.Int32
+      - #7 id=3386651 idx=7 name=bucketValue type=Core.Int32
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.getHash_1_TKey
+    VirtualName: getHash_Core.Int32_1_TKey
+    Name: getHash
+    InterfaceMethod: False
+    Return:
+      - #0 id=27691114 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=3076790 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=47893437 idx=1 name=key type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.indexOfKey_1_TKey
+    VirtualName: indexOfKey_Core.Int32_1_TKey
+    Name: indexOfKey
+    InterfaceMethod: False
+    Return:
+      - #0 id=17706579 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=54163180 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=25141484 idx=1 name=key type=T[0]
+    Locals:
+      - #0 id=24946770 idx=0 name=hash type=Core.Int32
+      - #1 id=23194341 idx=1 name=bucketSize type=Core.Int32
+      - #2 id=7422478 idx=2 name=bucket type=Core.Int32
+      - #3 id=66802302 idx=3 name=autocreate_31638772 type=Core.Boolean
+      - #4 id=64349806 idx=4 name=autocreate_16313497 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.TryAdd_2_TKey_TValue
+    VirtualName: TryAdd_Core.Boolean_2_TKey_TValue
+    Name: TryAdd
+    InterfaceMethod: False
+    Return:
+      - #0 id=23997610 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=17579482 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=14651901 idx=1 name=key type=T[0]
+      - #2 id=64758253 idx=2 name=value type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.TryGetValue_2_TKey_TValue
+    VirtualName: TryGetValue_Core.Boolean_2_TKey_TValue
+    Name: TryGetValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=31235479 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=10927149 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=12683857 idx=1 name=key type=T[0]
+      - #2 id=47045852 idx=2 name=value type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.insertEntry_2_TKey_TValue
+    VirtualName: insertEntry_Core.Void_2_TKey_TValue
+    Name: insertEntry
+    InterfaceMethod: False
+    Return:
+      - #0 id=3797095 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52617682 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=34173856 idx=1 name=key type=T[0]
+      - #2 id=39129256 idx=2 name=value type=T[1]
+    Locals:
+      - #0 id=16618991 idx=0 name=hash type=Core.Int32
+      - #1 id=15353199 idx=1 name=slotIndex type=Core.Int32
+      - #2 id=3961063 idx=2 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #3 id=35649569 idx=3 name=bucketSize type=Core.Int32
+      - #4 id=52410671 idx=4 name=bucket type=Core.Int32
+      - #5 id=1933992 idx=5 name=bucketValue type=Core.Int32
+      - #6 id=17405935 idx=6 name=autocreate_12603749 type=Core.Boolean
+      - #7 id=22435692 idx=7 name=autocreate_46324881 type=Core.Boolean
+      - #8 id=594640 idx=8 name=oldEnt type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #9 id=5351764 idx=9 name=autocreate_14270750 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.add_2_TKey_TValue
+    VirtualName: add_Core.Boolean_2_TKey_TValue
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=20375168 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=24633528 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=49158788 idx=1 name=key type=T[0]
+      - #2 id=39775908 idx=2 name=value type=T[1]
+    Locals:
+      - #0 id=22438859 idx=0 name=idx type=Core.Int32
+      - #1 id=623145 idx=1 name=autocreate_61327894 type=Core.Boolean
+      - #2 id=5608311 idx=2 name=autocreate_15080136 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>._setItem__2_TKey_TValue
+    VirtualName: _setItem__Core.Void_2_TKey_TValue
+    Name: _setItem_
+    InterfaceMethod: True
+    Return:
+      - #0 id=55719536 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43473761 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=31713777 idx=1 name=key type=T[0]
+      - #2 id=16988543 idx=2 name=value type=T[1]
+    Locals:
+      - #0 id=18679162 idx=0 name=idx type=Core.Int32
+      - #1 id=33894731 idx=1 name=autocreate_1503503 type=Core.Boolean
+      - #2 id=36617123 idx=2 name=autocreate_13531531 type=Core.Boolean
+      - #3 id=61118651 idx=3 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>._getItem__1_TKey
+    VirtualName: _getItem__TValue_1_TKey
+    Name: _getItem_
+    InterfaceMethod: True
+    Return:
+      - #0 id=18041159 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=31830735 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=28152706 idx=1 name=key type=T[0]
+    Locals:
+      - #0 id=52047770 idx=0 name=idx type=Core.Int32
+      - #1 id=65776751 idx=1 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #2 id=55119850 idx=2 name=autocreate_54674917 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.containsKey_1_TKey
+    VirtualName: containsKey_Core.Boolean_1_TKey
+    Name: containsKey
+    InterfaceMethod: False
+    Return:
+      - #0 id=58778271 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=51270161 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=59242391 idx=1 name=key type=T[0]
+    Locals:
+      - #0 id=63419476 idx=0 name=autocreate_22312206 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.containsValue_1_TValue
+    VirtualName: containsValue_Core.Boolean_1_TValue
+    Name: containsValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=20226684 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=61899732 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=47822428 idx=1 name=value type=T[1]
+    Locals:
+      - #0 id=27748670 idx=0 name=autocreate_66592127 type=Core.Boolean
+      - #1 id=48411444 idx=1 name=i type=Core.Int32
+      - #2 id=33049813 idx=2 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #3 id=29012868 idx=3 name=autocreate_62458233 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.getOrDefault_2_TKey_TValue
+    VirtualName: getOrDefault_TValue_2_TKey_TValue
+    Name: getOrDefault
+    InterfaceMethod: False
+    Return:
+      - #0 id=62469641 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=6941071 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=25355861 idx=1 name=key type=T[0]
+      - #2 id=26876165 idx=2 name=defaultValue type=T[1]
+    Locals:
+      - #0 id=40558897 idx=0 name=idx type=Core.Int32
+      - #1 id=29485753 idx=1 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #2 id=64045192 idx=2 name=autocreate_25253189 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.putIfAbsent_2_TKey_TValue
+    VirtualName: putIfAbsent_TValue_2_TKey_TValue
+    Name: putIfAbsent
+    InterfaceMethod: False
+    Return:
+      - #0 id=31912141 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=48285036 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=18773818 idx=1 name=key type=T[0]
+      - #2 id=34746634 idx=2 name=value type=T[1]
+    Locals:
+      - #0 id=44284256 idx=0 name=idx type=Core.Int32
+      - #1 id=63013988 idx=1 name=autocreate_25952117 type=Core.Boolean
+      - #2 id=30254983 idx=2 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.remove_1_TKey
+    VirtualName: remove_TValue_1_TKey
+    Name: remove
+    InterfaceMethod: True
+    Return:
+      - #0 id=62035190 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=44175501 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=21445804 idx=1 name=key type=T[0]
+    Locals:
+      - #0 id=58794511 idx=0 name=hash type=Core.Int32
+      - #1 id=59388552 idx=1 name=bucketSize type=Core.Int32
+      - #2 id=64734920 idx=2 name=bucket type=Core.Int32
+      - #3 id=45743368 idx=3 name=bucketValue type=Core.Int32
+      - #4 id=9037129 idx=4 name=entryIndex type=Core.Int32
+      - #5 id=14225300 idx=5 name=prev type=Core.Int32
+      - #6 id=60918843 idx=6 name=autocreate_32242465 type=Core.Boolean
+      - #7 id=11398677 idx=7 name=autocreate_21746729 type=Core.Boolean
+      - #8 id=35479237 idx=8 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #9 id=50877683 idx=9 name=autocreate_61502840 type=Core.Boolean
+      - #10 id=55245968 idx=10 name=oldValue type=T[1]
+      - #11 id=27451669 idx=11 name=autocreate_16654654 type=Core.Boolean
+      - #12 id=45738436 idx=12 name=prevEnt type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.removeAt_1_Core.Int32
+    VirtualName: removeAt_Core.Void_1_Core.Int32
+    Name: removeAt
+    InterfaceMethod: True
+    Return:
+      - #0 id=10826121 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60855225 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=30326225 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=4500571 idx=0 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #1 id=40505145 idx=1 name=hash type=Core.Int32
+      - #2 id=29001986 idx=2 name=bucketSize type=Core.Int32
+      - #3 id=59691289 idx=3 name=bucket type=Core.Int32
+      - #4 id=350694 idx=4 name=bucketValue type=Core.Int32
+      - #5 id=3156250 idx=5 name=entryIndex type=Core.Int32
+      - #6 id=28406254 idx=6 name=prev type=Core.Int32
+      - #7 id=54329699 idx=7 name=autocreate_15674164 type=Core.Boolean
+      - #8 id=19205251 idx=8 name=autocreate_6849756 type=Core.Boolean
+      - #9 id=38629533 idx=9 name=autocreate_61647805 type=Core.Boolean
+      - #10 id=12121484 idx=10 name=curEnt type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #11 id=41984496 idx=11 name=autocreate_17959338 type=Core.Boolean
+      - #12 id=42316146 idx=12 name=autocreate_27416314 type=Core.Boolean
+      - #13 id=45300995 idx=13 name=prevEnt type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.entryAt_1_Core.Int32
+    VirtualName: entryAt_Core.MapEntity<TKey,TValue>_1_Core.Int32
+    Name: entryAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=19908716 idx=0 name=return] type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Arguments:
+      - #0 id=32038241 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=44960719 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=1993291 idx=0 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #1 id=17939626 idx=1 name=autocreate_45420240 type=Core.Boolean
+      - #2 id=27238907 idx=2 name=autocreate_6128980 type=Core.Boolean
+      - #3 id=43823577 idx=3 name=autocreate_55160823 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: True
+    Return:
+      - #0 id=9111029 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=1012336 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.keys
+    VirtualName: keys_Core.List<TKey>_0
+    Name: keys
+    InterfaceMethod: False
+    Return:
+      - #0 id=66904761 idx=0 name=return] type=Core.List<T><T[0]>
+    Arguments:
+      - #0 id=14890402 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=65271937 idx=0 name=len type=Core.Int32
+      - #1 id=50576524 idx=1 name=keyList type=Core.List<T><T[0]>
+      - #2 id=52535540 idx=2 name=autocreate_26685362 type=Core.Boolean
+      - #3 id=3057817 idx=3 name=i type=Core.Int32
+      - #4 id=27520356 idx=4 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #5 id=46356614 idx=5 name=autocreate_38841670 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.values
+    VirtualName: values_Core.List<TValue>_0
+    Name: values
+    InterfaceMethod: False
+    Return:
+      - #0 id=6933822 idx=0 name=return] type=Core.List<T><T[1]>
+    Arguments:
+      - #0 id=770424 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=62404399 idx=0 name=len type=Core.Int32
+      - #1 id=24768686 idx=1 name=valueList type=Core.List<T><T[1]>
+      - #2 id=21591587 idx=2 name=autocreate_14030717 type=Core.Boolean
+      - #3 id=60106559 idx=3 name=i type=Core.Int32
+      - #4 id=4088123 idx=4 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #5 id=36793112 idx=5 name=autocreate_59167590 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.toArray
+    VirtualName: toArray_Core.Array<Core.MapEntity<TKey,TValue>>[-1]_0
+    Name: toArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=14412003 idx=0 name=return] type=Core.Array<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+    Arguments:
+      - #0 id=23970955 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=62599170 idx=0 name=len type=Core.Int32
+      - #1 id=26521624 idx=1 name=arr type=Core.Array<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+      - #2 id=37368030 idx=2 name=j type=Core.Int32
+      - #3 id=767958 idx=3 name=autocreate_62746268 type=Core.Boolean
+      - #4 id=6911623 idx=4 name=i type=Core.Int32
+      - #5 id=62204612 idx=5 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #6 id=22970596 idx=6 name=autocreate_27845503 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.toList
+    VirtualName: toList_Core.List<Core.MapEntity<TKey,TValue>>_0
+    Name: toList
+    InterfaceMethod: False
+    Return:
+      - #0 id=34134946 idx=0 name=return] type=Core.List<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+    Arguments:
+      - #0 id=41075474 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=38779059 idx=0 name=len type=Core.Int32
+      - #1 id=13467214 idx=1 name=list type=Core.List<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+      - #2 id=54096069 idx=2 name=autocreate_49282936 type=Core.Boolean
+      - #3 id=17102575 idx=3 name=i type=Core.Int32
+      - #4 id=19705455 idx=4 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #5 id=43131373 idx=5 name=autocreate_40893240 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=15805238 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53951920 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=5155867 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=8029414 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals:
+      - #0 id=46402804 idx=0 name=autocreate_32494840 type=Core.Boolean
+      - #1 id=14972060 idx=1 name=ent type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+      - #2 id=530819 idx=2 name=autocreate_24018105 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.current
+    VirtualName: current_Core.MapEntity<TKey,TValue>_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=59455271 idx=0 name=return] type=Core.MapEntity<TKey,TValue><T[0], T[1]>
+    Arguments:
+      - #0 id=6606141 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.current_1_TValue
+    VirtualName: current_Core.Void_1_TValue
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=57675884 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=51147674 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=49320909 idx=1 name=val type=T[1]
+    Locals:
+      - #0 id=41234998 idx=0 name=autocreate_14836356 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.iterator
+    VirtualName: iterator_Core.IIterator<Core.MapEntity<TKey,TValue>>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=466603 idx=0 name=return] type=Core.IIterator<T><Core.MapEntity<TKey,TValue><T[0], T[1]>>
+    Arguments:
+      - #0 id=14964925 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=4609929 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=37794916 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Map<TKey,TValue>.index_1_Core.Int32
+    VirtualName: index_Core.Void_1_Core.Int32
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=5195099 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37859935 idx=0 name=this] type=Core.Map<TKey,TValue><T[0], T[1]>
+      - #1 id=46755894 idx=1 name=ind type=Core.Int32
+    Locals:
+      - #0 id=18149865 idx=0 name=autocreate_66418347 type=Core.Boolean
+      - #1 id=29131061 idx=1 name=autocreate_60894213 type=Core.Boolean
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

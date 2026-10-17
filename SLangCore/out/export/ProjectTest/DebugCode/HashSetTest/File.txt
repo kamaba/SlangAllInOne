@@ -1,0 +1,216 @@
+-------------------FileMeta 文件显示 开始 : Path: HashSetTest.sl-----------------------
+ ;
+HashSetTest
+{
+    _public static testBasicAdd( )
+    {
+        global.println("===== testBasicAdd =====");
+        Core.HashSet<int> s = new();
+        global.println("isEmpty = " + s.isEmpty);
+        global.println("add(1) = " + s.add(1i));
+        global.println("add(2) = " + s.add(2i));
+        global.println("add(2) dup = " + s.add(2i));
+        global.println("add(3) = " + s.add(3i));
+        global.println("length = " + s.length);
+        global.println("isEmpty = " + s.isEmpty);
+        global.println("toString = " + s.toString());
+    }
+    _public static testConstructors( )
+    {
+        global.println("===== testConstructors =====");
+        Core.HashSet<int> s1 = HashSet(8i);
+        global.println("capacity(s1) = " + s1.capacity);
+        Array<int> arr = Array(3i);
+        arr[0i] = 10i;
+        arr[1i] = 20i;
+        arr[2i] = 20i;
+        Core.HashSet<int> s2 = HashSet(arr);
+        global.println("s2.length = " + s2.length);
+        global.println("s2.toString = " + s2.toString());
+    }
+    _public static testContainsAndAddRange( )
+    {
+        global.println("===== testContainsAndAddRange =====");
+        Core.HashSet<int> s = new();
+        s.add(1i);
+        s.add(2i);
+        global.println("contains(1) = " + s.contains(1i));
+        global.println("contains(9) = " + s.contains(9i));
+        Array<int> more = Array(3i);
+        more[0i] = 3i;
+        more[1i] = 4i;
+        more[2i] = 1i;
+        s.addRange(more);
+        global.println("after addRange, length = " + s.length);
+        global.println("s.toString = " + s.toString());
+    }
+    _public static testRemoveAndClear( )
+    {
+        global.println("===== testRemoveAndClear =====");
+        Core.HashSet<int> s = new();
+        s.add(1i);
+        s.add(2i);
+        s.add(3i);
+        global.println("remove(2) = " + s.remove(2i));
+        global.println("remove(2) again = " + s.remove(2i));
+        global.println("after removes, length = " + s.length);
+        global.println("contains(2) = " + s.contains(2i));
+        s.clear();
+        global.println("after clear, length = " + s.length);
+        global.println("after clear, isEmpty = " + s.isEmpty);
+    }
+    _public static testGrow( )
+    {
+        global.println("===== testGrow =====");
+        Core.HashSet<int> s = new();
+        global.println("initial capacity = " + s.capacity);
+        s.add(1i);
+        global.println("after 1 add, capacity = " + s.capacity);
+        
+        for i = 2i, i <= 8i, i ++ 
+        {
+            s.add(i);
+        }
+        global.println("after 8 adds, capacity = " + s.capacity);
+        
+        for i = 9i, i <= 16i, i ++ 
+        {
+            s.add(i);
+        }
+        global.println("after 16 adds, capacity = " + s.capacity);
+        global.println("length = " + s.length);
+        global.println("setEquals(toArray-based) check toString = " + s.toString());
+    }
+    _public static testEnsureCapacity( )
+    {
+        global.println("===== testEnsureCapacity =====");
+        Core.HashSet<int> s = new();
+        s.ensureCapacity(100i);
+        global.println("after ensureCapacity(100), capacity = " + s.capacity);
+        s.add(1i);
+        global.println("after 1 add, capacity = " + s.capacity);
+    }
+    _public static testModifyOps( )
+    {
+        global.println("===== testModifyOps =====");
+        Core.HashSet<int> a = HashSet([1i,2i,3i]);
+        Core.HashSet<int> b = HashSet([2i,3i,4i]);
+        Core.HashSet<int> u = HashSet([1i,2i,3i]);
+        u.unionWith(b);
+        global.println("unionWith = " + u.toString());
+        Core.HashSet<int> i = HashSet([1i,2i,3i]);
+        i.intersectWith(b);
+        global.println("intersectWith = " + i.toString());
+        Core.HashSet<int> e = HashSet([1i,2i,3i]);
+        e.exceptWith(b);
+        global.println("exceptWith = " + e.toString());
+        Core.HashSet<int> se = HashSet([1i,2i,3i]);
+        se.symmetricExceptWith(b);
+        global.println("symmetricExceptWith = " + se.toString());
+    }
+    _public static testQueryOps( )
+    {
+        global.println("===== testQueryOps =====");
+        Core.HashSet<int> a = HashSet([1i,2i,3i]);
+        Core.HashSet<int> b = HashSet([2i,3i,4i]);
+        global.println("union = " + a.union(b).toString());
+        global.println("intersection = " + a.intersection(b).toString());
+        global.println("difference = " + a.difference(b).toString());
+        global.println("symmetricDifference = " + a.symmetricDifference(b).toString());
+        Core.HashSet<int> c = a.copy();
+        global.println("copy = " + c.toString());
+        global.println("a unchanged after ops = " + a.toString());
+    }
+    _public static testPredicateOps( )
+    {
+        global.println("===== testPredicateOps =====");
+        Core.HashSet<int> empty = new();
+        Core.HashSet<int> a = HashSet([1i,2i,3i]);
+        Core.HashSet<int> b = HashSet([2i,3i]);
+        Core.HashSet<int> c = HashSet([1i,2i,3i]);
+        Core.HashSet<int> d = HashSet([3i,4i,5i]);
+        global.println("b.isSubsetOf(a) = " + b.isSubsetOf(a));
+        global.println("a.isSupersetOf(b) = " + a.isSupersetOf(b));
+        global.println("empty.isSubsetOf(a) = " + empty.isSubsetOf(a));
+        global.println("a.isSupersetOf(empty) = " + a.isSupersetOf(empty));
+        global.println("b.isProperSubsetOf(a) = " + b.isProperSubsetOf(a));
+        global.println("a.isProperSubsetOf(c) = " + a.isProperSubsetOf(c));
+        global.println("a.isProperSupersetOf(b) = " + a.isProperSupersetOf(b));
+        global.println("a.overlaps(d) = " + a.overlaps(d));
+        global.println("empty.overlaps(a) = " + empty.overlaps(a));
+        global.println("a.setEquals(c) = " + a.setEquals(c));
+        global.println("a.setEquals(b) = " + a.setEquals(b));
+    }
+    _public static testConvert( )
+    {
+        global.println("===== testConvert =====");
+        Core.HashSet<int> s = HashSet([10i,20i,30i]);
+        Array<int> arr = s.toArray();
+        global.println("toArray.length = " + arr.length);
+        
+        for i = 0i, i < arr.length, i ++ 
+        {
+            global.println("arr[" + i + "] = " + arr[i]);
+        }
+        Core.List<int> list = s.toList();
+        global.println("toList.length = " + list.length);
+        global.println("first = " + s.first);
+        global.println("last = " + s.last);
+    }
+    _public static testIterator( )
+    {
+        global.println("===== testIterator =====");
+        Core.HashSet<string> s = HashSet(["a","b","c"]);
+        int sum = 0i;
+        
+        for item in s
+        {
+            global.println("foreach item = " + item);
+            sum ++ 
+        }
+        global.println("iterated count = " + sum);
+    }
+    _public static testStringElements( )
+    {
+        global.println("===== testStringElements =====");
+        Core.HashSet<string> s = new();
+        s.add("apple");
+        s.add("banana");
+        s.add("apple");
+        global.println("length = " + s.length);
+        global.println("contains(banana) = " + s.contains("banana"));
+        global.println("add(null) = " + s.add(null));
+        global.println("contains(null) = " + s.contains(null));
+        global.println("remove(null) = " + s.remove(null));
+        global.println("toString = " + s.toString());
+    }
+    _public static testEmptyEdge( )
+    {
+        global.println("===== testEmptyEdge =====");
+        Core.HashSet<int> s = new();
+        global.println("toArray.length = " + s.toArray().length);
+        global.println("first = " + s.first);
+        global.println("last = " + s.last);
+        global.println("toString = " + s.toString());
+        Core.HashSet<int> empty = new();
+        global.println("setEquals(empty) = " + s.setEquals(empty));
+    }
+    _public static fun( )
+    {
+        global.println("===== HashSetTest =====");
+        testBasicAdd();
+        testConstructors();
+        testContainsAndAddRange();
+        testRemoveAndClear();
+        testGrow();
+        testEnsureCapacity();
+        testModifyOps();
+        testQueryOps();
+        testPredicateOps();
+        testConvert();
+        testIterator();
+        testStringElements();
+        testEmptyEdge();
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

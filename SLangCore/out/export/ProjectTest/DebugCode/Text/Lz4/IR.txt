@@ -1,0 +1,155 @@
+-------------------IR 文件显示 开始 : Path: Text/Lz4.sl-----------------------
+Class: Core.Lz4
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Lz4.compressBound_1_Core.Int32
+    VirtualName: compressBound_Core.Int32_1_Core.Int32
+    Name: compressBound
+    InterfaceMethod: False
+    Return:
+      - #0 id=29887344 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=550643 idx=0 name=inputSize type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Lz4.compress_1_Core.ByteBuffer
+    VirtualName: compress_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: compress
+    InterfaceMethod: False
+    Return:
+      - #0 id=44602092 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=65874508 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=55999661 idx=0 name=id type=Core.Int64
+      - #1 id=34234904 idx=1 name=b type=Core.ByteBuffer
+      - #2 id=39678687 idx=2 name=autocreate_64515557 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Lz4.decompress_1_Core.ByteBuffer
+    VirtualName: decompress_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: decompress
+    InterfaceMethod: False
+    Return:
+      - #0 id=1842679 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=16584116 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=15039321 idx=0 name=id type=Core.Int64
+      - #1 id=1136168 idx=1 name=b type=Core.ByteBuffer
+      - #2 id=10225512 idx=2 name=autocreate_43769104 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Lz4Error
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-436701055 idx=0 name=Core.Lz4Error.CompressFailed type=Core.Member
+      - #1 id=-864840246 idx=1 name=Core.Lz4Error.DecompressFailed type=Core.Member
+      - #2 id=-1529839788 idx=2 name=Core.Lz4Error.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

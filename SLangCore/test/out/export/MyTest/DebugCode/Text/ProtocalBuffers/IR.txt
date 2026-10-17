@@ -1,0 +1,1117 @@
+-------------------IR 文件显示 开始 : Path: Text/ProtocalBuffers.sl-----------------------
+Class: Core.PbTag
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-324327141 idx=0 name=Core.PbTag.fieldNumber type=Core.Int32
+      - #1 id=1480893618 idx=1 name=Core.PbTag.wireType type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbTag.make_2_Core.Int32_Core.Int32
+    VirtualName: make_Core.PbTag_2_Core.Int32_Core.Int32
+    Name: make
+    InterfaceMethod: False
+    Return:
+      - #0 id=64181324 idx=0 name=return] type=Core.PbTag
+    Arguments:
+      - #0 id=40761008 idx=0 name=field type=Core.Int32
+      - #1 id=31304760 idx=1 name=wire type=Core.Int32
+    Locals:
+      - #0 id=13307388 idx=0 name=t type=Core.PbTag
+    Instructions:
+
+  Method: Core.PbTag.encode_2_Core.Int32_Core.Int32
+    VirtualName: encode_Core.Int32_2_Core.Int32_Core.Int32
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=4156611 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=37409505 idx=0 name=field type=Core.Int32
+      - #1 id=1141231 idx=1 name=wire type=Core.Int32
+    Locals:
+      - #0 id=10271087 idx=0 name=raw type=Core.Int64
+    Instructions:
+
+  Method: Core.PbTag.decode_1_Core.Int32
+    VirtualName: decode_Core.PbTag_1_Core.Int32
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=26651693 idx=0 name=return] type=Core.PbTag
+    Arguments:
+      - #0 id=38538645 idx=0 name=raw type=Core.Int32
+    Locals:
+      - #0 id=11303491 idx=0 name=t type=Core.PbTag
+    Instructions:
+
+  Method: Core.PbTag._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=52963885 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43167578 idx=0 name=this] type=Core.PbTag
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbTag.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=62216296 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=6912921 idx=0 name=this] type=Core.PbTag
+    Locals: []
+    Instructions:
+
+Class: Core.PbCoding
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding.mask32
+    VirtualName: mask32_Core.Int64_0
+    Name: mask32
+    InterfaceMethod: False
+    Return:
+      - #0 id=6355191 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding.zigzagEncode32_1_Core.Int32
+    VirtualName: zigzagEncode32_Core.Int64_1_Core.Int32
+    Name: zigzagEncode32
+    InterfaceMethod: False
+    Return:
+      - #0 id=45008451 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=2422875 idx=0 name=n type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding.zigzagDecode32_1_Core.Int64
+    VirtualName: zigzagDecode32_Core.Int32_1_Core.Int64
+    Name: zigzagDecode32
+    InterfaceMethod: False
+    Return:
+      - #0 id=62035148 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=21445423 idx=0 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding.zigzagEncode64_1_Core.Int64
+    VirtualName: zigzagEncode64_Core.Int64_1_Core.Int64
+    Name: zigzagEncode64
+    InterfaceMethod: False
+    Return:
+      - #0 id=59357728 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=64457512 idx=0 name=n type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding.zigzagDecode64_1_Core.Int64
+    VirtualName: zigzagDecode64_Core.Int64_1_Core.Int64
+    Name: zigzagDecode64
+    InterfaceMethod: False
+    Return:
+      - #0 id=53676003 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=13321984 idx=0 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbCoding._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=48050490 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5338943 idx=0 name=this] type=Core.PbCoding
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.PbWriter
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=60908325 idx=0 name=Core.PbWriter._buf type=Core.ByteBuffer
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=66884519 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29801234 idx=0 name=this] type=Core.PbWriter
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48936948 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65089762 idx=0 name=this] type=Core.PbWriter
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=40228503 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=4469833 idx=0 name=this] type=Core.PbWriter
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeRawByte_1_Core.Int32
+    VirtualName: writeRawByte_Core.Void_1_Core.Int32
+    Name: writeRawByte
+    InterfaceMethod: False
+    Return:
+      - #0 id=5165 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37283276 idx=0 name=this] type=Core.PbWriter
+      - #1 id=46493 idx=1 name=b type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeVarint_1_Core.Int64
+    VirtualName: writeVarint_Core.Void_1_Core.Int64
+    Name: writeVarint
+    InterfaceMethod: False
+    Return:
+      - #0 id=3766004 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=418444 idx=0 name=this] type=Core.PbWriter
+      - #1 id=33894036 idx=1 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeTag_2_Core.Int32_Core.Int32
+    VirtualName: writeTag_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeTag
+    InterfaceMethod: False
+    Return:
+      - #0 id=61062380 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36610870 idx=0 name=this] type=Core.PbWriter
+      - #1 id=12690509 idx=1 name=field type=Core.Int32
+      - #2 id=47105724 idx=2 name=wire type=Core.Int32
+    Locals:
+      - #0 id=21298337 idx=0 name=raw type=Core.Int64
+    Instructions:
+
+  Method: Core.PbWriter.writeInt32_2_Core.Int32_Core.Int32
+    VirtualName: writeInt32_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=47443737 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57467309 idx=0 name=this] type=Core.PbWriter
+      - #1 id=24340454 idx=1 name=field type=Core.Int32
+      - #2 id=17737502 idx=2 name=v type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeInt64_2_Core.Int32_Core.Int64
+    VirtualName: writeInt64_Core.Void_2_Core.Int32_Core.Int64
+    Name: writeInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=27451543 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25419792 idx=0 name=this] type=Core.PbWriter
+      - #1 id=45737299 idx=1 name=field type=Core.Int32
+      - #2 id=8982509 idx=2 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeUInt32_2_Core.Int32_Core.Int32
+    VirtualName: writeUInt32_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeUInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=56494599 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13733718 idx=0 name=this] type=Core.PbWriter
+      - #1 id=38689345 idx=1 name=field type=Core.Int32
+      - #2 id=12659789 idx=2 name=v type=Core.Int32
+    Locals:
+      - #0 id=46829245 idx=0 name=uv type=Core.Int64
+      - #1 id=18810025 idx=1 name=result] type=Core.Int64
+    Instructions:
+
+  Method: Core.PbWriter.writeUInt64_2_Core.Int32_Core.Int64
+    VirtualName: writeUInt64_Core.Void_2_Core.Int32_Core.Int64
+    Name: writeUInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=22300038 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47217024 idx=0 name=this] type=Core.PbWriter
+      - #1 id=66482620 idx=1 name=field type=Core.Int32
+      - #2 id=61472676 idx=2 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeSInt32_2_Core.Int32_Core.Int32
+    VirtualName: writeSInt32_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeSInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=13230834 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16383173 idx=0 name=this] type=Core.PbWriter
+      - #1 id=51968642 idx=1 name=field type=Core.Int32
+      - #2 id=65064600 idx=2 name=v type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeSInt64_2_Core.Int32_Core.Int64
+    VirtualName: writeSInt64_Core.Void_2_Core.Int32_Core.Int64
+    Name: writeSInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=35741247 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=48710492 idx=0 name=this] type=Core.PbWriter
+      - #1 id=53235770 idx=1 name=field type=Core.Int32
+      - #2 id=9359886 idx=2 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeBool_2_Core.Int32_Core.Boolean
+    VirtualName: writeBool_Core.Void_2_Core.Int32_Core.Boolean
+    Name: writeBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=19953326 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17130117 idx=0 name=this] type=Core.PbWriter
+      - #1 id=45362212 idx=1 name=field type=Core.Int32
+      - #2 id=5606727 idx=2 name=v type=Core.Boolean
+    Locals:
+      - #0 id=50460544 idx=0 name=autocreate_54402144 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbWriter.writeEnum_2_Core.Int32_Core.Int32
+    VirtualName: writeEnum_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeEnum
+    InterfaceMethod: False
+    Return:
+      - #0 id=23603084 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10079105 idx=0 name=this] type=Core.PbWriter
+      - #1 id=11101171 idx=1 name=field type=Core.Int32
+      - #2 id=32801677 idx=2 name=v type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeFixed32_2_Core.Int32_Core.Int32
+    VirtualName: writeFixed32_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeFixed32
+    InterfaceMethod: False
+    Return:
+      - #0 id=39690219 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26779645 idx=0 name=this] type=Core.PbWriter
+      - #1 id=21667656 idx=1 name=field type=Core.Int32
+      - #2 id=60791181 idx=2 name=v type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeSFixed32_2_Core.Int32_Core.Int32
+    VirtualName: writeSFixed32_Core.Void_2_Core.Int32_Core.Int32
+    Name: writeSFixed32
+    InterfaceMethod: False
+    Return:
+      - #0 id=25138652 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10249724 idx=0 name=this] type=Core.PbWriter
+      - #1 id=24921279 idx=1 name=field type=Core.Int32
+      - #2 id=22964927 idx=2 name=v type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeFixed64_2_Core.Int32_Core.Int64
+    VirtualName: writeFixed64_Core.Void_2_Core.Int32_Core.Int64
+    Name: writeFixed64
+    InterfaceMethod: False
+    Return:
+      - #0 id=48219807 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5357756 idx=0 name=this] type=Core.PbWriter
+      - #1 id=31325081 idx=1 name=field type=Core.Int32
+      - #2 id=13490275 idx=2 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeSFixed64_2_Core.Int32_Core.Int64
+    VirtualName: writeSFixed64_Core.Void_2_Core.Int32_Core.Int64
+    Name: writeSFixed64
+    InterfaceMethod: False
+    Return:
+      - #0 id=18970484 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54303614 idx=0 name=this] type=Core.PbWriter
+      - #1 id=36516628 idx=1 name=field type=Core.Int32
+      - #2 id=60214201 idx=2 name=v type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeFloat_2_Core.Int32_Core.Float32
+    VirtualName: writeFloat_Core.Void_2_Core.Int32_Core.Float32
+    Name: writeFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=45512090 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5056898 idx=0 name=this] type=Core.PbWriter
+      - #1 id=6955633 idx=1 name=field type=Core.Int32
+      - #2 id=62600705 idx=2 name=v type=Core.Float32
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeDouble_2_Core.Int32_Core.Float64
+    VirtualName: writeDouble_Core.Void_2_Core.Int32_Core.Float64
+    Name: writeDouble
+    InterfaceMethod: False
+    Return:
+      - #0 id=37492307 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26535433 idx=0 name=this] type=Core.PbWriter
+      - #1 id=1886449 idx=1 name=field type=Core.Int32
+      - #2 id=16978042 idx=2 name=v type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.PbWriter.writeString_2_Core.Int32_Core.String
+    VirtualName: writeString_Core.Void_2_Core.Int32_Core.String
+    Name: writeString
+    InterfaceMethod: False
+    Return:
+      - #0 id=33044190 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=18584657 idx=0 name=this] type=Core.PbWriter
+      - #1 id=28962258 idx=1 name=field type=Core.Int32
+      - #2 id=59333734 idx=2 name=s type=Core.String
+    Locals:
+      - #0 id=64241563 idx=0 name=tmp type=Core.ByteBuffer
+      - #1 id=41303163 idx=1 name=autocreate_19857248 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbWriter.writeBytes_2_Core.Int32_Core.Array<Core.UInt8>[-1]
+    VirtualName: writeBytes_Core.Void_2_Core.Int32_Core.Array<Core.UInt8>[-1]
+    Name: writeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=55104322 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13579242 idx=0 name=this] type=Core.PbWriter
+      - #1 id=26176854 idx=1 name=field type=Core.Int32
+      - #2 id=34265094 idx=2 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=39950397 idx=0 name=n type=Core.Int32
+      - #1 id=24009259 idx=1 name=autocreate_44497505 type=Core.Boolean
+      - #2 id=14756745 idx=2 name=autocreate_64933228 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbWriter.writeMessage_2_Core.Int32_Core.PbWriter
+    VirtualName: writeMessage_Core.Void_2_Core.Int32_Core.PbWriter
+    Name: writeMessage
+    InterfaceMethod: False
+    Return:
+      - #0 id=52816515 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35694663 idx=0 name=this] type=Core.PbWriter
+      - #1 id=5586594 idx=1 name=field type=Core.Int32
+      - #2 id=50279347 idx=2 name=sub type=Core.PbWriter
+    Locals:
+      - #0 id=49860945 idx=0 name=view type=Core.ByteBuffer
+      - #1 id=46095324 idx=1 name=autocreate_47528147 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbWriter.toBytes
+    VirtualName: toBytes_Core.Array<Core.UInt8>[-1]_0
+    Name: toBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=49212776 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=12924626 idx=0 name=this] type=Core.PbWriter
+    Locals: []
+    Instructions:
+
+Class: Core.PbReader
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1495767611 idx=0 name=Core.PbReader._buf type=Core.ByteBuffer
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=39980785 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26811930 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17218116 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=24282745 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader._init__1_Core.Array<Core.UInt8>[-1]
+    VirtualName: _init__Core.Void_1_Core.Array<Core.UInt8>[-1]
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=2649692 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52490193 idx=0 name=this] type=Core.PbReader
+      - #1 id=23847230 idx=1 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=13298480 idx=0 name=autocreate_25100141 type=Core.Boolean
+      - #1 id=30368798 idx=1 name=bytes type=Core.Array<T><Core.UInt8>
+      - #2 id=4883734 idx=2 name=b type=Core.ByteBuffer
+      - #3 id=52577459 idx=3 name=result] type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.PbReader.atEnd
+    VirtualName: atEnd_Core.Boolean_0
+    Name: atEnd
+    InterfaceMethod: False
+    Return:
+      - #0 id=15611638 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39017328 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.position
+    VirtualName: position_Core.Int32_0
+    Name: position
+    InterfaceMethod: False
+    Return:
+      - #0 id=39486235 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=56583142 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readVarintRaw
+    VirtualName: readVarintRaw_Core.Int64_0
+    Name: readVarintRaw
+    InterfaceMethod: False
+    Return:
+      - #0 id=62871888 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=44268467 idx=0 name=this] type=Core.PbReader
+    Locals:
+      - #0 id=28976088 idx=0 name=before type=Core.Int32
+      - #1 id=59458202 idx=1 name=u type=Core.UInt64
+      - #2 id=65361777 idx=2 name=autocreate_24574685 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbReader.readTag
+    VirtualName: readTag_Core.PbTag_0
+    Name: readTag
+    InterfaceMethod: False
+    Return:
+      - #0 id=12981025 idx=0 name=return] type=Core.PbTag
+    Arguments:
+      - #0 id=1442336 idx=0 name=this] type=Core.PbReader
+    Locals:
+      - #0 id=38538645 idx=0 name=raw type=Core.Int32
+      - #1 id=11303491 idx=1 name=t type=Core.PbTag
+      - #2 id=49720363 idx=2 name=result] type=Core.PbTag
+    Instructions:
+
+  Method: Core.PbReader.readInt32
+    VirtualName: readInt32_Core.Int32_0
+    Name: readInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=66226203 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=7358467 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readInt64
+    VirtualName: readInt64_Core.Int64_0
+    Name: readInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=27629398 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=62722256 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readUInt32
+    VirtualName: readUInt32_Core.Int32_0
+    Name: readUInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=9172604 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=23388799 idx=0 name=this] type=Core.PbReader
+    Locals:
+      - #0 id=15444572 idx=0 name=result] type=Core.Int64
+    Instructions:
+
+  Method: Core.PbReader.readUInt64
+    VirtualName: readUInt64_Core.Int64_0
+    Name: readUInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=64565844 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=51913225 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readSInt32
+    VirtualName: readSInt32_Core.Int32_0
+    Name: readSInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=25187000 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=62450879 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readSInt64
+    VirtualName: readSInt64_Core.Int64_0
+    Name: readSInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=40603642 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=26881137 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readBool
+    VirtualName: readBool_Core.Boolean_0
+    Name: readBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=5045995 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=560666 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readEnum
+    VirtualName: readEnum_Core.Int32_0
+    Name: readEnum
+    InterfaceMethod: False
+    Return:
+      - #0 id=54652007 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=6072445 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readFixed32
+    VirtualName: readFixed32_Core.Int32_0
+    Name: readFixed32
+    InterfaceMethod: False
+    Return:
+      - #0 id=45757458 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=64736485 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readFixed64
+    VirtualName: readFixed64_Core.Int64_0
+    Name: readFixed64
+    InterfaceMethod: False
+    Return:
+      - #0 id=4081942 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=15366630 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readSFixed32
+    VirtualName: readSFixed32_Core.Int32_0
+    Name: readSFixed32
+    InterfaceMethod: False
+    Return:
+      - #0 id=22946022 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=62201881 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readSFixed64
+    VirtualName: readSFixed64_Core.Int64_0
+    Name: readSFixed64
+    InterfaceMethod: False
+    Return:
+      - #0 id=17543165 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=46688483 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readFloat
+    VirtualName: readFloat_Core.Float32_0
+    Name: readFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=38283422 idx=0 name=return] type=Core.Float32
+    Arguments:
+      - #0 id=11710254 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readDouble
+    VirtualName: readDouble_Core.Float64_0
+    Name: readDouble
+    InterfaceMethod: False
+    Return:
+      - #0 id=58436500 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=13949484 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader._readLength
+    VirtualName: _readLength_Core.Int32_0
+    Name: _readLength
+    InterfaceMethod: False
+    Return:
+      - #0 id=53189363 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35736091 idx=0 name=this] type=Core.PbReader
+    Locals:
+      - #0 id=8942221 idx=0 name=n type=Core.Int32
+      - #1 id=13371131 idx=1 name=autocreate_19845579 type=Core.Boolean
+    Instructions:
+
+  Method: Core.PbReader.readBytes
+    VirtualName: readBytes_Core.Array<Core.UInt8>[-1]_0
+    Name: readBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=16706588 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=16769368 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readString
+    VirtualName: readString_Core.String_0
+    Name: readString
+    InterfaceMethod: False
+    Return:
+      - #0 id=32398645 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11056389 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.readMessage
+    VirtualName: readMessage_Core.PbReader_0
+    Name: readMessage
+    InterfaceMethod: False
+    Return:
+      - #0 id=63401170 idx=0 name=return] type=Core.PbReader
+    Arguments:
+      - #0 id=7044574 idx=0 name=this] type=Core.PbReader
+    Locals:
+      - #0 id=33739620 idx=0 name=bytes type=Core.Array<T><Core.UInt8>
+      - #1 id=35221125 idx=1 name=result] type=Core.PbReader
+    Instructions:
+
+  Method: Core.PbReader.readMessageBytes
+    VirtualName: readMessageBytes_Core.Array<Core.UInt8>[-1]_0
+    Name: readMessageBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=29983308 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=40614180 idx=0 name=this] type=Core.PbReader
+    Locals: []
+    Instructions:
+
+  Method: Core.PbReader.skipField_1_Core.Int32
+    VirtualName: skipField_Core.Void_1_Core.Int32
+    Name: skipField
+    InterfaceMethod: False
+    Return:
+      - #0 id=47451063 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12728880 idx=0 name=this] type=Core.PbReader
+      - #1 id=24406389 idx=1 name=wireType type=Core.Int32
+    Locals:
+      - #0 id=18330915 idx=0 name=autocreate_44392488 type=Core.Boolean
+      - #1 id=30760515 idx=1 name=autocreate_63988077 type=Core.Boolean
+      - #2 id=8409180 idx=2 name=autocreate_39021788 type=Core.Boolean
+      - #3 id=8573761 idx=3 name=autocreate_15651772 type=Core.Boolean
+      - #4 id=10054985 idx=4 name=autocreate_6648223 type=Core.Boolean
+      - #5 id=23386007 idx=5 name=t type=Core.PbTag
+      - #6 id=9147475 idx=6 name=autocreate_59834015 type=Core.Boolean
+    Instructions:
+
+Class: Core.ProtocalBuffers
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.ProtocalBuffers.newWriter
+    VirtualName: newWriter_Core.PbWriter_0
+    Name: newWriter
+    InterfaceMethod: False
+    Return:
+      - #0 id=66695407 idx=0 name=return] type=Core.PbWriter
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.ProtocalBuffers.newReader_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: newReader_Core.PbReader_1_Core.Array<Core.UInt8>[-1]
+    Name: newReader
+    InterfaceMethod: False
+    Return:
+      - #0 id=33618848 idx=0 name=return] type=Core.PbReader
+    Arguments:
+      - #0 id=33739620 idx=0 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals: []
+    Instructions:
+
+  Method: Core.ProtocalBuffers._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=13405140 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38772162 idx=0 name=this] type=Core.ProtocalBuffers
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.ProtocalBuffers.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=12074594 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53537404 idx=0 name=this] type=Core.ProtocalBuffers
+    Locals: []
+    Instructions:
+
+Class: Core.EPbWireType
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1227488941 idx=0 name=Core.EPbWireType.Varint type=Core.Member
+      - #1 id=346099743 idx=1 name=Core.EPbWireType.Fixed64 type=Core.Member
+      - #2 id=-1786688850 idx=2 name=Core.EPbWireType.LengthDelimited type=Core.Member
+      - #3 id=-1068257102 idx=3 name=Core.EPbWireType.StartGroup type=Core.Member
+      - #4 id=1990003925 idx=4 name=Core.EPbWireType.EndGroup type=Core.Member
+      - #5 id=944999670 idx=5 name=Core.EPbWireType.Fixed32 type=Core.Member
+      - #6 id=1403145235 idx=6 name=Core.EPbWireType.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

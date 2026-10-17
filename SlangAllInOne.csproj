@@ -27,9 +27,32 @@
     <Content Include="resources\S语言图标-方案B-极简线性.ico" />
   </ItemGroup>
 
+  <!-- 2026-10-17 仓库重组：编译/测试工程、库源树、工具随迁入本目录后，SDK 的
+       默认 **/*.cs glob 会把它们全部吞进宿主工程（多份 Program.cs 类型冲突，
+       CS0111）。这里是宿主（Backend/FrontEnd/Pack/Program.cs），其余子树各有
+       自己的工程文件，全部排除（对照 SimpleLanguageFront.csproj 对 source\ 的
+       排除模式）。 -->
+  <ItemGroup>
+    <Compile Remove="Project\**" />
+    <Compile Remove="tools\**" />
+    <Compile Remove="SLangCore\**" />
+    <Compile Remove="examples\**" />
+    <Compile Remove="md\**" />
+    <EmbeddedResource Remove="Project\**" />
+    <EmbeddedResource Remove="tools\**" />
+    <EmbeddedResource Remove="SLangCore\**" />
+    <EmbeddedResource Remove="examples\**" />
+    <EmbeddedResource Remove="md\**" />
+    <None Remove="Project\**" />
+    <None Remove="tools\**" />
+    <None Remove="SLangCore\**" />
+    <None Remove="examples\**" />
+    <None Remove="md\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <!-- FrontEnd: SimpleLanguage compiler (in-process compile) -->
-    <ProjectReference Include="..\simple_language\source\Front\SimpleLanguageFront.csproj" />
+    <ProjectReference Include="..\simple_language\source\SimpleLanguageFront.csproj" />
   </ItemGroup>
 
   <!-- Native AOT 发布支持（2026-10-17，-p:PublishAot=true 时生效）：

@@ -1,0 +1,37 @@
+-------------------FileMeta 文件显示 开始 : Path: PlatformOverrideTest.sl-----------------------
+PlatformOverrideTest
+{
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            SystemPrintln("[PlatformOverrideTest] " + name + " : OK");
+        }
+        else
+        {
+            SystemPrintln("[PlatformOverrideTest] " + name + " : FAIL");
+        }
+    }
+    _public static fun( )
+    {
+        SystemPrintln("========== PlatformOverrideTest (start) ==========");
+        Int64 rawMem = Environment.probe.totalMemMB;
+        bool rawAvx2 = Environment.probe.isaHas(Environment.Platform.isa.avx2);
+        check("SET source(memory) == jsonc",Environment.Override.source("memory") == "jsonc");
+        check("SET getValue(memory) == 256",Environment.Override.getValue("memory") == "256");
+        check("SET current.totalMemMB == 256",Environment.current.totalMemMB == 256i);
+        check("SET probe.totalMemMB unchanged",Environment.probe.totalMemMB == rawMem);
+        check("SET probe not masked (raw != 256)",Environment.probe.totalMemMB != 256i);
+        check("ENABLE source(cpu.avx2) == jsonc",Environment.Override.source("cpu.avx2") == "jsonc");
+        check("ENABLE isDisabled(cpu.avx2) == false",Environment.Override.isDisabled("cpu.avx2") == false);
+        check("ENABLE current.isaHas(avx2) forced true",Environment.current.isaHas(Environment.Platform.isa.avx2) == true);
+        check("ENABLE probe.isaHas(avx2) stays raw",Environment.probe.isaHas(Environment.Platform.isa.avx2) == rawAvx2);
+        check("DISABLE isDisabled(device.gpu) == true",Environment.Override.isDisabled("device.gpu") == true);
+        check("DISABLE source(device.gpu) == jsonc",Environment.Override.source("device.gpu") == "jsonc");
+        check("no-override source(os) is empty",Environment.Override.source("os") == "");
+        check("no-override isDisabled(os) == false",Environment.Override.isDisabled("os") == false);
+        check("no-override getValue(os) is empty",Environment.Override.getValue("os") == "");
+        SystemPrintln("========== PlatformOverrideTest (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

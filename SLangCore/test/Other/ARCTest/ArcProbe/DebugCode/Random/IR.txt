@@ -1,0 +1,205 @@
+-------------------IR 文件显示 开始 : Path: Random.sl-----------------------
+Class: Core.Random
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1200483611 idx=0 name=Core.Random._seed type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Random.randomInt_1_Core.Int32
+    VirtualName: randomInt_Core.Int32_1_Core.Int32
+    Name: randomInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=25741004 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=30342446 idx=0 name=max type=Core.Int32
+    Locals:
+      - #0 id=4646565 idx=0 name=r type=Core.Random
+    Instructions:
+
+  Method: Core.Random.randomFloat
+    VirtualName: randomFloat_Core.Num_0
+    Name: randomFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=40827483 idx=0 name=return] type=Core.Num
+    Arguments: []
+    Locals:
+      - #0 id=31903028 idx=0 name=r type=Core.Random
+    Instructions:
+
+  Method: Core.Random.randomFloat_2_Core.Num_Core.Num
+    VirtualName: randomFloat_Core.Num_2_Core.Num_Core.Num
+    Name: randomFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=34008447 idx=0 name=return] type=Core.Num
+    Arguments:
+      - #0 id=37640571 idx=0 name=min type=Core.Num
+      - #1 id=3220827 idx=1 name=max type=Core.Num
+    Locals:
+      - #0 id=28987447 idx=0 name=r type=Core.Random
+    Instructions:
+
+  Method: Core.Random._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=59665636 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66281838 idx=0 name=this] type=Core.Random
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Random._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=1078370 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=119818 idx=0 name=this] type=Core.Random
+      - #1 id=9705331 idx=1 name=initialSeed type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Random.advance
+    VirtualName: advance_Core.Int32_0
+    Name: advance
+    InterfaceMethod: False
+    Return:
+      - #0 id=47934352 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=20239120 idx=0 name=this] type=Core.Random
+    Locals: []
+    Instructions:
+
+  Method: Core.Random.nextInt_1_Core.Int32
+    VirtualName: nextInt_Core.Int32_1_Core.Int32
+    Name: nextInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=47533853 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=57477322 idx=0 name=this] type=Core.Random
+      - #1 id=25151496 idx=1 name=max type=Core.Int32
+    Locals:
+      - #0 id=25036876 idx=0 name=autocreate_15035499 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Random.nextInt_2_Core.Int32_Core.Int32
+    VirtualName: nextInt_Core.Int32_2_Core.Int32_Core.Int32
+    Name: nextInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=51558469 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=65381042 idx=0 name=this] type=Core.Random
+      - #1 id=61373038 idx=1 name=min type=Core.Int32
+      - #2 id=15486430 idx=2 name=max type=Core.Int32
+    Locals:
+      - #0 id=5160142 idx=0 name=autocreate_1101770 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Random.nextFloat
+    VirtualName: nextFloat_Core.Num_0
+    Name: nextFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=32825243 idx=0 name=return] type=Core.Num
+    Arguments:
+      - #0 id=3647249 idx=0 name=this] type=Core.Random
+    Locals:
+      - #0 id=26991739 idx=0 name=s type=Core.Int32
+      - #1 id=41599065 idx=1 name=v type=Core.Num
+    Instructions:
+
+  Method: Core.Random.nextFloat_2_Core.Num_Core.Num
+    VirtualName: nextFloat_Core.Num_2_Core.Num_Core.Num
+    Name: nextFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=59621178 idx=0 name=return] type=Core.Num
+    Arguments:
+      - #0 id=14081115 idx=0 name=this] type=Core.Random
+      - #1 id=66828554 idx=1 name=min type=Core.Num
+      - #2 id=64586077 idx=2 name=max type=Core.Num
+    Locals: []
+    Instructions:
+
+  Method: Core.Random.nextBool
+    VirtualName: nextBool_Core.Boolean_0
+    Name: nextBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=39937165 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=64089786 idx=0 name=this] type=Core.Random
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

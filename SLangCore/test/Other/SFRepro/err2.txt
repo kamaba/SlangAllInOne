@@ -1,0 +1,193 @@
+﻿..\csimple_lang\build\Debug\bin\csimple_lang.exe : [VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:0000029839FF226
+0 (executing class=Std.FileMode)
+At line:15 char:5823
++ ... pgrep\bin'; ..\csimple_lang\build\Debug\bin\csimple_lang.exe run --de ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([VM-DBG] LoadSt...s=Std.FileMode):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:0000029839FF2440 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:0000029839FF23E0 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:0000029839FF22C0 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:0000029839FF28C0 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:0000029839FF30A0 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:0000029839FF3C40 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:0000029839FF44E0 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:0000029839FF28C0 (executing class=SFRepro.SFReproTest)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:0000029839FF2260 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF2260
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF2260
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:0000029839FF2440 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF2440
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF2440
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:0000029839FF23E0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF23E0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF23E0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:0000029839FF22C0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF22C0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF22C0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:0000029839FF28C0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF28C0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF28C0
+[CEQ-DBG] result want=1 cmp=1
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:0000029839FF30A0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF30A0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF28C0 | b etype=19 obj=0000029839FF30A0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:0000029839FF3C40 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] result want=1 cmp=1
+[FS-DBG] open path=sf_repro_a.txt mode=9 fmode=w+b
+[FS-DBG] open ok slot=0 handle=1
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:0000029839FF3C40 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] result want=1 cmp=1
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:0000029839FF44E0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF44E0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF44E0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] result want=1 cmp=1
+[CEQ-DBG] slow-path kinds=17,17
+[CEQ-DBG] popped a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] normed a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] file_write handle=1 buf_id=2
+[FS-DBG] write handle=1 len=17 f=00000298334D6190
+[FS-DBG] write ret=17
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=17,17
+[CEQ-DBG] popped a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] normed a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[FS-DBG] flush handle=1 f=00000298334D6190
+[CEQ-DBG] slow-path kinds=17,17
+[CEQ-DBG] popped a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] normed a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=17,17
+[CEQ-DBG] popped a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] normed a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=0 cmp=1
+[FS-DBG] close handle=1 f=00000298334D6190
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:0000029839FF2260 (executing class=SFRepro.SFReproTest)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:0000029839FF2260 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF2260
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF2260
+[CEQ-DBG] result want=1 cmp=1
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:0000029839FF2440 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF2440
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF2440
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:0000029839FF23E0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF23E0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF23E0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:0000029839FF22C0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF22C0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF22C0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:0000029839FF28C0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF28C0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF28C0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:0000029839FF30A0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF30A0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF2260 | b etype=19 obj=0000029839FF30A0
+[CEQ-DBG] result want=1 cmp=0
+[FS-DBG] open path=sf_repro_a.txt mode=2 fmode=wb
+[FS-DBG] open ok slot=0 handle=1
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:0000029839FF3C40 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3C40
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] result want=1 cmp=1
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:0000029839FF44E0 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF44E0
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF44E0
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:0000029839FF3D60 (executing class=Std.FileStream)
+[CEQ-DBG] slow-path kinds=15,15
+[CEQ-DBG] popped a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] normed a etype=19 obj=0000029839FF3D60 | b etype=19 obj=0000029839FF3D60
+[CEQ-DBG] result want=1 cmp=1
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=17,17
+[CEQ-DBG] popped a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] normed a etype=2 obj=0000000000000001 | b etype=2 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[CEQ-DBG] slow-path kinds=1,3
+[CEQ-DBG] popped a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] normed a etype=9 obj=0000000000000001 | b etype=7 obj=0000000000000000
+[CEQ-DBG] result want=1 cmp=0
+[VM-DBG] file_read handle=1 buf_id=3 count=32
+[FS-DBG] read handle=1 len=32 f=00000298334D6190

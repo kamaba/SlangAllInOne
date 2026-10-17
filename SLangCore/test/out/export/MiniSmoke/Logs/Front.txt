@@ -1,0 +1,46 @@
+﻿[07:24:59 755] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[07:24:59 755] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sp]
+[07:24:59 756] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sl]
+[07:24:59 756] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sp]编译File层完成]
+[07:24:59 756] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sl]编译File层完成]
+[07:24:59 756] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[07:24:59 757] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[07:24:59 757] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[07:24:59 769] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[07:24:59 769] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[07:24:59 770] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[07:24:59 770] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[07:24:59 770] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[07:24:59 771] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[07:24:59 771] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[07:24:59 771] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[07:24:59 772] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[07:24:59 805] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (in-memory): D:\project\lang\simple_language\test\out\export\MiniSmoke\MiniSmoke.module.json]
+[07:24:59 805] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]

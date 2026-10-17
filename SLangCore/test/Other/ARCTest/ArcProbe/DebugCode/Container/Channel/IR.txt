@@ -1,0 +1,173 @@
+-------------------IR 文件显示 开始 : Path: Container/Channel.sl-----------------------
+Class: Core.Channel<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1722189538 idx=0 name=Core.Channel<T>._chid type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.create
+    VirtualName: create_Core.Channel<T>_0
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=4883734 idx=0 name=return] type=Core.Channel<T><T[0]>
+    Arguments: []
+    Locals:
+      - #0 id=43953607 idx=0 name=ch type=Core.Channel<T><T[0]>
+    Instructions:
+
+  Method: Core.Channel<T>.create_1_Core.Int32
+    VirtualName: create_Core.Channel<T>_1_Core.Int32
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=3472420 idx=0 name=return] type=Core.Channel<T><T[0]>
+    Arguments:
+      - #0 id=31251786 idx=0 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=12830622 idx=0 name=ch type=Core.Channel<T><T[0]>
+    Instructions:
+
+  Method: Core.Channel<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=25391616 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32647452 idx=0 name=this] type=Core.Channel<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Channel<T>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43455040 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=27197959 idx=0 name=this] type=Core.Channel<T><T[0]>
+      - #1 id=55551046 idx=1 name=capacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.send_1_T
+    VirtualName: send_Core.Void_1_T
+    Name: send
+    InterfaceMethod: False
+    Return:
+      - #0 id=3340866 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=30197369 idx=0 name=this] type=Core.Channel<T><T[0]>
+      - #1 id=30067794 idx=1 name=value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.recv
+    VirtualName: recv_T_0
+    Name: recv
+    InterfaceMethod: False
+    Return:
+      - #0 id=19572211 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=2174690 idx=0 name=this] type=Core.Channel<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.close
+    VirtualName: close_Core.Void_0
+    Name: close
+    InterfaceMethod: False
+    Return:
+      - #0 id=41062959 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41845253 idx=0 name=this] type=Core.Channel<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.count
+    VirtualName: count_Core.Int32_0
+    Name: count
+    InterfaceMethod: False
+    Return:
+      - #0 id=37765421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34022319 idx=0 name=this] type=Core.Channel<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Channel<T>.isClosed
+    VirtualName: isClosed_Core.Boolean_0
+    Name: isClosed
+    InterfaceMethod: False
+    Return:
+      - #0 id=16358126 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39100271 idx=0 name=this] type=Core.Channel<T><T[0]>
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

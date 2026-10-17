@@ -1,0 +1,946 @@
+-------------------Meta 文件显示 开始 : Path: MonitorTest.sl-----------------------
+enum MonitorTestError
+{
+    ScopeBoom = {code = 90i,message = "scope-boom"}
+
+}
+data MonitorScoreData
+{
+    math = 0i
+    english = 0i
+}
+MonitorTest
+{
+    _public static fun( )
+    {
+        SystemPrintln("========== MonitorTest (start) ==========");
+        SystemPrintln("--- T1 scalar watch ---");
+        Int32 before = Monitor.frameCount();
+        Int32 answer = 42i;
+        Monitor.watch(answer,"answer");
+        Int32 after = Monitor.frameCount();
+        SystemPrintln("frameCount before=" + before.toString() + " after=" + after.toString());
+        if after == before + 1i
+        {
+            SystemPrintln("T1 frameCount increments: OK");
+        }
+        else
+        {
+            SystemPrintln("T1 frameCount increments: FAIL");
+        }
+        string f0 = Monitor.lastFrame();
+        SystemPrintln("lastFrame = [" + f0 + "]");
+        if f0 == "[watch] answer = 42"
+        {
+            SystemPrintln("T1 lastFrame text: OK");
+        }
+        else
+        {
+            SystemPrintln("T1 lastFrame text: FAIL");
+        }
+        SystemPrintln("--- T2 string watch ---");
+        string name = "hello";
+        Monitor.watch(name,"name");
+        string f1 = Monitor.lastFrame();
+        SystemPrintln("lastFrame = [" + f1 + "]");
+        if f1 == "[watch] name = hello"
+        {
+            SystemPrintln("T2 string frame text: OK");
+        }
+        else
+        {
+            SystemPrintln("T2 string frame text: FAIL");
+        }
+        SystemPrintln("--- getFrame by index ---");
+        string g0 = Monitor.getFrame(after - 1i);
+        SystemPrintln("getFrame(" + ((after - 1i).toString() + ") = [" + g0 + "]");
+        if g0 == "[watch] answer = 42"
+        {
+            SystemPrintln("getFrame history: OK");
+        }
+        else
+        {
+            SystemPrintln("getFrame history: FAIL");
+        }
+        string outOfRange = Monitor.getFrame(99999i);
+        if outOfRange == ""
+        {
+            SystemPrintln("getFrame out-of-range returns empty: OK");
+        }
+        else
+        {
+            SystemPrintln("getFrame out-of-range returns empty: FAIL");
+        }
+        SystemPrintln("--- T3 data member watch ---");
+        MonitorScoreData sd = MonitorScoreData();
+        sd.math = 95i;
+        sd.english = 88i;
+        Monitor.watch(sd,"math","sd.math");
+        string fm = Monitor.lastFrame();
+        SystemPrintln("lastFrame = [" + fm + "]");
+        if fm == "[watch] sd.math = 95"
+        {
+            SystemPrintln("T3 member frame text: OK");
+        }
+        else
+        {
+            SystemPrintln("T3 member frame text: FAIL");
+        }
+        Monitor.watch(sd,"sd");
+        string fd = Monitor.lastFrame();
+        SystemPrintln("sd whole frame len = " + fd.length.toString());
+        if fd.length > 0i
+        {
+            SystemPrintln("T2 data whole frame non-empty: OK");
+        }
+        else
+        {
+            SystemPrintln("T2 data whole frame non-empty: FAIL");
+        }
+        SystemPrintln("--- truncation ---");
+        Monitor.setMaxTextLength(16i);
+        string longText = "0123456789ABCDEFGHIJ";
+        Monitor.watch(longText,"long");
+        string ft = Monitor.lastFrame();
+        SystemPrintln("lastFrame = [" + ft + "]");
+        if ft == "[watch] long = 0123456789ABCDEF...(len=20)"
+        {
+            SystemPrintln("truncation marks ...(len=N): OK");
+        }
+        else
+        {
+            SystemPrintln("truncation marks ...(len=N): FAIL");
+        }
+        Monitor.setMaxTextLength(0i);
+        SystemPrintln("--- edge cases ---");
+        MonitorScoreData nd = null;
+        Monitor.watch(nd,"nd");
+        string fn = Monitor.lastFrame();
+        if fn == "[watch] nd = null"
+        {
+            SystemPrintln("null watch text: OK");
+        }
+        else
+        {
+            SystemPrintln("null watch text: FAIL");
+        }
+        bool flag = true;
+        Monitor.watch(flag,"flag");
+        if Monitor.lastFrame() == "[watch] flag = true"
+        {
+            SystemPrintln("bool watch text: OK");
+        }
+        else
+        {
+            SystemPrintln("bool watch text: FAIL");
+        }
+        Float64 pi = 3.5f;
+        Monitor.watch(pi,"pi");
+        if Monitor.lastFrame() == "[watch] pi = 3.5"
+        {
+            SystemPrintln("float watch text: OK");
+        }
+        else
+        {
+            SystemPrintln("float watch text: FAIL");
+        }
+        Monitor.watch("literal","lit");
+        if Monitor.lastFrame() == "[watch] lit = literal"
+        {
+            SystemPrintln("literal watch text: OK");
+        }
+        else
+        {
+            SystemPrintln("literal watch text: FAIL");
+        }
+        Int32 snap = 2i;
+        Monitor.watch(snap,"snap");
+        snap = 99i;
+        if Monitor.getFrame(Monitor.frameCount() - 1i) == "[watch] snap = 2"
+        {
+            SystemPrintln("snapshot semantics: OK");
+        }
+        else
+        {
+            SystemPrintln("snapshot semantics: FAIL");
+        }
+        SystemPrintln("--- ring buffer overflow ---");
+        Int32 capBefore = Monitor.frameCount();
+        int i = 0i;
+        while i < 1100i
+        {
+            Monitor.watch(i,"ring");
+            i = i + 1i;
+        }
+        Int32 capAfter = Monitor.frameCount();
+        SystemPrintln("frameCount before=" + capBefore.toString() + " after=" + capAfter.toString());
+        if capAfter == 1024i
+        {
+            SystemPrintln("ring caps at 1024: OK");
+        }
+        else
+        {
+            SystemPrintln("ring caps at 1024: FAIL");
+        }
+        string newest = Monitor.lastFrame();
+        SystemPrintln("newest = [" + newest + "]");
+        if newest == "[watch] ring = 1099"
+        {
+            SystemPrintln("ring newest frame survives: OK");
+        }
+        else
+        {
+            SystemPrintln("ring newest frame survives: FAIL");
+        }
+        string oldest = Monitor.getFrame(0i);
+        SystemPrintln("oldest = [" + oldest + "]");
+        if oldest != "[watch] ring = 0"
+        {
+            SystemPrintln("ring oldest overwritten: OK");
+        }
+        else
+        {
+            SystemPrintln("ring oldest overwritten: FAIL");
+        }
+        SystemPrintln("--- P2 scope chain nesting ---");
+        Monitor.begin("p2main");
+        if Monitor.scopeChain() == "p2main"
+        {
+            SystemPrintln("begin enters chain: OK");
+        }
+        else
+        {
+            SystemPrintln("begin enters chain: FAIL [" + Monitor.scopeChain() + "]");
+        }
+        Monitor.begin("p2loop");
+        if Monitor.scopeChain() == "p2main > p2loop"
+        {
+            SystemPrintln("nested chain joins with ' > ': OK");
+        }
+        else
+        {
+            SystemPrintln("nested chain joins with ' > ': FAIL [" + Monitor.scopeChain() + "]");
+        }
+        Monitor.end("p2loop");
+        if Monitor.scopeChain() == "p2main"
+        {
+            SystemPrintln("end pops inner scope: OK");
+        }
+        else
+        {
+            SystemPrintln("end pops inner scope: FAIL [" + Monitor.scopeChain() + "]");
+        }
+        Monitor.end("p2main");
+        if Monitor.scopeChain() == ""
+        {
+            SystemPrintln("end pops to empty: OK");
+        }
+        else
+        {
+            SystemPrintln("end pops to empty: FAIL [" + Monitor.scopeChain() + "]");
+        }
+        SystemPrintln("--- P2 exception unwind ---");
+        Monitor.begin("safeOuter");
+        try
+        {
+            ;
+        }
+        catch
+        {
+            SystemPrintln("exception caught");
+        }
+        if Monitor.scopeChain() == "safeOuter"
+        {
+            SystemPrintln("unwind pops callee scopes: OK");
+        }
+        else
+        {
+            SystemPrintln("unwind pops callee scopes: FAIL [" + Monitor.scopeChain() + "]");
+        }
+        Monitor.end("safeOuter");
+        if Monitor.scopeChain() == ""
+        {
+            SystemPrintln("outer scope still closable: OK");
+        }
+        else
+        {
+            SystemPrintln("outer scope still closable: FAIL [" + Monitor.scopeChain() + "]");
+        }
+        SystemPrintln("--- P2 sampling controls ---");
+        Int32 skipVal = 7i;
+        Monitor.setSkip(2i);
+        Monitor.watch(skipVal,"skipfx");
+        Monitor.watch(skipVal,"skipfx");
+        Monitor.watch(skipVal,"skipfx");
+        Array<Int32> skipHits = Monitor.find("skipfx");
+        if skipHits.length == 1i
+        {
+            SystemPrintln("setSkip skips first 2 hits: OK");
+        }
+        else
+        {
+            SystemPrintln("setSkip skips first 2 hits: FAIL");
+        }
+        Monitor.setSkip(0i);
+        Monitor.pause();
+        Monitor.watch(skipVal,"pfx");
+        Monitor.resume();
+        Monitor.watch(skipVal,"pfx");
+        Array<Int32> pauseHits = Monitor.find("pfx");
+        if pauseHits.length == 1i
+        {
+            SystemPrintln("pause blocks then resume restores: OK");
+        }
+        else
+        {
+            SystemPrintln("pause blocks then resume restores: FAIL");
+        }
+        Monitor.disable("dfx");
+        Monitor.watch(skipVal,"dfx");
+        Monitor.enable("dfx");
+        Monitor.watch(skipVal,"dfx");
+        Array<Int32> disableHits = Monitor.find("dfx");
+        if disableHits.length == 1i
+        {
+            SystemPrintln("disable blocks single label only: OK");
+        }
+        else
+        {
+            SystemPrintln("disable blocks single label only: FAIL");
+        }
+        SystemPrintln("--- P2 find by label + scope prefix ---");
+        Monitor.watch(skipVal,"ofx");
+        Monitor.begin("o1");
+        Monitor.watch(1i,"fx2");
+        Monitor.begin("o2");
+        Monitor.watch(2i,"fx2");
+        Monitor.end("o2");
+        Monitor.end("o1");
+        Array<Int32> allFx2 = Monitor.find("fx2");
+        Array<Int32> inO1 = Monitor.find("fx2","o1");
+        Array<Int32> inO2 = Monitor.find("fx2","o2");
+        Array<Int32> inNoSuch = Monitor.find("fx2","nosuch");
+        SystemPrintln("find all=" + allFx2.length.toString() + " o1=" + inO1.length.toString() + " o2=" + inO2.length.toString() + " nosuch=" + inNoSuch.length.toString());
+        if allFx2.length == 2i && inO1.length == 2i && inO2.length == 0i && inNoSuch.length == 0i
+        {
+            SystemPrintln("find label + scope-segment prefix: OK");
+        }
+        else
+        {
+            SystemPrintln("find label + scope-segment prefix: FAIL");
+        }
+        SystemPrintln("--- P2 series ---");
+        Array<string> fx2Values = Monitor.series("fx2");
+        if fx2Values.length == 2i && fx2Values[0i].length > 0i && fx2Values[1i].length > 0i
+        {
+            SystemPrintln("series returns per-label value list: OK");
+        }
+        else
+        {
+            SystemPrintln("series returns per-label value list: FAIL");
+        }
+        SystemPrintln("--- P2 mark ---");
+        Monitor.mark("m1");
+        Array<Int32> marks = Monitor.find("m1");
+        if marks.length == 1i
+        {
+            SystemPrintln("mark lands findable frame: OK");
+        }
+        else
+        {
+            SystemPrintln("mark lands findable frame: FAIL");
+        }
+        SystemPrintln("--- P2 interval stats ---");
+        Monitor.begin("loopStats");
+        int spin = 0i;
+        while spin < 1000i
+        {
+            spin = spin + 1i;
+        }
+        Monitor.end("loopStats");
+        string statJson = Monitor.stats("loopStats");
+        SystemPrintln("stats = [" + statJson + "]");
+        if statJson.length > 19i && statJson.slice(10i,19i) == "loopStats"
+        {
+            SystemPrintln("stats JSON contains label: OK");
+        }
+        else
+        {
+            SystemPrintln("stats JSON contains label: FAIL");
+        }
+        SystemPrintln("--- P2 diff ---");
+        MonitorScoreData dd = MonitorScoreData();
+        dd.math = 95i;
+        Monitor.watch(dd,"dd");
+        dd.math = 100i;
+        Monitor.watch(dd,"dd");
+        string df = Monitor.diff(Monitor.frameCount() - 1i);
+        SystemPrintln("diff = [" + df + "]");
+        if df.front(1i) == "-"
+        {
+            SystemPrintln("diff shows +new/-old lines: OK");
+        }
+        else
+        {
+            SystemPrintln("diff shows +new/-old lines: FAIL");
+        }
+        SystemPrintln("--- P3 watchAssert ---");
+        Int32 viol0 = Monitor.assertViolations();
+        Monitor.watchAssert(100i,"ax",100i >= 50i);
+        if Monitor.lastFrame() == "[watch] ax = 100"
+        {
+            SystemPrintln("watchAssert pass lands watch frame: OK");
+        }
+        else
+        {
+            SystemPrintln("watchAssert pass lands watch frame: FAIL");
+        }
+        Monitor.watchAssert(- - 1i,"axbad",2i > 3i);
+        if Monitor.lastFrame() == "[assert] axbad = -1"
+        {
+            SystemPrintln("watchAssert violation lands assert frame: OK");
+        }
+        else
+        {
+            SystemPrintln("watchAssert violation lands assert frame: FAIL");
+        }
+        Monitor.watchAssert(2i,"axbad2",false);
+        Int32 viol1 = Monitor.assertViolations();
+        SystemPrintln("assertViolations before=" + viol0.toString() + " after=" + viol1.toString());
+        if viol0 == 0i && viol1 == 2i
+        {
+            SystemPrintln("assertViolations counts only false conds: OK");
+        }
+        else
+        {
+            SystemPrintln("assertViolations counts only false conds: FAIL");
+        }
+        Array<Int32> axHits = Monitor.find("ax");
+        Array<Int32> axbadHits = Monitor.find("axbad");
+        if axHits.length == 1i && axbadHits.length == 1i
+        {
+            SystemPrintln("assert frames findable by label: OK");
+        }
+        else
+        {
+            SystemPrintln("assert frames findable by label: FAIL");
+        }
+        SystemPrintln("--- P3 watchIn ---");
+        MonitorTest dt = MonitorTest();
+        dt.inTarget();
+        dt.outOther();
+        Array<Int32> wixHits = Monitor.find("wix");
+        SystemPrintln("wix hits=" + wixHits.length.toString());
+        if wixHits.length == 1i
+        {
+            SystemPrintln("watchIn samples only on target chain: OK");
+        }
+        else
+        {
+            SystemPrintln("watchIn samples only on target chain: FAIL");
+        }
+        if wixHits.length == 1i && Monitor.getFrame(wixHits[0i]) == "[watch] wix = 5"
+        {
+            SystemPrintln("watchIn frame text: OK");
+        }
+        else
+        {
+            SystemPrintln("watchIn frame text: FAIL");
+        }
+        Array<Int32> wix2Hits = Monitor.find("wix2");
+        if wix2Hits.length == 1i
+        {
+            SystemPrintln("watchIn matches declaring type name: OK");
+        }
+        else
+        {
+            SystemPrintln("watchIn matches declaring type name: FAIL");
+        }
+        SystemPrintln("--- P4 listen all frames ---");
+        int hit = 0i;
+        function onFrame(  )
+            {
+                hit = hit + 1i;
+            }
+        int id1 = Monitor.listen(onFrame);
+        SystemPrintln("listen id = " + id1.toString());
+        if id1 >= 1i
+        {
+            SystemPrintln("listen returns positive id: OK");
+        }
+        else
+        {
+            SystemPrintln("listen returns positive id: FAIL");
+        }
+        Monitor.watch(1i,"p4a");
+        Monitor.watch(2i,"p4a");
+        if hit == 2i
+        {
+            SystemPrintln("all-frame listener fires per frame: OK");
+        }
+        else
+        {
+            SystemPrintln("all-frame listener fires per frame: FAIL hit=" + hit.toString());
+        }
+        if Monitor.unlisten(id1)
+        {
+            SystemPrintln("unlisten returns true: OK");
+        }
+        else
+        {
+            SystemPrintln("unlisten returns true: FAIL");
+        }
+        Monitor.watch(3i,"p4a");
+        if hit == 2i
+        {
+            SystemPrintln("listener silent after unlisten: OK");
+        }
+        else
+        {
+            SystemPrintln("listener silent after unlisten: FAIL hit=" + hit.toString());
+        }
+        SystemPrintln("--- P4 listen by label ---");
+        int tagHit = 0i;
+        function onTag(  )
+            {
+                tagHit = tagHit + 1i;
+            }
+        int id2 = Monitor.listen("p4tag",onTag);
+        Monitor.watch(1i,"p4tag");
+        Monitor.watch(2i,"p4other");
+        Monitor.mark("p4tag");
+        Monitor.mark("p4other");
+        if tagHit == 2i
+        {
+            SystemPrintln("label listener filters + mark fires: OK");
+        }
+        else
+        {
+            SystemPrintln("label listener filters + mark fires: FAIL hit=" + tagHit.toString());
+        }
+        Monitor.unlisten(id2);
+        SystemPrintln("--- P4 lastFrame inside callback ---");
+        string seen = "";
+        function onSeen(  )
+            {
+                seen = Monitor.lastFrame();
+            }
+        int id3 = Monitor.listen(onSeen);
+        Monitor.watch(7i,"seen1");
+        if seen == "[watch] seen1 = 7"
+        {
+            SystemPrintln("callback sees fresh frame via lastFrame: OK");
+        }
+        else
+        {
+            SystemPrintln("callback sees fresh frame via lastFrame: FAIL [" + seen + "]");
+        }
+        Monitor.unlisten(id3);
+        SystemPrintln("--- P4 reentry guard ---");
+        int reHit = 0i;
+        function onRe(  )
+            {
+                reHit = reHit + 1i;
+                Monitor.watch(99i,"nested");
+            }
+        int id4 = Monitor.listen(onRe);
+        Monitor.watch(7i,"re1");
+        if reHit == 1i
+        {
+            SystemPrintln("reentry guard blocks nested notify: OK");
+        }
+        else
+        {
+            SystemPrintln("reentry guard blocks nested notify: FAIL hit=" + reHit.toString());
+        }
+        Array<Int32> nestedHits = Monitor.find("nested");
+        if nestedHits.length == 1i
+        {
+            SystemPrintln("nested frame still buffered: OK");
+        }
+        else
+        {
+            SystemPrintln("nested frame still buffered: FAIL len=" + nestedHits.length.toString());
+        }
+        Monitor.unlisten(id4);
+        SystemPrintln("--- P4 assert frame notifies ---");
+        int axHit = 0i;
+        function onAx(  )
+            {
+                axHit = axHit + 1i;
+            }
+        int id5 = Monitor.listen(onAx);
+        Monitor.watch(1i,"axt");
+        Monitor.watchAssert(- - 1i,"axbad",2i > 3i);
+        if axHit == 2i
+        {
+            SystemPrintln("assert violation frame notifies: OK");
+        }
+        else
+        {
+            SystemPrintln("assert violation frame notifies: FAIL hit=" + axHit.toString());
+        }
+        Monitor.unlisten(id5);
+        SystemPrintln("--- P4 table full + double unlisten ---");
+        function fillCb(  )
+            {
+            }
+        Array<Int32> ids = Array(20i);
+        int okCount = 0i;
+        int j = 0i;
+        while j < 20i
+        {
+            int r = Monitor.listen(fillCb);
+            ids[j] = r;
+            if r > 0i
+            {
+                okCount = okCount + 1i;
+            }
+            j = j + 1i;
+        }
+        SystemPrintln("listen ok = " + okCount.toString());
+        if okCount == 16i
+        {
+            SystemPrintln("listener table caps at 16: OK");
+        }
+        else
+        {
+            SystemPrintln("listener table caps at 16: FAIL ok=" + okCount.toString());
+        }
+        bool firstOut = Monitor.unlisten(ids[0i]);
+        bool secondOut = Monitor.unlisten(ids[0i]);
+        if firstOut && ! ! secondOut
+        {
+            SystemPrintln("double unlisten returns true then false: OK");
+        }
+        else
+        {
+            SystemPrintln("double unlisten returns true then false: FAIL");
+        }
+        j = 1i;
+        while j < okCount
+        {
+            Monitor.unlisten(ids[j]);
+            j = j + 1i;
+        }
+        SystemPrintln("--- P4 watch with callback ---");
+        int wcHit = 0i;
+        function onWatchCb(  )
+            {
+                wcHit = wcHit + 1i;
+            }
+        Monitor.watch(1i,"p4wc",onWatchCb);
+        Monitor.watch(2i,"p4wc");
+        Monitor.watch(3i,"p4wcother");
+        if wcHit == 2i
+        {
+            SystemPrintln("watch callback fires per tagged frame: OK");
+        }
+        else
+        {
+            SystemPrintln("watch callback fires per tagged frame: FAIL hit=" + wcHit.toString());
+        }
+        SystemPrintln("--- P5 StackView ---");
+        string sv0 = Monitor.stackView();
+        SystemPrintln("stack(clean) = [" + sv0 + "]");
+        if sv0 == "[]"
+        {
+            SystemPrintln("P5 stack empty at statement level: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 stack empty at statement level: FAIL");
+        }
+        string pre = "x";
+        string sv1 = pre + Monitor.stackView();
+        SystemPrintln("stack(expr) = " + sv1);
+        if sv1 == "x[{"index":0,"type":"ptr","value":"str:x"}]"
+        {
+            SystemPrintln("P5 stack snapshot sees left operand: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 stack snapshot sees left operand: FAIL");
+        }
+        string fr = dt.p5fr();
+        SystemPrintln("frames = " + fr);
+        if fr.front(35i) == "[{"index":0,"method":"p5fr","line":"
+        {
+            SystemPrintln("P5 frames top frame is caller: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frames top frame is caller: FAIL");
+        }
+        string p5fd = dt.p5data();
+        SystemPrintln("frameData(0) = " + p5fd);
+        if p5fd == "[{"scope":"local","name":"aa","value":"i32:7"},{"scope":"local","name":"bb","value":"i32:8"}]"
+        {
+            SystemPrintln("P5 frameData locals rows: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frameData locals rows: FAIL");
+        }
+        string vv = dt.p5var();
+        SystemPrintln("frameVar(0) = [" + vv + "]");
+        if vv == "i32:42|str:"abc""
+        {
+            SystemPrintln("P5 frameVar local values: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frameVar local values: FAIL");
+        }
+        Int32 p5HostVar = 777i;
+        string ov = dt.p5outer();
+        SystemPrintln("frameVar(1,p5HostVar) = [" + ov + "]");
+        if ov == "i32:777"
+        {
+            SystemPrintln("P5 frameVar reads caller frame: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frameVar reads caller frame: FAIL");
+        }
+        string fa = dt.p5arg(9i);
+        SystemPrintln("frameData(args) = " + fa);
+        if fa == "[{"scope":"arg","name":"av","value":"i32:9"}]"
+        {
+            SystemPrintln("P5 frameData arg rows: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frameData arg rows: FAIL");
+        }
+        string fv = dt.p5argvar(9i);
+        SystemPrintln("frameVar(arg) = [" + fv + "]");
+        if fv == "i32:9"
+        {
+            SystemPrintln("P5 frameVar arg value: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 frameVar arg value: FAIL");
+        }
+        string fd99 = Monitor.frameData(99i);
+        string fv99 = Monitor.frameVar(99i,"xx");
+        string fvnf = Monitor.frameVar(0i,"p5NoSuchVar");
+        if fd99 == "[]" && fv99 == "" && fvnf == ""
+        {
+            SystemPrintln("P5 oob/not-found degrade: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 oob/not-found degrade: FAIL fd99=[" + fd99 + "] fv99=[" + fv99 + "] fvnf=[" + fvnf + "]");
+        }
+        function spawnClosureTmp0(  )
+            {
+                ret dt.p5cf()
+            }
+        Task ct = Coroutine.spawnClosure0(spawnClosureTmp0);
+        string cfr = Coroutine.awaitTask(ct)as string;
+        SystemPrintln("coro frames = " + cfr);
+        if cfr.front(35i) == "[{"index":0,"method":"p5cf","line":"
+        {
+            SystemPrintln("P5 coroutine frames isolated: OK");
+        }
+        else
+        {
+            SystemPrintln("P5 coroutine frames isolated: FAIL");
+        }
+        SystemPrintln("--- P6 trace & frameTable ---");
+        Monitor.log("p6 first");
+        string tr1 = Monitor.getTraceLog();
+        SystemPrintln("trace1 = " + tr1);
+        if tr1.length > 10i && tr1.front(3i) == "#3 " && tr1.end(11i) == " | p6 first"
+        {
+            SystemPrintln("P6 log basic frame: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 log basic frame: FAIL tr1=[" + tr1 + "]");
+        }
+        dt.p6mid();
+        string tr2 = Monitor.getTraceLog();
+        SystemPrintln("trace2 = " + tr2);
+        if tr2.end(19i) == " > p6mid | p6 chain"
+        {
+            SystemPrintln("P6 log chain summary: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 log chain summary: FAIL tr2=[" + tr2 + "]");
+        }
+        Monitor.pause();
+        Monitor.log("p6 dropped");
+        string trp = Monitor.getTraceLog();
+        Monitor.resume();
+        Monitor.log("p6 kept");
+        string trk = Monitor.getTraceLog();
+        if trp.end(19i) == " > p6mid | p6 chain" && trk.end(10i) == " | p6 kept"
+        {
+            SystemPrintln("P6 pause drops & resume keeps: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 pause drops & resume keeps: FAIL trp=[" + trp + "] trk=[" + trk + "]");
+        }
+        Monitor.mark("p6m");
+        Monitor.log("p6 after mark");
+        string tr4 = Monitor.getTraceLog();
+        SystemPrintln("trace4 = " + tr4);
+        if tr4.end(16i) == " | p6 after mark"
+        {
+            SystemPrintln("P6 log after mark: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 log after mark: FAIL tr4=[" + tr4 + "]");
+        }
+        Array<string> noLabels = Array(0i);
+        string tbEmpty = Monitor.frameTable(noLabels);
+        if tbEmpty == ""
+        {
+            SystemPrintln("P6 frameTable empty labels: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 frameTable empty labels: FAIL [" + tbEmpty + "]");
+        }
+        Array<string> lb1 = Array(1i);
+        lb1[0i] = "p6nope";
+        string tb1 = Monitor.frameTable(lb1);
+        SystemPrintln("table1 = " + tb1);
+        if tb1 == "row | p6nope
+1 | -
+2 | -
+3 | -
+4 | -"
+        {
+            SystemPrintln("P6 frameTable rows & miss cell: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 frameTable rows & miss cell: FAIL tb1=[" + tb1 + "]");
+        }
+        Monitor.watch(11i,"p6w");
+        Monitor.mark("p6m2");
+        Monitor.watch(22i,"p6w");
+        Array<string> lb2 = Array(1i);
+        lb2[0i] = "p6w";
+        string tb2 = Monitor.frameTable(lb2);
+        SystemPrintln("table2 = " + tb2);
+        if tb2 == "row | p6w
+1 | -
+2 | -
+3 | -
+4 | 11
+5 | 22"
+        {
+            SystemPrintln("P6 frameTable watch aligned: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 frameTable watch aligned: FAIL tb2=[" + tb2 + "]");
+        }
+        Monitor.mark("p6m3");
+        Monitor.watch(1i,"p6j");
+        Monitor.watch(2i,"p6j");
+        Array<string> lb3 = Array(1i);
+        lb3[0i] = "p6j";
+        string tb3 = Monitor.frameTable(lb3);
+        SystemPrintln("table3 = " + tb3);
+        if tb3 == "row | p6j
+1 | -
+2 | -
+3 | -
+4 | -
+5 | -
+6 | 2"
+        {
+            SystemPrintln("P6 frameTable latest cell: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 frameTable latest cell: FAIL tb3=[" + tb3 + "]");
+        }
+        Array<string> lb4 = Array(2i);
+        lb4[0i] = "p6w";
+        lb4[1i] = "p6j";
+        string tb4 = Monitor.frameTable(lb4);
+        SystemPrintln("table4 = " + tb4);
+        if tb4 == "row | p6w | p6j
+1 | - | -
+2 | - | -
+3 | - | -
+4 | 11 | -
+5 | 22 | -
+6 | - | 2"
+        {
+            SystemPrintln("P6 frameTable multi labels: OK");
+        }
+        else
+        {
+            SystemPrintln("P6 frameTable multi labels: FAIL tb4=[" + tb4 + "]");
+        }
+        SystemPrintln("========== MonitorTest (end) ==========");
+    }
+    _public string p5fr( )
+    {
+        ret Monitor.frames()
+    }
+    _public string p5data( )
+    {
+        Int32 aa = 7i;
+        Int32 bb = 8i;
+        ret Monitor.frameData(0i)
+    }
+    _public string p5var( )
+    {
+        Int32 xx = 42i;
+        string yy = "abc";
+        string r1 = Monitor.frameVar(0i,"xx");
+        string r2 = Monitor.frameVar(0i,"yy");
+        ret r1 + "|" + r2
+    }
+    _public string p5outer( )
+    {
+        ret Monitor.frameVar(1i,"p5HostVar")
+    }
+    _public string p5arg( Int32 av )
+    {
+        ret Monitor.frameData(0i)
+    }
+    _public string p5argvar( Int32 av )
+    {
+        ret Monitor.frameVar(0i,"av")
+    }
+    _public string p5cf( )
+    {
+        ret Monitor.frames()
+    }
+    _public static throws void scopeThrow( )
+    {
+        Monitor.begin("risky");
+        throw MonitorTestError.ScopeBoom
+    }
+    _public void inTarget( )
+    {
+        Monitor.watchIn(5i,"wix","inTarget");
+        Monitor.watchIn(9i,"wix2","MonitorTest");
+    }
+    _public void outOther( )
+    {
+        Monitor.watchIn(6i,"wix","inTarget");
+    }
+    _public void p6mid( )
+    {
+        this.p6logIn();
+    }
+    _public void p6logIn( )
+    {
+        Monitor.log("p6 chain");
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

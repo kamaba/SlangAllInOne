@@ -6,17 +6,18 @@ namespace SlangAllInOne.Pack;
 /// target），也可单独手动执行（`--dest &lt;dir&gt;` 默认 = exe 目录）。
 ///
 /// 拷贝清单（用户视角；排除内部文档）：
-///   simple_language\md\ 根     入口文档白名单：INDEX / GUIDE / code / CLI /
+///   SlangAllInOne\md\ 根      入口文档白名单：INDEX / GUIDE / code / CLI /
 ///                              SL语法与编码规范总表
 ///   md\syntax\**               语言语法规范（coroutine.md 为协程权威）
 ///   md\lib\**                  标准库文档（Contraint/Core/Math/Std）
 ///   md\project\**              工程配置 / FFI / 参数 / 测试指南
 ///   md\log\**                  日志系统
 ///   md\plugins\**              插件（@csharp_mono 等 capability 文档）
-///   source\Front\Lib\**\*.md   各库源码树内说明 → md\src-lib\（保持相对
+///   SLangCore\Lib\**\*.md      各库源码树内说明 → md\src-lib\（保持相对
 ///                              结构；排除 cvm_* 前缀目录 —— C 侧工程自带
 ///                              的第三方 README 非 SL 用户文档）
 /// 不拷：md\ai\（AI 会话内部）、md\vm\（C VM 实现内部）。
+/// 2026-10-17 仓库重组：md 与 Lib 源树自 simple_language 迁入 SlangAllInOne。
 /// </summary>
 internal static class PackDocsCommand
 {
@@ -42,8 +43,8 @@ internal static class PackDocsCommand
         string destRoot = string.IsNullOrWhiteSpace(destDir)
             ? AppContext.BaseDirectory
             : Path.GetFullPath(destDir);
-        string mdRoot = Path.Combine(repoRoot, "simple_language", "md");
-        string libRoot = Path.Combine(repoRoot, "simple_language", "source", "Front", "Lib");
+        string mdRoot = Path.Combine(repoRoot, "SlangAllInOne", "md");
+        string libRoot = Path.Combine(repoRoot, "SlangAllInOne", "SLangCore", "Lib");
         string destMd = Path.Combine(destRoot, "md");
 
         Console.WriteLine($"=== pack-docs ===");

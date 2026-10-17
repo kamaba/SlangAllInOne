@@ -1,0 +1,117 @@
+-------------------IR 文件显示 开始 : Path: Container/IList.sl-----------------------
+Class: Core.IList<T>
+  metaClassKind: Interface
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.IList<T>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: True
+    Return:
+      - #0 id=62545829 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6949536 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=26041554 idx=1 name=capacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=28991153 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=33047401 idx=0 name=this] type=Core.IList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=66582052 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59593788 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=62367561 idx=1 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=18607670 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24437140 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=33251304 idx=1 name=min type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.add_1_T
+    VirtualName: add_Core.Void_1_T
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=9001097 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=30826283 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=13901009 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.remove_1_T
+    VirtualName: remove_Core.Void_1_T
+    Name: remove
+    InterfaceMethod: True
+    Return:
+      - #0 id=52239951 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58000222 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=397519 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.removeAt_1_Core.Int32
+    VirtualName: removeAt_Core.Void_1_Core.Int32
+    Name: removeAt
+    InterfaceMethod: True
+    Return:
+      - #0 id=32199110 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3577678 idx=0 name=this] type=Core.IList<T><T[0]>
+      - #1 id=21356534 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: True
+    Return:
+      - #0 id=52157678 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57991080 idx=0 name=this] type=Core.IList<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.IList<T>.toArray
+    VirtualName: toArray_Core.Array<T>[-1]_0
+    Name: toArray
+    InterfaceMethod: True
+    Return:
+      - #0 id=64022366 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=66765919 idx=0 name=this] type=Core.IList<T><T[0]>
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

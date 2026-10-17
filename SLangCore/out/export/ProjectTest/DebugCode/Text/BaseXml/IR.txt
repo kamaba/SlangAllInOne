@@ -1,0 +1,607 @@
+-------------------IR 文件显示 开始 : Path: Text/BaseXml.sl-----------------------
+Class: Core.BaseXml
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=2040243793 idx=0 name=Core.BaseXml._tree type=Core.Tree<T><Core.String>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.parse_1_Core.String
+    VirtualName: parse_Core.BaseXml_1_Core.String
+    Name: parse
+    InterfaceMethod: False
+    Return:
+      - #0 id=55493126 idx=0 name=return] type=Core.BaseXml
+    Arguments:
+      - #0 id=29676093 idx=0 name=xmlText type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.fromTree_1_Core.Tree<Core.String>
+    VirtualName: fromTree_Core.BaseXml_1_Core.Tree<Core.String>
+    Name: fromTree
+    InterfaceMethod: False
+    Return:
+      - #0 id=54953365 idx=0 name=return] type=Core.BaseXml
+    Arguments:
+      - #0 id=24818239 idx=0 name=tree type=Core.Tree<T><Core.String>
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.attrName_1_Core.String
+    VirtualName: attrName_Core.String_1_Core.String
+    Name: attrName
+    InterfaceMethod: False
+    Return:
+      - #0 id=64120358 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=40212317 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.isElement_1_Core.TreeNode<Core.String>
+    VirtualName: isElement_Core.Boolean_1_Core.TreeNode<Core.String>
+    Name: isElement
+    InterfaceMethod: False
+    Return:
+      - #0 id=35972254 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=55314834 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=28071463 idx=0 name=autocreate_12577900 type=Core.Boolean
+      - #1 id=51316583 idx=1 name=autocreate_46092238 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.isAttr_1_Core.TreeNode<Core.String>
+    VirtualName: isAttr_Core.Boolean_1_Core.TreeNode<Core.String>
+    Name: isAttr
+    InterfaceMethod: False
+    Return:
+      - #0 id=16669838 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=15810818 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=8079634 idx=0 name=autocreate_12176960 type=Core.Boolean
+      - #1 id=5607849 idx=1 name=autocreate_42483779 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=34558579 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41122544 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=47781518 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42591759 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=3226344 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45097725 idx=0 name=this] type=Core.BaseXml
+      - #1 id=29037097 idx=1 name=xmlText type=Core.String
+    Locals:
+      - #0 id=60007281 idx=0 name=autocreate_17053313 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml._init__1_Core.Tree<Core.String>
+    VirtualName: _init__Core.Void_1_Core.Tree<Core.String>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=54232646 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6025849 idx=0 name=this] type=Core.BaseXml
+      - #1 id=18331773 idx=1 name=tree type=Core.Tree<T><Core.String>
+    Locals:
+      - #0 id=30768229 idx=0 name=autocreate_19262089 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.parseText_1_Core.String
+    VirtualName: parseText_Core.Boolean_1_Core.String
+    Name: parseText
+    InterfaceMethod: False
+    Return:
+      - #0 id=43913021 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=57075007 idx=0 name=this] type=Core.BaseXml
+      - #1 id=59672869 idx=1 name=xmlText type=Core.String
+    Locals:
+      - #0 id=184914 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+      - #1 id=1664227 idx=1 name=root type=Core.TreeNode<T><Core.String>
+      - #2 id=14978051 idx=2 name=autocreate_39141076 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.tree
+    VirtualName: tree_Core.Tree<Core.String>_0
+    Name: tree
+    InterfaceMethod: False
+    Return:
+      - #0 id=33475267 idx=0 name=return] type=Core.Tree<T><Core.String>
+    Arguments:
+      - #0 id=26089095 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.root
+    VirtualName: root_Core.TreeNode<Core.String>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=42952388 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=27142108 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.rootName
+    VirtualName: rootName_Core.String_0
+    Name: rootName
+    InterfaceMethod: False
+    Return:
+      - #0 id=39560457 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=56591389 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=49870669 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=50280428 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=49822483 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12992371 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.memberCount
+    VirtualName: memberCount_Core.Int32_0
+    Name: memberCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=14695014 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=9089319 idx=0 name=this] type=Core.BaseXml
+    Locals:
+      - #0 id=65146268 idx=0 name=root type=Core.TreeNode<T><Core.String>
+      - #1 id=49445506 idx=1 name=autocreate_16725372 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.nodeCount
+    VirtualName: nodeCount_Core.Int32_0
+    Name: nodeCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=53442692 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=65590400 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=36581930 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=33890820 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.setRoot_1_Core.TreeNode<Core.String>
+    VirtualName: setRoot_Core.Void_1_Core.TreeNode<Core.String>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=26008214 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10346342 idx=0 name=this] type=Core.BaseXml
+      - #1 id=32747334 idx=1 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=26290551 idx=0 name=autocreate_16310625 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.select_1_Core.String
+    VirtualName: select_Core.TreeNode<Core.String>_1_Core.String
+    Name: select
+    InterfaceMethod: False
+    Return:
+      - #0 id=56342274 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=28629874 idx=0 name=this] type=Core.BaseXml
+      - #1 id=37318421 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.findByName_1_Core.String
+    VirtualName: findByName_Core.TreeNode<Core.String>_1_Core.String
+    Name: findByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=26039685 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=2893298 idx=0 name=this] type=Core.BaseXml
+      - #1 id=33030575 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=54316058 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58230900 idx=0 name=this] type=Core.BaseXml
+      - #1 id=19082474 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=19589120 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=2176568 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getText_1_Core.String
+    VirtualName: getText_Core.String_1_Core.String
+    Name: getText
+    InterfaceMethod: False
+    Return:
+      - #0 id=43214919 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42084359 idx=0 name=this] type=Core.BaseXml
+      - #1 id=53389951 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getText_2_Core.String_Core.String
+    VirtualName: getText_Core.String_2_Core.String_Core.String
+    Name: getText
+    InterfaceMethod: False
+    Return:
+      - #0 id=65242240 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=29618759 idx=0 name=this] type=Core.BaseXml
+      - #1 id=50309255 idx=1 name=path type=Core.String
+      - #2 id=50130116 idx=2 name=defaultValue type=Core.String
+    Locals:
+      - #0 id=48517864 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=34007596 idx=1 name=autocreate_46809697 type=Core.Boolean
+      - #2 id=37632913 idx=2 name=autocreate_18634089 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.getAttr_2_Core.String_Core.String
+    VirtualName: getAttr_Core.String_2_Core.String_Core.String
+    Name: getAttr
+    InterfaceMethod: False
+    Return:
+      - #0 id=61837391 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=14327361 idx=0 name=this] type=Core.BaseXml
+      - #1 id=19665615 idx=1 name=path type=Core.String
+      - #2 id=42772808 idx=2 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getAttr_3_Core.String_Core.String_Core.String
+    VirtualName: getAttr_Core.String_3_Core.String_Core.String_Core.String
+    Name: getAttr
+    InterfaceMethod: False
+    Return:
+      - #0 id=42864547 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42045429 idx=0 name=this] type=Core.BaseXml
+      - #1 id=50236607 idx=1 name=path type=Core.String
+      - #2 id=49476282 idx=2 name=name type=Core.String
+      - #3 id=42633357 idx=3 name=defaultValue type=Core.String
+    Locals:
+      - #0 id=48155897 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=30749896 idx=1 name=attr type=Core.TreeNode<T><Core.String>
+      - #2 id=8313609 idx=2 name=autocreate_33489078 type=Core.Boolean
+      - #3 id=7713623 idx=3 name=autocreate_32966247 type=Core.Boolean
+      - #4 id=2313746 idx=4 name=autocreate_28260775 type=Core.Boolean
+      - #5 id=20823715 idx=5 name=autocreate_53020390 type=Core.Boolean
+      - #6 id=40212317 idx=6 name=name type=Core.String
+      - #7 id=53195707 idx=7 name=result] type=Core.String
+    Instructions:
+
+  Method: Core.BaseXml.hasAttr_2_Core.String_Core.String
+    VirtualName: hasAttr_Core.Boolean_2_Core.String_Core.String
+    Name: hasAttr
+    InterfaceMethod: False
+    Return:
+      - #0 id=28694013 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=40470925 idx=0 name=this] type=Core.BaseXml
+      - #1 id=56919532 idx=1 name=path type=Core.String
+      - #2 id=42513748 idx=2 name=name type=Core.String
+    Locals:
+      - #0 id=47079412 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=21061526 idx=1 name=autocreate_7421470 type=Core.Boolean
+      - #2 id=55336012 idx=2 name=autocreate_66793230 type=Core.Boolean
+      - #3 id=40212317 idx=3 name=name type=Core.String
+      - #4 id=28262061 idx=4 name=result] type=Core.String
+    Instructions:
+
+  Method: Core.BaseXml.setAttr_3_Core.String_Core.String_Core.String
+    VirtualName: setAttr_Core.Boolean_3_Core.String_Core.String_Core.String
+    Name: setAttr
+    InterfaceMethod: False
+    Return:
+      - #0 id=17998518 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=31825997 idx=0 name=this] type=Core.BaseXml
+      - #1 id=27768935 idx=1 name=path type=Core.String
+      - #2 id=48593825 idx=2 name=name type=Core.String
+      - #3 id=34691245 idx=3 name=value type=Core.String
+    Locals:
+      - #0 id=43785757 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=58527497 idx=1 name=attr type=Core.TreeNode<T><Core.String>
+      - #2 id=56985425 idx=2 name=autocreate_64268160 type=Core.Boolean
+      - #3 id=43106784 idx=3 name=autocreate_41542534 type=Core.Boolean
+      - #4 id=52416742 idx=4 name=autocreate_38338487 type=Core.Boolean
+      - #5 id=40212317 idx=5 name=name type=Core.String
+      - #6 id=1988636 idx=6 name=result] type=Core.String
+      - #7 id=40212317 idx=7 name=name type=Core.String
+      - #8 id=26861861 idx=8 name=result] type=Core.String
+    Instructions:
+
+  Method: Core.BaseXml.addRootElement_1_Core.String
+    VirtualName: addRootElement_Core.TreeNode<Core.String>_1_Core.String
+    Name: addRootElement
+    InterfaceMethod: False
+    Return:
+      - #0 id=25179629 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=47536979 idx=0 name=this] type=Core.BaseXml
+      - #1 id=25290077 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=26284107 idx=0 name=autocreate_9502070 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.addElement_2_Core.String_Core.String
+    VirtualName: addElement_Core.TreeNode<Core.String>_2_Core.String_Core.String
+    Name: addElement
+    InterfaceMethod: False
+    Return:
+      - #0 id=47358524 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=35088220 idx=0 name=this] type=Core.BaseXml
+      - #1 id=23573535 idx=1 name=path type=Core.String
+      - #2 id=10835231 idx=2 name=name type=Core.String
+    Locals:
+      - #0 id=30408220 idx=0 name=parent type=Core.TreeNode<T><Core.String>
+      - #1 id=5238527 idx=1 name=autocreate_18409771 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.addElement_3_Core.String_Core.String_Core.String
+    VirtualName: addElement_Core.TreeNode<Core.String>_3_Core.String_Core.String_Core.String
+    Name: addElement
+    InterfaceMethod: False
+    Return:
+      - #0 id=14943697 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=1660410 idx=0 name=this] type=Core.BaseXml
+      - #1 id=275553 idx=1 name=path type=Core.String
+      - #2 id=2479977 idx=2 name=name type=Core.String
+      - #3 id=22319795 idx=3 name=text type=Core.String
+    Locals:
+      - #0 id=66660433 idx=0 name=parent type=Core.TreeNode<T><Core.String>
+      - #1 id=63072986 idx=1 name=autocreate_31470215 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.getBool_1_Core.String
+    VirtualName: getBool_Core.Boolean_1_Core.String
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=1269896 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=15054180 idx=0 name=this] type=Core.BaseXml
+      - #1 id=11429066 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getBool_2_Core.String_Core.Boolean
+    VirtualName: getBool_Core.Boolean_2_Core.String_Core.Boolean
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=10290070 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=53339124 idx=0 name=this] type=Core.BaseXml
+      - #1 id=25501770 idx=1 name=path type=Core.String
+      - #2 id=28189346 idx=2 name=defaultValue type=Core.Boolean
+    Locals:
+      - #0 id=52377526 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=1635686 idx=1 name=autocreate_14796483 type=Core.Boolean
+      - #2 id=14721181 idx=2 name=autocreate_66059488 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.getInt_1_Core.String
+    VirtualName: getInt_Core.Int32_1_Core.String
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=3762492 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45157297 idx=0 name=this] type=Core.BaseXml
+      - #1 id=33862429 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getInt_2_Core.String_Core.Int32
+    VirtualName: getInt_Core.Int32_2_Core.String_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=56757654 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=58502189 idx=0 name=this] type=Core.BaseXml
+      - #1 id=41056841 idx=1 name=path type=Core.String
+      - #2 id=33967256 idx=2 name=defaultValue type=Core.Int32
+    Locals:
+      - #0 id=37269850 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=66993202 idx=1 name=autocreate_57664488 type=Core.Boolean
+      - #2 id=66067912 idx=2 name=autocreate_49218346 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.getFloat_1_Core.String
+    VirtualName: getFloat_Core.Float64_1_Core.String
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=25933367 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=17794566 idx=0 name=this] type=Core.BaseXml
+      - #1 id=32073719 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.getFloat_2_Core.String_Core.Float64
+    VirtualName: getFloat_Core.Float64_2_Core.String_Core.Float64
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=27857118 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=47834478 idx=0 name=this] type=Core.BaseXml
+      - #1 id=49387472 idx=1 name=path type=Core.String
+      - #2 id=41834070 idx=2 name=defaultValue type=Core.Float64
+    Locals:
+      - #0 id=40962311 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=33116486 idx=1 name=autocreate_40311937 type=Core.Boolean
+      - #2 id=29612923 idx=2 name=autocreate_27263117 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseXml.toXml
+    VirtualName: toXml_Core.String_0
+    Name: toXml
+    InterfaceMethod: False
+    Return:
+      - #0 id=4220283 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=45208163 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseXml.toXmlPretty
+    VirtualName: toXmlPretty_Core.String_0
+    Name: toXmlPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=56688054 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=6298672 idx=0 name=this] type=Core.BaseXml
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

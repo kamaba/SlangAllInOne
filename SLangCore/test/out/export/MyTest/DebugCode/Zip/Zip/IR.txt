@@ -1,0 +1,185 @@
+-------------------IR 文件显示 开始 : Path: Zip/Zip.sl-----------------------
+Class: Std.Zlib
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Zlib.compressBound_1_Core.Int32
+    VirtualName: compressBound_Core.Int32_1_Core.Int32
+    Name: compressBound
+    InterfaceMethod: False
+    Return:
+      - #0 id=31430389 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=14438051 idx=0 name=inputSize type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Zlib.compress_1_Core.ByteBuffer
+    VirtualName: compress_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: compress
+    InterfaceMethod: False
+    Return:
+      - #0 id=28631516 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=56357057 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=37451465 idx=0 name=id type=Core.Int64
+      - #1 id=1518871 idx=1 name=autocreate_60888739 type=Core.Boolean
+      - #2 id=13669843 idx=2 name=autocreate_11127745 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Zlib.decompress_1_Core.ByteBuffer
+    VirtualName: decompress_Core.ByteBuffer_1_Core.ByteBuffer
+    Name: decompress
+    InterfaceMethod: False
+    Return:
+      - #0 id=30400092 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=5165373 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=46488363 idx=0 name=id type=Core.Int64
+      - #1 id=15742086 idx=1 name=autocreate_33040847 type=Core.Boolean
+      - #2 id=7461047 idx=2 name=autocreate_28932175 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Zlib.compress_1_Core.String
+    VirtualName: compress_Core.ByteBuffer_1_Core.String
+    Name: compress
+    InterfaceMethod: False
+    Return:
+      - #0 id=29567523 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=64781122 idx=0 name=src type=Core.String
+    Locals:
+      - #0 id=46159188 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=12779516 idx=1 name=packed type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Zlib.compress_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: compress_Core.ByteBuffer_1_Core.Array<Core.UInt8>[-1]
+    Name: compress
+    InterfaceMethod: False
+    Return:
+      - #0 id=28507895 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=55244468 idx=0 name=src type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=27438171 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=45616947 idx=1 name=packed type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Zlib.decompressString_1_Core.ByteBuffer
+    VirtualName: decompressString_Core.String_1_Core.ByteBuffer
+    Name: decompressString
+    InterfaceMethod: False
+    Return:
+      - #0 id=3985222 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=35867003 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=54367574 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=19546120 idx=1 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Zlib.decompressBytes_1_Core.ByteBuffer
+    VirtualName: decompressBytes_Core.Array<Core.UInt8>[-1]_1_Core.ByteBuffer
+    Name: decompressBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=39731869 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=22042507 idx=0 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=64164835 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=40612608 idx=1 name=bytes type=Core.Array<T><Core.UInt8>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.ZlibError
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-723507547 idx=0 name=Std.ZlibError.CompressFailed type=Core.Member
+      - #1 id=662187891 idx=1 name=Std.ZlibError.DecompressFailed type=Core.Member
+      - #2 id=1161171266 idx=2 name=Std.ZlibError.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

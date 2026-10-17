@@ -1,0 +1,764 @@
+-------------------IR 文件显示 开始 : Path: ClosureTest.sl-----------------------
+Class: ProjectTest.NSClosureTest.ClosureTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=29622330 idx=0 name=ProjectTest.NSClosureTest.ClosureTest.m_value type=Core.Int32
+  ClassStatics:
+      - #0 id=40133923 idx=0 name=ProjectTest.NSClosureTest.ClosureTest.s_counter type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.captureCase
+    VirtualName: captureCase_Core.Void_0
+    Name: captureCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=49691197 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.captureCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=59062984 idx=0 name=captureCase_local[baseVal] type=Core.Int32
+      - #1 id=44567592 idx=1 name=captureCase_local[addBase] type=Core.Function
+      - #2 id=65564010 idx=2 name=_local[ProjectTest.NSClosureTest.ClosureTest.captureCase.__closure_ctx__] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:10] [AllocClosureContext] index:[1] info:[AllocClosureContext 1]
+1 1   [ ClosureTest.sl:10] [StoreLocal] index:[2] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:12] [LoadConstInt32] index:[0] val: int32[100] 
+4 4   [ ClosureTest.sl:12] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+5 5   [ ClosureTest.sl:12] [StoreArrayIndex] index:[0] info:[StoreArrayIndex shared capture:baseVal] val:[0] 
+6 6   [ ClosureTest.sl:13] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+7 7   [ ClosureTest.sl:13] [NewClosure] index:[0] info:[NewClosure __closure_addBase_9] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_addBase_9_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ClosureTest.sl:10] [StoreLocal] index:[1] info:[LocalStatement]
+9 9   [ ClosureTest.sl:17] [LoadConstString] index:[2753] val: string[addBase(1,2) = ] 
+10 10   [ ClosureTest.sl:17] [LoadLocal] index:[1] info:[LocalStatement]
+11 11   [ ClosureTest.sl:17] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ ClosureTest.sl:17] [LoadConstInt32] index:[0] val: int32[2] 
+13 13   [ ClosureTest.sl:17] [CallClosure] index:[2] info:[CallClosure __closure_addBase_9 params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_addBase_9_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ClosureTest.sl:17] [Add] index:[0]
+16 16   [ ClosureTest.sl:10] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ ClosureTest.sl:10] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.anonymousCase
+    VirtualName: anonymousCase_Core.Void_0
+    Name: anonymousCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=53205180 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.anonymousCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=9084575 idx=0 name=anonymousCase_local[mul] type=Core.Function
+      - #1 id=14652317 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.anonymousCase.__closure_ctx__] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:21] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:21] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:23] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:23] [NewClosure] index:[0] info:[NewClosure __closure_mul_10] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_mul_10_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:27] [LoadConstString] index:[2754] val: string[mul(3,4) = ] 
+7 7   [ ClosureTest.sl:27] [LoadLocal] index:[0] info:[LocalStatement]
+8 8   [ ClosureTest.sl:27] [LoadConstInt32] index:[0] val: int32[3] 
+9 9   [ ClosureTest.sl:27] [LoadConstInt32] index:[0] val: int32[4] 
+10 10   [ ClosureTest.sl:27] [CallClosure] index:[2] info:[CallClosure __closure_mul_10 params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_mul_10_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+11 11   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ClosureTest.sl:27] [Add] index:[0]
+13 13   [ ClosureTest.sl:21] [StoreLocal] index:[2] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ ClosureTest.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.writeCaptureCase
+    VirtualName: writeCaptureCase_Core.Void_0
+    Name: writeCaptureCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=64761989 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.writeCaptureCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=61804813 idx=0 name=writeCaptureCase_local[count] type=Core.Int32
+      - #1 id=45986994 idx=1 name=writeCaptureCase_local[inc] type=Core.Function
+      - #2 id=11229763 idx=2 name=_local[ProjectTest.NSClosureTest.ClosureTest.writeCaptureCase.__closure_ctx__] type=Core.Object
+      - #3 id=19372405 idx=3 name=writeCaptureCase_local[counts] type=Core.Array<T><Core.Int32>
+      - #4 id=33959011 idx=4 name=writeCaptureCase_local[getCounts] type=Core.Function
+      - #5 id=37195650 idx=5 name=writeCaptureCase_local[merged] type=Core.Array<T><Core.Int32>
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:31] [AllocClosureContext] index:[2] info:[AllocClosureContext 2]
+1 1   [ ClosureTest.sl:31] [StoreLocal] index:[2] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:33] [LoadConstInt32] index:[0] val: int32[0] 
+4 4   [ ClosureTest.sl:33] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+5 5   [ ClosureTest.sl:33] [StoreArrayIndex] index:[0] info:[StoreArrayIndex shared capture:count] val:[0] 
+6 6   [ ClosureTest.sl:34] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+7 7   [ ClosureTest.sl:34] [NewClosure] index:[0] info:[NewClosure __closure_inc_11] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_inc_11_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ClosureTest.sl:31] [StoreLocal] index:[1] info:[LocalStatement]
+9 9   [ ClosureTest.sl:39] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ ClosureTest.sl:39] [LoadConstInt32] index:[0] val: int32[5] 
+11 11   [ ClosureTest.sl:39] [CallClosure] index:[1] info:[CallClosure __closure_inc_11 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_inc_11_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+12 12   [ ClosureTest.sl:40] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ ClosureTest.sl:40] [LoadConstInt32] index:[0] val: int32[7] 
+14 14   [ ClosureTest.sl:40] [CallClosure] index:[1] info:[CallClosure __closure_inc_11 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_inc_11_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+15 15   [ ClosureTest.sl:41] [LoadConstString] index:[2755] val: string[count = ] 
+16 16   [ ClosureTest.sl:41] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+17 17   [ ClosureTest.sl:41] [LoadArrayIndex] index:[0] info:[LoadArrayIndex shared capture:count]
+18 18   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ClosureTest.sl:41] [Add] index:[0]
+20 20   [ ClosureTest.sl:31] [StoreLocal] index:[6] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+26 26   [ ClosureTest.sl:31] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+27 27   [ :0] [Dup] index:[0]
+28 28   [ ClosureTest.sl:43] [LoadConstInt32] index:[0] val: int32[0] 
+29 29   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+30 30   [ ClosureTest.sl:43] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+31 31   [ ClosureTest.sl:43] [StoreArrayIndex] index:[1] info:[StoreArrayIndex shared capture:counts] val:[0] 
+32 32   [ ClosureTest.sl:46] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+33 33   [ ClosureTest.sl:46] [NewClosure] index:[0] info:[NewClosure __closure_getCounts_12] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_getCounts_12_2_Core.Object_Core.Array<Core.Int32>[-1], MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ ClosureTest.sl:31] [StoreLocal] index:[4] info:[LocalStatement]
+35 35   [ ClosureTest.sl:64] [LoadLocal] index:[4] info:[LocalStatement]
+36 36   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+37 37   [ ClosureTest.sl:31] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ ClosureTest.sl:64] [LoadConstInt32] index:[0] val: int32[10] 
+40 40   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+41 41   [ :0] [Dup] index:[0]
+42 42   [ ClosureTest.sl:64] [LoadConstInt32] index:[0] val: int32[20] 
+43 43   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+44 44   [ ClosureTest.sl:64] [CallClosure] index:[1] info:[CallClosure __closure_getCounts_12 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_getCounts_12_2_Core.Object_Core.Array<Core.Int32>[-1], MethodRuntimeTypeList=[], ParamCount=1}] 
+45 45   [ ClosureTest.sl:31] [StoreLocal] index:[5] info:[LocalStatement]
+46 46   [ ClosureTest.sl:65] [LoadConstString] index:[2756] val: string[merged = ] 
+47 47   [ ClosureTest.sl:65] [LoadLocal] index:[5] info:[LocalStatement]
+48 48   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+49 49   [ ClosureTest.sl:65] [Add] index:[0]
+50 50   [ ClosureTest.sl:31] [StoreLocal] index:[7] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+53 53   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+54 54   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+55 55   [ ClosureTest.sl:31] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.helperAdd_2_Core.Int32_Core.Int32
+    VirtualName: helperAdd_Core.Int32_2_Core.Int32_Core.Int32
+    Name: helperAdd
+    InterfaceMethod: False
+    Return:
+      - #0 id=66325402 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.helperAdd.return] type=Core.Int32
+    Arguments:
+      - #0 id=60057706 idx=0 name=_local[x] type=Core.Int32
+      - #1 id=3648444 idx=1 name=_local[y] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ClosureTest.sl:71] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ClosureTest.sl:71] [LoadArgument] index:[1] info:[Argument]
+3 3   [ ClosureTest.sl:71] [Add] index:[0]
+4 4   [ ClosureTest.sl:71] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ ClosureTest.sl:69] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.memberFunctionRelation
+    VirtualName: memberFunctionRelation_Core.Void_0
+    Name: memberFunctionRelation
+    InterfaceMethod: False
+    Return:
+      - #0 id=27088563 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.memberFunctionRelation.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=42470482 idx=0 name=memberFunctionRelation_local[caller] type=Core.Function
+      - #1 id=46690023 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.memberFunctionRelation.__closure_ctx__] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:74] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:74] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:76] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:76] [NewClosure] index:[0] info:[NewClosure __closure_caller_13] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_caller_13_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:74] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:80] [LoadConstString] index:[2757] val: string[caller(10,20) = ] 
+7 7   [ ClosureTest.sl:80] [LoadLocal] index:[0] info:[LocalStatement]
+8 8   [ ClosureTest.sl:80] [LoadConstInt32] index:[0] val: int32[10] 
+9 9   [ ClosureTest.sl:80] [LoadConstInt32] index:[0] val: int32[20] 
+10 10   [ ClosureTest.sl:80] [CallClosure] index:[2] info:[CallClosure __closure_caller_13 params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_caller_13_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+11 11   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ClosureTest.sl:80] [Add] index:[0]
+13 13   [ ClosureTest.sl:74] [StoreLocal] index:[2] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ ClosureTest.sl:74] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.memberVariableRelation
+    VirtualName: memberVariableRelation_Core.Void_0
+    Name: memberVariableRelation
+    InterfaceMethod: False
+    Return:
+      - #0 id=17557027 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.memberVariableRelation.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=23795519 idx=0 name=memberVariableRelation_local[incCounter] type=Core.Function
+      - #1 id=12833084 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.memberVariableRelation.__closure_ctx__] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:84] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:84] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:86] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:86] [NewClosure] index:[0] info:[NewClosure __closure_incCounter_14] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_incCounter_14_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:84] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:91] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ClosureTest.sl:91] [LoadConstInt32] index:[0] val: int32[10] 
+8 8   [ ClosureTest.sl:91] [CallClosure] index:[1] info:[CallClosure __closure_incCounter_14 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_incCounter_14_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ ClosureTest.sl:92] [LoadLocal] index:[0] info:[LocalStatement]
+10 10   [ ClosureTest.sl:92] [LoadConstInt32] index:[0] val: int32[5] 
+11 11   [ ClosureTest.sl:92] [CallClosure] index:[1] info:[CallClosure __closure_incCounter_14 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_incCounter_14_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+12 12   [ ClosureTest.sl:93] [LoadConstString] index:[2758] val: string[s_counter = ] 
+13 13   [ ClosureTest.sl:93] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.NSClosureTest.ClosureTest] staticOwner:[ProjectTest.NSClosureTest.ClosureTest]  field:[ProjectTest.NSClosureTest.ClosureTest.s_counter]
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ClosureTest.sl:93] [Add] index:[0]
+16 16   [ ClosureTest.sl:84] [StoreLocal] index:[2] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ ClosureTest.sl:84] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.variableAbout
+    VirtualName: variableAbout_Core.Void_0
+    Name: variableAbout
+    InterfaceMethod: False
+    Return:
+      - #0 id=48388900 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.variableAbout.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=32846918 idx=0 name=variableAbout_local[doubler] type=Core.Function
+      - #1 id=27186813 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.variableAbout.__closure_ctx__] type=Core.Object
+      - #2 id=43354729 idx=2 name=variableAbout_local[nums] type=Core.Array<T><Core.Int32>
+      - #3 id=54648243 idx=3 name=variableAbout_local[i] type=Core.Int32
+      - #4 id=22072140 idx=4 name=variableAbout_local[val] type=Core.Int32
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:97] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:97] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:99] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:99] [NewClosure] index:[0] info:[NewClosure __closure_doubler_15] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_doubler_15_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:97] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+7 7   [ ClosureTest.sl:97] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ClosureTest.sl:103] [LoadConstInt32] index:[0] val: int32[1] 
+10 10   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ClosureTest.sl:103] [LoadConstInt32] index:[0] val: int32[2] 
+13 13   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ClosureTest.sl:103] [LoadConstInt32] index:[0] val: int32[3] 
+16 16   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+17 17   [ ClosureTest.sl:103] [ArcRetain] index:[0] info:[ARC claim owned new local: nums]
+18 18   [ ClosureTest.sl:97] [StoreLocal] index:[2] info:[LocalStatement]
+19 19   [ ClosureTest.sl:104] [LoadConstInt32] index:[0] val: int32[0] 
+20 20   [ ClosureTest.sl:97] [StoreLocal] index:[3] info:[LocalStatement]
+21 21   [ :0] [Label] index:[2]
+22 22   [ ClosureTest.sl:104] [LoadLocal] index:[3] info:[LocalStatement]
+23 23   [ ClosureTest.sl:104] [LoadLocal] index:[2] info:[LocalStatement]
+24 24   [ :0] [CallVirt] index:[8] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+25 25   [ ClosureTest.sl:104] [Clt] index:[0]
+26 26   [ :0] [BrFalse] index:[55]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ClosureTest.sl:106] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ ClosureTest.sl:106] [LoadLocal] index:[3] info:[LocalStatement]
+30 30   [ :0] [CallVirt] index:[18] info:[CallVirt _getItem_] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>._getItem__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+31 31   [ ClosureTest.sl:97] [StoreLocal] index:[4] info:[LocalStatement]
+32 32   [ ClosureTest.sl:107] [LoadConstString] index:[2759] val: string[doubler(] 
+33 33   [ ClosureTest.sl:107] [LoadLocal] index:[4] info:[LocalStatement]
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ ClosureTest.sl:107] [Add] index:[0]
+36 36   [ ClosureTest.sl:107] [LoadConstString] index:[2760] val: string[) = ] 
+37 37   [ ClosureTest.sl:107] [Add] index:[0]
+38 38   [ ClosureTest.sl:107] [LoadLocal] index:[0] info:[LocalStatement]
+39 39   [ ClosureTest.sl:107] [LoadLocal] index:[4] info:[LocalStatement]
+40 40   [ ClosureTest.sl:107] [CallClosure] index:[1] info:[CallClosure __closure_doubler_15 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_doubler_15_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+41 41   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+42 42   [ ClosureTest.sl:107] [Add] index:[0]
+43 43   [ ClosureTest.sl:97] [StoreLocal] index:[5] info:[LocalStatement]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+46 46   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+47 47   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+48 48   [ :0] [Nop] index:[0]
+49 49   [ ClosureTest.sl:104] [LoadLocal] index:[3] info:[LocalStatement]
+50 50   [ :0] [LoadConstInt8] index:[0] val:[1] 
+51 51   [ :0] [Convert_I32] index:[0]
+52 52   [ :0] [Add] index:[0]
+53 53   [ ClosureTest.sl:97] [StoreLocal] index:[3] info:[LocalStatement]
+54 54   [ :0] [Br] index:[21]
+55 55   [ :0] [Label] index:[1]
+56 56   [ ClosureTest.sl:97] [Label] index:[0] info:[FunEndLabel]
+57 57   [ ClosureTest.sl:97] [LoadLocal] index:[2] info:[ARC release: LoadLocal variableAbout_local[nums]]
+58 58   [ ClosureTest.sl:97] [ArcRelease] index:[0] info:[ARC release owned local: variableAbout_local[nums]]
+59 59   [ ClosureTest.sl:97] [StoreLocal] index:[2] info:[ARC release: StoreLocal variableAbout_local[nums]]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.makeCounter
+    VirtualName: makeCounter_Core.Function_0
+    Name: makeCounter
+    InterfaceMethod: False
+    Return:
+      - #0 id=51571667 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.makeCounter.return] type=Core.Function
+    Arguments: []
+    Locals:
+      - #0 id=25660991 idx=0 name=makeCounter_local[count] type=Core.Int32
+      - #1 id=61491827 idx=1 name=makeCounter_local[counter] type=Core.Function
+      - #2 id=16555535 idx=2 name=_local[ProjectTest.NSClosureTest.ClosureTest.makeCounter.__closure_ctx__] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:113] [AllocClosureContext] index:[1] info:[AllocClosureContext 1]
+1 1   [ ClosureTest.sl:113] [StoreLocal] index:[2] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:115] [LoadConstInt32] index:[0] val: int32[0] 
+4 4   [ ClosureTest.sl:115] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+5 5   [ ClosureTest.sl:115] [StoreArrayIndex] index:[0] info:[StoreArrayIndex shared capture:count] val:[0] 
+6 6   [ ClosureTest.sl:116] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+7 7   [ ClosureTest.sl:116] [NewClosure] index:[0] info:[NewClosure __closure_counter_16] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_counter_16_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ClosureTest.sl:113] [StoreLocal] index:[1] info:[LocalStatement]
+9 9   [ ClosureTest.sl:121] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ ClosureTest.sl:121] [StoreReturn] index:[0] info:[StoreReturn]
+11 11   [ :0] [BrLabel] index:[12]
+12 12   [ ClosureTest.sl:113] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.returnClosureFunction
+    VirtualName: returnClosureFunction_Core.Void_0
+    Name: returnClosureFunction
+    InterfaceMethod: False
+    Return:
+      - #0 id=65929926 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.returnClosureFunction.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=56498428 idx=0 name=returnClosureFunction_local[c] type=Core.Function
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ClosureTest.sl:113] [CallStatic] index:[0] info:[CallStatic makeCounter] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.makeCounter, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ClosureTest.sl:124] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ ClosureTest.sl:127] [LoadConstString] index:[2761] val: string[c() = ] 
+4 4   [ ClosureTest.sl:127] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ ClosureTest.sl:127] [CallClosure] index:[0] info:[CallClosure indirect params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=<null>, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ ClosureTest.sl:127] [Add] index:[0]
+8 8   [ ClosureTest.sl:124] [StoreLocal] index:[1] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0]
+10 10   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+11 11   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+12 12   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+13 13   [ ClosureTest.sl:128] [LoadConstString] index:[2761] val: string[c() = ] 
+14 14   [ ClosureTest.sl:128] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ ClosureTest.sl:128] [CallClosure] index:[0] info:[CallClosure indirect params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=<null>, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ ClosureTest.sl:128] [Add] index:[0]
+18 18   [ ClosureTest.sl:124] [StoreLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+22 22   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+23 23   [ ClosureTest.sl:129] [LoadConstString] index:[2761] val: string[c() = ] 
+24 24   [ ClosureTest.sl:129] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ ClosureTest.sl:129] [CallClosure] index:[0] info:[CallClosure indirect params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=<null>, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ ClosureTest.sl:129] [Add] index:[0]
+28 28   [ ClosureTest.sl:124] [StoreLocal] index:[3] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ ClosureTest.sl:124] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.forEachCase
+    VirtualName: forEachCase_Core.Void_0
+    Name: forEachCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=38723810 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.forEachCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=12969978 idx=0 name=forEachCase_local[arr] type=Core.Array<T><Core.Int32>
+      - #1 id=49620939 idx=1 name=forEachCase_local[printer] type=Core.Function
+      - #2 id=43935272 idx=2 name=_local[ProjectTest.NSClosureTest.ClosureTest.forEachCase.__closure_ctx__] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:133] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:133] [StoreLocal] index:[2] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[5] 
+4 4   [ ClosureTest.sl:133] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Int32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ClosureTest.sl:135] [LoadConstInt32] index:[0] val: int32[1] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ClosureTest.sl:135] [LoadConstInt32] index:[0] val: int32[2] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ClosureTest.sl:135] [LoadConstInt32] index:[0] val: int32[3] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ClosureTest.sl:135] [LoadConstInt32] index:[0] val: int32[4] 
+16 16   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ClosureTest.sl:135] [LoadConstInt32] index:[0] val: int32[5] 
+19 19   [ :0] [StoreArrayIndex] index:[4] val:[1] 
+20 20   [ ClosureTest.sl:135] [ArcRetain] index:[0] info:[ARC claim owned new local: arr]
+21 21   [ ClosureTest.sl:133] [StoreLocal] index:[0] info:[LocalStatement]
+22 22   [ ClosureTest.sl:136] [LoadLocal] index:[2] info:[LoadLocal __closure_ctx__]
+23 23   [ ClosureTest.sl:136] [NewClosure] index:[0] info:[NewClosure __closure_printer_17] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_printer_17_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ ClosureTest.sl:133] [StoreLocal] index:[1] info:[LocalStatement]
+25 25   [ ClosureTest.sl:140] [LoadLocal] index:[0] info:[LocalStatement]
+26 26   [ ClosureTest.sl:140] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ :0] [CallVirt] index:[19] info:[CallVirt forEach] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.forEach_1_Core.Function, MethodRuntimeTypeList=[], ParamCount=1}] 
+28 28   [ ClosureTest.sl:133] [Label] index:[0] info:[FunEndLabel]
+29 29   [ ClosureTest.sl:133] [LoadLocal] index:[0] info:[ARC release: LoadLocal forEachCase_local[arr]]
+30 30   [ ClosureTest.sl:133] [ArcRelease] index:[0] info:[ARC release owned local: forEachCase_local[arr]]
+31 31   [ ClosureTest.sl:133] [StoreLocal] index:[0] info:[ARC release: StoreLocal forEachCase_local[arr]]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.returnTypeInferenceCase
+    VirtualName: returnTypeInferenceCase_Core.Void_0
+    Name: returnTypeInferenceCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=59873128 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.returnTypeInferenceCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=1987246 idx=0 name=returnTypeInferenceCase_local[adder] type=Core.Function
+      - #1 id=17885218 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.returnTypeInferenceCase.__closure_ctx__] type=Core.Object
+      - #2 id=26749237 idx=2 name=returnTypeInferenceCase_local[greeter] type=Core.Function
+      - #3 id=39416544 idx=3 name=returnTypeInferenceCase_local[printer] type=Core.Function
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:145] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:145] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:148] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:148] [NewClosure] index:[0] info:[NewClosure __closure_adder_18] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_adder_18_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:145] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:152] [LoadConstString] index:[2762] val: string[adder(3,4) = ] 
+7 7   [ ClosureTest.sl:152] [LoadLocal] index:[0] info:[LocalStatement]
+8 8   [ ClosureTest.sl:152] [LoadConstInt32] index:[0] val: int32[3] 
+9 9   [ ClosureTest.sl:152] [LoadConstInt32] index:[0] val: int32[4] 
+10 10   [ ClosureTest.sl:152] [CallClosure] index:[2] info:[CallClosure __closure_adder_18 params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_adder_18_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+11 11   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ClosureTest.sl:152] [Add] index:[0]
+13 13   [ ClosureTest.sl:145] [StoreLocal] index:[4] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ ClosureTest.sl:155] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+19 19   [ ClosureTest.sl:155] [NewClosure] index:[0] info:[NewClosure __closure_greeter_19] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_greeter_19_2_Core.Object_Core.String, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ClosureTest.sl:145] [StoreLocal] index:[2] info:[LocalStatement]
+21 21   [ ClosureTest.sl:159] [LoadConstString] index:[2763] val: string[greeter = ] 
+22 22   [ ClosureTest.sl:159] [LoadLocal] index:[2] info:[LocalStatement]
+23 23   [ ClosureTest.sl:159] [LoadConstString] index:[846] val: string[world] 
+24 24   [ ClosureTest.sl:159] [CallClosure] index:[1] info:[CallClosure __closure_greeter_19 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_greeter_19_2_Core.Object_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+25 25   [ ClosureTest.sl:159] [Add] index:[0]
+26 26   [ ClosureTest.sl:145] [StoreLocal] index:[5] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ ClosureTest.sl:162] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+32 32   [ ClosureTest.sl:162] [NewClosure] index:[0] info:[NewClosure __closure_printer_20] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_printer_20_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ ClosureTest.sl:145] [StoreLocal] index:[3] info:[LocalStatement]
+34 34   [ ClosureTest.sl:166] [LoadLocal] index:[3] info:[LocalStatement]
+35 35   [ ClosureTest.sl:166] [LoadConstInt32] index:[0] val: int32[42] 
+36 36   [ ClosureTest.sl:166] [CallClosure] index:[1] info:[CallClosure __closure_printer_20 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_printer_20_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ ClosureTest.sl:145] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.makeCalc
+    VirtualName: makeCalc_FunctionSig_CalcFunc_0
+    Name: makeCalc
+    InterfaceMethod: False
+    Return:
+      - #0 id=19204580 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.makeCalc.return] type=Core.Function
+    Arguments: []
+    Locals:
+      - #0 id=38623499 idx=0 name=makeCalc_local[f] type=Core.Function
+      - #1 id=12067172 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.makeCalc.__closure_ctx__] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:172] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:172] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:174] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:174] [NewClosure] index:[0] info:[NewClosure __closure_f_21] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_f_21_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:172] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:178] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ClosureTest.sl:178] [StoreReturn] index:[0] info:[StoreReturn]
+8 8   [ :0] [BrLabel] index:[9]
+9 9   [ ClosureTest.sl:172] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.typealiasFuncCase
+    VirtualName: typealiasFuncCase_Core.Void_0
+    Name: typealiasFuncCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=37916893 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.typealiasFuncCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=5707718 idx=0 name=typealiasFuncCase_local[adder] type=Core.Function
+      - #1 id=51369462 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.typealiasFuncCase.__closure_ctx__] type=Core.Object
+      - #2 id=59671974 idx=2 name=typealiasFuncCase_local[calc] type=Core.Function
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:181] [AllocClosureContext] index:[0] info:[AllocClosureContext 0]
+1 1   [ ClosureTest.sl:181] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ClosureTest.sl:183] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:183] [NewClosure] index:[0] info:[NewClosure __closure_adder_22] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_adder_22_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:181] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ClosureTest.sl:187] [LoadConstString] index:[2764] val: string[adder(5,6) = ] 
+7 7   [ ClosureTest.sl:187] [LoadLocal] index:[0] info:[LocalStatement]
+8 8   [ ClosureTest.sl:187] [LoadConstInt32] index:[0] val: int32[5] 
+9 9   [ ClosureTest.sl:187] [LoadConstInt32] index:[0] val: int32[6] 
+10 10   [ ClosureTest.sl:187] [CallClosure] index:[2] info:[CallClosure __closure_adder_22 params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_adder_22_3_Core.Object_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+11 11   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ClosureTest.sl:187] [Add] index:[0]
+13 13   [ ClosureTest.sl:181] [StoreLocal] index:[3] info:[LocalStatement]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+18 18   [ ClosureTest.sl:172] [CallStatic] index:[0] info:[CallStatic makeCalc] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.makeCalc, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ClosureTest.sl:181] [StoreLocal] index:[2] info:[LocalStatement]
+20 20   [ ClosureTest.sl:190] [LoadConstString] index:[2765] val: string[calc(3,7) = ] 
+21 21   [ ClosureTest.sl:190] [LoadLocal] index:[2] info:[LocalStatement]
+22 22   [ ClosureTest.sl:190] [LoadConstInt32] index:[0] val: int32[3] 
+23 23   [ ClosureTest.sl:190] [LoadConstInt32] index:[0] val: int32[7] 
+24 24   [ ClosureTest.sl:190] [CallClosure] index:[2] info:[CallClosure indirect params:2] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=<null>, MethodRuntimeTypeList=[], ParamCount=2}] 
+25 25   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ ClosureTest.sl:190] [Add] index:[0]
+27 27   [ ClosureTest.sl:181] [StoreLocal] index:[4] info:[LocalStatement]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+30 30   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+31 31   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+32 32   [ ClosureTest.sl:181] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=176855 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=1591698 idx=0 name=thisInClosureTest_local[test] type=ProjectTest.NSClosureTest.ClosureTest
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ClosureTest.sl:10] [CallStatic] index:[0] info:[CallStatic captureCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.captureCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ClosureTest.sl:21] [CallStatic] index:[0] info:[CallStatic anonymousCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.anonymousCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ ClosureTest.sl:31] [CallStatic] index:[0] info:[CallStatic writeCaptureCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.writeCaptureCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ClosureTest.sl:74] [CallStatic] index:[0] info:[CallStatic memberFunctionRelation] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.memberFunctionRelation, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ClosureTest.sl:84] [CallStatic] index:[0] info:[CallStatic memberVariableRelation] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.memberVariableRelation, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ClosureTest.sl:97] [CallStatic] index:[0] info:[CallStatic variableAbout] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.variableAbout, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ ClosureTest.sl:124] [CallStatic] index:[0] info:[CallStatic returnClosureFunction] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.returnClosureFunction, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ClosureTest.sl:133] [CallStatic] index:[0] info:[CallStatic forEachCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.forEachCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ ClosureTest.sl:145] [CallStatic] index:[0] info:[CallStatic returnTypeInferenceCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.returnTypeInferenceCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ ClosureTest.sl:181] [CallStatic] index:[0] info:[CallStatic typealiasFuncCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.typealiasFuncCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ :0] [Nop] index:[0]
+12 12   [ ClosureTest.sl:214] [NewObject] index:[0] info:[IRNew] val: int32[1400306279] 
+13 13   [ ClosureTest.sl:232] [ArcRetain] index:[0] info:[ARC claim owned new local: test]
+14 14   [ ClosureTest.sl:214] [StoreLocal] index:[0] info:[LocalStatement]
+15 15   [ ClosureTest.sl:233] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ ClosureTest.sl:196] [CallVirt] index:[7] info:[CallVirt thisInClosureCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ ClosureTest.sl:230] [Nop] index:[0] info:[inline end: thisInClosureTest]
+18 18   [ ClosureTest.sl:214] [Label] index:[0] info:[FunEndLabel]
+19 19   [ ClosureTest.sl:214] [LoadLocal] index:[0] info:[ARC release: LoadLocal thisInClosureTest_local[test]]
+20 20   [ ClosureTest.sl:214] [ArcRelease] index:[0] info:[ARC release owned local: thisInClosureTest_local[test]]
+21 21   [ ClosureTest.sl:214] [StoreLocal] index:[0] info:[ARC release: StoreLocal thisInClosureTest_local[test]]
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.thisInClosureTest
+    VirtualName: thisInClosureTest_Core.Void_0
+    Name: thisInClosureTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=14325289 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.thisInClosureTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=1591698 idx=0 name=thisInClosureTest_local[test] type=ProjectTest.NSClosureTest.ClosureTest
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ClosureTest.sl:230] [NewObject] index:[0] info:[IRNew] val: int32[1400306279] 
+2 2   [ ClosureTest.sl:232] [ArcRetain] index:[0] info:[ARC claim owned new local: test]
+3 3   [ ClosureTest.sl:230] [StoreLocal] index:[0] info:[LocalStatement]
+4 4   [ ClosureTest.sl:233] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ ClosureTest.sl:196] [CallVirt] index:[7] info:[CallVirt thisInClosureCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSClosureTest.ClosureTest, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ClosureTest.sl:230] [Label] index:[0] info:[FunEndLabel]
+7 7   [ ClosureTest.sl:230] [LoadLocal] index:[0] info:[ARC release: LoadLocal thisInClosureTest_local[test]]
+8 8   [ ClosureTest.sl:230] [ArcRelease] index:[0] info:[ARC release owned local: thisInClosureTest_local[test]]
+9 9   [ ClosureTest.sl:230] [StoreLocal] index:[0] info:[ARC release: StoreLocal thisInClosureTest_local[test]]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase
+    VirtualName: thisInClosureCase_Core.Void_0
+    Name: thisInClosureCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=61818739 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.return] type=Core.Void
+    Arguments:
+      - #0 id=65274381 idx=0 name=_local[ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.this] type=ProjectTest.NSClosureTest.ClosureTest
+    Locals:
+      - #0 id=19497747 idx=0 name=thisInClosureCase_local[getValue] type=Core.Function
+      - #1 id=41262001 idx=1 name=_local[ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.__closure_ctx__] type=Core.Object
+      - #2 id=35813694 idx=2 name=thisInClosureCase_local[setValue] type=Core.Function
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ ClosureTest.sl:196] [AllocClosureContext] index:[1] info:[AllocClosureContext 1]
+1 1   [ ClosureTest.sl:196] [StoreLocal] index:[1] info:[StoreLocal __closure_ctx__]
+2 2   [ ClosureTest.sl:196] [LoadArgument] index:[0] info:[LoadArgument capture:ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.this]
+3 3   [ ClosureTest.sl:196] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+4 4   [ ClosureTest.sl:196] [StoreArrayIndex] index:[0] info:[StoreArrayIndex capture:ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.this] val:[0] 
+5 5   [ :0] [Nop] index:[0]
+6 6   [ ClosureTest.sl:198] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+7 7   [ ClosureTest.sl:198] [LoadArrayIndex] index:[0] info:[LoadArrayIndex shared capture:ProjectTest.NSClosureTest.ClosureTest.thisInClosureCase.this]
+8 8   [ ClosureTest.sl:198] [LoadConstInt32] index:[0] val: int32[100] 
+9 9   [ ClosureTest.sl:196] [StoreNotStaticField2] index:[0] info:[Member]
+10 10   [ ClosureTest.sl:200] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+11 11   [ ClosureTest.sl:200] [NewClosure] index:[0] info:[NewClosure __closure_getValue_23] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_getValue_23_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ClosureTest.sl:196] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ ClosureTest.sl:204] [LoadLocal] index:[1] info:[LoadLocal __closure_ctx__]
+14 14   [ ClosureTest.sl:204] [NewClosure] index:[0] info:[NewClosure __closure_setValue_24] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_setValue_24_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ClosureTest.sl:196] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ ClosureTest.sl:208] [LoadConstString] index:[2766] val: string[getValue() = ] 
+17 17   [ ClosureTest.sl:208] [LoadLocal] index:[0] info:[LocalStatement]
+18 18   [ ClosureTest.sl:208] [CallClosure] index:[0] info:[CallClosure __closure_getValue_23 params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_getValue_23_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ClosureTest.sl:208] [Add] index:[0]
+21 21   [ ClosureTest.sl:196] [StoreLocal] index:[3] info:[LocalStatement]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+24 24   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+25 25   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+26 26   [ ClosureTest.sl:209] [LoadLocal] index:[2] info:[LocalStatement]
+27 27   [ ClosureTest.sl:209] [LoadConstInt32] index:[0] val: int32[200] 
+28 28   [ ClosureTest.sl:209] [CallClosure] index:[1] info:[CallClosure __closure_setValue_24 params:1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_setValue_24_2_Core.Object_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+29 29   [ ClosureTest.sl:210] [LoadConstString] index:[2767] val: string[after setValue(200), getValue() = ] 
+30 30   [ ClosureTest.sl:210] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ ClosureTest.sl:210] [CallClosure] index:[0] info:[CallClosure __closure_getValue_23 params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ProjectTest.NSClosureTest.ClosureTest.__closure_getValue_23_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+32 32   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ ClosureTest.sl:210] [Add] index:[0]
+34 34   [ ClosureTest.sl:196] [StoreLocal] index:[4] info:[LocalStatement]
+35 35   [ :0] [Nop] index:[0]
+36 36   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+38 38   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+39 39   [ ClosureTest.sl:196] [Label] index:[0] info:[FunEndLabel]
+
+-------------------IR 文件显示 结束 : -----------------------

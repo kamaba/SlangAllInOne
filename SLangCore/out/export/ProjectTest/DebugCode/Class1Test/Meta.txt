@@ -1,0 +1,27 @@
+-------------------Meta 文件显示 开始 : Path: Class1Test.sl-----------------------
+partial N1.N2.N3.ClassN1_2_3_1
+{
+    X1 = 100i
+
+}
+ClassG1
+{
+}
+Std.Class_std1
+{
+}
+Class1TestSmoke
+{
+    _public static fun( )
+    {
+        global.println("========== Class1Test (start) ==========");
+        global.println("本文件为 partial、Std 前缀类、多级 namespace 与 extends 链的声明样例，无运行时断言。");
+        c1 = Class1Expand.ClassDefineChild(11i,22i);
+        nested = Class1Expand.ClassDefineBase.ClassDefineNested();
+        global.println("Class1Expand child virtualName -> " + c1.virtualName());
+        global.println("Class1Expand child sumAll -> " + c1.sumAll().toString());
+        global.println("Class1Expand baseProp/static/nested -> " + c1.baseProp.toString() + "/" + Class1Expand.ClassDefineBase.staticSeed.toString() + "/" + nested.nestedValue.toString());
+        global.println("========== Class1Test (end) ==========");
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

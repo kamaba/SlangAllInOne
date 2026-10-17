@@ -1,0 +1,137 @@
+-------------------IR 文件显示 开始 : Path: Isolate/IsolateGroup.sl-----------------------
+Class: Std.IsolateGroup
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1365977788 idx=0 name=Std.IsolateGroup._handle type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.IsolateGroup.current
+    VirtualName: current_Std.IsolateGroup_0
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=11464716 idx=0 name=return] type=Std.IsolateGroup
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Std.IsolateGroup._init__1_Core.Int64
+    VirtualName: _init__Core.Void_1_Core.Int64
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=36279478 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56226836 idx=0 name=this] type=Std.IsolateGroup
+      - #1 id=58079852 idx=1 name=groupId type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Std.IsolateGroup.exit
+    VirtualName: exit_Core.Void_0
+    Name: exit
+    InterfaceMethod: False
+    Return:
+      - #0 id=6847548 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52956621 idx=0 name=this] type=Std.IsolateGroup
+    Locals: []
+    Instructions:
+
+  Method: Std.IsolateGroup.isolateCount
+    VirtualName: isolateCount_Core.Int32_0
+    Name: isolateCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=17780525 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61627937 idx=0 name=this] type=Std.IsolateGroup
+    Locals: []
+    Instructions:
+
+  Method: Std.IsolateGroup.id
+    VirtualName: id_Core.Int64_0
+    Name: id
+    InterfaceMethod: False
+    Return:
+      - #0 id=9992350 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=30936422 idx=0 name=this] type=Std.IsolateGroup
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

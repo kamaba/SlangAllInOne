@@ -1,0 +1,248 @@
+-------------------Meta 文件显示 开始 : Path: BindDataTest.sl-----------------------
+const data BookData
+{
+    name = "ABC"
+    pageCount = 20i
+    price = 20i
+}
+data BP
+{
+    width = 30i
+    height = 40i
+}
+BookC  bind BookData, BP
+{
+    BookData BookDataBookData = new()
+    BP BPBP = new()
+
+    _public string name( )
+    {
+        ret this.BookData.name
+    }
+    _public name( string _name )
+    {
+        this.BookData.name = _name;
+    }
+    _public int pageCount( )
+    {
+        ret this.BookData.pageCount
+    }
+    _public pageCount( int _pageCount )
+    {
+        this.BookData.pageCount = _pageCount;
+    }
+    _public int price( )
+    {
+        ret this.BookData.price
+    }
+    _public price( int _price )
+    {
+        this.BookData.price = _price;
+    }
+    _public int width( )
+    {
+        ret this.BP.width
+    }
+    _public width( int _width )
+    {
+        this.BP.width = _width;
+    }
+    _public int height( )
+    {
+        ret this.BP.height
+    }
+    _public height( int _height )
+    {
+        this.BP.height = _height;
+    }
+    _public BookData BookDataData( )
+    {
+        ret this.BookData
+    }
+    _public BookDataData( BookData _bookData )
+    {
+        this.BookData = _bookData;
+    }
+    _public BP BPData( )
+    {
+        ret this.BP
+    }
+    _public BPData( BP _bP )
+    {
+        this.BP = _bP;
+    }
+    _public _init_( BookData _bookData )
+    {
+        this.BookData = _bookData;
+    }
+    _public _init_( BookData _bookData,  BP _bP )
+    {
+        this.BookData = _bookData;
+        this.BP = _bP;
+    }
+}
+BindDataTest
+{
+    _public static fun( )
+    {
+        global.println("========== BindDataTest (start) ==========");
+        BookC bc = new();
+        bc.name = "hahah";
+        bc.width = 20i;
+        bc.height = 40i;
+        global.println("[base] direct mapped fields");
+        global.println("bc.name=" + bc.name.toString());
+        global.println("bc.width=" + bc.width);
+        global.println("bc.height=" + bc.height);
+        bindNameAccessTest();
+        conflictOverrideTest();
+        interfaceBindBehaviorTest();
+        global.println("========== BindDataTest (end) ==========");
+    }
+    _public static bindNameAccessTest( )
+    {
+        global.println("[bindNameAccessTest] start");
+        BookC bc = new();
+        bc.BookData.name = "bind-name-access";
+        bc.BP.width = 101i;
+        bc.BP.height = 202i;
+        global.println("bc.BookData.name=" + bc.BookData.name);
+        global.println("bc.name=" + bc.name);
+        global.println("bc.BP.width=" + bc.BP.width);
+        global.println("bc.width=" + bc.width);
+        global.println("bc.height=" + bc.height);
+        global.println("[bindNameAccessTest] end");
+    }
+    _public static conflictOverrideTest( )
+    {
+        global.println("[conflictOverrideTest] start");
+        BindConflictClass c = new();
+        c.a = 77i;
+        global.println("c.a=" + c.a.toString());
+        global.println("c.DA2.a=" + c.DA2.a.toString());
+        global.println("c.DB2.a=" + c.DB2.a.toString());
+        global.println("[conflictOverrideTest] end");
+    }
+    _public static interfaceBindBehaviorTest( )
+    {
+        global.println("[interfaceBindBehaviorTest] start");
+        SeltBookData d = new();
+        d.price = 15i;
+        d.count = 3i;
+        global.println("d.calc()=" + d.calc().toString());
+        global.println("[interfaceBindBehaviorTest] end");
+    }
+}
+data DA2
+{
+    a = 1i
+}
+data DB2
+{
+    a = 2i
+}
+BindConflictClass  bind DA2, DB2
+{
+    DA2 DA2DA2 = new()
+    DB2 DB2DB2 = new()
+
+    _public int a( )
+    {
+        ret this.DA2.a
+    }
+    _public a( int v )
+    {
+        this.DA2.a = v;
+    }
+    _public DA2 DA2Data( )
+    {
+        ret this.DA2
+    }
+    _public DA2Data( DA2 _dA2 )
+    {
+        this.DA2 = _dA2;
+    }
+    _public DB2 DB2Data( )
+    {
+        ret this.DB2
+    }
+    _public DB2Data( DB2 _dB2 )
+    {
+        this.DB2 = _dB2;
+    }
+    _public _init_( DA2 _dA2 )
+    {
+        this.DA2 = _dA2;
+    }
+    _public _init_( DA2 _dA2,  DB2 _dB2 )
+    {
+        this.DA2 = _dA2;
+        this.DB2 = _dB2;
+    }
+}
+public interface CalcPrice  bind BookData
+{
+    _public float calc( )
+    {
+        ret this.price * 1i
+    }
+    _public string name( )
+
+    _public name( string _name )
+
+    _public int pageCount( )
+
+    _public pageCount( int _pageCount )
+
+    _public int price( )
+
+    _public price( int _price )
+
+}
+public class SeltBookData  interface CalcPrice  bind BookData
+{
+    public int intcount = 20i
+    BookData BookDataBookData = new()
+
+    _public override float calc( )
+    {
+        ret this.price * this.count
+    }
+    _public override string name( )
+    {
+        ret this.BookData.name
+    }
+    _public override name( string _name )
+    {
+        this.BookData.name = _name;
+    }
+    _public override int pageCount( )
+    {
+        ret this.BookData.pageCount
+    }
+    _public override pageCount( int _pageCount )
+    {
+        this.BookData.pageCount = _pageCount;
+    }
+    _public override int price( )
+    {
+        ret this.BookData.price
+    }
+    _public override price( int _price )
+    {
+        this.BookData.price = _price;
+    }
+    _public BookData BookDataData( )
+    {
+        ret this.BookData
+    }
+    _public BookDataData( BookData _bookData )
+    {
+        this.BookData = _bookData;
+    }
+    _public _init_( BookData _bookData )
+    {
+        this.BookData = _bookData;
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

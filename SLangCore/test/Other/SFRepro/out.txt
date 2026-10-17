@@ -1,0 +1,13 @@
+repro begin
+open ok
+srcBuf readable = 17
+srcBuf handle = 2
+srcBuf writerIndex = 17
+write n = 
+srcBuf readable after = 0
+write done
+A1 length = 0
+A2 position = 0
+pre ByteBuffer(32)
+post ByteBuffer(32) writable = 32 handle = 3
+pre read

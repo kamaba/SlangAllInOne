@@ -1,0 +1,659 @@
+-------------------IR 文件显示 开始 : Path: Text/Json.sl-----------------------
+Class: Std.Text.Json
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=858715218 idx=0 name=Std.Text.Json._tree type=Core.Tree<T><Core.String>
+      - #1 id=1610354895 idx=1 name=Std.Text.Json._path type=Core.String
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.parse_1_Core.String
+    VirtualName: parse_Core.BaseJson_0
+    Name: parse
+    InterfaceMethod: False
+    Return:
+      - #0 id=32841951 idx=0 name=return] type=Core.BaseJson
+    Arguments:
+      - #0 id=27142108 idx=0 name=jsonText type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.fromTree_1_Core.Tree<Core.String>
+    VirtualName: fromTree_Core.BaseJson_0
+    Name: fromTree
+    InterfaceMethod: False
+    Return:
+      - #0 id=51027174 idx=0 name=return] type=Core.BaseJson
+    Arguments:
+      - #0 id=56591389 idx=0 name=tree type=Core.Tree<T><Core.String>
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.fromData_1_Core.Object
+    VirtualName: fromData_Core.BaseJson_0
+    Name: fromData
+    InterfaceMethod: False
+    Return:
+      - #0 id=20499795 idx=0 name=return] type=Core.BaseJson
+    Arguments:
+      - #0 id=50280428 idx=0 name=obj type=Core.Object
+    Locals:
+      - #0 id=49870669 idx=0 name=j type=Core.BaseJson
+      - #1 id=46182839 idx=1 name=proto type=Core.TreeNode<T><Core.String>
+      - #2 id=12992371 idx=2 name=root type=Core.TreeNode<T><Core.String>
+      - #3 id=49822483 idx=3 name=autocreate_38079613 type=Core.Boolean
+      - #4 id=45749167 idx=4 name=autocreate_7172200 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.isObject_1_Core.TreeNode<Core.String>
+    VirtualName: isObject_Core.Boolean_0
+    Name: isObject
+    InterfaceMethod: False
+    Return:
+      - #0 id=11222187 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=33890820 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=36581930 idx=0 name=autocreate_13491266 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.isArray_1_Core.TreeNode<Core.String>
+    VirtualName: isArray_Core.Boolean_0
+    Name: isArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=39785747 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=22527411 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=1420113 idx=0 name=autocreate_54312533 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.isNull_1_Core.TreeNode<Core.String>
+    VirtualName: isNull_Core.Boolean_0
+    Name: isNull
+    InterfaceMethod: False
+    Return:
+      - #0 id=26039685 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=33030575 idx=0 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=28839721 idx=0 name=autocreate_19050756 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.load_1_Core.String
+    VirtualName: load_Std.Text.Json_1_Core.String
+    Name: load
+    InterfaceMethod: False
+    Return:
+      - #0 id=18653909 idx=0 name=return] type=Std.Text.Json
+    Arguments:
+      - #0 id=33667455 idx=0 name=path type=Core.String
+    Locals:
+      - #0 id=34571641 idx=0 name=result type=Std.Text.Json
+    Instructions:
+
+  Method: Core.BaseJson._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=53389951 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43214919 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=29618759 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=10747513 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=50130116 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50309255 idx=0 name=this] type=Core.BaseJson
+      - #1 id=48517864 idx=1 name=jsonText type=Core.String
+    Locals:
+      - #0 id=34007596 idx=0 name=autocreate_66750478 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson._init__1_Core.Tree<Core.String>
+    VirtualName: _init__Core.Void_1_Core.Tree<Core.String>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=63092140 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=14466778 idx=0 name=this] type=Core.BaseJson
+      - #1 id=30958352 idx=1 name=tree type=Core.Tree<T><Core.String>
+    Locals:
+      - #0 id=10189720 idx=0 name=autocreate_63883391 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.parseText_1_Core.String
+    VirtualName: parseText_Core.Boolean_1_Core.String
+    Name: parseText
+    InterfaceMethod: False
+    Return:
+      - #0 id=49410957 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=42772808 idx=0 name=this] type=Core.BaseJson
+      - #1 id=42045429 idx=1 name=jsonText type=Core.String
+    Locals:
+      - #0 id=42864547 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+      - #1 id=50236607 idx=1 name=root type=Core.TreeNode<T><Core.String>
+      - #2 id=49476282 idx=2 name=autocreate_64549801 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.tree
+    VirtualName: tree_Core.Tree<Core.String>_0
+    Name: tree
+    InterfaceMethod: False
+    Return:
+      - #0 id=8999315 idx=0 name=return] type=Core.Tree<T><Core.String>
+    Arguments:
+      - #0 id=53195707 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.root
+    VirtualName: root_Core.TreeNode<Core.String>_0
+    Name: root
+    InterfaceMethod: False
+    Return:
+      - #0 id=50940942 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=57855887 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.value
+    VirtualName: value_Core.JsonValue_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=24745166 idx=0 name=return] type=Core.JsonValue
+    Arguments:
+      - #0 id=32575624 idx=0 name=this] type=Core.BaseJson
+    Locals:
+      - #0 id=21379907 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=58201440 idx=1 name=jv type=Core.JsonValue
+      - #2 id=54050919 idx=2 name=result] type=Core.JsonValue
+    Instructions:
+
+  Method: Core.BaseJson._getItem__1_Core.String
+    VirtualName: _getItem__Core.JsonValue_1_Core.String
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=24842503 idx=0 name=return] type=Core.JsonValue
+    Arguments:
+      - #0 id=10216818 idx=0 name=this] type=Core.BaseJson
+      - #1 id=22255938 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.JsonValue_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=51342761 idx=0 name=return] type=Core.JsonValue
+    Arguments:
+      - #0 id=57900534 idx=0 name=this] type=Core.BaseJson
+      - #1 id=59431671 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=40470925 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=49236012 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=42513748 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=56919532 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.memberCount
+    VirtualName: memberCount_Core.Int32_0
+    Name: memberCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=55336012 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=21061526 idx=0 name=this] type=Core.BaseJson
+    Locals:
+      - #0 id=28262061 idx=0 name=root type=Core.TreeNode<T><Core.String>
+      - #1 id=53031964 idx=1 name=autocreate_44077297 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.nodeCount
+    VirtualName: nodeCount_Core.Int32_0
+    Name: nodeCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=31825997 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=25905843 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.height
+    VirtualName: height_Core.Int32_0
+    Name: height
+    InterfaceMethod: False
+    Return:
+      - #0 id=48593825 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=27768935 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.setRoot_1_Core.TreeNode<Core.String>
+    VirtualName: setRoot_Core.Void_1_Core.TreeNode<Core.String>
+    Name: setRoot
+    InterfaceMethod: False
+    Return:
+      - #0 id=58527497 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43785757 idx=0 name=this] type=Core.BaseJson
+      - #1 id=56985425 idx=1 name=node type=Core.TreeNode<T><Core.String>
+    Locals:
+      - #0 id=43106784 idx=0 name=autocreate_61151353 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.select_1_Core.String
+    VirtualName: select_Core.TreeNode<Core.String>_1_Core.String
+    Name: select
+    InterfaceMethod: False
+    Return:
+      - #0 id=48062879 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=12796860 idx=0 name=this] type=Core.BaseJson
+      - #1 id=29912730 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.findByName_1_Core.String
+    VirtualName: findByName_Core.TreeNode<Core.String>_1_Core.String
+    Name: findByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=63108622 idx=0 name=return] type=Core.TreeNode<T><Core.String>
+    Arguments:
+      - #0 id=7012069 idx=0 name=this] type=Core.BaseJson
+      - #1 id=31106692 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=61091552 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=36614112 idx=0 name=this] type=Core.BaseJson
+      - #1 id=12953056 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=47536979 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=42564588 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.getStr_1_Core.String
+    VirtualName: getStr_Core.String_1_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=25290077 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=25179629 idx=0 name=this] type=Core.BaseJson
+      - #1 id=26284107 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.getStr_2_Core.String_Core.String
+    VirtualName: getStr_Core.String_2_Core.String_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=35088220 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=48637933 idx=0 name=this] type=Core.BaseJson
+      - #1 id=47358524 idx=1 name=path type=Core.String
+      - #2 id=23573535 idx=2 name=defaultValue type=Core.String
+    Locals:
+      - #0 id=10835231 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=30408220 idx=1 name=autocreate_37239078 type=Core.Boolean
+      - #2 id=5238527 idx=2 name=autocreate_66716254 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.getBool_1_Core.String
+    VirtualName: getBool_Core.Boolean_1_Core.String
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=30785969 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=63072986 idx=0 name=this] type=Core.BaseJson
+      - #1 id=8638270 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.getBool_2_Core.String_Core.Boolean
+    VirtualName: getBool_Core.Boolean_2_Core.String_Core.Boolean
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=56174843 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=28611270 idx=0 name=this] type=Core.BaseJson
+      - #1 id=35811547 idx=1 name=path type=Core.String
+      - #2 id=53868469 idx=2 name=defaultValue type=Core.Boolean
+    Locals:
+      - #0 id=15054180 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=1269896 idx=1 name=autocreate_63575380 type=Core.Boolean
+      - #2 id=11429066 idx=2 name=autocreate_35307513 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.getInt_1_Core.String
+    VirtualName: getInt_Core.Int32_1_Core.String
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=309837 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=22404047 idx=0 name=this] type=Core.BaseJson
+      - #1 id=2788537 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.getInt_2_Core.String_Core.Int32
+    VirtualName: getInt_Core.Int32_2_Core.String_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=19577827 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=24544935 idx=0 name=this] type=Core.BaseJson
+      - #1 id=41982722 idx=1 name=path type=Core.String
+      - #2 id=42300179 idx=2 name=defaultValue type=Core.Int32
+    Locals:
+      - #0 id=45157297 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=3762492 idx=1 name=autocreate_49332166 type=Core.Boolean
+      - #2 id=33862429 idx=2 name=autocreate_41336317 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.getFloat_1_Core.String
+    VirtualName: getFloat_Core.Float64_1_Core.String
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=35581233 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=41236172 idx=0 name=this] type=Core.BaseJson
+      - #1 id=51795644 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.getFloat_2_Core.String_Core.Float64
+    VirtualName: getFloat_Core.Float64_2_Core.String_Core.Float64
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=43843091 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=34697616 idx=0 name=this] type=Core.BaseJson
+      - #1 id=59043505 idx=1 name=path type=Core.String
+      - #2 id=61629497 idx=2 name=defaultValue type=Core.Float64
+    Locals:
+      - #0 id=17794566 idx=0 name=node type=Core.TreeNode<T><Core.String>
+      - #1 id=25933367 idx=1 name=autocreate_36482533 type=Core.Boolean
+      - #2 id=32073719 idx=2 name=autocreate_59907344 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseJson.toData_1_Core.String
+    VirtualName: toData_Core.Object_1_Core.String
+    Name: toData
+    InterfaceMethod: False
+    Return:
+      - #0 id=8452189 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=23308753 idx=0 name=this] type=Core.BaseJson
+      - #1 id=8960839 idx=1 name=typeName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.toData<T>
+    VirtualName: toData_T_0
+    Name: toData
+    InterfaceMethod: False
+    Return:
+      - #0 id=22891915 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=54739329 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=45208163 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42305831 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseJson.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=6298672 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=37982554 idx=0 name=this] type=Core.BaseJson
+    Locals: []
+    Instructions:
+
+  Method: Std.Text.Json.readFrom_1_Core.String
+    VirtualName: readFrom_Core.Boolean_1_Core.String
+    Name: readFrom
+    InterfaceMethod: False
+    Return:
+      - #0 id=36902586 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=this] type=Std.Text.Json
+      - #1 id=63687823 idx=1 name=path type=Core.String
+    Locals:
+      - #0 id=36319496 idx=0 name=text type=Core.String
+      - #1 id=58440016 idx=1 name=autocreate_5882489 type=Core.Boolean
+      - #2 id=56198103 idx=2 name=autocreate_52942405 type=Core.Boolean
+      - #3 id=36020887 idx=3 name=autocreate_6719600 type=Core.Boolean
+      - #4 id=55752527 idx=4 name=autocreate_60476403 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.reload
+    VirtualName: reload_Core.Boolean_0
+    Name: reload
+    InterfaceMethod: False
+    Return:
+      - #0 id=10058158 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23487194 idx=0 name=this] type=Std.Text.Json
+    Locals:
+      - #0 id=23414560 idx=0 name=autocreate_7416719 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.save
+    VirtualName: save_Core.Boolean_0
+    Name: save
+    InterfaceMethod: False
+    Return:
+      - #0 id=10739296 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=this] type=Std.Text.Json
+    Locals:
+      - #0 id=29544808 idx=0 name=autocreate_66750478 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.savePretty
+    VirtualName: savePretty_Core.Boolean_0
+    Name: savePretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=33089041 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=63328883 idx=0 name=this] type=Std.Text.Json
+    Locals:
+      - #0 id=29365919 idx=0 name=autocreate_63883391 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.saveAs_1_Core.String
+    VirtualName: saveAs_Core.Boolean_1_Core.String
+    Name: saveAs
+    InterfaceMethod: False
+    Return:
+      - #0 id=251973 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27997 idx=0 name=this] type=Std.Text.Json
+      - #1 id=2267763 idx=1 name=path type=Core.String
+    Locals:
+      - #0 id=20409871 idx=0 name=autocreate_38079613 type=Core.Boolean
+      - #1 id=49471114 idx=1 name=autocreate_7172200 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.saveAsPretty_1_Core.String
+    VirtualName: saveAsPretty_Core.Boolean_1_Core.String
+    Name: saveAsPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=38092711 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=41515225 idx=0 name=this] type=Std.Text.Json
+      - #1 id=7290082 idx=1 name=path type=Core.String
+    Locals:
+      - #0 id=65610739 idx=0 name=autocreate_64549801 type=Core.Boolean
+      - #1 id=53625739 idx=1 name=autocreate_44077297 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.path
+    VirtualName: path_Core.String_0
+    Name: path
+    InterfaceMethod: False
+    Return:
+      - #0 id=14515408 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53808606 idx=0 name=this] type=Std.Text.Json
+    Locals: []
+    Instructions:
+
+  Method: Std.Text.Json.fileExists
+    VirtualName: fileExists_Core.Boolean_0
+    Name: fileExists
+    InterfaceMethod: False
+    Return:
+      - #0 id=45641491 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=34897438 idx=0 name=this] type=Std.Text.Json
+    Locals:
+      - #0 id=8120240 idx=0 name=autocreate_61151353 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Text.Json.fileSize
+    VirtualName: fileSize_Core.Int64_0
+    Name: fileSize
+    InterfaceMethod: False
+    Return:
+      - #0 id=59570626 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=14075498 idx=0 name=this] type=Std.Text.Json
+    Locals:
+      - #0 id=66373591 idx=0 name=autocreate_13491266 type=Core.Boolean
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

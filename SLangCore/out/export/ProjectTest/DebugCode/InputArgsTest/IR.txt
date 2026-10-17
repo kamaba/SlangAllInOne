@@ -1,0 +1,626 @@
+-------------------IR 文件显示 开始 : Path: InputArgsTest.sl-----------------------
+Class: ProjectTest.InputArgsTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.InputArgsTest.check_2_Core.String_Core.Boolean
+    VirtualName: check_Core.Void_2_Core.String_Core.Boolean
+    Name: check
+    InterfaceMethod: False
+    Return:
+      - #0 id=42186743 idx=0 name=_local[ProjectTest.InputArgsTest.check.return] type=Core.Void
+    Arguments:
+      - #0 id=44136375 idx=0 name=_local[name] type=Core.String
+      - #1 id=61683061 idx=1 name=_local[cond] type=Core.Boolean
+    Locals:
+      - #0 id=18276642 idx=0 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+2 2   [ InputArgsTest.sl:6] [LoadArgument] index:[1] info:[Argument]
+3 3   [ InputArgsTest.sl:4] [StoreLocal] index:[0] info:[if/elif store condition var]
+4 4   [ InputArgsTest.sl:4] [LoadLocal] index:[0] info:[if/elif load condition var]
+5 5   [ InputArgsTest.sl:6] [BrFalse] index:[18] info:[if/elif BrFalse]
+6 6   [ :0] [Nop] index:[0]
+7 7   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+8 8   [ InputArgsTest.sl:8] [LoadArgument] index:[0] info:[Argument]
+9 9   [ InputArgsTest.sl:8] [Add] index:[0]
+10 10   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+11 11   [ InputArgsTest.sl:8] [Add] index:[0]
+12 12   [ InputArgsTest.sl:4] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ :0] [Nop] index:[0]
+14 14   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+16 16   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+17 17   [ InputArgsTest.sl:9] [Br] index:[31] info:[if/elif/else block end Br]
+18 18   [ InputArgsTest.sl:10] [Label] index:[1] info:[if/elif/else branch start]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+21 21   [ InputArgsTest.sl:12] [LoadArgument] index:[0] info:[Argument]
+22 22   [ InputArgsTest.sl:12] [Add] index:[0]
+23 23   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+24 24   [ InputArgsTest.sl:12] [Add] index:[0]
+25 25   [ InputArgsTest.sl:4] [StoreLocal] index:[2] info:[LocalStatement]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+28 28   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+29 29   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+30 30   [ InputArgsTest.sl:13] [Br] index:[31] info:[if/elif/else block end Br]
+31 31   [ InputArgsTest.sl:13] [Label] index:[2] info:[if end]
+32 32   [ InputArgsTest.sl:4] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.InputArgsTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=36117414 idx=0 name=_local[ProjectTest.InputArgsTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=56621273 idx=0 name=fun_local[inputArgs] type=Core.Array<T><Core.Object>
+      - #1 id=39829417 idx=1 name=fun_local[argCount] type=Core.Int32
+      - #2 id=22920438 idx=2 name=fun_local[autocreate_20077469] type=Core.Boolean
+      - #3 id=46479497 idx=3 name=fun_local[i] type=Core.Int32
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=44136375 idx=5 name=_local[name] type=Core.String
+      - #6 id=61683061 idx=6 name=_local[cond] type=Core.Boolean
+      - #7 id=18276642 idx=7 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=44136375 idx=11 name=_local[name] type=Core.String
+      - #12 id=61683061 idx=12 name=_local[cond] type=Core.Boolean
+      - #13 id=18276642 idx=13 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=44136375 idx=16 name=_local[name] type=Core.String
+      - #17 id=61683061 idx=17 name=_local[cond] type=Core.Boolean
+      - #18 id=18276642 idx=18 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #19 id=37952469 idx=19 name=_local[txt] type=Core.Object
+      - #20 id=37952469 idx=20 name=_local[txt] type=Core.Object
+      - #21 id=44136375 idx=21 name=_local[name] type=Core.String
+      - #22 id=61683061 idx=22 name=_local[cond] type=Core.Boolean
+      - #23 id=18276642 idx=23 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #24 id=37952469 idx=24 name=_local[txt] type=Core.Object
+      - #25 id=37952469 idx=25 name=_local[txt] type=Core.Object
+      - #26 id=44136375 idx=26 name=_local[name] type=Core.String
+      - #27 id=61683061 idx=27 name=_local[cond] type=Core.Boolean
+      - #28 id=18276642 idx=28 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #29 id=37952469 idx=29 name=_local[txt] type=Core.Object
+      - #30 id=37952469 idx=30 name=_local[txt] type=Core.Object
+      - #31 id=44136375 idx=31 name=_local[name] type=Core.String
+      - #32 id=61683061 idx=32 name=_local[cond] type=Core.Boolean
+      - #33 id=18276642 idx=33 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #34 id=37952469 idx=34 name=_local[txt] type=Core.Object
+      - #35 id=37952469 idx=35 name=_local[txt] type=Core.Object
+      - #36 id=37952469 idx=36 name=_local[txt] type=Core.Object
+      - #37 id=44136375 idx=37 name=_local[name] type=Core.String
+      - #38 id=61683061 idx=38 name=_local[cond] type=Core.Boolean
+      - #39 id=18276642 idx=39 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #40 id=37952469 idx=40 name=_local[txt] type=Core.Object
+      - #41 id=37952469 idx=41 name=_local[txt] type=Core.Object
+      - #42 id=37952469 idx=42 name=_local[txt] type=Core.Object
+      - #43 id=44136375 idx=43 name=_local[name] type=Core.String
+      - #44 id=61683061 idx=44 name=_local[cond] type=Core.Boolean
+      - #45 id=18276642 idx=45 name=check_local[autocreate_2230829] type=Core.Boolean
+      - #46 id=37952469 idx=46 name=_local[txt] type=Core.Object
+      - #47 id=37952469 idx=47 name=_local[txt] type=Core.Object
+      - #48 id=37952469 idx=48 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ InputArgsTest.sl:23] [LoadConstString] index:[3607] val: string[========== InputArgsTest (start) ==========] 
+2 2   [ InputArgsTest.sl:21] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ InputArgsTest.sl:26] [LoadStaticField] index:[3] info:[Static] fieldTypeIrmt:[ProjectTest.Project] staticOwner:[ProjectTest.InputArgsTest] 
+8 8   [ InputArgsTest.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ InputArgsTest.sl:27] [LoadConstString] index:[3608] val: string[T1 global._inputArgs 始终非 null] 
+10 10   [ InputArgsTest.sl:27] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ InputArgsTest.sl:27] [LoadConstNull] index:[0] val:[null] 
+12 12   [ InputArgsTest.sl:27] [Cne] index:[0]
+13 13   [ InputArgsTest.sl:21] [StoreLocal] index:[6] info:[LocalStatement]
+14 14   [ InputArgsTest.sl:21] [StoreLocal] index:[5] info:[LocalStatement]
+15 15   [ :0] [Nop] index:[0]
+16 16   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+17 17   [ InputArgsTest.sl:6] [LoadLocal] index:[6] info:[LocalStatement]
+18 18   [ InputArgsTest.sl:21] [StoreLocal] index:[7] info:[if/elif store condition var]
+19 19   [ InputArgsTest.sl:21] [LoadLocal] index:[7] info:[if/elif load condition var]
+20 20   [ InputArgsTest.sl:6] [BrFalse] index:[33] info:[if/elif BrFalse]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+23 23   [ InputArgsTest.sl:8] [LoadLocal] index:[5] info:[LocalStatement]
+24 24   [ InputArgsTest.sl:8] [Add] index:[0]
+25 25   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+26 26   [ InputArgsTest.sl:8] [Add] index:[0]
+27 27   [ InputArgsTest.sl:21] [StoreLocal] index:[8] info:[LocalStatement]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+30 30   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+31 31   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+32 32   [ InputArgsTest.sl:9] [Br] index:[46] info:[if/elif/else block end Br]
+33 33   [ InputArgsTest.sl:10] [Label] index:[1] info:[if/elif/else branch start]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+36 36   [ InputArgsTest.sl:12] [LoadLocal] index:[5] info:[LocalStatement]
+37 37   [ InputArgsTest.sl:12] [Add] index:[0]
+38 38   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+39 39   [ InputArgsTest.sl:12] [Add] index:[0]
+40 40   [ InputArgsTest.sl:21] [StoreLocal] index:[9] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+43 43   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+44 44   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+45 45   [ InputArgsTest.sl:13] [Br] index:[46] info:[if/elif/else block end Br]
+46 46   [ InputArgsTest.sl:13] [Label] index:[2] info:[if end]
+47 47   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+48 48   [ InputArgsTest.sl:29] [LoadLocal] index:[0] info:[LocalStatement]
+49 49   [ :0] [CallVirt] index:[8] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ InputArgsTest.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+51 51   [ InputArgsTest.sl:30] [LoadConstString] index:[3609] val: string[  (本次运行参数个数: ] 
+52 52   [ InputArgsTest.sl:30] [LoadLocal] index:[1] info:[LocalStatement]
+53 53   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+54 54   [ InputArgsTest.sl:30] [Add] index:[0]
+55 55   [ InputArgsTest.sl:30] [LoadConstString] index:[611] val: string[)] 
+56 56   [ InputArgsTest.sl:30] [Add] index:[0]
+57 57   [ InputArgsTest.sl:21] [StoreLocal] index:[10] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ InputArgsTest.sl:32] [Nop] index:[0] info:[if/elif/else branch start]
+63 63   [ InputArgsTest.sl:32] [LoadLocal] index:[1] info:[LocalStatement]
+64 64   [ InputArgsTest.sl:32] [LoadConstInt32] index:[0] val: int32[0] 
+65 65   [ InputArgsTest.sl:32] [Ceq] index:[0]
+66 66   [ InputArgsTest.sl:21] [StoreLocal] index:[2] info:[if/elif store condition var]
+67 67   [ InputArgsTest.sl:21] [LoadLocal] index:[2] info:[if/elif load condition var]
+68 68   [ InputArgsTest.sl:32] [BrFalse] index:[110] info:[if/elif BrFalse]
+69 69   [ :0] [Nop] index:[0]
+70 70   [ InputArgsTest.sl:35] [LoadConstString] index:[3610] val: string[T2 无参数时 length == 0] 
+71 71   [ InputArgsTest.sl:35] [LoadLocal] index:[1] info:[LocalStatement]
+72 72   [ InputArgsTest.sl:35] [LoadConstInt32] index:[0] val: int32[0] 
+73 73   [ InputArgsTest.sl:35] [Ceq] index:[0]
+74 74   [ InputArgsTest.sl:21] [StoreLocal] index:[12] info:[LocalStatement]
+75 75   [ InputArgsTest.sl:21] [StoreLocal] index:[11] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+78 78   [ InputArgsTest.sl:6] [LoadLocal] index:[12] info:[LocalStatement]
+79 79   [ InputArgsTest.sl:21] [StoreLocal] index:[13] info:[if/elif store condition var]
+80 80   [ InputArgsTest.sl:21] [LoadLocal] index:[13] info:[if/elif load condition var]
+81 81   [ InputArgsTest.sl:6] [BrFalse] index:[94] info:[if/elif BrFalse]
+82 82   [ :0] [Nop] index:[0]
+83 83   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+84 84   [ InputArgsTest.sl:8] [LoadLocal] index:[11] info:[LocalStatement]
+85 85   [ InputArgsTest.sl:8] [Add] index:[0]
+86 86   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+87 87   [ InputArgsTest.sl:8] [Add] index:[0]
+88 88   [ InputArgsTest.sl:21] [StoreLocal] index:[14] info:[LocalStatement]
+89 89   [ :0] [Nop] index:[0]
+90 90   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+93 93   [ InputArgsTest.sl:9] [Br] index:[107] info:[if/elif/else block end Br]
+94 94   [ InputArgsTest.sl:10] [Label] index:[4] info:[if/elif/else branch start]
+95 95   [ :0] [Nop] index:[0]
+96 96   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+97 97   [ InputArgsTest.sl:12] [LoadLocal] index:[11] info:[LocalStatement]
+98 98   [ InputArgsTest.sl:12] [Add] index:[0]
+99 99   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+100 100   [ InputArgsTest.sl:12] [Add] index:[0]
+101 101   [ InputArgsTest.sl:21] [StoreLocal] index:[15] info:[LocalStatement]
+102 102   [ :0] [Nop] index:[0]
+103 103   [ ProjectTest.sp:8] [LoadLocal] index:[15] info:[LocalStatement]
+104 104   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+105 105   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+106 106   [ InputArgsTest.sl:13] [Br] index:[107] info:[if/elif/else block end Br]
+107 107   [ InputArgsTest.sl:13] [Label] index:[5] info:[if end]
+108 108   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+109 109   [ InputArgsTest.sl:36] [Br] index:[367] info:[if/elif/else block end Br]
+110 110   [ InputArgsTest.sl:37] [Label] index:[3] info:[if/elif/else branch start]
+111 111   [ :0] [Nop] index:[0]
+112 112   [ InputArgsTest.sl:40] [LoadConstString] index:[3611] val: string[T3 有参数时 length == 3] 
+113 113   [ InputArgsTest.sl:40] [LoadLocal] index:[1] info:[LocalStatement]
+114 114   [ InputArgsTest.sl:40] [LoadConstInt32] index:[0] val: int32[3] 
+115 115   [ InputArgsTest.sl:40] [Ceq] index:[0]
+116 116   [ InputArgsTest.sl:21] [StoreLocal] index:[17] info:[LocalStatement]
+117 117   [ InputArgsTest.sl:21] [StoreLocal] index:[16] info:[LocalStatement]
+118 118   [ :0] [Nop] index:[0]
+119 119   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+120 120   [ InputArgsTest.sl:6] [LoadLocal] index:[17] info:[LocalStatement]
+121 121   [ InputArgsTest.sl:21] [StoreLocal] index:[18] info:[if/elif store condition var]
+122 122   [ InputArgsTest.sl:21] [LoadLocal] index:[18] info:[if/elif load condition var]
+123 123   [ InputArgsTest.sl:6] [BrFalse] index:[136] info:[if/elif BrFalse]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+126 126   [ InputArgsTest.sl:8] [LoadLocal] index:[16] info:[LocalStatement]
+127 127   [ InputArgsTest.sl:8] [Add] index:[0]
+128 128   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+129 129   [ InputArgsTest.sl:8] [Add] index:[0]
+130 130   [ InputArgsTest.sl:21] [StoreLocal] index:[19] info:[LocalStatement]
+131 131   [ :0] [Nop] index:[0]
+132 132   [ ProjectTest.sp:8] [LoadLocal] index:[19] info:[LocalStatement]
+133 133   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+134 134   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+135 135   [ InputArgsTest.sl:9] [Br] index:[149] info:[if/elif/else block end Br]
+136 136   [ InputArgsTest.sl:10] [Label] index:[7] info:[if/elif/else branch start]
+137 137   [ :0] [Nop] index:[0]
+138 138   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+139 139   [ InputArgsTest.sl:12] [LoadLocal] index:[16] info:[LocalStatement]
+140 140   [ InputArgsTest.sl:12] [Add] index:[0]
+141 141   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+142 142   [ InputArgsTest.sl:12] [Add] index:[0]
+143 143   [ InputArgsTest.sl:21] [StoreLocal] index:[20] info:[LocalStatement]
+144 144   [ :0] [Nop] index:[0]
+145 145   [ ProjectTest.sp:8] [LoadLocal] index:[20] info:[LocalStatement]
+146 146   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+147 147   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+148 148   [ InputArgsTest.sl:13] [Br] index:[149] info:[if/elif/else block end Br]
+149 149   [ InputArgsTest.sl:13] [Label] index:[8] info:[if end]
+150 150   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+151 151   [ InputArgsTest.sl:43] [LoadConstString] index:[3612] val: string[T4[0] 内容为 hello] 
+152 152   [ InputArgsTest.sl:43] [LoadLocal] index:[0] info:[LocalStatement]
+153 153   [ InputArgsTest.sl:43] [LoadArrayIndex] index:[0] info:[LoadArrayIndex] val: int32[0] 
+154 154   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+155 155   [ InputArgsTest.sl:43] [LoadConstString] index:[586] val: string[hello] 
+156 156   [ InputArgsTest.sl:43] [Ceq] index:[0]
+157 157   [ InputArgsTest.sl:21] [StoreLocal] index:[22] info:[LocalStatement]
+158 158   [ InputArgsTest.sl:21] [StoreLocal] index:[21] info:[LocalStatement]
+159 159   [ :0] [Nop] index:[0]
+160 160   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+161 161   [ InputArgsTest.sl:6] [LoadLocal] index:[22] info:[LocalStatement]
+162 162   [ InputArgsTest.sl:21] [StoreLocal] index:[23] info:[if/elif store condition var]
+163 163   [ InputArgsTest.sl:21] [LoadLocal] index:[23] info:[if/elif load condition var]
+164 164   [ InputArgsTest.sl:6] [BrFalse] index:[177] info:[if/elif BrFalse]
+165 165   [ :0] [Nop] index:[0]
+166 166   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+167 167   [ InputArgsTest.sl:8] [LoadLocal] index:[21] info:[LocalStatement]
+168 168   [ InputArgsTest.sl:8] [Add] index:[0]
+169 169   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+170 170   [ InputArgsTest.sl:8] [Add] index:[0]
+171 171   [ InputArgsTest.sl:21] [StoreLocal] index:[24] info:[LocalStatement]
+172 172   [ :0] [Nop] index:[0]
+173 173   [ ProjectTest.sp:8] [LoadLocal] index:[24] info:[LocalStatement]
+174 174   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+175 175   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+176 176   [ InputArgsTest.sl:9] [Br] index:[190] info:[if/elif/else block end Br]
+177 177   [ InputArgsTest.sl:10] [Label] index:[9] info:[if/elif/else branch start]
+178 178   [ :0] [Nop] index:[0]
+179 179   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+180 180   [ InputArgsTest.sl:12] [LoadLocal] index:[21] info:[LocalStatement]
+181 181   [ InputArgsTest.sl:12] [Add] index:[0]
+182 182   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+183 183   [ InputArgsTest.sl:12] [Add] index:[0]
+184 184   [ InputArgsTest.sl:21] [StoreLocal] index:[25] info:[LocalStatement]
+185 185   [ :0] [Nop] index:[0]
+186 186   [ ProjectTest.sp:8] [LoadLocal] index:[25] info:[LocalStatement]
+187 187   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+188 188   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+189 189   [ InputArgsTest.sl:13] [Br] index:[190] info:[if/elif/else block end Br]
+190 190   [ InputArgsTest.sl:13] [Label] index:[10] info:[if end]
+191 191   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+192 192   [ InputArgsTest.sl:44] [LoadConstString] index:[3613] val: string[T4[1] 内容为 42] 
+193 193   [ InputArgsTest.sl:44] [LoadLocal] index:[0] info:[LocalStatement]
+194 194   [ InputArgsTest.sl:44] [LoadArrayIndex] index:[1] info:[LoadArrayIndex] val: int32[1] 
+195 195   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+196 196   [ InputArgsTest.sl:44] [LoadConstString] index:[3155] val: string[42] 
+197 197   [ InputArgsTest.sl:44] [Ceq] index:[0]
+198 198   [ InputArgsTest.sl:21] [StoreLocal] index:[27] info:[LocalStatement]
+199 199   [ InputArgsTest.sl:21] [StoreLocal] index:[26] info:[LocalStatement]
+200 200   [ :0] [Nop] index:[0]
+201 201   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+202 202   [ InputArgsTest.sl:6] [LoadLocal] index:[27] info:[LocalStatement]
+203 203   [ InputArgsTest.sl:21] [StoreLocal] index:[28] info:[if/elif store condition var]
+204 204   [ InputArgsTest.sl:21] [LoadLocal] index:[28] info:[if/elif load condition var]
+205 205   [ InputArgsTest.sl:6] [BrFalse] index:[218] info:[if/elif BrFalse]
+206 206   [ :0] [Nop] index:[0]
+207 207   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+208 208   [ InputArgsTest.sl:8] [LoadLocal] index:[26] info:[LocalStatement]
+209 209   [ InputArgsTest.sl:8] [Add] index:[0]
+210 210   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+211 211   [ InputArgsTest.sl:8] [Add] index:[0]
+212 212   [ InputArgsTest.sl:21] [StoreLocal] index:[29] info:[LocalStatement]
+213 213   [ :0] [Nop] index:[0]
+214 214   [ ProjectTest.sp:8] [LoadLocal] index:[29] info:[LocalStatement]
+215 215   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+216 216   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+217 217   [ InputArgsTest.sl:9] [Br] index:[231] info:[if/elif/else block end Br]
+218 218   [ InputArgsTest.sl:10] [Label] index:[11] info:[if/elif/else branch start]
+219 219   [ :0] [Nop] index:[0]
+220 220   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+221 221   [ InputArgsTest.sl:12] [LoadLocal] index:[26] info:[LocalStatement]
+222 222   [ InputArgsTest.sl:12] [Add] index:[0]
+223 223   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+224 224   [ InputArgsTest.sl:12] [Add] index:[0]
+225 225   [ InputArgsTest.sl:21] [StoreLocal] index:[30] info:[LocalStatement]
+226 226   [ :0] [Nop] index:[0]
+227 227   [ ProjectTest.sp:8] [LoadLocal] index:[30] info:[LocalStatement]
+228 228   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+229 229   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+230 230   [ InputArgsTest.sl:13] [Br] index:[231] info:[if/elif/else block end Br]
+231 231   [ InputArgsTest.sl:13] [Label] index:[12] info:[if end]
+232 232   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+233 233   [ InputArgsTest.sl:45] [LoadConstString] index:[3614] val: string[T4[2] 内容为 world] 
+234 234   [ InputArgsTest.sl:45] [LoadLocal] index:[0] info:[LocalStatement]
+235 235   [ InputArgsTest.sl:45] [LoadArrayIndex] index:[2] info:[LoadArrayIndex] val: int32[2] 
+236 236   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+237 237   [ InputArgsTest.sl:45] [LoadConstString] index:[846] val: string[world] 
+238 238   [ InputArgsTest.sl:45] [Ceq] index:[0]
+239 239   [ InputArgsTest.sl:21] [StoreLocal] index:[32] info:[LocalStatement]
+240 240   [ InputArgsTest.sl:21] [StoreLocal] index:[31] info:[LocalStatement]
+241 241   [ :0] [Nop] index:[0]
+242 242   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+243 243   [ InputArgsTest.sl:6] [LoadLocal] index:[32] info:[LocalStatement]
+244 244   [ InputArgsTest.sl:21] [StoreLocal] index:[33] info:[if/elif store condition var]
+245 245   [ InputArgsTest.sl:21] [LoadLocal] index:[33] info:[if/elif load condition var]
+246 246   [ InputArgsTest.sl:6] [BrFalse] index:[259] info:[if/elif BrFalse]
+247 247   [ :0] [Nop] index:[0]
+248 248   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+249 249   [ InputArgsTest.sl:8] [LoadLocal] index:[31] info:[LocalStatement]
+250 250   [ InputArgsTest.sl:8] [Add] index:[0]
+251 251   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+252 252   [ InputArgsTest.sl:8] [Add] index:[0]
+253 253   [ InputArgsTest.sl:21] [StoreLocal] index:[34] info:[LocalStatement]
+254 254   [ :0] [Nop] index:[0]
+255 255   [ ProjectTest.sp:8] [LoadLocal] index:[34] info:[LocalStatement]
+256 256   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+257 257   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+258 258   [ InputArgsTest.sl:9] [Br] index:[272] info:[if/elif/else block end Br]
+259 259   [ InputArgsTest.sl:10] [Label] index:[13] info:[if/elif/else branch start]
+260 260   [ :0] [Nop] index:[0]
+261 261   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+262 262   [ InputArgsTest.sl:12] [LoadLocal] index:[31] info:[LocalStatement]
+263 263   [ InputArgsTest.sl:12] [Add] index:[0]
+264 264   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+265 265   [ InputArgsTest.sl:12] [Add] index:[0]
+266 266   [ InputArgsTest.sl:21] [StoreLocal] index:[35] info:[LocalStatement]
+267 267   [ :0] [Nop] index:[0]
+268 268   [ ProjectTest.sp:8] [LoadLocal] index:[35] info:[LocalStatement]
+269 269   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+270 270   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+271 271   [ InputArgsTest.sl:13] [Br] index:[272] info:[if/elif/else block end Br]
+272 272   [ InputArgsTest.sl:13] [Label] index:[14] info:[if end]
+273 273   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+274 274   [ InputArgsTest.sl:48] [LoadConstString] index:[3615] val: string[  遍历拼接: [0]=] 
+275 275   [ InputArgsTest.sl:48] [LoadLocal] index:[0] info:[LocalStatement]
+276 276   [ InputArgsTest.sl:48] [LoadArrayIndex] index:[0] info:[LoadArrayIndex] val: int32[0] 
+277 277   [ InputArgsTest.sl:48] [Add] index:[0]
+278 278   [ InputArgsTest.sl:48] [LoadConstString] index:[3616] val: string[ [1]=] 
+279 279   [ InputArgsTest.sl:48] [Add] index:[0]
+280 280   [ InputArgsTest.sl:48] [LoadLocal] index:[0] info:[LocalStatement]
+281 281   [ InputArgsTest.sl:48] [LoadArrayIndex] index:[1] info:[LoadArrayIndex] val: int32[1] 
+282 282   [ InputArgsTest.sl:48] [Add] index:[0]
+283 283   [ InputArgsTest.sl:48] [LoadConstString] index:[3617] val: string[ [2]=] 
+284 284   [ InputArgsTest.sl:48] [Add] index:[0]
+285 285   [ InputArgsTest.sl:48] [LoadLocal] index:[0] info:[LocalStatement]
+286 286   [ InputArgsTest.sl:48] [LoadArrayIndex] index:[2] info:[LoadArrayIndex] val: int32[2] 
+287 287   [ InputArgsTest.sl:48] [Add] index:[0]
+288 288   [ InputArgsTest.sl:21] [StoreLocal] index:[36] info:[LocalStatement]
+289 289   [ :0] [Nop] index:[0]
+290 290   [ ProjectTest.sp:8] [LoadLocal] index:[36] info:[LocalStatement]
+291 291   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+292 292   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+293 293   [ InputArgsTest.sl:49] [LoadConstString] index:[3618] val: string[T5 元素可直接字符串拼接] 
+294 294   [ InputArgsTest.sl:49] [LoadConstString] index:[2] val: string[] 
+295 295   [ InputArgsTest.sl:49] [LoadLocal] index:[0] info:[LocalStatement]
+296 296   [ InputArgsTest.sl:49] [LoadArrayIndex] index:[0] info:[LoadArrayIndex] val: int32[0] 
+297 297   [ InputArgsTest.sl:49] [Add] index:[0]
+298 298   [ InputArgsTest.sl:49] [LoadConstString] index:[586] val: string[hello] 
+299 299   [ InputArgsTest.sl:49] [Ceq] index:[0]
+300 300   [ InputArgsTest.sl:21] [StoreLocal] index:[38] info:[LocalStatement]
+301 301   [ InputArgsTest.sl:21] [StoreLocal] index:[37] info:[LocalStatement]
+302 302   [ :0] [Nop] index:[0]
+303 303   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+304 304   [ InputArgsTest.sl:6] [LoadLocal] index:[38] info:[LocalStatement]
+305 305   [ InputArgsTest.sl:21] [StoreLocal] index:[39] info:[if/elif store condition var]
+306 306   [ InputArgsTest.sl:21] [LoadLocal] index:[39] info:[if/elif load condition var]
+307 307   [ InputArgsTest.sl:6] [BrFalse] index:[320] info:[if/elif BrFalse]
+308 308   [ :0] [Nop] index:[0]
+309 309   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+310 310   [ InputArgsTest.sl:8] [LoadLocal] index:[37] info:[LocalStatement]
+311 311   [ InputArgsTest.sl:8] [Add] index:[0]
+312 312   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+313 313   [ InputArgsTest.sl:8] [Add] index:[0]
+314 314   [ InputArgsTest.sl:21] [StoreLocal] index:[40] info:[LocalStatement]
+315 315   [ :0] [Nop] index:[0]
+316 316   [ ProjectTest.sp:8] [LoadLocal] index:[40] info:[LocalStatement]
+317 317   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+318 318   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+319 319   [ InputArgsTest.sl:9] [Br] index:[333] info:[if/elif/else block end Br]
+320 320   [ InputArgsTest.sl:10] [Label] index:[15] info:[if/elif/else branch start]
+321 321   [ :0] [Nop] index:[0]
+322 322   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+323 323   [ InputArgsTest.sl:12] [LoadLocal] index:[37] info:[LocalStatement]
+324 324   [ InputArgsTest.sl:12] [Add] index:[0]
+325 325   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+326 326   [ InputArgsTest.sl:12] [Add] index:[0]
+327 327   [ InputArgsTest.sl:21] [StoreLocal] index:[41] info:[LocalStatement]
+328 328   [ :0] [Nop] index:[0]
+329 329   [ ProjectTest.sp:8] [LoadLocal] index:[41] info:[LocalStatement]
+330 330   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+331 331   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+332 332   [ InputArgsTest.sl:13] [Br] index:[333] info:[if/elif/else block end Br]
+333 333   [ InputArgsTest.sl:13] [Label] index:[16] info:[if end]
+334 334   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+335 335   [ InputArgsTest.sl:52] [LoadConstInt32] index:[0] val: int32[0] 
+336 336   [ InputArgsTest.sl:21] [StoreLocal] index:[3] info:[LocalStatement]
+337 337   [ :0] [Label] index:[18]
+338 338   [ InputArgsTest.sl:53] [LoadLocal] index:[3] info:[LocalStatement]
+339 339   [ InputArgsTest.sl:53] [LoadLocal] index:[1] info:[LocalStatement]
+340 340   [ InputArgsTest.sl:53] [Clt] index:[0]
+341 341   [ :0] [BrFalse] index:[365]
+342 342   [ :0] [Nop] index:[0]
+343 343   [ :0] [Nop] index:[0]
+344 344   [ InputArgsTest.sl:55] [LoadConstString] index:[3619] val: string[  global._inputArgs[] 
+345 345   [ InputArgsTest.sl:55] [LoadLocal] index:[3] info:[LocalStatement]
+346 346   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+347 347   [ InputArgsTest.sl:55] [Add] index:[0]
+348 348   [ InputArgsTest.sl:55] [LoadConstString] index:[529] val: string[] -> ] 
+349 349   [ InputArgsTest.sl:55] [Add] index:[0]
+350 350   [ InputArgsTest.sl:55] [LoadLocal] index:[0] info:[LocalStatement]
+351 351   [ InputArgsTest.sl:21] [LoadLocal] index:[3] info:[LocalStatement]
+352 352   [ :0] [LoadArrayIndexField] index:[0]
+353 353   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+354 354   [ InputArgsTest.sl:55] [Add] index:[0]
+355 355   [ InputArgsTest.sl:21] [StoreLocal] index:[42] info:[LocalStatement]
+356 356   [ :0] [Nop] index:[0]
+357 357   [ ProjectTest.sp:8] [LoadLocal] index:[42] info:[LocalStatement]
+358 358   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+359 359   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+360 360   [ InputArgsTest.sl:56] [LoadLocal] index:[3] info:[LocalStatement]
+361 361   [ InputArgsTest.sl:56] [LoadConstInt32] index:[0] val: int32[1] 
+362 362   [ InputArgsTest.sl:56] [Add] index:[0]
+363 363   [ InputArgsTest.sl:21] [StoreLocal] index:[3] info:[LocalStatement]
+364 364   [ :0] [Br] index:[337]
+365 365   [ :0] [Label] index:[17]
+366 366   [ InputArgsTest.sl:58] [Br] index:[367] info:[if/elif/else block end Br]
+367 367   [ InputArgsTest.sl:58] [Label] index:[6] info:[if end]
+368 368   [ InputArgsTest.sl:61] [LoadConstString] index:[3620] val: string[T6 jsonc global.var1 共存正常] 
+369 369   [ InputArgsTest.sl:61] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.Project] staticOwner:[ProjectTest.InputArgsTest] 
+370 370   [ InputArgsTest.sl:61] [LoadConstInt32] index:[0] val: int32[12] 
+371 371   [ InputArgsTest.sl:61] [Ceq] index:[0]
+372 372   [ InputArgsTest.sl:21] [StoreLocal] index:[44] info:[LocalStatement]
+373 373   [ InputArgsTest.sl:21] [StoreLocal] index:[43] info:[LocalStatement]
+374 374   [ :0] [Nop] index:[0]
+375 375   [ InputArgsTest.sl:6] [Nop] index:[0] info:[if/elif/else branch start]
+376 376   [ InputArgsTest.sl:6] [LoadLocal] index:[44] info:[LocalStatement]
+377 377   [ InputArgsTest.sl:21] [StoreLocal] index:[45] info:[if/elif store condition var]
+378 378   [ InputArgsTest.sl:21] [LoadLocal] index:[45] info:[if/elif load condition var]
+379 379   [ InputArgsTest.sl:6] [BrFalse] index:[392] info:[if/elif BrFalse]
+380 380   [ :0] [Nop] index:[0]
+381 381   [ InputArgsTest.sl:8] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+382 382   [ InputArgsTest.sl:8] [LoadLocal] index:[43] info:[LocalStatement]
+383 383   [ InputArgsTest.sl:8] [Add] index:[0]
+384 384   [ InputArgsTest.sl:8] [LoadConstString] index:[1834] val: string[ : OK] 
+385 385   [ InputArgsTest.sl:8] [Add] index:[0]
+386 386   [ InputArgsTest.sl:21] [StoreLocal] index:[46] info:[LocalStatement]
+387 387   [ :0] [Nop] index:[0]
+388 388   [ ProjectTest.sp:8] [LoadLocal] index:[46] info:[LocalStatement]
+389 389   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+390 390   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+391 391   [ InputArgsTest.sl:9] [Br] index:[405] info:[if/elif/else block end Br]
+392 392   [ InputArgsTest.sl:10] [Label] index:[19] info:[if/elif/else branch start]
+393 393   [ :0] [Nop] index:[0]
+394 394   [ InputArgsTest.sl:12] [LoadConstString] index:[3606] val: string[[InputArgsTest] ] 
+395 395   [ InputArgsTest.sl:12] [LoadLocal] index:[43] info:[LocalStatement]
+396 396   [ InputArgsTest.sl:12] [Add] index:[0]
+397 397   [ InputArgsTest.sl:12] [LoadConstString] index:[1835] val: string[ : FAIL] 
+398 398   [ InputArgsTest.sl:12] [Add] index:[0]
+399 399   [ InputArgsTest.sl:21] [StoreLocal] index:[47] info:[LocalStatement]
+400 400   [ :0] [Nop] index:[0]
+401 401   [ ProjectTest.sp:8] [LoadLocal] index:[47] info:[LocalStatement]
+402 402   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+403 403   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+404 404   [ InputArgsTest.sl:13] [Br] index:[405] info:[if/elif/else block end Br]
+405 405   [ InputArgsTest.sl:13] [Label] index:[20] info:[if end]
+406 406   [ InputArgsTest.sl:4] [Nop] index:[0] info:[inline end: check]
+407 407   [ InputArgsTest.sl:63] [LoadConstString] index:[3621] val: string[========== InputArgsTest (end) ==========] 
+408 408   [ InputArgsTest.sl:21] [StoreLocal] index:[48] info:[LocalStatement]
+409 409   [ :0] [Nop] index:[0]
+410 410   [ ProjectTest.sp:8] [LoadLocal] index:[48] info:[LocalStatement]
+411 411   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+412 412   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+413 413   [ InputArgsTest.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

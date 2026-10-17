@@ -1,0 +1,168 @@
+-------------------Meta 文件显示 开始 : Path: Float32.sl-----------------------
+public class Float32 extends Core.Num
+{
+public const [Core.Float32]Epsilen = 4.912321f;
+public const [Core.Float32]MaxValue = 20f;
+public const [Core.Float32]MinValue = -1f;
+private [Core.Float32]_value = 0f;
+public  static Core.Boolean isFinite([Core.Float32]f)
+{
+return False;
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return SystemConvertString(this);
+}
+
+public  override get Core.Int32 size()
+{
+return 32;
+}
+
+public  override get Core.Int32 byteLength()
+{
+return 4;
+}
+
+public  override Core.Num abs()
+{
+return SystemNumAbs(this);
+}
+
+public  override Core.Num floor()
+{
+return SystemNumFloor(this);
+}
+
+public  override Core.Num ceil()
+{
+return [Core.Float32]Core.Float32.ceil.this;
+}
+
+public  override Core.Int32 compareTo([Core.Num]other)
+{
+Core.Boolean autocreate_42137308 = ([Core.Num]other == null)
+if autocreate_42137308
+{
+return 1;
+}
+[Core.Float64]ov = [Core.Num]other.toFloat64();
+Core.Boolean autocreate_43691456 = ([Core.Float32]Core.Float32.compareTo.this  ->  [Core.Float32]_value == [Core.Float64]ov)
+if autocreate_43691456
+{
+return 0;
+}
+return ([Core.Float32]Core.Float32.compareTo.this  ->  [Core.Float32]_value > [Core.Float64]ov)  ?  1  :  (0 - 1);
+}
+
+public  Core.Boolean toBool()
+{
+return SystemConvertBool(this);
+}
+
+public  Core.Int8 toInt8([Core.UInt8]index)
+{
+return SystemConvertInt8(this,index);
+}
+
+public  Core.UInt8 toUInt8([Core.UInt8]index)
+{
+return SystemConvertUInt8(this,index);
+}
+
+public  Core.Int16 toInt16()
+{
+return SystemConvertInt16(this);
+}
+
+public  Core.UInt16 toUInt16()
+{
+return SystemConvertUInt16(this);
+}
+
+public  override Core.Int32 toInt32()
+{
+return SystemConvertInt32(this);
+}
+
+public  Core.UInt32 toUInt32()
+{
+return SystemConvertUInt32(this);
+}
+
+public  Core.Int64 toInt64()
+{
+return SystemConvertInt64(this);
+}
+
+public  Core.Int64 toUInt64()
+{
+return SystemConvertUInt64(this);
+}
+
+public  Core.Float32 toFloat32()
+{
+return SystemConvertFloat32(this);
+}
+
+public  override Core.Float64 toFloat64()
+{
+return SystemConvertFloat64(this);
+}
+
+public  Core.Void _init_([Core.Float32]f)
+{
+[Core.Float32]Core.Float32._init_.this  ->  [Core.Float32]_value = [Core.Float32]f;
+
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

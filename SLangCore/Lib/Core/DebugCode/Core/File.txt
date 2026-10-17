@@ -1,0 +1,29 @@
+-------------------FileMeta 文件显示 开始 : Path: Core.sp-----------------------
+_public _partial _class Project
+{
+    publicstring cpk = "cpkkk"
+    publicfloat Pi = 3.1f
+
+    _public print( object str )
+    {
+        SystemPrint(str);
+    }
+    _public println( object str )
+    {
+        SystemPrintln(str);
+    }
+    _public _main_( )
+    {
+        NumberTest.fun();
+    }
+    _public _test_( )
+    {
+    }
+    _public CompileBefore( )
+    {
+    }
+    _public CompileAfter( )
+    {
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

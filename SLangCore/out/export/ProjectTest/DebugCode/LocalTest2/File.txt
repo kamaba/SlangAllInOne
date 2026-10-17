@@ -1,0 +1,32 @@
+-------------------FileMeta 文件显示 开始 : Path: LocalTest2.sl-----------------------
+local
+{
+    a = 100i;
+    order = "L2";
+    _public int Add( int x )
+    {
+        ret x + local.a
+    }
+    _public PrintLocal( )
+    {
+        global.println("LocalTest2 local.a=" + local.a);
+        global.println("LocalTest2 local.order=" + local.order);
+    }
+}
+class LocalTest2
+{
+    _public static Test( )
+    {
+        local.a = local.a + 1i;
+        v = local.Add(5i);
+        global.println("LocalTest2 v=" + v);
+        local.PrintLocal();
+    }
+    _public static fun( )
+    {
+        global.println("========== LocalTest2 (start) ==========");
+        LocalTest2.Test();
+        global.println("========== LocalTest2 (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

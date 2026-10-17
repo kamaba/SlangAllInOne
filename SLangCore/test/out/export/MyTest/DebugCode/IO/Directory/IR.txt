@@ -1,0 +1,169 @@
+-------------------IR 文件显示 开始 : Path: IO/Directory.sl-----------------------
+Class: Std.IO.Directory
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.exists_1_Core.String
+    VirtualName: exists_Core.Boolean_1_Core.String
+    Name: exists
+    InterfaceMethod: False
+    Return:
+      - #0 id=56327989 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=37189853 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.createDirectory_1_Core.String
+    VirtualName: createDirectory_Core.Boolean_1_Core.String
+    Name: createDirectory
+    InterfaceMethod: False
+    Return:
+      - #0 id=59588135 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66531170 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.delete_1_Core.String
+    VirtualName: delete_Core.Boolean_1_Core.String
+    Name: delete
+    InterfaceMethod: False
+    Return:
+      - #0 id=20315681 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48623408 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.getCurrentDirectory
+    VirtualName: getCurrentDirectory_Core.String_0
+    Name: getCurrentDirectory
+    InterfaceMethod: False
+    Return:
+      - #0 id=46181951 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.setCurrentDirectory_1_Core.String
+    VirtualName: setCurrentDirectory_Core.Boolean_1_Core.String
+    Name: setCurrentDirectory
+    InterfaceMethod: False
+    Return:
+      - #0 id=49750539 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=45101667 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.IO.Directory.getFiles_1_Core.String
+    VirtualName: getFiles_Core.String_1_Core.String
+    Name: getFiles
+    InterfaceMethod: False
+    Return:
+      - #0 id=29356372 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=62880759 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Std.IO.Directory.current
+    VirtualName: current_Core.String_0
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=4719792 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=60176744 idx=0 name=this] type=Std.IO.Directory
+    Locals: []
+    Instructions:
+
+Class: Std.IO.SearchOption
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1636237407 idx=0 name=Std.IO.SearchOption.TopDirectoryOnly type=Core.Member
+      - #1 id=-2137206941 idx=1 name=Std.IO.SearchOption.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,16 @@
+-------------------FileMeta 文件显示 开始 : Path: Member.sl-----------------------
+public _partial class Member extends Object
+{
+    publicstring name = ""
+    publicobject value = null
+    publicint index = - 1
+
+    _public void _init_( )
+    {
+    }
+    public string toString( )
+    {
+        ret this.value.toString()
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

@@ -1,0 +1,1125 @@
+-------------------IR 文件显示 开始 : Path: IO/LengthPrefix.sl-----------------------
+Class: Core.LengthPrefix
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.LengthPrefix.defaultMaxFrame
+    VirtualName: defaultMaxFrame_Core.Int32_0
+    Name: defaultMaxFrame
+    InterfaceMethod: False
+    Return:
+      - #0 id=63718061 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.LengthPrefix.writeFrame_2_Core.ByteBuffer_Core.ByteBuffer
+    VirtualName: writeFrame_Core.Void_2_Core.ByteBuffer_Core.ByteBuffer
+    Name: writeFrame
+    InterfaceMethod: False
+    Return:
+      - #0 id=60889336 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11133117 idx=0 name=dst type=Core.ByteBuffer
+      - #1 id=33089196 idx=1 name=payload type=Core.ByteBuffer
+    Locals:
+      - #0 id=29367308 idx=0 name=len type=Core.Int32
+    Instructions:
+
+  Method: Core.LengthPrefix.writeFrameBytes_2_Core.ByteBuffer_Core.Array<Core.UInt8>[-1]
+    VirtualName: writeFrameBytes_Core.Void_2_Core.ByteBuffer_Core.Array<Core.UInt8>[-1]
+    Name: writeFrameBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=62979183 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29941743 idx=0 name=dst type=Core.ByteBuffer
+      - #1 id=1040236 idx=1 name=payload type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=9362127 idx=0 name=len type=Core.Int32
+    Instructions:
+
+  Method: Core.LengthPrefix.readFrameLength_2_Core.ByteBuffer_Core.Int32
+    VirtualName: readFrameLength_Core.Int32_2_Core.ByteBuffer_Core.Int32
+    Name: readFrameLength
+    InterfaceMethod: False
+    Return:
+      - #0 id=17150281 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=20134803 idx=0 name=src type=Core.ByteBuffer
+      - #1 id=46995502 idx=1 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=20306340 idx=0 name=before type=Core.Int32
+      - #1 id=48539332 idx=1 name=u type=Core.UInt64
+      - #2 id=34200809 idx=2 name=len64 type=Core.Int64
+      - #3 id=39371826 idx=3 name=len type=Core.Int32
+      - #4 id=18802122 idx=4 name=autocreate_27353390 type=Core.Boolean
+      - #5 id=35001377 idx=5 name=autocreate_44853923 type=Core.Boolean
+      - #6 id=46576945 idx=6 name=autocreate_1032124 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LengthPrefix.tryReadFrame_2_Core.ByteBuffer_Core.Int32
+    VirtualName: tryReadFrame_Core.ByteBuffer_2_Core.ByteBuffer_Core.Int32
+    Name: tryReadFrame
+    InterfaceMethod: False
+    Return:
+      - #0 id=66562817 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=62194446 idx=0 name=src type=Core.ByteBuffer
+      - #1 id=22879106 idx=1 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=4585366 idx=0 name=len type=Core.Int32
+      - #1 id=41268299 idx=1 name=frame type=Core.ByteBuffer
+      - #2 id=35870379 idx=2 name=autocreate_9289124 type=Core.Boolean
+      - #3 id=54397957 idx=3 name=autocreate_16493259 type=Core.Boolean
+      - #4 id=19819572 idx=4 name=autocreate_14221611 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LengthPrefix.drainFrames<T>_4_Core.StreamController<T>_Core.Codec<T,Core.ByteBuffer>_Core.ByteBuffer_Core.Int32
+    VirtualName: drainFrames_Core.Void_4_Core.StreamController<T>_Core.Codec<T,Core.ByteBuffer>_Core.ByteBuffer_Core.Int32
+    Name: drainFrames
+    InterfaceMethod: False
+    Return:
+      - #0 id=14455526 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62990874 idx=0 name=ctrl type=Core.StreamController<T><T[0]>
+      - #1 id=30046962 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=1987206 idx=2 name=acc type=Core.ByteBuffer
+      - #3 id=17884854 idx=3 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=26745965 idx=0 name=c type=Core.StreamController<T><T[0]>
+      - #1 id=39387099 idx=1 name=cd type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=18939577 idx=2 name=len type=Core.Int32
+      - #3 id=36238473 idx=3 name=frame type=Core.ByteBuffer
+      - #4 id=57710802 idx=4 name=msg type=T[0]
+      - #5 id=49635175 idx=5 name=autocreate_60885635 type=Core.Boolean
+      - #6 id=44063391 idx=6 name=autocreate_11099805 type=Core.Boolean
+      - #7 id=61026205 idx=7 name=autocreate_32789387 type=Core.Boolean
+    Instructions:
+
+  Method: Core.LengthPrefix.decodeStream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: decodeStream_Core.Stream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: decodeStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=59855715 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=1830529 idx=0 name=src type=Core.ByteStream
+      - #1 id=16474764 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=14055149 idx=0 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.LengthPrefix.decodeStream<T>_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: decodeStream_Core.Stream<T>_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: decodeStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=45656294 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=8253465 idx=0 name=src type=Core.ByteStream
+      - #1 id=7172328 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=64550954 idx=2 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=44087682 idx=0 name=s type=Core._FramedDecodeStream<T><T[0]>
+    Instructions:
+
+  Method: Core.LengthPrefix.encodeSink<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: encodeSink_Core.StreamSink<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: encodeSink
+    InterfaceMethod: False
+    Return:
+      - #0 id=14332509 idx=0 name=return] type=Core.StreamSink<T><T[0]>
+    Arguments:
+      - #0 id=61883722 idx=0 name=dst type=Core.ByteStream
+      - #1 id=20082593 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=46525609 idx=0 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.LengthPrefix.encodeSink<T>_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: encodeSink_Core.StreamSink<T>_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: encodeSink
+    InterfaceMethod: False
+    Return:
+      - #0 id=27192961 idx=0 name=return] type=Core.StreamSink<T><T[0]>
+    Arguments:
+      - #0 id=43410060 idx=0 name=dst type=Core.ByteStream
+      - #1 id=55146222 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=26553952 idx=2 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=37658979 idx=0 name=k type=Core._FrameEncodeSink<T><T[0]>
+    Instructions:
+
+  Method: Core.LengthPrefix.bindStream<T>_2_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: bindStream_Core.Stream<T>_2_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>
+    Name: bindStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=30478473 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=5870806 idx=0 name=chunks type=Core.Stream<T><Core.ByteBuffer>
+      - #1 id=52837255 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=5773255 idx=0 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.LengthPrefix.bindStream<T>_3_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: bindStream_Core.Stream<T>_3_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: bindStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=47953966 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=28932512 idx=0 name=chunks type=Core.Stream<T><Core.ByteBuffer>
+      - #1 id=59066022 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=61832151 idx=2 name=maxFrame type=Core.Int32
+    Locals:
+      - #0 id=19618454 idx=0 name=s type=Core._FramedBindStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core._FramedDecodeStream<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1343102136 idx=0 name=Core._FramedDecodeStream<T>._src type=Core.ByteStream
+      - #1 id=-1708567277 idx=1 name=Core._FramedDecodeStream<T>._codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=-229002601 idx=2 name=Core._FramedDecodeStream<T>._maxFrame type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Stream<T>.fromIterable_1_Core.Array<T>[-1]
+    VirtualName: fromIterable_Core.Stream<T>_1_Core.Array<T>[-1]
+    Name: fromIterable
+    InterfaceMethod: False
+    Return:
+      - #0 id=45590951 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=7665379 idx=0 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=1879552 idx=0 name=s type=Core._FromIterableStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.generate_2_Core.Int32_Core.Function
+    VirtualName: generate_Core.Stream<T>_2_Core.Int32_Core.Function
+    Name: generate
+    InterfaceMethod: False
+    Return:
+      - #0 id=18026058 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=28016801 idx=0 name=count type=Core.Int32
+      - #1 id=50824621 idx=1 name=gen type=Core.Function
+    Locals:
+      - #0 id=54768407 idx=0 name=s type=Core._GenerateStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.periodic_2_Core.Int64_Core.Function
+    VirtualName: periodic_Core.Stream<T>_2_Core.Int64_Core.Function
+    Name: periodic
+    InterfaceMethod: False
+    Return:
+      - #0 id=7055953 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=63503579 idx=0 name=millis type=Core.Int64
+      - #1 id=34661303 idx=1 name=tick type=Core.Function
+    Locals:
+      - #0 id=43516279 idx=0 name=s type=Core._PeriodicStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.fromByteStream_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: fromByteStream_Core.Stream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: fromByteStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=35157707 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=47983914 idx=0 name=src type=Core.ByteStream
+      - #1 id=29202048 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=61491846 idx=0 name=s type=Core._FromByteStreamStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.empty
+    VirtualName: empty_Core.Stream<T>_0
+    Name: empty
+    InterfaceMethod: False
+    Return:
+      - #0 id=14783663 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments: []
+    Locals:
+      - #0 id=65944108 idx=0 name=s type=Core._EmptyStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.failed_1_Core.Object
+    VirtualName: failed_Core.Stream<T>_1_Core.Object
+    Name: failed
+    InterfaceMethod: False
+    Return:
+      - #0 id=39872498 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=23308166 idx=0 name=errInfo type=Core.Object
+    Locals:
+      - #0 id=8446905 idx=0 name=s type=Core._ErrorStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core._FramedDecodeStream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean
+    VirtualName: listen_Core.StreamSubscription_4_Core.Function_Core.Function_Core.Function_Core.Boolean
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=13110696 idx=0 name=return] type=Core.StreamSubscription
+    Arguments:
+      - #0 id=26669028 idx=0 name=this] type=Core._FramedDecodeStream<T><T[0]>
+      - #1 id=50887407 idx=1 name=onData type=Core.Function
+      - #2 id=55333480 idx=2 name=onError type=Core.Function
+      - #3 id=28239278 idx=3 name=onDone type=Core.Function
+      - #4 id=52826913 idx=4 name=cancelOnError type=Core.Boolean
+    Locals:
+      - #0 id=47260332 idx=0 name=ctrl type=Core.StreamController<T><T[0]>
+      - #1 id=5680170 idx=1 name=s type=Core.Stream<T><T[0]>
+      - #2 id=51121530 idx=2 name=sub type=Core.StreamSubscription
+      - #3 id=38694667 idx=3 name=src type=Core.ByteStream
+      - #4 id=25935173 idx=4 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #5 id=32089967 idx=5 name=maxFrame type=Core.Int32
+      - #6 id=57440586 idx=6 name=f type=Core.Function
+      - #7 id=47203227 idx=7 name=__closure_ctx__] type=Core.Object
+      - #8 id=49328407 idx=8 name=closure type=Core.Object
+      - #9 id=22175862 idx=9 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core.Stream<T>.listen_1_Core.Function
+    VirtualName: listen_Core.StreamSubscription_1_Core.Function
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=3818773 idx=0 name=return] type=Core.StreamSubscription
+    Arguments:
+      - #0 id=60076631 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=34368962 idx=1 name=onData type=Core.Function
+    Locals: []
+    Instructions:
+
+  Method: Core.Stream<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=23367494 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=32422550 idx=0 name=this] type=Core.Stream<T><T[0]>
+    Locals:
+      - #0 id=8980857 idx=0 name=it type=Core.StreamIterator<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.mapEach<U>_1_Core.Function
+    VirtualName: mapEach_Core.Stream<U>_1_Core.Function
+    Name: mapEach
+    InterfaceMethod: False
+    Return:
+      - #0 id=37485641 idx=0 name=return] type=Core.Stream<T><T[1]>
+    Arguments:
+      - #0 id=56360854 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=1826451 idx=1 name=mapper type=Core.Function
+    Locals:
+      - #0 id=16438061 idx=0 name=s type=Core._MapStream<S,U><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Stream<T>.where_1_Core.Function
+    VirtualName: where_Core.Stream<T>_1_Core.Function
+    Name: where
+    InterfaceMethod: False
+    Return:
+      - #0 id=37968974 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=56414558 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=6176451 idx=1 name=predicate type=Core.Function
+    Locals:
+      - #0 id=55588060 idx=0 name=s type=Core._WhereStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.take_1_Core.Int32
+    VirtualName: take_Core.Stream<T>_1_Core.Int32
+    Name: take
+    InterfaceMethod: False
+    Return:
+      - #0 id=57051467 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=6339051 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=43701155 idx=1 name=count type=Core.Int32
+    Locals:
+      - #0 id=57766077 idx=0 name=s type=Core._TakeStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.skip_1_Core.Int32
+    VirtualName: skip_Core.Stream<T>_1_Core.Int32
+    Name: skip
+    InterfaceMethod: False
+    Return:
+      - #0 id=34212907 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=48540676 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=39480712 idx=1 name=count type=Core.Int32
+    Locals:
+      - #0 id=19782092 idx=0 name=s type=Core._SkipStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.transform<U>_1_Core.StreamTransformer<T,U>
+    VirtualName: transform_Core.Stream<U>_1_Core.StreamTransformer<T,U>
+    Name: transform
+    InterfaceMethod: False
+    Return:
+      - #0 id=59848549 idx=0 name=return] type=Core.Stream<T><T[1]>
+    Arguments:
+      - #0 id=58845621 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=1766031 idx=1 name=transformer type=Core.StreamTransformer<S,T><T[0], T[1]>
+    Locals:
+      - #0 id=15894286 idx=0 name=src type=Core.Stream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.forEach_1_Core.Function
+    VirtualName: forEach_Core.Task_1_Core.Function
+    Name: forEach
+    InterfaceMethod: False
+    Return:
+      - #0 id=12368788 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=41469957 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=44210229 idx=1 name=action type=Core.Function
+    Locals:
+      - #0 id=37685299 idx=0 name=src type=Core.Stream<T><T[0]>
+      - #1 id=3623379 idx=1 name=act type=Core.Function
+      - #2 id=62347742 idx=2 name=f type=Core.Function
+      - #3 id=24258768 idx=3 name=__closure_ctx__] type=Core.Object
+      - #4 id=17002324 idx=4 name=task type=Core.Task
+      - #5 id=49328407 idx=5 name=closure type=Core.Object
+      - #6 id=18803196 idx=6 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core.Stream<T>.toListThenTask
+    VirtualName: toListThenTask_Core.Task_0
+    Name: toListThenTask
+    InterfaceMethod: False
+    Return:
+      - #0 id=17321959 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=32610412 idx=0 name=this] type=Core.Stream<T><T[0]>
+    Locals:
+      - #0 id=25058257 idx=0 name=src type=Core.Stream<T><T[0]>
+      - #1 id=21679909 idx=1 name=f type=Core.Function
+      - #2 id=60901459 idx=2 name=__closure_ctx__] type=Core.Object
+      - #3 id=11242227 idx=3 name=task type=Core.Task
+      - #4 id=49328407 idx=4 name=closure type=Core.Object
+      - #5 id=34071180 idx=5 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core._FramedDecodeStream<T>._init__3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: _init__Core.Void_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=1389699 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7610951 idx=0 name=this] type=Core._FramedDecodeStream<T><T[0]>
+      - #1 id=12507294 idx=1 name=src type=Core.ByteStream
+      - #2 id=45456785 idx=2 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #3 id=6457885 idx=3 name=maxFrame type=Core.Int32
+    Locals: []
+    Instructions:
+
+Class: Core._FrameEncodeSink<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-2050682817 idx=0 name=Core._FrameEncodeSink<T>._ctrl type=Core.StreamController<T><T[0]>
+      - #1 id=-400700005 idx=1 name=Core._FrameEncodeSink<T>._dst type=Core.ByteStream
+      - #2 id=-1988015343 idx=2 name=Core._FrameEncodeSink<T>._codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #3 id=-504255337 idx=3 name=Core._FrameEncodeSink<T>._maxFrame type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core._FrameEncodeSink<T>.add_1_T
+    VirtualName: add_Core.Void_1_T
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=53326701 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58120972 idx=0 name=this] type=Core._FrameEncodeSink<T><T[0]>
+      - #1 id=10178267 idx=1 name=chunk type=T[0]
+    Locals:
+      - #0 id=24495542 idx=0 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #1 id=19133287 idx=1 name=dst type=Core.ByteStream
+      - #2 id=37981855 idx=2 name=payload type=Core.ByteBuffer
+      - #3 id=6292375 idx=3 name=len type=Core.Int32
+      - #4 id=56631376 idx=4 name=frame type=Core.ByteBuffer
+      - #5 id=39920339 idx=5 name=autocreate_49150562 type=Core.Boolean
+      - #6 id=65178831 idx=6 name=value type=Core.Int64
+      - #7 id=23738738 idx=7 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core._FrameEncodeSink<T>.close
+    VirtualName: close_Core.Void_0
+    Name: close
+    InterfaceMethod: False
+    Return:
+      - #0 id=57297703 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58562194 idx=0 name=this] type=Core._FrameEncodeSink<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.StreamSink<T>._init__1_Core.StreamController<T>
+    VirtualName: _init__Core.Void_1_Core.StreamController<T>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10602379 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45917284 idx=0 name=this] type=Core.StreamSink<T><T[0]>
+      - #1 id=28312547 idx=1 name=ctrl type=Core.StreamController<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core._FrameEncodeSink<T>._init__3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: _init__Core.Void_3_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=11614966 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53486334 idx=0 name=this] type=Core._FrameEncodeSink<T><T[0]>
+      - #1 id=37425835 idx=1 name=dst type=Core.ByteStream
+      - #2 id=1288198 idx=2 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #3 id=11593784 idx=3 name=maxFrame type=Core.Int32
+    Locals: []
+    Instructions:
+
+Class: Core._FramedBindStream<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1643603677 idx=0 name=Core._FramedBindStream<T>._source type=Core.Stream<T><Core.ByteBuffer>
+      - #1 id=-2120639824 idx=1 name=Core._FramedBindStream<T>._codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=-370574028 idx=2 name=Core._FramedBindStream<T>._maxFrame type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Stream<T>.fromIterable_1_Core.Array<T>[-1]
+    VirtualName: fromIterable_Core.Stream<T>_1_Core.Array<T>[-1]
+    Name: fromIterable
+    InterfaceMethod: False
+    Return:
+      - #0 id=45590951 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=7665379 idx=0 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=1879552 idx=0 name=s type=Core._FromIterableStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.generate_2_Core.Int32_Core.Function
+    VirtualName: generate_Core.Stream<T>_2_Core.Int32_Core.Function
+    Name: generate
+    InterfaceMethod: False
+    Return:
+      - #0 id=18026058 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=28016801 idx=0 name=count type=Core.Int32
+      - #1 id=50824621 idx=1 name=gen type=Core.Function
+    Locals:
+      - #0 id=54768407 idx=0 name=s type=Core._GenerateStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.periodic_2_Core.Int64_Core.Function
+    VirtualName: periodic_Core.Stream<T>_2_Core.Int64_Core.Function
+    Name: periodic
+    InterfaceMethod: False
+    Return:
+      - #0 id=7055953 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=63503579 idx=0 name=millis type=Core.Int64
+      - #1 id=34661303 idx=1 name=tick type=Core.Function
+    Locals:
+      - #0 id=43516279 idx=0 name=s type=Core._PeriodicStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.fromByteStream_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    VirtualName: fromByteStream_Core.Stream<T>_2_Core.ByteStream_Core.Codec<T,Core.ByteBuffer>
+    Name: fromByteStream
+    InterfaceMethod: False
+    Return:
+      - #0 id=35157707 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=47983914 idx=0 name=src type=Core.ByteStream
+      - #1 id=29202048 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+    Locals:
+      - #0 id=61491846 idx=0 name=s type=Core._FromByteStreamStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.empty
+    VirtualName: empty_Core.Stream<T>_0
+    Name: empty
+    InterfaceMethod: False
+    Return:
+      - #0 id=14783663 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments: []
+    Locals:
+      - #0 id=65944108 idx=0 name=s type=Core._EmptyStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.failed_1_Core.Object
+    VirtualName: failed_Core.Stream<T>_1_Core.Object
+    Name: failed
+    InterfaceMethod: False
+    Return:
+      - #0 id=39872498 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=23308166 idx=0 name=errInfo type=Core.Object
+    Locals:
+      - #0 id=8446905 idx=0 name=s type=Core._ErrorStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core._FramedBindStream<T>.listen_4_Core.Function_Core.Function_Core.Function_Core.Boolean
+    VirtualName: listen_Core.StreamSubscription_4_Core.Function_Core.Function_Core.Function_Core.Boolean
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=37235194 idx=0 name=return] type=Core.StreamSubscription
+    Arguments:
+      - #0 id=39701876 idx=0 name=this] type=Core._FramedBindStream<T><T[0]>
+      - #1 id=66681293 idx=1 name=onData type=Core.Function
+      - #2 id=63260731 idx=2 name=onError type=Core.Function
+      - #3 id=32475667 idx=3 name=onDone type=Core.Function
+      - #4 id=23845552 idx=4 name=cancelOnError type=Core.Boolean
+    Locals:
+      - #0 id=13283377 idx=0 name=src type=Core.Stream<T><Core.ByteBuffer>
+      - #1 id=18747312 idx=1 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #2 id=34508084 idx=2 name=maxFrame type=Core.Int32
+      - #3 id=61735358 idx=3 name=ctrl type=Core.StreamController<T><T[0]>
+      - #4 id=52441537 idx=4 name=s type=Core.Stream<T><T[0]>
+      - #5 id=2211792 idx=5 name=sub type=Core.StreamSubscription
+      - #6 id=21772565 idx=6 name=acc type=Core.ByteBuffer
+      - #7 id=19906136 idx=7 name=fwd type=Core.Function
+      - #8 id=44937496 idx=8 name=__closure_ctx__] type=Core.Object
+      - #9 id=1784282 idx=9 name=err type=Core.Function
+      - #10 id=16058544 idx=10 name=dn type=Core.Function
+    Instructions:
+
+  Method: Core.Stream<T>.listen_1_Core.Function
+    VirtualName: listen_Core.StreamSubscription_1_Core.Function
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=3818773 idx=0 name=return] type=Core.StreamSubscription
+    Arguments:
+      - #0 id=60076631 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=34368962 idx=1 name=onData type=Core.Function
+    Locals: []
+    Instructions:
+
+  Method: Core.Stream<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=23367494 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=32422550 idx=0 name=this] type=Core.Stream<T><T[0]>
+    Locals:
+      - #0 id=8980857 idx=0 name=it type=Core.StreamIterator<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.mapEach<U>_1_Core.Function
+    VirtualName: mapEach_Core.Stream<U>_1_Core.Function
+    Name: mapEach
+    InterfaceMethod: False
+    Return:
+      - #0 id=37485641 idx=0 name=return] type=Core.Stream<T><T[1]>
+    Arguments:
+      - #0 id=56360854 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=1826451 idx=1 name=mapper type=Core.Function
+    Locals:
+      - #0 id=16438061 idx=0 name=s type=Core._MapStream<S,U><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Stream<T>.where_1_Core.Function
+    VirtualName: where_Core.Stream<T>_1_Core.Function
+    Name: where
+    InterfaceMethod: False
+    Return:
+      - #0 id=37968974 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=56414558 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=6176451 idx=1 name=predicate type=Core.Function
+    Locals:
+      - #0 id=55588060 idx=0 name=s type=Core._WhereStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.take_1_Core.Int32
+    VirtualName: take_Core.Stream<T>_1_Core.Int32
+    Name: take
+    InterfaceMethod: False
+    Return:
+      - #0 id=57051467 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=6339051 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=43701155 idx=1 name=count type=Core.Int32
+    Locals:
+      - #0 id=57766077 idx=0 name=s type=Core._TakeStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.skip_1_Core.Int32
+    VirtualName: skip_Core.Stream<T>_1_Core.Int32
+    Name: skip
+    InterfaceMethod: False
+    Return:
+      - #0 id=34212907 idx=0 name=return] type=Core.Stream<T><T[0]>
+    Arguments:
+      - #0 id=48540676 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=39480712 idx=1 name=count type=Core.Int32
+    Locals:
+      - #0 id=19782092 idx=0 name=s type=Core._SkipStream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.transform<U>_1_Core.StreamTransformer<T,U>
+    VirtualName: transform_Core.Stream<U>_1_Core.StreamTransformer<T,U>
+    Name: transform
+    InterfaceMethod: False
+    Return:
+      - #0 id=59848549 idx=0 name=return] type=Core.Stream<T><T[1]>
+    Arguments:
+      - #0 id=58845621 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=1766031 idx=1 name=transformer type=Core.StreamTransformer<S,T><T[0], T[1]>
+    Locals:
+      - #0 id=15894286 idx=0 name=src type=Core.Stream<T><T[0]>
+    Instructions:
+
+  Method: Core.Stream<T>.forEach_1_Core.Function
+    VirtualName: forEach_Core.Task_1_Core.Function
+    Name: forEach
+    InterfaceMethod: False
+    Return:
+      - #0 id=12368788 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=41469957 idx=0 name=this] type=Core.Stream<T><T[0]>
+      - #1 id=44210229 idx=1 name=action type=Core.Function
+    Locals:
+      - #0 id=37685299 idx=0 name=src type=Core.Stream<T><T[0]>
+      - #1 id=3623379 idx=1 name=act type=Core.Function
+      - #2 id=62347742 idx=2 name=f type=Core.Function
+      - #3 id=24258768 idx=3 name=__closure_ctx__] type=Core.Object
+      - #4 id=17002324 idx=4 name=task type=Core.Task
+      - #5 id=49328407 idx=5 name=closure type=Core.Object
+      - #6 id=18803196 idx=6 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core.Stream<T>.toListThenTask
+    VirtualName: toListThenTask_Core.Task_0
+    Name: toListThenTask
+    InterfaceMethod: False
+    Return:
+      - #0 id=17321959 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=32610412 idx=0 name=this] type=Core.Stream<T><T[0]>
+    Locals:
+      - #0 id=25058257 idx=0 name=src type=Core.Stream<T><T[0]>
+      - #1 id=21679909 idx=1 name=f type=Core.Function
+      - #2 id=60901459 idx=2 name=__closure_ctx__] type=Core.Object
+      - #3 id=11242227 idx=3 name=task type=Core.Task
+      - #4 id=49328407 idx=4 name=closure type=Core.Object
+      - #5 id=34071180 idx=5 name=result] type=Core.Task
+    Instructions:
+
+  Method: Core._FramedBindStream<T>._init__3_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    VirtualName: _init__Core.Void_3_Core.Stream<Core.ByteBuffer>_Core.Codec<T,Core.ByteBuffer>_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=29736389 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25673664 idx=0 name=this] type=Core._FramedBindStream<T><T[0]>
+      - #1 id=66300913 idx=1 name=source type=Core.Stream<T><Core.ByteBuffer>
+      - #2 id=59837309 idx=2 name=codec type=Core.Codec<S,T><T[0], Core.ByteBuffer>
+      - #3 id=1664874 idx=3 name=maxFrame type=Core.Int32
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

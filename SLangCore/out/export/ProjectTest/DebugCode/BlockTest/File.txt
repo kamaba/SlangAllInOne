@@ -1,0 +1,99 @@
+-------------------FileMeta 文件显示 开始 : Path: BlockTest.sl-----------------------
+namespace NSBlockTest
+{
+    Class2
+    {
+         staticint intm2 = 10i
+        m = 10i
+
+        _public _init_( int x )
+        {
+            this.m = 10i;
+        }
+    }
+    Class1
+    {
+        Class2 Class2c3 = {m = 20i}
+
+        _public print( )
+        {
+            int a = 10i;
+            try
+            {
+                b = 20i;
+                label innerPrint
+                {
+                    a = 15i;
+                    a2 = 13i;
+                    try
+                    {
+                        m = 10i;
+                    }
+                }
+                global.println("a2 = " + b);
+            }
+        }
+        _public static scopeShadowCase( )
+        {
+            int a = 1i;
+            label middleBlock
+            {
+                a = 2i;
+                label innerBlock
+                {
+                    a = 3i;
+                    global.println("inner a = " + a);
+                }
+                global.println("middle a = " + a);
+            }
+            global.println("outer a = " + a);
+        }
+        _public static emptyAndStandaloneBlockCase( )
+        {
+            label empty
+            {
+            }
+            label BlockTest_FN_emptyAndStandaloneBlockCase_58
+            {
+                int onlyInBlock = 100i;
+                global.println("onlyInBlock = " + onlyInBlock);
+            }
+            if true
+            {
+                int inIf = 200i;
+                global.println("inIf = " + inIf);
+            }
+        }
+        _public static initAndStatementMixedCase( )
+        {
+            Class2 c = {m = 88i};
+            try
+            {
+                c.m = c.m + 1i;
+                global.println("c.m = " + c.m);
+            }
+        }
+        _public static gotoIntoLabelBlockCase( )
+        {
+            int a = 0i;
+            goto targetBlock
+            a = 999i;
+            label targetBlock
+            {
+                a += 1i
+            }
+            global.println("gotoIntoLabelBlock a -> " + a.toString());
+        }
+    }
+}
+BlockTest
+{
+    _public static fun( )
+    {
+        NSBlockTest.Class1.scopeShadowCase();
+        NSBlockTest.Class1.emptyAndStandaloneBlockCase();
+        NSBlockTest.Class1.initAndStatementMixedCase();
+        NSBlockTest.Class1.gotoIntoLabelBlockCase();
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

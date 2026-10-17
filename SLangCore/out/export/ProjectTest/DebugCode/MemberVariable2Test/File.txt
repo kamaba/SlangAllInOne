@@ -1,0 +1,306 @@
+-------------------FileMeta 文件显示 开始 : Path: MemberVariable2Test.sl-----------------------
+partial C2
+{
+    x1 = 10i
+    y1 = 100i
+     staticint inty2 = 200i
+
+    _public _init_( int a )
+    {
+        this.x = a;
+        this.x1 = a + 1i;
+    }
+    _public int getX1( )
+    {
+        ret this.x1
+    }
+}
+MVLiteralInit
+{
+    int inta = 0i
+    string stringb = ""
+    bool boolc = false
+
+}
+data MVDataPoint
+{
+    x = 0i
+    y = 0i
+}
+class MVDataHolder
+{
+    int intpx = 0i
+    int intpy = 0i
+
+    _public override _init_( )
+    {
+        this.px = 1i;
+        this.py = 2i;
+    }
+}
+class MVArrayMember
+{
+    int intn0 = 1i
+    int intn1 = 2i
+    int intn2 = 3i
+
+    _public override _init_( )
+    {
+        this.n0 = 100i;
+    }
+}
+class MVInner
+{
+    int intval = 0i
+
+}
+class MVOuter
+{
+    MVInner MVInnerinner = new()
+
+    _public override _init_( )
+    {
+        this.inner.val = 10i;
+    }
+}
+partial MVPartialTarget
+{
+    int intextra = 2i
+
+    _public int sum( )
+    {
+        ret this.baseVal + this.extra
+    }
+}
+class MVExtendParent extends MVParent
+{
+    int inteVal = 40i
+    string stringeName = "extend"
+
+    _public _init_( int ev )
+    {
+        this.pVal = 100i;
+        this.eVal = ev;
+    }
+}
+class MVExtendChild extends MVChild
+{
+    int intxVal = 50i
+
+    _public override _init_( )
+    {
+        this.pVal = 801i;
+        this.cVal = 802i;
+        this.xVal = 803i;
+    }
+    _public int total( )
+    {
+        ret this.pVal + this.cVal + this.xVal
+    }
+}
+class MVExtendGrand extends MVGrandChild
+{
+    int intexVal = 60i
+
+    _public override _init_( )
+    {
+        this.exVal = 999i;
+    }
+}
+enum MVColor
+{
+    Red = 1i
+    Green = 2i
+    Blue = 3i
+
+}
+class MVEnumHolder
+{
+    color = MVColor.Green
+
+}
+class MVL3
+{
+    int intv = 42i
+
+}
+class MVL2
+{
+    MVL3 MVL3l3 = new()
+
+}
+class MVDeep
+{
+    MVL2 MVL2l2 = new()
+
+}
+class MVArrHolder
+{
+    Int32[] Int32[]items = null
+
+    _public override _init_( )
+    {
+        this.items = Array<Int32>.create(3i);
+        this.items[0i] = 10i;
+        this.items[1i] = 20i;
+        this.items[2i] = 30i;
+    }
+    _public int total( )
+    {
+        ret this.items[0i] + this.items[1i] + this.items[2i]
+    }
+}
+MVTest2
+{
+    _public static fun( )
+    {
+        global.println("========== MemberVariable2Test (start) ==========");
+        MVTest2.testPartialExtend();
+        MVTest2.testLiteralInit();
+        MVTest2.testDataMember();
+        MVTest2.testArrayMember();
+        MVTest2.testNestedObject();
+        MVTest2.testPartialMethod();
+        MVTest2.testInheritCrossFile();
+        MVTest2.testEnumMember();
+        MVTest2.testDeepNested();
+        MVTest2.testArrayMemberInit();
+        MVTest2.testBaseRefCrossFile();
+        MVTest2.testStaticInheritWrite();
+        global.println("========== MemberVariable2Test (end) ==========");
+    }
+    _public static testPartialExtend( )
+    {
+        global.println("----- testPartialExtend -----");
+        C2 c1 = C2(7i,2.0f);
+        global.println("x=" + c1.x + " x1=" + c1.x1 + " y1=" + c1.y1);
+        global.println("x2=" + C2.x2 + " y2=" + C2.y2);
+        C2 c2 = C2(99i);
+        global.println("x=" + c2.x + " x1=" + c2.x1 + " getX1=" + c2.getX1());
+    }
+    _public static testLiteralInit( )
+    {
+        global.println("----- testLiteralInit -----");
+        MVLiteralInit obj1 = MVLiteralInit(){a = 10i,b = "hi"};
+        global.println("obj1: a=" + obj1.a + " b=" + obj1.b + " c=" + obj1.c);
+        MVLiteralInit obj2 = {a = 20i,c = true};
+        global.println("obj2: a=" + obj2.a + " b=" + obj2.b + " c=" + obj2.c);
+        MVLiteralInit obj3 = MVLiteralInit();
+        obj3.a = 30i;
+        obj3.b = "manual";
+        obj3.c = true;
+        global.println("obj3: a=" + obj3.a + " b=" + obj3.b + " c=" + obj3.c);
+    }
+    _public static testDataMember( )
+    {
+        global.println("----- testDataMember -----");
+        MVDataHolder h = MVDataHolder();
+        global.println("px=" + h.px + " py=" + h.py);
+    }
+    _public static testArrayMember( )
+    {
+        global.println("----- testArrayMember -----");
+        MVArrayMember a = MVArrayMember();
+        global.println("n0=" + a.n0 + " n1=" + a.n1 + " n2=" + a.n2);
+    }
+    _public static testNestedObject( )
+    {
+        global.println("----- testNestedObject -----");
+        MVOuter o = MVOuter();
+        global.println("inner.val=" + o.inner.val);
+    }
+    _public static testPartialMethod( )
+    {
+        global.println("----- testPartialMethod -----");
+        MVPartialTarget t = MVPartialTarget();
+        global.println("baseVal=" + t.baseVal + " extra=" + t.extra + " sum=" + t.sum());
+    }
+    _public static testInheritCrossFile( )
+    {
+        global.println("----- testInheritCrossFile -----");
+        MVExtendParent ep = MVExtendParent(777i);
+        global.println("ep: pVal=" + ep.pVal + " pName=" + ep.pName + " eVal=" + ep.eVal + " eName=" + ep.eName);
+        MVExtendChild ec = MVExtendChild();
+        global.println("ec: pVal=" + ec.pVal + " cVal=" + ec.cVal + " xVal=" + ec.xVal);
+        global.println("ec.total()=" + ec.total());
+        MVExtendGrand eg = MVExtendGrand();
+        global.println("eg: pVal=" + eg.pVal + " cVal=" + eg.cVal + " gVal=" + eg.gVal + " exVal=" + eg.exVal);
+        eg.pName = "four_levels";
+        eg.cName = "extend_child";
+        global.println("eg: pName=" + eg.pName + " cName=" + eg.cName);
+        global.println("pStatic(via ExtendParent)=" + MVExtendParent.pStatic);
+    }
+    _public static testEnumMember( )
+    {
+        global.println("----- testEnumMember -----");
+        MVEnumHolder h = MVEnumHolder();
+        global.println("color=" + h.color.toString());
+        h.color = MVColor.Blue;
+        global.println("color(after set)=" + h.color.toString());
+        if h.color == MVColor.Blue
+        {
+            global.println("color == Blue -> True");
+        }
+        else
+        {
+            global.println("color == Blue -> False");
+        }
+        if h.color == MVColor.Red
+        {
+            global.println("color == Red -> True");
+        }
+        else
+        {
+            global.println("color == Red -> False");
+        }
+    }
+    _public static testDeepNested( )
+    {
+        global.println("----- testDeepNested -----");
+        MVDeep d = MVDeep();
+        global.println("d.l2.l3.v=" + d.l2.l3.v);
+        d.l2.l3.v = 99i;
+        global.println("after set, d.l2.l3.v=" + d.l2.l3.v);
+        d.l2 = MVL2();
+        global.println("after replace l2, d.l2.l3.v=" + d.l2.l3.v);
+    }
+    _public static testArrayMemberInit( )
+    {
+        global.println("----- testArrayMemberInit -----");
+        MVArrHolder h = MVArrHolder();
+        global.println("items[0]=" + h.items[0i] + " items[1]=" + h.items[1i] + " items[2]=" + h.items[2i]);
+        global.println("total()=" + h.total() + " length=" + h.items.length);
+        h.items[1i] = 200i;
+        global.println("after items[1]=200, total()=" + h.total());
+        Int32[] arr = h.items;
+        
+        for v in arr
+        {
+            global.println("item=" + v);
+        }
+    }
+    _public static testBaseRefCrossFile( )
+    {
+        global.println("----- testBaseRefCrossFile -----");
+        MVExtendChild ec = MVExtendChild();
+        MVParent pp = ecas MVParent;
+        global.println("pp.pVal=" + pp.pVal + " pp.pName=" + pp.pName + " (read via base ref)");
+        pp.pVal = 4321i;
+        global.println("ec.pVal=" + ec.pVal + " (after write via base ref)");
+        global.println("ec.total()=" + ec.total() + " (pVal + cVal + xVal)");
+        MVExtendGrand eg4 = MVExtendGrand();
+        MVParent p4 = eg4as MVParent;
+        global.println("p4.pVal=" + p4.pVal + " p4.pName=" + p4.pName);
+    }
+    _public static testStaticInheritWrite( )
+    {
+        global.println("----- testStaticInheritWrite -----");
+        MVExtendParent.pStatic = 2000i;
+        global.println("pStatic(via ExtendParent after write)=" + MVExtendParent.pStatic);
+        global.println("pStatic(via Parent after ExtendParent write)=" + MVParent.pStatic);
+        global.println("pStatic(via ExtendGrand read)=" + MVExtendGrand.pStatic);
+        MVExtendParent.pStatic = 1000i;
+        global.println("pStatic(restored via ExtendParent)=" + MVExtendParent.pStatic);
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

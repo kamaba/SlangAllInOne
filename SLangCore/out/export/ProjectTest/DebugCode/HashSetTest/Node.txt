@@ -1,0 +1,193 @@
+import Core ;
+
+HashSetTest 
+{
+# 测试基本 add + 重复去重 + length / isEmptystatic testBasicAdd()
+{
+global.println("===== testBasicAdd =====")
+Core.HashSets =new 
+global.println("isEmpty = "+s.isEmpty)
+global.println("add(1) = "+s.add(1))
+global.println("add(2) = "+s.add(2))
+global.println("add(2) dup = "+s.add(2))# 重复返回 falseglobal.println("add(3) = "+s.add(3))
+global.println("length = "+s.length)
+global.println("isEmpty = "+s.isEmpty)
+global.println("toString = "+s.toString())
+}
+
+# 测试指定容量构造 + 从数组构造static testConstructors()
+{
+global.println("===== testConstructors =====")
+Core.HashSets1 =HashSet(8)
+global.println("capacity(s1) = "+s1.capacity)
+
+Array arr =Array(3)
+arr =10
+arr =20
+arr =20# 重复，构造时去重Core.HashSets2 =HashSet(arr )
+global.println("s2.length = "+s2.length)# 2global.println("s2.toString = "+s2.toString())
+}
+
+# 测试 contains / addRangestatic testContainsAndAddRange()
+{
+global.println("===== testContainsAndAddRange =====")
+Core.HashSets =new 
+s.add(1)
+s.add(2)
+global.println("contains(1) = "+s.contains(1))
+global.println("contains(9) = "+s.contains(9))
+
+Array more =Array(3)
+more =3
+more =4
+more =1# 已存在，addRange 会跳过s.addRange(more )
+global.println("after addRange, length = "+s.length)# 4global.println("s.toString = "+s.toString())
+}
+
+# 测试 remove / clearstatic testRemoveAndClear()
+{
+global.println("===== testRemoveAndClear =====")
+Core.HashSets =new 
+s.add(1)
+s.add(2)
+s.add(3)
+global.println("remove(2) = "+s.remove(2))# trueglobal.println("remove(2) again = "+s.remove(2))# falseglobal.println("after removes, length = "+s.length)# 2global.println("contains(2) = "+s.contains(2))
+s.clear()
+global.println("after clear, length = "+s.length)
+global.println("after clear, isEmpty = "+s.isEmpty)
+}
+
+# 测试容量增长（自动扩容）static testGrow()
+{
+global.println("===== testGrow =====")
+Core.HashSets =new 
+global.println("initial capacity = "+s.capacity)# 0s.add(1)
+global.println("after 1 add, capacity = "+s.capacity)# 4for i =2,i <=8,i ++
+{
+s.add(i )
+}
+global.println("after 8 adds, capacity = "+s.capacity)# 8for i =9,i <=16,i ++
+{
+s.add(i )
+}
+global.println("after 16 adds, capacity = "+s.capacity)# 16global.println("length = "+s.length)
+global.println("setEquals(toArray-based) check toString = "+s.toString())
+}
+
+# 测试 ensureCapacitystatic testEnsureCapacity()
+{
+global.println("===== testEnsureCapacity =====")
+Core.HashSets =new 
+s.ensureCapacity(100)
+global.println("after ensureCapacity(100), capacity = "+s.capacity)# 100s.add(1)
+global.println("after 1 add, capacity = "+s.capacity)# 仍为 100（不缩容）}
+
+# 测试修改型集合运算 unionWith / intersectWith / exceptWith / symmetricExceptWithstatic testModifyOps()
+{
+global.println("===== testModifyOps =====")
+Core.HashSeta =HashSet([1,2,3])
+Core.HashSetb =HashSet([2,3,4])
+
+Core.HashSetu =HashSet([1,2,3])
+u.unionWith(b )
+global.println("unionWith = "+u.toString())# {1,2,3,4}
+Core.HashSeti =HashSet([1,2,3])
+i.intersectWith(b )
+global.println("intersectWith = "+i.toString())# {2,3}
+Core.HashSete =HashSet([1,2,3])
+e.exceptWith(b )
+global.println("exceptWith = "+e.toString())# {1}
+Core.HashSetse =HashSet([1,2,3])
+se.symmetricExceptWith(b )
+global.println("symmetricExceptWith = "+se.toString())# {1,4}}
+
+# 测试非修改型集合运算 union / intersection / difference / symmetricDifference / copystatic testQueryOps()
+{
+global.println("===== testQueryOps =====")
+Core.HashSeta =HashSet([1,2,3])
+Core.HashSetb =HashSet([2,3,4])
+global.println("union = "+a.union(b ))# {1,2,3,4}global.println("intersection = "+a.intersection(b ))# {2,3}global.println("difference = "+a.difference(b ))# {1}global.println("symmetricDifference = "+a.symmetricDifference(b ))# {1,4}Core.HashSetc =a.copy()
+global.println("copy = "+c.toString())
+global.println("a unchanged after ops = "+a.toString())# {1,2,3}}
+
+# 测试判断型集合运算static testPredicateOps()
+{
+global.println("===== testPredicateOps =====")
+Core.HashSetempty =new 
+Core.HashSeta =HashSet([1,2,3])
+Core.HashSetb =HashSet([2,3])
+Core.HashSetc =HashSet([1,2,3])
+Core.HashSetd =HashSet([3,4,5])
+
+global.println("b.isSubsetOf(a) = "+b.isSubsetOf(a ))# trueglobal.println("a.isSupersetOf(b) = "+a.isSupersetOf(b ))# trueglobal.println("empty.isSubsetOf(a) = "+empty.isSubsetOf(a ))# trueglobal.println("a.isSupersetOf(empty) = "+a.isSupersetOf(empty ))# trueglobal.println("b.isProperSubsetOf(a) = "+b.isProperSubsetOf(a ))# trueglobal.println("a.isProperSubsetOf(c) = "+a.isProperSubsetOf(c ))# false（长度相等）global.println("a.isProperSupersetOf(b) = "+a.isProperSupersetOf(b ))# trueglobal.println("a.overlaps(d) = "+a.overlaps(d ))# true（共有 3）global.println("empty.overlaps(a) = "+empty.overlaps(a ))# falseglobal.println("a.setEquals(c) = "+a.setEquals(c ))# trueglobal.println("a.setEquals(b) = "+a.setEquals(b ))# false}
+
+# 测试 toArray / toList / first / laststatic testConvert()
+{
+global.println("===== testConvert =====")
+Core.HashSets =HashSet([10,20,30])
+Array arr =s.toArray()
+global.println("toArray.length = "+arr.length)
+for i =0,i <arr.length,i ++
+{
+global.println("arr["+i +"] = "+arr )
+}
+Core.Listlist =s.toList()
+global.println("toList.length = "+list.length)
+global.println("first = "+s.first)
+global.println("last = "+s.last)
+}
+
+# 测试迭代器 / foreachstatic testIterator()
+{
+global.println("===== testIterator =====")
+Core.HashSets =HashSet(["a","b","c"])
+int sum =0
+for item in s 
+{
+global.println("foreach item = "+item )
+sum ++
+}
+global.println("iterated count = "+sum )
+}
+
+# 测试字符串元素集合static testStringElements()
+{
+global.println("===== testStringElements =====")
+Core.HashSets =new 
+s.add("apple")
+s.add("banana")
+s.add("apple")# 去重global.println("length = "+s.length)
+global.println("contains(banana) = "+s.contains("banana"))
+global.println("add(null) = "+s.add(null))# false（null 不存储）global.println("contains(null) = "+s.contains(null))# falseglobal.println("remove(null) = "+s.remove(null))# falseglobal.println("toString = "+s.toString())
+}
+
+# 测试空集合边界行为static testEmptyEdge()
+{
+global.println("===== testEmptyEdge =====")
+Core.HashSets =new 
+global.println("toArray.length = "+s.toArray())
+global.println("first = "+s.first)
+global.println("last = "+s.last)
+global.println("toString = "+s.toString())
+Core.HashSetempty =new 
+global.println("setEquals(empty) = "+s.setEquals(empty ))
+}
+
+static fun()
+{
+global.println("===== HashSetTest =====")
+testBasicAdd()
+testConstructors()
+testContainsAndAddRange()
+testRemoveAndClear()
+testGrow()
+testEnsureCapacity()
+testModifyOps()
+testQueryOps()
+testPredicateOps()
+testConvert()
+testIterator()
+testStringElements()
+testEmptyEdge()
+}
+}

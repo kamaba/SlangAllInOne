@@ -1,0 +1,423 @@
+-------------------IR 文件显示 开始 : Path: Container/Queue.sl-----------------------
+Class: Core.Queue<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1066195915 idx=0 name=Core.Queue<T>._items type=Core.Array<T><T[0]>
+      - #1 id=674057606 idx=1 name=Core.Queue<T>._head type=Core.Int32
+      - #2 id=-1137666413 idx=2 name=Core.Queue<T>._tail type=Core.Int32
+      - #3 id=1682227774 idx=3 name=Core.Queue<T>._count type=Core.Int32
+      - #4 id=1992967577 idx=4 name=Core.Queue<T>._capacity type=Core.Int32
+      - #5 id=2106270994 idx=5 name=Core.Queue<T>._index type=Core.Int32
+      - #6 id=-1782877093 idx=6 name=Core.Queue<T>._current type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28338386 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32974871 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=13707899 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53718883 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals:
+      - #0 id=56262227 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=36597996 idx=1 name=showstr type=Core.String
+      - #2 id=60946511 idx=2 name=i type=Core.Int32
+      - #3 id=11647694 idx=3 name=v type=Core.Object
+      - #4 id=37720384 idx=4 name=autocreate_28788263 type=Core.Boolean
+      - #5 id=3939144 idx=5 name=autocreate_57767782 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28107703 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62775401 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=51642735 idx=1 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=62131436 idx=0 name=autocreate_46071449 type=Core.Boolean
+      - #1 id=22312013 idx=1 name=autocreate_11989863 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>._init__1_Core.Array<T>[-1]
+    VirtualName: _init__Core.Void_1_Core.Array<T>[-1]
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=24691380 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25113108 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=20895830 idx=1 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=53844748 idx=0 name=autocreate_40799911 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=14332877 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61244865 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=46793790 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=20112390 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals:
+      - #0 id=18490928 idx=0 name=autocreate_31654880 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=53266806 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58114317 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals:
+      - #0 id=9639207 idx=0 name=autocreate_16458469 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=26289097 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47660253 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=38725542 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=49042080 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=12985564 idx=1 name=value type=Core.Int32
+    Locals:
+      - #0 id=49761220 idx=0 name=autocreate_13908493 type=Core.Boolean
+      - #1 id=45197797 idx=1 name=autocreate_58067579 type=Core.Boolean
+      - #2 id=4126994 idx=2 name=autocreate_52846167 type=Core.Boolean
+      - #3 id=37142946 idx=3 name=autocreate_5853458 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=57299616 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6366624 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=45934497 idx=1 name=min type=Core.Int32
+    Locals:
+      - #0 id=10757292 idx=0 name=autocreate_52681125 type=Core.Boolean
+      - #1 id=29706771 idx=1 name=newCapacity type=Core.Int32
+      - #2 id=66034349 idx=2 name=autocreate_4368081 type=Core.Boolean
+      - #3 id=57438237 idx=3 name=autocreate_39312736 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.grow
+    VirtualName: grow_Core.Void_0
+    Name: grow
+    InterfaceMethod: False
+    Return:
+      - #0 id=55622396 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36006428 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals:
+      - #0 id=30839519 idx=0 name=newCapacity type=Core.Int32
+      - #1 id=9120223 idx=1 name=autocreate_18270305 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.resizeArray_1_Core.Int32
+    VirtualName: resizeArray_Core.Void_1_Core.Int32
+    Name: resizeArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=4865465 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=540607 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=43789187 idx=1 name=newCapacity type=Core.Int32
+    Locals:
+      - #0 id=58558366 idx=0 name=newArr type=Core.Array<T><T[0]>
+      - #1 id=57263252 idx=1 name=autocreate_30215023 type=Core.Boolean
+      - #2 id=45607220 idx=2 name=autocreate_3499754 type=Core.Boolean
+      - #3 id=7811801 idx=3 name=autocreate_31497787 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.enqueue_1_T
+    VirtualName: enqueue_Core.Void_1_T
+    Name: enqueue
+    InterfaceMethod: False
+    Return:
+      - #0 id=34275314 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41091070 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=40042374 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=24837051 idx=0 name=autocreate_15044627 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.enqueueRange_1_Core.Array<T>[-1]
+    VirtualName: enqueueRange_Core.Void_1_Core.Array<T>[-1]
+    Name: enqueueRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=53926436 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=65644149 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=15575880 idx=1 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=5965194 idx=0 name=autocreate_1183915 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.dequeue
+    VirtualName: dequeue_T_0
+    Name: dequeue
+    InterfaceMethod: False
+    Return:
+      - #0 id=13170954 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=53659222 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.peek
+    VirtualName: peek_T_0
+    Name: peek
+    InterfaceMethod: False
+    Return:
+      - #0 id=5058598 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=60214390 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.rear
+    VirtualName: rear_T_0
+    Name: rear
+    InterfaceMethod: False
+    Return:
+      - #0 id=63839913 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=7093323 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=32854487 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3650498 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=27254927 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.indexOf_1_T
+    VirtualName: indexOf_Core.Int32_1_T
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=4618564 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=60165497 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=41567079 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.lastIndexOf_1_T
+    VirtualName: lastIndexOf_Core.Int32_1_T
+    Name: lastIndexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=36303315 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=11490242 idx=0 name=this] type=Core.Queue<T><T[0]>
+      - #1 id=58294385 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=16696005 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24224733 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.toArray
+    VirtualName: toArray_Core.Array<T>[-1]_0
+    Name: toArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=10199126 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=16046317 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals:
+      - #0 id=24683273 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=20822872 idx=1 name=autocreate_10655236 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Queue<T>.toList
+    VirtualName: toList_Core.List<T>_0
+    Name: toList
+    InterfaceMethod: False
+    Return:
+      - #0 id=52327117 idx=0 name=return] type=Core.List<T><T[0]>
+    Arguments:
+      - #0 id=13270664 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.copy
+    VirtualName: copy_Core.Queue<T>_0
+    Name: copy
+    InterfaceMethod: False
+    Return:
+      - #0 id=28634009 idx=0 name=return] type=Core.Queue<T><T[0]>
+    Arguments:
+      - #0 id=10638097 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=3336177 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37653388 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=1794910 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=30025596 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=33421169 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=11170003 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=3514615 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=22760134 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Queue<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=12018222 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=16248438 idx=0 name=this] type=Core.Queue<T><T[0]>
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,1049 @@
+-------------------IR 文件显示 开始 : Path: Memory.sl-----------------------
+Class: Core.Memory
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=2036149044 idx=0 name=Core.Memory.MODE_MANUAL type=Core.Int32
+      - #1 id=2040454878 idx=1 name=Core.Memory.MODE_GC type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.manual_1_Core.Object
+    VirtualName: manual_Core.Int32_1_Core.Object
+    Name: manual
+    InterfaceMethod: False
+    Return:
+      - #0 id=22646572 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=2492560 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.auto_1_Core.Object
+    VirtualName: auto_Core.Int32_1_Core.Object
+    Name: auto
+    InterfaceMethod: False
+    Return:
+      - #0 id=570775 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=5136981 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.isManual_1_Core.Object
+    VirtualName: isManual_Core.Boolean_1_Core.Object
+    Name: isManual
+    InterfaceMethod: False
+    Return:
+      - #0 id=13442339 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=53872188 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.refCount_1_Core.Object
+    VirtualName: refCount_Core.Int32_1_Core.Object
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=1571113 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=14140023 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.retain_1_Core.Object
+    VirtualName: retain_Core.Int32_1_Core.Object
+    Name: retain
+    InterfaceMethod: False
+    Return:
+      - #0 id=4491214 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=40420929 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.release_1_Core.Object
+    VirtualName: release_Core.Int32_1_Core.Object
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=52869820 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=6066333 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.free_1_Core.Object
+    VirtualName: free_Core.Int32_1_Core.Object
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=21610982 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=60281111 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.collect
+    VirtualName: collect_Core.Int32_0
+    Name: collect
+    InterfaceMethod: False
+    Return:
+      - #0 id=50931783 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.collect_1_Core.Int32
+    VirtualName: collect_Core.Int32_1_Core.Int32
+    Name: collect
+    InterfaceMethod: False
+    Return:
+      - #0 id=31833731 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=18068130 idx=0 name=threshold type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.setGcThreshold_1_Core.Int32
+    VirtualName: setGcThreshold_Core.Int32_1_Core.Int32
+    Name: setGcThreshold
+    InterfaceMethod: False
+    Return:
+      - #0 id=54232412 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=18329666 idx=0 name=threshold type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.gcThreshold
+    VirtualName: gcThreshold_Core.Int32_0
+    Name: gcThreshold
+    InterfaceMethod: False
+    Return:
+      - #0 id=8307988 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.setMode_1_Core.Int32
+    VirtualName: setMode_Core.Int32_1_Core.Int32
+    Name: setMode
+    InterfaceMethod: False
+    Return:
+      - #0 id=1858451 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=16726062 idx=0 name=mode type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.objectCount
+    VirtualName: objectCount_Core.Int32_0
+    Name: objectCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=12633819 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.GcCycleCount
+    VirtualName: GcCycleCount_Core.Int32_0
+    Name: GcCycleCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=16706408 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.gcFreedCount
+    VirtualName: gcFreedCount_Core.Int32_0
+    Name: gcFreedCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=11041789 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.totalAllocated
+    VirtualName: totalAllocated_Core.Int32_0
+    Name: totalAllocated
+    InterfaceMethod: False
+    Return:
+      - #0 id=21969731 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.totalFreed
+    VirtualName: totalFreed_Core.Int32_0
+    Name: totalFreed
+    InterfaceMethod: False
+    Return:
+      - #0 id=34717793 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.tlsfEnabled
+    VirtualName: tlsfEnabled_Core.Boolean_0
+    Name: tlsfEnabled
+    InterfaceMethod: False
+    Return:
+      - #0 id=60677888 idx=0 name=return] type=Core.Boolean
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.tlsfUsedBytes
+    VirtualName: tlsfUsedBytes_Core.Int32_0
+    Name: tlsfUsedBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=15961928 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.tlsfFreeBytes
+    VirtualName: tlsfFreeBytes_Core.Int32_0
+    Name: tlsfFreeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=17847776 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.tlsfFragmentation
+    VirtualName: tlsfFragmentation_Core.Int32_0
+    Name: tlsfFragmentation
+    InterfaceMethod: False
+    Return:
+      - #0 id=36383728 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocEnabled
+    VirtualName: mimallocEnabled_Core.Boolean_0
+    Name: mimallocEnabled
+    InterfaceMethod: False
+    Return:
+      - #0 id=61400865 idx=0 name=return] type=Core.Boolean
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocVersion
+    VirtualName: mimallocVersion_Core.Int32_0
+    Name: mimallocVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=7414170 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocCollect_1_Core.Boolean
+    VirtualName: mimallocCollect_Core.Void_1_Core.Boolean
+    Name: mimallocCollect
+    InterfaceMethod: False
+    Return:
+      - #0 id=63676932 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36221483 idx=0 name=force type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocCurrentBytes
+    VirtualName: mimallocCurrentBytes_Core.Int64_0
+    Name: mimallocCurrentBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=57557895 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocPeakBytes
+    VirtualName: mimallocPeakBytes_Core.Int64_0
+    Name: mimallocPeakBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=31677898 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocRequestedBytes
+    VirtualName: mimallocRequestedBytes_Core.Int64_0
+    Name: mimallocRequestedBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=15772917 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocCommittedBytes
+    VirtualName: mimallocCommittedBytes_Core.Int64_0
+    Name: mimallocCommittedBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=2537905 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.mimallocReservedBytes
+    VirtualName: mimallocReservedBytes_Core.Int64_0
+    Name: mimallocReservedBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=4243749 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.ref_1_Core.Object
+    VirtualName: ref_Core.Object_1_Core.Object
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=8199418 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=6685904 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.weakRef_1_Core.Object
+    VirtualName: weakRef_Core.Object_1_Core.Object
+    Name: weakRef
+    InterfaceMethod: False
+    Return:
+      - #0 id=4687385 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=42186470 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.isWeakRefValid_1_Core.Object
+    VirtualName: isWeakRefValid_Core.Boolean_1_Core.Object
+    Name: isWeakRefValid
+    InterfaceMethod: False
+    Return:
+      - #0 id=61660876 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=18076976 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.keepAlive_1_Core.Object
+    VirtualName: keepAlive_Core.Void_1_Core.Object
+    Name: keepAlive
+    InterfaceMethod: False
+    Return:
+      - #0 id=54948942 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24778434 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.clone_1_Core.Object
+    VirtualName: clone_Core.Object_1_Core.Object
+    Name: clone
+    InterfaceMethod: False
+    Return:
+      - #0 id=21679321 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=60896162 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.alloc_1_Core.Int32
+    VirtualName: alloc_Core.Int64_1_Core.Int32
+    Name: alloc
+    InterfaceMethod: False
+    Return:
+      - #0 id=33642107 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=34343508 idx=0 name=byteCount type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.freeNative_1_Core.Int64
+    VirtualName: freeNative_Core.Boolean_1_Core.Int64
+    Name: freeNative
+    InterfaceMethod: False
+    Return:
+      - #0 id=30360724 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=4811061 idx=0 name=addr type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.sizeOf_1_Core.String
+    VirtualName: sizeOf_Core.Int32_1_Core.String
+    Name: sizeOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=54151655 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17602849 idx=0 name=typeName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.allocArray_2_Core.Int32_Core.String
+    VirtualName: allocArray_Core.Int64_2_Core.Int32_Core.String
+    Name: allocArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=16544703 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=14684604 idx=0 name=count type=Core.Int32
+      - #1 id=65052577 idx=1 name=elemType type=Core.String
+    Locals:
+      - #0 id=48602288 idx=0 name=sz type=Core.Int32
+      - #1 id=34767408 idx=1 name=autocreate_53412201 type=Core.Boolean
+      - #2 id=17602849 idx=2 name=typeName type=Core.String
+      - #3 id=44471219 idx=3 name=result] type=Core.Int32
+      - #4 id=34343508 idx=4 name=byteCount type=Core.Int32
+      - #5 id=64696659 idx=5 name=result] type=Core.Int64
+    Instructions:
+
+  Method: Core.Memory.newInt8_1_Core.Int32
+    VirtualName: newInt8_Core.Int64_1_Core.Int32
+    Name: newInt8
+    InterfaceMethod: False
+    Return:
+      - #0 id=33860402 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=36308168 idx=0 name=value type=Core.Int32
+    Locals:
+      - #0 id=58338056 idx=0 name=p type=Core.Int64
+      - #1 id=55280461 idx=1 name=autocreate_10947764 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=27762102 idx=3 name=result] type=Core.Int64
+      - #4 id=48532334 idx=4 name=addr type=Core.Int64
+      - #5 id=34137829 idx=5 name=offset type=Core.Int32
+      - #6 id=38805013 idx=6 name=value type=Core.Int32
+      - #7 id=13700797 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newInt16_1_Core.Int32
+    VirtualName: newInt16_Core.Int64_1_Core.Int32
+    Name: newInt16
+    InterfaceMethod: False
+    Return:
+      - #0 id=21024178 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=54999878 idx=0 name=value type=Core.Int32
+    Locals:
+      - #0 id=25236858 idx=0 name=p type=Core.Int64
+      - #1 id=25805135 idx=1 name=autocreate_31421019 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=30919631 idx=3 name=result] type=Core.Int64
+      - #4 id=9841225 idx=4 name=addr type=Core.Int64
+      - #5 id=21462168 idx=5 name=offset type=Core.Int32
+      - #6 id=58941788 idx=6 name=value type=Core.Int32
+      - #7 id=60714046 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newInt32_1_Core.Int32
+    VirtualName: newInt32_Core.Int64_1_Core.Int32
+    Name: newInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=13977142 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=58685418 idx=0 name=value type=Core.Int32
+    Locals:
+      - #0 id=58406714 idx=0 name=p type=Core.Int64
+      - #1 id=55898385 idx=1 name=autocreate_14353717 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=33323423 idx=3 name=result] type=Core.Int64
+      - #4 id=31475357 idx=4 name=addr type=Core.Int64
+      - #5 id=14842765 idx=5 name=offset type=Core.Int32
+      - #6 id=66476022 idx=6 name=value type=Core.Int32
+      - #7 id=61413291 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newInt64_1_Core.Int64
+    VirtualName: newInt64_Core.Int64_1_Core.Int64
+    Name: newInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=31741019 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=17233719 idx=0 name=value type=Core.Int64
+    Locals:
+      - #0 id=20885750 idx=0 name=p type=Core.Int64
+      - #1 id=53754023 idx=1 name=autocreate_62074597 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=14024165 idx=3 name=result] type=Core.Int64
+      - #4 id=59108624 idx=4 name=addr type=Core.Int64
+      - #5 id=62215569 idx=5 name=offset type=Core.Int32
+      - #6 id=23069209 idx=6 name=value type=Core.Int64
+      - #7 id=6296289 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newFloat32_1_Core.Float32
+    VirtualName: newFloat32_Core.Int64_1_Core.Float32
+    Name: newFloat32
+    InterfaceMethod: False
+    Return:
+      - #0 id=6471942 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=58247484 idx=0 name=value type=Core.Float32
+    Locals:
+      - #0 id=54465313 idx=0 name=p type=Core.Int64
+      - #1 id=20425774 idx=1 name=autocreate_21800467 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=49614245 idx=3 name=result] type=Core.Int64
+      - #4 id=43875021 idx=4 name=addr type=Core.Int64
+      - #5 id=59330872 idx=5 name=offset type=Core.Int32
+      - #6 id=64215808 idx=6 name=value type=Core.Float32
+      - #7 id=41071365 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newFloat64_1_Core.Float64
+    VirtualName: newFloat64_Core.Int64_1_Core.Float64
+    Name: newFloat64
+    InterfaceMethod: False
+    Return:
+      - #0 id=42925989 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=50789581 idx=0 name=value type=Core.Float64
+    Locals:
+      - #0 id=54453050 idx=0 name=p type=Core.Int64
+      - #1 id=20315403 idx=1 name=autocreate_61986480 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=48620907 idx=3 name=result] type=Core.Int64
+      - #4 id=34934986 idx=4 name=addr type=Core.Int64
+      - #5 id=45979426 idx=5 name=offset type=Core.Int32
+      - #6 id=11161650 idx=6 name=value type=Core.Float64
+      - #7 id=33345988 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newBool_1_Core.Boolean
+    VirtualName: newBool_Core.Int64_1_Core.Boolean
+    Name: newBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=6107499 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=54967495 idx=0 name=value type=Core.Boolean
+    Locals:
+      - #0 id=24945412 idx=0 name=p type=Core.Int64
+      - #1 id=23182124 idx=1 name=autocreate_21007413 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=7312526 idx=3 name=result] type=Core.Int64
+      - #4 id=65812741 idx=4 name=addr type=Core.Int64
+      - #5 id=55443761 idx=5 name=offset type=Core.Int32
+      - #6 id=29231803 idx=6 name=value type=Core.Int32
+      - #7 id=61759636 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.newUtf8_1_Core.String
+    VirtualName: newUtf8_Core.Int64_1_Core.String
+    Name: newUtf8
+    InterfaceMethod: False
+    Return:
+      - #0 id=63384014 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=33585220 idx=0 name=value type=Core.String
+    Locals:
+      - #0 id=33831530 idx=0 name=p type=Core.Int64
+      - #1 id=36048322 idx=1 name=autocreate_54848996 type=Core.Boolean
+      - #2 id=34343508 idx=2 name=byteCount type=Core.Int32
+      - #3 id=55999443 idx=3 name=result] type=Core.Int64
+      - #4 id=34232944 idx=4 name=addr type=Core.Int64
+      - #5 id=39661040 idx=5 name=offset type=Core.Int32
+      - #6 id=21405046 idx=6 name=value type=Core.String
+      - #7 id=58427690 idx=7 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Memory.readBool_2_Core.Int64_Core.Int32
+    VirtualName: readBool_Core.Boolean_2_Core.Int64_Core.Int32
+    Name: readBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=29990828 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=1482002 idx=0 name=addr type=Core.Int64
+      - #1 id=13338021 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readInt8_2_Core.Int64_Core.Int32
+    VirtualName: readInt8_Core.Int32_2_Core.Int64_Core.Int32
+    Name: readInt8
+    InterfaceMethod: False
+    Return:
+      - #0 id=6637886 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=59740974 idx=0 name=addr type=Core.Int64
+      - #1 id=797855 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readUInt8_2_Core.Int64_Core.Int32
+    VirtualName: readUInt8_Core.Int32_2_Core.Int64_Core.Int32
+    Name: readUInt8
+    InterfaceMethod: False
+    Return:
+      - #0 id=64626289 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=44765691 idx=0 name=addr type=Core.Int64
+      - #1 id=238043 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readInt16_2_Core.Int64_Core.Int32
+    VirtualName: readInt16_Core.Int32_2_Core.Int64_Core.Int32
+    Name: readInt16
+    InterfaceMethod: False
+    Return:
+      - #0 id=19281542 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=39316155 idx=0 name=addr type=Core.Int64
+      - #1 id=18301082 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readUInt16_2_Core.Int64_Core.Int32
+    VirtualName: readUInt16_Core.Int32_2_Core.Int64_Core.Int32
+    Name: readUInt16
+    InterfaceMethod: False
+    Return:
+      - #0 id=5992637 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=53933741 idx=0 name=addr type=Core.Int64
+      - #1 id=15641626 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readInt32_2_Core.Int64_Core.Int32
+    VirtualName: readInt32_Core.Int32_2_Core.Int64_Core.Int32
+    Name: readInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=59012183 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61347601 idx=0 name=addr type=Core.Int64
+      - #1 id=15257500 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readUInt32_2_Core.Int64_Core.Int32
+    VirtualName: readUInt32_Core.Int64_2_Core.Int64_Core.Int32
+    Name: readUInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=27898002 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=49755431 idx=0 name=addr type=Core.Int64
+      - #1 id=45145696 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readInt64_2_Core.Int64_Core.Int32
+    VirtualName: readInt64_Core.Int64_2_Core.Int64_Core.Int32
+    Name: readInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=32922799 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=27869743 idx=0 name=addr type=Core.Int64
+      - #1 id=49501095 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readUInt64_2_Core.Int64_Core.Int32
+    VirtualName: readUInt64_Core.Int64_2_Core.Int64_Core.Int32
+    Name: readUInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=50165743 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=48838504 idx=0 name=addr type=Core.Int64
+      - #1 id=36893359 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readPtr_2_Core.Int64_Core.Int32
+    VirtualName: readPtr_Core.Int64_2_Core.Int64_Core.Int32
+    Name: readPtr
+    InterfaceMethod: False
+    Return:
+      - #0 id=35572112 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=51713556 idx=0 name=addr type=Core.Int64
+      - #1 id=62768825 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readFloat32_2_Core.Int64_Core.Int32
+    VirtualName: readFloat32_Core.Float32_2_Core.Int64_Core.Int32
+    Name: readFloat32
+    InterfaceMethod: False
+    Return:
+      - #0 id=51110099 idx=0 name=return] type=Core.Float32
+    Arguments:
+      - #0 id=57337714 idx=0 name=addr type=Core.Int64
+      - #1 id=46277382 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readFloat64_2_Core.Int64_Core.Int32
+    VirtualName: readFloat64_Core.Float64_2_Core.Int64_Core.Int32
+    Name: readFloat64
+    InterfaceMethod: False
+    Return:
+      - #0 id=57480441 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=47561922 idx=0 name=addr type=Core.Int64
+      - #1 id=25404116 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.readUtf8_2_Core.Int64_Core.Int32
+    VirtualName: readUtf8_Core.String_2_Core.Int64_Core.Int32
+    Name: readUtf8
+    InterfaceMethod: False
+    Return:
+      - #0 id=44467520 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64663364 idx=0 name=addr type=Core.Int64
+      - #1 id=45099364 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeBool_3_Core.Int64_Core.Int32_Core.Int32
+    VirtualName: writeBool_Core.Boolean_3_Core.Int64_Core.Int32_Core.Int32
+    Name: writeBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=29169897 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=65812741 idx=0 name=addr type=Core.Int64
+      - #1 id=55443761 idx=1 name=offset type=Core.Int32
+      - #2 id=29231803 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeI8_3_Core.Int64_Core.Int32_Core.Int32
+    VirtualName: writeI8_Core.Boolean_3_Core.Int64_Core.Int32_Core.Int32
+    Name: writeI8
+    InterfaceMethod: False
+    Return:
+      - #0 id=13951479 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48532334 idx=0 name=addr type=Core.Int64
+      - #1 id=34137829 idx=1 name=offset type=Core.Int32
+      - #2 id=38805013 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeI16_3_Core.Int64_Core.Int32_Core.Int32
+    VirtualName: writeI16_Core.Boolean_3_Core.Int64_Core.Int32_Core.Int32
+    Name: writeI16
+    InterfaceMethod: False
+    Return:
+      - #0 id=56327989 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=9841225 idx=0 name=addr type=Core.Int64
+      - #1 id=21462168 idx=1 name=offset type=Core.Int32
+      - #2 id=58941788 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeI32_3_Core.Int64_Core.Int32_Core.Int32
+    VirtualName: writeI32_Core.Boolean_3_Core.Int64_Core.Int32_Core.Int32
+    Name: writeI32
+    InterfaceMethod: False
+    Return:
+      - #0 id=66273227 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=31475357 idx=0 name=addr type=Core.Int64
+      - #1 id=14842765 idx=1 name=offset type=Core.Int32
+      - #2 id=66476022 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeI64_3_Core.Int64_Core.Int32_Core.Int64
+    VirtualName: writeI64_Core.Boolean_3_Core.Int64_Core.Int32_Core.Int64
+    Name: writeI64
+    InterfaceMethod: False
+    Return:
+      - #0 id=66531170 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=59108624 idx=0 name=addr type=Core.Int64
+      - #1 id=62215569 idx=1 name=offset type=Core.Int32
+      - #2 id=23069209 idx=2 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeF32_3_Core.Int64_Core.Int32_Core.Float32
+    VirtualName: writeF32_Core.Boolean_3_Core.Int64_Core.Int32_Core.Float32
+    Name: writeF32
+    InterfaceMethod: False
+    Return:
+      - #0 id=20315681 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=43875021 idx=0 name=addr type=Core.Int64
+      - #1 id=59330872 idx=1 name=offset type=Core.Int32
+      - #2 id=64215808 idx=2 name=value type=Core.Float32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeF64_3_Core.Int64_Core.Int32_Core.Float64
+    VirtualName: writeF64_Core.Boolean_3_Core.Int64_Core.Int32_Core.Float64
+    Name: writeF64
+    InterfaceMethod: False
+    Return:
+      - #0 id=34957489 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=34934986 idx=0 name=addr type=Core.Int64
+      - #1 id=45979426 idx=1 name=offset type=Core.Int32
+      - #2 id=11161650 idx=2 name=value type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.writeUtf8_3_Core.Int64_Core.Int32_Core.String
+    VirtualName: writeUtf8_Core.Boolean_3_Core.Int64_Core.Int32_Core.String
+    Name: writeUtf8
+    InterfaceMethod: False
+    Return:
+      - #0 id=12984378 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=34232944 idx=0 name=addr type=Core.Int64
+      - #1 id=39661040 idx=1 name=offset type=Core.Int32
+      - #2 id=21405046 idx=2 name=value type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.copyUtf8_4_Core.Int64_Core.Int32_Core.String_Core.Int32
+    VirtualName: copyUtf8_Core.Int32_4_Core.Int64_Core.Int32_Core.String_Core.Int32
+    Name: copyUtf8
+    InterfaceMethod: False
+    Return:
+      - #0 id=45101667 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=3261819 idx=0 name=addr type=Core.Int64
+      - #1 id=29356372 idx=1 name=offset type=Core.Int32
+      - #2 id=62880759 idx=2 name=value type=Core.String
+      - #3 id=29055926 idx=3 name=maxBytes type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.structSize_1_Core.String
+    VirtualName: structSize_Core.Int32_1_Core.String
+    Name: structSize
+    InterfaceMethod: False
+    Return:
+      - #0 id=4719792 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=42478134 idx=0 name=fields type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.structFieldOffset_2_Core.String_Core.Int32
+    VirtualName: structFieldOffset_Core.Int32_2_Core.String_Core.Int32
+    Name: structFieldOffset
+    InterfaceMethod: False
+    Return:
+      - #0 id=18176840 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=29373839 idx=0 name=fields type=Core.String
+      - #1 id=63037959 idx=1 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.newStruct_1_Core.String
+    VirtualName: newStruct_Core.Int64_1_Core.String
+    Name: newStruct
+    InterfaceMethod: False
+    Return:
+      - #0 id=5801050 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=52209455 idx=0 name=fields type=Core.String
+    Locals:
+      - #0 id=123050 idx=0 name=sz type=Core.Int32
+      - #1 id=1107452 idx=1 name=autocreate_23878916 type=Core.Boolean
+      - #2 id=42478134 idx=2 name=fields type=Core.String
+      - #3 id=9967070 idx=3 name=result] type=Core.Int32
+      - #4 id=34343508 idx=4 name=byteCount type=Core.Int32
+      - #5 id=22594769 idx=5 name=result] type=Core.Int64
+    Instructions:
+
+  Method: Core.Memory.dataToArray_1_Core.Object
+    VirtualName: dataToArray_Core.Array<Core.Object>[-1]_1_Core.Object
+    Name: dataToArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=7229285 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=65063572 idx=0 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.arrayToData_2_Core.Array<Core.Object>[-1]_Core.String
+    VirtualName: arrayToData_Core.Object_2_Core.Array<Core.Object>[-1]_Core.String
+    Name: arrayToData
+    InterfaceMethod: False
+    Return:
+      - #0 id=35658012 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=52486654 idx=0 name=values type=Core.Array<T><Core.Object>
+      - #1 id=2617844 idx=1 name=fields type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.dataToNativeStruct_2_Core.String_Core.Object
+    VirtualName: dataToNativeStruct_Core.Int64_2_Core.String_Core.Object
+    Name: dataToNativeStruct
+    InterfaceMethod: False
+    Return:
+      - #0 id=10718788 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=29360233 idx=0 name=structName type=Core.String
+      - #1 id=62915509 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.dataToNativeStruct<T>_2_Core.String_T
+    VirtualName: dataToNativeStruct_Core.Int64_2_Core.String_T
+    Name: dataToNativeStruct
+    InterfaceMethod: False
+    Return:
+      - #0 id=62991470 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=30052326 idx=0 name=structName type=Core.String
+      - #1 id=2035480 idx=1 name=t type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.nativeStructToData_2_Core.Int64_Core.String
+    VirtualName: nativeStructToData_Core.Object_2_Core.Int64_Core.String
+    Name: nativeStructToData
+    InterfaceMethod: False
+    Return:
+      - #0 id=30656219 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=7470517 idx=0 name=addr type=Core.Int64
+      - #1 id=125790 idx=1 name=typeName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Memory.nativeStructToData<T>_2_Core.Int64_Core.String
+    VirtualName: nativeStructToData_T_2_Core.Int64_Core.String
+    Name: nativeStructToData
+    InterfaceMethod: False
+    Return:
+      - #0 id=10189001 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=24592149 idx=0 name=addr type=Core.Int64
+      - #1 id=20002757 idx=1 name=typeName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

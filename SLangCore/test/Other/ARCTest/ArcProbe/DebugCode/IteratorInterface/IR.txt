@@ -1,0 +1,66 @@
+-------------------IR 文件显示 开始 : Path: IteratorInterface.sl-----------------------
+Class: Core.IIterator
+  metaClassKind: Interface
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.IIterator.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=42184651 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19600264 idx=0 name=this] type=Core.IIterator
+    Locals: []
+    Instructions:
+
+  Method: Core.IIterator.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=61513540 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=44117540 idx=0 name=this] type=Core.IIterator
+    Locals: []
+    Instructions:
+
+  Method: Core.IIterator.current
+    VirtualName: current_Core.Object_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=16540805 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=16750948 idx=0 name=this] type=Core.IIterator
+    Locals: []
+    Instructions:
+
+Class: Core.IIterable
+  metaClassKind: Interface
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.IIterable.iterator
+    VirtualName: iterator_Core.IIterator_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=64736823 idx=0 name=return] type=Core.IIterator
+    Arguments:
+      - #0 id=14649520 idx=0 name=this] type=Core.IIterable
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

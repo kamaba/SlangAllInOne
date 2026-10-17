@@ -1,0 +1,217 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/EnumTest.sl-----------------------
+import Std;
+import CSharp.System;
+class XC
+{
+    a = 10i
+    b = 10i
+
+}
+data BData
+{
+    i2 = 0i
+    url = ""
+    xc1 = XC()
+}
+enum Color2
+{
+}
+enum Book
+{
+    B1 = 1i
+    B2 = 2i
+    没有差别MemberDataType
+    string stringStr = ""
+    c4 = 10i
+
+}
+enum EErr
+{
+    None = 1i
+    没有差别MemberDataType
+    没有差别MemberDataType
+    没有差别MemberDataType
+    Four = 5i
+    没有差别MemberDataType
+
+}
+data RectShape
+{
+    x = 0i
+    y = 0i
+    width = 0i
+    height = 0i
+}
+data CircleShape
+{
+    x = 0i
+    y = 0i
+    r = 1.0f
+}
+enum EShape
+{
+    r1 = RectShape()
+    r2 = RectShape()
+    c1 = CircleShape()
+    c2 = CircleShape()
+    cd = CircleShape()
+
+}
+enum ESeason
+{
+    Spring = "春天"
+    Summer = "夏天"
+    Autumn = "秋天"
+    Winter = "冬天"
+
+}
+enum EBytes
+{
+    x = 1i
+    x2 x2x3 = 10i
+    x4 = 13i
+
+}
+enum Book2
+{
+    Int32 Int32Id = 1i
+    String StringName = ""
+
+}
+enum Book3
+{
+    A1 = 10i
+
+}
+data MixColor
+{
+    Red = 0.0f
+    Green = 0.0f
+    Blue = 0.0f
+}
+const enum ConstColor
+{
+    Red = 0xff0000
+    Green = 0x00ff00
+    Blue = 0x0000ff
+    MixColor1 = MixColor()
+    MixColor2 = MixColor()
+
+}
+enum GameState
+{
+    Init = 1i
+    Begin = 2i
+    End = 3i
+
+}
+OK
+{
+    code = 0i
+
+}
+Error
+{
+    code = 0i
+
+}
+EnumTest
+{
+    _public static fun( )
+    {
+        global.println("========== EnumTest (start) ==========");
+        BridgeKind kind222 = BridgeKind.SELF;
+        kind111 = BridgeKind.SELF;
+        if kind222 == kind111
+        {
+            global.println("BridgeKind--------------SELF11111111111");
+        }
+        if kind222 == BridgeKind.SELF
+        {
+            global.println("BridgeKind--------------SELF1");
+        }
+        elif kind222 == BridgeKind.JVM
+        {
+            global.println("BridgeKind--------------JVM1");
+        }
+        else
+        {
+            global.println("BridgeKind--------------OTHER1");
+        }
+        kind111 = BridgeKind.JVM;
+        if kind111 == BridgeKind.SELF
+        {
+            global.println("BridgeKind--------------SELF2");
+        }
+        elif kind111 == BridgeKind.JVM
+        {
+            global.println("BridgeKind--------------JVM2");
+        }
+        else
+        {
+            global.println("BridgeKind--------------OTHER2");
+        }
+        EShape shape123 = EShape.r1;
+        if shape123 == EShape.r1
+        {
+            global.println("EShape default branch: r1");
+        }
+        elif shape123 == EShape.cd
+        {
+            global.println("EShape branch: cd");
+        }
+        
+        for b3 in ESeason.values
+        {
+            global.println("ESeason value: " + b3.toString());
+        }
+        
+        for b4 in ESeason
+        {
+            if b4 == ESeason.Spring
+            {
+                global.println(" if b4 == ESeason.Spring");
+            }
+            else
+            {
+                global.println("ESeason value: " + b4.toString());
+            }
+        }
+        global.println("----- mut enum member modify -----");
+        global.println("Book.Str before# Test both separator styles -> " + Book.Str.toString());
+        Book.Str = "runtime string";
+        global.println("Book.Str after -> " + Book.Str.toString());
+        global.println("Book.c4 front -> " + Book.c4.toString());
+        Book.c4 = 20i;
+        global.println("Book.c4 after -> " + Book.c4.toString());
+        EShape.cd = RectShape();
+        global.println("EErr.First ordinal smoke -> " + EErr.First.value.toString());
+        global.println("========== EnumTest (end) ==========");
+        states = [GameState.Init,GameState.Begin,GameState.End];
+        
+        for s in states
+        {
+            if s == GameState.Init
+            {
+                global.println("GameState.Init");
+                continue
+            }
+            global.println("State: " + s.name);
+        }
+    }
+}
+enum ESemi
+{
+    A = 1i
+    B = 2i
+    C = 3i
+
+}
+enum ENewline
+{
+    D = 4i
+    E = 5i
+    F = 6i
+
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

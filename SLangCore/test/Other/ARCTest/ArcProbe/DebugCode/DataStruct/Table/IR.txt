@@ -1,0 +1,1186 @@
+-------------------IR 文件显示 开始 : Path: DataStruct/Table.sl-----------------------
+Class: Core.Table
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=781874791 idx=0 name=Core.Table._columns type=Core.List<T><Core.String>
+      - #1 id=1191874609 idx=1 name=Core.Table._rows type=Core.List<T><Core.Array<T><Core.Object>>
+      - #2 id=-1999654029 idx=2 name=Core.Table._hasHeader type=Core.Boolean
+      - #3 id=1554452523 idx=3 name=Core.Table._index type=Core.Int32
+      - #4 id=-1265155738 idx=4 name=Core.Table._current type=Core.Array<T><Core.Object>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.fromCsv_1_Core.String
+    VirtualName: fromCsv_Core.Table_1_Core.String
+    Name: fromCsv
+    InterfaceMethod: False
+    Return:
+      - #0 id=31002363 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=10585816 idx=0 name=csvText type=Core.String
+    Locals:
+      - #0 id=28163481 idx=0 name=_result type=Core.Table
+      - #1 id=52144745 idx=1 name=autocreate_27089021 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.fromCsvNoHeader_1_Core.String
+    VirtualName: fromCsvNoHeader_Core.Table_1_Core.String
+    Name: fromCsvNoHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=24410221 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=18365401 idx=0 name=csvText type=Core.String
+    Locals:
+      - #0 id=31070885 idx=0 name=_result type=Core.Table
+      - #1 id=11202514 idx=1 name=autocreate_42474604 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=29858457 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=55513389 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=2615989 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=290665 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table._init__1_Core.Array<Core.String>[-1]
+    VirtualName: _init__Core.Void_1_Core.Array<Core.String>[-1]
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28007858 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10568524 idx=0 name=this] type=Core.Table
+      - #1 id=50744136 idx=1 name=columns type=Core.Array<T><Core.String>
+    Locals:
+      - #0 id=54044048 idx=0 name=width type=Core.Int32
+      - #1 id=16634385 idx=1 name=autocreate_10896307 type=Core.Boolean
+      - #2 id=15491742 idx=2 name=c type=Core.Int32
+      - #3 id=5207950 idx=3 name=name type=Core.String
+      - #4 id=46871556 idx=4 name=autocreate_30957904 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table._init__2_Core.Array<Core.String>[-1]_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Array<Core.String>[-1]_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=6094519 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=15590249 idx=0 name=this] type=Core.Table
+      - #1 id=54850676 idx=1 name=columns type=Core.Array<T><Core.String>
+      - #2 id=23894041 idx=2 name=_rowCount type=Core.Int32
+    Locals:
+      - #0 id=13719784 idx=0 name=width2 type=Core.Int32
+      - #1 id=56369192 idx=1 name=autocreate_10185684 type=Core.Boolean
+      - #2 id=37560683 idx=2 name=width type=Core.Int32
+      - #3 id=2501835 idx=3 name=c type=Core.Int32
+      - #4 id=22516520 idx=4 name=name type=Core.String
+      - #5 id=1322091 idx=5 name=autocreate_24562296 type=Core.Boolean
+      - #6 id=11898821 idx=6 name=autocreate_19734077 type=Core.Boolean
+      - #7 id=39980527 idx=7 name=r type=Core.Int32
+    Instructions:
+
+  Method: Core.Table._init__1_Core.Table
+    VirtualName: _init__Core.Void_1_Core.Table
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=59644417 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36453319 idx=0 name=this] type=Core.Table
+      - #1 id=67037712 idx=1 name=other type=Core.Table
+    Locals:
+      - #0 id=66468500 idx=0 name=autocreate_43388973 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.rowCount
+    VirtualName: rowCount_Core.Int32_0
+    Name: rowCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=19241481 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=9594482 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.columnCount
+    VirtualName: columnCount_Core.Int32_0
+    Name: columnCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=1287621 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=15056149 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=66260603 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=37188451 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=59474521 idx=0 name=autocreate_54956439 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41400175 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=4600019 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=37057262 idx=0 name=autocreate_24845910 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.hasHeader
+    VirtualName: hasHeader_Core.Boolean_0
+    Name: hasHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=64391817 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=36980808 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.hasHeader_1_Core.Boolean
+    VirtualName: hasHeader_Core.Void_1_Core.Boolean
+    Name: hasHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=32538658 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=48354649 idx=0 name=this] type=Core.Table
+      - #1 id=24412469 idx=1 name=value type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.columnNames
+    VirtualName: columnNames_Core.Array<Core.String>[-1]_0
+    Name: columnNames
+    InterfaceMethod: False
+    Return:
+      - #0 id=31252998 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=18385636 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=12841534 idx=0 name=width type=Core.Int32
+      - #1 id=48464948 idx=1 name=_result type=Core.Array<T><Core.String>
+      - #2 id=33531353 idx=2 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.first
+    VirtualName: first_Core.Array<Core.Object>[-1]_0
+    Name: first
+    InterfaceMethod: False
+    Return:
+      - #0 id=12977784 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=16355056 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=49691197 idx=0 name=autocreate_22286602 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.last
+    VirtualName: last_Core.Array<Core.Object>[-1]_0
+    Name: last
+    InterfaceMethod: False
+    Return:
+      - #0 id=9084575 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=53205180 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=14652317 idx=0 name=_rowCount type=Core.Int32
+      - #1 id=64761989 idx=1 name=autocreate_66361692 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Array<Core.Object>[-1]_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=37195650 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=33959011 idx=0 name=this] type=Core.Table
+      - #1 id=66325402 idx=1 name=row type=Core.Int32
+    Locals:
+      - #0 id=60057706 idx=0 name=autocreate_60384317 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table._setItem__2_Core.Int32_Core.Array<Core.Object>[-1]
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Array<Core.Object>[-1]
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42470482 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=27088563 idx=0 name=this] type=Core.Table
+      - #1 id=46690023 idx=1 name=row type=Core.Int32
+      - #2 id=17557027 idx=2 name=value type=Core.Array<T><Core.Object>
+    Locals:
+      - #0 id=23795519 idx=0 name=autocreate_6587942 type=Core.Boolean
+      - #1 id=12833084 idx=1 name=autocreate_59291480 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.addColumn_1_Core.String
+    VirtualName: addColumn_Core.Void_1_Core.String
+    Name: addColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=61491827 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=51571667 idx=0 name=this] type=Core.Table
+      - #1 id=16555535 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=14782087 idx=0 name=width type=Core.Int32
+      - #1 id=65929926 idx=1 name=_rowCount type=Core.Int32
+      - #2 id=56498428 idx=2 name=autocreate_63861276 type=Core.Boolean
+      - #3 id=38723810 idx=3 name=r type=Core.Int32
+      - #4 id=12969978 idx=4 name=oldRow type=Core.Array<T><Core.Object>
+      - #5 id=49620939 idx=5 name=_newRow type=Core.Array<T><Core.Object>
+      - #6 id=43935272 idx=6 name=srcLen type=Core.Int32
+      - #7 id=59873128 idx=7 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.insertColumn_2_Core.Int32_Core.String
+    VirtualName: insertColumn_Core.Void_2_Core.Int32_Core.String
+    Name: insertColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=59671974 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=51369462 idx=0 name=this] type=Core.Table
+      - #1 id=176855 idx=1 name=colIndex type=Core.Int32
+      - #2 id=1591698 idx=2 name=name type=Core.String
+    Locals:
+      - #0 id=14325289 idx=0 name=width type=Core.Int32
+      - #1 id=61818739 idx=1 name=_rowCount type=Core.Int32
+      - #2 id=19497747 idx=2 name=autocreate_37880580 type=Core.Boolean
+      - #3 id=41262001 idx=3 name=autocreate_5380904 type=Core.Boolean
+      - #4 id=35813694 idx=4 name=r type=Core.Int32
+      - #5 id=53887795 idx=5 name=oldRow type=Core.Array<T><Core.Object>
+      - #6 id=15228114 idx=6 name=_newRow type=Core.Array<T><Core.Object>
+      - #7 id=2835298 idx=7 name=srcLen type=Core.Int32
+      - #8 id=25517685 idx=8 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.removeColumn_1_Core.String
+    VirtualName: removeColumn_Core.Boolean_1_Core.String
+    Name: removeColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=4247975 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=7928537 idx=0 name=this] type=Core.Table
+      - #1 id=38231776 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.removeColumnAt_1_Core.Int32
+    VirtualName: removeColumnAt_Core.Boolean_1_Core.Int32
+    Name: removeColumnAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=20786760 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=9766180 idx=0 name=this] type=Core.Table
+      - #1 id=52863116 idx=1 name=colIndex type=Core.Int32
+    Locals:
+      - #0 id=6006001 idx=0 name=width type=Core.Int32
+      - #1 id=54054017 idx=1 name=newWidth type=Core.Int32
+      - #2 id=16724107 idx=2 name=_rowCount type=Core.Int32
+      - #3 id=16299242 idx=3 name=autocreate_48428136 type=Core.Boolean
+      - #4 id=12475454 idx=4 name=r type=Core.Int32
+      - #5 id=45170224 idx=5 name=oldRow type=Core.Array<T><Core.Object>
+      - #6 id=3878833 idx=6 name=_newRow type=Core.Array<T><Core.Object>
+      - #7 id=34909498 idx=7 name=srcLen type=Core.Int32
+      - #8 id=45750028 idx=8 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.renameColumn_2_Core.String_Core.String
+    VirtualName: renameColumn_Core.Boolean_2_Core.String_Core.String
+    Name: renameColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=64305901 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=14601640 idx=0 name=this] type=Core.Table
+      - #1 id=41882197 idx=1 name=oldName type=Core.String
+      - #2 id=41395459 idx=2 name=newName type=Core.String
+    Locals:
+      - #0 id=37014815 idx=0 name=colIndex type=Core.Int32
+      - #1 id=64697882 idx=1 name=autocreate_33200047 type=Core.Boolean
+      - #2 id=45410029 idx=2 name=autocreate_30364973 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.containsColumn_1_Core.String
+    VirtualName: containsColumn_Core.Boolean_1_Core.String
+    Name: containsColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=48653295 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=50145164 idx=0 name=this] type=Core.Table
+      - #1 id=35226478 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=48602848 idx=0 name=autocreate_4849307 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getColumnIndex_1_Core.String
+    VirtualName: getColumnIndex_Core.Int32_1_Core.String
+    Name: getColumnIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=49079232 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=65105571 idx=0 name=this] type=Core.Table
+      - #1 id=39059911 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=15994879 idx=0 name=width type=Core.Int32
+      - #1 id=9736186 idx=1 name=c type=Core.Int32
+      - #2 id=20516818 idx=2 name=autocreate_43643771 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getColumnName_1_Core.Int32
+    VirtualName: getColumnName_Core.String_1_Core.Int32
+    Name: getColumnName
+    InterfaceMethod: False
+    Return:
+      - #0 id=33021783 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=48408329 idx=0 name=this] type=Core.Table
+      - #1 id=28760591 idx=1 name=colIndex type=Core.Int32
+    Locals:
+      - #0 id=57518732 idx=0 name=autocreate_57249620 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getColumnValues_1_Core.String
+    VirtualName: getColumnValues_Core.List<Core.Object>_1_Core.String
+    Name: getColumnValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=27259828 idx=0 name=return] type=Core.List<T><Core.Object>
+    Arguments:
+      - #0 id=55224652 idx=0 name=this] type=Core.Table
+      - #1 id=44011860 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=60562422 idx=0 name=_result type=Core.List<T><Core.Object>
+      - #1 id=8190892 idx=1 name=colIndex type=Core.Int32
+      - #2 id=6609165 idx=2 name=_rowCount type=Core.Int32
+      - #3 id=59482492 idx=3 name=autocreate_45484537 type=Core.Boolean
+      - #4 id=65580385 idx=4 name=r type=Core.Int32
+      - #5 id=53352557 idx=5 name=row type=Core.Array<T><Core.Object>
+      - #6 id=10410969 idx=6 name=autocreate_6707649 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.newRow
+    VirtualName: newRow_Core.Int32_0
+    Name: newRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=12150471 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=31176214 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=42245377 idx=0 name=row type=Core.Array<T><Core.Object>
+    Instructions:
+
+  Method: Core.Table.addRow_1_Core.Array<Core.Object>[-1]
+    VirtualName: addRow_Core.Int32_1_Core.Array<Core.Object>[-1]
+    Name: addRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=61020521 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=66432381 idx=0 name=this] type=Core.Table
+      - #1 id=12313777 idx=1 name=row type=Core.Array<T><Core.Object>
+    Locals:
+      - #0 id=43715136 idx=0 name=rowLen type=Core.Int32
+      - #1 id=57891910 idx=1 name=autocreate_60368847 type=Core.Boolean
+      - #2 id=51265148 idx=2 name=autocreate_6448715 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.insertRow_2_Core.Int32_Core.Array<Core.Object>[-1]
+    VirtualName: insertRow_Core.Int32_2_Core.Int32_Core.Array<Core.Object>[-1]
+    Name: insertRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=51944261 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43054286 idx=0 name=this] type=Core.Table
+      - #1 id=64845166 idx=1 name=row type=Core.Int32
+      - #2 id=46735588 idx=2 name=rowData type=Core.Array<T><Core.Object>
+    Locals:
+      - #0 id=17967111 idx=0 name=_rowCount type=Core.Int32
+      - #1 id=27486272 idx=1 name=rowLen type=Core.Int32
+      - #2 id=46049856 idx=2 name=autocreate_58038438 type=Core.Boolean
+      - #3 id=11795520 idx=3 name=autocreate_52583897 type=Core.Boolean
+      - #4 id=39050817 idx=4 name=autocreate_3493029 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.removeRowAt_1_Core.Int32
+    VirtualName: removeRowAt_Core.Boolean_1_Core.Int32
+    Name: removeRowAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=28589951 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=47915903 idx=0 name=this] type=Core.Table
+      - #1 id=55982972 idx=1 name=row type=Core.Int32
+    Locals:
+      - #0 id=34084703 idx=0 name=autocreate_31437268 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.removeRowsWhere_2_Core.String_Core.Object
+    VirtualName: removeRowsWhere_Core.Int32_2_Core.String_Core.Object
+    Name: removeRowsWhere
+    InterfaceMethod: False
+    Return:
+      - #0 id=23003188 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17468990 idx=0 name=this] type=Core.Table
+      - #1 id=5702100 idx=1 name=columnName type=Core.String
+      - #2 id=51318905 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=59216962 idx=0 name=colIndex type=Core.Int32
+      - #1 id=63190618 idx=1 name=hits type=Core.Array<T><Core.Int32>
+      - #2 id=31844657 idx=2 name=n type=Core.Int32
+      - #3 id=18166465 idx=3 name=autocreate_14499957 type=Core.Boolean
+      - #4 id=29280457 idx=4 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=34776210 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56059806 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.clearAll
+    VirtualName: clearAll_Core.Void_0
+    Name: clearAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=65409627 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=44550438 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.normalizeRow_1_Core.Array<Core.Object>[-1]
+    VirtualName: normalizeRow_Core.Array<Core.Object>[-1]_1_Core.Array<Core.Object>[-1]
+    Name: normalizeRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=63688469 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=51815739 idx=0 name=this] type=Core.Table
+      - #1 id=36325316 idx=1 name=row type=Core.Array<T><Core.Object>
+    Locals:
+      - #0 id=58492392 idx=0 name=width type=Core.Int32
+      - #1 id=56669482 idx=1 name=_result type=Core.Array<T><Core.Object>
+      - #2 id=40263291 idx=2 name=count type=Core.Int32
+      - #3 id=26825300 idx=3 name=autocreate_63390755 type=Core.Boolean
+      - #4 id=40101110 idx=4 name=autocreate_33645886 type=Core.Boolean
+      - #5 id=25365674 idx=5 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.expandRows_1_Core.Int32
+    VirtualName: expandRows_Core.Void_1_Core.Int32
+    Name: expandRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=45894937 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5099437 idx=0 name=this] type=Core.Table
+      - #1 id=10401252 idx=1 name=width type=Core.Int32
+    Locals:
+      - #0 id=26502407 idx=0 name=oldWidth type=Core.Int32
+      - #1 id=37195075 idx=1 name=i type=Core.Int32
+      - #2 id=66320226 idx=2 name=_rowCount type=Core.Int32
+      - #3 id=60011123 idx=3 name=autocreate_34377519 type=Core.Boolean
+      - #4 id=3229201 idx=4 name=r type=Core.Int32
+      - #5 id=29062812 idx=5 name=oldRow type=Core.Array<T><Core.Object>
+      - #6 id=60238717 idx=6 name=_newRow type=Core.Array<T><Core.Object>
+      - #7 id=5277541 idx=7 name=srcLen type=Core.Int32
+      - #8 id=47497869 idx=8 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.getValue_2_Core.Int32_Core.Int32
+    VirtualName: getValue_Core.Object_2_Core.Int32_Core.Int32
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=61611833 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=36671921 idx=0 name=this] type=Core.Table
+      - #1 id=17635588 idx=1 name=row type=Core.Int32
+      - #2 id=24502572 idx=2 name=col type=Core.Int32
+    Locals:
+      - #0 id=19196561 idx=0 name=rowData type=Core.Array<T><Core.Object>
+      - #1 id=38551324 idx=1 name=autocreate_40962215 type=Core.Boolean
+      - #2 id=11417598 idx=2 name=autocreate_33115615 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getValueByName_2_Core.Int32_Core.String
+    VirtualName: getValueByName_Core.Object_2_Core.Int32_Core.String
+    Name: getValueByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=22112358 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=17370009 idx=0 name=this] type=Core.Table
+      - #1 id=64793495 idx=1 name=row type=Core.Int32
+      - #2 id=46270551 idx=2 name=columnName type=Core.String
+    Locals:
+      - #0 id=13781782 idx=0 name=colIndex type=Core.Int32
+      - #1 id=56927182 idx=1 name=autocreate_29605080 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.setValue_3_Core.Int32_Core.Int32_Core.Object
+    VirtualName: setValue_Core.Void_3_Core.Int32_Core.Int32_Core.Object
+    Name: setValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=38413159 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26637750 idx=0 name=this] type=Core.Table
+      - #1 id=10174118 idx=1 name=row type=Core.Int32
+      - #2 id=24458203 idx=2 name=col type=Core.Int32
+      - #3 id=18797239 idx=3 name=value type=Core.Object
+    Locals:
+      - #0 id=34957427 idx=0 name=rowData type=Core.Array<T><Core.Object>
+      - #1 id=46181392 idx=1 name=autocreate_65119131 type=Core.Boolean
+      - #2 id=12979352 idx=2 name=autocreate_49201274 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.setValueByName_3_Core.Int32_Core.String_Core.Object
+    VirtualName: setValueByName_Core.Void_3_Core.Int32_Core.String_Core.Object
+    Name: setValueByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=34547936 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63490983 idx=0 name=this] type=Core.Table
+      - #1 id=42495969 idx=1 name=row type=Core.Int32
+      - #2 id=46919403 idx=2 name=columnName type=Core.String
+      - #3 id=19621447 idx=3 name=value type=Core.Object
+    Locals:
+      - #0 id=42375303 idx=0 name=colIndex type=Core.Int32
+      - #1 id=45833411 idx=1 name=autocreate_40158284 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getInt_2_Core.Int32_Core.Int32
+    VirtualName: getInt_Core.Int32_2_Core.Int32_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=65299478 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=59451280 idx=0 name=this] type=Core.Table
+      - #1 id=50824398 idx=1 name=row type=Core.Int32
+      - #2 id=54766399 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getInt_3_Core.Int32_Core.Int32_Core.Int32
+    VirtualName: getInt_Core.Int32_3_Core.Int32_Core.Int32_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=62040066 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=6893340 idx=0 name=this] type=Core.Table
+      - #1 id=21489686 idx=1 name=row type=Core.Int32
+      - #2 id=59189449 idx=2 name=col type=Core.Int32
+      - #3 id=62942996 idx=3 name=defaultValue type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getIntByName_3_Core.Int32_Core.String_Core.Int32
+    VirtualName: getIntByName_Core.Int32_3_Core.Int32_Core.String_Core.Int32
+    Name: getIntByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=50090360 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=65217919 idx=0 name=this] type=Core.Table
+      - #1 id=48160062 idx=1 name=row type=Core.Int32
+      - #2 id=30787377 idx=2 name=columnName type=Core.String
+      - #3 id=8650938 idx=3 name=defaultValue type=Core.Int32
+    Locals:
+      - #0 id=10749578 idx=0 name=colIndex type=Core.Int32
+      - #1 id=29637338 idx=1 name=autocreate_25880244 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getFloat_2_Core.Int32_Core.Int32
+    VirtualName: getFloat_Core.Float64_2_Core.Int32_Core.Int32
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=36196647 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=63674173 idx=0 name=this] type=Core.Table
+      - #1 id=57334375 idx=1 name=row type=Core.Int32
+      - #2 id=46247333 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getFloat_3_Core.Int32_Core.Int32_Core.Float64
+    VirtualName: getFloat_Core.Float64_3_Core.Int32_Core.Int32_Core.Float64
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=25656486 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=55046503 idx=0 name=this] type=Core.Table
+      - #1 id=29581782 idx=1 name=row type=Core.Int32
+      - #2 id=64909449 idx=2 name=col type=Core.Int32
+      - #3 id=47314137 idx=3 name=defaultValue type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getFloatByName_3_Core.Int32_Core.String_Core.Float64
+    VirtualName: getFloatByName_Core.Float64_3_Core.Int32_Core.String_Core.Float64
+    Name: getFloatByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=65159075 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=7239897 idx=0 name=this] type=Core.Table
+      - #1 id=49560765 idx=1 name=row type=Core.Int32
+      - #2 id=43393704 idx=2 name=columnName type=Core.String
+      - #3 id=54999022 idx=3 name=defaultValue type=Core.Float64
+    Locals:
+      - #0 id=25229150 idx=0 name=colIndex type=Core.Int32
+      - #1 id=25735763 idx=1 name=autocreate_31595610 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getBool_2_Core.Int32_Core.Int32
+    VirtualName: getBool_Core.Boolean_2_Core.Int32_Core.Int32
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=6440667 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=37998331 idx=0 name=this] type=Core.Table
+      - #1 id=57966003 idx=1 name=row type=Core.Int32
+      - #2 id=51931981 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getBool_3_Core.Int32_Core.Int32_Core.Boolean
+    VirtualName: getBool_Core.Boolean_3_Core.Int32_Core.Int32_Core.Boolean
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=9015355 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=45740948 idx=0 name=this] type=Core.Table
+      - #1 id=14029336 idx=1 name=row type=Core.Int32
+      - #2 id=59155164 idx=2 name=col type=Core.Int32
+      - #3 id=62634432 idx=3 name=defaultValue type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getBoolByName_3_Core.Int32_Core.String_Core.Boolean
+    VirtualName: getBoolByName_Core.Boolean_3_Core.Int32_Core.String_Core.Boolean
+    Name: getBoolByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=26473887 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=40224245 idx=0 name=this] type=Core.Table
+      - #1 id=36938398 idx=1 name=row type=Core.Int32
+      - #2 id=64010130 idx=2 name=columnName type=Core.String
+      - #3 id=39220260 idx=3 name=defaultValue type=Core.Boolean
+    Locals:
+      - #0 id=17438021 idx=0 name=colIndex type=Core.Int32
+      - #1 id=22724462 idx=1 name=autocreate_15925039 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.getStr_2_Core.Int32_Core.Int32
+    VirtualName: getStr_Core.String_2_Core.Int32_Core.Int32
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=46410096 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57352460 idx=0 name=this] type=Core.Table
+      - #1 id=15037680 idx=1 name=row type=Core.Int32
+      - #2 id=1121399 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getStr_3_Core.Int32_Core.Int32_Core.String
+    VirtualName: getStr_Core.String_3_Core.Int32_Core.Int32_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=12194051 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=23724515 idx=0 name=this] type=Core.Table
+      - #1 id=42637596 idx=1 name=row type=Core.Int32
+      - #2 id=48194049 idx=2 name=col type=Core.Int32
+      - #3 id=31093257 idx=3 name=defaultValue type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.getStrByName_3_Core.Int32_Core.String_Core.String
+    VirtualName: getStrByName_Core.String_3_Core.Int32_Core.String_Core.String
+    Name: getStrByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=51297710 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=35525907 idx=0 name=this] type=Core.Table
+      - #1 id=59026209 idx=1 name=row type=Core.Int32
+      - #2 id=61473837 idx=2 name=columnName type=Core.String
+      - #3 id=16393628 idx=3 name=defaultValue type=Core.String
+    Locals:
+      - #0 id=13324925 idx=0 name=colIndex type=Core.Int32
+      - #1 id=52815467 idx=1 name=autocreate_9107628 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.clone
+    VirtualName: clone_Core.Table_0
+    Name: clone
+    InterfaceMethod: False
+    Return:
+      - #0 id=39216423 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=49096623 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.cloneStructure
+    VirtualName: cloneStructure_Core.Table_0
+    Name: cloneStructure
+    InterfaceMethod: False
+    Return:
+      - #0 id=396418 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=22413667 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=3567764 idx=0 name=_result type=Core.Table
+      - #1 id=32109884 idx=1 name=width type=Core.Int32
+      - #2 id=20553506 idx=2 name=c type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.cloneRange_4_Core.Int32_Core.Int32_Core.Int32_Core.Int32
+    VirtualName: cloneRange_Core.Table_4_Core.Int32_Core.Int32_Core.Int32_Core.Int32
+    Name: cloneRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=207374 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=29849203 idx=0 name=this] type=Core.Table
+      - #1 id=1866374 idx=1 name=rowStart type=Core.Int32
+      - #2 id=16797371 idx=2 name=rowCount type=Core.Int32
+      - #3 id=16958614 idx=3 name=colStart type=Core.Int32
+      - #4 id=18409800 idx=4 name=colCount type=Core.Int32
+    Locals:
+      - #0 id=31470474 idx=0 name=rows type=Core.Int32
+      - #1 id=14798813 idx=1 name=width type=Core.Int32
+      - #2 id=66080459 idx=2 name=_result type=Core.Table
+      - #3 id=57853219 idx=3 name=c type=Core.Int32
+      - #4 id=50916928 idx=4 name=r type=Core.Int32
+      - #5 id=55599169 idx=5 name=autocreate_14859795 type=Core.Boolean
+      - #6 id=30630481 idx=6 name=autocreate_66629291 type=Core.Boolean
+      - #7 id=7238880 idx=7 name=autocreate_62792710 type=Core.Boolean
+      - #8 id=65149928 idx=8 name=autocreate_28263486 type=Core.Boolean
+      - #9 id=49478440 idx=9 name=autocreate_53044787 type=Core.Boolean
+      - #10 id=42652778 idx=10 name=autocreate_7641038 type=Core.Boolean
+      - #11 id=48330688 idx=11 name=autocreate_1660480 type=Core.Boolean
+      - #12 id=32323009 idx=12 name=autocreate_14944322 type=Core.Boolean
+      - #13 id=22471632 idx=13 name=srcRow type=Core.Array<T><Core.Object>
+      - #14 id=918101 idx=14 name=_newRow type=Core.Array<T><Core.Object>
+      - #15 id=8262913 idx=15 name=i type=Core.Int32
+      - #16 id=7257357 idx=16 name=srcCol type=Core.Int32
+      - #17 id=65316218 idx=17 name=autocreate_281173 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.cloneRows_1_Core.Array<Core.Int32>[-1]
+    VirtualName: cloneRows_Core.Table_1_Core.Array<Core.Int32>[-1]
+    Name: cloneRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=28418246 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=47896825 idx=0 name=this] type=Core.Table
+      - #1 id=54437622 idx=1 name=rowIndices type=Core.Array<T><Core.Int32>
+    Locals:
+      - #0 id=20176556 idx=0 name=_result type=Core.Table
+      - #1 id=47371280 idx=1 name=width type=Core.Int32
+      - #2 id=23688339 idx=2 name=_rowCount type=Core.Int32
+      - #3 id=11868462 idx=3 name=n type=Core.Int32
+      - #4 id=39707298 idx=4 name=autocreate_2530563 type=Core.Boolean
+      - #5 id=21821369 idx=5 name=i type=Core.Int32
+      - #6 id=62174594 idx=6 name=r type=Core.Int32
+      - #7 id=22700440 idx=7 name=autocreate_22775067 type=Core.Boolean
+      - #8 id=2977371 idx=8 name=autocreate_3649016 type=Core.Boolean
+      - #9 id=26796340 idx=9 name=srcRow type=Core.Array<T><Core.Object>
+      - #10 id=39840468 idx=10 name=_newRow type=Core.Array<T><Core.Object>
+      - #11 id=23019892 idx=11 name=c type=Core.Int32
+      - #12 id=5852437 idx=12 name=autocreate_32841145 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.merge_1_Core.Table
+    VirtualName: merge_Core.Boolean_1_Core.Table
+    Name: merge
+    InterfaceMethod: False
+    Return:
+      - #0 id=58113810 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=28826711 idx=0 name=this] type=Core.Table
+      - #1 id=53262248 idx=1 name=other type=Core.Table
+    Locals:
+      - #0 id=9598184 idx=0 name=autocreate_27134857 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.union_1_Core.Table
+    VirtualName: union_Core.Table_1_Core.Table
+    Name: union
+    InterfaceMethod: False
+    Return:
+      - #0 id=3664366 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=22776773 idx=0 name=this] type=Core.Table
+      - #1 id=32979301 idx=1 name=other type=Core.Table
+    Locals:
+      - #0 id=28378258 idx=0 name=_result type=Core.Table
+      - #1 id=54077734 idx=1 name=autocreate_42887128 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.join_2_Core.Table_Core.String
+    VirtualName: join_Core.Table_2_Core.Table_Core.String
+    Name: join
+    InterfaceMethod: False
+    Return:
+      - #0 id=66647176 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=29774863 idx=0 name=this] type=Core.Table
+      - #1 id=62953674 idx=1 name=other type=Core.Table
+      - #2 id=29712158 idx=2 name=keyColumn type=Core.String
+    Locals:
+      - #0 id=66082838 idx=0 name=_result type=Core.Table
+      - #1 id=57874634 idx=1 name=autocreate_50439840 type=Core.Boolean
+      - #2 id=51109658 idx=2 name=autocreate_51305376 type=Core.Boolean
+      - #3 id=57333745 idx=3 name=autocreate_59095202 type=Core.Boolean
+      - #4 id=46241663 idx=4 name=autocreate_62094776 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.findRows_2_Core.String_Core.Object
+    VirtualName: findRows_Core.Array<Core.Int32>[-1]_2_Core.String_Core.Object
+    Name: findRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=40663687 idx=0 name=return] type=Core.Array<T><Core.Int32>
+    Arguments:
+      - #0 id=49257430 idx=0 name=this] type=Core.Table
+      - #1 id=30428869 idx=1 name=columnName type=Core.String
+      - #2 id=5424368 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=48819313 idx=0 name=colIndex type=Core.Int32
+      - #1 id=36720633 idx=1 name=_rowCount type=Core.Int32
+      - #2 id=62050241 idx=2 name=buf type=Core.Array<T><Core.Int32>
+      - #3 id=21581258 idx=3 name=n type=Core.Int32
+      - #4 id=60013597 idx=4 name=_result type=Core.Array<T><Core.Int32>
+      - #5 id=3251468 idx=5 name=autocreate_21982073 type=Core.Boolean
+      - #6 id=29263214 idx=6 name=autocreate_63620936 type=Core.Boolean
+      - #7 id=62042342 idx=7 name=autocreate_35717517 type=Core.Boolean
+      - #8 id=21510172 idx=8 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.Table.sortBy_1_Core.String
+    VirtualName: sortBy_Core.Void_1_Core.String
+    Name: sortBy
+    InterfaceMethod: False
+    Return:
+      - #0 id=64066064 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36944613 idx=0 name=this] type=Core.Table
+      - #1 id=39723666 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.sortBy_2_Core.String_Core.Boolean
+    VirtualName: sortBy_Core.Void_2_Core.String_Core.Boolean
+    Name: sortBy
+    InterfaceMethod: False
+    Return:
+      - #0 id=63500359 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=21968676 idx=0 name=this] type=Core.Table
+      - #1 id=34632325 idx=1 name=columnName type=Core.String
+      - #2 id=43255469 idx=2 name=ascending type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.sortByAt_2_Core.Int32_Core.Boolean
+    VirtualName: sortByAt_Core.Void_2_Core.Int32_Core.Boolean
+    Name: sortByAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=14032107 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53754906 idx=0 name=this] type=Core.Table
+      - #1 id=59180107 idx=1 name=colIndex type=Core.Int32
+      - #2 id=62858922 idx=2 name=ascending type=Core.Boolean
+    Locals:
+      - #0 id=28859394 idx=0 name=autocreate_53022201 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.distinctRows
+    VirtualName: distinctRows_Core.Int32_0
+    Name: distinctRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=32378907 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=33423818 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.min_1_Core.String
+    VirtualName: min_Core.Float64_1_Core.String
+    Name: min
+    InterfaceMethod: False
+    Return:
+      - #0 id=49012555 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=5445839 idx=0 name=this] type=Core.Table
+      - #1 id=38459815 idx=1 name=columnName type=Core.String
+    Locals:
+      - #0 id=10594020 idx=0 name=colIndex type=Core.Int32
+      - #1 id=28237324 idx=1 name=_result type=Core.Float64
+      - #2 id=52809326 idx=2 name=hasValue type=Core.Boolean
+      - #3 id=5521893 idx=3 name=_rowCount type=Core.Int32
+      - #4 id=49697041 idx=4 name=autocreate_7437765 type=Core.Boolean
+      - #5 id=44620187 idx=5 name=r type=Core.Int32
+      - #6 id=66037364 idx=6 name=autocreate_66939890 type=Core.Boolean
+      - #7 id=57465365 idx=7 name=v type=Core.Float64
+      - #8 id=47426239 idx=8 name=autocreate_65588106 type=Core.Boolean
+      - #9 id=24182971 idx=9 name=autocreate_53422044 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.max_1_Core.String
+    VirtualName: max_Core.Float64_1_Core.String
+    Name: max
+    InterfaceMethod: False
+    Return:
+      - #0 id=44731208 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=57165917 idx=0 name=this] type=Core.Table
+      - #1 id=67036556 idx=1 name=columnName type=Core.String
+    Locals:
+      - #0 id=66458099 idx=0 name=colIndex type=Core.Int32
+      - #1 id=61251980 idx=1 name=_result type=Core.Float64
+      - #2 id=14396914 idx=2 name=hasValue type=Core.Boolean
+      - #3 id=62463365 idx=3 name=_rowCount type=Core.Int32
+      - #4 id=25299374 idx=4 name=autocreate_11036355 type=Core.Boolean
+      - #5 id=26367774 idx=5 name=r type=Core.Int32
+      - #6 id=35983374 idx=6 name=autocreate_32218335 type=Core.Boolean
+      - #7 id=55414911 idx=7 name=v type=Core.Float64
+      - #8 id=28972154 idx=8 name=autocreate_21529561 type=Core.Boolean
+      - #9 id=59422801 idx=9 name=autocreate_59548322 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.sum_1_Core.String
+    VirtualName: sum_Core.Float64_1_Core.String
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=55337852 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=58344433 idx=0 name=this] type=Core.Table
+      - #1 id=28278626 idx=1 name=columnName type=Core.String
+    Locals:
+      - #0 id=53181042 idx=0 name=colIndex type=Core.Int32
+      - #1 id=8867335 idx=1 name=total type=Core.Float64
+      - #2 id=12697152 idx=2 name=_rowCount type=Core.Int32
+      - #3 id=47165512 idx=3 name=autocreate_66172851 type=Core.Boolean
+      - #4 id=21836431 idx=4 name=r type=Core.Int32
+      - #5 id=62310159 idx=5 name=autocreate_58684749 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.avg_1_Core.String
+    VirtualName: avg_Core.Float64_1_Core.String
+    Name: avg
+    InterfaceMethod: False
+    Return:
+      - #0 id=21868626 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=9886387 idx=0 name=this] type=Core.Table
+      - #1 id=62599910 idx=1 name=columnName type=Core.String
+    Locals:
+      - #0 id=26528280 idx=0 name=colIndex type=Core.Int32
+      - #1 id=37427929 idx=1 name=total type=Core.Float64
+      - #2 id=1307042 idx=2 name=validCount type=Core.Int32
+      - #3 id=11763380 idx=3 name=_rowCount type=Core.Int32
+      - #4 id=38761560 idx=4 name=autocreate_58400697 type=Core.Boolean
+      - #5 id=13309728 idx=5 name=r type=Core.Int32
+      - #6 id=52678692 idx=6 name=autocreate_55844233 type=Core.Boolean
+      - #7 id=4346180 idx=7 name=autocreate_32836053 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.toCsv
+    VirtualName: toCsv_Core.String_0
+    Name: toCsv
+    InterfaceMethod: False
+    Return:
+      - #0 id=41179664 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64227841 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.toCsvDelimited_1_Core.String
+    VirtualName: toCsvDelimited_Core.String_1_Core.String
+    Name: toCsvDelimited
+    InterfaceMethod: False
+    Return:
+      - #0 id=22312986 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=47218463 idx=0 name=this] type=Core.Table
+      - #1 id=66599147 idx=1 name=delimiter type=Core.String
+    Locals:
+      - #0 id=62521411 idx=0 name=autocreate_46727122 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.preview_1_Core.Int32
+    VirtualName: preview_Core.String_1_Core.Int32
+    Name: preview
+    InterfaceMethod: False
+    Return:
+      - #0 id=33600918 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11189975 idx=0 name=this] type=Core.Table
+      - #1 id=33972808 idx=1 name=maxRows type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=3006923 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=334102 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=42234223 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27062312 idx=0 name=this] type=Core.Table
+    Locals:
+      - #0 id=44563687 idx=0 name=hasNextVar type=Core.Boolean
+      - #1 id=65528866 idx=1 name=autocreate_17890920 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Table.current
+    VirtualName: current_Core.Array<Core.Object>[-1]_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=51184318 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=35513308 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.Table.iterator
+    VirtualName: iterator_Core.IIterator<Core.Array<Core.Object>[-1]>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=839735 idx=0 name=return] type=Core.IIterator<T><Core.Array<T><Core.Object>>
+    Arguments:
+      - #0 id=52289087 idx=0 name=this] type=Core.Table
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

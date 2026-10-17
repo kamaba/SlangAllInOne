@@ -1,0 +1,30 @@
+-------------------IR 文件显示 开始 : Path: Error.sl-----------------------
+Class: Core.CoreError
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1540494222 idx=0 name=Core.CoreError.None type=Core.Member
+      - #1 id=890002981 idx=1 name=Core.CoreError.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.MathOpError
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1319952888 idx=0 name=Core.MathOpError.Overflow type=Core.Member
+      - #1 id=-848160910 idx=1 name=Core.MathOpError.Underflow type=Core.Member
+      - #2 id=1812600806 idx=2 name=Core.MathOpError.DivisionByZero type=Core.Member
+      - #3 id=-624990094 idx=3 name=Core.MathOpError.InvalidArgument type=Core.Member
+      - #4 id=1853531387 idx=4 name=Core.MathOpError.InvalidOperation type=Core.Member
+      - #5 id=974776115 idx=5 name=Core.MathOpError.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,59 @@
+﻿[01:52:37 354] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[01:52:37 356] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ArcProbe.sp]
+[01:52:37 364] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ArcProbeDefs.sl]
+[01:52:37 401] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ArcProbe.sp]编译File层完成]
+[01:52:37 402] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ArcProbeDefs.sl]编译File层完成]
+[01:52:37 403] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[01:52:37 403] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[01:52:37 410] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: makeObj Path:ArcProbe.sp Line: 8 Pos: 27  ]
+[01:52:37 410] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: makeClaimed Path:ArcProbe.sp Line: 15 Pos: 25  ]
+[01:52:37 411] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: returnTransferCase Path:ArcProbe.sp Line: 23 Pos: 79  ]
+[01:52:37 411] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: listTransferCase Path:ArcProbe.sp Line: 32 Pos: 93  ]
+[01:52:37 411] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: arrayTransferCase Path:ArcProbe.sp Line: 44 Pos: 100  ]
+[01:52:37 412] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: staticFieldTransferCase Path:ArcProbe.sp Line: 56 Pos: 95  ]
+[01:52:37 412] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: instanceFieldTransferCase Path:ArcProbe.sp Line: 66 Pos: 102  ]
+[01:52:37 413] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: globalTransferCase Path:ArcProbe.sp Line: 78 Pos: 32  ]
+[01:52:37 413] [Info] [ParseMeta]  [MetaCoreClassInfoProjectStatic]  Info:[Info Project类成员函数默认按 static 处理:] Extend:[Info Project类成员函数默认按 static 处理: Lex: closureTransferCase Path:ArcProbe.sp Line: 88 Pos: 90  ]
+[01:52:37 424] [Info] [ParseMeta]  [MetaCoreClassIssue4] Position:[ArcProbeDefs.sl_4_0]  Info:[Warning 类[] Extend:[Warning 类[ArcProbe.ArcProbeNS.ArcCtor] 方法: _init_ 重写了父类方法但未使用 override 标记: Core.Object._init_]
+[01:52:37 433] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[01:52:37 500] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[01:52:37 501] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[01:52:37 502] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[01:52:37 503] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[01:52:37 518] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[01:52:37 562] [Info] [GenIR]  [IRManagerStartExportingIR]  Info:[Start exporting IR debug data...] Extend:[Start exporting IR debug data...]
+[01:52:37 605] [Info] [GenIR]  [IRManagerEndExportingIR]  Info:[End exporting IR debug data...] Extend:[End exporting IR debug data...]
+[01:52:37 605] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[01:52:37 605] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[01:52:37 606] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[01:52:37 607] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[01:52:37 675] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: d:\project\lang\simple_language\out\arc_probe\ArcProbe\ArcProbe.module.json]
+[01:52:37 675] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]

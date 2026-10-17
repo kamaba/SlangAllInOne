@@ -1,0 +1,103 @@
+-------------------FileMeta 文件显示 开始 : Path: BindDataTest.sl-----------------------
+const data BookData
+{
+    name = "ABC"
+    pageCount = 20i
+    price = 20i
+}
+data BP
+{
+    width = 30i
+    height = 40i
+}
+BookC  bind BookData, BP
+{
+}
+BindDataTest
+{
+    _public static fun( )
+    {
+        global.println("========== BindDataTest (start) ==========");
+        BookC bc = new();
+        bc.name = "hahah";
+        bc.width = 20i;
+        bc.height = 40i;
+        global.println("[base] direct mapped fields");
+        global.println("bc.name=" + bc.name.toString());
+        global.println("bc.width=" + bc.width);
+        global.println("bc.height=" + bc.height);
+        bindNameAccessTest();
+        conflictOverrideTest();
+        interfaceBindBehaviorTest();
+        global.println("========== BindDataTest (end) ==========");
+    }
+    _public static bindNameAccessTest( )
+    {
+        global.println("[bindNameAccessTest] start");
+        BookC bc = new();
+        bc.BookData.name = "bind-name-access";
+        bc.BP.width = 101i;
+        bc.BP.height = 202i;
+        global.println("bc.BookData.name=" + bc.BookData.name);
+        global.println("bc.name=" + bc.name);
+        global.println("bc.BP.width=" + bc.BP.width);
+        global.println("bc.width=" + bc.width);
+        global.println("bc.height=" + bc.height);
+        global.println("[bindNameAccessTest] end");
+    }
+    _public static conflictOverrideTest( )
+    {
+        global.println("[conflictOverrideTest] start");
+        BindConflictClass c = new();
+        c.a = 77i;
+        global.println("c.a=" + c.a.toString());
+        global.println("c.DA2.a=" + c.DA2.a.toString());
+        global.println("c.DB2.a=" + c.DB2.a.toString());
+        global.println("[conflictOverrideTest] end");
+    }
+    _public static interfaceBindBehaviorTest( )
+    {
+        global.println("[interfaceBindBehaviorTest] start");
+        SeltBookData d = new();
+        d.price = 15i;
+        d.count = 3i;
+        global.println("d.calc()=" + d.calc().toString());
+        global.println("[interfaceBindBehaviorTest] end");
+    }
+}
+data DA2
+{
+    a = 1i
+}
+data DB2
+{
+    a = 2i
+}
+BindConflictClass  bind DA2, DB2
+{
+    _public int a( )
+    {
+        ret this.DA2.a
+    }
+    _public a( int v )
+    {
+        this.DA2.a = v;
+    }
+}
+public interface CalcPrice  bind BookData
+{
+    _public float calc( )
+    {
+        ret this.price * 1i
+    }
+}
+public class SeltBookData  interface CalcPrice  bind BookData
+{
+    public int intcount = 20i
+
+    _public override float calc( )
+    {
+        ret this.price * this.count
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

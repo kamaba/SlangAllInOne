@@ -1,0 +1,58 @@
+-------------------Meta 文件显示 开始 : Path: Attribute.sl-----------------------
+public class Attribute extends Core.Object
+{
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

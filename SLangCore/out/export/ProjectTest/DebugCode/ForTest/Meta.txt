@@ -1,0 +1,304 @@
+-------------------Meta 文件显示 开始 : Path: ForTest.sl-----------------------
+ForTest
+{
+    enum EItType
+    {
+        It1 = 1i
+        It2 = 2i
+
+    }
+    interface IPay
+    {
+        _public pay( int a )
+
+        _public check( )
+
+    }
+    public class Pay  interface IPay
+    {
+        _paycash = 0i
+
+        _public override pay( int a )
+        {
+            this._paycash = a;
+            global.println("pay:" + a.toString());
+        }
+        _public override check( )
+        {
+            global.println("check:" + this._paycash.toString());
+        }
+    }
+
+    _public static fun( )
+    {
+        ForTest.forInMixedArray();
+        ForTest.forInEnumAttrHandleType();
+        ForTest.forInRange();
+        ForTest.forInNestedRange();
+        ForTest.forInitOnly();
+        ForTest.forConditionOnly();
+        ForTest.forFullThreePart();
+        ForTest.forInArrayLiteral();
+        ForTest.forInRangeLiteral();
+        ForTest.forInNestedArray();
+        ForTest.forInFlow();
+        ForTest.forInNest();
+        ForTest.forenum();
+        forInterface();
+    }
+    _public static forInMixedArray( )
+    {
+        global.println("---------------forInMixedArray--------------");
+        a = [1981i,"mmmmm",0xef,33333uL,[1988i,2045i]];
+        
+        for v in a
+        {
+            global.println("------------------${v.toString()}");
+        }
+    }
+    _public static forInEnumAttrHandleType( )
+    {
+        global.println("---------------forInEnumAttrHandleType--------------");
+        
+        for v in EAttributeStage
+        {
+            if v == EAttributeStage.PreCompile
+            {
+                global.println("EAttributeStage--------------PreCompile ");
+                continue
+            }
+            global.println("EAttributeStage= ${v.name.toString()}value = ${v.value.toString()} ");
+            global.println(v);
+            if v == EAttributeStage.Runtime
+            {
+                global.println("EAttributeStage--------------Runtime ");
+                break
+            }
+        }
+    }
+    _public static forInRange( )
+    {
+        global.println("---------------forInRange--------------");
+        r1 = 1..100;
+        r2 = range(1.0f,200.0f,1.0f);
+        Range<double> r3 = new(3.20d,54.30d,0.22d);
+        r4 = Range(1s,100s,2s);
+        
+        for v in r1
+        {
+            global.println("value=${v}");
+        }
+        
+        for v in r2
+        {
+            global.println("value=${v}");
+        }
+        
+        for v in r3
+        {
+            global.println("value=${v}");
+        }
+        
+        for v in r4
+        {
+            global.println("value=${v}");
+        }
+    }
+    _public static forInNestedRange( )
+    {
+        global.println("---------------forInNestedRange--------------");
+        sum = 0i;
+        
+        for i in range(1i,10i,2i)
+        {
+            sum += 10i
+            global.println(i);
+            
+            for n in range(3i,6i)
+            {
+                sum += n
+                global.println("n=${n}");
+            }
+        }
+        global.println("sum:" + sum);
+    }
+    _public static forInitOnly( )
+    {
+        global.println("---------------forInitOnly--------------");
+        i = 20i;
+        
+        for i = 1i
+        {
+            if i > 22i
+            {
+                break
+            }
+            i = i + 2i;
+            global.println("for i= ${i}");
+        }
+        
+        for i = 123i
+        {
+            if i >= 130i
+            {
+                break
+            }
+            i ++ 
+            global.println("i= ${i}");
+        }
+        
+        for f1 = 0i
+        {
+            if f1 >= 5i
+            {
+                break
+            }
+            f1 = f1 + 1i;
+            global.println("1.1.2 for-init-only f1=${f1}");
+        }
+    }
+    _public static forConditionOnly( )
+    {
+        global.println("---------------forConditionOnly--------------");
+        
+        for i = 0i, i < 10i
+        {
+            global.println("i= ${i}");
+            i ++ 
+        }
+        
+        for f2 = 0i, f2 < 3i
+        {
+            global.println("1.1.3 for-cond f2=${f2}");
+            f2 = f2 + 1i;
+        }
+    }
+    _public static forFullThreePart( )
+    {
+        global.println("---------------forFullThreePart--------------");
+        
+        for i = 0i, i <= 2i, i += 2i
+        {
+            global.println("i= ${i}");
+            n = i * 10i;
+        }
+        
+        for i = 0i, i < 30i, i ++ 
+        {
+            global.println("i= ${i}");
+            n = i * 10i;
+            if n == 200i
+            {
+                break
+            }
+            if n % 2i == 0i
+            {
+                global.println("这是一个偶数 = ${i}");
+                continue
+            }
+        }
+        
+        for f3 = 0i, f3 < 3i, f3 += 1i
+        {
+            global.println("1.1.4 for-full f3=${f3}");
+        }
+        
+        for f4 = 0i, f4 < 10i, f4 += 1i
+        {
+            if f4 == 2i
+            {
+                continue
+            }
+            if f4 == 5i
+            {
+                break
+            }
+            global.println("1.1.4 for-flow f4=${f4}");
+        }
+    }
+    _public static forInArrayLiteral( )
+    {
+        global.println("---------------forInArrayLiteral--------------");
+        arr = [1i,2i,3i];
+        
+        for v in arr
+        {
+            global.println(" v= ${v}");
+        }
+        
+        for v in [10i,20i,30i]
+        {
+            global.println("1.2 for-in-literal v=${v}");
+        }
+    }
+    _public static forInRangeLiteral( )
+    {
+        global.println("---------------forInRangeLiteral--------------");
+        
+        for v in [1..4]
+        {
+            global.println(" v= ${v}");
+        }
+    }
+    _public static forInNestedArray( )
+    {
+        global.println("---------------forInNestedArray--------------");
+        a1 = [[1i,2i,3i],[4i,5i,6i],[7i,8i,9i]];
+        
+        for v in a1
+        {
+            global.println("这里是索引" + v.index);
+            
+            for i = 0i, i < v.length, i ++ 
+            {
+                global.println("这里是值" + v.$i + "----" + v[i]);
+            }
+        }
+    }
+    _public static forInFlow( )
+    {
+        global.println("---------------forInFlow--------------");
+        
+        for v in [1i,2i,3i,4i,5i]
+        {
+            if v == 3i
+            {
+                continue
+            }
+            if v == 4i
+            {
+                break
+            }
+            global.println("1.2 for-in-flow v=${v}");
+        }
+    }
+    _public static forInNest( )
+    {
+        global.println("---------------forInNest--------------");
+        
+        for v in [1i,2i]
+        {
+            
+            for w in [10i,20i]
+            {
+                global.println("1.2 for-in-nest v=${v}w=${w}");
+            }
+        }
+    }
+    _public static forenum( )
+    {
+        
+        for v in EItType
+        {
+            global.println("forenum:" + v.toString());
+        }
+    }
+    _public static forInterface( )
+    {
+        global.println("---------------forInterface--------------");
+        IPay pay1 = Pay();
+        pay1.check();
+        pay1.pay(20i);
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

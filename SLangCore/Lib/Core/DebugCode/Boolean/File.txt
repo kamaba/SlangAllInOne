@@ -1,0 +1,15 @@
+-------------------FileMeta 文件显示 开始 : Path: Boolean.sl-----------------------
+public _partial class Boolean extends Object
+{
+    publicbool _value = false
+
+    _public _init_( bool b )
+    {
+        this._value = b;
+    }
+    _public override string toString( )
+    {
+        ret this._value ? "True" : "False"
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

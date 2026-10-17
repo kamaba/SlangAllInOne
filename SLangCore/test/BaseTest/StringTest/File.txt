@@ -1,0 +1,74 @@
+-------------------FileMeta 文件显示 开始 : Path: ../../../../test/BaseTest/StringTest.sl-----------------------
+import Std;
+import CSharp.System;
+StringTest
+{
+    Class2
+    {
+        int inta = 0i
+
+    }
+    Class1
+    {
+        a1 = 20i
+        Class2 Class2c2 = null
+
+        _public static string printf( string x )
+        {
+            global.println("StringTest.printf: " + x);
+            ret "m"
+        }
+    }
+    ClassT
+    {
+        string stringname = "xxx"
+
+    }
+
+    _public static literalAndFormatSmoke( )
+    {
+        global.println("----- literalAndFormatSmoke -----");
+        a3 = "{"name":"okr","age":13}" + 3i;
+        Class1.printf(a3);
+        a41 = "{0} this is {1} that a {2}".format("mum","skirt","big");
+        Class1.printf(a41);
+        Class1 c1 = Class1();
+        a7 = "c1.a1 as concat -> " + c1.a1.toString();
+        Class1.printf(a7);
+        c4 = "a" + "b";
+        global.println("char-like + -> " + c4.toString());
+        c6 = "aaaaaa";
+        Class1.printf(c6);
+        fstr = "prefix";
+        global.println("f-string sample -> " + fstr);
+    }
+    _public static dollarAndFormatSmoke( )
+    {
+        global.println("----- dollarAndFormatSmoke -----");
+        name = "QuTa";
+        score = 55i;
+        a = 100i;
+        b = 300i;
+        ct = ClassT(){name = "mmm"};
+        str3 = "{} Name:$ct.name {} Score:$score a+b=${(a + b).toString()} bb = {}";
+        str33 = str3.format(name,score,"bb");
+        global.println(str3.format(name + "---",score - 50i,"bbxxxx"));
+        global.println(str33);
+        str4 = "Name:$name Score:$score a[{}]+b[{}]=${(a + b).toString()}".format(a,b);
+        global.println(str4);
+        str5 = "Name:'$name' NickName="AQ" Score=$score a{}+b{}=${(a + b).toString()}";
+        global.println(str5);
+        str6 = "我是一段话 我叫${name}
+        我\n今天 考了${score}分 "大Q$name QQ" 'xml' " \t
+        End";
+        global.println("verbatim f-triple: " + str6);
+    }
+    _public static fun( )
+    {
+        global.println("========== StringTest (start) ==========");
+        literalAndFormatSmoke();
+        dollarAndFormatSmoke();
+        global.println("========== StringTest (end) ==========");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

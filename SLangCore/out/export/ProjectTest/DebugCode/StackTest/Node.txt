@@ -1,0 +1,182 @@
+#Stack 容器功能测试：构造/入栈/出栈/查找/扩容/清空/转换/迭代器（LIFO）StackTest 
+{
+# 测试基本 push / pop / peek / length / isEmptystatic testBasicPushPop()
+{
+global.println("===== testBasicPushPop =====")
+Stack s =new 
+global.println("isEmpty = "+s.isEmpty)
+s.push(1)
+s.push(2)
+s.push(3)
+global.println("length = "+s.length)
+global.println("peek = "+s.peek)
+global.println("bottom = "+s.bottom)
+global.println("pop = "+s.pop())
+global.println("pop = "+s.pop())
+global.println("length = "+s.length)
+global.println("peek = "+s.peek)
+global.println("isEmpty = "+s.isEmpty)
+global.println("pop = "+s.pop())
+global.println("isEmpty = "+s.isEmpty)
+global.println("pop on empty is null = "+(s.pop()==null).toString())
+global.println("peek on empty is null = "+(s.peek==null).toString())
+}
+
+# 测试指定容量构造 + 从数组构造static testConstructors()
+{
+global.println("===== testConstructors =====")
+Stack s1 =Stack(8)
+global.println("capacity(s1) = "+s1.capacity)
+
+Array arr =Array(3)
+arr =10
+arr =20
+arr =30
+Stack s2 =Stack(arr )# 数组首元素为栈底global.println("s2.length = "+s2.length)
+global.println("s2.bottom = "+s2.bottom)
+global.println("s2.peek = "+s2.peek)
+global.println("s2.toString = "+s2.toString())
+}
+
+# 测试 contains / indexOf / lastIndexOf / pushRangestatic testSearchAndPushRange()
+{
+global.println("===== testSearchAndPushRange =====")
+Stack s =new 
+s.push(1)
+s.push(2)
+s.push(3)
+s.push(2)
+global.println("contains(2) = "+s.contains(2))
+global.println("contains(9) = "+s.contains(9))
+global.println("indexOf(2) = "+s.indexOf(2))# 底->顶首个 = 1global.println("lastIndexOf(2) = "+s.lastIndexOf(2))# 顶->底首个 = 3global.println("indexOf(9) = "+s.indexOf(9))# -1
+Array more =Array(3)
+more =4
+more =5
+more =6
+s.pushRange(more )
+global.println("after pushRange, length = "+s.length)# 7global.println("s.toString = "+s.toString())
+}
+
+# 测试容量增长（自动扩容）static testGrow()
+{
+global.println("===== testGrow =====")
+Stack s =new 
+global.println("initial capacity = "+s.capacity)# 0s.push(1)
+global.println("after 1 push, capacity = "+s.capacity)# 4for i =2,i <=4,i ++
+{
+s.push(i )
+}
+global.println("after 4 pushes, capacity = "+s.capacity)# 4s.push(5)
+global.println("after 5 pushes, capacity = "+s.capacity)# 8for i =6,i <=16,i ++
+{
+s.push(i )
+}
+global.println("after 16 pushes, capacity = "+s.capacity)# 16global.println("length = "+s.length)
+}
+
+# 测试 ensureCapacity / capacity setterstatic testEnsureCapacity()
+{
+global.println("===== testEnsureCapacity =====")
+Stack s =new 
+s.ensureCapacity(100)
+global.println("after ensureCapacity(100), capacity = "+s.capacity)# 100s.push(1)
+global.println("after 1 push, capacity = "+s.capacity)# 仍为 100（不缩容）}
+
+# 测试 clearstatic testClear()
+{
+global.println("===== testClear =====")
+Stack s =new 
+s.push(1)
+s.push(2)
+s.push(3)
+s.clear()
+global.println("after clear, length = "+s.length)
+global.println("after clear, isEmpty = "+s.isEmpty)
+global.println("after clear, capacity = "+s.capacity)# 0s.push(9)
+global.println("push after clear works, length = "+s.length)
+}
+
+# 测试 toArray / toList / copystatic testConvert()
+{
+global.println("===== testConvert =====")
+Array arr =Array(3)
+arr =10
+arr =20
+arr =30
+Stack s =Stack(arr )
+Array outArr =s.toArray()
+global.println("toArray.length = "+outArr.length)
+for i =0,i <outArr.length,i ++
+{
+global.println("outArr["+i.toString()+"] = "+outArr.toString())
+}
+List list =s.toList()
+global.println("toList.length = "+list.length)
+Stack c =s.copy()
+global.println("copy.length = "+c.length)
+global.println("copy.peek = "+c.peek)
+global.println("copy.toString = "+c.toString())
+}
+
+# 测试迭代器 / foreach（LIFO：栈顶 -> 栈底）static testIterator()
+{
+global.println("===== testIterator =====")
+Stack s =new 
+s.push("a")
+s.push("b")
+s.push("c")
+int count =0
+for item in s 
+{
+global.println("foreach item = "+item )
+count ++
+}
+global.println("iterated count = "+count.toString())
+# 迭代后再迭代（reset 语义）for item in s 
+{
+global.println("foreach again item = "+item )
+}
+}
+
+# 测试字符串元素栈 + toStringstatic testStringElements()
+{
+global.println("===== testStringElements =====")
+Stack s =new 
+s.push("apple")
+s.push("banana")
+s.push("cherry")
+global.println("length = "+s.length)
+global.println("contains(banana) = "+s.contains("banana"))
+global.println("toString = "+s.toString())# [apple,banana,cherry]}
+
+# 测试空栈边界行为static testEmptyEdge()
+{
+global.println("===== testEmptyEdge =====")
+Stack s =new 
+global.println("toArray.length = "+s.toArray())
+global.println("bottom is null = "+(s.bottom==null).toString())
+global.println("toString = "+s.toString())
+global.println("contains(1) = "+s.contains(1))
+global.println("indexOf(1) = "+s.indexOf(1))
+for item in s 
+{
+global.println("should not reach here")
+}
+global.println("empty foreach done")
+}
+
+static fun()
+{
+global.println("===== StackTest =====")
+testBasicPushPop()
+testConstructors()
+testSearchAndPushRange()
+testGrow()
+testEnsureCapacity()
+testClear()
+testConvert()
+testIterator()
+testStringElements()
+testEmptyEdge()
+}
+}

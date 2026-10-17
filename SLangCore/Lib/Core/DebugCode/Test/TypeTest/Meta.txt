@@ -1,0 +1,83 @@
+-------------------Meta 文件显示 开始 : Path: Test/TypeTest.sl-----------------------
+public class TypeTest extends Core.Object
+{
+public  static Core.Object fun()
+{
+[Core.Object]t =   ->  type;
+println("int.type() -> " + t.toString())
+[Core.Int32]i2 = 20i;
+[Core.Object]t2 = [Core.Object]i2.type();
+println("i2.type -> " + t2.toString())
+Core.Boolean autocreate_12963143 = ([Core.Object]t == [Core.Object]t2)
+if autocreate_12963143
+{
+println("int.type == i2.type : true")
+
+}
+else
+{
+println("int.type == i2.type : false")
+
+}
+[Core.Object]tg =   ->  type;
+println("Array<int>.type -> " + tg.toString())
+
+
+
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

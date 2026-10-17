@@ -34,8 +34,14 @@ slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 │   └── Linux : libcsimple_lang_dll.so + libsqlite3.so.0（捆绑，零 LD_LIBRARY_PATH 配置）
 ├── module\                    # 标准库 Core/Math/Std *.module.slb（平铺单目录）
 │   └── Windows 另含 math_lib.dll（Math 的 FFI 原生库；Linux 侧不捆绑，见下）
+├── test\RefProbe\             # 开箱示例：纯名引用官方库的最小工程（slang run test\RefProbe\RefProbe）
 └── md\                        # ~93 篇用户文档
 ```
+
+**官方库直查（2026-10-17 起）**：用户工程 jsonc 的 `references` 直接写官方库名
+（`{ "path": "Core", "name": "Core.module.json" }`）即可——Front 编译期与
+C VM 运行期都会在 `<slang 目录>\module\` 下按名直查（slb 优先；工程跨盘/包外
+时 C VM 再兜底 exe 目录 module\），任何放进 `module\` 的官方库零配置可用。
 
 ## 构建链差异（Windows vs Linux）
 
@@ -58,4 +64,4 @@ slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 
 | 版本 | 双包结果 |
 |------|----------|
-| v0.0.3（2026-10-17） | 首个双平台 AOT 版（详见 GitHub Release 附的两个资产与发布说明） |
+| v0.0.3（2026-10-17） | ✅ 首个双平台 AOT 版：win zip 8.2MB + linux tgz 8.1MB（同一 Release 两资产）；双平台冒烟全过——win run-disk Std/Math exit 0、linux run-disk Std exit 0、linux `run MiniSmoke`（Front 编译→SLIR 内存直传→C VM 执行 `_main_`）exit 0。发布链修复实录：① wsl 调用 stdout 混入返回值导致预检假失败（`Out-Host` 修）；② AOT obj 缓存复活 slang.pdb（归档前兜底删除）；③ Linux 系统方法全挂 error_code=-13——C VM 注册表走 `dlsym(dlopen(NULL))` 查主程序全局符号表，.NET 默认 `RTLD_LOCAL` dlopen 使 `.so` 符号不可见，宿主改 `RTLD_GLOBAL` dlopen（对齐 exe `-rdynamic` 语义，`Backend/CvmInterop.cs` + `CvmBackend.cs`）；④ 测试工程 jsonc 平台校验硬编码 win64，Linux 冒烟需 `SL_FORCE_RUN=1`（既有预期差异） |

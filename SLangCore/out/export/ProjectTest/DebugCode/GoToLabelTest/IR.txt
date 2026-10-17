@@ -1,0 +1,598 @@
+-------------------IR 文件显示 开始 : Path: GoToLabelTest.sl-----------------------
+Class: ProjectTest.GotoLabel
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GotoLabel.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=833575 idx=0 name=_local[ProjectTest.GotoLabel.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:6] [LoadConstString] index:[3586] val: string[========== GotoLabelTest (start) ==========] 
+2 2   [ GoToLabelTest.sl:4] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:21] [CallStatic] index:[0] info:[CallStatic backwardJumpLoopTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.backwardJumpLoopTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ GoToLabelTest.sl:38] [CallStatic] index:[0] info:[CallStatic forwardJumpSkipTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.forwardJumpSkipTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ GoToLabelTest.sl:51] [CallStatic] index:[0] info:[CallStatic multiLabelChainTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.multiLabelChainTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ GoToLabelTest.sl:74] [CallStatic] index:[0] info:[CallStatic gotoOutOfIfTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.gotoOutOfIfTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ GoToLabelTest.sl:89] [CallStatic] index:[0] info:[CallStatic gotoOutOfWhileTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.gotoOutOfWhileTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ GoToLabelTest.sl:110] [CallStatic] index:[0] info:[CallStatic gotoLoopSumTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.gotoLoopSumTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ GoToLabelTest.sl:127] [CallStatic] index:[0] info:[CallStatic forwardBackwardMixTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.forwardBackwardMixTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ GoToLabelTest.sl:148] [CallStatic] index:[0] info:[CallStatic labelNoGotoTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.GotoLabel, StaticRuntimeTypeList=[], Method=ProjectTest.GotoLabel.labelNoGotoTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ GoToLabelTest.sl:17] [LoadConstString] index:[3587] val: string[========== GotoLabelTest (end) ==========] 
+16 16   [ GoToLabelTest.sl:4] [StoreLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ GoToLabelTest.sl:4] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.backwardJumpLoopTest
+    VirtualName: backwardJumpLoopTest_Core.Void_0
+    Name: backwardJumpLoopTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=7502182 idx=0 name=_local[ProjectTest.GotoLabel.backwardJumpLoopTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=410782 idx=0 name=backwardJumpLoopTest_local[i] type=Core.Int32
+      - #1 id=3697038 idx=1 name=backwardJumpLoopTest_local[sum] type=Core.Int32
+      - #2 id=33273344 idx=2 name=backwardJumpLoopTest_local[autocreate_19289328] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:23] [LoadConstString] index:[3588] val: string[---------------backwardJumpLoopTest--------------] 
+2 2   [ GoToLabelTest.sl:21] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:25] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ GoToLabelTest.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:26] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ GoToLabelTest.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:27] [Label] index:[0] info:[Label:loopStart] val:[loopStart] 
+12 12   [ GoToLabelTest.sl:28] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ :0] [LoadConstInt8] index:[0] val:[1] 
+14 14   [ :0] [Convert_I32] index:[0]
+15 15   [ :0] [Add] index:[0]
+16 16   [ GoToLabelTest.sl:21] [StoreLocal] index:[0] info:[LocalStatement]
+17 17   [ GoToLabelTest.sl:29] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ GoToLabelTest.sl:29] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ :0] [Add] index:[0]
+20 20   [ GoToLabelTest.sl:21] [StoreLocal] index:[1] info:[LocalStatement]
+21 21   [ GoToLabelTest.sl:30] [Nop] index:[0] info:[if/elif/else branch start]
+22 22   [ GoToLabelTest.sl:30] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ GoToLabelTest.sl:30] [LoadConstInt32] index:[0] val: int32[5] 
+24 24   [ GoToLabelTest.sl:30] [Clt] index:[0]
+25 25   [ GoToLabelTest.sl:21] [StoreLocal] index:[2] info:[if/elif store condition var]
+26 26   [ GoToLabelTest.sl:21] [LoadLocal] index:[2] info:[if/elif load condition var]
+27 27   [ GoToLabelTest.sl:30] [BrFalse] index:[31] info:[if/elif BrFalse]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ GoToLabelTest.sl:32] [BrLabel] index:[11]
+30 30   [ GoToLabelTest.sl:33] [Br] index:[31] info:[if/elif/else block end Br]
+31 31   [ GoToLabelTest.sl:33] [Label] index:[1] info:[if end]
+32 32   [ GoToLabelTest.sl:34] [LoadConstString] index:[3589] val: string[backwardJump sum -> ] 
+33 33   [ GoToLabelTest.sl:34] [LoadLocal] index:[1] info:[LocalStatement]
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ GoToLabelTest.sl:34] [Add] index:[0]
+36 36   [ GoToLabelTest.sl:21] [StoreLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ GoToLabelTest.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.forwardJumpSkipTest
+    VirtualName: forwardJumpSkipTest_Core.Void_0
+    Name: forwardJumpSkipTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=29968374 idx=0 name=_local[ProjectTest.GotoLabel.forwardJumpSkipTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=1279915 idx=0 name=forwardJumpSkipTest_local[a] type=Core.Int32
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:40] [LoadConstString] index:[3590] val: string[---------------forwardJumpSkipTest--------------] 
+2 2   [ GoToLabelTest.sl:38] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:42] [LoadConstInt32] index:[0] val: int32[1] 
+8 8   [ GoToLabelTest.sl:38] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:43] [BrLabel] index:[12]
+10 10   [ GoToLabelTest.sl:44] [LoadConstInt32] index:[0] val: int32[100] 
+11 11   [ GoToLabelTest.sl:38] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ GoToLabelTest.sl:45] [Label] index:[0] info:[Label:skip] val:[skip] 
+13 13   [ GoToLabelTest.sl:46] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ GoToLabelTest.sl:46] [LoadConstInt32] index:[0] val: int32[2] 
+15 15   [ :0] [Add] index:[0]
+16 16   [ GoToLabelTest.sl:38] [StoreLocal] index:[0] info:[LocalStatement]
+17 17   [ GoToLabelTest.sl:47] [LoadConstString] index:[3591] val: string[forwardJump a -> ] 
+18 18   [ GoToLabelTest.sl:47] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ GoToLabelTest.sl:47] [Add] index:[0]
+21 21   [ GoToLabelTest.sl:38] [StoreLocal] index:[2] info:[LocalStatement]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+24 24   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+25 25   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+26 26   [ GoToLabelTest.sl:38] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.multiLabelChainTest
+    VirtualName: multiLabelChainTest_Core.Void_0
+    Name: multiLabelChainTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=36564291 idx=0 name=_local[ProjectTest.GotoLabel.multiLabelChainTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=60643168 idx=0 name=multiLabelChainTest_local[a] type=Core.Int32
+      - #1 id=8917608 idx=1 name=multiLabelChainTest_local[autocreate_39386231] type=Core.Boolean
+      - #2 id=13149610 idx=2 name=multiLabelChainTest_local[autocreate_18931763] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:53] [LoadConstString] index:[3592] val: string[---------------multiLabelChainTest--------------] 
+2 2   [ GoToLabelTest.sl:51] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:55] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ GoToLabelTest.sl:51] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:56] [Label] index:[0] info:[Label:l1] val:[l1] 
+10 10   [ GoToLabelTest.sl:57] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:57] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ :0] [Add] index:[0]
+13 13   [ GoToLabelTest.sl:51] [StoreLocal] index:[0] info:[LocalStatement]
+14 14   [ GoToLabelTest.sl:58] [Nop] index:[0] info:[if/elif/else branch start]
+15 15   [ GoToLabelTest.sl:58] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ GoToLabelTest.sl:58] [LoadConstInt32] index:[0] val: int32[1] 
+17 17   [ GoToLabelTest.sl:58] [Ceq] index:[0]
+18 18   [ GoToLabelTest.sl:51] [StoreLocal] index:[1] info:[if/elif store condition var]
+19 19   [ GoToLabelTest.sl:51] [LoadLocal] index:[1] info:[if/elif load condition var]
+20 20   [ GoToLabelTest.sl:58] [BrFalse] index:[24] info:[if/elif BrFalse]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ GoToLabelTest.sl:60] [BrLabel] index:[29]
+23 23   [ GoToLabelTest.sl:61] [Br] index:[24] info:[if/elif/else block end Br]
+24 24   [ GoToLabelTest.sl:61] [Label] index:[1] info:[if end]
+25 25   [ GoToLabelTest.sl:62] [LoadLocal] index:[0] info:[LocalStatement]
+26 26   [ GoToLabelTest.sl:62] [LoadConstInt32] index:[0] val: int32[10] 
+27 27   [ :0] [Add] index:[0]
+28 28   [ GoToLabelTest.sl:51] [StoreLocal] index:[0] info:[LocalStatement]
+29 29   [ GoToLabelTest.sl:63] [Label] index:[0] info:[Label:l2] val:[l2] 
+30 30   [ GoToLabelTest.sl:64] [Nop] index:[0] info:[if/elif/else branch start]
+31 31   [ GoToLabelTest.sl:64] [LoadLocal] index:[0] info:[LocalStatement]
+32 32   [ GoToLabelTest.sl:64] [LoadConstInt32] index:[0] val: int32[1] 
+33 33   [ GoToLabelTest.sl:64] [Ceq] index:[0]
+34 34   [ GoToLabelTest.sl:51] [StoreLocal] index:[2] info:[if/elif store condition var]
+35 35   [ GoToLabelTest.sl:51] [LoadLocal] index:[2] info:[if/elif load condition var]
+36 36   [ GoToLabelTest.sl:64] [BrFalse] index:[40] info:[if/elif BrFalse]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ GoToLabelTest.sl:66] [BrLabel] index:[41]
+39 39   [ GoToLabelTest.sl:67] [Br] index:[40] info:[if/elif/else block end Br]
+40 40   [ GoToLabelTest.sl:67] [Label] index:[2] info:[if end]
+41 41   [ GoToLabelTest.sl:68] [Label] index:[0] info:[Label:l3] val:[l3] 
+42 42   [ GoToLabelTest.sl:69] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ GoToLabelTest.sl:69] [LoadConstInt32] index:[0] val: int32[100] 
+44 44   [ :0] [Add] index:[0]
+45 45   [ GoToLabelTest.sl:51] [StoreLocal] index:[0] info:[LocalStatement]
+46 46   [ GoToLabelTest.sl:70] [LoadConstString] index:[3593] val: string[multiLabel a -> ] 
+47 47   [ GoToLabelTest.sl:70] [LoadLocal] index:[0] info:[LocalStatement]
+48 48   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+49 49   [ GoToLabelTest.sl:70] [Add] index:[0]
+50 50   [ GoToLabelTest.sl:51] [StoreLocal] index:[4] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+53 53   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+54 54   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+55 55   [ GoToLabelTest.sl:51] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.gotoOutOfIfTest
+    VirtualName: gotoOutOfIfTest_Core.Void_0
+    Name: gotoOutOfIfTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=21813425 idx=0 name=_local[ProjectTest.GotoLabel.gotoOutOfIfTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=62103099 idx=0 name=gotoOutOfIfTest_local[a] type=Core.Int32
+      - #1 id=22056983 idx=1 name=gotoOutOfIfTest_local[autocreate_36168141] type=Core.Boolean
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:76] [LoadConstString] index:[3594] val: string[---------------gotoOutOfIfTest--------------] 
+2 2   [ GoToLabelTest.sl:74] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:78] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ GoToLabelTest.sl:74] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:79] [Nop] index:[0] info:[if/elif/else branch start]
+10 10   [ GoToLabelTest.sl:79] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:79] [LoadConstInt32] index:[0] val: int32[0] 
+12 12   [ GoToLabelTest.sl:79] [Ceq] index:[0]
+13 13   [ GoToLabelTest.sl:74] [StoreLocal] index:[1] info:[if/elif store condition var]
+14 14   [ GoToLabelTest.sl:74] [LoadLocal] index:[1] info:[if/elif load condition var]
+15 15   [ GoToLabelTest.sl:79] [BrFalse] index:[19] info:[if/elif BrFalse]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ GoToLabelTest.sl:81] [BrLabel] index:[22]
+18 18   [ GoToLabelTest.sl:82] [Br] index:[19] info:[if/elif/else block end Br]
+19 19   [ GoToLabelTest.sl:82] [Label] index:[1] info:[if end]
+20 20   [ GoToLabelTest.sl:83] [LoadConstInt32] index:[0] val: int32[999] 
+21 21   [ GoToLabelTest.sl:74] [StoreLocal] index:[0] info:[LocalStatement]
+22 22   [ GoToLabelTest.sl:84] [Label] index:[0] info:[Label:endLabel] val:[endLabel] 
+23 23   [ GoToLabelTest.sl:85] [LoadConstString] index:[3595] val: string[gotoOutOfIf a -> ] 
+24 24   [ GoToLabelTest.sl:85] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ GoToLabelTest.sl:85] [Add] index:[0]
+27 27   [ GoToLabelTest.sl:74] [StoreLocal] index:[3] info:[LocalStatement]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+30 30   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+31 31   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+32 32   [ GoToLabelTest.sl:74] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.gotoOutOfWhileTest
+    VirtualName: gotoOutOfWhileTest_Core.Void_0
+    Name: gotoOutOfWhileTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=40522795 idx=0 name=_local[ProjectTest.GotoLabel.gotoOutOfWhileTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=29160842 idx=0 name=gotoOutOfWhileTest_local[i] type=Core.Int32
+      - #1 id=61120992 idx=1 name=gotoOutOfWhileTest_local[hit] type=Core.Int32
+      - #2 id=13218022 idx=2 name=gotoOutOfWhileTest_local[autocreate_57077814] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:91] [LoadConstString] index:[3596] val: string[---------------gotoOutOfWhileTest--------------] 
+2 2   [ GoToLabelTest.sl:89] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:93] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ GoToLabelTest.sl:89] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:94] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ GoToLabelTest.sl:89] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ :0] [Label] index:[3]
+12 12   [ GoToLabelTest.sl:95] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ GoToLabelTest.sl:95] [LoadConstInt32] index:[0] val: int32[10] 
+14 14   [ GoToLabelTest.sl:95] [Clt] index:[0]
+15 15   [ :0] [BrFalse] index:[40]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ GoToLabelTest.sl:97] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ :0] [LoadConstInt8] index:[0] val:[1] 
+20 20   [ :0] [Convert_I32] index:[0]
+21 21   [ :0] [Add] index:[0]
+22 22   [ GoToLabelTest.sl:89] [StoreLocal] index:[0] info:[LocalStatement]
+23 23   [ GoToLabelTest.sl:98] [Nop] index:[0] info:[if/elif/else branch start]
+24 24   [ GoToLabelTest.sl:98] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ GoToLabelTest.sl:98] [LoadConstInt32] index:[0] val: int32[3] 
+26 26   [ GoToLabelTest.sl:98] [Ceq] index:[0]
+27 27   [ GoToLabelTest.sl:89] [StoreLocal] index:[2] info:[if/elif store condition var]
+28 28   [ GoToLabelTest.sl:89] [LoadLocal] index:[2] info:[if/elif load condition var]
+29 29   [ GoToLabelTest.sl:98] [BrFalse] index:[33] info:[if/elif BrFalse]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ GoToLabelTest.sl:100] [BrLabel] index:[41]
+32 32   [ GoToLabelTest.sl:101] [Br] index:[33] info:[if/elif/else block end Br]
+33 33   [ GoToLabelTest.sl:101] [Label] index:[2] info:[if end]
+34 34   [ GoToLabelTest.sl:102] [LoadLocal] index:[1] info:[LocalStatement]
+35 35   [ :0] [LoadConstInt8] index:[0] val:[1] 
+36 36   [ :0] [Convert_I32] index:[0]
+37 37   [ :0] [Add] index:[0]
+38 38   [ GoToLabelTest.sl:89] [StoreLocal] index:[1] info:[LocalStatement]
+39 39   [ :0] [Br] index:[11]
+40 40   [ :0] [Label] index:[1]
+41 41   [ GoToLabelTest.sl:104] [Label] index:[0] info:[Label:done] val:[done] 
+42 42   [ GoToLabelTest.sl:105] [LoadConstString] index:[3597] val: string[gotoOutOfWhile i -> ] 
+43 43   [ GoToLabelTest.sl:105] [LoadLocal] index:[0] info:[LocalStatement]
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ GoToLabelTest.sl:105] [Add] index:[0]
+46 46   [ GoToLabelTest.sl:89] [StoreLocal] index:[4] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+49 49   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+50 50   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+51 51   [ GoToLabelTest.sl:106] [LoadConstString] index:[3598] val: string[gotoOutOfWhile hit -> ] 
+52 52   [ GoToLabelTest.sl:106] [LoadLocal] index:[1] info:[LocalStatement]
+53 53   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+54 54   [ GoToLabelTest.sl:106] [Add] index:[0]
+55 55   [ GoToLabelTest.sl:89] [StoreLocal] index:[5] info:[LocalStatement]
+56 56   [ :0] [Nop] index:[0]
+57 57   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+58 58   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+59 59   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+60 60   [ GoToLabelTest.sl:89] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.gotoLoopSumTest
+    VirtualName: gotoLoopSumTest_Core.Void_0
+    Name: gotoLoopSumTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=34946386 idx=0 name=_local[ProjectTest.GotoLabel.gotoLoopSumTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=46082022 idx=0 name=gotoLoopSumTest_local[i] type=Core.Int32
+      - #1 id=12085017 idx=1 name=gotoLoopSumTest_local[sum] type=Core.Int32
+      - #2 id=41656292 idx=2 name=gotoLoopSumTest_local[autocreate_43938279] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:112] [LoadConstString] index:[3599] val: string[---------------gotoLoopSumTest--------------] 
+2 2   [ GoToLabelTest.sl:110] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:114] [LoadConstInt32] index:[0] val: int32[1] 
+8 8   [ GoToLabelTest.sl:110] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:115] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ GoToLabelTest.sl:110] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:116] [Label] index:[0] info:[Label:head] val:[head] 
+12 12   [ GoToLabelTest.sl:117] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ GoToLabelTest.sl:117] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [Add] index:[0]
+15 15   [ GoToLabelTest.sl:110] [StoreLocal] index:[1] info:[LocalStatement]
+16 16   [ GoToLabelTest.sl:118] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ :0] [LoadConstInt8] index:[0] val:[1] 
+18 18   [ :0] [Convert_I32] index:[0]
+19 19   [ :0] [Add] index:[0]
+20 20   [ GoToLabelTest.sl:110] [StoreLocal] index:[0] info:[LocalStatement]
+21 21   [ GoToLabelTest.sl:119] [Nop] index:[0] info:[if/elif/else branch start]
+22 22   [ GoToLabelTest.sl:119] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ GoToLabelTest.sl:119] [LoadConstInt32] index:[0] val: int32[10] 
+24 24   [ GoToLabelTest.sl:119] [Cle] index:[0]
+25 25   [ GoToLabelTest.sl:110] [StoreLocal] index:[2] info:[if/elif store condition var]
+26 26   [ GoToLabelTest.sl:110] [LoadLocal] index:[2] info:[if/elif load condition var]
+27 27   [ GoToLabelTest.sl:119] [BrFalse] index:[31] info:[if/elif BrFalse]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ GoToLabelTest.sl:121] [BrLabel] index:[11]
+30 30   [ GoToLabelTest.sl:122] [Br] index:[31] info:[if/elif/else block end Br]
+31 31   [ GoToLabelTest.sl:122] [Label] index:[1] info:[if end]
+32 32   [ GoToLabelTest.sl:123] [LoadConstString] index:[3600] val: string[gotoLoopSum sum -> ] 
+33 33   [ GoToLabelTest.sl:123] [LoadLocal] index:[1] info:[LocalStatement]
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ GoToLabelTest.sl:123] [Add] index:[0]
+36 36   [ GoToLabelTest.sl:110] [StoreLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ GoToLabelTest.sl:110] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.forwardBackwardMixTest
+    VirtualName: forwardBackwardMixTest_Core.Void_0
+    Name: forwardBackwardMixTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=34230728 idx=0 name=_local[ProjectTest.GotoLabel.forwardBackwardMixTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=39641102 idx=0 name=forwardBackwardMixTest_local[count] type=Core.Int32
+      - #1 id=21225601 idx=1 name=forwardBackwardMixTest_local[a] type=Core.Int32
+      - #2 id=56812682 idx=2 name=forwardBackwardMixTest_local[autocreate_59900193] type=Core.Boolean
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:129] [LoadConstString] index:[3601] val: string[---------------forwardBackwardMixTest--------------] 
+2 2   [ GoToLabelTest.sl:127] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:131] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ GoToLabelTest.sl:127] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:132] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ GoToLabelTest.sl:127] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:133] [Label] index:[0] info:[Label:top] val:[top] 
+12 12   [ GoToLabelTest.sl:134] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ :0] [LoadConstInt8] index:[0] val:[1] 
+14 14   [ :0] [Convert_I32] index:[0]
+15 15   [ :0] [Add] index:[0]
+16 16   [ GoToLabelTest.sl:127] [StoreLocal] index:[0] info:[LocalStatement]
+17 17   [ GoToLabelTest.sl:135] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ GoToLabelTest.sl:135] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ :0] [Add] index:[0]
+20 20   [ GoToLabelTest.sl:127] [StoreLocal] index:[1] info:[LocalStatement]
+21 21   [ GoToLabelTest.sl:136] [Nop] index:[0] info:[if/elif/else branch start]
+22 22   [ GoToLabelTest.sl:136] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ GoToLabelTest.sl:136] [LoadConstInt32] index:[0] val: int32[3] 
+24 24   [ GoToLabelTest.sl:136] [Clt] index:[0]
+25 25   [ GoToLabelTest.sl:127] [StoreLocal] index:[2] info:[if/elif store condition var]
+26 26   [ GoToLabelTest.sl:127] [LoadLocal] index:[2] info:[if/elif load condition var]
+27 27   [ GoToLabelTest.sl:136] [BrFalse] index:[31] info:[if/elif BrFalse]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ GoToLabelTest.sl:138] [BrLabel] index:[11]
+30 30   [ GoToLabelTest.sl:139] [Br] index:[31] info:[if/elif/else block end Br]
+31 31   [ GoToLabelTest.sl:139] [Label] index:[1] info:[if end]
+32 32   [ GoToLabelTest.sl:140] [BrLabel] index:[37]
+33 33   [ GoToLabelTest.sl:141] [LoadLocal] index:[1] info:[LocalStatement]
+34 34   [ GoToLabelTest.sl:141] [LoadConstInt32] index:[0] val: int32[1000] 
+35 35   [ :0] [Add] index:[0]
+36 36   [ GoToLabelTest.sl:127] [StoreLocal] index:[1] info:[LocalStatement]
+37 37   [ GoToLabelTest.sl:142] [Label] index:[0] info:[Label:tail] val:[tail] 
+38 38   [ GoToLabelTest.sl:143] [LoadConstString] index:[3602] val: string[mix count -> ] 
+39 39   [ GoToLabelTest.sl:143] [LoadLocal] index:[0] info:[LocalStatement]
+40 40   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+41 41   [ GoToLabelTest.sl:143] [Add] index:[0]
+42 42   [ GoToLabelTest.sl:127] [StoreLocal] index:[4] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ GoToLabelTest.sl:144] [LoadConstString] index:[3603] val: string[mix a -> ] 
+48 48   [ GoToLabelTest.sl:144] [LoadLocal] index:[1] info:[LocalStatement]
+49 49   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ GoToLabelTest.sl:144] [Add] index:[0]
+51 51   [ GoToLabelTest.sl:127] [StoreLocal] index:[5] info:[LocalStatement]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+54 54   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+55 55   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+56 56   [ GoToLabelTest.sl:127] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.GotoLabel.labelNoGotoTest
+    VirtualName: labelNoGotoTest_Core.Void_0
+    Name: labelNoGotoTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=25375958 idx=0 name=_local[ProjectTest.GotoLabel.labelNoGotoTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=27057037 idx=0 name=labelNoGotoTest_local[a] type=Core.Int32
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GoToLabelTest.sl:150] [LoadConstString] index:[3604] val: string[---------------labelNoGotoTest--------------] 
+2 2   [ GoToLabelTest.sl:148] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ GoToLabelTest.sl:152] [LoadConstInt32] index:[0] val: int32[5] 
+8 8   [ GoToLabelTest.sl:148] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ GoToLabelTest.sl:153] [Label] index:[0] info:[Label:lonely] val:[lonely] 
+10 10   [ GoToLabelTest.sl:154] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ GoToLabelTest.sl:154] [LoadConstInt32] index:[0] val: int32[2] 
+12 12   [ :0] [Multiply] index:[0]
+13 13   [ GoToLabelTest.sl:148] [StoreLocal] index:[0] info:[LocalStatement]
+14 14   [ GoToLabelTest.sl:155] [LoadConstString] index:[3605] val: string[labelNoGoto a -> ] 
+15 15   [ GoToLabelTest.sl:155] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ GoToLabelTest.sl:155] [Add] index:[0]
+18 18   [ GoToLabelTest.sl:148] [StoreLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+22 22   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+23 23   [ GoToLabelTest.sl:148] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

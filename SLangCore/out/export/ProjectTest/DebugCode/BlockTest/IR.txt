@@ -1,0 +1,575 @@
+-------------------IR 文件显示 开始 : Path: BlockTest.sl-----------------------
+Class: ProjectTest.NSBlockTest.Class2
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=27416314 idx=0 name=ProjectTest.NSBlockTest.Class2.m type=Core.Int32
+  ClassStatics:
+      - #0 id=20058459 idx=0 name=ProjectTest.NSBlockTest.Class2.m2 type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.NSBlockTest.Class2._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57664987 idx=0 name=_local[ProjectTest.NSBlockTest.Class2._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=43689923 idx=0 name=_local[ProjectTest.NSBlockTest.Class2._init_.this] type=ProjectTest.NSBlockTest.Class2
+      - #1 id=49222835 idx=1 name=_local[x] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:11] [LoadArgument] index:[0] info:[Argument]
+2 2   [ BlockTest.sl:11] [LoadConstInt32] index:[0] val: int32[10] 
+3 3   [ BlockTest.sl:9] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ BlockTest.sl:9] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.NSBlockTest.Class1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=46308405 idx=0 name=ProjectTest.NSBlockTest.Class1.c3 type=ProjectTest.NSBlockTest.Class2
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.NSBlockTest.Class1.scopeShadowCase
+    VirtualName: scopeShadowCase_Core.Void_0
+    Name: scopeShadowCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=40352332 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.scopeShadowCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=27626671 idx=0 name=scopeShadowCase_local[a] type=Core.Int32
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:39] [LoadConstInt32] index:[0] val: int32[1] 
+2 2   [ BlockTest.sl:37] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ BlockTest.sl:40] [Label] index:[0] info:[Label:middleBlock] val:[middleBlock] 
+4 4   [ :0] [Nop] index:[0]
+5 5   [ BlockTest.sl:42] [LoadConstInt32] index:[0] val: int32[2] 
+6 6   [ BlockTest.sl:37] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ BlockTest.sl:43] [Label] index:[0] info:[Label:innerBlock] val:[innerBlock] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ BlockTest.sl:45] [LoadConstInt32] index:[0] val: int32[3] 
+10 10   [ BlockTest.sl:37] [StoreLocal] index:[0] info:[LocalStatement]
+11 11   [ BlockTest.sl:46] [LoadConstString] index:[759] val: string[inner a = ] 
+12 12   [ BlockTest.sl:46] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ :0] [Convert_ToString] index:[0]
+14 14   [ BlockTest.sl:46] [Add] index:[0]
+15 15   [ BlockTest.sl:37] [StoreLocal] index:[1] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ BlockTest.sl:48] [LoadConstString] index:[760] val: string[middle a = ] 
+21 21   [ BlockTest.sl:48] [LoadLocal] index:[0] info:[LocalStatement]
+22 22   [ :0] [Convert_ToString] index:[0]
+23 23   [ BlockTest.sl:48] [Add] index:[0]
+24 24   [ BlockTest.sl:37] [StoreLocal] index:[2] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ BlockTest.sl:50] [LoadConstString] index:[761] val: string[outer a = ] 
+30 30   [ BlockTest.sl:50] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ :0] [Convert_ToString] index:[0]
+32 32   [ BlockTest.sl:50] [Add] index:[0]
+33 33   [ BlockTest.sl:37] [StoreLocal] index:[3] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ BlockTest.sl:37] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSBlockTest.Class1.emptyAndStandaloneBlockCase
+    VirtualName: emptyAndStandaloneBlockCase_Core.Void_0
+    Name: emptyAndStandaloneBlockCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=47313454 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.emptyAndStandaloneBlockCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=23167904 idx=0 name=emptyAndStandaloneBlockCase_local[onlyInBlock] type=Core.Int32
+      - #1 id=7184552 idx=1 name=emptyAndStandaloneBlockCase_local[autocreate_45420240] type=Core.Boolean
+      - #2 id=64660974 idx=2 name=emptyAndStandaloneBlockCase_local[inIf] type=Core.Int32
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:56] [Label] index:[0] info:[Label:empty] val:[empty] 
+2 2   [ :0] [Nop] index:[0]
+3 3   [ BlockTest.sl:58] [Label] index:[0] info:[Label:BlockTest_FN_emptyAndStandaloneBlockCase_58] val:[BlockTest_FN_emptyAndStandaloneBlockCase_58] 
+4 4   [ :0] [Nop] index:[0]
+5 5   [ BlockTest.sl:60] [LoadConstInt32] index:[0] val: int32[100] 
+6 6   [ BlockTest.sl:54] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ BlockTest.sl:61] [LoadConstString] index:[762] val: string[onlyInBlock = ] 
+8 8   [ BlockTest.sl:61] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [Convert_ToString] index:[0]
+10 10   [ BlockTest.sl:61] [Add] index:[0]
+11 11   [ BlockTest.sl:54] [StoreLocal] index:[3] info:[LocalStatement]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+14 14   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+15 15   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+16 16   [ BlockTest.sl:64] [Nop] index:[0] info:[if/elif/else branch start]
+17 17   [ BlockTest.sl:64] [LoadConstBoolean] index:[0] val:[True] 
+18 18   [ BlockTest.sl:54] [StoreLocal] index:[1] info:[if/elif store condition var]
+19 19   [ BlockTest.sl:54] [LoadLocal] index:[1] info:[if/elif load condition var]
+20 20   [ BlockTest.sl:64] [BrFalse] index:[34] info:[if/elif BrFalse]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ BlockTest.sl:66] [LoadConstInt32] index:[0] val: int32[200] 
+23 23   [ BlockTest.sl:54] [StoreLocal] index:[2] info:[LocalStatement]
+24 24   [ BlockTest.sl:67] [LoadConstString] index:[763] val: string[inIf = ] 
+25 25   [ BlockTest.sl:67] [LoadLocal] index:[2] info:[LocalStatement]
+26 26   [ :0] [Convert_ToString] index:[0]
+27 27   [ BlockTest.sl:67] [Add] index:[0]
+28 28   [ BlockTest.sl:54] [StoreLocal] index:[4] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ BlockTest.sl:68] [Br] index:[34] info:[if/elif/else block end Br]
+34 34   [ BlockTest.sl:68] [Label] index:[1] info:[if end]
+35 35   [ BlockTest.sl:54] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.NSBlockTest.Class1.initAndStatementMixedCase
+    VirtualName: initAndStatementMixedCase_Core.Void_0
+    Name: initAndStatementMixedCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=3047552 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.initAndStatementMixedCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=27427975 idx=0 name=initAndStatementMixedCase_local[c] type=ProjectTest.NSBlockTest.Class2
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:72] [NewObject] index:[0] info:[IRNew] val: int32[-352242304] 
+2 2   [ :0] [Dup] index:[0]
+3 3   [ BlockTest.sl:74] [LoadConstInt32] index:[0] val: int32[88] 
+4 4   [ BlockTest.sl:72] [StoreNotStaticField2] index:[0] info:[Member]
+5 5   [ BlockTest.sl:74] [ArcRetain] index:[0] info:[ARC claim owned new local: c]
+6 6   [ BlockTest.sl:72] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ :0] [BeginTry] index:[0]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ BlockTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+10 10   [ BlockTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ BlockTest.sl:77] [LoadNotStaticField] index:[0] info:[Member]
+12 12   [ BlockTest.sl:77] [LoadConstInt32] index:[0] val: int32[1] 
+13 13   [ BlockTest.sl:77] [Add] index:[0]
+14 14   [ BlockTest.sl:72] [StoreNotStaticField2] index:[0] info:[Member]
+15 15   [ BlockTest.sl:78] [LoadConstString] index:[764] val: string[c.m = ] 
+16 16   [ BlockTest.sl:78] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ BlockTest.sl:78] [LoadNotStaticField] index:[0] info:[Member]
+18 18   [ :0] [Convert_ToString] index:[0]
+19 19   [ BlockTest.sl:78] [Add] index:[0]
+20 20   [ BlockTest.sl:72] [StoreLocal] index:[1] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ :0] [LeaveTry] index:[26]
+26 26   [ :0] [Label] index:[1]
+27 27   [ BlockTest.sl:72] [Label] index:[0] info:[FunEndLabel]
+28 28   [ BlockTest.sl:72] [LoadLocal] index:[0] info:[ARC release: LoadLocal initAndStatementMixedCase_local[c]]
+29 29   [ BlockTest.sl:72] [ArcRelease] index:[0] info:[ARC release owned local: initAndStatementMixedCase_local[c]]
+30 30   [ BlockTest.sl:72] [StoreLocal] index:[0] info:[ARC release: StoreLocal initAndStatementMixedCase_local[c]]
+
+  Method: ProjectTest.NSBlockTest.Class1.gotoIntoLabelBlockCase
+    VirtualName: gotoIntoLabelBlockCase_Core.Void_0
+    Name: gotoIntoLabelBlockCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=7073466 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.gotoIntoLabelBlockCase.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=63661202 idx=0 name=gotoIntoLabelBlockCase_local[a] type=Core.Int32
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:85] [LoadConstInt32] index:[0] val: int32[0] 
+2 2   [ BlockTest.sl:83] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ BlockTest.sl:86] [BrLabel] index:[6]
+4 4   [ BlockTest.sl:87] [LoadConstInt32] index:[0] val: int32[999] 
+5 5   [ BlockTest.sl:83] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ BlockTest.sl:88] [Label] index:[0] info:[Label:targetBlock] val:[targetBlock] 
+7 7   [ :0] [Nop] index:[0]
+8 8   [ BlockTest.sl:90] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ BlockTest.sl:90] [LoadConstInt32] index:[0] val: int32[1] 
+10 10   [ :0] [Add] index:[0]
+11 11   [ BlockTest.sl:83] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ BlockTest.sl:92] [LoadConstString] index:[765] val: string[gotoIntoLabelBlock a -> ] 
+13 13   [ BlockTest.sl:92] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ BlockTest.sl:92] [Add] index:[0]
+16 16   [ BlockTest.sl:83] [StoreLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ BlockTest.sl:83] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.NSBlockTest.Class1.print
+    VirtualName: print_Core.Void_0
+    Name: print
+    InterfaceMethod: False
+    Return:
+      - #0 id=36791668 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.print.return] type=Core.Void
+    Arguments:
+      - #0 id=56283746 idx=0 name=_local[ProjectTest.NSBlockTest.Class1.print.this] type=ProjectTest.NSBlockTest.Class1
+    Locals:
+      - #0 id=62689558 idx=0 name=print_local[a] type=Core.Int32
+      - #1 id=27335113 idx=1 name=print_local[b] type=Core.Int32
+      - #2 id=44689431 idx=2 name=print_local[a2] type=Core.Int32
+      - #3 id=66660559 idx=3 name=print_local[m] type=Core.Int32
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:19] [LoadConstInt32] index:[0] val: int32[10] 
+2 2   [ BlockTest.sl:17] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [BeginTry] index:[0]
+4 4   [ :0] [Nop] index:[0]
+5 5   [ BlockTest.sl:22] [LoadConstInt32] index:[0] val: int32[20] 
+6 6   [ BlockTest.sl:17] [StoreLocal] index:[1] info:[LocalStatement]
+7 7   [ BlockTest.sl:23] [Label] index:[0] info:[Label:innerPrint] val:[innerPrint] 
+8 8   [ :0] [Nop] index:[0]
+9 9   [ BlockTest.sl:25] [LoadConstInt32] index:[0] val: int32[15] 
+10 10   [ BlockTest.sl:17] [StoreLocal] index:[0] info:[LocalStatement]
+11 11   [ BlockTest.sl:26] [LoadConstInt32] index:[0] val: int32[13] 
+12 12   [ BlockTest.sl:17] [StoreLocal] index:[2] info:[LocalStatement]
+13 13   [ :0] [BeginTry] index:[0]
+14 14   [ :0] [Nop] index:[0]
+15 15   [ BlockTest.sl:29] [LoadConstInt32] index:[0] val: int32[10] 
+16 16   [ BlockTest.sl:17] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ :0] [LeaveTry] index:[18]
+18 18   [ :0] [Label] index:[1]
+19 19   [ BlockTest.sl:32] [LoadConstString] index:[766] val: string[a2 = ] 
+20 20   [ BlockTest.sl:32] [LoadLocal] index:[1] info:[LocalStatement]
+21 21   [ :0] [Convert_ToString] index:[0]
+22 22   [ BlockTest.sl:32] [Add] index:[0]
+23 23   [ BlockTest.sl:17] [StoreLocal] index:[4] info:[LocalStatement]
+24 24   [ :0] [Nop] index:[0]
+25 25   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+26 26   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+27 27   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+28 28   [ :0] [LeaveTry] index:[29]
+29 29   [ :0] [Label] index:[2]
+30 30   [ BlockTest.sl:17] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.BlockTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.BlockTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=8730397 idx=0 name=_local[ProjectTest.BlockTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ BlockTest.sl:37] [CallStatic] index:[0] info:[CallStatic scopeShadowCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSBlockTest.Class1, StaticRuntimeTypeList=[], Method=ProjectTest.NSBlockTest.Class1.scopeShadowCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ BlockTest.sl:54] [CallStatic] index:[0] info:[CallStatic emptyAndStandaloneBlockCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSBlockTest.Class1, StaticRuntimeTypeList=[], Method=ProjectTest.NSBlockTest.Class1.emptyAndStandaloneBlockCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ BlockTest.sl:72] [CallStatic] index:[0] info:[CallStatic initAndStatementMixedCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSBlockTest.Class1, StaticRuntimeTypeList=[], Method=ProjectTest.NSBlockTest.Class1.initAndStatementMixedCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ BlockTest.sl:83] [CallStatic] index:[0] info:[CallStatic gotoIntoLabelBlockCase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.NSBlockTest.Class1, StaticRuntimeTypeList=[], Method=ProjectTest.NSBlockTest.Class1.gotoIntoLabelBlockCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ BlockTest.sl:127] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,121 @@
+-------------------IR 文件显示 开始 : Path: Environment/Platform_Misc.sl-----------------------
+Class: Core.Environment.Platform.network
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=271499845 idx=0 name=Core.Environment.Platform.network.none type=Core.Member
+      - #1 id=1975367737 idx=1 name=Core.Environment.Platform.network.loopback type=Core.Member
+      - #2 id=-1938745422 idx=2 name=Core.Environment.Platform.network.ethernet type=Core.Member
+      - #3 id=1545022155 idx=3 name=Core.Environment.Platform.network.wifi type=Core.Member
+      - #4 id=-881670515 idx=4 name=Core.Environment.Platform.network.cellular type=Core.Member
+      - #5 id=1228891571 idx=5 name=Core.Environment.Platform.network.unknownNet type=Core.Member
+      - #6 id=1448698782 idx=6 name=Core.Environment.Platform.network.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.link
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=984295115 idx=0 name=Core.Environment.Platform.link.down type=Core.Member
+      - #1 id=1707319478 idx=1 name=Core.Environment.Platform.link.lan type=Core.Member
+      - #2 id=-1845550980 idx=2 name=Core.Environment.Platform.link.online type=Core.Member
+      - #3 id=1491520261 idx=3 name=Core.Environment.Platform.link.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.embedded
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1726853641 idx=0 name=Core.Environment.Platform.embedded.none type=Core.Member
+      - #1 id=450889527 idx=1 name=Core.Environment.Platform.embedded.cortexM type=Core.Member
+      - #2 id=1995479647 idx=2 name=Core.Environment.Platform.embedded.cortexA type=Core.Member
+      - #3 id=-474051312 idx=3 name=Core.Environment.Platform.embedded.cortexR type=Core.Member
+      - #4 id=-936802273 idx=4 name=Core.Environment.Platform.embedded.xtensa type=Core.Member
+      - #5 id=-2023070605 idx=5 name=Core.Environment.Platform.embedded.riscvMcu type=Core.Member
+      - #6 id=-965446846 idx=6 name=Core.Environment.Platform.embedded.mcs51 type=Core.Member
+      - #7 id=1071291835 idx=7 name=Core.Environment.Platform.embedded.avr type=Core.Member
+      - #8 id=1099489011 idx=8 name=Core.Environment.Platform.embedded.pic type=Core.Member
+      - #9 id=423430506 idx=9 name=Core.Environment.Platform.embedded.msp430 type=Core.Member
+      - #10 id=171379615 idx=10 name=Core.Environment.Platform.embedded.rl78 type=Core.Member
+      - #11 id=-361717332 idx=11 name=Core.Environment.Platform.embedded.rx type=Core.Member
+      - #12 id=511563721 idx=12 name=Core.Environment.Platform.embedded.triCore type=Core.Member
+      - #13 id=-1709120641 idx=13 name=Core.Environment.Platform.embedded.hc08 type=Core.Member
+      - #14 id=546968538 idx=14 name=Core.Environment.Platform.embedded.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.rtos
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-195087933 idx=0 name=Core.Environment.Platform.rtos.none type=Core.Member
+      - #1 id=626010773 idx=1 name=Core.Environment.Platform.rtos.freeRTOS type=Core.Member
+      - #2 id=1746875015 idx=2 name=Core.Environment.Platform.rtos.rtThread type=Core.Member
+      - #3 id=2118931030 idx=3 name=Core.Environment.Platform.rtos.zephyr type=Core.Member
+      - #4 id=1631568659 idx=4 name=Core.Environment.Platform.rtos.threadX type=Core.Member
+      - #5 id=922973389 idx=5 name=Core.Environment.Platform.rtos.ucos type=Core.Member
+      - #6 id=-585662219 idx=6 name=Core.Environment.Platform.rtos.mbed type=Core.Member
+      - #7 id=245493834 idx=7 name=Core.Environment.Platform.rtos.liteOS type=Core.Member
+      - #8 id=1440042131 idx=8 name=Core.Environment.Platform.rtos.aliosThings type=Core.Member
+      - #9 id=-1305964521 idx=9 name=Core.Environment.Platform.rtos.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.runtime
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1299544988 idx=0 name=Core.Environment.Platform.runtime.slvm type=Core.Member
+      - #1 id=1941252587 idx=1 name=Core.Environment.Platform.runtime.clr type=Core.Member
+      - #2 id=1887827434 idx=2 name=Core.Environment.Platform.runtime.jvm type=Core.Member
+      - #3 id=83895389 idx=3 name=Core.Environment.Platform.runtime.aot type=Core.Member
+      - #4 id=307473858 idx=4 name=Core.Environment.Platform.runtime.wasm type=Core.Member
+      - #5 id=-1453318081 idx=5 name=Core.Environment.Platform.runtime.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.build
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1405783450 idx=0 name=Core.Environment.Platform.build.debug type=Core.Member
+      - #1 id=2017461050 idx=1 name=Core.Environment.Platform.build.release type=Core.Member
+      - #2 id=2059026452 idx=2 name=Core.Environment.Platform.build.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.endian
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1113299597 idx=0 name=Core.Environment.Platform.endian.unknown type=Core.Member
+      - #1 id=138590394 idx=1 name=Core.Environment.Platform.endian.little type=Core.Member
+      - #2 id=-1553178761 idx=2 name=Core.Environment.Platform.endian.big type=Core.Member
+      - #3 id=-79004970 idx=3 name=Core.Environment.Platform.endian.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,1200 @@
+-------------------IR 文件显示 开始 : Path: Encoding/Encoding.sl-----------------------
+Class: Std.Encoding
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Encoding.codeValue_1_Std.EncodingCode
+    VirtualName: codeValue_Core.Int32_1_Std.EncodingCode
+    Name: codeValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=18774354 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34751460 idx=0 name=code type=Std.EncodingCode
+    Locals:
+      - #0 id=44327687 idx=0 name=v type=Core.Int32
+      - #1 id=63404869 idx=1 name=autocreate_52733512 type=Core.Boolean
+      - #2 id=33772909 idx=2 name=autocreate_4839561 type=Core.Boolean
+      - #3 id=35520730 idx=3 name=autocreate_43556055 type=Core.Boolean
+      - #4 id=51251115 idx=4 name=autocreate_56460178 type=Core.Boolean
+      - #5 id=58606859 idx=5 name=autocreate_38379555 type=Core.Boolean
+      - #6 id=57699690 idx=6 name=autocreate_9871675 type=Core.Boolean
+      - #7 id=49535170 idx=7 name=autocreate_21736211 type=Core.Boolean
+      - #8 id=43163346 idx=8 name=autocreate_61408172 type=Core.Boolean
+      - #9 id=52925796 idx=9 name=autocreate_15802639 type=Core.Boolean
+      - #10 id=6570122 idx=10 name=autocreate_8006030 type=Core.Boolean
+      - #11 id=59131099 idx=11 name=autocreate_4945408 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Encoding.codeFromName_1_Core.String
+    VirtualName: codeFromName_Std.EncodingCode_1_Core.String
+    Name: codeFromName
+    InterfaceMethod: False
+    Return:
+      - #0 id=37640571 idx=0 name=return] type=Std.EncodingCode
+    Arguments:
+      - #0 id=3220827 idx=0 name=name type=Core.String
+    Locals:
+      - #0 id=28987447 idx=0 name=autocreate_44508680 type=Core.Boolean
+      - #1 id=59560431 idx=1 name=autocreate_65033806 type=Core.Boolean
+      - #2 id=66281838 idx=2 name=autocreate_48433347 type=Core.Boolean
+      - #3 id=59665636 idx=3 name=autocreate_33246944 type=Core.Boolean
+      - #4 id=119818 idx=4 name=autocreate_30787047 type=Core.Boolean
+      - #5 id=1078370 idx=5 name=autocreate_8647967 type=Core.Boolean
+      - #6 id=9705331 idx=6 name=autocreate_10722842 type=Core.Boolean
+      - #7 id=20239120 idx=7 name=autocreate_29396722 type=Core.Boolean
+      - #8 id=47934352 idx=8 name=autocreate_63243911 type=Core.Boolean
+      - #9 id=28755990 idx=9 name=autocreate_32324290 type=Core.Boolean
+      - #10 id=57477322 idx=10 name=autocreate_22483156 type=Core.Boolean
+      - #11 id=47533853 idx=11 name=autocreate_1021814 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Encoding.nameFromCode_1_Std.EncodingCode
+    VirtualName: nameFromCode_Core.String_1_Std.EncodingCode
+    Name: nameFromCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=26991739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=41599065 idx=0 name=code type=Std.EncodingCode
+    Locals:
+      - #0 id=38847270 idx=0 name=autocreate_9196329 type=Core.Boolean
+      - #1 id=14081115 idx=1 name=autocreate_15658103 type=Core.Boolean
+      - #2 id=59621178 idx=2 name=autocreate_6705199 type=Core.Boolean
+      - #3 id=66828554 idx=3 name=autocreate_60346796 type=Core.Boolean
+      - #4 id=64586077 idx=4 name=autocreate_6250253 type=Core.Boolean
+      - #5 id=44403789 idx=5 name=autocreate_56252285 type=Core.Boolean
+      - #6 id=64089786 idx=6 name=autocreate_36508524 type=Core.Boolean
+      - #7 id=39937165 idx=7 name=autocreate_60141268 type=Core.Boolean
+      - #8 id=23890167 idx=8 name=autocreate_4400500 type=Core.Boolean
+      - #9 id=13684913 idx=9 name=autocreate_39604502 type=Core.Boolean
+      - #10 id=56055356 idx=10 name=autocreate_20896204 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Encoding.hasBom_1_Std.EncodingCode
+    VirtualName: hasBom_Core.Boolean_1_Std.EncodingCode
+    Name: hasBom
+    InterfaceMethod: False
+    Return:
+      - #0 id=7106508 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=63958576 idx=0 name=code type=Std.EncodingCode
+    Locals:
+      - #0 id=38756276 idx=0 name=autocreate_53848109 type=Core.Boolean
+      - #1 id=13262169 idx=1 name=autocreate_14870940 type=Core.Boolean
+      - #2 id=52250665 idx=2 name=autocreate_66729601 type=Core.Boolean
+      - #3 id=493939 idx=3 name=autocreate_63695501 type=Core.Boolean
+      - #4 id=4445458 idx=4 name=autocreate_36388601 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Encoding.maxByteCount_2_Std.EncodingCode_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_2_Std.EncodingCode_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=53130720 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=34751460 idx=0 name=code type=Std.EncodingCode
+      - #1 id=44327687 idx=1 name=v type=Core.Int32
+      - #2 id=63404869 idx=2 name=autocreate_52733512 type=Core.Boolean
+      - #3 id=33772909 idx=3 name=autocreate_4839561 type=Core.Boolean
+      - #4 id=35520730 idx=4 name=autocreate_43556055 type=Core.Boolean
+      - #5 id=51251115 idx=5 name=autocreate_56460178 type=Core.Boolean
+      - #6 id=58606859 idx=6 name=autocreate_38379555 type=Core.Boolean
+      - #7 id=57699690 idx=7 name=autocreate_9871675 type=Core.Boolean
+      - #8 id=49535170 idx=8 name=autocreate_21736211 type=Core.Boolean
+      - #9 id=43163346 idx=9 name=autocreate_61408172 type=Core.Boolean
+      - #10 id=52925796 idx=10 name=autocreate_15802639 type=Core.Boolean
+      - #11 id=6570122 idx=11 name=autocreate_8006030 type=Core.Boolean
+      - #12 id=59131099 idx=12 name=autocreate_4945408 type=Core.Boolean
+      - #13 id=10480683 idx=13 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Encoding.maxCharCount_2_Std.EncodingCode_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_2_Std.EncodingCode_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=15569626 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=34751460 idx=0 name=code type=Std.EncodingCode
+      - #1 id=44327687 idx=1 name=v type=Core.Int32
+      - #2 id=63404869 idx=2 name=autocreate_52733512 type=Core.Boolean
+      - #3 id=33772909 idx=3 name=autocreate_4839561 type=Core.Boolean
+      - #4 id=35520730 idx=4 name=autocreate_43556055 type=Core.Boolean
+      - #5 id=51251115 idx=5 name=autocreate_56460178 type=Core.Boolean
+      - #6 id=58606859 idx=6 name=autocreate_38379555 type=Core.Boolean
+      - #7 id=57699690 idx=7 name=autocreate_9871675 type=Core.Boolean
+      - #8 id=49535170 idx=8 name=autocreate_21736211 type=Core.Boolean
+      - #9 id=43163346 idx=9 name=autocreate_61408172 type=Core.Boolean
+      - #10 id=52925796 idx=10 name=autocreate_15802639 type=Core.Boolean
+      - #11 id=6570122 idx=11 name=autocreate_8006030 type=Core.Boolean
+      - #12 id=59131099 idx=12 name=autocreate_4945408 type=Core.Boolean
+      - #13 id=8859419 idx=13 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Encoding.encode_2_Std.EncodingCode_Core.String
+    VirtualName: encode_Core.ByteBuffer_2_Std.EncodingCode_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=59587228 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=66523006 idx=0 name=code type=Std.EncodingCode
+      - #1 id=61836145 idx=1 name=text type=Core.String
+    Locals:
+      - #0 id=19654399 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=42671863 idx=1 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Encoding.encode_2_Std.EncodingCode_Core.ByteBuffer
+    VirtualName: encode_Core.ByteBuffer_2_Std.EncodingCode_Core.ByteBuffer
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=33868885 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=36384517 idx=0 name=code type=Std.EncodingCode
+      - #1 id=59025204 idx=1 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=61464796 idx=0 name=id type=Core.Int64
+      - #1 id=16312252 idx=1 name=autocreate_59061958 type=Core.Boolean
+      - #2 id=12592542 idx=2 name=autocreate_61795582 type=Core.Boolean
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=46224020 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Encoding.decode_2_Std.EncodingCode_Core.ByteBuffer
+    VirtualName: decode_Core.String_2_Std.EncodingCode_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=28240785 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=52840473 idx=0 name=code type=Std.EncodingCode
+      - #1 id=5802216 idx=1 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=52219950 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=217508 idx=1 name=text type=Core.String
+    Instructions:
+
+  Method: Std.Encoding.decodeBytes_2_Std.EncodingCode_Core.ByteBuffer
+    VirtualName: decodeBytes_Core.ByteBuffer_2_Std.EncodingCode_Core.ByteBuffer
+    Name: decodeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=17618221 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=24346266 idx=0 name=code type=Std.EncodingCode
+      - #1 id=17789802 idx=1 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=25890496 idx=0 name=id type=Core.Int64
+      - #1 id=31687876 idx=1 name=autocreate_19289328 type=Core.Boolean
+      - #2 id=16755431 idx=2 name=autocreate_39386231 type=Core.Boolean
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=16581154 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Encoding.convert_3_Std.EncodingCode_Std.EncodingCode_Core.ByteBuffer
+    VirtualName: convert_Core.ByteBuffer_3_Std.EncodingCode_Std.EncodingCode_Core.ByteBuffer
+    Name: convert
+    InterfaceMethod: False
+    Return:
+      - #0 id=42658596 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=48383044 idx=0 name=fromCode type=Std.EncodingCode
+      - #1 id=32794215 idx=1 name=toCode type=Std.EncodingCode
+      - #2 id=26712487 idx=2 name=src type=Core.ByteBuffer
+    Locals:
+      - #0 id=39085796 idx=0 name=utf8 type=Core.ByteBuffer
+      - #1 id=16227847 idx=1 name=encoded type=Core.ByteBuffer
+    Instructions:
+
+  Method: Std.Encoding.preamble_1_Std.EncodingCode
+    VirtualName: preamble_Core.ByteBuffer_1_Std.EncodingCode
+    Name: preamble
+    InterfaceMethod: False
+    Return:
+      - #0 id=39387211 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=18940582 idx=0 name=code type=Std.EncodingCode
+    Locals:
+      - #0 id=36247516 idx=0 name=id type=Core.Int64
+      - #1 id=57792188 idx=1 name=autocreate_18931763 type=Core.Boolean
+      - #2 id=34751460 idx=2 name=code type=Std.EncodingCode
+      - #3 id=44327687 idx=3 name=v type=Core.Int32
+      - #4 id=63404869 idx=4 name=autocreate_52733512 type=Core.Boolean
+      - #5 id=33772909 idx=5 name=autocreate_4839561 type=Core.Boolean
+      - #6 id=35520730 idx=6 name=autocreate_43556055 type=Core.Boolean
+      - #7 id=51251115 idx=7 name=autocreate_56460178 type=Core.Boolean
+      - #8 id=58606859 idx=8 name=autocreate_38379555 type=Core.Boolean
+      - #9 id=57699690 idx=9 name=autocreate_9871675 type=Core.Boolean
+      - #10 id=49535170 idx=10 name=autocreate_21736211 type=Core.Boolean
+      - #11 id=43163346 idx=11 name=autocreate_61408172 type=Core.Boolean
+      - #12 id=52925796 idx=12 name=autocreate_15802639 type=Core.Boolean
+      - #13 id=6570122 idx=13 name=autocreate_8006030 type=Core.Boolean
+      - #14 id=59131099 idx=14 name=autocreate_4945408 type=Core.Boolean
+      - #15 id=50367649 idx=15 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.Utf8
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Utf8.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=60524524 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=7849808 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Utf8.encodeBom_1_Core.String
+    VirtualName: encodeBom_Core.ByteBuffer_1_Core.String
+    Name: encodeBom
+    InterfaceMethod: False
+    Return:
+      - #0 id=31854691 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=18256764 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Utf8.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.String_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=2402898 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=21626090 idx=0 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Std.Utf8.maxByteCount_1_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_1_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=6882862 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=61945765 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+      - #2 id=20640979 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=51551089 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Utf8.maxCharCount_1_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_1_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=2107829 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=18970462 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+      - #2 id=36516433 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=60212448 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.Unicode
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Unicode.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=51015809 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=56489102 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Unicode.encodeBom_1_Core.String
+    VirtualName: encodeBom_Core.ByteBuffer_1_Core.String
+    Name: encodeBom
+    InterfaceMethod: False
+    Return:
+      - #0 id=12214527 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=42821886 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Unicode.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.String_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46020774 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11533784 idx=0 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Std.Unicode.maxByteCount_1_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_1_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61821327 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=19521038 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+      - #2 id=41471619 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=37700255 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Unicode.maxCharCount_1_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_1_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=19774328 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43751230 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+      - #2 id=58216758 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=54188775 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.BigEndianUnicode
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.BigEndianUnicode.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=31478446 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=14870565 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.BigEndianUnicode.encodeBom_1_Core.String
+    VirtualName: encodeBom_Core.ByteBuffer_1_Core.String
+    Name: encodeBom
+    InterfaceMethod: False
+    Return:
+      - #0 id=63665103 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=36115021 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.BigEndianUnicode.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.String_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=39635599 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=21176078 idx=0 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Std.BigEndianUnicode.maxByteCount_1_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_1_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=37540721 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=2322177 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+      - #2 id=20899598 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=53878657 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.BigEndianUnicode.maxCharCount_1_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_1_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=25017536 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=23831236 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+      - #2 id=13154536 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=51281965 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.Gb2312
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Gb2312.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=17067371 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=19388612 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Gb2312.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.String_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=26973745 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=41437119 idx=0 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Std.Gb2312.maxByteCount_1_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_1_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=963478 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=8671305 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+      - #2 id=10932885 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=31287108 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Gb2312.maxCharCount_1_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_1_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=65158171 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49552630 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+      - #2 id=43320494 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=54340131 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.Ascii
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Ascii.encode_1_Core.String
+    VirtualName: encode_Core.ByteBuffer_1_Core.String
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=22324024 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=66698493 idx=0 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.Ascii.decode_1_Core.ByteBuffer
+    VirtualName: decode_Core.String_1_Core.ByteBuffer
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=33868853 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=36384226 idx=0 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Std.Ascii.maxByteCount_1_Core.Int32
+    VirtualName: maxByteCount_Core.Int32_1_Core.Int32
+    Name: maxByteCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61441228 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=16100147 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=8414436 idx=0 name=code type=Std.EncodingCode
+      - #1 id=8621060 idx=1 name=inputSize type=Core.Int32
+      - #2 id=10683599 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=29043529 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Std.Ascii.maxCharCount_1_Core.Int32
+    VirtualName: maxCharCount_Core.Int32_1_Core.Int32
+    Name: maxCharCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=9393336 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17431163 idx=0 name=inputSize type=Core.Int32
+    Locals:
+      - #0 id=5908907 idx=0 name=code type=Std.EncodingCode
+      - #1 id=53180163 idx=1 name=inputSize type=Core.Int32
+      - #2 id=22662742 idx=2 name=result] type=Core.Int32
+      - #3 id=34751460 idx=3 name=code type=Std.EncodingCode
+      - #4 id=44327687 idx=4 name=v type=Core.Int32
+      - #5 id=63404869 idx=5 name=autocreate_52733512 type=Core.Boolean
+      - #6 id=33772909 idx=6 name=autocreate_4839561 type=Core.Boolean
+      - #7 id=35520730 idx=7 name=autocreate_43556055 type=Core.Boolean
+      - #8 id=51251115 idx=8 name=autocreate_56460178 type=Core.Boolean
+      - #9 id=58606859 idx=9 name=autocreate_38379555 type=Core.Boolean
+      - #10 id=57699690 idx=10 name=autocreate_9871675 type=Core.Boolean
+      - #11 id=49535170 idx=11 name=autocreate_21736211 type=Core.Boolean
+      - #12 id=43163346 idx=12 name=autocreate_61408172 type=Core.Boolean
+      - #13 id=52925796 idx=13 name=autocreate_15802639 type=Core.Boolean
+      - #14 id=6570122 idx=14 name=autocreate_8006030 type=Core.Boolean
+      - #15 id=59131099 idx=15 name=autocreate_4945408 type=Core.Boolean
+      - #16 id=2638090 idx=16 name=result] type=Core.Int32
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.EncodingCode
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-831871747 idx=0 name=Std.EncodingCode.Utf8 type=Core.Member
+      - #1 id=448394702 idx=1 name=Std.EncodingCode.Utf8Bom type=Core.Member
+      - #2 id=-869170049 idx=2 name=Std.EncodingCode.Utf16LE type=Core.Member
+      - #3 id=1523792692 idx=3 name=Std.EncodingCode.Utf16LEBom type=Core.Member
+      - #4 id=-767977428 idx=4 name=Std.EncodingCode.Utf16BE type=Core.Member
+      - #5 id=661239629 idx=5 name=Std.EncodingCode.Utf16BEBom type=Core.Member
+      - #6 id=1143987843 idx=6 name=Std.EncodingCode.Utf32LE type=Core.Member
+      - #7 id=611529873 idx=7 name=Std.EncodingCode.Utf32LEBom type=Core.Member
+      - #8 id=2008922744 idx=8 name=Std.EncodingCode.Utf32BE type=Core.Member
+      - #9 id=-1841030511 idx=9 name=Std.EncodingCode.Utf32BEBom type=Core.Member
+      - #10 id=-813455710 idx=10 name=Std.EncodingCode.Gb2312 type=Core.Member
+      - #11 id=-1725948267 idx=11 name=Std.EncodingCode.Ascii type=Core.Member
+      - #12 id=-1355006311 idx=12 name=Std.EncodingCode.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Std.EncodingError
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-243635385 idx=0 name=Std.EncodingError.EncodeFailed type=Core.Member
+      - #1 id=756202380 idx=1 name=Std.EncodingError.DecodeFailed type=Core.Member
+      - #2 id=1014600467 idx=2 name=Std.EncodingError.UnknownEncoding type=Core.Member
+      - #3 id=1560622779 idx=3 name=Std.EncodingError.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

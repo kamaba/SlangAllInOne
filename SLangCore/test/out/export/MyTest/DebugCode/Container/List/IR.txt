@@ -1,0 +1,619 @@
+-------------------IR 文件显示 开始 : Path: Container/List.sl-----------------------
+Class: Core.List<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=376185411 idx=0 name=Core.List<T>._length type=Core.Int32
+      - #1 id=-1574056422 idx=1 name=Core.List<T>._capacity type=Core.Int32
+      - #2 id=1374458142 idx=2 name=Core.List<T>._index type=Core.Int32
+      - #3 id=-1848670874 idx=3 name=Core.List<T>._current type=T[0]
+      - #4 id=-819217004 idx=4 name=Core.List<T>._list type=Core.Array<T><T[0]>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.create_1_Core.Int32
+    VirtualName: create_Core.List<T>_1_Core.Int32
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=31644779 idx=0 name=return] type=Core.List<T><T[0]>
+    Arguments:
+      - #0 id=16367560 idx=0 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=13090320 idx=0 name=result type=Core.List<T><T[0]>
+    Instructions:
+
+  Method: Core.List<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=13384821 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53682985 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=10428696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53354527 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=26749401 idx=0 name=showstr type=Core.String
+      - #1 id=39418019 idx=1 name=i type=Core.Int32
+      - #2 id=19217855 idx=2 name=cur type=Core.Object
+      - #3 id=38742975 idx=3 name=autocreate_48014184 type=Core.Boolean
+      - #4 id=13142459 idx=4 name=autocreate_29474473 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>._init__1_Core.Array<T>[-1]
+    VirtualName: _init__Core.Void_1_Core.Array<T>[-1]
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=50388336 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13055244 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=50841847 idx=1 name=list type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=54923440 idx=0 name=count type=Core.Int32
+      - #1 id=24548918 idx=1 name=autocreate_11318680 type=Core.Boolean
+      - #2 id=19613673 idx=2 name=autocreate_34759260 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>._init__3_Core.Array<T>[-1]_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_3_Core.Array<T>[-1]_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=19950346 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9673245 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=45335391 idx=1 name=list type=Core.Array<T><T[0]>
+      - #2 id=5365342 idx=2 name=startIndex type=Core.Int32
+      - #3 id=48288078 idx=3 name=length type=Core.Int32
+    Locals:
+      - #0 id=31939521 idx=0 name=count type=Core.Int32
+      - #1 id=19020241 idx=1 name=autocreate_44397891 type=Core.Boolean
+      - #2 id=36964446 idx=2 name=autocreate_64036700 type=Core.Boolean
+      - #3 id=64244561 idx=3 name=autocreate_39459394 type=Core.Boolean
+      - #4 id=41330139 idx=4 name=autocreate_19590229 type=Core.Boolean
+      - #5 id=36426933 idx=5 name=autocreate_42094334 type=Core.Boolean
+      - #6 id=59406944 idx=6 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.List<T>._init__1_Core.Range<T>
+    VirtualName: _init__Core.Void_1_Core.Range<T>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10313144 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60798228 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=25709437 idx=1 name=range type=Core.Range<T><T[0]>
+    Locals:
+      - #0 id=30058349 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=2089687 idx=1 name=count type=Core.Int32
+      - #2 id=18807190 idx=2 name=autocreate_43304686 type=Core.Boolean
+      - #3 id=35046986 idx=3 name=autocreate_54197854 type=Core.Boolean
+      - #4 id=46987420 idx=4 name=autocreate_18018639 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: True
+    Return:
+      - #0 id=66839947 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52165903 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=64688614 idx=1 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=45326617 idx=0 name=autocreate_27950026 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=25543093 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47577364 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=31759983 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=55724670 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=17404391 idx=0 name=autocreate_50223649 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=38031802 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=4225755 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=6741900 idx=0 name=autocreate_49359659 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.first
+    VirtualName: first_T_0
+    Name: first
+    InterfaceMethod: False
+    Return:
+      - #0 id=8870892 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=15898735 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=12729171 idx=0 name=autocreate_41583755 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.last
+    VirtualName: last_T_0
+    Name: last
+    InterfaceMethod: False
+    Return:
+      - #0 id=32664435 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=18542462 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=25544462 idx=0 name=autocreate_38709481 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=26383427 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=32757653 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=40383225 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56682808 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=27904713 idx=1 name=value type=Core.Int32
+    Locals:
+      - #0 id=49815832 idx=0 name=autocreate_12841014 type=Core.Boolean
+      - #1 id=45689312 idx=1 name=autocreate_48460267 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.grow
+    VirtualName: grow_Core.Void_0
+    Name: grow
+    InterfaceMethod: False
+    Return:
+      - #0 id=64744584 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59389625 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=45830349 idx=0 name=newCapacity type=Core.Int32
+      - #1 id=9819961 idx=1 name=autocreate_33489226 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: True
+    Return:
+      - #0 id=45212362 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57219378 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=4258076 idx=1 name=min type=Core.Int32
+    Locals:
+      - #0 id=38322691 idx=0 name=curCap type=Core.Int32
+      - #1 id=9359903 idx=1 name=autocreate_32967578 type=Core.Boolean
+      - #2 id=17130265 idx=2 name=newCapacity type=Core.Int32
+      - #3 id=19954658 idx=3 name=autocreate_28272749 type=Core.Boolean
+      - #4 id=45374195 idx=4 name=autocreate_53128157 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.resizeArray_1_Core.Int32
+    VirtualName: resizeArray_Core.Void_1_Core.Int32
+    Name: resizeArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=46570941 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5174549 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=16485292 idx=1 name=newCapacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.add_1_T
+    VirtualName: add_Core.Void_1_T
+    Name: add
+    InterfaceMethod: True
+    Return:
+      - #0 id=60240296 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=14149906 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=5291760 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=47625841 idx=0 name=autocreate_8391370 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.insert_2_Core.Int32_T
+    VirtualName: insert_Core.Void_2_Core.Int32_T
+    Name: insert
+    InterfaceMethod: False
+    Return:
+      - #0 id=23955812 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32487918 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=14275720 idx=1 name=index type=Core.Int32
+      - #2 id=61372619 idx=2 name=item type=T[0]
+    Locals:
+      - #0 id=15482662 idx=0 name=autocreate_8413469 type=Core.Boolean
+      - #1 id=5126234 idx=1 name=autocreate_8612359 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.remove_1_T
+    VirtualName: remove_Core.Void_1_T
+    Name: remove
+    InterfaceMethod: True
+    Return:
+      - #0 id=38061996 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11685651 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=7013644 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=63122796 idx=0 name=autocreate_10402369 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.removeAt_1_Core.Int32
+    VirtualName: removeAt_Core.Void_1_Core.Int32
+    Name: removeAt
+    InterfaceMethod: True
+    Return:
+      - #0 id=46946559 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12672824 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=19865849 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=44574921 idx=0 name=autocreate_26512460 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: True
+    Return:
+      - #0 id=62741064 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=14427769 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.indexOf_1_T
+    VirtualName: indexOf_Core.Int32_1_T
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=48861387 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=27798664 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=37099307 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=65458312 idx=0 name=i type=Core.Int32
+      - #1 id=52253899 idx=1 name=autocreate_37285554 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.lastIndexOf_1_T
+    VirtualName: lastIndexOf_Core.Int32_1_T
+    Name: lastIndexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=15222565 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=9147936 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=2785358 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=25068230 idx=0 name=i type=Core.Int32
+      - #1 id=24287485 idx=1 name=autocreate_25666 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=49541661 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=35330790 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=43221770 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=53451614 idx=0 name=autocreate_230999 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.fill_3_T_Core.Int32_Core.Int32
+    VirtualName: fill_Core.Void_3_T_Core.Int32_Core.Int32
+    Name: fill
+    InterfaceMethod: False
+    Return:
+      - #0 id=52228449 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43085863 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=294000 idx=1 name=value type=T[0]
+      - #2 id=2646004 idx=2 name=startIndex type=Core.Int32
+      - #3 id=23814038 idx=3 name=count type=Core.Int32
+    Locals:
+      - #0 id=12999751 idx=0 name=end type=Core.Int32
+      - #1 id=49888896 idx=1 name=autocreate_2078992 type=Core.Boolean
+      - #2 id=46346882 idx=2 name=autocreate_18710936 type=Core.Boolean
+      - #3 id=14468758 idx=3 name=autocreate_34180703 type=Core.Boolean
+      - #4 id=63109966 idx=4 name=autocreate_39190879 type=Core.Boolean
+      - #5 id=31118786 idx=5 name=autocreate_17173591 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.addRange_1_Core.List<T>
+    VirtualName: addRange_Core.Void_1_Core.List<T>
+    Name: addRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=52271033 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58003675 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=677253 idx=1 name=other type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=6095280 idx=0 name=autocreate_20344593 type=Core.Boolean
+      - #1 id=54857523 idx=1 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.List<T>.insertRange_2_Core.Int32_Core.List<T>
+    VirtualName: insertRange_Core.Void_2_Core.Int32_Core.List<T>
+    Name: insertRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=48841284 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12883349 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=36918374 idx=1 name=index type=Core.Int32
+      - #2 id=63829918 idx=2 name=other type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=37598356 idx=0 name=autocreate_48883615 type=Core.Boolean
+      - #1 id=2840889 idx=1 name=autocreate_37299352 type=Core.Boolean
+      - #2 id=25568006 idx=2 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.List<T>.removeRange_2_Core.Int32_Core.Int32
+    VirtualName: removeRange_Core.Void_2_Core.Int32_Core.Int32
+    Name: removeRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=21010194 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=61986789 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=54874019 idx=1 name=index type=Core.Int32
+      - #2 id=24104131 idx=2 name=count type=Core.Int32
+    Locals:
+      - #0 id=15610594 idx=0 name=newLength type=Core.Int32
+      - #1 id=6277626 idx=1 name=autocreate_149855 type=Core.Boolean
+      - #2 id=56498634 idx=2 name=autocreate_1348700 type=Core.Boolean
+      - #3 id=38725660 idx=3 name=autocreate_12138304 type=Core.Boolean
+      - #4 id=12986626 idx=4 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.List<T>.reverse
+    VirtualName: reverse_Core.Void_0
+    Name: reverse
+    InterfaceMethod: False
+    Return:
+      - #0 id=6802342 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8212356 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=61221085 idx=0 name=left type=Core.Int32
+      - #1 id=14118857 idx=1 name=right type=Core.Int32
+      - #2 id=59960851 idx=2 name=tmp type=Core.Object
+    Instructions:
+
+  Method: Core.List<T>.getRange_2_Core.Int32_Core.Int32
+    VirtualName: getRange_Core.List<T>_2_Core.Int32_Core.Int32
+    Name: getRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=10983475 idx=0 name=return] type=Core.List<T><T[0]>
+    Arguments:
+      - #0 id=23590007 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=31742419 idx=1 name=index type=Core.Int32
+      - #2 id=17246319 idx=2 name=count type=Core.Int32
+    Locals:
+      - #0 id=20999143 idx=0 name=result type=Core.List<T><T[0]>
+      - #1 id=54774566 idx=1 name=autocreate_42135876 type=Core.Boolean
+      - #2 id=23209052 idx=2 name=autocreate_43678569 type=Core.Boolean
+      - #3 id=7554882 idx=3 name=autocreate_57562809 type=Core.Boolean
+      - #4 id=885082 idx=4 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.List<T>.toArray
+    VirtualName: toArray_Core.Array<T>[-1]_0
+    Name: toArray
+    InterfaceMethod: True
+    Return:
+      - #0 id=35822404 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=26349888 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=9185002 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=15933636 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=5787686 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=15556157 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals:
+      - #0 id=52089174 idx=0 name=hasNext_var type=Core.Boolean
+      - #1 id=66149382 idx=1 name=autocreate_48303235 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=50546803 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=13072851 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.current_1_T
+    VirtualName: current_Core.Void_1_T
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=5853587 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=650398 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=52682290 idx=1 name=val type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=39407061 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=4378562 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=5154373 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=37855410 idx=0 name=this] type=Core.List<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>.index_1_Core.Int32
+    VirtualName: index_Core.Void_1_Core.Int32
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=66550580 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=14851049 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=62084314 idx=1 name=ind type=Core.Int32
+    Locals:
+      - #0 id=21887914 idx=0 name=autocreate_32075938 type=Core.Boolean
+      - #1 id=62773503 idx=1 name=autocreate_20247990 type=Core.Boolean
+    Instructions:
+
+  Method: Core.List<T>._setItem__2_Core.Int32_T
+    VirtualName: _setItem__Core.Void_2_Core.Int32_T
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=21597503 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9856263 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=60159801 idx=1 name=_index type=Core.Int32
+      - #2 id=4567303 idx=2 name=_value type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.List<T>._getItem__1_Core.Int32
+    VirtualName: _getItem__T_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=34407239 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=41105728 idx=0 name=this] type=Core.List<T><T[0]>
+      - #1 id=41229700 idx=1 name=_index type=Core.Int32
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

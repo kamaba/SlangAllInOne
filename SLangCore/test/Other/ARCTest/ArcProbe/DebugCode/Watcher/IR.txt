@@ -1,0 +1,302 @@
+-------------------IR 文件显示 开始 : Path: Watcher.sl-----------------------
+Class: Core._WatcherCallbackNode
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-310612865 idx=0 name=Core._WatcherCallbackNode._fn type=Core.Function
+      - #1 id=-1852416249 idx=1 name=Core._WatcherCallbackNode._next type=Core._WatcherCallbackNode
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core._WatcherCallbackNode._init__2_Core.Function_Core._WatcherCallbackNode
+    VirtualName: _init__Core.Void_2_Core.Function_Core._WatcherCallbackNode
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=52618006 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50585687 idx=0 name=this] type=Core._WatcherCallbackNode
+      - #1 id=3800007 idx=1 name=fn type=Core.Function
+      - #2 id=34200069 idx=2 name=nxt type=Core._WatcherCallbackNode
+    Locals: []
+    Instructions:
+
+Class: Core.Watcher<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-2095445825 idx=0 name=Core.Watcher<T>._value type=T[0]
+      - #1 id=1057946290 idx=1 name=Core.Watcher<T>._last type=T[0]
+      - #2 id=532382604 idx=2 name=Core.Watcher<T>._changed type=Core.Boolean
+      - #3 id=-1117138646 idx=3 name=Core.Watcher<T>._inEmit type=Core.Boolean
+      - #4 id=-449691990 idx=4 name=Core.Watcher<T>._cbCount type=Core.Int32
+      - #5 id=-2016597013 idx=5 name=Core.Watcher<T>._head type=Core._WatcherCallbackNode
+      - #6 id=332460286 idx=6 name=Core.Watcher<T>._tail type=Core._WatcherCallbackNode
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Watcher<T>.create_1_T
+    VirtualName: create_Core.Watcher<T>_1_T
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=39365168 idx=0 name=return] type=Core.Watcher<T><T[0]>
+    Arguments:
+      - #0 id=18742193 idx=0 name=init type=T[0]
+    Locals:
+      - #0 id=34462009 idx=0 name=w type=Core.Watcher<T><T[0]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Watcher<T>.update_1_T
+    VirtualName: update_Core.Boolean_1_T
+    Name: update
+    InterfaceMethod: False
+    Return:
+      - #0 id=24089437 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39959306 idx=0 name=this] type=Core.Watcher<T><T[0]>
+      - #1 id=15478348 idx=1 name=value type=T[0]
+    Locals:
+      - #0 id=5087406 idx=0 name=autocreate_44005273 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Watcher<T>.listen_1_Core.Function
+    VirtualName: listen_Core.Void_1_Core.Function
+    Name: listen
+    InterfaceMethod: False
+    Return:
+      - #0 id=25371726 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17732161 idx=0 name=this] type=Core.Watcher<T><T[0]>
+      - #1 id=27018949 idx=1 name=callback type=Core.Function
+    Locals:
+      - #0 id=41843949 idx=0 name=node type=Core._WatcherCallbackNode
+      - #1 id=41051224 idx=1 name=autocreate_60503138 type=Core.Boolean
+      - #2 id=33916704 idx=2 name=autocreate_7657338 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Watcher<T>.unlisten_1_Core.Function
+    VirtualName: unlisten_Core.Boolean_1_Core.Function
+    Name: unlisten
+    InterfaceMethod: False
+    Return:
+      - #0 id=58055515 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=28820234 idx=0 name=this] type=Core.Watcher<T><T[0]>
+      - #1 id=52737594 idx=1 name=callback type=Core.Function
+    Locals:
+      - #0 id=4876303 idx=0 name=prev type=Core._WatcherCallbackNode
+      - #1 id=43886731 idx=1 name=cur type=Core._WatcherCallbackNode
+      - #2 id=59436263 idx=2 name=autocreate_1807185 type=Core.Boolean
+      - #3 id=65164324 idx=3 name=autocreate_16264673 type=Core.Boolean
+      - #4 id=49608012 idx=4 name=autocreate_12164329 type=Core.Boolean
+      - #5 id=43818926 idx=5 name=autocreate_42370099 type=Core.Boolean
+      - #6 id=23562876 idx=6 name=objA type=Core.Object
+      - #7 id=10739296 idx=7 name=objB type=Core.Object
+      - #8 id=58826021 idx=8 name=result] type=Core.Boolean
+    Instructions:
+
+  Method: Core.Watcher<T>.emit
+    VirtualName: emit_Core.Void_0
+    Name: emit
+    InterfaceMethod: False
+    Return:
+      - #0 id=15841586 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9216716 idx=0 name=this] type=Core.Watcher<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Watcher<T>.value
+    VirtualName: value_T_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=8100078 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=8356549 idx=0 name=this] type=Core.Watcher<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Watcher<T>.last
+    VirtualName: last_T_0
+    Name: last
+    InterfaceMethod: False
+    Return:
+      - #0 id=66485695 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=52126542 idx=0 name=this] type=Core.Watcher<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Watcher<T>.changed
+    VirtualName: changed_Core.Boolean_0
+    Name: changed
+    InterfaceMethod: False
+    Return:
+      - #0 id=15472155 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16632209 idx=0 name=this] type=Core.Watcher<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Watcher<T>.fireCallbacks
+    VirtualName: fireCallbacks_Core.Void_0
+    Name: fireCallbacks
+    InterfaceMethod: False
+    Return:
+      - #0 id=4912550 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45285081 idx=0 name=this] type=Core.Watcher<T><T[0]>
+    Locals:
+      - #0 id=44212955 idx=0 name=cur type=Core._WatcherCallbackNode
+      - #1 id=62372282 idx=1 name=autocreate_45786577 type=Core.Boolean
+      - #2 id=24479626 idx=2 name=cb type=Core.Function
+      - #3 id=18990045 idx=3 name=nxt type=Core._WatcherCallbackNode
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,295 @@
+-------------------Meta 文件显示 开始 : Path: GenClass_Interface.sl-----------------------
+interface IShape
+{
+    _public double area( )
+
+    _public string name( )
+
+}
+class Circle  interface IShape
+{
+    radius = 0.00d
+
+    _public _init_( double r )
+    {
+        this.radius = r;
+    }
+    _public override double area( )
+    {
+        ret 3.14d * this.radius * this.radius
+    }
+    _public override string name( )
+    {
+        ret "Circle"
+    }
+}
+class Rectangle  interface IShape
+{
+    width = 0.00d
+    height = 0.00d
+
+    _public _init_( double w,  double h )
+    {
+        this.width = w;
+        this.height = h;
+    }
+    _public override double area( )
+    {
+        ret this.width * this.height
+    }
+    _public override string name( )
+    {
+        ret "Rectangle"
+    }
+}
+interface IComparable
+{
+    _public int compareTo( object other )
+
+}
+interface IDescribable
+{
+    _public string describe( )
+
+}
+class Product  interface IComparable, IDescribable
+{
+    pid = 0i
+    pname = ""
+    price = 0.00d
+
+    _public _init_( int id,  string n,  double p )
+    {
+        this.pid = id;
+        this.pname = n;
+        this.price = p;
+    }
+    _public override int compareTo( object other )
+    {
+        Product o = otheras Product;
+        if o == null
+        {
+            ret 1i
+        }
+        if this.price > o.price
+        {
+            ret 1i
+        }
+        elif this.price < o.price
+        {
+            ret - - 1i
+        }
+        else
+        {
+            ret 0i
+        }
+    }
+    _public override string describe( )
+    {
+        ret "Product[id=" + this.pid.toString() + ", name=" + this.pname + ", price=" + this.price.toString() + "]"
+    }
+}
+interface IAnimal
+{
+    _public string sound( )
+
+}
+interface IPet extends IAnimal
+{
+    _public string petName( )
+
+}
+class Dog  interface IPet
+{
+    dogName = ""
+
+    _public _init_( string n )
+    {
+        this.dogName = n;
+    }
+    _public override string sound( )
+    {
+        ret "Woof"
+    }
+    _public override string petName( )
+    {
+        ret this.dogName
+    }
+}
+class Cat  interface IPet
+{
+    catName = ""
+
+    _public _init_( string n )
+    {
+        this.catName = n;
+    }
+    _public override string sound( )
+    {
+        ret "Meow"
+    }
+    _public override string petName( )
+    {
+        ret this.catName
+    }
+}
+class ShapeFactory
+{
+    _public static IShape createCircle( double r )
+    {
+        ret Circle(r)
+    }
+    _public static IShape createRectangle( double w,  double h )
+    {
+        ret Rectangle(w,h)
+    }
+}
+interface ICalculator
+{
+    _public int add( int a,  int b )
+
+    _public int subtract( int a,  int b )
+
+    _public int multiply( int a,  int b )
+
+}
+class BasicCalculator  interface ICalculator
+{
+    _public override int add( int a,  int b )
+    {
+        ret a + b
+    }
+    _public override int subtract( int a,  int b )
+    {
+        ret a - b
+    }
+    _public override int multiply( int a,  int b )
+    {
+        ret a * b
+    }
+}
+interface IWalkable
+{
+    _public void walk( )
+
+}
+class AnimalBase
+{
+    legs = 4i
+
+    _public int getLegs( )
+    {
+        ret this.legs
+    }
+}
+class DogAnimal extends AnimalBase  interface IWalkable
+{
+    _public override void walk( )
+    {
+        global.println("DogAnimal walking on " + this.legs.toString() + " legs");
+    }
+}
+GenClass_Interface
+{
+    _public static testBasicInterface( )
+    {
+        global.println("=== testBasicInterface ===");
+        IShape s1 = Circle(5.00d);
+        IShape s2 = Rectangle(3.00d,4.00d);
+        global.println(s1.name() + " area=" + s1.area().toString());
+        global.println(s2.name() + " area=" + s2.area().toString());
+    }
+    _public static testMultiInterface( )
+    {
+        global.println("=== testMultiInterface ===");
+        Product p1 = Product(1i,"Apple",5.50d);
+        Product p2 = Product(2i,"Banana",3.20d);
+        Product p3 = Product(3i,"Cherry",5.50d);
+        IComparable cmp = p1;
+        global.println("p1 vs p2: " + cmp.compareTo(p2).toString());
+        global.println("p1 vs p3: " + cmp.compareTo(p3).toString());
+        IDescribable desc = p1;
+        global.println(desc.describe());
+    }
+    _public static testInterfaceInheritance( )
+    {
+        global.println("=== testInterfaceInheritance ===");
+        IPet dog = Dog("Buddy");
+        IPet cat = Cat("Whiskers");
+        global.println(dog.petName() + " says " + dog.sound());
+        global.println(cat.petName() + " says " + cat.sound());
+    }
+    _public static testPolymorphism( )
+    {
+        global.println("=== testPolymorphism ===");
+        IShape[] shapes = [Circle(1.00d),Rectangle(2.00d,3.00d),Circle(10.00d)];
+        
+        for s in shapes
+        {
+            global.println(s.name() + " area=" + s.area().toString());
+        }
+    }
+    _public static testFactoryPattern( )
+    {
+        global.println("=== testFactoryPattern ===");
+        IShape c = ShapeFactory.createCircle(7.00d);
+        IShape r = ShapeFactory.createRectangle(6.00d,8.00d);
+        global.println("factory circle area=" + c.area().toString());
+        global.println("factory rect area=" + r.area().toString());
+    }
+    _public static testCalculatorInterface( )
+    {
+        global.println("=== testCalculatorInterface ===");
+        ICalculator calc = BasicCalculator();
+        global.println("add(3,5)=" + calc.add(3i,5i).toString());
+        global.println("sub(10,4)=" + calc.subtract(10i,4i).toString());
+        global.println("mul(6,7)=" + calc.multiply(6i,7i).toString());
+    }
+    _public static testInterfaceWithInheritance( )
+    {
+        global.println("=== testInterfaceWithInheritance ===");
+        DogAnimal da = DogAnimal();
+        da.walk();
+        global.println("legs=" + da.getLegs().toString());
+    }
+    _public static testInterfaceNullCheck( )
+    {
+        global.println("=== testInterfaceNullCheck ===");
+        Product p = Product(10i,"Test",1.00d);
+        IComparable cmp = p;
+        object obj = p;
+        global.println("p is IComparable: true");
+        Product p2 = objas Product;
+        if p2 != null
+        {
+            global.println("as Product success: " + p2.describe());
+        }
+        else
+        {
+            global.println("as Product failed");
+        }
+    }
+    _public static testInterfaceArrayAndLoop( )
+    {
+        global.println("=== testInterfaceArrayAndLoop ===");
+        IPet[] pets = [Dog("Rex"),Cat("Tom"),Dog("Max")];
+        
+        for pet in pets
+        {
+            global.println(pet.petName() + " -> " + pet.sound());
+        }
+    }
+    _public static fun( )
+    {
+        GenClass_Interface.testBasicInterface();
+        GenClass_Interface.testMultiInterface();
+        GenClass_Interface.testInterfaceInheritance();
+        GenClass_Interface.testPolymorphism();
+        GenClass_Interface.testFactoryPattern();
+        GenClass_Interface.testCalculatorInterface();
+        GenClass_Interface.testInterfaceWithInheritance();
+        GenClass_Interface.testInterfaceNullCheck();
+        GenClass_Interface.testInterfaceArrayAndLoop();
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

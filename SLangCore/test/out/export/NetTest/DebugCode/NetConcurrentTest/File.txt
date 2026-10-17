@@ -1,0 +1,122 @@
+-------------------FileMeta 文件显示 开始 : Path: NetConcurrentTest.sl-----------------------
+ ;
+ ;
+NetConcurrentTest
+{
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            Console.println("[NetConcurrentTest] " + name + " : OK");
+        }
+        else
+        {
+            Console.println("[NetConcurrentTest] " + name + " : FAIL");
+        }
+    }
+    _public static throws Int32 sfEchoConn( Net.TcpStream conn )
+    {
+        ByteBuffer acc = ByteBuffer(128i);
+        while true
+        {
+            ByteBuffer buf = ByteBuffer(128i);
+            Int32 n = conn.read(buf);
+            if n <= 0i
+            {
+                break
+            }
+            acc.writeBytes(buf);
+        }
+        conn.write(acc);
+        conn.close();
+        ret 1i
+    }
+    _public static throws Int32 sfAccept10( Net.TcpServer srv )
+    {
+        var ef = function(  object arg )
+            {
+                object r = try? try? NetConcurrentTest.sfEchoConn(argas Net.TcpStream);
+            }
+        Int32 i = 0i;
+        while i < 10i
+        {
+            Net.TcpStream conn = srv.accept();
+            Coroutine.spawnClosure1(ef,conn);
+            i = i + 1i;
+        }
+        ret 1i
+    }
+    _public static throws Int32 sfCliOnce( Int32 idx,  Channel<object> results )
+    {
+        Net.TcpStream c = Net.Tcp.connectTimeout("127.0.0.1",19321i,2000i);
+        ByteBuffer w = ByteBuffer(64i);
+        w.writeString("ping-" + idx.toString());
+        c.write(w);
+        c.closeWrite();
+        ByteBuffer acc = ByteBuffer(64i);
+        while acc.readableBytes < 6i
+        {
+            ByteBuffer b = ByteBuffer(64i);
+            Int32 n = c.read(b);
+            if n <= 0i
+            {
+                break
+            }
+            acc.writeBytes(b);
+        }
+        string got = acc.readString(acc.readableBytes);
+        c.close();
+        if got == "ping-" + idx.toString()
+        {
+            results.send("ok");
+        }
+        else
+        {
+            results.send("bad");
+        }
+        ret 1i
+    }
+    _public static testGroupE( )
+    {
+        Console.println("========== E: 并发连接 ==========");
+        Net.TcpServer srv = Net.Tcp.listen(19321i);
+        var af = function(  )
+            {
+                object r = try? try? NetConcurrentTest.sfAccept10(srv);
+            }
+        Task at = Coroutine.spawnClosure0(af);
+        Channel<object> results = Channel<object>.create(16i);
+        var cf = function(  object a,  object b )
+            {
+                object r = try? try? NetConcurrentTest.sfCliOnce(aas int,bas Channel<object>);
+            }
+        Int32 i = 0i;
+        while i < 10i
+        {
+            Coroutine.spawnClosure2(cf,i,results);
+            i = i + 1i;
+        }
+        Int32 okCount = 0i;
+        i = 0i;
+        while i < 10i
+        {
+            object msg = results.recv();
+            string ms = msgas string;
+            if ms == "ok"
+            {
+                okCount = okCount + 1i;
+            }
+            i = i + 1i;
+        }
+        check("E1 10 concurrent echo round-trips",okCount == 10i);
+        object ar = Coroutine.awaitTask(at);
+        srv.close();
+    }
+    _public static fun( )
+    {
+        Console.println("===== NetConcurrentTest start =====");
+        testGroupE();
+        Console.println("===== NetConcurrentTest end =====");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

@@ -1,0 +1,714 @@
+-------------------IR 文件显示 开始 : Path: IO/Codec.sl-----------------------
+Class: Core.ChunkedConversionSink<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.ChunkedConversionSink<T>.add_1_T
+    VirtualName: add_Core.Void_1_T
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=1879552 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7665379 idx=0 name=this] type=Core.ChunkedConversionSink<T><T[0]>
+      - #1 id=16915976 idx=1 name=chunk type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.ChunkedConversionSink<T>.close
+    VirtualName: close_Core.Void_0
+    Name: close
+    InterfaceMethod: False
+    Return:
+      - #0 id=28016801 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=18026058 idx=0 name=this] type=Core.ChunkedConversionSink<T><T[0]>
+    Locals: []
+    Instructions:
+
+Class: Core.Converter<S,T>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Converter<S,T>.convert_1_S
+    VirtualName: convert_T_1_S
+    Name: convert
+    InterfaceMethod: False
+    Return:
+      - #0 id=54768407 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=50824621 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=23153616 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.startChunkedConversion_1_Core.ChunkedConversionSink<T>
+    VirtualName: startChunkedConversion_Core.ChunkedConversionSink<S>_1_Core.ChunkedConversionSink<T>
+    Name: startChunkedConversion
+    InterfaceMethod: False
+    Return:
+      - #0 id=63503579 idx=0 name=return] type=Core.ChunkedConversionSink<T><T[0]>
+    Arguments:
+      - #0 id=7055953 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=34661303 idx=1 name=sink type=Core.ChunkedConversionSink<T><T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.fuse<M>_1_Core.Converter<T,M>
+    VirtualName: fuse_Core.Converter<S,M>_1_Core.Converter<T,M>
+    Name: fuse
+    InterfaceMethod: False
+    Return:
+      - #0 id=56102195 idx=0 name=return] type=Core.Converter<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=43516279 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=35157707 idx=1 name=other type=Core.Converter<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+Class: Core._FusedConverter<S,T,M>
+  metaClassKind: Class
+  TemplateCount: 3
+  TemplateParameterCount: 3
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1272659766 idx=0 name=Core._FusedConverter<S,T,M>._first type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=-522428409 idx=1 name=Core._FusedConverter<S,T,M>._second type=Core.Converter<S,T><T[1], T[2]>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core._FusedConverter<S,T,M>.convert_1_S
+    VirtualName: convert_M_1_S
+    Name: convert
+    InterfaceMethod: False
+    Return:
+      - #0 id=61491846 idx=0 name=return] type=T[2]
+    Arguments:
+      - #0 id=29202048 idx=0 name=this] type=Core._FusedConverter<S,T,M><T[0], T[1], T[2]>
+      - #1 id=16555710 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core._FusedConverter<S,T,M>.startChunkedConversion_1_Core.ChunkedConversionSink<M>
+    VirtualName: startChunkedConversion_Core.ChunkedConversionSink<S>_1_Core.ChunkedConversionSink<M>
+    Name: startChunkedConversion
+    InterfaceMethod: False
+    Return:
+      - #0 id=56626060 idx=0 name=return] type=Core.ChunkedConversionSink<T><T[0]>
+    Arguments:
+      - #0 id=65944108 idx=0 name=this] type=Core._FusedConverter<S,T,M><T[0], T[1], T[2]>
+      - #1 id=39872498 idx=1 name=sink type=Core.ChunkedConversionSink<T><T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.fuse<M>_1_Core.Converter<T,M>
+    VirtualName: fuse_Core.Converter<S,M>_1_Core.Converter<T,M>
+    Name: fuse
+    InterfaceMethod: False
+    Return:
+      - #0 id=56102195 idx=0 name=return] type=Core.Converter<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=43516279 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=35157707 idx=1 name=other type=Core.Converter<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core._FusedConverter<S,T,M>._init__2_Core.Converter<S,T>_Core.Converter<T,M>
+    VirtualName: _init__Core.Void_2_Core.Converter<S,T>_Core.Converter<T,M>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=8913284 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8446905 idx=0 name=this] type=Core._FusedConverter<S,T,M><T[0], T[1], T[2]>
+      - #1 id=13110696 idx=1 name=first type=Core.Converter<S,T><T[0], T[1]>
+      - #2 id=50887407 idx=2 name=second type=Core.Converter<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+Class: Core.Codec<S,T>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Codec<S,T>.convert_1_S
+    VirtualName: convert_T_1_S
+    Name: convert
+    InterfaceMethod: False
+    Return:
+      - #0 id=28239278 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=55333480 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=52826913 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.startChunkedConversion_1_Core.ChunkedConversionSink<T>
+    VirtualName: startChunkedConversion_Core.ChunkedConversionSink<S>_1_Core.ChunkedConversionSink<T>
+    Name: startChunkedConversion
+    InterfaceMethod: False
+    Return:
+      - #0 id=63503579 idx=0 name=return] type=Core.ChunkedConversionSink<T><T[0]>
+    Arguments:
+      - #0 id=7055953 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=34661303 idx=1 name=sink type=Core.ChunkedConversionSink<T><T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.fuse<M>_1_Core.Converter<T,M>
+    VirtualName: fuse_Core.Converter<S,M>_1_Core.Converter<T,M>
+    Name: fuse
+    InterfaceMethod: False
+    Return:
+      - #0 id=56102195 idx=0 name=return] type=Core.Converter<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=43516279 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=35157707 idx=1 name=other type=Core.Converter<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.encoder
+    VirtualName: encoder_Core.Converter<S,T>_0
+    Name: encoder
+    InterfaceMethod: False
+    Return:
+      - #0 id=57440586 idx=0 name=return] type=Core.Converter<S,T><T[0], T[1]>
+    Arguments:
+      - #0 id=51121530 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.decoder
+    VirtualName: decoder_Core.Converter<T,S>_0
+    Name: decoder
+    InterfaceMethod: False
+    Return:
+      - #0 id=22175862 idx=0 name=return] type=Core.Converter<S,T><T[1], T[0]>
+    Arguments:
+      - #0 id=47203227 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.encode_1_S
+    VirtualName: encode_T_1_S
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=51414423 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=65365037 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=60076631 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.decode_1_T
+    VirtualName: decode_S_1_T
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=40885207 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=34368962 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=32422550 idx=1 name=output type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.fuseCodec<M>_1_Core.Codec<T,M>
+    VirtualName: fuseCodec_Core.Codec<S,M>_1_Core.Codec<T,M>
+    Name: fuseCodec
+    InterfaceMethod: False
+    Return:
+      - #0 id=13718857 idx=0 name=return] type=Core.Codec<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=8980857 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=56360854 idx=1 name=other type=Core.Codec<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+Class: Core._FusedCodec<S,T,M>
+  metaClassKind: Class
+  TemplateCount: 3
+  TemplateParameterCount: 3
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-542925952 idx=0 name=Core._FusedCodec<S,T,M>._first type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=-1956955315 idx=1 name=Core._FusedCodec<S,T,M>._second type=Core.Codec<S,T><T[1], T[2]>
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Codec<S,T>.convert_1_S
+    VirtualName: convert_T_1_S
+    Name: convert
+    InterfaceMethod: False
+    Return:
+      - #0 id=28239278 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=55333480 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=52826913 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core._FusedCodec<S,T,M>.startChunkedConversion_1_Core.ChunkedConversionSink<M>
+    VirtualName: startChunkedConversion_Core.ChunkedConversionSink<S>_1_Core.ChunkedConversionSink<M>
+    Name: startChunkedConversion
+    InterfaceMethod: False
+    Return:
+      - #0 id=16438061 idx=0 name=return] type=Core.ChunkedConversionSink<T><T[0]>
+    Arguments:
+      - #0 id=1826451 idx=0 name=this] type=Core._FusedCodec<S,T,M><T[0], T[1], T[2]>
+      - #1 id=13724824 idx=1 name=sink type=Core.ChunkedConversionSink<T><T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Converter<S,T>.fuse<M>_1_Core.Converter<T,M>
+    VirtualName: fuse_Core.Converter<S,M>_1_Core.Converter<T,M>
+    Name: fuse
+    InterfaceMethod: False
+    Return:
+      - #0 id=56102195 idx=0 name=return] type=Core.Converter<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=43516279 idx=0 name=this] type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=35157707 idx=1 name=other type=Core.Converter<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core._FusedCodec<S,T,M>.encoder
+    VirtualName: encoder_Core.Converter<S,M>_0
+    Name: encoder
+    InterfaceMethod: False
+    Return:
+      - #0 id=6176451 idx=0 name=return] type=Core.Converter<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=37968974 idx=0 name=this] type=Core._FusedCodec<S,T,M><T[0], T[1], T[2]>
+    Locals:
+      - #0 id=55588060 idx=0 name=e1 type=Core.Converter<S,T><T[0], T[1]>
+      - #1 id=30530500 idx=1 name=e2 type=Core.Converter<S,T><T[1], T[2]>
+    Instructions:
+
+  Method: Core._FusedCodec<S,T,M>.decoder
+    VirtualName: decoder_Core.Converter<M,S>_0
+    Name: decoder
+    InterfaceMethod: False
+    Return:
+      - #0 id=43701155 idx=0 name=return] type=Core.Converter<S,T><T[2], T[0]>
+    Arguments:
+      - #0 id=57051467 idx=0 name=this] type=Core._FusedCodec<S,T,M><T[0], T[1], T[2]>
+    Locals:
+      - #0 id=57766077 idx=0 name=d1 type=Core.Converter<S,T><T[2], T[1]>
+      - #1 id=50132651 idx=1 name=d2 type=Core.Converter<S,T><T[1], T[0]>
+    Instructions:
+
+  Method: Core.Codec<S,T>.encode_1_S
+    VirtualName: encode_T_1_S
+    Name: encode
+    InterfaceMethod: False
+    Return:
+      - #0 id=51414423 idx=0 name=return] type=T[1]
+    Arguments:
+      - #0 id=65365037 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=60076631 idx=1 name=input type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.decode_1_T
+    VirtualName: decode_S_1_T
+    Name: decode
+    InterfaceMethod: False
+    Return:
+      - #0 id=40885207 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=34368962 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=32422550 idx=1 name=output type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.Codec<S,T>.fuseCodec<M>_1_Core.Codec<T,M>
+    VirtualName: fuseCodec_Core.Codec<S,M>_1_Core.Codec<T,M>
+    Name: fuseCodec
+    InterfaceMethod: False
+    Return:
+      - #0 id=13718857 idx=0 name=return] type=Core.Codec<S,T><T[0], T[2]>
+    Arguments:
+      - #0 id=8980857 idx=0 name=this] type=Core.Codec<S,T><T[0], T[1]>
+      - #1 id=56360854 idx=1 name=other type=Core.Codec<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core._FusedCodec<S,T,M>._init__2_Core.Codec<S,T>_Core.Codec<T,M>
+    VirtualName: _init__Core.Void_2_Core.Codec<S,T>_Core.Codec<T,M>
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=39480712 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=34212907 idx=0 name=this] type=Core._FusedCodec<S,T,M><T[0], T[1], T[2]>
+      - #1 id=19782092 idx=1 name=first type=Core.Codec<S,T><T[0], T[1]>
+      - #2 id=43821104 idx=2 name=second type=Core.Codec<S,T><T[1], T[2]>
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

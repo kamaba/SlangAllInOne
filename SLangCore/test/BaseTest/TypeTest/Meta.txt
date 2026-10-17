@@ -1,0 +1,369 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/TypeTest.sl-----------------------
+public class TypeTest extends Core.Object
+{
+    public class ArrClass extends Core.Object
+    {
+        public [Core.Int32]i = 0i;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+    }
+    public class Box<T extends Core.Object> extends Core.Object
+    {
+        public [Core.Object]value = null;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+        public  Core.String toString()
+        {
+            return (("Box(" + [Core.TypeTest.Box<T><T>]Core.TypeTest.Box<T>.toString.this  ->  public [T]value = ConstExpressNode: [Null] null;  ->  [Core.Object]value.toString()) + ")");
+        }
+
+        public  Core.Void _init_([Core.Object]v)
+        {
+            [Core.TypeTest.Box<T><T>]Core.TypeTest.Box<T>._init_.this  ->  public [T]value = ConstExpressNode: [Null] null; = [T]v;
+
+        }
+
+    }
+    public  static Core.Boolean IsIntType([Core.Type]t)
+    {
+        return ([Core.Type]t ==   ->  type);
+    }
+
+    public  static Core.Object primitiveAliasTypeTest()
+    {
+        println("----- primitiveAliasTypeTest -----")
+        [Core.Object]tIntLower =   ->  type;
+        [Core.Object]tIntUpper =   ->  type;
+        [Core.Object]tFloatLower =   ->  type;
+        [Core.Object]tFloatUpper =   ->  type;
+        println("int.type   -> " + tIntLower.toString())
+        println("Int32.type -> " + tIntUpper.toString())
+        println("float.type -> " + tFloatLower.toString())
+        println("Float.type -> " + tFloatUpper.toString())
+        println("int.type == Int32.type -> " + ((tIntLower == tIntUpper).toString())
+        println("float.type == Float.type -> " + ((tFloatLower == tFloatUpper).toString())
+        println("int.type == float.type -> " + ((tIntLower == tFloatLower).toString())
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object arrayAliasTypeTest()
+    {
+        println("----- arrayAliasTypeTest -----")
+        [Core.Object]tObjArrAlias = type;
+        [Core.Object]tObjArrRaw =   ->  type;
+        [Core.Object]tIntArrAlias = type;
+        [Core.Object]tIntArrRaw =   ->  type;
+        [Core.Object]tAliasIntArray = type;
+        [Core.Object]tAliasObjArray = type;
+        println("ObjectArray.type -> " + tObjArrAlias.toString())
+        println("Array<Object>.type -> " + tObjArrRaw.toString())
+        println("Int32Array.type -> " + tIntArrAlias.toString())
+        println("Array<Int32>.type -> " + tIntArrRaw.toString())
+        println("AliasIntArray.type -> " + tAliasIntArray.toString())
+        println("AliasObjArray.type -> " + tAliasObjArray.toString())
+        println("ObjectArray == Array<Object> -> " + ((tObjArrAlias == tObjArrRaw).toString())
+        println("Int32Array == Array<Int32> -> " + ((tIntArrAlias == tIntArrRaw).toString())
+        println("ObjectArray == Int32Array -> " + ((tObjArrAlias == tIntArrAlias).toString())
+        println("AliasIntArray == Array<Int32> -> " + ((tAliasIntArray == tIntArrRaw).toString())
+        println("AliasObjArray == Array<Object> -> " + ((tAliasObjArray == tObjArrRaw).toString())
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object templateTypeTest()
+    {
+        println("----- templateTypeTest -----")
+        [Core.Object]tBoxInt =   ->  type;
+        [Core.Object]tBoxInt2 =   ->  type;
+        [Core.Object]tBoxStr =   ->  type;
+        [Core.Object]tBoxObj =   ->  type;
+        println("Box<int>.type -> " + tBoxInt.toString())
+        println("Box<Int32>.type -> " + tBoxInt2.toString())
+        println("Box<string>.type -> " + tBoxStr.toString())
+        println("Box<Object>.type -> " + tBoxObj.toString())
+        println("Box<int> == Box<Int32> -> " + ((tBoxInt == tBoxInt2).toString())
+        println("Box<int> == Box<string> -> " + ((tBoxInt == tBoxStr).toString())
+        println("Box<Object> == Object.type -> " + ((tBoxObj == Object.type).toString())
+        [Core.TypeTest.Box<Core.Int32>Core.Int32
+]bi = Core.TypeTest.Box<Core.Int32>().;
+        [Core.TypeTest.Box<Core.String>Core.String
+]bs = Core.TypeTest.Box<Core.String>().;
+        println("instance bi.type == Box<int>.type -> " + ((bi.type == tBoxInt).toString())
+        println("instance bs.type == Box<string>.type -> " + ((bs.type == tBoxStr).toString())
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object inferredAndDynamicTypeTest()
+    {
+        println("----- inferredAndDynamicTypeTest -----")
+        [Core.Object]vi = 123i;
+        [Core.Object]vf = 1.5f;
+        [Core.Object]vs = "hello";
+        println("vi.type -> " + vi.type.toString())
+        println("vf.type -> " + vf.type.toString())
+        println("vs.type -> " + vs.type.toString())
+        println("vi.type == int.type -> " + ((vi.type == int.type).toString())
+        println("vf.type == float.type -> " + ((vf.type == float.type).toString())
+        println("vs.type == string.type -> " + ((vs.type == string.type).toString())
+        [Core.Object]dyn = AnonData_Lex: { Path:../../../../test/BaseTest/TypeTest.sl Line: 118 Pos: 19  _dyn{10i,"ok",Core.TypeTest.ArrClass().{i=7i}};
+        [Core.Object]tDyn = [AnonData_Lex: { Path:../../../../test/BaseTest/TypeTest.sl Line: 118 Pos: 19  _dyn]dyn  ->  [Core.Object]dyn.type();
+        println("dynamic value .type -> " + tDyn.toString())
+        println("dynamic self type compare -> " + ((tDyn == dyn.type).toString())
+        println("dyn.c.type == ArrClass.type -> " + ((dyn.c.type == ArrClass.type).toString())
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== TypeTest (start) ==========")
+        [Core.Object]tPrim =   ->  type;
+        [Core.Int32]i2 = 20i;
+        [Core.Object]tInst = [Core.Int32]i2  ->  [Core.Object]i2.type();
+        println("primitive int.type() -> " + tPrim.toString())
+        println("instance i2.type -> " + tInst.toString())
+        Core.Boolean autocreate_51718129 = ([Core.Type]tPrim == [Core.Type]tInst)
+        if autocreate_51718129
+        {
+            println("int.type() == 20.type : true")
+
+        }
+        else
+        {
+            println("int.type() == 20.type : false")
+
+        }
+        [Core.Object]tFloat =   ->  type;
+        println("float.type() -> " + tFloat.toString())
+        Core.Boolean autocreate_62809978 = ([Core.Type]tFloat == [Core.Type]tInst)
+        if autocreate_62809978
+        {
+            println("float.type == int instance.type : true")
+
+        }
+        else
+        {
+            println("float.type == int instance.type : false (expected)")
+
+        }
+        [Core.Object]tgArrInt =   ->  type;
+        println("Array<int>.type -> " + tgArrInt.toString())
+        [Core.Object]tgArrStr =   ->  type;
+        Core.Boolean autocreate_28418891 = ([Core.Type]tgArrInt == [Core.Type]tgArrStr)
+        if autocreate_28418891
+        {
+            println("Array<int>.type == Array<string>.type : true")
+
+        }
+        else
+        {
+            println("Array<int>.type == Array<string>.type : false (expected)")
+
+        }
+        [Core.Boolean]arrIsInt = IsIntType(ArrClass.type);
+        println("IsIntType(ArrClass.type) -> " + arrIsInt.toString())
+        [Core.Object]obj3 = Core.Object().;
+        [Core.Object]tObj = [Core.Object]obj3  ->  [Core.Object]obj3.type();
+        println("new() instance .type -> " + tObj.toString())
+        primitiveAliasTypeTest()
+        arrayAliasTypeTest()
+        templateTypeTest()
+        inferredAndDynamicTypeTest()
+        println("========== TypeTest (end) ==========")
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

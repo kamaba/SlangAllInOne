@@ -1,0 +1,47 @@
+-------------------FileMeta 文件显示 开始 : Path: String.sl-----------------------
+public _partial class String extends Object
+{
+    privateString _value = null
+
+    _public _init_( Int8 aa )
+    {
+        this._value = aa.toString();
+    }
+    _public _init_( Int32 aa )
+    {
+        this._value = aa.toString();
+    }
+    _public _init_( String aa )
+    {
+        this._value = aa;
+    }
+    public string format( object[] _parmas )
+    {
+        ret SystemStringFormat(this,_parmas)
+    }
+    _public String toString( )
+    {
+        ret this
+    }
+    public static string toFormat( string _format,  object[] _parmas )
+    {
+        ret SystemStringFormat(_format,_parmas)
+    }
+    _public string front( int index )
+    {
+        ret SystemStringFront(this,index)
+    }
+    _public string end( int index )
+    {
+        ret SystemStringEnd(this,index)
+    }
+    _public string range( int start,  int end )
+    {
+        ret SystemStringRange(this,start,end)
+    }
+    _public UInt8Array toUInt8Array( )
+    {
+        ret SystemStringToUInt8Array(this)
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

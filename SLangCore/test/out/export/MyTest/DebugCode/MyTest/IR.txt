@@ -1,0 +1,214 @@
+-------------------IR 文件显示 开始 : Path: MyTest.sp-----------------------
+Class: MyTest.Project
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=50611656 idx=0 name=MyTest.Project._inputArgs type=Core.Array<T><Core.Object>
+      - #1 id=52851724 idx=1 name=MyTest.Project.dllImport type=MyTest.___DllImportGlobal___
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: MyTest.Project._main_
+    VirtualName: _main__Core.Void_0
+    Name: _main_
+    InterfaceMethod: False
+    Return:
+      - #0 id=30567910 idx=0 name=_local[MyTest.Project._main_.return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest.sp:24] [LoadConstString] index:[1] val: string[===== Mytest start =====] 
+2 2   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+3 3   [ MyTest.sp:22] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+4 4   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+5 5   [ MyTest1.sl:26] [CallStatic] index:[0] info:[CallStatic fun] val:[RuntimeCall{StaticRuntimeType=MyTest.MyTest1, StaticRuntimeTypeList=[], Method=MyTest.MyTest1.fun, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ MyTest.sp:26] [LoadConstString] index:[2] val: string[===== Mytest end =====] 
+7 7   [ :0] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ MyTest.sp:22] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.Object>] 
+9 9   [ :0] [CallStatic] index:[2] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Std.Console, StaticRuntimeTypeList=[], Method=Std.Console.println_2_Core.String_Core.Array<Core.Object>[-1], MethodRuntimeTypeList=[], ParamCount=2}] 
+10 10   [ MyTest.sp:22] [Label] index:[0] info:[FunEndLabel]
+
+  Method: MyTest.Project._before_
+    VirtualName: _before__Core.Void_0
+    Name: _before_
+    InterfaceMethod: False
+    Return:
+      - #0 id=60081642 idx=0 name=_local[MyTest.Project._before_.return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest.sp:28] [Label] index:[0] info:[FunEndLabel]
+
+  Method: MyTest.Project._after_
+    VirtualName: _after__Core.Void_0
+    Name: _after_
+    InterfaceMethod: False
+    Return:
+      - #0 id=3863873 idx=0 name=_local[MyTest.Project._after_.return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest.sp:31] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: MyTest.___DllImportGlobal___
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=5903470 idx=0 name=MyTest.___DllImportGlobal___.Std type=Std.FFI.Library
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: MyTest.___DllImportGlobal___._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=44538317 idx=0 name=_local[MyTest.___DllImportGlobal___._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=34774863 idx=0 name=_local[MyTest.___DllImportGlobal___._init_.this] type=MyTest.___DllImportGlobal___
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MyTest.sp:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

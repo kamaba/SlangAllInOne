@@ -1,0 +1,202 @@
+-------------------Meta 文件显示 开始 : Path: Int64.sl-----------------------
+public class Int64 extends Core.Num
+{
+public const [Core.Int64]MaxValue = 2147483647L;
+public const [Core.Int64]MinValue = 2147483648L;
+private [Core.Int64]_value = 0L;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return SystemConvertString(this);
+}
+
+public  override get Core.Int32 size()
+{
+return 64;
+}
+
+public  override get Core.Int32 byteLength()
+{
+return 8;
+}
+
+public  override Core.Num abs()
+{
+return SystemConvertInt64(SystemNumAbs(this));
+}
+
+public  override Core.Num floor()
+{
+return SystemNumFloor(this);
+}
+
+public  override Core.Num ceil()
+{
+return [Core.Int64]Core.Int64.ceil.this;
+}
+
+public  override Core.Int32 compareTo([Core.Num]other)
+{
+Core.Boolean autocreate_18747312 = ([Core.Num]other == null)
+if autocreate_18747312
+{
+return 1;
+}
+[Core.Int64]ov = SystemConvertInt64(other);
+Core.Boolean autocreate_34508084 = ([Core.Int64]Core.Int64.compareTo.this  ->  [Core.Int64]_value == [Core.Int64]ov)
+if autocreate_34508084
+{
+return 0;
+}
+return ([Core.Int64]Core.Int64.compareTo.this  ->  [Core.Int64]_value > [Core.Int64]ov)  ?  1  :  (0 - 1);
+}
+
+public  override Core.Boolean toBool()
+{
+return SystemConvertBool(this);
+}
+
+public  override Core.Int8 toInt8([Core.UInt8]index)
+{
+return SystemConvertInt8(this,index);
+}
+
+public  override Core.UInt8 toUInt8([Core.UInt8]index)
+{
+return SystemConvertUInt8(this,index);
+}
+
+public  override Core.Int16 toInt16()
+{
+return SystemConvertInt16(this);
+}
+
+public  override Core.UInt16 toUInt16()
+{
+return SystemConvertUInt16(this);
+}
+
+public  override Core.Int32 toInt32()
+{
+return SystemConvertInt32(this);
+}
+
+public  override Core.UInt32 toUInt32()
+{
+return SystemConvertUInt32(this);
+}
+
+public  override Core.Int64 toInt64()
+{
+return [Core.Int64]Core.Int64.toInt64.this  ->  [Core.Int64]_value;
+}
+
+public  override Core.Int64 toUInt64()
+{
+return SystemConvertUInt64(this);
+}
+
+public  override Core.Float32 toFloat32()
+{
+return SystemConvertFloat32(this);
+}
+
+public  override Core.Float64 toFloat64()
+{
+return SystemConvertFloat64(this);
+}
+
+public  Core.Void _init_([Core.Int64]_val)
+{
+[Core.Int64]Core.Int64._init_.this  ->  [Core.Int64]_value = [Core.Int64]_val;
+
+}
+
+public  Core.Int64 parse([Core.String]s)
+{
+return SystemConvertInt64(s);
+}
+
+public  Core.Int32 sign()
+{
+return ([Core.Int64]Core.Int64.sign.this  ->  [Core.Int64]_value > 0)  ?  1  :  (0 - 1);
+}
+
+public  Core.Boolean isEven()
+{
+return (([Core.Int64]Core.Int64.isEven.this  ->  [Core.Int64]_value NoSign 1) == 0);
+}
+
+public  Core.Boolean isOdd()
+{
+return (([Core.Int64]Core.Int64.isOdd.this  ->  [Core.Int64]_value NoSign 1) != 0);
+}
+
+public  Core.String toRadixString([Core.Int32]radix)
+{
+return "";
+}
+
+public  Core.String toBinaryString()
+{
+return [Core.Int64]Core.Int64.toBinaryString.this.toRadixString(2);
+}
+
+public  Core.String toHexString()
+{
+return [Core.Int64]Core.Int64.toHexString.this.toRadixString(16);
+}
+
+public  Core.String toOctalString()
+{
+return [Core.Int64]Core.Int64.toOctalString.this.toRadixString(8);
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

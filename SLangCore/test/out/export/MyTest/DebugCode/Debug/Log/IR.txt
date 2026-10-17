@@ -1,0 +1,889 @@
+-------------------IR 文件显示 开始 : Path: Debug/Log.sl-----------------------
+Class: Std.SLang.Log
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1796358123 idx=0 name=Std.SLang.Log._enableInfo type=Core.Boolean
+      - #1 id=1086569440 idx=1 name=Std.SLang.Log._enableWarning type=Core.Boolean
+      - #2 id=-1220065794 idx=2 name=Std.SLang.Log._enableError type=Core.Boolean
+      - #3 id=792353612 idx=3 name=Std.SLang.Log._logFilePath type=Core.String
+      - #4 id=-1039420072 idx=4 name=Std.SLang.Log._writeToFile type=Core.Boolean
+      - #5 id=-1643968784 idx=5 name=Std.SLang.Log._enableConsole type=Core.Boolean
+      - #6 id=748276939 idx=6 name=Std.SLang.Log._showTime type=Core.Boolean
+      - #7 id=-1950309974 idx=7 name=Std.SLang.Log._showLevel type=Core.Boolean
+      - #8 id=414114335 idx=8 name=Std.SLang.Log._timeFormat type=Core.String
+      - #9 id=1619844654 idx=9 name=Std.SLang.Log._flushIntervalSec type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setLogType_3_Core.Boolean_Core.Boolean_Core.Boolean
+    VirtualName: setLogType_Core.Void_3_Core.Boolean_Core.Boolean_Core.Boolean
+    Name: setLogType
+    InterfaceMethod: False
+    Return:
+      - #0 id=59085005 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62003000 idx=0 name=f type=Core.Boolean
+      - #1 id=21156092 idx=1 name=f2 type=Core.Boolean
+      - #2 id=56187107 idx=2 name=f3 type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setFilePath_2_Core.String_Core.Boolean
+    VirtualName: setFilePath_Core.Void_2_Core.String_Core.Boolean
+    Name: setFilePath
+    InterfaceMethod: False
+    Return:
+      - #0 id=35921916 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54861794 idx=0 name=path type=Core.String
+      - #1 id=23994101 idx=1 name=start type=Core.Boolean
+    Locals:
+      - #0 id=14620318 idx=0 name=autocreate_59721402 type=Core.Boolean
+      - #1 id=64473998 idx=1 name=autocreate_621706 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.setConsoleOutput_1_Core.Boolean
+    VirtualName: setConsoleOutput_Core.Void_1_Core.Boolean
+    Name: setConsoleOutput
+    InterfaceMethod: False
+    Return:
+      - #0 id=25339754 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26731201 idx=0 name=enabled type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setShowTime_1_Core.Boolean
+    VirtualName: setShowTime_Core.Void_1_Core.Boolean
+    Name: setShowTime
+    InterfaceMethod: False
+    Return:
+      - #0 id=39254219 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17743659 idx=0 name=show type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setShowLevel_1_Core.Boolean
+    VirtualName: setShowLevel_Core.Void_1_Core.Boolean
+    Name: setShowLevel
+    InterfaceMethod: False
+    Return:
+      - #0 id=25475209 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=27950294 idx=0 name=show type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setTimeFormat_1_Core.String
+    VirtualName: setTimeFormat_Core.Void_1_Core.String
+    Name: setTimeFormat
+    InterfaceMethod: False
+    Return:
+      - #0 id=50226059 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=49381354 idx=0 name=fmt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setFlushInterval_1_Core.Int32
+    VirtualName: setFlushInterval_Core.Void_1_Core.Int32
+    Name: setFlushInterval
+    InterfaceMethod: False
+    Return:
+      - #0 id=41779002 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40466701 idx=0 name=seconds type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.save
+    VirtualName: save_Core.Void_0
+    Name: save
+    InterfaceMethod: False
+    Return:
+      - #0 id=28655997 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.save_1_Core.String
+    VirtualName: save_Core.Void_1_Core.String
+    Name: save
+    InterfaceMethod: False
+    Return:
+      - #0 id=56577386 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39434429 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.closeFile
+    VirtualName: closeFile_Core.Void_0
+    Name: closeFile
+    InterfaceMethod: False
+    Return:
+      - #0 id=19365543 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.clearFile
+    VirtualName: clearFile_Core.Void_0
+    Name: clearFile
+    InterfaceMethod: False
+    Return:
+      - #0 id=40072161 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=25105132 idx=0 name=autocreate_5595356 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: False
+    Return:
+      - #0 id=20249826 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.setMinLevel_1_Core.Int32
+    VirtualName: setMinLevel_Core.Void_1_Core.Int32
+    Name: setMinLevel
+    InterfaceMethod: False
+    Return:
+      - #0 id=48030711 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29623216 idx=0 name=level type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log.isEnabled_1_Core.Int32
+    VirtualName: isEnabled_Core.Boolean_1_Core.Int32
+    Name: isEnabled
+    InterfaceMethod: False
+    Return:
+      - #0 id=65282360 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=50670335 idx=0 name=level type=Core.Int32
+    Locals:
+      - #0 id=53379839 idx=0 name=autocreate_50358210 type=Core.Boolean
+      - #1 id=10656503 idx=1 name=autocreate_50570707 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.print_1_Core.String
+    VirtualName: print_Core.Void_1_Core.String
+    Name: print
+    InterfaceMethod: False
+    Return:
+      - #0 id=56990719 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43154428 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=52845536 idx=0 name=autocreate_52483186 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.verbose_1_Core.String
+    VirtualName: verbose_Core.Void_1_Core.String
+    Name: verbose
+    InterfaceMethod: False
+    Return:
+      - #0 id=52630025 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3908185 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.debug_1_Core.String
+    VirtualName: debug_Core.Void_1_Core.String
+    Name: debug
+    InterfaceMethod: False
+    Return:
+      - #0 id=6017800 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54160201 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.info_1_Core.String
+    VirtualName: info_Core.Void_1_Core.String
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=17679762 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24900132 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.warning_1_Core.String
+    VirtualName: warning_Core.Void_1_Core.String
+    Name: warning
+    InterfaceMethod: False
+    Return:
+      - #0 id=22774600 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3644816 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.logError_1_Core.String
+    VirtualName: logError_Core.Void_1_Core.String
+    Name: logError
+    InterfaceMethod: False
+    Return:
+      - #0 id=32803348 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=26794676 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.fatal_1_Core.String
+    VirtualName: fatal_Core.Void_1_Core.String
+    Name: fatal
+    InterfaceMethod: False
+    Return:
+      - #0 id=39825499 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=22885177 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.exception_1_Core.String
+    VirtualName: exception_Core.Void_1_Core.String
+    Name: exception
+    InterfaceMethod: False
+    Return:
+      - #0 id=4640007 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41760071 idx=0 name=msg type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.exception_2_Core.String_Core.String
+    VirtualName: exception_Core.Void_2_Core.String_Core.String
+    Name: exception
+    InterfaceMethod: False
+    Return:
+      - #0 id=40296320 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=27122565 idx=0 name=msg type=Core.String
+      - #1 id=42776493 idx=1 name=detail type=Core.String
+    Locals:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.log_2_Core.Int32_Core.String
+    VirtualName: log_Core.Void_2_Core.Int32_Core.String
+    Name: log
+    InterfaceMethod: False
+    Return:
+      - #0 id=49444123 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=42343927 idx=0 name=level type=Core.Int32
+      - #1 id=45551026 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=7306053 idx=0 name=tag type=Core.String
+      - #1 id=65754481 idx=1 name=on type=Core.Boolean
+      - #2 id=54919424 idx=2 name=autocreate_2586631 type=Core.Boolean
+      - #3 id=24512769 idx=3 name=autocreate_23279683 type=Core.Boolean
+      - #4 id=19288335 idx=4 name=autocreate_8190559 type=Core.Boolean
+      - #5 id=39377290 idx=5 name=autocreate_6606172 type=Core.Boolean
+      - #6 id=18851291 idx=6 name=autocreate_59455556 type=Core.Boolean
+      - #7 id=35443891 idx=7 name=autocreate_65337958 type=Core.Boolean
+      - #8 id=35173667 idx=8 name=level type=Core.String
+      - #9 id=48127554 idx=9 name=msg type=Core.String
+      - #10 id=30494806 idx=10 name=enabled type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Log.assert_2_Core.Boolean_Core.String
+    VirtualName: assert_Core.Void_2_Core.Boolean_Core.String
+    Name: assert
+    InterfaceMethod: False
+    Return:
+      - #0 id=42291718 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45081147 idx=0 name=flag type=Core.Boolean
+      - #1 id=3077144 idx=1 name=msg type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Log._emit_3_Core.String_Core.String_Core.Boolean
+    VirtualName: _emit_Core.Void_3_Core.String_Core.String_Core.Boolean
+    Name: _emit
+    InterfaceMethod: False
+    Return:
+      - #0 id=27694303 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35173667 idx=0 name=level type=Core.String
+      - #1 id=48127554 idx=1 name=msg type=Core.String
+      - #2 id=30494806 idx=2 name=enabled type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Std.SLang.Logger
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=671796849 idx=0 name=Std.SLang.Logger._enableInfo type=Core.Boolean
+      - #1 id=-64703100 idx=1 name=Std.SLang.Logger._enableWarning type=Core.Boolean
+      - #2 id=195054490 idx=2 name=Std.SLang.Logger._enableError type=Core.Boolean
+      - #3 id=-1814211288 idx=3 name=Std.SLang.Logger._logFilePath type=Core.String
+      - #4 id=2129443644 idx=4 name=Std.SLang.Logger._writeToFile type=Core.Boolean
+      - #5 id=585369748 idx=5 name=Std.SLang.Logger._enableConsole type=Core.Boolean
+      - #6 id=-1870740817 idx=6 name=Std.SLang.Logger._showTime type=Core.Boolean
+      - #7 id=925347790 idx=7 name=Std.SLang.Logger._showLevel type=Core.Boolean
+      - #8 id=-1538659205 idx=8 name=Std.SLang.Logger._timeFormat type=Core.String
+      - #9 id=-596914102 idx=9 name=Std.SLang.Logger._flushIntervalSec type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Std.SLang.Logger._init__1_Core.Boolean
+    VirtualName: _init__Core.Void_1_Core.Boolean
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28646034 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47922135 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=56487722 idx=1 name=consoleOutput type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setLogType_3_Core.Boolean_Core.Boolean_Core.Boolean
+    VirtualName: setLogType_Core.Void_3_Core.Boolean_Core.Boolean_Core.Boolean
+    Name: setLogType
+    InterfaceMethod: False
+    Return:
+      - #0 id=12102778 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38627455 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=41816140 idx=1 name=f type=Core.Boolean
+      - #2 id=40800942 idx=2 name=f2 type=Core.Boolean
+      - #3 id=31664161 idx=3 name=f3 type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setFilePath_2_Core.String_Core.Boolean
+    VirtualName: setFilePath_Core.Void_2_Core.String_Core.Boolean
+    Name: setFilePath
+    InterfaceMethod: False
+    Return:
+      - #0 id=14660263 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16541999 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=64833508 idx=1 name=path type=Core.String
+      - #2 id=46630661 idx=2 name=start type=Core.Boolean
+    Locals:
+      - #0 id=17022773 idx=0 name=autocreate_51170717 type=Core.Boolean
+      - #1 id=18987236 idx=1 name=autocreate_57883273 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Logger.setConsoleOutput_1_Core.Boolean
+    VirtualName: setConsoleOutput_Core.Void_1_Core.Boolean
+    Name: setConsoleOutput
+    InterfaceMethod: False
+    Return:
+      - #0 id=21209668 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17269710 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=56669285 idx=1 name=enabled type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setShowTime_1_Core.Boolean
+    VirtualName: setShowTime_Core.Void_1_Core.Boolean
+    Name: setShowTime
+    InterfaceMethod: False
+    Return:
+      - #0 id=26809401 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40261524 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=39958021 idx=1 name=show type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setShowLevel_1_Core.Boolean
+    VirtualName: setShowLevel_Core.Void_1_Core.Boolean
+    Name: setShowLevel
+    InterfaceMethod: False
+    Return:
+      - #0 id=15374270 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24077873 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=4150710 idx=1 name=show type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setTimeFormat_1_Core.String
+    VirtualName: setTimeFormat_Core.Void_1_Core.String
+    Name: setTimeFormat
+    InterfaceMethod: False
+    Return:
+      - #0 id=663215 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37356392 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=5968939 idx=1 name=fmt type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setFlushInterval_1_Core.Int32
+    VirtualName: setFlushInterval_Core.Void_1_Core.Int32
+    Name: setFlushInterval
+    InterfaceMethod: False
+    Return:
+      - #0 id=13722030 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=53720453 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=56389407 idx=1 name=seconds type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.save
+    VirtualName: save_Core.Void_0
+    Name: save
+    InterfaceMethod: False
+    Return:
+      - #0 id=4139237 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37742617 idx=0 name=this] type=Std.SLang.Logger
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.save_1_Core.String
+    VirtualName: save_Core.Void_1_Core.String
+    Name: save
+    InterfaceMethod: False
+    Return:
+      - #0 id=66842817 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37253141 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=64714441 idx=1 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.closeFile
+    VirtualName: closeFile_Core.Void_0
+    Name: closeFile
+    InterfaceMethod: False
+    Return:
+      - #0 id=7378398 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45559064 idx=0 name=this] type=Std.SLang.Logger
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.clearFile
+    VirtualName: clearFile_Core.Void_0
+    Name: clearFile
+    InterfaceMethod: False
+    Return:
+      - #0 id=60779388 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66405588 idx=0 name=this] type=Std.SLang.Logger
+    Locals:
+      - #0 id=10143581 idx=0 name=autocreate_51187411 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Logger.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: False
+    Return:
+      - #0 id=12695920 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16323738 idx=0 name=this] type=Std.SLang.Logger
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.setMinLevel_1_Core.Int32
+    VirtualName: setMinLevel_Core.Void_1_Core.Int32
+    Name: setMinLevel
+    InterfaceMethod: False
+    Return:
+      - #0 id=21736599 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47154420 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=61411666 idx=1 name=level type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger.isEnabled_1_Core.Int32
+    VirtualName: isEnabled_Core.Boolean_1_Core.Int32
+    Name: isEnabled
+    InterfaceMethod: False
+    Return:
+      - #0 id=8289053 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=15834086 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=7492614 idx=1 name=level type=Core.Int32
+    Locals:
+      - #0 id=324668 idx=0 name=autocreate_58033516 type=Core.Boolean
+      - #1 id=2922015 idx=1 name=autocreate_52539597 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Logger.print_1_Core.String
+    VirtualName: print_Core.Void_1_Core.String
+    Name: print
+    InterfaceMethod: False
+    Return:
+      - #0 id=5180964 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45314905 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=46628683 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=17004965 idx=0 name=autocreate_3094327 type=Core.Boolean
+    Instructions:
+
+  Method: Std.SLang.Logger.verbose_1_Core.String
+    VirtualName: verbose_Core.Void_1_Core.String
+    Name: verbose
+    InterfaceMethod: False
+    Return:
+      - #0 id=48589216 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=35224963 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=34649765 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.debug_1_Core.String
+    VirtualName: debug_Core.Void_1_Core.String
+    Name: debug
+    InterfaceMethod: False
+    Return:
+      - #0 id=36549175 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=18974100 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=60507121 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.info_1_Core.String
+    VirtualName: info_Core.Void_1_Core.String
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=2129750 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7693179 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=19167756 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.warning_1_Core.String
+    VirtualName: warning_Core.Void_1_Core.String
+    Name: warning
+    InterfaceMethod: False
+    Return:
+      - #0 id=9084369 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38292076 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=14650458 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.logError_1_Core.String
+    VirtualName: logError_Core.Void_1_Core.String
+    Name: logError
+    InterfaceMethod: False
+    Return:
+      - #0 id=45836489 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64745266 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=9875225 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.fatal_1_Core.String
+    VirtualName: fatal_Core.Void_1_Core.String
+    Name: fatal
+    InterfaceMethod: False
+    Return:
+      - #0 id=61695723 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=21768161 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=18390601 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.exception_1_Core.String
+    VirtualName: exception_Core.Void_1_Core.String
+    Name: exception
+    InterfaceMethod: False
+    Return:
+      - #0 id=13243689 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=31297682 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=52084342 idx=1 name=msg type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.exception_2_Core.String_Core.String
+    VirtualName: exception_Core.Void_2_Core.String_Core.String
+    Name: exception
+    InterfaceMethod: False
+    Return:
+      - #0 id=58082174 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66105898 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=52977523 idx=1 name=msg type=Core.String
+      - #2 id=7035667 idx=2 name=detail type=Core.String
+    Locals:
+      - #0 id=43412436 idx=0 name=level type=Core.String
+      - #1 id=55167604 idx=1 name=msg type=Core.String
+      - #2 id=26746391 idx=2 name=enabled type=Core.Boolean
+      - #3 id=39390935 idx=3 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.log_2_Core.Int32_Core.String
+    VirtualName: log_Core.Void_2_Core.Int32_Core.String
+    Name: log
+    InterfaceMethod: False
+    Return:
+      - #0 id=33018140 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63321005 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=28727808 idx=1 name=level type=Core.Int32
+      - #2 id=57223682 idx=2 name=msg type=Core.String
+    Locals:
+      - #0 id=45251091 idx=0 name=tag type=Core.String
+      - #1 id=4606636 idx=1 name=on type=Core.Boolean
+      - #2 id=41459726 idx=2 name=autocreate_27848947 type=Core.Boolean
+      - #3 id=37593218 idx=3 name=autocreate_49313939 type=Core.Boolean
+      - #4 id=2794650 idx=4 name=autocreate_41172271 type=Core.Boolean
+      - #5 id=25151854 idx=5 name=autocreate_35006119 type=Core.Boolean
+      - #6 id=25040094 idx=6 name=autocreate_46619622 type=Core.Boolean
+      - #7 id=24034261 idx=7 name=autocreate_16923420 type=Core.Boolean
+      - #8 id=43412436 idx=8 name=level type=Core.String
+      - #9 id=55167604 idx=9 name=msg type=Core.String
+      - #10 id=26746391 idx=10 name=enabled type=Core.Boolean
+      - #11 id=39390935 idx=11 name=this] type=Std.SLang.Logger
+    Instructions:
+
+  Method: Std.SLang.Logger.assert_2_Core.Boolean_Core.String
+    VirtualName: assert_Core.Void_2_Core.Boolean_Core.String
+    Name: assert
+    InterfaceMethod: False
+    Return:
+      - #0 id=10190321 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60784581 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=24604028 idx=1 name=flag type=Core.Boolean
+      - #2 id=20109663 idx=2 name=msg type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Std.SLang.Logger._emit_3_Core.String_Core.String_Core.Boolean
+    VirtualName: _emit_Core.Void_3_Core.String_Core.String_Core.Boolean
+    Name: _emit
+    InterfaceMethod: False
+    Return:
+      - #0 id=46769243 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39390935 idx=0 name=this] type=Std.SLang.Logger
+      - #1 id=43412436 idx=1 name=level type=Core.String
+      - #2 id=55167604 idx=2 name=msg type=Core.String
+      - #3 id=26746391 idx=3 name=enabled type=Core.Boolean
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

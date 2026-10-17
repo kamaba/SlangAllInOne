@@ -1,0 +1,236 @@
+-------------------IR 文件显示 开始 : Path: GuidTest.sl-----------------------
+Class: ProjectTest.GuidTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.GuidTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=41234998 idx=0 name=_local[ProjectTest.GuidTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=35570664 idx=0 name=fun_local[g1] type=Core.String
+      - #1 id=51700524 idx=1 name=fun_local[g2] type=Core.String
+      - #2 id=62651540 idx=2 name=fun_local[len] type=Core.Int32
+      - #3 id=26992952 idx=3 name=fun_local[guidObj] type=Core.Guid
+      - #4 id=41609976 idx=4 name=fun_local[fixedGuid] type=Core.Guid
+      - #5 id=38945471 idx=5 name=fun_local[autocreate_14944322] type=Core.Boolean
+      - #6 id=14964925 idx=6 name=fun_local[autocreate_281173] type=Core.Boolean
+      - #7 id=466603 idx=7 name=fun_local[autocreate_2530563] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ GuidTest.sl:5] [LoadConstString] index:[2009] val: string[========== GuidTest (start) ==========] 
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ GuidTest.sl:8] [LoadConstString] index:[2010] val: string[--- Guid.newGuid() ---] 
+4 4   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+5 5   [ :0] [CallStatic] index:[0] info:[CallStatic newGuid] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.newGuid, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ GuidTest.sl:3] [StoreLocal] index:[0] info:[LocalStatement]
+7 7   [ GuidTest.sl:10] [LoadConstString] index:[2011] val: string[newGuid() = ] 
+8 8   [ GuidTest.sl:10] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ GuidTest.sl:10] [Add] index:[0]
+10 10   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+11 11   [ :0] [CallStatic] index:[0] info:[CallStatic newGuid] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.newGuid, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ GuidTest.sl:3] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ GuidTest.sl:13] [LoadConstString] index:[2011] val: string[newGuid() = ] 
+14 14   [ GuidTest.sl:13] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ GuidTest.sl:13] [Add] index:[0]
+16 16   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+17 17   [ GuidTest.sl:15] [Nop] index:[0] info:[if/elif/else branch start]
+18 18   [ GuidTest.sl:15] [LoadLocal] index:[0] info:[LocalStatement]
+19 19   [ GuidTest.sl:15] [LoadLocal] index:[1] info:[LocalStatement]
+20 20   [ GuidTest.sl:15] [Cne] index:[0]
+21 21   [ GuidTest.sl:3] [StoreLocal] index:[5] info:[if/elif store condition var]
+22 22   [ GuidTest.sl:3] [LoadLocal] index:[5] info:[if/elif load condition var]
+23 23   [ GuidTest.sl:15] [BrFalse] index:[28] info:[if/elif BrFalse]
+24 24   [ :0] [Nop] index:[0]
+25 25   [ GuidTest.sl:17] [LoadConstString] index:[2012] val: string[Two GUIDs are different: OK] 
+26 26   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+27 27   [ GuidTest.sl:18] [Br] index:[33] info:[if/elif/else block end Br]
+28 28   [ GuidTest.sl:19] [Label] index:[1] info:[if/elif/else branch start]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ GuidTest.sl:21] [LoadConstString] index:[2013] val: string[ERROR: Two GUIDs are the same!] 
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ GuidTest.sl:22] [Br] index:[33] info:[if/elif/else block end Br]
+33 33   [ GuidTest.sl:22] [Label] index:[2] info:[if end]
+34 34   [ GuidTest.sl:25] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemStringLength] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+36 36   [ GuidTest.sl:3] [StoreLocal] index:[2] info:[LocalStatement]
+37 37   [ GuidTest.sl:26] [LoadConstString] index:[2014] val: string[GUID length = ] 
+38 38   [ GuidTest.sl:26] [LoadLocal] index:[2] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemConvertString] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ GuidTest.sl:26] [Add] index:[0]
+41 41   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+42 42   [ GuidTest.sl:27] [Nop] index:[0] info:[if/elif/else branch start]
+43 43   [ GuidTest.sl:27] [LoadLocal] index:[2] info:[LocalStatement]
+44 44   [ GuidTest.sl:27] [LoadConstInt32] index:[0] val: int32[36] 
+45 45   [ GuidTest.sl:27] [Ceq] index:[0]
+46 46   [ GuidTest.sl:3] [StoreLocal] index:[6] info:[if/elif store condition var]
+47 47   [ GuidTest.sl:3] [LoadLocal] index:[6] info:[if/elif load condition var]
+48 48   [ GuidTest.sl:27] [BrFalse] index:[53] info:[if/elif BrFalse]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ GuidTest.sl:29] [LoadConstString] index:[2015] val: string[GUID length is 36: OK] 
+51 51   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+52 52   [ GuidTest.sl:30] [Br] index:[58] info:[if/elif/else block end Br]
+53 53   [ GuidTest.sl:31] [Label] index:[3] info:[if/elif/else branch start]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ GuidTest.sl:33] [LoadConstString] index:[2016] val: string[WARNING: GUID length is not 36] 
+56 56   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+57 57   [ GuidTest.sl:34] [Br] index:[58] info:[if/elif/else block end Br]
+58 58   [ GuidTest.sl:34] [Label] index:[4] info:[if end]
+59 59   [ GuidTest.sl:37] [LoadConstString] index:[2017] val: string[--- Guid() constructor ---] 
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ GuidTest.sl:3] [NewObject] index:[0] info:[IRNew] val: int32[1966075773] 
+62 62   [ :0] [Dup] index:[0]
+63 63   [ GuidTest.sl:38] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+64 64   [ GuidTest.sl:3] [StoreLocal] index:[3] info:[LocalStatement]
+65 65   [ GuidTest.sl:39] [LoadConstString] index:[2018] val: string[Guid().value = ] 
+66 66   [ GuidTest.sl:39] [LoadLocal] index:[3] info:[LocalStatement]
+67 67   [ :0] [CallVirt] index:[8] info:[CallVirt value] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.value, MethodRuntimeTypeList=[], ParamCount=0}] 
+68 68   [ GuidTest.sl:39] [Add] index:[0]
+69 69   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+70 70   [ GuidTest.sl:40] [LoadConstString] index:[2019] val: string[Guid().toString() = ] 
+71 71   [ GuidTest.sl:40] [LoadLocal] index:[3] info:[LocalStatement]
+72 72   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+73 73   [ GuidTest.sl:40] [Add] index:[0]
+74 74   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+75 75   [ GuidTest.sl:43] [LoadConstString] index:[2020] val: string[--- Guid(string) constructor ---] 
+76 76   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+77 77   [ GuidTest.sl:3] [NewObject] index:[0] info:[IRNew] val: int32[1966075773] 
+78 78   [ :0] [Dup] index:[0]
+79 79   [ GuidTest.sl:44] [LoadConstString] index:[2021] val: string[12345678-1234-1234-1234-123456789abc] 
+80 80   [ GuidTest.sl:44] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid._init__1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+81 81   [ GuidTest.sl:3] [StoreLocal] index:[4] info:[LocalStatement]
+82 82   [ GuidTest.sl:45] [LoadConstString] index:[2022] val: string[Guid(fixed).value = ] 
+83 83   [ GuidTest.sl:45] [LoadLocal] index:[4] info:[LocalStatement]
+84 84   [ :0] [CallVirt] index:[8] info:[CallVirt value] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.value, MethodRuntimeTypeList=[], ParamCount=0}] 
+85 85   [ GuidTest.sl:45] [Add] index:[0]
+86 86   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+87 87   [ GuidTest.sl:46] [LoadConstString] index:[2023] val: string[Guid(fixed).toString() = ] 
+88 88   [ GuidTest.sl:46] [LoadLocal] index:[4] info:[LocalStatement]
+89 89   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+90 90   [ GuidTest.sl:46] [Add] index:[0]
+91 91   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+92 92   [ GuidTest.sl:48] [Nop] index:[0] info:[if/elif/else branch start]
+93 93   [ GuidTest.sl:48] [LoadLocal] index:[4] info:[LocalStatement]
+94 94   [ :0] [CallVirt] index:[8] info:[CallVirt value] val:[RuntimeCall{StaticRuntimeType=Core.Guid, StaticRuntimeTypeList=[], Method=Core.Guid.value, MethodRuntimeTypeList=[], ParamCount=0}] 
+95 95   [ GuidTest.sl:48] [LoadConstString] index:[2021] val: string[12345678-1234-1234-1234-123456789abc] 
+96 96   [ GuidTest.sl:48] [Ceq] index:[0]
+97 97   [ GuidTest.sl:3] [StoreLocal] index:[7] info:[if/elif store condition var]
+98 98   [ GuidTest.sl:3] [LoadLocal] index:[7] info:[if/elif load condition var]
+99 99   [ GuidTest.sl:48] [BrFalse] index:[104] info:[if/elif BrFalse]
+100 100   [ :0] [Nop] index:[0]
+101 101   [ GuidTest.sl:50] [LoadConstString] index:[2024] val: string[Fixed GUID value matches: OK] 
+102 102   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+103 103   [ GuidTest.sl:51] [Br] index:[109] info:[if/elif/else block end Br]
+104 104   [ GuidTest.sl:52] [Label] index:[5] info:[if/elif/else branch start]
+105 105   [ :0] [Nop] index:[0]
+106 106   [ GuidTest.sl:54] [LoadConstString] index:[2025] val: string[ERROR: Fixed GUID value mismatch!] 
+107 107   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+108 108   [ GuidTest.sl:55] [Br] index:[109] info:[if/elif/else block end Br]
+109 109   [ GuidTest.sl:55] [Label] index:[6] info:[if end]
+110 110   [ GuidTest.sl:57] [LoadConstString] index:[2026] val: string[========== GuidTest (end) ==========] 
+111 111   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+112 112   [ GuidTest.sl:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

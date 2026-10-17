@@ -1,0 +1,114 @@
+-------------------FileMeta 文件显示 开始 : Path: Range.sl-----------------------
+public _partial class Range<T>  interface IIterable<T>, IIterator<T>
+{
+    publicT _start = null
+    publicT _end = null
+    publicT _step = null
+    publicT _iteratorValue = 0
+    publicT _current = null
+    publicArray<T> _toArrayCache = null
+
+    _public _init_( T _end )
+    {
+        this._init_(0,_end,1);
+    }
+    _public _init_( T _start,  T _end )
+    {
+        this._init_(_start,_end,1);
+    }
+    _public _init_( T _start,  T _end,  T _step )
+    {
+        this._start = _start;
+        this._end = _end;
+        this._step = _step;
+        this._toArrayCache = null;
+        this.reset();
+    }
+    _public override void reset( )
+    {
+        this._iteratorValue = 0;
+        this._current = null;
+    }
+    _public override bool moveNext( )
+    {
+        if this._step == 0
+        {
+            this._current = null;
+            ret false
+        }
+        T nextValue = this._start + this._iteratorValue;
+        bool hasNext_var = false;
+        if this._step > 0
+        {
+            hasNext_var = nextValue < this._end;
+        }
+        else
+        {
+            hasNext_var = nextValue > this._end;
+        }
+        if hasNext_var
+        {
+            this._current = nextValue;
+            this._iteratorValue += this._step
+        }
+        else
+        {
+            this._current = null;
+        }
+        ret hasNext_var
+    }
+    _public bool isContain( T t )
+    {
+        if t > this._start
+        {
+            if t < this._end
+            {
+                ret true
+            }
+        }
+        else
+        {
+            if t > this._end
+            {
+                ret true
+            }
+            ret false
+        }
+    }
+    _public override T current( )
+    {
+        ret this._current
+    }
+    _public override IIterator<T> iterator( )
+    {
+        ret this
+    }
+    _public Array<T> toArray( )
+    {
+        if this._toArrayCache != null
+        {
+            ret this._toArrayCache
+        }
+        this.reset();
+        int cnt = 0;
+        while this.moveNext()
+        {
+            cnt ++ 
+        }
+        this.reset();
+        Array<T> arr = Array<T(cnt)>;
+        int idx = 0;
+        while this.moveNext()
+        {
+            arr.setValue(idx,this.current());
+            idx ++ 
+        }
+        this._toArrayCache = arr;
+        ret arr
+    }
+    _public override string toString( )
+    {
+        ret "Range(" + this._start + "," + this._end + "," + this._step + ")"
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

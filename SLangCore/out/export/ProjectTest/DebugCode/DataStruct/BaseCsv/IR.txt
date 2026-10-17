@@ -1,0 +1,960 @@
+-------------------IR 文件显示 开始 : Path: DataStruct/BaseCsv.sl-----------------------
+Class: Core.BaseCsv
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1295791222 idx=0 name=Core.BaseCsv._table type=Core.Table
+      - #1 id=1641761262 idx=1 name=Core.BaseCsv._delimiter type=Core.String
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.parse_1_Core.String
+    VirtualName: parse_Core.BaseCsv_1_Core.String
+    Name: parse
+    InterfaceMethod: False
+    Return:
+      - #0 id=51495331 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=60804799 idx=0 name=csvText type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.parseNoHeader_1_Core.String
+    VirtualName: parseNoHeader_Core.BaseCsv_1_Core.String
+    Name: parseNoHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=26241711 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=34848813 idx=0 name=csvText type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.parseDelimited_3_Core.String_Core.Boolean_Core.String
+    VirtualName: parseDelimited_Core.BaseCsv_3_Core.String_Core.Boolean_Core.String
+    Name: parseDelimited
+    InterfaceMethod: False
+    Return:
+      - #0 id=4181593 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=37634337 idx=0 name=csvText type=Core.String
+      - #1 id=3164713 idx=1 name=hasHeader type=Core.Boolean
+      - #2 id=28482418 idx=2 name=delimiter type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27044054 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25374516 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=43084804 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=42069902 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=1874221 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=208246 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=16867989 idx=1 name=csvText type=Core.String
+    Locals:
+      - #0 id=17594176 idx=0 name=autocreate_8268111 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseCsv._init__3_Core.String_Core.Boolean_Core.String
+    VirtualName: _init__Core.Void_3_Core.String_Core.Boolean_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=15156098 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=46423253 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=2187155 idx=1 name=csvText type=Core.String
+      - #2 id=19684403 idx=2 name=hasHeader type=Core.Boolean
+      - #3 id=42941906 idx=3 name=delimiter type=Core.String
+    Locals:
+      - #0 id=50932842 idx=0 name=autocreate_7304143 type=Core.Boolean
+      - #1 id=55742394 idx=1 name=autocreate_65737292 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseCsv._init__1_Core.Table
+    VirtualName: _init__Core.Void_1_Core.Table
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=17754262 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9429236 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=25570637 idx=1 name=table type=Core.Table
+    Locals:
+      - #0 id=28809145 idx=0 name=autocreate_54764719 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseCsv.table
+    VirtualName: table_Core.Table_0
+    Name: table
+    InterfaceMethod: False
+    Return:
+      - #0 id=45424599 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=27416799 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.rowCount
+    VirtualName: rowCount_Core.Int32_0
+    Name: rowCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=29863346 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55513932 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.columnCount
+    VirtualName: columnCount_Core.Int32_0
+    Name: columnCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=27107960 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=3011995 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=31696882 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48261118 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=21578036 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=17310640 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.hasHeader
+    VirtualName: hasHeader_Core.Boolean_0
+    Name: hasHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=26914650 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=2990516 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.hasHeader_1_Core.Boolean
+    VirtualName: hasHeader_Core.Void_1_Core.Boolean
+    Name: hasHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=24991814 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32603030 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=23599734 idx=1 name=value type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.delimiter
+    VirtualName: delimiter_Core.String_0
+    Name: delimiter
+    InterfaceMethod: False
+    Return:
+      - #0 id=32530274 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11071015 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Array<Core.Object>[-1]_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=25141347 idx=0 name=return] type=Core.Array<T><Core.Object>
+    Arguments:
+      - #0 id=17706563 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=24945537 idx=1 name=row type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.addColumn_1_Core.String
+    VirtualName: addColumn_Core.Void_1_Core.String
+    Name: addColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=65903650 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7322627 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=56261938 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.insertColumn_2_Core.Int32_Core.String
+    VirtualName: insertColumn_Core.Void_2_Core.Int32_Core.String
+    Name: insertColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=60923125 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36595397 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=11437218 idx=1 name=colIndex type=Core.Int32
+      - #2 id=35826101 idx=2 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.removeColumn_1_Core.String
+    VirtualName: removeColumn_Core.Boolean_1_Core.String
+    Name: removeColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=16233049 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=53999455 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=11879716 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.removeColumnAt_1_Core.Int32
+    VirtualName: removeColumnAt_Core.Boolean_1_Core.Int32
+    Name: removeColumnAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=3269999 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=22732954 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=29429992 idx=1 name=colIndex type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.renameColumn_2_Core.String_Core.String
+    VirtualName: renameColumn_Core.Boolean_2_Core.String_Core.String
+    Name: renameColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=46737271 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=35019191 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=17982255 idx=1 name=oldName type=Core.String
+      - #2 id=27622569 idx=2 name=newName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.containsColumn_1_Core.String
+    VirtualName: containsColumn_Core.Boolean_1_Core.String
+    Name: containsColumn
+    InterfaceMethod: False
+    Return:
+      - #0 id=4194103 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=22835632 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=37746932 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getColumnIndex_1_Core.String
+    VirtualName: getColumnIndex_Core.Int32_1_Core.String
+    Name: getColumnIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=2879553 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=37602652 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=25915985 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getColumnName_1_Core.Int32
+    VirtualName: getColumnName_Core.String_1_Core.Int32
+    Name: getColumnName
+    InterfaceMethod: False
+    Return:
+      - #0 id=35162510 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=18820026 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=48027136 idx=1 name=colIndex type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.columnNames
+    VirtualName: columnNames_Core.Array<Core.String>[-1]_0
+    Name: columnNames
+    InterfaceMethod: False
+    Return:
+      - #0 id=48064092 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=64992778 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getColumnValues_1_Core.String
+    VirtualName: getColumnValues_Core.List<Core.Object>_1_Core.String
+    Name: getColumnValues
+    InterfaceMethod: False
+    Return:
+      - #0 id=7896460 idx=0 name=return] type=Core.List<T><Core.Object>
+    Arguments:
+      - #0 id=877384 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=3959276 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.newRow
+    VirtualName: newRow_Core.Int32_0
+    Name: newRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=631679 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=52265969 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.addRow_1_Core.Array<Core.Object>[-1]
+    VirtualName: addRow_Core.Int32_1_Core.Array<Core.Object>[-1]
+    Name: addRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=57841469 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=51166072 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=50811173 idx=1 name=row type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.insertRow_2_Core.Int32_Core.Array<Core.Object>[-1]
+    VirtualName: insertRow_Core.Int32_2_Core.Int32_Core.Array<Core.Object>[-1]
+    Name: insertRow
+    InterfaceMethod: False
+    Return:
+      - #0 id=64361578 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=22064367 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=42383293 idx=1 name=row type=Core.Int32
+      - #2 id=45905321 idx=2 name=rowData type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.removeRowAt_1_Core.Int32
+    VirtualName: removeRowAt_Core.Boolean_1_Core.Int32
+    Name: removeRowAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=44765319 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27343545 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=234690 idx=1 name=row type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.removeRowsWhere_2_Core.String_Core.Object
+    VirtualName: removeRowsWhere_Core.Int32_2_Core.String_Core.Object
+    Name: removeRowsWhere
+    InterfaceMethod: False
+    Return:
+      - #0 id=36871363 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=19009899 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=63406812 idx=1 name=columnName type=Core.String
+      - #2 id=33790399 idx=2 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=4248376 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=52667824 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.clearAll
+    VirtualName: clearAll_Core.Void_0
+    Name: clearAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=8574195 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38235390 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getValue_2_Core.Int32_Core.Int32
+    VirtualName: getValue_Core.Object_2_Core.Int32_Core.Int32
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=23421207 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=10058896 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=9464271 idx=1 name=row type=Core.Int32
+      - #2 id=18069578 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getValueByName_2_Core.Int32_Core.String
+    VirtualName: getValueByName_Core.Object_2_Core.Int32_Core.String
+    Name: getValueByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=19385714 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=54349751 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=40253700 idx=1 name=row type=Core.Int32
+      - #2 id=26738982 idx=2 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.setValue_3_Core.Int32_Core.Int32_Core.Object
+    VirtualName: setValue_Core.Void_3_Core.Int32_Core.Int32_Core.Object
+    Name: setValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=31147615 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=18373927 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=11893084 idx=1 name=row type=Core.Int32
+      - #2 id=39928893 idx=2 name=col type=Core.Int32
+      - #3 id=23815725 idx=3 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.setValueByName_3_Core.Int32_Core.String_Core.Object
+    VirtualName: setValueByName_Core.Void_3_Core.Int32_Core.String_Core.Object
+    Name: setValueByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=50025604 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13014940 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=47577252 idx=1 name=row type=Core.Int32
+      - #2 id=25542086 idx=2 name=columnName type=Core.String
+      - #3 id=28552188 idx=3 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getInt_2_Core.Int32_Core.Int32
+    VirtualName: getInt_Core.Int32_2_Core.Int32_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=31025868 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55643101 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=10797361 idx=1 name=row type=Core.Int32
+      - #2 id=30067389 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getInt_3_Core.Int32_Core.Int32_Core.Int32
+    VirtualName: getInt_Core.Int32_3_Core.Int32_Core.Int32_Core.Int32
+    Name: getInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=41637294 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=19539446 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=39191328 idx=1 name=row type=Core.Int32
+      - #2 id=17177639 idx=2 name=col type=Core.Int32
+      - #3 id=20381027 idx=3 name=defaultValue type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getIntByName_3_Core.Int32_Core.String_Core.Int32
+    VirtualName: getIntByName_Core.Int32_3_Core.Int32_Core.String_Core.Int32
+    Name: getIntByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=26709911 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=40250470 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=39062609 idx=1 name=row type=Core.Int32
+      - #2 id=16019165 idx=2 name=columnName type=Core.String
+      - #3 id=9954765 idx=3 name=defaultValue type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getFloat_2_Core.Int32_Core.Int32
+    VirtualName: getFloat_Core.Float64_2_Core.Int32_Core.Int32
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=9266704 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=1029633 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=16291478 idx=1 name=row type=Core.Int32
+      - #2 id=12405580 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getFloat_3_Core.Int32_Core.Int32_Core.Float64
+    VirtualName: getFloat_Core.Float64_3_Core.Int32_Core.Int32_Core.Float64
+    Name: getFloat
+    InterfaceMethod: False
+    Return:
+      - #0 id=51080706 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=65327957 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=57073170 idx=1 name=row type=Core.Int32
+      - #2 id=43896488 idx=2 name=col type=Core.Int32
+      - #3 id=59524076 idx=3 name=defaultValue type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getFloatByName_3_Core.Int32_Core.String_Core.Float64
+    VirtualName: getFloatByName_Core.Float64_3_Core.Int32_Core.String_Core.Float64
+    Name: getFloatByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=40725534 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=56720842 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=30985493 idx=1 name=row type=Core.Int32
+      - #2 id=10433982 idx=2 name=columnName type=Core.String
+      - #3 id=26796980 idx=3 name=defaultValue type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getBool_2_Core.Int32_Core.Int32
+    VirtualName: getBool_Core.Boolean_2_Core.Int32_Core.Int32
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=6319248 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23071760 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=56873232 idx=1 name=row type=Core.Int32
+      - #2 id=42097041 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getBool_3_Core.Int32_Core.Int32_Core.Boolean
+    VirtualName: getBool_Core.Boolean_3_Core.Int32_Core.Int32_Core.Boolean
+    Name: getBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=19992349 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=54417155 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=45713421 idx=1 name=row type=Core.Int32
+      - #2 id=8767611 idx=2 name=col type=Core.Int32
+      - #3 id=11799640 idx=3 name=defaultValue type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getBoolByName_3_Core.Int32_Core.String_Core.Boolean
+    VirtualName: getBoolByName_Core.Boolean_3_Core.Int32_Core.String_Core.Boolean
+    Name: getBoolByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=12003436 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=16246796 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=40922063 idx=1 name=row type=Core.Int32
+      - #2 id=32754255 idx=2 name=columnName type=Core.String
+      - #3 id=26352844 idx=3 name=defaultValue type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getStr_2_Core.Int32_Core.Int32
+    VirtualName: getStr_Core.String_2_Core.Int32_Core.Int32
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=18088435 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=54205609 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=28578190 idx=1 name=row type=Core.Int32
+      - #2 id=55877124 idx=2 name=col type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getStr_3_Core.Int32_Core.Int32_Core.String
+    VirtualName: getStr_Core.String_3_Core.Int32_Core.Int32_Core.String
+    Name: getStr
+    InterfaceMethod: False
+    Return:
+      - #0 id=66451858 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=29753161 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=61195818 idx=1 name=row type=Core.Int32
+      - #2 id=13891457 idx=2 name=col type=Core.Int32
+      - #3 id=57914257 idx=3 name=defaultValue type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.getStrByName_3_Core.Int32_Core.String_Core.String
+    VirtualName: getStrByName_Core.String_3_Core.Int32_Core.String_Core.String
+    Name: getStrByName
+    InterfaceMethod: False
+    Return:
+      - #0 id=8017921 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=60543203 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=5052426 idx=1 name=row type=Core.Int32
+      - #2 id=45471841 idx=2 name=columnName type=Core.String
+      - #3 id=6593390 idx=3 name=defaultValue type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.clone
+    VirtualName: clone_Core.BaseCsv_0
+    Name: clone
+    InterfaceMethod: False
+    Return:
+      - #0 id=41852331 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=64302582 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.cloneStructure
+    VirtualName: cloneStructure_Core.BaseCsv_0
+    Name: cloneStructure
+    InterfaceMethod: False
+    Return:
+      - #0 id=42925716 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=34595685 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.cloneRange_4_Core.Int32_Core.Int32_Core.Int32_Core.Int32
+    VirtualName: cloneRange_Core.BaseCsv_4_Core.Int32_Core.Int32_Core.Int32_Core.Int32
+    Name: cloneRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=20116683 idx=0 name=return] type=Core.BaseCsv
+    Arguments:
+      - #0 id=54430970 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=46832420 idx=1 name=rowStart type=Core.Int32
+      - #2 id=18838598 idx=2 name=rowCount type=Core.Int32
+      - #3 id=35329658 idx=3 name=colStart type=Core.Int32
+      - #4 id=49531474 idx=4 name=colCount type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.merge_1_Core.Table
+    VirtualName: merge_Core.Boolean_1_Core.Table
+    Name: merge
+    InterfaceMethod: False
+    Return:
+      - #0 id=3876045 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=52626454 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=34884411 idx=1 name=other type=Core.Table
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.mergeCsv_1_Core.BaseCsv
+    VirtualName: mergeCsv_Core.Boolean_1_Core.BaseCsv
+    Name: mergeCsv
+    InterfaceMethod: False
+    Return:
+      - #0 id=63585586 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=7065065 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=35399367 idx=1 name=other type=Core.BaseCsv
+    Locals:
+      - #0 id=50158847 idx=0 name=autocreate_23120425 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseCsv.join_2_Core.Table_Core.String
+    VirtualName: join_Core.Table_2_Core.Table_Core.String
+    Name: join
+    InterfaceMethod: False
+    Return:
+      - #0 id=7958508 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=45623521 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=4517709 idx=1 name=other type=Core.Table
+      - #2 id=40659381 idx=2 name=keyColumn type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.joinCsv_2_Core.BaseCsv_Core.String
+    VirtualName: joinCsv_Core.Table_2_Core.BaseCsv_Core.String
+    Name: joinCsv
+    InterfaceMethod: False
+    Return:
+      - #0 id=45679737 idx=0 name=return] type=Core.Table
+    Arguments:
+      - #0 id=5075526 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=8464456 idx=1 name=other type=Core.BaseCsv
+      - #2 id=9071242 idx=2 name=keyColumn type=Core.String
+    Locals:
+      - #0 id=14532322 idx=0 name=autocreate_6757235 type=Core.Boolean
+    Instructions:
+
+  Method: Core.BaseCsv.findRows_2_Core.String_Core.Object
+    VirtualName: findRows_Core.Array<Core.Int32>[-1]_2_Core.String_Core.Object
+    Name: findRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=27806444 idx=0 name=return] type=Core.Array<T><Core.Int32>
+    Arguments:
+      - #0 id=10546145 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=48931406 idx=1 name=columnName type=Core.String
+      - #2 id=37729472 idx=2 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.sortBy_1_Core.String
+    VirtualName: sortBy_Core.Void_1_Core.String
+    Name: sortBy
+    InterfaceMethod: False
+    Return:
+      - #0 id=57260009 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=36188385 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=45578038 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.sortBy_2_Core.String_Core.Boolean
+    VirtualName: sortBy_Core.Void_2_Core.String_Core.Boolean
+    Name: sortBy
+    InterfaceMethod: False
+    Return:
+      - #0 id=833575 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7549159 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=7502182 idx=1 name=columnName type=Core.String
+      - #2 id=410782 idx=2 name=ascending type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.sortByAt_2_Core.Int32_Core.Boolean
+    VirtualName: sortByAt_Core.Void_2_Core.Int32_Core.Boolean
+    Name: sortByAt
+    InterfaceMethod: False
+    Return:
+      - #0 id=33273344 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3697038 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=31024646 idx=1 name=colIndex type=Core.Int32
+      - #2 id=10786359 idx=2 name=ascending type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.distinctRows
+    VirtualName: distinctRows_Core.Int32_0
+    Name: distinctRows
+    InterfaceMethod: False
+    Return:
+      - #0 id=1279915 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=29968374 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.min_1_Core.String
+    VirtualName: min_Core.Float64_1_Core.String
+    Name: min
+    InterfaceMethod: False
+    Return:
+      - #0 id=60643168 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=36564291 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=8917608 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.max_1_Core.String
+    VirtualName: max_Core.Float64_1_Core.String
+    Name: max
+    InterfaceMethod: False
+    Return:
+      - #0 id=58485517 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=51237633 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=56607607 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.sum_1_Core.String
+    VirtualName: sum_Core.Float64_1_Core.String
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=62103099 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=21813425 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=22056983 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.avg_1_Core.String
+    VirtualName: avg_Core.Float64_1_Core.String
+    Name: avg
+    InterfaceMethod: False
+    Return:
+      - #0 id=40522795 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=41785235 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=29160842 idx=1 name=columnName type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.toCsv
+    VirtualName: toCsv_Core.String_0
+    Name: toCsv
+    InterfaceMethod: False
+    Return:
+      - #0 id=51853342 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=13218022 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.toCsvDelimited
+    VirtualName: toCsvDelimited_Core.String_0
+    Name: toCsvDelimited
+    InterfaceMethod: False
+    Return:
+      - #0 id=18796012 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=39371148 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.toCsvDelimited_1_Core.String
+    VirtualName: toCsvDelimited_Core.String_1_Core.String
+    Name: toCsvDelimited
+    InterfaceMethod: False
+    Return:
+      - #0 id=12085017 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=46082022 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=41656292 idx=1 name=delimiter type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.toCsvNoHeader
+    VirtualName: toCsvNoHeader_Core.String_0
+    Name: toCsvNoHeader
+    InterfaceMethod: False
+    Return:
+      - #0 id=34230728 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=18716495 idx=0 name=this] type=Core.BaseCsv
+    Locals: []
+    Instructions:
+
+  Method: Core.BaseCsv.preview_1_Core.Int32
+    VirtualName: preview_Core.String_1_Core.Int32
+    Name: preview
+    InterfaceMethod: False
+    Return:
+      - #0 id=56812682 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=21225601 idx=0 name=this] type=Core.BaseCsv
+      - #1 id=41552090 idx=1 name=maxRows type=Core.Int32
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

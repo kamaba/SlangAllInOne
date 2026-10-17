@@ -1,0 +1,368 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/AssignStatement.sl-----------------------
+public class AssignStatement extends Core.Object
+{
+    public class AssignBox extends Core.Object
+    {
+        public [Core.Int32]value = 0i;
+        public [Core.String]name = "seed";
+        public [Core.Int32]flag = 3i;
+        public [Core.Array<Core.Int32>Core.Int32
+]numbers = Core.Array<Core.Int32>().{1i, 2i, 3i};
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+        public  override Core.String toString()
+        {
+            return (((((((((((("AssignBox(value=" + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i;  ->  [Core.Int32]value.toString()) + ", name=") + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Core.String]name = ConstExpressNode: [String] "seed";) + ", flag=") + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i;  ->  [Core.Int32]flag.toString()) + ", n0=") + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_0]  ->  [Core.Int32]Visit_0.toString()) + ", n1=") + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_1]  ->  [Core.Int32]Visit_1.toString()) + ", n2=") + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.toString.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_2]  ->  [Core.Int32]Visit_2.toString()) + ")");
+        }
+
+        public  get Core.Object total()
+        {
+            return ((([Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.total.this  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.total.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_0]) + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.total.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_1]) + [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.total.this  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_2]);
+        }
+
+        public  set Core.Void score([Core.Object]obj)
+        {
+            [Core.AssignStatement.AssignBox]Core.AssignStatement.AssignBox.score.this  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = [Core.Object]obj as Core.Int32 ;
+
+        }
+
+    }
+    public class Level<T extends Core.Object> extends Core.Object
+    {
+        public [Core.Object]t = Core.Object().;
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+        public  override Core.String toString()
+        {
+            return (("Level<T>(" + [Core.AssignStatement.Level<T><T>]Core.AssignStatement.Level<T>.toString.this  ->  public [T]t = NewObjectExpressNode: Core.Object().;  ->  [Core.Object]t.toString()) + ")");
+        }
+
+        public  Core.Void _init_([Core.Object]obj)
+        {
+            [Core.AssignStatement.Level<T><T>]Core.AssignStatement.Level<T>._init_.this  ->  public [T]t = NewObjectExpressNode: Core.Object().; = [Core.Object]obj as Core.Object ;
+
+        }
+
+    }
+    public  static Core.Object scalarAssignTest()
+    {
+        println("----- scalarAssignTest -----")
+        [Core.Int32]expr = 0i;
+        [Core.Int32]expr = (Error MetaVisitCall Default Parse!  ->  toInt32() + 104i);
+        println("expr = (20 / 3).toInt32() + 104 -> " + expr.toString())
+        [Core.Int32]addValue = 10i;
+        [Core.Int32]addValue = 5i;
+        println("addValue += 5 -> " + addValue.toString())
+        [Core.Int32]minusValue = 50i;
+        [Core.Int32]minusValue = 12i;
+        println("minusValue -= 12 -> " + minusValue.toString())
+        [Core.Int32]multiplyValue = 6i;
+        [Core.Int32]multiplyValue = 7i;
+        println("multiplyValue *= 7 -> " + multiplyValue.toString())
+        [Core.Int32]divideValue = 47i;
+        [Core.Int32]divideValue = 5i;
+        println("divideValue /= 5 -> " + divideValue.toString())
+        [Core.Int32]moduloValue = 23i;
+        [Core.Int32]moduloValue = 5i;
+        println("moduloValue %= 5 -> " + moduloValue.toString())
+        [Core.Int32]shiftLeftValue = 3i;
+        [Core.Int32]shiftLeftValue = 2i;
+        println("shiftLeftValue <<= 2 -> " + shiftLeftValue.toString())
+        [Core.Int32]shiftRightValue = -16i;
+        [Core.Int32]shiftRightValue = 2i;
+        println("shiftRightValue >>= 2 -> " + shiftRightValue.toString())
+        [Core.Int32]andValue = 12;
+        [Core.Int32]andValue = 10;
+        println("andValue &= 0b1010 -> " + andValue.toString())
+        [Core.Int32]xorValue = 10;
+        [Core.Int32]xorValue = 12;
+        println("xorValue ^= 0b1100 -> " + xorValue.toString())
+        [Core.Int32]orValue = 10;
+        [Core.Int32]orValue = 4;
+        println("orValue |= 0b0100 -> " + orValue.toString())
+        [Core.Int32]stepValue = 10i;
+        [Core.Int32]stepValue = 1;
+        [Core.Int32]stepValue = 1;
+        println("stepValue ++ / -- -> " + stepValue.toString())
+        [Core.Num]mixed = 10f;
+        [Core.Num]mixed = 2.5f;
+        [Core.Num]mixed = 1.5f;
+        [Core.Num]mixed = 2i;
+        [Core.Num]mixed = 4i;
+        println("Num mixed after += -= *= /= -> " + mixed.toString())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object memberAssignTest()
+    {
+        println("----- memberAssignTest -----")
+        [Core.AssignStatement.AssignBox]box = Core.AssignStatement.AssignBox().{value=10i, name="member", flag=5};
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 12i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 20i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 5i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 2i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 3i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 7i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 1;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 1;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i; = 6;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i; = 3;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i; = 8;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i; = 1i;
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i; = 2i;
+        [Core.AssignStatement.AssignBox]box  ->  [Core.AssignStatement.AssignBox]box.score(250i);
+        [Core.AssignStatement.AssignBox]box  ->  public [Core.String]name = ConstExpressNode: [String] "seed"; = "member-updated";
+        println("box -> " + box.toString())
+        println("box.total -> " + box.total.toString())
+
+
+
+    }
+
+    public  static Core.Object arrayAssignTest()
+    {
+        println("----- arrayAssignTest -----")
+        [Core.Array<Core.Int32>Core.Int32
+]values = Core.Array<Core.Int32>().{10i, 20i, 30i, 40i};
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_0] = 15i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_1] = 5i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_2] = 7i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_3] = 2i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_0] = 3i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_1] = 6i;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_2] = 1;
+        [Array<Core.Int32>[-1]]values  ->  values[Visit_3] = 1;
+        println("values[0] -> " + values[0i].toString())
+        println("values.$1 -> " + values.$1i.toString())
+        println("values[2] -> " + values[2i].toString())
+        println("values.$3 -> " + values.$3i.toString())
+        [Core.Array<Core.AssignStatement.AssignBox>Core.AssignStatement.AssignBox
+]boxes = Core.Array<Core.AssignStatement.AssignBox>().{Core.AssignStatement.AssignBox().{value=1i, name="left"}, Core.AssignStatement.AssignBox().{value=2i}};
+        [Array<Core.AssignStatement.AssignBox>[-1]]boxes  ->  boxes[Visit_0]  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 100i;
+        [Array<Core.AssignStatement.AssignBox>[-1]]boxes  ->  boxes[Visit_0]  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_1] = 222i;
+        [Array<Core.AssignStatement.AssignBox>[-1]]boxes  ->  boxes[Visit_1] = Core.AssignStatement.AssignBox().{value=20i, name="brace-rebind", flag=15};
+        [Array<Core.AssignStatement.AssignBox>[-1]]boxes  ->  boxes[Visit_1]  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = 5i;
+        [Array<Core.AssignStatement.AssignBox>[-1]]boxes  ->  boxes[Visit_1]  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_0] = 999i;
+        println("boxes[0] -> " + boxes[0i].toString())
+        println("boxes.$1 -> " + boxes.$1i.toString())
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object objectInitAndReferenceAssignTest()
+    {
+        println("----- objectInitAndReferenceAssignTest -----")
+        [Core.AssignStatement.AssignBox]left = Core.AssignStatement.AssignBox().{value=11i, name="left-init", flag=1};
+        [Core.AssignStatement.AssignBox]right = Core.AssignStatement.AssignBox().{value=22i, name="right-init", flag=2};
+        [Core.AssignStatement.AssignBox]alias = [Core.AssignStatement.AssignBox]left;
+        [Core.AssignStatement.AssignBox]alias  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; = ([Core.AssignStatement.AssignBox]right  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; + 100i);
+        [Core.AssignStatement.AssignBox]left = Core.AssignStatement.AssignBox().{value=33i, name="brace-left", flag=6};
+        [Core.AssignStatement.AssignBox]right = Core.AssignStatement.AssignBox().{value=([Core.AssignStatement.AssignBox]left  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i; + [Core.AssignStatement.AssignBox]alias  ->  public [Core.Int32]value = ConstExpressNode: [Int32] 0i;), name="copied", flag=[Core.AssignStatement.AssignBox]alias  ->  public [Core.Int32]flag = ConstExpressNode: [Int32] 3i;};
+        println("left -> " + left.toString())
+        println("right -> " + right.toString())
+        println("alias -> " + alias.toString())
+
+
+
+
+    }
+
+    public  static Core.Object genericAssignTest()
+    {
+        println("----- genericAssignTest -----")
+        [Core.AssignStatement.Level<Core.Int32>Core.Int32
+]lv = Core.AssignStatement.Level<Core.Int32>().;
+        [AssignStatement.Level<Core.Int32>]lv  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().; = 84i;
+        println("Level<int> -> " + lv.toString())
+        [Core.AssignStatement.Level<Core.AssignStatement.AssignBox>Core.AssignStatement.AssignBox
+]wrapped = Core.AssignStatement.Level<Core.AssignStatement.AssignBox>().;
+        [AssignStatement.Level<Core.AssignStatement.AssignBox>]wrapped  ->  public [Core.AssignStatement.AssignBox]t = NewObjectExpressNode: Core.Object().; = Core.AssignStatement.AssignBox().{value=[AssignStatement.Level<Core.Int32>]lv  ->  public [Core.Int32]t = NewObjectExpressNode: Core.Object().;, name="generic-reassign", flag=4};
+        [AssignStatement.Level<Core.AssignStatement.AssignBox>]wrapped  ->  public [Core.AssignStatement.AssignBox]t = NewObjectExpressNode: Core.Object().;  ->  [Core.AssignStatement.AssignBox]t.score(250i);
+        [AssignStatement.Level<Core.AssignStatement.AssignBox>]wrapped  ->  public [Core.AssignStatement.AssignBox]t = NewObjectExpressNode: Core.Object().;  ->  public [Array<Core.Int32>[-1]]numbers = NewObjectExpressNode: Core.Array<Core.Int32>().{1i, 2i, 3i};  ->  numbers[Visit_2] = 333i;
+        println("Level<AssignBox> -> " + wrapped.toString())
+        println("wrapped.t -> " + wrapped.t.toString())
+
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== AssignStatement (start) ==========")
+        scalarAssignTest()
+        memberAssignTest()
+        arrayAssignTest()
+        objectInitAndReferenceAssignTest()
+        genericAssignTest()
+        println("========== AssignStatement (end) ==========")
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

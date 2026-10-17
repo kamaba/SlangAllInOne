@@ -1,0 +1,3161 @@
+-------------------IR 文件显示 开始 : Path: MemberVariable1Test.sl-----------------------
+Class: ProjectTest.C2
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=29520332 idx=0 name=ProjectTest.C2.x type=Core.Int32
+      - #1 id=59325057 idx=1 name=ProjectTest.C2.x1 type=Core.Int32
+      - #2 id=2350413 idx=2 name=ProjectTest.C2.y1 type=Core.Int32
+  ClassStatics:
+      - #0 id=21153717 idx=0 name=ProjectTest.C2.x2 type=Core.Int32
+      - #1 id=56165728 idx=1 name=ProjectTest.C2.y2 type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.C2._init__2_Core.Int32_Core.Float32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Float32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=5843233 idx=0 name=_local[ProjectTest.C2._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=23018869 idx=0 name=_local[ProjectTest.C2._init_.this] type=ProjectTest.C2
+      - #1 id=52589099 idx=1 name=_local[a] type=Core.Int32
+      - #2 id=3539844 idx=2 name=_local[b] type=Core.Float32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:10] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:10] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:8] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:8] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.C2._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=18291919 idx=0 name=_local[ProjectTest.C2._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=31858597 idx=0 name=_local[ProjectTest.C2._init_.this] type=ProjectTest.C2
+      - #1 id=30409547 idx=1 name=_local[a] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable2Test.sl:11] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable2Test.sl:11] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable2Test.sl:9] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable2Test.sl:12] [LoadArgument] index:[0] info:[Argument]
+5 5   [ MemberVariable2Test.sl:12] [LoadArgument] index:[1] info:[Argument]
+6 6   [ MemberVariable2Test.sl:12] [LoadConstInt32] index:[0] val: int32[1] 
+7 7   [ MemberVariable2Test.sl:12] [Add] index:[0]
+8 8   [ MemberVariable2Test.sl:9] [StoreNotStaticField2] index:[1] info:[Member]
+9 9   [ MemberVariable2Test.sl:9] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.C2.getX1
+    VirtualName: getX1_Core.Int32_0
+    Name: getX1
+    InterfaceMethod: False
+    Return:
+      - #0 id=47254279 idx=0 name=_local[ProjectTest.C2.getX1.return] type=Core.Int32
+    Arguments:
+      - #0 id=5250475 idx=0 name=_local[ProjectTest.C2.getX1.this] type=ProjectTest.C2
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable2Test.sl:17] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable2Test.sl:17] [LoadNotStaticField] index:[1] info:[Member]
+3 3   [ MemberVariable2Test.sl:17] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ MemberVariable2Test.sl:15] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVBase
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=42336695 idx=0 name=ProjectTest.MVBase.id type=Core.Int32
+      - #1 id=9113635 idx=1 name=ProjectTest.MVBase.name type=Core.String
+      - #2 id=14913854 idx=2 name=ProjectTest.MVBase.active type=Core.Boolean
+      - #3 id=6965 idx=3 name=ProjectTest.MVBase.score type=Core.Float32
+      - #4 id=62687 idx=4 name=ProjectTest.MVBase.big type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.MVModifier
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=8642591 idx=0 name=ProjectTest.MVModifier.pubVal type=Core.Int32
+      - #1 id=64356400 idx=1 name=ProjectTest.MVModifier.priVal type=Core.Int32
+  ClassStatics:
+      - #0 id=564191 idx=0 name=ProjectTest.MVModifier.stVal type=Core.Int32
+      - #1 id=35729512 idx=1 name=ProjectTest.MVModifier.pubStVal type=Core.Int32
+      - #2 id=53130157 idx=2 name=ProjectTest.MVModifier.priStVal type=Core.Int32
+      - #3 id=8409368 idx=3 name=ProjectTest.MVModifier.stPubVal type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.MVModifier.getPriStVal
+    VirtualName: getPriStVal_Core.Int32_0
+    Name: getPriStVal
+    InterfaceMethod: False
+    Return:
+      - #0 id=2391358 idx=0 name=_local[ProjectTest.MVModifier.getPriStVal.return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:46] [LoadStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVModifier]  field:[ProjectTest.MVModifier.priStVal]
+2 2   [ MemberVariable1Test.sl:46] [StoreReturn] index:[0] info:[StoreReturn]
+3 3   [ :0] [BrLabel] index:[4]
+4 4   [ MemberVariable1Test.sl:44] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVModifier.getPriVal
+    VirtualName: getPriVal_Core.Int32_0
+    Name: getPriVal
+    InterfaceMethod: False
+    Return:
+      - #0 id=65578930 idx=0 name=_local[ProjectTest.MVModifier.getPriVal.return] type=Core.Int32
+    Arguments:
+      - #0 id=59482330 idx=0 name=_local[ProjectTest.MVModifier.getPriVal.this] type=ProjectTest.MVModifier
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:35] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:35] [LoadNotStaticField] index:[1] info:[Member]
+3 3   [ MemberVariable1Test.sl:35] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ MemberVariable1Test.sl:33] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVModifier.setPriVal_1_Core.Int32
+    VirtualName: setPriVal_Core.Int32_1_Core.Int32
+    Name: setPriVal
+    InterfaceMethod: False
+    Return:
+      - #0 id=25528928 idx=0 name=_local[ProjectTest.MVModifier.setPriVal.return] type=Core.Int32
+    Arguments:
+      - #0 id=10293088 idx=0 name=_local[ProjectTest.MVModifier.setPriVal.this] type=ProjectTest.MVModifier
+      - #1 id=28433766 idx=1 name=_local[v] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:40] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:40] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:38] [StoreNotStaticField2] index:[1] info:[Member]
+4 4   [ MemberVariable1Test.sl:41] [LoadArgument] index:[0] info:[Argument]
+5 5   [ MemberVariable1Test.sl:41] [LoadNotStaticField] index:[1] info:[Member]
+6 6   [ MemberVariable1Test.sl:41] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ MemberVariable1Test.sl:38] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVExprInit
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=8575450 idx=0 name=ProjectTest.MVExprInit.a type=Core.Int32
+      - #1 id=10070188 idx=1 name=ProjectTest.MVExprInit.b type=Core.Int32
+      - #2 id=23522831 idx=2 name=ProjectTest.MVExprInit.c type=Core.Boolean
+      - #3 id=10378893 idx=3 name=ProjectTest.MVExprInit.d type=Core.Int32
+      - #4 id=26301173 idx=4 name=ProjectTest.MVExprInit.e type=Core.Int32
+      - #5 id=35383970 idx=5 name=ProjectTest.MVExprInit.f type=Core.Int32
+      - #6 id=50020275 idx=6 name=ProjectTest.MVExprInit.g type=Core.Int32
+  ClassStatics:
+      - #0 id=47529299 idx=0 name=ProjectTest.MVExprInit.stRef type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.MVObjectMember
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=25110514 idx=0 name=ProjectTest.MVObjectMember.obj type=ProjectTest.MVBase
+      - #1 id=24668042 idx=1 name=ProjectTest.MVObjectMember.obj2 type=ProjectTest.MVBase
+      - #2 id=20685786 idx=2 name=ProjectTest.MVObjectMember.nullObj type=ProjectTest.MVBase
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.MVObjectMember._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=58685656 idx=0 name=_local[ProjectTest.MVObjectMember._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=21433709 idx=0 name=_local[ProjectTest.MVObjectMember._init_.this] type=ProjectTest.MVObjectMember
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:70] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:70] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable1Test.sl:70] [LoadConstInt32] index:[0] val: int32[999] 
+4 4   [ MemberVariable1Test.sl:68] [StoreNotStaticField2] index:[0] info:[Member]
+5 5   [ MemberVariable1Test.sl:68] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.MVParent
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=45485936 idx=0 name=ProjectTest.MVParent.pVal type=Core.Int32
+      - #1 id=5077725 idx=1 name=ProjectTest.MVParent.pName type=Core.String
+  ClassStatics:
+      - #0 id=28961294 idx=0 name=ProjectTest.MVParent.pStatic type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.MVChild
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1145496141
+      Mapping: []
+  ClassLocals:
+      - #0 id=45485936 idx=0 name=ProjectTest.MVParent.pVal type=Core.Int32
+      - #1 id=5077725 idx=1 name=ProjectTest.MVParent.pName type=Core.String
+      - #2 id=6720246 idx=2 name=ProjectTest.MVChild.cVal type=Core.Int32
+      - #3 id=45699530 idx=3 name=ProjectTest.MVChild.cName type=Core.String
+  ClassStatics:
+      - #0 id=28961294 idx=0 name=ProjectTest.MVParent.pStatic type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVChild._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55917699 idx=0 name=_local[ProjectTest.MVChild._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=58408860 idx=0 name=_local[ProjectTest.MVChild._init_.this] type=ProjectTest.MVChild
+      - #1 id=33497244 idx=1 name=_local[pv] type=Core.Int32
+      - #2 id=33039746 idx=2 name=_local[cv] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:88] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:88] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:86] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:89] [LoadArgument] index:[0] info:[Argument]
+5 5   [ MemberVariable1Test.sl:89] [LoadArgument] index:[2] info:[Argument]
+6 6   [ MemberVariable1Test.sl:86] [StoreNotStaticField2] index:[2] info:[Member]
+7 7   [ MemberVariable1Test.sl:86] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVChild.sumPC
+    VirtualName: sumPC_Core.Int32_0
+    Name: sumPC
+    InterfaceMethod: False
+    Return:
+      - #0 id=58973758 idx=0 name=_local[ProjectTest.MVChild.sumPC.return] type=Core.Int32
+    Arguments:
+      - #0 id=28922261 idx=0 name=_local[ProjectTest.MVChild.sumPC.this] type=ProjectTest.MVChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:95] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:95] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable1Test.sl:95] [LoadArgument] index:[0] info:[Argument]
+4 4   [ MemberVariable1Test.sl:95] [LoadNotStaticField] index:[2] info:[Member]
+5 5   [ MemberVariable1Test.sl:95] [Add] index:[0]
+6 6   [ MemberVariable1Test.sl:95] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ MemberVariable1Test.sl:93] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVGrandChild
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1730224589
+      Mapping: []
+    RelatedClassId: -1145496141
+      Mapping: []
+  ClassLocals:
+      - #0 id=45485936 idx=0 name=ProjectTest.MVParent.pVal type=Core.Int32
+      - #1 id=5077725 idx=1 name=ProjectTest.MVParent.pName type=Core.String
+      - #2 id=6720246 idx=2 name=ProjectTest.MVChild.cVal type=Core.Int32
+      - #3 id=45699530 idx=3 name=ProjectTest.MVChild.cName type=Core.String
+      - #4 id=60482217 idx=4 name=ProjectTest.MVGrandChild.gVal type=Core.Int32
+  ClassStatics:
+      - #0 id=28961294 idx=0 name=ProjectTest.MVParent.pStatic type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.MVGrandChild._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42196623 idx=0 name=_local[ProjectTest.MVGrandChild._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=12145054 idx=0 name=_local[ProjectTest.MVGrandChild._init_.this] type=ProjectTest.MVGrandChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:105] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:105] [LoadConstInt32] index:[0] val: int32[111] 
+3 3   [ MemberVariable1Test.sl:103] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:106] [LoadArgument] index:[0] info:[Argument]
+5 5   [ MemberVariable1Test.sl:106] [LoadConstInt32] index:[0] val: int32[222] 
+6 6   [ MemberVariable1Test.sl:103] [StoreNotStaticField2] index:[2] info:[Member]
+7 7   [ MemberVariable1Test.sl:107] [LoadArgument] index:[0] info:[Argument]
+8 8   [ MemberVariable1Test.sl:107] [LoadConstInt32] index:[0] val: int32[333] 
+9 9   [ MemberVariable1Test.sl:103] [StoreNotStaticField2] index:[4] info:[Member]
+10 10   [ MemberVariable1Test.sl:103] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVChild._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55917699 idx=0 name=_local[ProjectTest.MVChild._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=58408860 idx=0 name=_local[ProjectTest.MVChild._init_.this] type=ProjectTest.MVChild
+      - #1 id=33497244 idx=1 name=_local[pv] type=Core.Int32
+      - #2 id=33039746 idx=2 name=_local[cv] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:88] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:88] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:86] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:89] [LoadArgument] index:[0] info:[Argument]
+5 5   [ MemberVariable1Test.sl:89] [LoadArgument] index:[2] info:[Argument]
+6 6   [ MemberVariable1Test.sl:86] [StoreNotStaticField2] index:[2] info:[Member]
+7 7   [ MemberVariable1Test.sl:86] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVChild.sumPC
+    VirtualName: sumPC_Core.Int32_0
+    Name: sumPC
+    InterfaceMethod: False
+    Return:
+      - #0 id=58973758 idx=0 name=_local[ProjectTest.MVChild.sumPC.return] type=Core.Int32
+    Arguments:
+      - #0 id=28922261 idx=0 name=_local[ProjectTest.MVChild.sumPC.this] type=ProjectTest.MVChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:95] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:95] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable1Test.sl:95] [LoadArgument] index:[0] info:[Argument]
+4 4   [ MemberVariable1Test.sl:95] [LoadNotStaticField] index:[2] info:[Member]
+5 5   [ MemberVariable1Test.sl:95] [Add] index:[0]
+6 6   [ MemberVariable1Test.sl:95] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ MemberVariable1Test.sl:93] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVGrandChild.sumAll
+    VirtualName: sumAll_Core.Int32_0
+    Name: sumAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=62483297 idx=0 name=_local[ProjectTest.MVGrandChild.sumAll.return] type=Core.Int32
+    Arguments:
+      - #0 id=44225290 idx=0 name=_local[ProjectTest.MVGrandChild.sumAll.this] type=ProjectTest.MVGrandChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:113] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:113] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable1Test.sl:113] [LoadArgument] index:[0] info:[Argument]
+4 4   [ MemberVariable1Test.sl:113] [LoadNotStaticField] index:[2] info:[Member]
+5 5   [ MemberVariable1Test.sl:113] [Add] index:[0]
+6 6   [ MemberVariable1Test.sl:113] [LoadArgument] index:[0] info:[Argument]
+7 7   [ MemberVariable1Test.sl:113] [LoadNotStaticField] index:[4] info:[Member]
+8 8   [ MemberVariable1Test.sl:113] [Add] index:[0]
+9 9   [ MemberVariable1Test.sl:113] [StoreReturn] index:[0] info:[StoreReturn]
+10 10   [ :0] [BrLabel] index:[11]
+11 11   [ MemberVariable1Test.sl:111] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVStaticRef
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=51954348 idx=0 name=ProjectTest.MVStaticRef.s1 type=Core.Int32
+      - #1 id=64935954 idx=1 name=ProjectTest.MVStaticRef.s2 type=Core.Int32
+      - #2 id=47552675 idx=2 name=ProjectTest.MVStaticRef.s3 type=Core.Int32
+      - #3 id=25320898 idx=3 name=ProjectTest.MVStaticRef.s4 type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.MVCtorBase
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=7469042 idx=0 name=ProjectTest.MVCtorBase.v type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVCtorBase._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=50513961 idx=0 name=_local[ProjectTest.MVCtorBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=27982283 idx=0 name=_local[ProjectTest.MVCtorBase._init_.this] type=ProjectTest.MVCtorBase
+      - #1 id=51972470 idx=1 name=_local[v] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:132] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:132] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:130] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:130] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVCtorDerived
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -154562956
+      Mapping: []
+  ClassLocals:
+      - #0 id=7469042 idx=0 name=ProjectTest.MVCtorBase.v type=Core.Int32
+      - #1 id=112514 idx=1 name=ProjectTest.MVCtorDerived.w type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVCtorBase._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=50513961 idx=0 name=_local[ProjectTest.MVCtorBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=27982283 idx=0 name=_local[ProjectTest.MVCtorBase._init_.this] type=ProjectTest.MVCtorBase
+      - #1 id=51972470 idx=1 name=_local[v] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:132] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:132] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:130] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:130] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVCtorDerived._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49020554 idx=0 name=_local[ProjectTest.MVCtorDerived._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=65099051 idx=0 name=_local[ProjectTest.MVCtorDerived._init_.this] type=ProjectTest.MVCtorDerived
+      - #1 id=38531802 idx=1 name=_local[a] type=Core.Int32
+      - #2 id=11241901 idx=2 name=_local[b] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:142] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:142] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:142] [LoadConstInt32] index:[0] val: int32[100] 
+4 4   [ MemberVariable1Test.sl:142] [Add] index:[0]
+5 5   [ MemberVariable1Test.sl:130] [CallStatic] index:[1] info:[CallStatic _init_] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVCtorBase, StaticRuntimeTypeList=[], Method=ProjectTest.MVCtorBase._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+6 6   [ MemberVariable1Test.sl:143] [LoadArgument] index:[0] info:[Argument]
+7 7   [ MemberVariable1Test.sl:143] [LoadArgument] index:[2] info:[Argument]
+8 8   [ MemberVariable1Test.sl:140] [StoreNotStaticField2] index:[1] info:[Member]
+9 9   [ MemberVariable1Test.sl:140] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVCtorDerived.sum
+    VirtualName: sum_Core.Int32_0
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=38178826 idx=0 name=_local[ProjectTest.MVCtorDerived.sum.return] type=Core.Int32
+    Arguments:
+      - #0 id=34068253 idx=0 name=_local[ProjectTest.MVCtorDerived.sum.this] type=ProjectTest.MVCtorDerived
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:148] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:148] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable1Test.sl:148] [LoadArgument] index:[0] info:[Argument]
+4 4   [ MemberVariable1Test.sl:148] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ MemberVariable1Test.sl:148] [Add] index:[0]
+6 6   [ MemberVariable1Test.sl:148] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ MemberVariable1Test.sl:146] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVNode
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=1012626 idx=0 name=ProjectTest.MVNode.val type=Core.Int32
+      - #1 id=10674462 idx=1 name=ProjectTest.MVNode.nextNode type=ProjectTest.MVNode
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVNode._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49294721 idx=0 name=_local[ProjectTest.MVNode._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=5477191 idx=0 name=_local[ProjectTest.MVNode._init_.this] type=ProjectTest.MVNode
+      - #1 id=40999308 idx=1 name=_local[v] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:160] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable1Test.sl:160] [LoadArgument] index:[1] info:[Argument]
+3 3   [ MemberVariable1Test.sl:158] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ MemberVariable1Test.sl:158] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVPartialTarget
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=26561495 idx=0 name=ProjectTest.MVPartialTarget.baseVal type=Core.Int32
+      - #1 id=37726867 idx=1 name=ProjectTest.MVPartialTarget.extra type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.MVPartialTarget.sum
+    VirtualName: sum_Core.Int32_0
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=32609666 idx=0 name=_local[ProjectTest.MVPartialTarget.sum.return] type=Core.Int32
+    Arguments:
+      - #0 id=33449458 idx=0 name=_local[ProjectTest.MVPartialTarget.sum.this] type=ProjectTest.MVPartialTarget
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable2Test.sl:79] [LoadArgument] index:[0] info:[Argument]
+2 2   [ MemberVariable2Test.sl:79] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ MemberVariable2Test.sl:79] [LoadArgument] index:[0] info:[Argument]
+4 4   [ MemberVariable2Test.sl:79] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ MemberVariable2Test.sl:79] [Add] index:[0]
+6 6   [ MemberVariable2Test.sl:79] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ MemberVariable2Test.sl:77] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.MVTest1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.MVTest1.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=24137296 idx=0 name=_local[ProjectTest.MVTest1.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:173] [LoadConstString] index:[1318] val: string[========== MemberVariable1Test (start) ==========] 
+2 2   [ MemberVariable1Test.sl:171] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:193] [CallStatic] index:[0] info:[CallStatic testBaseTypes] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testBaseTypes, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ MemberVariable1Test.sl:206] [CallStatic] index:[0] info:[CallStatic testModifiers] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testModifiers, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ MemberVariable1Test.sl:218] [CallStatic] index:[0] info:[CallStatic testExprInit] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testExprInit, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ MemberVariable1Test.sl:226] [CallStatic] index:[0] info:[CallStatic testObjectMember] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testObjectMember, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ MemberVariable1Test.sl:235] [CallStatic] index:[0] info:[CallStatic testInheritMember] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testInheritMember, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ MemberVariable1Test.sl:254] [CallStatic] index:[0] info:[CallStatic testInheritModify] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testInheritModify, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ MemberVariable1Test.sl:280] [CallStatic] index:[0] info:[CallStatic testStaticRef] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testStaticRef, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ MemberVariable1Test.sl:287] [CallStatic] index:[0] info:[CallStatic testPartial] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testPartial, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ MemberVariable1Test.sl:295] [CallStatic] index:[0] info:[CallStatic testCtorChain] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testCtorChain, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ MemberVariable1Test.sl:307] [CallStatic] index:[0] info:[CallStatic testMethodBaseRef] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testMethodBaseRef, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ MemberVariable1Test.sl:318] [CallStatic] index:[0] info:[CallStatic testBaseClassRef] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testBaseClassRef, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ MemberVariable1Test.sl:337] [CallStatic] index:[0] info:[CallStatic testPrivateMember] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testPrivateMember, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ MemberVariable1Test.sl:348] [CallStatic] index:[0] info:[CallStatic testInstanceIsolation] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testInstanceIsolation, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ MemberVariable1Test.sl:363] [CallStatic] index:[0] info:[CallStatic testSelfRefChain] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testSelfRefChain, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ MemberVariable1Test.sl:381] [CallStatic] index:[0] info:[CallStatic testGrandStatic] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testGrandStatic, MethodRuntimeTypeList=[], ParamCount=0}] 
+22 22   [ MemberVariable1Test.sl:397] [CallStatic] index:[0] info:[CallStatic testLiteralInherit] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVTest1, StaticRuntimeTypeList=[], Method=ProjectTest.MVTest1.testLiteralInherit, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ MemberVariable1Test.sl:190] [LoadConstString] index:[1319] val: string[========== MemberVariable1Test (end) ==========] 
+24 24   [ MemberVariable1Test.sl:171] [StoreLocal] index:[1] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ MemberVariable1Test.sl:171] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testBaseTypes
+    VirtualName: testBaseTypes_Core.Void_0
+    Name: testBaseTypes
+    InterfaceMethod: False
+    Return:
+      - #0 id=15909080 idx=0 name=_local[ProjectTest.MVTest1.testBaseTypes.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=8963999 idx=0 name=testBaseTypes_local[b] type=ProjectTest.MVBase
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:195] [LoadConstString] index:[1320] val: string[----- testBaseTypes -----] 
+2 2   [ MemberVariable1Test.sl:193] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:193] [NewObject] index:[0] info:[IRNew] val: int32[1681069702] 
+8 8   [ MemberVariable1Test.sl:196] [ArcRetain] index:[0] info:[ARC claim owned new local: b]
+9 9   [ MemberVariable1Test.sl:193] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:197] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ MemberVariable1Test.sl:197] [LoadConstInt32] index:[0] val: int32[42] 
+12 12   [ MemberVariable1Test.sl:193] [StoreNotStaticField2] index:[0] info:[Member]
+13 13   [ MemberVariable1Test.sl:198] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ MemberVariable1Test.sl:198] [LoadConstString] index:[586] val: string[hello] 
+15 15   [ MemberVariable1Test.sl:193] [StoreNotStaticField2] index:[1] info:[Member]
+16 16   [ MemberVariable1Test.sl:199] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ MemberVariable1Test.sl:199] [LoadConstBoolean] index:[0] val:[False] 
+18 18   [ MemberVariable1Test.sl:193] [StoreNotStaticField2] index:[2] info:[Member]
+19 19   [ MemberVariable1Test.sl:200] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ MemberVariable1Test.sl:200] [LoadConstFloat32] index:[0] val:[3.14] 
+21 21   [ MemberVariable1Test.sl:193] [StoreNotStaticField2] index:[3] info:[Member]
+22 22   [ MemberVariable1Test.sl:201] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ MemberVariable1Test.sl:201] [LoadConstInt64] index:[0] val:[9999999999] 
+24 24   [ MemberVariable1Test.sl:193] [StoreNotStaticField2] index:[4] info:[Member]
+25 25   [ MemberVariable1Test.sl:202] [LoadConstString] index:[1321] val: string[id=] 
+26 26   [ MemberVariable1Test.sl:202] [LoadLocal] index:[0] info:[LocalStatement]
+27 27   [ MemberVariable1Test.sl:202] [LoadNotStaticField] index:[0] info:[Member]
+28 28   [ :0] [Convert_ToString] index:[0]
+29 29   [ MemberVariable1Test.sl:202] [Add] index:[0]
+30 30   [ MemberVariable1Test.sl:202] [LoadConstString] index:[1322] val: string[ name=] 
+31 31   [ MemberVariable1Test.sl:202] [Add] index:[0]
+32 32   [ MemberVariable1Test.sl:202] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ MemberVariable1Test.sl:202] [LoadNotStaticField] index:[1] info:[Member]
+34 34   [ MemberVariable1Test.sl:202] [Add] index:[0]
+35 35   [ MemberVariable1Test.sl:202] [LoadConstString] index:[1323] val: string[ active=] 
+36 36   [ MemberVariable1Test.sl:202] [Add] index:[0]
+37 37   [ MemberVariable1Test.sl:202] [LoadLocal] index:[0] info:[LocalStatement]
+38 38   [ MemberVariable1Test.sl:202] [LoadNotStaticField] index:[2] info:[Member]
+39 39   [ MemberVariable1Test.sl:202] [Add] index:[0]
+40 40   [ MemberVariable1Test.sl:193] [StoreLocal] index:[2] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+43 43   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+44 44   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+45 45   [ MemberVariable1Test.sl:203] [LoadConstString] index:[1324] val: string[score=] 
+46 46   [ MemberVariable1Test.sl:203] [LoadLocal] index:[0] info:[LocalStatement]
+47 47   [ MemberVariable1Test.sl:203] [LoadNotStaticField] index:[3] info:[Member]
+48 48   [ :0] [Convert_ToString] index:[0]
+49 49   [ MemberVariable1Test.sl:203] [Add] index:[0]
+50 50   [ MemberVariable1Test.sl:203] [LoadConstString] index:[1325] val: string[ big=] 
+51 51   [ MemberVariable1Test.sl:203] [Add] index:[0]
+52 52   [ MemberVariable1Test.sl:203] [LoadLocal] index:[0] info:[LocalStatement]
+53 53   [ MemberVariable1Test.sl:203] [LoadNotStaticField] index:[4] info:[Member]
+54 54   [ :0] [Convert_ToString] index:[0]
+55 55   [ MemberVariable1Test.sl:203] [Add] index:[0]
+56 56   [ MemberVariable1Test.sl:193] [StoreLocal] index:[3] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ MemberVariable1Test.sl:193] [Label] index:[0] info:[FunEndLabel]
+62 62   [ MemberVariable1Test.sl:193] [LoadLocal] index:[0] info:[ARC release: LoadLocal testBaseTypes_local[b]]
+63 63   [ MemberVariable1Test.sl:193] [ArcRelease] index:[0] info:[ARC release owned local: testBaseTypes_local[b]]
+64 64   [ MemberVariable1Test.sl:193] [StoreLocal] index:[0] info:[ARC release: StoreLocal testBaseTypes_local[b]]
+
+  Method: ProjectTest.MVTest1.testModifiers
+    VirtualName: testModifiers_Core.Void_0
+    Name: testModifiers
+    InterfaceMethod: False
+    Return:
+      - #0 id=13567135 idx=0 name=_local[ProjectTest.MVTest1.testModifiers.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=54995351 idx=0 name=testModifiers_local[m] type=ProjectTest.MVModifier
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:208] [LoadConstString] index:[1326] val: string[----- testModifiers -----] 
+2 2   [ MemberVariable1Test.sl:206] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:206] [NewObject] index:[0] info:[IRNew] val: int32[-1206148262] 
+8 8   [ MemberVariable1Test.sl:209] [ArcRetain] index:[0] info:[ARC claim owned new local: m]
+9 9   [ MemberVariable1Test.sl:206] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:210] [LoadConstString] index:[1327] val: string[pubVal=] 
+11 11   [ MemberVariable1Test.sl:210] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:210] [LoadNotStaticField] index:[0] info:[Member]
+13 13   [ :0] [Convert_ToString] index:[0]
+14 14   [ MemberVariable1Test.sl:210] [Add] index:[0]
+15 15   [ MemberVariable1Test.sl:206] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ MemberVariable1Test.sl:211] [LoadConstString] index:[1328] val: string[stVal=] 
+21 21   [ MemberVariable1Test.sl:211] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+22 22   [ :0] [Convert_ToString] index:[0]
+23 23   [ MemberVariable1Test.sl:211] [Add] index:[0]
+24 24   [ MemberVariable1Test.sl:206] [StoreLocal] index:[3] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ MemberVariable1Test.sl:212] [LoadConstString] index:[1329] val: string[pubStVal=] 
+30 30   [ MemberVariable1Test.sl:212] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+31 31   [ :0] [Convert_ToString] index:[0]
+32 32   [ MemberVariable1Test.sl:212] [Add] index:[0]
+33 33   [ MemberVariable1Test.sl:206] [StoreLocal] index:[4] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ MemberVariable1Test.sl:213] [LoadConstString] index:[1330] val: string[stPubVal=] 
+39 39   [ MemberVariable1Test.sl:213] [LoadStaticField] index:[3] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+40 40   [ :0] [Convert_ToString] index:[0]
+41 41   [ MemberVariable1Test.sl:213] [Add] index:[0]
+42 42   [ MemberVariable1Test.sl:206] [StoreLocal] index:[5] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ MemberVariable1Test.sl:214] [LoadConstInt32] index:[0] val: int32[999] 
+48 48   [ MemberVariable1Test.sl:206] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+49 49   [ MemberVariable1Test.sl:215] [LoadConstString] index:[1331] val: string[stVal(after set)=] 
+50 50   [ MemberVariable1Test.sl:215] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+51 51   [ :0] [Convert_ToString] index:[0]
+52 52   [ MemberVariable1Test.sl:215] [Add] index:[0]
+53 53   [ MemberVariable1Test.sl:206] [StoreLocal] index:[6] info:[LocalStatement]
+54 54   [ :0] [Nop] index:[0]
+55 55   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+56 56   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+57 57   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+58 58   [ MemberVariable1Test.sl:206] [Label] index:[0] info:[FunEndLabel]
+59 59   [ MemberVariable1Test.sl:206] [LoadLocal] index:[0] info:[ARC release: LoadLocal testModifiers_local[m]]
+60 60   [ MemberVariable1Test.sl:206] [ArcRelease] index:[0] info:[ARC release owned local: testModifiers_local[m]]
+61 61   [ MemberVariable1Test.sl:206] [StoreLocal] index:[0] info:[ARC release: StoreLocal testModifiers_local[m]]
+
+  Method: ProjectTest.MVTest1.testExprInit
+    VirtualName: testExprInit_Core.Void_0
+    Name: testExprInit
+    InterfaceMethod: False
+    Return:
+      - #0 id=25196113 idx=0 name=_local[ProjectTest.MVTest1.testExprInit.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=25438431 idx=0 name=testExprInit_local[e] type=ProjectTest.MVExprInit
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:220] [LoadConstString] index:[1332] val: string[----- testExprInit -----] 
+2 2   [ MemberVariable1Test.sl:218] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:218] [NewObject] index:[0] info:[IRNew] val: int32[1596474386] 
+8 8   [ MemberVariable1Test.sl:221] [ArcRetain] index:[0] info:[ARC claim owned new local: e]
+9 9   [ MemberVariable1Test.sl:218] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:222] [LoadConstString] index:[1333] val: string[a=] 
+11 11   [ MemberVariable1Test.sl:222] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:222] [LoadNotStaticField] index:[0] info:[Member]
+13 13   [ :0] [Convert_ToString] index:[0]
+14 14   [ MemberVariable1Test.sl:222] [Add] index:[0]
+15 15   [ MemberVariable1Test.sl:222] [LoadConstString] index:[1334] val: string[ b=] 
+16 16   [ MemberVariable1Test.sl:222] [Add] index:[0]
+17 17   [ MemberVariable1Test.sl:222] [LoadLocal] index:[0] info:[LocalStatement]
+18 18   [ MemberVariable1Test.sl:222] [LoadNotStaticField] index:[1] info:[Member]
+19 19   [ :0] [Convert_ToString] index:[0]
+20 20   [ MemberVariable1Test.sl:222] [Add] index:[0]
+21 21   [ MemberVariable1Test.sl:222] [LoadConstString] index:[1335] val: string[ c=] 
+22 22   [ MemberVariable1Test.sl:222] [Add] index:[0]
+23 23   [ MemberVariable1Test.sl:222] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ MemberVariable1Test.sl:222] [LoadNotStaticField] index:[2] info:[Member]
+25 25   [ MemberVariable1Test.sl:222] [Add] index:[0]
+26 26   [ MemberVariable1Test.sl:218] [StoreLocal] index:[2] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ MemberVariable1Test.sl:223] [LoadConstString] index:[1336] val: string[d=] 
+32 32   [ MemberVariable1Test.sl:223] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ MemberVariable1Test.sl:223] [LoadNotStaticField] index:[3] info:[Member]
+34 34   [ :0] [Convert_ToString] index:[0]
+35 35   [ MemberVariable1Test.sl:223] [Add] index:[0]
+36 36   [ MemberVariable1Test.sl:223] [LoadConstString] index:[1337] val: string[ e=] 
+37 37   [ MemberVariable1Test.sl:223] [Add] index:[0]
+38 38   [ MemberVariable1Test.sl:223] [LoadLocal] index:[0] info:[LocalStatement]
+39 39   [ MemberVariable1Test.sl:223] [LoadNotStaticField] index:[4] info:[Member]
+40 40   [ :0] [Convert_ToString] index:[0]
+41 41   [ MemberVariable1Test.sl:223] [Add] index:[0]
+42 42   [ MemberVariable1Test.sl:223] [LoadConstString] index:[1338] val: string[ f=] 
+43 43   [ MemberVariable1Test.sl:223] [Add] index:[0]
+44 44   [ MemberVariable1Test.sl:223] [LoadLocal] index:[0] info:[LocalStatement]
+45 45   [ MemberVariable1Test.sl:223] [LoadNotStaticField] index:[5] info:[Member]
+46 46   [ :0] [Convert_ToString] index:[0]
+47 47   [ MemberVariable1Test.sl:223] [Add] index:[0]
+48 48   [ MemberVariable1Test.sl:223] [LoadConstString] index:[1339] val: string[ g=] 
+49 49   [ MemberVariable1Test.sl:223] [Add] index:[0]
+50 50   [ MemberVariable1Test.sl:223] [LoadLocal] index:[0] info:[LocalStatement]
+51 51   [ MemberVariable1Test.sl:223] [LoadNotStaticField] index:[6] info:[Member]
+52 52   [ :0] [Convert_ToString] index:[0]
+53 53   [ MemberVariable1Test.sl:223] [Add] index:[0]
+54 54   [ MemberVariable1Test.sl:218] [StoreLocal] index:[3] info:[LocalStatement]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+57 57   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+58 58   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+59 59   [ MemberVariable1Test.sl:218] [Label] index:[0] info:[FunEndLabel]
+60 60   [ MemberVariable1Test.sl:218] [LoadLocal] index:[0] info:[ARC release: LoadLocal testExprInit_local[e]]
+61 61   [ MemberVariable1Test.sl:218] [ArcRelease] index:[0] info:[ARC release owned local: testExprInit_local[e]]
+62 62   [ MemberVariable1Test.sl:218] [StoreLocal] index:[0] info:[ARC release: StoreLocal testExprInit_local[e]]
+
+  Method: ProjectTest.MVTest1.testObjectMember
+    VirtualName: testObjectMember_Core.Void_0
+    Name: testObjectMember
+    InterfaceMethod: False
+    Return:
+      - #0 id=27619288 idx=0 name=_local[ProjectTest.MVTest1.testObjectMember.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=47247007 idx=0 name=testObjectMember_local[m] type=ProjectTest.MVObjectMember
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:228] [LoadConstString] index:[1340] val: string[----- testObjectMember -----] 
+2 2   [ MemberVariable1Test.sl:226] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:226] [NewObject] index:[0] info:[IRNew] val: int32[-1957434942] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:229] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVObjectMember, StaticRuntimeTypeList=[], Method=ProjectTest.MVObjectMember._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ MemberVariable1Test.sl:226] [StoreLocal] index:[0] info:[LocalStatement]
+11 11   [ MemberVariable1Test.sl:230] [LoadConstString] index:[1341] val: string[obj.id=] 
+12 12   [ MemberVariable1Test.sl:230] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:230] [LoadNotStaticField] index:[0] info:[Member]
+14 14   [ MemberVariable1Test.sl:230] [LoadNotStaticField] index:[0] info:[Member]
+15 15   [ :0] [Convert_ToString] index:[0]
+16 16   [ MemberVariable1Test.sl:230] [Add] index:[0]
+17 17   [ MemberVariable1Test.sl:226] [StoreLocal] index:[2] info:[LocalStatement]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+20 20   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+21 21   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+22 22   [ MemberVariable1Test.sl:231] [LoadConstString] index:[1342] val: string[obj2.id=] 
+23 23   [ MemberVariable1Test.sl:231] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ MemberVariable1Test.sl:231] [LoadNotStaticField] index:[1] info:[Member]
+25 25   [ MemberVariable1Test.sl:231] [LoadNotStaticField] index:[0] info:[Member]
+26 26   [ :0] [Convert_ToString] index:[0]
+27 27   [ MemberVariable1Test.sl:231] [Add] index:[0]
+28 28   [ MemberVariable1Test.sl:226] [StoreLocal] index:[3] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ MemberVariable1Test.sl:232] [LoadConstString] index:[1343] val: string[nullObj=] 
+34 34   [ MemberVariable1Test.sl:232] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ MemberVariable1Test.sl:232] [LoadNotStaticField] index:[2] info:[Member]
+36 36   [ MemberVariable1Test.sl:232] [Add] index:[0]
+37 37   [ MemberVariable1Test.sl:226] [StoreLocal] index:[4] info:[LocalStatement]
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+40 40   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+41 41   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+42 42   [ MemberVariable1Test.sl:226] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testInheritMember
+    VirtualName: testInheritMember_Core.Void_0
+    Name: testInheritMember
+    InterfaceMethod: False
+    Return:
+      - #0 id=22569884 idx=0 name=_local[ProjectTest.MVTest1.testInheritMember.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=1802368 idx=0 name=testInheritMember_local[p] type=ProjectTest.MVParent
+      - #1 id=16221316 idx=1 name=testInheritMember_local[c] type=ProjectTest.MVChild
+      - #2 id=11774121 idx=2 name=testInheritMember_local[gc] type=ProjectTest.MVGrandChild
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:237] [LoadConstString] index:[1344] val: string[----- testInheritMember -----] 
+2 2   [ MemberVariable1Test.sl:235] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:235] [NewObject] index:[0] info:[IRNew] val: int32[-1145496141] 
+8 8   [ MemberVariable1Test.sl:240] [ArcRetain] index:[0] info:[ARC claim owned new local: p]
+9 9   [ MemberVariable1Test.sl:235] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:241] [LoadConstString] index:[1345] val: string[Parent: pVal=] 
+11 11   [ MemberVariable1Test.sl:241] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:241] [LoadNotStaticField] index:[0] info:[Member]
+13 13   [ :0] [Convert_ToString] index:[0]
+14 14   [ MemberVariable1Test.sl:241] [Add] index:[0]
+15 15   [ MemberVariable1Test.sl:241] [LoadConstString] index:[1346] val: string[ pName=] 
+16 16   [ MemberVariable1Test.sl:241] [Add] index:[0]
+17 17   [ MemberVariable1Test.sl:241] [LoadLocal] index:[0] info:[LocalStatement]
+18 18   [ MemberVariable1Test.sl:241] [LoadNotStaticField] index:[1] info:[Member]
+19 19   [ MemberVariable1Test.sl:241] [Add] index:[0]
+20 20   [ MemberVariable1Test.sl:235] [StoreLocal] index:[4] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ MemberVariable1Test.sl:235] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+26 26   [ MemberVariable1Test.sl:243] [ArcRetain] index:[0] info:[ARC claim owned new local: c]
+27 27   [ MemberVariable1Test.sl:235] [StoreLocal] index:[1] info:[LocalStatement]
+28 28   [ MemberVariable1Test.sl:244] [LoadConstString] index:[1347] val: string[Child: pVal=] 
+29 29   [ MemberVariable1Test.sl:244] [LoadLocal] index:[1] info:[LocalStatement]
+30 30   [ MemberVariable1Test.sl:244] [LoadNotStaticField] index:[0] info:[Member]
+31 31   [ :0] [Convert_ToString] index:[0]
+32 32   [ MemberVariable1Test.sl:244] [Add] index:[0]
+33 33   [ MemberVariable1Test.sl:244] [LoadConstString] index:[1346] val: string[ pName=] 
+34 34   [ MemberVariable1Test.sl:244] [Add] index:[0]
+35 35   [ MemberVariable1Test.sl:244] [LoadLocal] index:[1] info:[LocalStatement]
+36 36   [ MemberVariable1Test.sl:244] [LoadNotStaticField] index:[1] info:[Member]
+37 37   [ MemberVariable1Test.sl:244] [Add] index:[0]
+38 38   [ MemberVariable1Test.sl:244] [LoadConstString] index:[1348] val: string[ cVal=] 
+39 39   [ MemberVariable1Test.sl:244] [Add] index:[0]
+40 40   [ MemberVariable1Test.sl:244] [LoadLocal] index:[1] info:[LocalStatement]
+41 41   [ MemberVariable1Test.sl:244] [LoadNotStaticField] index:[2] info:[Member]
+42 42   [ :0] [Convert_ToString] index:[0]
+43 43   [ MemberVariable1Test.sl:244] [Add] index:[0]
+44 44   [ MemberVariable1Test.sl:244] [LoadConstString] index:[1349] val: string[ cName=] 
+45 45   [ MemberVariable1Test.sl:244] [Add] index:[0]
+46 46   [ MemberVariable1Test.sl:244] [LoadLocal] index:[1] info:[LocalStatement]
+47 47   [ MemberVariable1Test.sl:244] [LoadNotStaticField] index:[3] info:[Member]
+48 48   [ MemberVariable1Test.sl:244] [Add] index:[0]
+49 49   [ MemberVariable1Test.sl:235] [StoreLocal] index:[5] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0]
+51 51   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+52 52   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+53 53   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+54 54   [ MemberVariable1Test.sl:235] [NewObject] index:[0] info:[IRNew] val: int32[730355083] 
+55 55   [ :0] [Dup] index:[0]
+56 56   [ MemberVariable1Test.sl:246] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ MemberVariable1Test.sl:235] [StoreLocal] index:[2] info:[LocalStatement]
+58 58   [ MemberVariable1Test.sl:247] [LoadConstString] index:[1350] val: string[GrandChild: pVal=] 
+59 59   [ MemberVariable1Test.sl:247] [LoadLocal] index:[2] info:[LocalStatement]
+60 60   [ MemberVariable1Test.sl:247] [LoadNotStaticField] index:[0] info:[Member]
+61 61   [ :0] [Convert_ToString] index:[0]
+62 62   [ MemberVariable1Test.sl:247] [Add] index:[0]
+63 63   [ MemberVariable1Test.sl:247] [LoadConstString] index:[1348] val: string[ cVal=] 
+64 64   [ MemberVariable1Test.sl:247] [Add] index:[0]
+65 65   [ MemberVariable1Test.sl:247] [LoadLocal] index:[2] info:[LocalStatement]
+66 66   [ MemberVariable1Test.sl:247] [LoadNotStaticField] index:[2] info:[Member]
+67 67   [ :0] [Convert_ToString] index:[0]
+68 68   [ MemberVariable1Test.sl:247] [Add] index:[0]
+69 69   [ MemberVariable1Test.sl:247] [LoadConstString] index:[1351] val: string[ gVal=] 
+70 70   [ MemberVariable1Test.sl:247] [Add] index:[0]
+71 71   [ MemberVariable1Test.sl:247] [LoadLocal] index:[2] info:[LocalStatement]
+72 72   [ MemberVariable1Test.sl:247] [LoadNotStaticField] index:[4] info:[Member]
+73 73   [ :0] [Convert_ToString] index:[0]
+74 74   [ MemberVariable1Test.sl:247] [Add] index:[0]
+75 75   [ MemberVariable1Test.sl:235] [StoreLocal] index:[6] info:[LocalStatement]
+76 76   [ :0] [Nop] index:[0]
+77 77   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+78 78   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+79 79   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+80 80   [ MemberVariable1Test.sl:250] [LoadConstString] index:[1352] val: string[pStatic(via Parent)=] 
+81 81   [ MemberVariable1Test.sl:250] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVParent] staticOwner:[ProjectTest.MVTest1] 
+82 82   [ :0] [Convert_ToString] index:[0]
+83 83   [ MemberVariable1Test.sl:250] [Add] index:[0]
+84 84   [ MemberVariable1Test.sl:235] [StoreLocal] index:[7] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+89 89   [ MemberVariable1Test.sl:251] [LoadConstString] index:[1353] val: string[pStatic(via Child)=] 
+90 90   [ MemberVariable1Test.sl:251] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVChild] staticOwner:[ProjectTest.MVTest1] 
+91 91   [ :0] [Convert_ToString] index:[0]
+92 92   [ MemberVariable1Test.sl:251] [Add] index:[0]
+93 93   [ MemberVariable1Test.sl:235] [StoreLocal] index:[8] info:[LocalStatement]
+94 94   [ :0] [Nop] index:[0]
+95 95   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+96 96   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+97 97   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+98 98   [ MemberVariable1Test.sl:235] [Label] index:[0] info:[FunEndLabel]
+99 99   [ MemberVariable1Test.sl:235] [LoadLocal] index:[0] info:[ARC release: LoadLocal testInheritMember_local[p]]
+100 100   [ MemberVariable1Test.sl:235] [ArcRelease] index:[0] info:[ARC release owned local: testInheritMember_local[p]]
+101 101   [ MemberVariable1Test.sl:235] [StoreLocal] index:[0] info:[ARC release: StoreLocal testInheritMember_local[p]]
+102 102   [ MemberVariable1Test.sl:235] [LoadLocal] index:[1] info:[ARC release: LoadLocal testInheritMember_local[c]]
+103 103   [ MemberVariable1Test.sl:235] [ArcRelease] index:[0] info:[ARC release owned local: testInheritMember_local[c]]
+104 104   [ MemberVariable1Test.sl:235] [StoreLocal] index:[1] info:[ARC release: StoreLocal testInheritMember_local[c]]
+
+  Method: ProjectTest.MVTest1.testInheritModify
+    VirtualName: testInheritModify_Core.Void_0
+    Name: testInheritModify
+    InterfaceMethod: False
+    Return:
+      - #0 id=38858233 idx=0 name=_local[ProjectTest.MVTest1.testInheritModify.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=14179779 idx=0 name=testInheritModify_local[c1] type=ProjectTest.MVChild
+      - #1 id=60509154 idx=1 name=testInheritModify_local[c2] type=ProjectTest.MVChild
+      - #2 id=7711478 idx=2 name=testInheritModify_local[p] type=ProjectTest.MVParent
+      - #3 id=2294440 idx=3 name=testInheritModify_local[gc] type=ProjectTest.MVGrandChild
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:256] [LoadConstString] index:[1354] val: string[----- testInheritModify -----] 
+2 2   [ MemberVariable1Test.sl:254] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:254] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:259] [LoadConstInt32] index:[0] val: int32[501] 
+10 10   [ MemberVariable1Test.sl:259] [LoadConstInt32] index:[0] val: int32[502] 
+11 11   [ MemberVariable1Test.sl:259] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVChild._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+12 12   [ MemberVariable1Test.sl:254] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:260] [LoadConstString] index:[1355] val: string[c1: pVal=] 
+14 14   [ MemberVariable1Test.sl:260] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ MemberVariable1Test.sl:260] [LoadNotStaticField] index:[0] info:[Member]
+16 16   [ :0] [Convert_ToString] index:[0]
+17 17   [ MemberVariable1Test.sl:260] [Add] index:[0]
+18 18   [ MemberVariable1Test.sl:260] [LoadConstString] index:[1348] val: string[ cVal=] 
+19 19   [ MemberVariable1Test.sl:260] [Add] index:[0]
+20 20   [ MemberVariable1Test.sl:260] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ MemberVariable1Test.sl:260] [LoadNotStaticField] index:[2] info:[Member]
+22 22   [ :0] [Convert_ToString] index:[0]
+23 23   [ MemberVariable1Test.sl:260] [Add] index:[0]
+24 24   [ MemberVariable1Test.sl:254] [StoreLocal] index:[5] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ MemberVariable1Test.sl:254] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+30 30   [ MemberVariable1Test.sl:263] [ArcRetain] index:[0] info:[ARC claim owned new local: c2]
+31 31   [ MemberVariable1Test.sl:254] [StoreLocal] index:[1] info:[LocalStatement]
+32 32   [ MemberVariable1Test.sl:264] [LoadLocal] index:[1] info:[LocalStatement]
+33 33   [ MemberVariable1Test.sl:264] [LoadConstInt32] index:[0] val: int32[999] 
+34 34   [ MemberVariable1Test.sl:254] [StoreNotStaticField2] index:[0] info:[Member]
+35 35   [ MemberVariable1Test.sl:265] [LoadConstString] index:[1356] val: string[c2.pVal=] 
+36 36   [ MemberVariable1Test.sl:265] [LoadLocal] index:[1] info:[LocalStatement]
+37 37   [ MemberVariable1Test.sl:265] [LoadNotStaticField] index:[0] info:[Member]
+38 38   [ :0] [Convert_ToString] index:[0]
+39 39   [ MemberVariable1Test.sl:265] [Add] index:[0]
+40 40   [ MemberVariable1Test.sl:265] [LoadConstString] index:[1357] val: string[ (after set)] 
+41 41   [ MemberVariable1Test.sl:265] [Add] index:[0]
+42 42   [ MemberVariable1Test.sl:254] [StoreLocal] index:[6] info:[LocalStatement]
+43 43   [ :0] [Nop] index:[0]
+44 44   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+45 45   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+46 46   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+47 47   [ MemberVariable1Test.sl:254] [NewObject] index:[0] info:[IRNew] val: int32[-1145496141] 
+48 48   [ MemberVariable1Test.sl:267] [ArcRetain] index:[0] info:[ARC claim owned new local: p]
+49 49   [ MemberVariable1Test.sl:254] [StoreLocal] index:[2] info:[LocalStatement]
+50 50   [ MemberVariable1Test.sl:268] [LoadConstString] index:[1358] val: string[p.pVal=] 
+51 51   [ MemberVariable1Test.sl:268] [LoadLocal] index:[2] info:[LocalStatement]
+52 52   [ MemberVariable1Test.sl:268] [LoadNotStaticField] index:[0] info:[Member]
+53 53   [ :0] [Convert_ToString] index:[0]
+54 54   [ MemberVariable1Test.sl:268] [Add] index:[0]
+55 55   [ MemberVariable1Test.sl:268] [LoadConstString] index:[1359] val: string[ (unaffected by c2)] 
+56 56   [ MemberVariable1Test.sl:268] [Add] index:[0]
+57 57   [ MemberVariable1Test.sl:254] [StoreLocal] index:[7] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ MemberVariable1Test.sl:254] [NewObject] index:[0] info:[IRNew] val: int32[730355083] 
+63 63   [ :0] [Dup] index:[0]
+64 64   [ MemberVariable1Test.sl:271] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+65 65   [ MemberVariable1Test.sl:254] [StoreLocal] index:[3] info:[LocalStatement]
+66 66   [ MemberVariable1Test.sl:272] [LoadConstString] index:[1360] val: string[gc: pVal=] 
+67 67   [ MemberVariable1Test.sl:272] [LoadLocal] index:[3] info:[LocalStatement]
+68 68   [ MemberVariable1Test.sl:272] [LoadNotStaticField] index:[0] info:[Member]
+69 69   [ :0] [Convert_ToString] index:[0]
+70 70   [ MemberVariable1Test.sl:272] [Add] index:[0]
+71 71   [ MemberVariable1Test.sl:272] [LoadConstString] index:[1348] val: string[ cVal=] 
+72 72   [ MemberVariable1Test.sl:272] [Add] index:[0]
+73 73   [ MemberVariable1Test.sl:272] [LoadLocal] index:[3] info:[LocalStatement]
+74 74   [ MemberVariable1Test.sl:272] [LoadNotStaticField] index:[2] info:[Member]
+75 75   [ :0] [Convert_ToString] index:[0]
+76 76   [ MemberVariable1Test.sl:272] [Add] index:[0]
+77 77   [ MemberVariable1Test.sl:272] [LoadConstString] index:[1351] val: string[ gVal=] 
+78 78   [ MemberVariable1Test.sl:272] [Add] index:[0]
+79 79   [ MemberVariable1Test.sl:272] [LoadLocal] index:[3] info:[LocalStatement]
+80 80   [ MemberVariable1Test.sl:272] [LoadNotStaticField] index:[4] info:[Member]
+81 81   [ :0] [Convert_ToString] index:[0]
+82 82   [ MemberVariable1Test.sl:272] [Add] index:[0]
+83 83   [ MemberVariable1Test.sl:254] [StoreLocal] index:[8] info:[LocalStatement]
+84 84   [ :0] [Nop] index:[0]
+85 85   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+86 86   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+87 87   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+88 88   [ MemberVariable1Test.sl:275] [LoadLocal] index:[3] info:[LocalStatement]
+89 89   [ MemberVariable1Test.sl:275] [LoadConstString] index:[1361] val: string[grand] 
+90 90   [ MemberVariable1Test.sl:254] [StoreNotStaticField2] index:[1] info:[Member]
+91 91   [ MemberVariable1Test.sl:276] [LoadLocal] index:[3] info:[LocalStatement]
+92 92   [ MemberVariable1Test.sl:276] [LoadConstString] index:[1362] val: string[gc_child] 
+93 93   [ MemberVariable1Test.sl:254] [StoreNotStaticField2] index:[3] info:[Member]
+94 94   [ MemberVariable1Test.sl:277] [LoadConstString] index:[1363] val: string[gc: pName=] 
+95 95   [ MemberVariable1Test.sl:277] [LoadLocal] index:[3] info:[LocalStatement]
+96 96   [ MemberVariable1Test.sl:277] [LoadNotStaticField] index:[1] info:[Member]
+97 97   [ MemberVariable1Test.sl:277] [Add] index:[0]
+98 98   [ MemberVariable1Test.sl:277] [LoadConstString] index:[1349] val: string[ cName=] 
+99 99   [ MemberVariable1Test.sl:277] [Add] index:[0]
+100 100   [ MemberVariable1Test.sl:277] [LoadLocal] index:[3] info:[LocalStatement]
+101 101   [ MemberVariable1Test.sl:277] [LoadNotStaticField] index:[3] info:[Member]
+102 102   [ MemberVariable1Test.sl:277] [Add] index:[0]
+103 103   [ MemberVariable1Test.sl:254] [StoreLocal] index:[9] info:[LocalStatement]
+104 104   [ :0] [Nop] index:[0]
+105 105   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+106 106   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+107 107   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+108 108   [ MemberVariable1Test.sl:254] [Label] index:[0] info:[FunEndLabel]
+109 109   [ MemberVariable1Test.sl:254] [LoadLocal] index:[1] info:[ARC release: LoadLocal testInheritModify_local[c2]]
+110 110   [ MemberVariable1Test.sl:254] [ArcRelease] index:[0] info:[ARC release owned local: testInheritModify_local[c2]]
+111 111   [ MemberVariable1Test.sl:254] [StoreLocal] index:[1] info:[ARC release: StoreLocal testInheritModify_local[c2]]
+112 112   [ MemberVariable1Test.sl:254] [LoadLocal] index:[2] info:[ARC release: LoadLocal testInheritModify_local[p]]
+113 113   [ MemberVariable1Test.sl:254] [ArcRelease] index:[0] info:[ARC release owned local: testInheritModify_local[p]]
+114 114   [ MemberVariable1Test.sl:254] [StoreLocal] index:[2] info:[ARC release: StoreLocal testInheritModify_local[p]]
+
+  Method: ProjectTest.MVTest1.testStaticRef
+    VirtualName: testStaticRef_Core.Void_0
+    Name: testStaticRef
+    InterfaceMethod: False
+    Return:
+      - #0 id=20649961 idx=0 name=_local[ProjectTest.MVTest1.testStaticRef.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:282] [LoadConstString] index:[1364] val: string[----- testStaticRef -----] 
+2 2   [ MemberVariable1Test.sl:280] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:283] [LoadConstString] index:[1365] val: string[s1=] 
+8 8   [ MemberVariable1Test.sl:283] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVStaticRef] staticOwner:[ProjectTest.MVTest1] 
+9 9   [ :0] [Convert_ToString] index:[0]
+10 10   [ MemberVariable1Test.sl:283] [Add] index:[0]
+11 11   [ MemberVariable1Test.sl:283] [LoadConstString] index:[1366] val: string[ s2=] 
+12 12   [ MemberVariable1Test.sl:283] [Add] index:[0]
+13 13   [ MemberVariable1Test.sl:283] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.MVStaticRef] staticOwner:[ProjectTest.MVTest1] 
+14 14   [ :0] [Convert_ToString] index:[0]
+15 15   [ MemberVariable1Test.sl:283] [Add] index:[0]
+16 16   [ MemberVariable1Test.sl:280] [StoreLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ MemberVariable1Test.sl:284] [LoadConstString] index:[1367] val: string[s3=] 
+22 22   [ MemberVariable1Test.sl:284] [LoadStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.MVStaticRef] staticOwner:[ProjectTest.MVTest1] 
+23 23   [ :0] [Convert_ToString] index:[0]
+24 24   [ MemberVariable1Test.sl:284] [Add] index:[0]
+25 25   [ MemberVariable1Test.sl:284] [LoadConstString] index:[1368] val: string[ s4=] 
+26 26   [ MemberVariable1Test.sl:284] [Add] index:[0]
+27 27   [ MemberVariable1Test.sl:284] [LoadStaticField] index:[3] info:[Static] fieldTypeIrmt:[ProjectTest.MVStaticRef] staticOwner:[ProjectTest.MVTest1] 
+28 28   [ :0] [Convert_ToString] index:[0]
+29 29   [ MemberVariable1Test.sl:284] [Add] index:[0]
+30 30   [ MemberVariable1Test.sl:280] [StoreLocal] index:[2] info:[LocalStatement]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+33 33   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+34 34   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+35 35   [ MemberVariable1Test.sl:280] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testPartial
+    VirtualName: testPartial_Core.Void_0
+    Name: testPartial
+    InterfaceMethod: False
+    Return:
+      - #0 id=51631922 idx=0 name=_local[ProjectTest.MVTest1.testPartial.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=62034116 idx=0 name=testPartial_local[c] type=ProjectTest.C2
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:289] [LoadConstString] index:[1369] val: string[----- testPartial -----] 
+2 2   [ MemberVariable1Test.sl:287] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:287] [NewObject] index:[0] info:[IRNew] val: int32[618334281] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:290] [LoadConstInt32] index:[0] val: int32[7] 
+10 10   [ MemberVariable1Test.sl:290] [LoadConstFloat32] index:[0] val:[2] 
+11 11   [ MemberVariable1Test.sl:290] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.C2, StaticRuntimeTypeList=[], Method=ProjectTest.C2._init__2_Core.Int32_Core.Float32, MethodRuntimeTypeList=[], ParamCount=2}] 
+12 12   [ MemberVariable1Test.sl:287] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:291] [LoadConstString] index:[833] val: string[x=] 
+14 14   [ MemberVariable1Test.sl:291] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ MemberVariable1Test.sl:291] [LoadNotStaticField] index:[0] info:[Member]
+16 16   [ :0] [Convert_ToString] index:[0]
+17 17   [ MemberVariable1Test.sl:291] [Add] index:[0]
+18 18   [ MemberVariable1Test.sl:291] [LoadConstString] index:[1370] val: string[ x2=] 
+19 19   [ MemberVariable1Test.sl:291] [Add] index:[0]
+20 20   [ MemberVariable1Test.sl:291] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.C2] staticOwner:[ProjectTest.MVTest1] 
+21 21   [ :0] [Convert_ToString] index:[0]
+22 22   [ MemberVariable1Test.sl:291] [Add] index:[0]
+23 23   [ MemberVariable1Test.sl:287] [StoreLocal] index:[2] info:[LocalStatement]
+24 24   [ :0] [Nop] index:[0]
+25 25   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+26 26   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+27 27   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+28 28   [ MemberVariable1Test.sl:287] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testCtorChain
+    VirtualName: testCtorChain_Core.Void_0
+    Name: testCtorChain
+    InterfaceMethod: False
+    Return:
+      - #0 id=21436136 idx=0 name=_local[ProjectTest.MVTest1.testCtorChain.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=58707504 idx=0 name=testCtorChain_local[b] type=ProjectTest.MVCtorBase
+      - #1 id=58605492 idx=1 name=testCtorChain_local[d] type=ProjectTest.MVCtorDerived
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:297] [LoadConstString] index:[1371] val: string[----- testCtorChain -----] 
+2 2   [ MemberVariable1Test.sl:295] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:295] [NewObject] index:[0] info:[IRNew] val: int32[-154562956] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:298] [LoadConstInt32] index:[0] val: int32[5] 
+10 10   [ MemberVariable1Test.sl:298] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVCtorBase, StaticRuntimeTypeList=[], Method=ProjectTest.MVCtorBase._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ MemberVariable1Test.sl:295] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:299] [LoadConstString] index:[1372] val: string[base: v=] 
+13 13   [ MemberVariable1Test.sl:299] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ MemberVariable1Test.sl:299] [LoadNotStaticField] index:[0] info:[Member]
+15 15   [ :0] [Convert_ToString] index:[0]
+16 16   [ MemberVariable1Test.sl:299] [Add] index:[0]
+17 17   [ MemberVariable1Test.sl:295] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+21 21   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+22 22   [ MemberVariable1Test.sl:295] [NewObject] index:[0] info:[IRNew] val: int32[1787371018] 
+23 23   [ :0] [Dup] index:[0]
+24 24   [ MemberVariable1Test.sl:301] [LoadConstInt32] index:[0] val: int32[11] 
+25 25   [ MemberVariable1Test.sl:301] [LoadConstInt32] index:[0] val: int32[22] 
+26 26   [ MemberVariable1Test.sl:301] [CallVirt] index:[8] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVCtorDerived, StaticRuntimeTypeList=[], Method=ProjectTest.MVCtorDerived._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+27 27   [ MemberVariable1Test.sl:295] [StoreLocal] index:[1] info:[LocalStatement]
+28 28   [ MemberVariable1Test.sl:302] [LoadConstString] index:[1373] val: string[derived: v=] 
+29 29   [ MemberVariable1Test.sl:302] [LoadLocal] index:[1] info:[LocalStatement]
+30 30   [ MemberVariable1Test.sl:302] [LoadNotStaticField] index:[0] info:[Member]
+31 31   [ :0] [Convert_ToString] index:[0]
+32 32   [ MemberVariable1Test.sl:302] [Add] index:[0]
+33 33   [ MemberVariable1Test.sl:302] [LoadConstString] index:[1374] val: string[ w=] 
+34 34   [ MemberVariable1Test.sl:302] [Add] index:[0]
+35 35   [ MemberVariable1Test.sl:302] [LoadLocal] index:[1] info:[LocalStatement]
+36 36   [ MemberVariable1Test.sl:302] [LoadNotStaticField] index:[1] info:[Member]
+37 37   [ :0] [Convert_ToString] index:[0]
+38 38   [ MemberVariable1Test.sl:302] [Add] index:[0]
+39 39   [ MemberVariable1Test.sl:295] [StoreLocal] index:[4] info:[LocalStatement]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+42 42   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+43 43   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+44 44   [ MemberVariable1Test.sl:303] [LoadConstString] index:[1375] val: string[derived.sum()=] 
+45 45   [ MemberVariable1Test.sl:303] [LoadLocal] index:[1] info:[LocalStatement]
+46 46   [ MemberVariable1Test.sl:146] [CallVirt] index:[9] info:[CallVirt sum] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVCtorDerived, StaticRuntimeTypeList=[], Method=ProjectTest.MVCtorDerived.sum, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ :0] [Convert_ToString] index:[0]
+48 48   [ MemberVariable1Test.sl:303] [Add] index:[0]
+49 49   [ MemberVariable1Test.sl:295] [StoreLocal] index:[5] info:[LocalStatement]
+50 50   [ :0] [Nop] index:[0]
+51 51   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+52 52   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+53 53   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+54 54   [ MemberVariable1Test.sl:295] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testMethodBaseRef
+    VirtualName: testMethodBaseRef_Core.Void_0
+    Name: testMethodBaseRef
+    InterfaceMethod: False
+    Return:
+      - #0 id=57687380 idx=0 name=_local[ProjectTest.MVTest1.testMethodBaseRef.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=49424379 idx=0 name=testMethodBaseRef_local[c] type=ProjectTest.MVChild
+      - #1 id=42166233 idx=1 name=testMethodBaseRef_local[gc] type=ProjectTest.MVGrandChild
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:309] [LoadConstString] index:[1376] val: string[----- testMethodBaseRef -----] 
+2 2   [ MemberVariable1Test.sl:307] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:307] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:310] [LoadConstInt32] index:[0] val: int32[30] 
+10 10   [ MemberVariable1Test.sl:310] [LoadConstInt32] index:[0] val: int32[40] 
+11 11   [ MemberVariable1Test.sl:310] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVChild._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+12 12   [ MemberVariable1Test.sl:307] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:311] [LoadConstString] index:[1377] val: string[c.sumPC()=] 
+14 14   [ MemberVariable1Test.sl:311] [LoadLocal] index:[0] info:[LocalStatement]
+15 15   [ MemberVariable1Test.sl:93] [CallVirt] index:[8] info:[CallVirt sumPC] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVChild.sumPC, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ :0] [Convert_ToString] index:[0]
+17 17   [ MemberVariable1Test.sl:311] [Add] index:[0]
+18 18   [ MemberVariable1Test.sl:311] [LoadConstString] index:[1378] val: string[ (pVal + cVal)] 
+19 19   [ MemberVariable1Test.sl:311] [Add] index:[0]
+20 20   [ MemberVariable1Test.sl:307] [StoreLocal] index:[3] info:[LocalStatement]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+23 23   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+24 24   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+25 25   [ MemberVariable1Test.sl:307] [NewObject] index:[0] info:[IRNew] val: int32[730355083] 
+26 26   [ :0] [Dup] index:[0]
+27 27   [ MemberVariable1Test.sl:313] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+28 28   [ MemberVariable1Test.sl:307] [StoreLocal] index:[1] info:[LocalStatement]
+29 29   [ MemberVariable1Test.sl:314] [LoadConstString] index:[1379] val: string[gc.sumAll()=] 
+30 30   [ MemberVariable1Test.sl:314] [LoadLocal] index:[1] info:[LocalStatement]
+31 31   [ MemberVariable1Test.sl:111] [CallVirt] index:[9] info:[CallVirt sumAll] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild.sumAll, MethodRuntimeTypeList=[], ParamCount=0}] 
+32 32   [ :0] [Convert_ToString] index:[0]
+33 33   [ MemberVariable1Test.sl:314] [Add] index:[0]
+34 34   [ MemberVariable1Test.sl:314] [LoadConstString] index:[1380] val: string[ (pVal + cVal + gVal)] 
+35 35   [ MemberVariable1Test.sl:314] [Add] index:[0]
+36 36   [ MemberVariable1Test.sl:307] [StoreLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ MemberVariable1Test.sl:307] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testBaseClassRef
+    VirtualName: testBaseClassRef_Core.Void_0
+    Name: testBaseClassRef
+    InterfaceMethod: False
+    Return:
+      - #0 id=43951783 idx=0 name=_local[ProjectTest.MVTest1.testBaseClassRef.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=60021735 idx=0 name=testBaseClassRef_local[c] type=ProjectTest.MVChild
+      - #1 id=3324704 idx=1 name=testBaseClassRef_local[p] type=ProjectTest.MVParent
+      - #2 id=29922341 idx=2 name=testBaseClassRef_local[gc2] type=ProjectTest.MVGrandChild
+      - #3 id=865613 idx=3 name=testBaseClassRef_local[p2] type=ProjectTest.MVParent
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:320] [LoadConstString] index:[1381] val: string[----- testBaseClassRef -----] 
+2 2   [ MemberVariable1Test.sl:318] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:318] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:322] [LoadConstInt32] index:[0] val: int32[7] 
+10 10   [ MemberVariable1Test.sl:322] [LoadConstInt32] index:[0] val: int32[8] 
+11 11   [ MemberVariable1Test.sl:322] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVChild._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+12 12   [ MemberVariable1Test.sl:318] [StoreLocal] index:[0] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:323] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ MemberVariable1Test.sl:323] [CastClass] index:[0] info:[CastClass as ProjectTest.MVParent] val irmt:[ProjectTest.MVParent] 
+15 15   [ MemberVariable1Test.sl:318] [StoreLocal] index:[1] info:[LocalStatement]
+16 16   [ MemberVariable1Test.sl:324] [LoadConstString] index:[1358] val: string[p.pVal=] 
+17 17   [ MemberVariable1Test.sl:324] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ MemberVariable1Test.sl:324] [LoadNotStaticField] index:[0] info:[Member]
+19 19   [ :0] [Convert_ToString] index:[0]
+20 20   [ MemberVariable1Test.sl:324] [Add] index:[0]
+21 21   [ MemberVariable1Test.sl:324] [LoadConstString] index:[1382] val: string[ p.pName=] 
+22 22   [ MemberVariable1Test.sl:324] [Add] index:[0]
+23 23   [ MemberVariable1Test.sl:324] [LoadLocal] index:[1] info:[LocalStatement]
+24 24   [ MemberVariable1Test.sl:324] [LoadNotStaticField] index:[1] info:[Member]
+25 25   [ MemberVariable1Test.sl:324] [Add] index:[0]
+26 26   [ MemberVariable1Test.sl:324] [LoadConstString] index:[1383] val: string[ (read via base ref)] 
+27 27   [ MemberVariable1Test.sl:324] [Add] index:[0]
+28 28   [ MemberVariable1Test.sl:318] [StoreLocal] index:[5] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ MemberVariable1Test.sl:327] [LoadLocal] index:[1] info:[LocalStatement]
+34 34   [ MemberVariable1Test.sl:327] [LoadConstInt32] index:[0] val: int32[500] 
+35 35   [ MemberVariable1Test.sl:318] [StoreNotStaticField2] index:[0] info:[Member]
+36 36   [ MemberVariable1Test.sl:328] [LoadConstString] index:[1384] val: string[c.pVal=] 
+37 37   [ MemberVariable1Test.sl:328] [LoadLocal] index:[0] info:[LocalStatement]
+38 38   [ MemberVariable1Test.sl:328] [LoadNotStaticField] index:[0] info:[Member]
+39 39   [ :0] [Convert_ToString] index:[0]
+40 40   [ MemberVariable1Test.sl:328] [Add] index:[0]
+41 41   [ MemberVariable1Test.sl:328] [LoadConstString] index:[1385] val: string[ (after write via base ref)] 
+42 42   [ MemberVariable1Test.sl:328] [Add] index:[0]
+43 43   [ MemberVariable1Test.sl:318] [StoreLocal] index:[6] info:[LocalStatement]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+46 46   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+47 47   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+48 48   [ MemberVariable1Test.sl:318] [NewObject] index:[0] info:[IRNew] val: int32[730355083] 
+49 49   [ :0] [Dup] index:[0]
+50 50   [ MemberVariable1Test.sl:331] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+51 51   [ MemberVariable1Test.sl:318] [StoreLocal] index:[2] info:[LocalStatement]
+52 52   [ MemberVariable1Test.sl:332] [LoadLocal] index:[2] info:[LocalStatement]
+53 53   [ MemberVariable1Test.sl:332] [CastClass] index:[0] info:[CastClass as ProjectTest.MVParent] val irmt:[ProjectTest.MVParent] 
+54 54   [ MemberVariable1Test.sl:318] [StoreLocal] index:[3] info:[LocalStatement]
+55 55   [ MemberVariable1Test.sl:333] [LoadConstString] index:[1386] val: string[p2.pVal=] 
+56 56   [ MemberVariable1Test.sl:333] [LoadLocal] index:[3] info:[LocalStatement]
+57 57   [ MemberVariable1Test.sl:333] [LoadNotStaticField] index:[0] info:[Member]
+58 58   [ :0] [Convert_ToString] index:[0]
+59 59   [ MemberVariable1Test.sl:333] [Add] index:[0]
+60 60   [ MemberVariable1Test.sl:333] [LoadConstString] index:[1387] val: string[ p2.pName=] 
+61 61   [ MemberVariable1Test.sl:333] [Add] index:[0]
+62 62   [ MemberVariable1Test.sl:333] [LoadLocal] index:[3] info:[LocalStatement]
+63 63   [ MemberVariable1Test.sl:333] [LoadNotStaticField] index:[1] info:[Member]
+64 64   [ MemberVariable1Test.sl:333] [Add] index:[0]
+65 65   [ MemberVariable1Test.sl:318] [StoreLocal] index:[7] info:[LocalStatement]
+66 66   [ :0] [Nop] index:[0]
+67 67   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+70 70   [ MemberVariable1Test.sl:318] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testPrivateMember
+    VirtualName: testPrivateMember_Core.Void_0
+    Name: testPrivateMember
+    InterfaceMethod: False
+    Return:
+      - #0 id=7790523 idx=0 name=_local[ProjectTest.MVTest1.testPrivateMember.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=3005847 idx=0 name=testPrivateMember_local[m] type=ProjectTest.MVModifier
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=27052626 idx=5 name=_local[ProjectTest.MVTest1.testPrivateMember.inline.getPriStVal.result] type=Core.Int32
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:339] [LoadConstString] index:[1388] val: string[----- testPrivateMember -----] 
+2 2   [ MemberVariable1Test.sl:337] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:337] [NewObject] index:[0] info:[IRNew] val: int32[-1206148262] 
+8 8   [ MemberVariable1Test.sl:340] [ArcRetain] index:[0] info:[ARC claim owned new local: m]
+9 9   [ MemberVariable1Test.sl:337] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:341] [LoadConstString] index:[1389] val: string[getPriVal=] 
+11 11   [ MemberVariable1Test.sl:341] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:33] [CallVirt] index:[7] info:[CallVirt getPriVal] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVModifier, StaticRuntimeTypeList=[], Method=ProjectTest.MVModifier.getPriVal, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [Convert_ToString] index:[0]
+14 14   [ MemberVariable1Test.sl:341] [Add] index:[0]
+15 15   [ MemberVariable1Test.sl:337] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ MemberVariable1Test.sl:342] [LoadConstString] index:[1390] val: string[setPriVal(250)=] 
+21 21   [ MemberVariable1Test.sl:342] [LoadLocal] index:[0] info:[LocalStatement]
+22 22   [ MemberVariable1Test.sl:342] [LoadConstInt32] index:[0] val: int32[250] 
+23 23   [ MemberVariable1Test.sl:38] [CallVirt] index:[8] info:[CallVirt setPriVal] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVModifier, StaticRuntimeTypeList=[], Method=ProjectTest.MVModifier.setPriVal_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+24 24   [ :0] [Convert_ToString] index:[0]
+25 25   [ MemberVariable1Test.sl:342] [Add] index:[0]
+26 26   [ MemberVariable1Test.sl:337] [StoreLocal] index:[3] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ MemberVariable1Test.sl:343] [LoadConstString] index:[1391] val: string[getPriVal(after)=] 
+32 32   [ MemberVariable1Test.sl:343] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ MemberVariable1Test.sl:33] [CallVirt] index:[7] info:[CallVirt getPriVal] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVModifier, StaticRuntimeTypeList=[], Method=ProjectTest.MVModifier.getPriVal, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ :0] [Convert_ToString] index:[0]
+35 35   [ MemberVariable1Test.sl:343] [Add] index:[0]
+36 36   [ MemberVariable1Test.sl:337] [StoreLocal] index:[4] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ MemberVariable1Test.sl:344] [LoadConstString] index:[1392] val: string[getPriStVal=] 
+42 42   [ :0] [Nop] index:[0]
+43 43   [ MemberVariable1Test.sl:46] [LoadStaticField] index:[2] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+44 44   [ MemberVariable1Test.sl:337] [StoreLocal] index:[5] info:[LocalStatement]
+45 45   [ :0] [BrLabel] index:[46]
+46 46   [ MemberVariable1Test.sl:44] [Label] index:[1] info:[inline end: getPriStVal]
+47 47   [ MemberVariable1Test.sl:337] [LoadLocal] index:[5] info:[LocalStatement]
+48 48   [ :0] [Convert_ToString] index:[0]
+49 49   [ MemberVariable1Test.sl:344] [Add] index:[0]
+50 50   [ MemberVariable1Test.sl:337] [StoreLocal] index:[6] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+53 53   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+54 54   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+55 55   [ MemberVariable1Test.sl:337] [Label] index:[0] info:[FunEndLabel]
+56 56   [ MemberVariable1Test.sl:337] [LoadLocal] index:[0] info:[ARC release: LoadLocal testPrivateMember_local[m]]
+57 57   [ MemberVariable1Test.sl:337] [ArcRelease] index:[0] info:[ARC release owned local: testPrivateMember_local[m]]
+58 58   [ MemberVariable1Test.sl:337] [StoreLocal] index:[0] info:[ARC release: StoreLocal testPrivateMember_local[m]]
+
+  Method: ProjectTest.MVTest1.testInstanceIsolation
+    VirtualName: testInstanceIsolation_Core.Void_0
+    Name: testInstanceIsolation
+    InterfaceMethod: False
+    Return:
+      - #0 id=43779089 idx=0 name=_local[ProjectTest.MVTest1.testInstanceIsolation.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=58467488 idx=0 name=testInstanceIsolation_local[m1] type=ProjectTest.MVModifier
+      - #1 id=56445345 idx=1 name=testInstanceIsolation_local[m2] type=ProjectTest.MVModifier
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:350] [LoadConstString] index:[1393] val: string[----- testInstanceIsolation -----] 
+2 2   [ MemberVariable1Test.sl:348] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:348] [NewObject] index:[0] info:[IRNew] val: int32[-1206148262] 
+8 8   [ MemberVariable1Test.sl:351] [ArcRetain] index:[0] info:[ARC claim owned new local: m1]
+9 9   [ MemberVariable1Test.sl:348] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ MemberVariable1Test.sl:348] [NewObject] index:[0] info:[IRNew] val: int32[-1206148262] 
+11 11   [ MemberVariable1Test.sl:352] [ArcRetain] index:[0] info:[ARC claim owned new local: m2]
+12 12   [ MemberVariable1Test.sl:348] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ MemberVariable1Test.sl:353] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ MemberVariable1Test.sl:353] [LoadConstInt32] index:[0] val: int32[111] 
+15 15   [ MemberVariable1Test.sl:348] [StoreNotStaticField2] index:[0] info:[Member]
+16 16   [ MemberVariable1Test.sl:354] [LoadLocal] index:[1] info:[LocalStatement]
+17 17   [ MemberVariable1Test.sl:354] [LoadConstInt32] index:[0] val: int32[222] 
+18 18   [ MemberVariable1Test.sl:348] [StoreNotStaticField2] index:[0] info:[Member]
+19 19   [ MemberVariable1Test.sl:355] [LoadConstString] index:[1394] val: string[m1.pubVal=] 
+20 20   [ MemberVariable1Test.sl:355] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ MemberVariable1Test.sl:355] [LoadNotStaticField] index:[0] info:[Member]
+22 22   [ :0] [Convert_ToString] index:[0]
+23 23   [ MemberVariable1Test.sl:355] [Add] index:[0]
+24 24   [ MemberVariable1Test.sl:355] [LoadConstString] index:[1395] val: string[ m2.pubVal=] 
+25 25   [ MemberVariable1Test.sl:355] [Add] index:[0]
+26 26   [ MemberVariable1Test.sl:355] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ MemberVariable1Test.sl:355] [LoadNotStaticField] index:[0] info:[Member]
+28 28   [ :0] [Convert_ToString] index:[0]
+29 29   [ MemberVariable1Test.sl:355] [Add] index:[0]
+30 30   [ MemberVariable1Test.sl:355] [LoadConstString] index:[1396] val: string[ (isolated)] 
+31 31   [ MemberVariable1Test.sl:355] [Add] index:[0]
+32 32   [ MemberVariable1Test.sl:348] [StoreLocal] index:[3] info:[LocalStatement]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+35 35   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+36 36   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+37 37   [ MemberVariable1Test.sl:357] [LoadConstInt32] index:[0] val: int32[3000] 
+38 38   [ MemberVariable1Test.sl:348] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+39 39   [ MemberVariable1Test.sl:358] [LoadConstString] index:[1397] val: string[stVal(via m1 read)=] 
+40 40   [ MemberVariable1Test.sl:358] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+41 41   [ :0] [Convert_ToString] index:[0]
+42 42   [ MemberVariable1Test.sl:358] [Add] index:[0]
+43 43   [ MemberVariable1Test.sl:348] [StoreLocal] index:[4] info:[LocalStatement]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+46 46   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+47 47   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+48 48   [ MemberVariable1Test.sl:359] [LoadConstString] index:[1398] val: string[stVal(static shared)=] 
+49 49   [ MemberVariable1Test.sl:359] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVModifier] staticOwner:[ProjectTest.MVTest1] 
+50 50   [ :0] [Convert_ToString] index:[0]
+51 51   [ MemberVariable1Test.sl:359] [Add] index:[0]
+52 52   [ MemberVariable1Test.sl:348] [StoreLocal] index:[5] info:[LocalStatement]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+55 55   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+56 56   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+57 57   [ MemberVariable1Test.sl:348] [Label] index:[0] info:[FunEndLabel]
+58 58   [ MemberVariable1Test.sl:348] [LoadLocal] index:[0] info:[ARC release: LoadLocal testInstanceIsolation_local[m1]]
+59 59   [ MemberVariable1Test.sl:348] [ArcRelease] index:[0] info:[ARC release owned local: testInstanceIsolation_local[m1]]
+60 60   [ MemberVariable1Test.sl:348] [StoreLocal] index:[0] info:[ARC release: StoreLocal testInstanceIsolation_local[m1]]
+61 61   [ MemberVariable1Test.sl:348] [LoadLocal] index:[1] info:[ARC release: LoadLocal testInstanceIsolation_local[m2]]
+62 62   [ MemberVariable1Test.sl:348] [ArcRelease] index:[0] info:[ARC release owned local: testInstanceIsolation_local[m2]]
+63 63   [ MemberVariable1Test.sl:348] [StoreLocal] index:[1] info:[ARC release: StoreLocal testInstanceIsolation_local[m2]]
+
+  Method: ProjectTest.MVTest1.testSelfRefChain
+    VirtualName: testSelfRefChain_Core.Void_0
+    Name: testSelfRefChain
+    InterfaceMethod: False
+    Return:
+      - #0 id=38246063 idx=0 name=_local[ProjectTest.MVTest1.testSelfRefChain.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=8670250 idx=0 name=testSelfRefChain_local[n1] type=ProjectTest.MVNode
+      - #1 id=10923387 idx=1 name=testSelfRefChain_local[n2] type=ProjectTest.MVNode
+      - #2 id=31201619 idx=2 name=testSelfRefChain_local[n3] type=ProjectTest.MVNode
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:365] [LoadConstString] index:[1399] val: string[----- testSelfRefChain -----] 
+2 2   [ MemberVariable1Test.sl:363] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:363] [NewObject] index:[0] info:[IRNew] val: int32[496212107] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:366] [LoadConstInt32] index:[0] val: int32[1] 
+10 10   [ MemberVariable1Test.sl:366] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVNode, StaticRuntimeTypeList=[], Method=ProjectTest.MVNode._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ MemberVariable1Test.sl:363] [StoreLocal] index:[0] info:[LocalStatement]
+12 12   [ MemberVariable1Test.sl:363] [NewObject] index:[0] info:[IRNew] val: int32[496212107] 
+13 13   [ :0] [Dup] index:[0]
+14 14   [ MemberVariable1Test.sl:367] [LoadConstInt32] index:[0] val: int32[2] 
+15 15   [ MemberVariable1Test.sl:367] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVNode, StaticRuntimeTypeList=[], Method=ProjectTest.MVNode._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ MemberVariable1Test.sl:363] [StoreLocal] index:[1] info:[LocalStatement]
+17 17   [ MemberVariable1Test.sl:363] [NewObject] index:[0] info:[IRNew] val: int32[496212107] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ MemberVariable1Test.sl:368] [LoadConstInt32] index:[0] val: int32[3] 
+20 20   [ MemberVariable1Test.sl:368] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVNode, StaticRuntimeTypeList=[], Method=ProjectTest.MVNode._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+21 21   [ MemberVariable1Test.sl:363] [StoreLocal] index:[2] info:[LocalStatement]
+22 22   [ MemberVariable1Test.sl:369] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ MemberVariable1Test.sl:369] [LoadLocal] index:[1] info:[LocalStatement]
+24 24   [ MemberVariable1Test.sl:363] [StoreNotStaticField2] index:[1] info:[Member]
+25 25   [ MemberVariable1Test.sl:370] [LoadLocal] index:[1] info:[LocalStatement]
+26 26   [ MemberVariable1Test.sl:370] [LoadLocal] index:[2] info:[LocalStatement]
+27 27   [ MemberVariable1Test.sl:363] [StoreNotStaticField2] index:[1] info:[Member]
+28 28   [ MemberVariable1Test.sl:372] [LoadConstString] index:[1400] val: string[n1.val=] 
+29 29   [ MemberVariable1Test.sl:372] [LoadLocal] index:[0] info:[LocalStatement]
+30 30   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[0] info:[Member]
+31 31   [ :0] [Convert_ToString] index:[0]
+32 32   [ MemberVariable1Test.sl:372] [Add] index:[0]
+33 33   [ MemberVariable1Test.sl:372] [LoadConstString] index:[1401] val: string[ n1.nextNode.val=] 
+34 34   [ MemberVariable1Test.sl:372] [Add] index:[0]
+35 35   [ MemberVariable1Test.sl:372] [LoadLocal] index:[0] info:[LocalStatement]
+36 36   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[1] info:[Member]
+37 37   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[0] info:[Member]
+38 38   [ :0] [Convert_ToString] index:[0]
+39 39   [ MemberVariable1Test.sl:372] [Add] index:[0]
+40 40   [ MemberVariable1Test.sl:372] [LoadConstString] index:[1402] val: string[ n1.nextNode.nextNode.val=] 
+41 41   [ MemberVariable1Test.sl:372] [Add] index:[0]
+42 42   [ MemberVariable1Test.sl:372] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[1] info:[Member]
+44 44   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[1] info:[Member]
+45 45   [ MemberVariable1Test.sl:372] [LoadNotStaticField] index:[0] info:[Member]
+46 46   [ :0] [Convert_ToString] index:[0]
+47 47   [ MemberVariable1Test.sl:372] [Add] index:[0]
+48 48   [ MemberVariable1Test.sl:363] [StoreLocal] index:[4] info:[LocalStatement]
+49 49   [ :0] [Nop] index:[0]
+50 50   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+51 51   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+52 52   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+53 53   [ MemberVariable1Test.sl:373] [LoadConstString] index:[1403] val: string[n3.nextNode=] 
+54 54   [ MemberVariable1Test.sl:373] [LoadLocal] index:[2] info:[LocalStatement]
+55 55   [ MemberVariable1Test.sl:373] [LoadNotStaticField] index:[1] info:[Member]
+56 56   [ MemberVariable1Test.sl:373] [Add] index:[0]
+57 57   [ MemberVariable1Test.sl:363] [StoreLocal] index:[5] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ MemberVariable1Test.sl:375] [LoadLocal] index:[1] info:[LocalStatement]
+63 63   [ MemberVariable1Test.sl:375] [LoadConstNull] index:[0] val:[null] 
+64 64   [ MemberVariable1Test.sl:363] [StoreNotStaticField2] index:[1] info:[Member]
+65 65   [ MemberVariable1Test.sl:376] [LoadConstString] index:[1404] val: string[after n2.nextNode=null, n1.nextNode.nextNode=] 
+66 66   [ MemberVariable1Test.sl:376] [LoadLocal] index:[0] info:[LocalStatement]
+67 67   [ MemberVariable1Test.sl:376] [LoadNotStaticField] index:[1] info:[Member]
+68 68   [ MemberVariable1Test.sl:376] [LoadNotStaticField] index:[1] info:[Member]
+69 69   [ MemberVariable1Test.sl:376] [Add] index:[0]
+70 70   [ MemberVariable1Test.sl:363] [StoreLocal] index:[6] info:[LocalStatement]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+73 73   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+74 74   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+75 75   [ MemberVariable1Test.sl:363] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testGrandStatic
+    VirtualName: testGrandStatic_Core.Void_0
+    Name: testGrandStatic
+    InterfaceMethod: False
+    Return:
+      - #0 id=12379115 idx=0 name=_local[ProjectTest.MVTest1.testGrandStatic.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:383] [LoadConstString] index:[1405] val: string[----- testGrandStatic -----] 
+2 2   [ MemberVariable1Test.sl:381] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:384] [LoadConstString] index:[1406] val: string[pStatic(via GrandChild)=] 
+8 8   [ MemberVariable1Test.sl:384] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVGrandChild] staticOwner:[ProjectTest.MVTest1] 
+9 9   [ :0] [Convert_ToString] index:[0]
+10 10   [ MemberVariable1Test.sl:384] [Add] index:[0]
+11 11   [ MemberVariable1Test.sl:381] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ :0] [Nop] index:[0]
+13 13   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+14 14   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+15 15   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+16 16   [ MemberVariable1Test.sl:386] [LoadConstInt32] index:[0] val: int32[5000] 
+17 17   [ MemberVariable1Test.sl:381] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVChild] staticOwner:[ProjectTest.MVTest1] 
+18 18   [ MemberVariable1Test.sl:387] [LoadConstString] index:[1407] val: string[pStatic(via Child after Child write)=] 
+19 19   [ MemberVariable1Test.sl:387] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVChild] staticOwner:[ProjectTest.MVTest1] 
+20 20   [ :0] [Convert_ToString] index:[0]
+21 21   [ MemberVariable1Test.sl:387] [Add] index:[0]
+22 22   [ MemberVariable1Test.sl:381] [StoreLocal] index:[2] info:[LocalStatement]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+25 25   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+26 26   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+27 27   [ MemberVariable1Test.sl:388] [LoadConstString] index:[1408] val: string[pStatic(via Parent after Child write)=] 
+28 28   [ MemberVariable1Test.sl:388] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVParent] staticOwner:[ProjectTest.MVTest1] 
+29 29   [ :0] [Convert_ToString] index:[0]
+30 30   [ MemberVariable1Test.sl:388] [Add] index:[0]
+31 31   [ MemberVariable1Test.sl:381] [StoreLocal] index:[3] info:[LocalStatement]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+34 34   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+35 35   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+36 36   [ MemberVariable1Test.sl:389] [LoadConstString] index:[1409] val: string[pStatic(via GrandChild after Child write)=] 
+37 37   [ MemberVariable1Test.sl:389] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVGrandChild] staticOwner:[ProjectTest.MVTest1] 
+38 38   [ :0] [Convert_ToString] index:[0]
+39 39   [ MemberVariable1Test.sl:389] [Add] index:[0]
+40 40   [ MemberVariable1Test.sl:381] [StoreLocal] index:[4] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+43 43   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+44 44   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+45 45   [ MemberVariable1Test.sl:392] [LoadConstInt32] index:[0] val: int32[1000] 
+46 46   [ MemberVariable1Test.sl:381] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVChild] staticOwner:[ProjectTest.MVTest1] 
+47 47   [ MemberVariable1Test.sl:393] [LoadConstString] index:[1410] val: string[pStatic(restored via Child)=] 
+48 48   [ MemberVariable1Test.sl:393] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.MVChild] staticOwner:[ProjectTest.MVTest1] 
+49 49   [ :0] [Convert_ToString] index:[0]
+50 50   [ MemberVariable1Test.sl:393] [Add] index:[0]
+51 51   [ MemberVariable1Test.sl:381] [StoreLocal] index:[5] info:[LocalStatement]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+54 54   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+55 55   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+56 56   [ MemberVariable1Test.sl:381] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.MVTest1.testLiteralInherit
+    VirtualName: testLiteralInherit_Core.Void_0
+    Name: testLiteralInherit
+    InterfaceMethod: False
+    Return:
+      - #0 id=44303172 idx=0 name=_local[ProjectTest.MVTest1.testLiteralInherit.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=63184231 idx=0 name=testLiteralInherit_local[lc] type=ProjectTest.MVChild
+      - #1 id=31787174 idx=1 name=testLiteralInherit_local[lgc] type=ProjectTest.MVGrandChild
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ MemberVariable1Test.sl:399] [LoadConstString] index:[1411] val: string[----- testLiteralInherit -----] 
+2 2   [ MemberVariable1Test.sl:397] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ MemberVariable1Test.sl:397] [NewObject] index:[0] info:[IRNew] val: int32[-1730224589] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ MemberVariable1Test.sl:400] [LoadConstInt32] index:[0] val: int32[55] 
+10 10   [ MemberVariable1Test.sl:397] [StoreNotStaticField2] index:[0] info:[Member]
+11 11   [ :0] [Dup] index:[0]
+12 12   [ MemberVariable1Test.sl:400] [LoadConstInt32] index:[0] val: int32[66] 
+13 13   [ MemberVariable1Test.sl:397] [StoreNotStaticField2] index:[2] info:[Member]
+14 14   [ MemberVariable1Test.sl:400] [ArcRetain] index:[0] info:[ARC claim owned new local: lc]
+15 15   [ MemberVariable1Test.sl:397] [StoreLocal] index:[0] info:[LocalStatement]
+16 16   [ MemberVariable1Test.sl:401] [LoadConstString] index:[1412] val: string[lc: pVal=] 
+17 17   [ MemberVariable1Test.sl:401] [LoadLocal] index:[0] info:[LocalStatement]
+18 18   [ MemberVariable1Test.sl:401] [LoadNotStaticField] index:[0] info:[Member]
+19 19   [ :0] [Convert_ToString] index:[0]
+20 20   [ MemberVariable1Test.sl:401] [Add] index:[0]
+21 21   [ MemberVariable1Test.sl:401] [LoadConstString] index:[1346] val: string[ pName=] 
+22 22   [ MemberVariable1Test.sl:401] [Add] index:[0]
+23 23   [ MemberVariable1Test.sl:401] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ MemberVariable1Test.sl:401] [LoadNotStaticField] index:[1] info:[Member]
+25 25   [ MemberVariable1Test.sl:401] [Add] index:[0]
+26 26   [ MemberVariable1Test.sl:401] [LoadConstString] index:[1348] val: string[ cVal=] 
+27 27   [ MemberVariable1Test.sl:401] [Add] index:[0]
+28 28   [ MemberVariable1Test.sl:401] [LoadLocal] index:[0] info:[LocalStatement]
+29 29   [ MemberVariable1Test.sl:401] [LoadNotStaticField] index:[2] info:[Member]
+30 30   [ :0] [Convert_ToString] index:[0]
+31 31   [ MemberVariable1Test.sl:401] [Add] index:[0]
+32 32   [ MemberVariable1Test.sl:401] [LoadConstString] index:[1349] val: string[ cName=] 
+33 33   [ MemberVariable1Test.sl:401] [Add] index:[0]
+34 34   [ MemberVariable1Test.sl:401] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ MemberVariable1Test.sl:401] [LoadNotStaticField] index:[3] info:[Member]
+36 36   [ MemberVariable1Test.sl:401] [Add] index:[0]
+37 37   [ MemberVariable1Test.sl:397] [StoreLocal] index:[3] info:[LocalStatement]
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+40 40   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+41 41   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+42 42   [ MemberVariable1Test.sl:397] [NewObject] index:[0] info:[IRNew] val: int32[730355083] 
+43 43   [ :0] [Dup] index:[0]
+44 44   [ MemberVariable1Test.sl:403] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.MVGrandChild, StaticRuntimeTypeList=[], Method=ProjectTest.MVGrandChild._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ :0] [Dup] index:[0]
+46 46   [ MemberVariable1Test.sl:403] [LoadConstInt32] index:[0] val: int32[77] 
+47 47   [ MemberVariable1Test.sl:397] [StoreNotStaticField2] index:[0] info:[Member]
+48 48   [ :0] [Dup] index:[0]
+49 49   [ MemberVariable1Test.sl:403] [LoadConstInt32] index:[0] val: int32[88] 
+50 50   [ MemberVariable1Test.sl:397] [StoreNotStaticField2] index:[4] info:[Member]
+51 51   [ MemberVariable1Test.sl:397] [StoreLocal] index:[1] info:[LocalStatement]
+52 52   [ MemberVariable1Test.sl:404] [LoadConstString] index:[1413] val: string[lgc: pVal=] 
+53 53   [ MemberVariable1Test.sl:404] [LoadLocal] index:[1] info:[LocalStatement]
+54 54   [ MemberVariable1Test.sl:404] [LoadNotStaticField] index:[0] info:[Member]
+55 55   [ :0] [Convert_ToString] index:[0]
+56 56   [ MemberVariable1Test.sl:404] [Add] index:[0]
+57 57   [ MemberVariable1Test.sl:404] [LoadConstString] index:[1348] val: string[ cVal=] 
+58 58   [ MemberVariable1Test.sl:404] [Add] index:[0]
+59 59   [ MemberVariable1Test.sl:404] [LoadLocal] index:[1] info:[LocalStatement]
+60 60   [ MemberVariable1Test.sl:404] [LoadNotStaticField] index:[2] info:[Member]
+61 61   [ :0] [Convert_ToString] index:[0]
+62 62   [ MemberVariable1Test.sl:404] [Add] index:[0]
+63 63   [ MemberVariable1Test.sl:404] [LoadConstString] index:[1351] val: string[ gVal=] 
+64 64   [ MemberVariable1Test.sl:404] [Add] index:[0]
+65 65   [ MemberVariable1Test.sl:404] [LoadLocal] index:[1] info:[LocalStatement]
+66 66   [ MemberVariable1Test.sl:404] [LoadNotStaticField] index:[4] info:[Member]
+67 67   [ :0] [Convert_ToString] index:[0]
+68 68   [ MemberVariable1Test.sl:404] [Add] index:[0]
+69 69   [ MemberVariable1Test.sl:397] [StoreLocal] index:[4] info:[LocalStatement]
+70 70   [ :0] [Nop] index:[0]
+71 71   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+72 72   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+73 73   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+74 74   [ MemberVariable1Test.sl:397] [Label] index:[0] info:[FunEndLabel]
+75 75   [ MemberVariable1Test.sl:397] [LoadLocal] index:[0] info:[ARC release: LoadLocal testLiteralInherit_local[lc]]
+76 76   [ MemberVariable1Test.sl:397] [ArcRelease] index:[0] info:[ARC release owned local: testLiteralInherit_local[lc]]
+77 77   [ MemberVariable1Test.sl:397] [StoreLocal] index:[0] info:[ARC release: StoreLocal testLiteralInherit_local[lc]]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

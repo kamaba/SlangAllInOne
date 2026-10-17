@@ -1,0 +1,109 @@
+-------------------Meta 文件显示 开始 : Path: String.sl-----------------------
+public class String extends Core.Object
+{
+private [Core.String]_value = null;
+public  static Core.String toFormat([Core.String]_format,[Core.Array<Core.Object>Core.Object
+]_parmas)
+{
+return SystemStringFormat(_format,_parmas);
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+return [Core.String]Core.String.toString.this;
+}
+
+public  Core.Void _init_([Core.Int8]aa)
+{
+[Core.String]Core.String._init_.this  ->  [Core.String]_value = [Core.Int8]aa.toString();
+
+}
+
+public  Core.Void _init_([Core.Int32]aa)
+{
+[Core.String]Core.String._init_.this  ->  [Core.String]_value = [Core.Int32]aa.toString();
+
+}
+
+public  Core.Void _init_([Core.String]aa)
+{
+[Core.String]Core.String._init_.this  ->  [Core.String]_value = [Core.String]aa;
+
+}
+
+public  Core.String format([Core.Array<Core.Object>Core.Object
+]_parmas)
+{
+return SystemStringFormat(this,_parmas);
+}
+
+public  Core.String front([Core.Int32]index)
+{
+return SystemStringFront(this,index);
+}
+
+public  Core.String end([Core.Int32]index)
+{
+return SystemStringEnd(this,index);
+}
+
+public  Core.String range([Core.Int32]start,[Core.Int32]end)
+{
+return SystemStringRange(this,start,end);
+}
+
+public  Core.Array<Core.UInt8>Core.UInt8
+ toUInt8Array()
+{
+return SystemStringToUInt8Array(this);
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

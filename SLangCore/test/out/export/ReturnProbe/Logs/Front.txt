@@ -1,0 +1,61 @@
+﻿[04:42:28 587] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[04:42:28 589] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ReturnProbe.sp]
+[04:42:28 593] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ReturnProbe.sl]
+[04:42:28 594] [Error] [ParseToken]  [TokenLexerReturnNotSupported] Position:[ReturnProbe.sl_12_11]  Info:[Error 关键字[return]不受支持：返回语句请使用 ret 关键字!] Extend:[identifier:[return] 返回语句请使用 ret 关键字]
+[04:42:28 596] [Error] [ParseToken]  [TokenLexerReturnNotSupported] Position:[ReturnProbe.sl_20_19]  Info:[Error 关键字[return]不受支持：返回语句请使用 ret 关键字!] Extend:[identifier:[return] 返回语句请使用 ret 关键字]
+[04:42:28 598] [Error] [ParseToken]  [TokenLexerReturnNotSupported] Position:[ReturnProbe.sl_22_21]  Info:[Error 关键字[return]不受支持：返回语句请使用 ret 关键字!] Extend:[identifier:[return] 返回语句请使用 ret 关键字]
+[04:42:28 598] [Error] [ParseToken]  [TokenLexerReturnNotSupported] Position:[ReturnProbe.sl_28_27]  Info:[Error 关键字[return]不受支持：返回语句请使用 ret 关键字!] Extend:[identifier:[return] 返回语句请使用 ret 关键字]
+[04:42:28 598] [Error] [ParseToken]  [TokenLexerReturnNotSupported] Position:[ReturnProbe.sl_35_34]  Info:[Error 关键字[return]不受支持：返回语句请使用 ret 关键字!] Extend:[identifier:[return] 返回语句请使用 ret 关键字]
+[04:42:28 599] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_41_40]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[foreach] 遍历请使用 for ( x in collection ) 语法]
+[04:42:28 599] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_42_41]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[using] 导入请使用 import 关键字]
+[04:42:28 599] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_43_42]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[elseif] 多分支请使用 elif 关键字]
+[04:42:28 600] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_44_43]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[struct] 数据结构请使用 data 或 class]
+[04:42:28 600] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_45_44]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[let] 变量声明请使用 var 或显式类型]
+[04:42:28 600] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_46_45]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[raise] 抛出异常请使用 throw 关键字]
+[04:42:28 600] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_47_46]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[lambda] 闭包请使用 function 表达式或 => 语法]
+[04:42:28 601] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_48_47]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[def] 函数直接以名称声明]
+[04:42:28 601] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_49_48]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[package] 命名空间请使用 namespace 关键字]
+[04:42:28 601] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_50_49]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[include] 导入请使用 import 关键字]
+[04:42:28 602] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_51_50]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[impl] 实现请使用 class extends / interface]
+[04:42:28 602] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_52_51]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[trait] 接口请使用 interface 关键字]
+[04:42:28 602] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_53_52]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[pub] 访问级别请使用 public]
+[04:42:28 603] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_54_53]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[unless] 条件请使用 if not ( ... )]
+[04:42:28 603] [Error] [ParseToken]  [TokenLexerUnsupportedKeyword] Position:[ReturnProbe.sl_55_54]  Info:[Error 关键字不受支持：该词不是 SL 语言的关键字，SL 中没有对应语法!] Extend:[identifier:[until] 循环请使用 while not ( ... )]
+[04:42:28 603] [Error] [Process]  [ProcessCompileFileFailed]  Info:[编译文件[ReturnProbe.sl]失败: Token 解析存在错误]
+[04:42:28 604] [Error] [Process]  [ProcessStepFailed]  Info:[编译步骤[Token]执行失败: 步骤执行返回失败]
+[04:42:28 606] [Error] [Process]  [ProcessStepFailed]  Info:[编译步骤[Node]执行失败: 步骤执行返回失败]
+[04:42:28 622] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ReturnProbe.sp]编译File层完成]
+[04:42:28 622] [Error] [Process]  [ProcessStepFailed]  Info:[编译步骤[File]执行失败: 步骤执行返回失败]
+[04:42:28 623] [Error] [Process]  [ProcessPhaseFailed]  Info:[编译阶段[File]失败: 阶段内产生了 24 个错误]
+[04:42:28 623] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[MetaCore]被跳过，前置阶段未成功完成]
+[04:42:28 623] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[IR]被跳过，前置阶段未成功完成]
+[04:42:28 624] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[Export]被跳过，前置阶段未成功完成]
+[04:42:28 625] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Failed] File : 阶段内产生了 24 个错误 errors: 24
+  [Completed] PrepareFiles
+  [Failed] Token : 步骤执行返回失败 errors: 21
+  [Failed] Node : 步骤执行返回失败
+  [Failed] File : 步骤执行返回失败
+[Skipped] MetaCore : 前置阶段[File]失败
+  [Pending] ExpandBind
+  [Pending] InjectDllImportHolder
+  [Pending] CreateNamespace
+  [Pending] CombineFileMeta
+  [Pending] ParseMetaClassLink
+  [Pending] ParseAttributes
+  [Pending] ParseMemberExpress
+  [Pending] InjectProjectData
+  [Pending] ValidatePlatformConfig
+  [Pending] BuildLocalClass
+  [Pending] ParseStatements
+  [Pending] InjectInitCall
+  [Pending] ExportMetaDebug
+  [Pending] AddGlobalData
+  [Pending] ProjectCompileAfter
+  [Pending] AutoInlineMark
+[Skipped] IR : 前置阶段[File]失败
+  [Pending] TranslateIR
+[Skipped] Export : 前置阶段[File]失败
+  [Pending] ExportModule
+]

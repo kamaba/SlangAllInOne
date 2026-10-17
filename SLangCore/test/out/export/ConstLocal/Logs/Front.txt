@@ -1,0 +1,44 @@
+﻿[04:31:42 549] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[04:31:42 551] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ConstLocal.sp]
+[04:31:42 554] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ConstLocal.sl]
+[04:31:42 574] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ConstLocal.sp]编译File层完成]
+[04:31:42 581] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ConstLocal.sl]编译File层完成]
+[04:31:42 581] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[04:31:42 581] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[04:31:42 612] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[04:31:42 643] [Error] [ParseMeta]  [MetaCoreAssignStatementConst] Position:[ConstLocal.sl_8_0]  Info:[Error 当前左值声明为 const，不允许进行赋值或修改!!] Extend:[Error 当前左值声明为 const，不允许进行赋值或修改!! [Core.Int32]la]
+[04:31:42 646] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundInClass] Position:[ConstLocal.sl_9_0]  Info:[解析链 节点[println] 没有在类[Std.Console]中没有被发现]
+[04:31:42 646] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] Position:[ConstLocal.sl_9_0]  Info:[Error not support type] Extend:[Error not support type]
+[04:31:42 646] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] Position:[ConstLocal.sl_9_0]  Info:[解析链 [Lex: Console Path:ConstLocal.sl Line: 9 Pos: 14  ] 出现了错误] Extend:[Call link parse failed!]
+[04:31:42 652] [Error] [Process]  [ProcessPhaseFailed]  Info:[编译阶段[MetaCore]失败: 阶段内产生了 3 个错误]
+[04:31:42 652] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[IR]被跳过，前置阶段未成功完成]
+[04:31:42 653] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[Export]被跳过，前置阶段未成功完成]
+[04:31:42 654] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Failed] MetaCore : 阶段内产生了 3 个错误 errors: 3
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements errors: 3
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Skipped] IR : 前置阶段[MetaCore]失败
+  [Pending] TranslateIR
+[Skipped] Export : 前置阶段[MetaCore]失败
+  [Pending] ExportModule
+]

@@ -1,0 +1,86 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/GlobalTest.sl-----------------------
+public class GlobalTest extends Core.Object
+{
+    public  static Core.Object fun()
+    {
+        println("========== GlobalTest (start) ==========")
+        print("project static function print -> ok")
+        println("")
+        [Core.Int32]gv1 = public const static [Core.Int32]var1 = ConstExpressNode: [Int32] 12i;;
+        [Core.Object]aa = public static [___ProjectGlobalData_vardata2___]vardata2 = NewObjectExpressNode: ___ProjectGlobalData_vardata2___{};  ->  a = 10i;
+        println("jsonc global.var1 -> " + gv1.toString())
+        println("jsonc global.vardata2.a -> " + aa.toString())
+        [Core.Object]arrRef = public static [Array<Core.Int32>[5]]arrvar1 = NewObjectExpressNode: Core.Array<T>().{1i, 2i, 3i, 4i, 5i};;
+        println("global.arrvar1 != null -> " + arrRef.toString())
+        [Core.Object]bb = public static [___ProjectGlobalData_vardata2___]vardata2 = NewObjectExpressNode: ___ProjectGlobalData_vardata2___{};  ->  b = 20.1d;
+        println("global.vardata2.a -> " + aa.toString())
+        println("global.vardata2.b -> " + bb.toString())
+        println("config data (vardata2.a+b) -> " + ((aa + bb).toString())
+        println("========== GlobalTest (end) ==========")
+
+
+
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

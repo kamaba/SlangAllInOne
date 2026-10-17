@@ -1,0 +1,1055 @@
+-------------------IR 文件显示 开始 : Path: IO/ByteBuffer.sl-----------------------
+Class: Core.ByteBuffer
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1242936236 idx=0 name=Core.ByteBuffer._bid type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.fromBytes_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: fromBytes_Core.ByteBuffer_1_Core.Array<Core.UInt8>[-1]
+    Name: fromBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=33200472 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=30368798 idx=0 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=4883734 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.wrap_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: wrap_Core.ByteBuffer_1_Core.Array<Core.UInt8>[-1]
+    Name: wrap
+    InterfaceMethod: False
+    Return:
+      - #0 id=60038148 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=3472420 idx=0 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals:
+      - #0 id=31251786 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.fromString_1_Core.String
+    VirtualName: fromString_Core.ByteBuffer_1_Core.String
+    Name: fromString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48366737 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=32647452 idx=0 name=text type=Core.String
+    Locals:
+      - #0 id=25391616 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.fromHex_1_Core.String
+    VirtualName: fromHex_Core.ByteBuffer_1_Core.String
+    Name: fromHex
+    InterfaceMethod: False
+    Return:
+      - #0 id=43455040 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=55551046 idx=0 name=hex type=Core.String
+    Locals:
+      - #0 id=30197369 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.fromHandle_1_Core.Int64
+    VirtualName: fromHandle_Core.ByteBuffer_1_Core.Int64
+    Name: fromHandle
+    InterfaceMethod: False
+    Return:
+      - #0 id=30067794 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=2174690 idx=0 name=handle type=Core.Int64
+    Locals:
+      - #0 id=19572211 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.varUintEncodedSize_1_Core.Int64
+    VirtualName: varUintEncodedSize_Core.Int32_1_Core.Int64
+    Name: varUintEncodedSize
+    InterfaceMethod: False
+    Return:
+      - #0 id=41845253 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=41062959 idx=0 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=4344474 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37765421 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=16358126 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=39100271 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=46804961 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49939793 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=29514091 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33105505 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=64300229 idx=1 name=initialCapacity type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer._ensureLive
+    VirtualName: _ensureLive_Core.Void_0
+    Name: _ensureLive
+    InterfaceMethod: False
+    Return:
+      - #0 id=40936054 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41831152 idx=0 name=this] type=Core.ByteBuffer
+    Locals:
+      - #0 id=32880166 idx=0 name=autocreate_56251627 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer._ensureReadable_1_Core.Int32
+    VirtualName: _ensureReadable_Core.Void_1_Core.Int32
+    Name: _ensureReadable
+    InterfaceMethod: False
+    Return:
+      - #0 id=11776988 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=46047796 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=38884035 idx=1 name=len type=Core.Int32
+    Locals:
+      - #0 id=14412003 idx=0 name=autocreate_36502600 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer.readerIndex
+    VirtualName: readerIndex_Core.Int32_0
+    Name: readerIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=37367427 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=26521557 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readerIndex_1_Core.Int32
+    VirtualName: readerIndex_Core.Void_1_Core.Int32
+    Name: readerIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=61764512 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=6862723 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=19009700 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=36869576 idx=0 name=autocreate_60087944 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer.writerIndex
+    VirtualName: writerIndex_Core.Int32_0
+    Name: writerIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=34375783 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=33645693 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writerIndex_1_Core.Int32
+    VirtualName: writerIndex_Core.Void_1_Core.Int32
+    Name: writerIndex
+    InterfaceMethod: False
+    Return:
+      - #0 id=28340140 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32975066 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=53734669 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=13849974 idx=0 name=autocreate_3920590 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=30301652 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=48106092 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.maxCapacity
+    VirtualName: maxCapacity_Core.Int32_0
+    Name: maxCapacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=11088383 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=38514744 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readableBytes
+    VirtualName: readableBytes_Core.Int32_0
+    Name: readableBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=30368075 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=25743851 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writableBytes
+    VirtualName: writableBytes_Core.Int32_0
+    Name: writableBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=59510545 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43894985 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.handle
+    VirtualName: handle_Core.Int64_0
+    Name: handle
+    InterfaceMethod: False
+    Return:
+      - #0 id=30861686 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=55624859 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.ensureWritable_1_Core.Int32
+    VirtualName: ensureWritable_Core.Void_1_Core.Int32
+    Name: ensureWritable
+    InterfaceMethod: False
+    Return:
+      - #0 id=16699940 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=16768629 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=16081733 idx=1 name=minWritableBytes type=Core.Int32
+    Locals:
+      - #0 id=10517875 idx=0 name=need type=Core.Int32
+      - #1 id=27552014 idx=1 name=autocreate_35285314 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer.discardReadBytes
+    VirtualName: discardReadBytes_Core.Void_0
+    Name: discardReadBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=19867951 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17120631 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=65800171 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=44593832 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.shrink
+    VirtualName: shrink_Core.Void_0
+    Name: shrink
+    InterfaceMethod: False
+    Return:
+      - #0 id=28213660 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=55330634 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU8
+    VirtualName: readU8_Core.UInt8_0
+    Name: readU8
+    InterfaceMethod: False
+    Return:
+      - #0 id=3605162 idx=0 name=return] type=Core.UInt8
+    Arguments:
+      - #0 id=52596356 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readBool
+    VirtualName: readBool_Core.Boolean_0
+    Name: readBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=10917859 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23582716 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI16Le
+    VirtualName: readI16Le_Core.Int16_0
+    Name: readI16Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=40273294 idx=0 name=return] type=Core.Int16
+    Arguments:
+      - #0 id=11931350 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI16Be
+    VirtualName: readI16Be_Core.Int16_0
+    Name: readI16Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=32658192 idx=0 name=return] type=Core.Int16
+    Arguments:
+      - #0 id=40911390 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU16Le
+    VirtualName: readU16Le_Core.UInt16_0
+    Name: readU16Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=51284307 idx=0 name=return] type=Core.UInt16
+    Arguments:
+      - #0 id=28067877 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU16Be
+    VirtualName: readU16Be_Core.UInt16_0
+    Name: readU16Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=6622601 idx=0 name=return] type=Core.UInt16
+    Arguments:
+      - #0 id=60388168 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI32Le
+    VirtualName: readI32Le_Core.Int32_0
+    Name: readI32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=63147504 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=66668712 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI32Be
+    VirtualName: readI32Be_Core.Int32_0
+    Name: readI32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=64958600 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=14674162 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU32Le
+    VirtualName: readU32Le_Core.UInt32_0
+    Name: readU32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=43070429 idx=0 name=return] type=Core.UInt32
+    Arguments:
+      - #0 id=27155224 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU32Be
+    VirtualName: readU32Be_Core.UInt32_0
+    Name: readU32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=58503618 idx=0 name=return] type=Core.UInt32
+    Arguments:
+      - #0 id=66152725 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI64Le
+    VirtualName: readI64Le_Core.Int64_0
+    Name: readI64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=35009555 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=41172652 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readI64Be
+    VirtualName: readI64Be_Core.Int64_0
+    Name: readI64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=20597618 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=17201705 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU64Le
+    VirtualName: readU64Le_Core.UInt64_0
+    Name: readU64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=50386953 idx=0 name=return] type=Core.UInt64
+    Arguments:
+      - #0 id=57794333 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readU64Be
+    VirtualName: readU64Be_Core.UInt64_0
+    Name: readU64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=23540813 idx=0 name=return] type=Core.UInt64
+    Arguments:
+      - #0 id=54811429 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readF32Le
+    VirtualName: readF32Le_Core.Float32_0
+    Name: readF32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=48492984 idx=0 name=return] type=Core.Float32
+    Arguments:
+      - #0 id=27757730 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readF32Be
+    VirtualName: readF32Be_Core.Float32_0
+    Name: readF32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=52123534 idx=0 name=return] type=Core.Float32
+    Arguments:
+      - #0 id=35617665 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readF64Le
+    VirtualName: readF64Le_Core.Float64_0
+    Name: readF64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=14439320 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=61256692 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readF64Be
+    VirtualName: readF64Be_Core.Float64_0
+    Name: readF64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=57281770 idx=0 name=return] type=Core.Float64
+    Arguments:
+      - #0 id=28734262 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readVarUint
+    VirtualName: readVarUint_Core.UInt64_0
+    Name: readVarUint
+    InterfaceMethod: False
+    Return:
+      - #0 id=16697504 idx=0 name=return] type=Core.UInt64
+    Arguments:
+      - #0 id=9311818 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readVarInt
+    VirtualName: readVarInt_Core.Int64_0
+    Name: readVarInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=25776284 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=10320572 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeVarUint_1_Core.Int64
+    VirtualName: writeVarUint_Core.Void_1_Core.Int64
+    Name: writeVarUint
+    InterfaceMethod: False
+    Return:
+      - #0 id=429128 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7504221 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=3862159 idx=1 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeVarInt_1_Core.Int64
+    VirtualName: writeVarInt_Core.Void_1_Core.Int64
+    Name: writeVarInt
+    InterfaceMethod: False
+    Return:
+      - #0 id=44399449 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=34759433 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=64050727 idx=1 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readBytes_2_Core.ByteBuffer_Core.Int32
+    VirtualName: readBytes_Core.Void_2_Core.ByteBuffer_Core.Int32
+    Name: readBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=20726409 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39585636 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=52319960 idx=1 name=dst type=Core.ByteBuffer
+      - #2 id=1117592 idx=2 name=len type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeBytes_1_Core.ByteBuffer
+    VirtualName: writeBytes_Core.Void_1_Core.ByteBuffer
+    Name: writeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=23416123 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=10058331 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=9418520 idx=1 name=src type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeBytes_2_Core.ByteBuffer_Core.Int32
+    VirtualName: writeBytes_Core.Void_2_Core.ByteBuffer_Core.Int32
+    Name: writeBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=24702645 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17657819 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=20997215 idx=1 name=src type=Core.ByteBuffer
+      - #2 id=54757210 idx=2 name=len type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readByteArray_1_Core.Int32
+    VirtualName: readByteArray_Core.Array<Core.UInt8>[-1]_1_Core.Int32
+    Name: readByteArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=6149040 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=23052848 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=55341365 idx=1 name=len type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readString_1_Core.Int32
+    VirtualName: readString_Core.String_1_Core.Int32
+    Name: readString
+    InterfaceMethod: False
+    Return:
+      - #0 id=11427981 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53465558 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=35742973 idx=1 name=len type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.readLine
+    VirtualName: readLine_Core.String_0
+    Name: readLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=18388109 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9499663 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.skipBytes_1_Core.Int32
+    VirtualName: skipBytes_Core.Void_1_Core.Int32
+    Name: skipBytes
+    InterfaceMethod: False
+    Return:
+      - #0 id=50267674 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13041837 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=49755886 idx=1 name=len type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeByteArray_1_Core.Array<Core.UInt8>[-1]
+    VirtualName: writeByteArray_Core.Void_1_Core.Array<Core.UInt8>[-1]
+    Name: writeByteArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=3694967 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=45149794 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=33254711 idx=1 name=bytes type=Core.Array<T><Core.UInt8>
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeString_1_Core.String
+    VirtualName: writeString_Core.Void_1_Core.String
+    Name: writeString
+    InterfaceMethod: False
+    Return:
+      - #0 id=9277056 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=30856945 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=16384644 idx=1 name=text type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU8_1_Core.UInt8
+    VirtualName: writeU8_Core.Void_1_Core.UInt8
+    Name: writeU8
+    InterfaceMethod: False
+    Return:
+      - #0 id=52087767 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13244070 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=66136720 idx=1 name=value type=Core.UInt8
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeBool_1_Core.Boolean
+    VirtualName: writeBool_Core.Void_1_Core.Boolean
+    Name: writeBool
+    InterfaceMethod: False
+    Return:
+      - #0 id=55474086 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58359570 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=29504734 idx=1 name=value type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI16Le_1_Core.Int16
+    VirtualName: writeI16Le_Core.Void_1_Core.Int16
+    Name: writeI16Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=41073250 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64216018 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=34114937 idx=1 name=value type=Core.Int16
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI16Be_1_Core.Int16
+    VirtualName: writeI16Be_Core.Void_1_Core.Int16
+    Name: writeI16Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=11846533 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=38598983 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=39509941 idx=1 name=value type=Core.Int16
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU16Le_1_Core.UInt16
+    VirtualName: writeU16Le_Core.Void_1_Core.UInt16
+    Name: writeU16Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=46188627 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=20045150 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=13044459 idx=1 name=value type=Core.UInt16
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU16Be_1_Core.UInt16
+    VirtualName: writeU16Be_Core.Void_1_Core.UInt16
+    Name: writeU16Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=49968277 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50291273 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=47061312 idx=1 name=value type=Core.UInt16
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI32Le_1_Core.Int32
+    VirtualName: writeI32Le_Core.Void_1_Core.Int32
+    Name: writeI32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=53869919 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=20898627 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=15067230 idx=1 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI32Be_1_Core.Int32
+    VirtualName: writeI32Be_Core.Void_1_Core.Int32
+    Name: writeI32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=12486093 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=1387343 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=45265976 idx=1 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU32Le_1_Core.UInt32
+    VirtualName: writeU32Le_Core.Void_1_Core.UInt32
+    Name: writeU32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=42665409 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=4740601 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=48444361 idx=1 name=value type=Core.UInt32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU32Be_1_Core.UInt32
+    VirtualName: writeU32Be_Core.Void_1_Core.UInt32
+    Name: writeU32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=31679141 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33346066 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=16676820 idx=1 name=value type=Core.UInt32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI64Le_1_Core.Int64
+    VirtualName: writeI64Le_Core.Void_1_Core.Int64
+    Name: writeI64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=8645166 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=15873654 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=10697636 idx=1 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeI64Be_1_Core.Int64
+    VirtualName: writeI64Be_Core.Void_1_Core.Int64
+    Name: writeI64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=61202198 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29169865 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=13948877 idx=1 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU64Le_1_Core.UInt64
+    VirtualName: writeU64Le_Core.Void_1_Core.UInt64
+    Name: writeU64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=56117216 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58431029 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=35292904 idx=1 name=value type=Core.UInt64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeU64Be_1_Core.UInt64
+    VirtualName: writeU64Be_Core.Void_1_Core.UInt64
+    Name: writeU64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=40152984 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=49200685 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=25832538 idx=1 name=value type=Core.UInt64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeF32Le_1_Core.Float32
+    VirtualName: writeF32Le_Core.Void_1_Core.Float32
+    Name: writeF32Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=12060815 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=31166252 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=41438477 idx=1 name=value type=Core.Float32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeF32Be_1_Core.Float32
+    VirtualName: writeF32Be_Core.Void_1_Core.Float32
+    Name: writeF32Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=1073442 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37401973 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=9660979 idx=1 name=value type=Core.Float32
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeF64Le_1_Core.Float64
+    VirtualName: writeF64Le_Core.Void_1_Core.Float64
+    Name: writeF64Le
+    InterfaceMethod: False
+    Return:
+      - #0 id=44341874 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19839955 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=63532554 idx=1 name=value type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.writeF64Be_1_Core.Float64
+    VirtualName: writeF64Be_Core.Void_1_Core.Float64
+    Name: writeF64Be
+    InterfaceMethod: False
+    Return:
+      - #0 id=45863212 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=34922074 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=10115730 idx=1 name=value type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.slice
+    VirtualName: slice_Core.ByteBuffer_0
+    Name: slice
+    InterfaceMethod: False
+    Return:
+      - #0 id=14067778 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=23932707 idx=0 name=this] type=Core.ByteBuffer
+    Locals:
+      - #0 id=59501143 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.slice_2_Core.Int32_Core.Int32
+    VirtualName: slice_Core.ByteBuffer_2_Core.Int32_Core.Int32
+    Name: slice
+    InterfaceMethod: False
+    Return:
+      - #0 id=24007468 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=54863279 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=14740628 idx=1 name=index type=Core.Int32
+      - #2 id=65556790 idx=2 name=length type=Core.Int32
+    Locals:
+      - #0 id=53140205 idx=0 name=b type=Core.ByteBuffer
+      - #1 id=8499801 idx=1 name=autocreate_49132373 type=Core.Boolean
+    Instructions:
+
+  Method: Core.ByteBuffer.duplicate
+    VirtualName: duplicate_Core.ByteBuffer_0
+    Name: duplicate
+    InterfaceMethod: False
+    Return:
+      - #0 id=66838791 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=22339613 idx=0 name=this] type=Core.ByteBuffer
+    Locals:
+      - #0 id=64678211 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.copy
+    VirtualName: copy_Core.ByteBuffer_0
+    Name: copy
+    InterfaceMethod: False
+    Return:
+      - #0 id=39993975 idx=0 name=return] type=Core.ByteBuffer
+    Arguments:
+      - #0 id=4443775 idx=0 name=this] type=Core.ByteBuffer
+    Locals:
+      - #0 id=24401462 idx=0 name=b type=Core.ByteBuffer
+    Instructions:
+
+  Method: Core.ByteBuffer.indexOf_1_Core.UInt8
+    VirtualName: indexOf_Core.Int32_1_Core.UInt8
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=4817386 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=30361426 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=43356475 idx=1 name=value type=Core.UInt8
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.indexOf_1_Core.ByteBuffer
+    VirtualName: indexOf_Core.Int32_1_Core.ByteBuffer
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=65704606 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=22213592 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=54470546 idx=1 name=pattern type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.startsWith_1_Core.ByteBuffer
+    VirtualName: startsWith_Core.Boolean_1_Core.ByteBuffer
+    Name: startsWith
+    InterfaceMethod: False
+    Return:
+      - #0 id=47689684 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=50038096 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=26553979 idx=1 name=prefix type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.equals_1_Core.ByteBuffer
+    VirtualName: equals_Core.Boolean_1_Core.ByteBuffer
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=30497997 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=3388666 idx=0 name=this] type=Core.ByteBuffer
+      - #1 id=6046518 idx=1 name=other type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.toArray
+    VirtualName: toArray_Core.Array<Core.UInt8>[-1]_0
+    Name: toArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=45835463 idx=0 name=return] type=Core.Array<T><Core.UInt8>
+    Arguments:
+      - #0 id=20005910 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.toHex
+    VirtualName: toHex_Core.String_0
+    Name: toHex
+    InterfaceMethod: False
+    Return:
+      - #0 id=60947427 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=21685017 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+  Method: Core.ByteBuffer.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=4607022 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=37794593 idx=0 name=this] type=Core.ByteBuffer
+    Locals: []
+    Instructions:
+
+Class: Core.BufferError
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1068711769 idx=0 name=Core.BufferError.Underflow type=Core.Member
+      - #1 id=867526873 idx=1 name=Core.BufferError.IndexOutOfRange type=Core.Member
+      - #2 id=-1912515590 idx=2 name=Core.BufferError.Released type=Core.Member
+      - #3 id=1471118677 idx=3 name=Core.BufferError.CapacityExceeded type=Core.Member
+      - #4 id=-1129570379 idx=4 name=Core.BufferError.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

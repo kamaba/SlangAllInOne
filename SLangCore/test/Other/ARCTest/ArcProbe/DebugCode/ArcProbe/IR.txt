@@ -1,0 +1,652 @@
+-------------------IR 文件显示 开始 : Path: ArcProbe.sp-----------------------
+Class: ArcProbe.Project
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=36783718 idx=0 name=ArcProbe.Project.gslot type=ArcProbe.ArcProbeT
+      - #1 id=62618006 idx=1 name=ArcProbe.Project._inputArgs type=Core.Array<T><Core.Object>
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ArcProbe.Project.println_1_Core.Object
+    VirtualName: println_Core.Void_1_Core.Object
+    Name: println
+    InterfaceMethod: False
+    Return:
+      - #0 id=54749715 idx=0 name=_local[ArcProbe.Project.println.return] type=Core.Void
+    Arguments:
+      - #0 id=22985394 idx=0 name=_local[txt] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:5] [LoadArgument] index:[0] info:[Argument]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ ArcProbe.sp:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project.makeObj
+    VirtualName: makeObj_ArcProbe.ArcProbeT_0
+    Name: makeObj
+    InterfaceMethod: False
+    Return:
+      - #0 id=49877601 idx=0 name=_local[ArcProbe.Project.makeObj.return] type=ArcProbe.ArcProbeT
+    Arguments: []
+    Locals:
+      - #0 id=46245228 idx=0 name=makeObj_local[tmp] type=ArcProbe.ArcProbeT
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:8] [NewObject] index:[0] info:[IRNew] val: int32[-941283305] 
+2 2   [ :0] [Dup] index:[0]
+3 3   [ ArcProbe.sp:10] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ArcProbe.ArcProbeT, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ArcProbe.sp:10] [ArcRetain] index:[0] info:[ARC claim owned new local: tmp]
+5 5   [ ArcProbe.sp:8] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ArcProbe.sp:11] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ArcProbe.sp:11] [LoadConstInt32] index:[0] val: int32[7] 
+8 8   [ ArcProbe.sp:8] [StoreNotStaticField2] index:[0] info:[Member]
+9 9   [ ArcProbe.sp:12] [LoadLocal] index:[0] info:[LocalStatement]
+10 10   [ ArcProbe.sp:12] [StoreReturn] index:[0] info:[StoreReturn]
+11 11   [ :0] [BrLabel] index:[12]
+12 12   [ ArcProbe.sp:8] [Label] index:[0] info:[FunEndLabel]
+13 13   [ ArcProbe.sp:8] [LoadLocal] index:[0] info:[ARC release: LoadLocal makeObj_local[tmp]]
+14 14   [ ArcProbe.sp:8] [ArcRelease] index:[0] info:[ARC release owned local: makeObj_local[tmp]]
+15 15   [ ArcProbe.sp:8] [StoreLocal] index:[0] info:[ARC release: StoreLocal makeObj_local[tmp]]
+
+  Method: ArcProbe.Project.makeClaimed
+    VirtualName: makeClaimed_Core.Int32_0
+    Name: makeClaimed
+    InterfaceMethod: False
+    Return:
+      - #0 id=24121565 idx=0 name=_local[ArcProbe.Project.makeClaimed.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=15767494 idx=0 name=makeClaimed_local[tmp] type=ArcProbe.ArcProbeNS.ArcNoCtor
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:15] [NewObject] index:[0] info:[IRNew] val: int32[-1729096071] 
+2 2   [ :0] [Dup] index:[0]
+3 3   [ ArcProbe.sp:17] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ArcProbe.ArcProbeNS.ArcNoCtor, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ArcProbe.sp:17] [ArcRetain] index:[0] info:[ARC claim owned new local: tmp]
+5 5   [ ArcProbe.sp:15] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ArcProbe.sp:18] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ArcProbe.sp:18] [LoadConstInt32] index:[0] val: int32[99] 
+8 8   [ ArcProbe.sp:15] [StoreNotStaticField2] index:[0] info:[Member]
+9 9   [ ArcProbe.sp:19] [LoadLocal] index:[0] info:[LocalStatement]
+10 10   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ ArcProbe.sp:19] [StoreReturn] index:[0] info:[StoreReturn]
+12 12   [ :0] [BrLabel] index:[13]
+13 13   [ ArcProbe.sp:15] [Label] index:[0] info:[FunEndLabel]
+14 14   [ ArcProbe.sp:15] [LoadLocal] index:[0] info:[ARC release: LoadLocal makeClaimed_local[tmp]]
+15 15   [ ArcProbe.sp:15] [ArcRelease] index:[0] info:[ARC release owned local: makeClaimed_local[tmp]]
+16 16   [ ArcProbe.sp:15] [StoreLocal] index:[0] info:[ARC release: StoreLocal makeClaimed_local[tmp]]
+
+  Method: ArcProbe.Project.returnTransferCase
+    VirtualName: returnTransferCase_Core.Int32_0
+    Name: returnTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=2098632 idx=0 name=_local[ArcProbe.Project.returnTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=18887690 idx=0 name=returnTransferCase_local[o0] type=ArcProbe.ArcProbeT
+      - #1 id=35771490 idx=1 name=returnTransferCase_local[rc] type=Core.Int32
+      - #2 id=53507960 idx=2 name=returnTransferCase_local[x] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ArcProbe.sp:23] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ ArcProbe.sp:26] [LoadLocal] index:[0] info:[LocalStatement]
+4 4   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ ArcProbe.sp:23] [StoreLocal] index:[1] info:[LocalStatement]
+6 6   [ ArcProbe.sp:27] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ArcProbe.sp:27] [LoadNotStaticField] index:[0] info:[Member]
+8 8   [ ArcProbe.sp:23] [StoreLocal] index:[2] info:[LocalStatement]
+9 9   [ ArcProbe.sp:28] [LoadLocal] index:[1] info:[LocalStatement]
+10 10   [ ArcProbe.sp:28] [LoadConstInt32] index:[0] val: int32[10] 
+11 11   [ ArcProbe.sp:28] [Multiply] index:[0]
+12 12   [ ArcProbe.sp:28] [LoadLocal] index:[2] info:[LocalStatement]
+13 13   [ ArcProbe.sp:28] [Add] index:[0]
+14 14   [ ArcProbe.sp:28] [StoreReturn] index:[0] info:[StoreReturn]
+15 15   [ :0] [BrLabel] index:[16]
+16 16   [ ArcProbe.sp:23] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project.listTransferCase
+    VirtualName: listTransferCase_Core.Int32_0
+    Name: listTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=39177514 idx=0 name=_local[ArcProbe.Project.listTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=17053313 idx=0 name=listTransferCase_local[xs] type=Core.List<T><ArcProbe.ArcProbeT>
+      - #1 id=19262089 idx=1 name=listTransferCase_local[o1] type=ArcProbe.ArcProbeT
+      - #2 id=39141076 idx=2 name=listTransferCase_local[rcBefore] type=Core.Int32
+      - #3 id=16725372 idx=3 name=listTransferCase_local[rcAfter] type=Core.Int32
+      - #4 id=16310625 idx=4 name=listTransferCase_local[len] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:32] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.List<T><ArcProbe.ArcProbeT>] 
+2 2   [ :0] [Dup] index:[0]
+3 3   [ ArcProbe.sp:34] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.List<T><ArcProbe.ArcProbeT>, StaticRuntimeTypeList=[ArcProbe.ArcProbeT], Method=Core.List<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ArcProbe.sp:32] [StoreLocal] index:[0] info:[LocalStatement]
+5 5   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ArcProbe.sp:32] [StoreLocal] index:[1] info:[LocalStatement]
+7 7   [ ArcProbe.sp:36] [LoadLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ ArcProbe.sp:32] [StoreLocal] index:[2] info:[LocalStatement]
+10 10   [ ArcProbe.sp:37] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ArcProbe.sp:37] [LoadLocal] index:[1] info:[LocalStatement]
+12 12   [ :0] [CallDynamic] index:[2] info:[CallDynamic add] val:[RuntimeCall{StaticRuntimeType=Core.List<T>, StaticRuntimeTypeList=[], Method=Core.List<T>.add_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+13 13   [ ArcProbe.sp:38] [LoadLocal] index:[1] info:[LocalStatement]
+14 14   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+15 15   [ ArcProbe.sp:32] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ ArcProbe.sp:39] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ :0] [CallVirt] index:[9] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.List<T>, StaticRuntimeTypeList=[], Method=Core.List<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ArcProbe.sp:32] [StoreLocal] index:[4] info:[LocalStatement]
+19 19   [ ArcProbe.sp:40] [LoadLocal] index:[3] info:[LocalStatement]
+20 20   [ ArcProbe.sp:40] [LoadConstInt32] index:[0] val: int32[100] 
+21 21   [ ArcProbe.sp:40] [Multiply] index:[0]
+22 22   [ ArcProbe.sp:40] [LoadLocal] index:[2] info:[LocalStatement]
+23 23   [ ArcProbe.sp:40] [LoadConstInt32] index:[0] val: int32[10] 
+24 24   [ ArcProbe.sp:40] [Multiply] index:[0]
+25 25   [ ArcProbe.sp:40] [Add] index:[0]
+26 26   [ ArcProbe.sp:40] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ ArcProbe.sp:40] [Add] index:[0]
+28 28   [ ArcProbe.sp:40] [StoreReturn] index:[0] info:[StoreReturn]
+29 29   [ :0] [BrLabel] index:[30]
+30 30   [ ArcProbe.sp:32] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project.arrayTransferCase
+    VirtualName: arrayTransferCase_Core.Int32_0
+    Name: arrayTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=46092238 idx=0 name=_local[ArcProbe.Project.arrayTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=12176960 idx=0 name=arrayTransferCase_local[arr] type=Core.Array<T><ArcProbe.ArcProbeT>
+      - #1 id=42483779 idx=1 name=arrayTransferCase_local[o2] type=ArcProbe.ArcProbeT
+      - #2 id=46809697 idx=2 name=arrayTransferCase_local[rcBefore] type=Core.Int32
+      - #3 id=18634089 idx=3 name=arrayTransferCase_local[rcAfter] type=Core.Int32
+      - #4 id=33489078 idx=4 name=arrayTransferCase_local[x2] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:46] [LoadConstInt32] index:[0] val: int32[1] 
+2 2   [ ArcProbe.sp:44] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><ArcProbe.ArcProbeT>] 
+3 3   [ ArcProbe.sp:46] [ArcRetain] index:[0] info:[ARC claim owned new local: arr]
+4 4   [ ArcProbe.sp:44] [StoreLocal] index:[0] info:[LocalStatement]
+5 5   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ArcProbe.sp:44] [StoreLocal] index:[1] info:[LocalStatement]
+7 7   [ ArcProbe.sp:48] [LoadLocal] index:[1] info:[LocalStatement]
+8 8   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ ArcProbe.sp:44] [StoreLocal] index:[2] info:[LocalStatement]
+10 10   [ ArcProbe.sp:49] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ArcProbe.sp:49] [LoadConstInt32] index:[0] val: int32[0] 
+12 12   [ ArcProbe.sp:49] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ ArcProbe.sp:44] [StoreArrayIndexField] index:[0] info:[Array] val:[True] 
+14 14   [ ArcProbe.sp:50] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ ArcProbe.sp:44] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ ArcProbe.sp:51] [LoadLocal] index:[0] info:[LocalStatement]
+18 18   [ ArcProbe.sp:51] [LoadArrayIndex] index:[0] info:[LoadArrayIndex] val: int32[0] 
+19 19   [ ArcProbe.sp:51] [LoadNotStaticField] index:[0] info:[Member]
+20 20   [ ArcProbe.sp:44] [StoreLocal] index:[4] info:[LocalStatement]
+21 21   [ ArcProbe.sp:52] [LoadLocal] index:[3] info:[LocalStatement]
+22 22   [ ArcProbe.sp:52] [LoadConstInt32] index:[0] val: int32[100] 
+23 23   [ ArcProbe.sp:52] [Multiply] index:[0]
+24 24   [ ArcProbe.sp:52] [LoadLocal] index:[2] info:[LocalStatement]
+25 25   [ ArcProbe.sp:52] [LoadConstInt32] index:[0] val: int32[10] 
+26 26   [ ArcProbe.sp:52] [Multiply] index:[0]
+27 27   [ ArcProbe.sp:52] [Add] index:[0]
+28 28   [ ArcProbe.sp:52] [LoadLocal] index:[4] info:[LocalStatement]
+29 29   [ ArcProbe.sp:52] [Add] index:[0]
+30 30   [ ArcProbe.sp:52] [StoreReturn] index:[0] info:[StoreReturn]
+31 31   [ :0] [BrLabel] index:[32]
+32 32   [ ArcProbe.sp:44] [Label] index:[0] info:[FunEndLabel]
+33 33   [ ArcProbe.sp:44] [LoadLocal] index:[0] info:[ARC release: LoadLocal arrayTransferCase_local[arr]]
+34 34   [ ArcProbe.sp:44] [ArcRelease] index:[0] info:[ARC release owned local: arrayTransferCase_local[arr]]
+35 35   [ ArcProbe.sp:44] [StoreLocal] index:[0] info:[ARC release: StoreLocal arrayTransferCase_local[arr]]
+
+  Method: ArcProbe.Project.staticFieldTransferCase
+    VirtualName: staticFieldTransferCase_Core.Int32_0
+    Name: staticFieldTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=53020390 idx=0 name=_local[ArcProbe.Project.staticFieldTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=7421470 idx=0 name=staticFieldTransferCase_local[o3] type=ArcProbe.ArcProbeT
+      - #1 id=66793230 idx=1 name=staticFieldTransferCase_local[rcBefore] type=Core.Int32
+      - #2 id=64268160 idx=2 name=staticFieldTransferCase_local[rcAfter] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ArcProbe.sp:56] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ ArcProbe.sp:59] [LoadLocal] index:[0] info:[LocalStatement]
+4 4   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ ArcProbe.sp:56] [StoreLocal] index:[1] info:[LocalStatement]
+6 6   [ ArcProbe.sp:60] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ArcProbe.sp:56] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.ArcProbeNS.ArcHolder] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+8 8   [ ArcProbe.sp:61] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ ArcProbe.sp:56] [StoreLocal] index:[2] info:[LocalStatement]
+11 11   [ ArcProbe.sp:62] [LoadLocal] index:[2] info:[LocalStatement]
+12 12   [ ArcProbe.sp:62] [LoadConstInt32] index:[0] val: int32[10] 
+13 13   [ ArcProbe.sp:62] [Multiply] index:[0]
+14 14   [ ArcProbe.sp:62] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ ArcProbe.sp:62] [Add] index:[0]
+16 16   [ ArcProbe.sp:62] [StoreReturn] index:[0] info:[StoreReturn]
+17 17   [ :0] [BrLabel] index:[18]
+18 18   [ ArcProbe.sp:56] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project.instanceFieldTransferCase
+    VirtualName: instanceFieldTransferCase_Core.Int32_0
+    Name: instanceFieldTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=38338487 idx=0 name=_local[ArcProbe.Project.instanceFieldTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=9502070 idx=0 name=instanceFieldTransferCase_local[box] type=ArcProbe.ArcProbeNS.ArcBox
+      - #1 id=18409771 idx=1 name=instanceFieldTransferCase_local[o4] type=ArcProbe.ArcProbeT
+      - #2 id=31470215 idx=2 name=instanceFieldTransferCase_local[rcBefore] type=Core.Int32
+      - #3 id=14796483 idx=3 name=instanceFieldTransferCase_local[rcAfter] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:66] [NewObject] index:[0] info:[IRNew] val: int32[620800165] 
+2 2   [ :0] [Dup] index:[0]
+3 3   [ ArcProbe.sp:68] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ArcProbe.ArcProbeNS.ArcBox, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ArcProbe.sp:68] [ArcRetain] index:[0] info:[ARC claim owned new local: box]
+5 5   [ ArcProbe.sp:66] [StoreLocal] index:[0] info:[LocalStatement]
+6 6   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ ArcProbe.sp:66] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ ArcProbe.sp:70] [LoadLocal] index:[1] info:[LocalStatement]
+9 9   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ ArcProbe.sp:66] [StoreLocal] index:[2] info:[LocalStatement]
+11 11   [ ArcProbe.sp:71] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ ArcProbe.sp:71] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ ArcProbe.sp:66] [StoreNotStaticField2] index:[0] info:[Member]
+14 14   [ ArcProbe.sp:72] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ ArcProbe.sp:66] [StoreLocal] index:[3] info:[LocalStatement]
+17 17   [ ArcProbe.sp:73] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ ArcProbe.sp:73] [LoadConstInt32] index:[0] val: int32[10] 
+19 19   [ ArcProbe.sp:73] [Multiply] index:[0]
+20 20   [ ArcProbe.sp:73] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ ArcProbe.sp:73] [Add] index:[0]
+22 22   [ ArcProbe.sp:73] [StoreReturn] index:[0] info:[StoreReturn]
+23 23   [ :0] [BrLabel] index:[24]
+24 24   [ ArcProbe.sp:66] [Label] index:[0] info:[FunEndLabel]
+25 25   [ ArcProbe.sp:66] [LoadLocal] index:[0] info:[ARC release: LoadLocal instanceFieldTransferCase_local[box]]
+26 26   [ ArcProbe.sp:66] [ArcRelease] index:[0] info:[ARC release owned local: instanceFieldTransferCase_local[box]]
+27 27   [ ArcProbe.sp:66] [StoreLocal] index:[0] info:[ARC release: StoreLocal instanceFieldTransferCase_local[box]]
+
+  Method: ArcProbe.Project.globalTransferCase
+    VirtualName: globalTransferCase_Core.Int32_0
+    Name: globalTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=57664488 idx=0 name=_local[ArcProbe.Project.globalTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=49218346 idx=0 name=globalTransferCase_local[o5] type=ArcProbe.ArcProbeT
+      - #1 id=40311937 idx=1 name=globalTransferCase_local[rcBefore] type=Core.Int32
+      - #2 id=27263117 idx=2 name=globalTransferCase_local[rcAfter] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ArcProbe.sp:78] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ ArcProbe.sp:81] [LoadLocal] index:[0] info:[LocalStatement]
+4 4   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ ArcProbe.sp:78] [StoreLocal] index:[1] info:[LocalStatement]
+6 6   [ ArcProbe.sp:82] [LoadLocal] index:[0] info:[LocalStatement]
+7 7   [ ArcProbe.sp:78] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.Project] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+8 8   [ ArcProbe.sp:83] [LoadLocal] index:[0] info:[LocalStatement]
+9 9   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ ArcProbe.sp:78] [StoreLocal] index:[2] info:[LocalStatement]
+11 11   [ ArcProbe.sp:84] [LoadLocal] index:[2] info:[LocalStatement]
+12 12   [ ArcProbe.sp:84] [LoadConstInt32] index:[0] val: int32[10] 
+13 13   [ ArcProbe.sp:84] [Multiply] index:[0]
+14 14   [ ArcProbe.sp:84] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ ArcProbe.sp:84] [Add] index:[0]
+16 16   [ ArcProbe.sp:84] [StoreReturn] index:[0] info:[StoreReturn]
+17 17   [ :0] [BrLabel] index:[18]
+18 18   [ ArcProbe.sp:78] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project.closureTransferCase
+    VirtualName: closureTransferCase_Core.Int32_0
+    Name: closureTransferCase
+    InterfaceMethod: False
+    Return:
+      - #0 id=60828848 idx=0 name=_local[ArcProbe.Project.closureTransferCase.return] type=Core.Int32
+    Arguments: []
+    Locals:
+      - #0 id=25879650 idx=0 name=closureTransferCase_local[o6] type=ArcProbe.ArcProbeT
+      - #1 id=10588721 idx=1 name=closureTransferCase_local[rcBefore] type=Core.Int32
+      - #2 id=28189627 idx=2 name=closureTransferCase_local[touchCaptured] type=Core.Function
+      - #3 id=52380055 idx=3 name=_local[ArcProbe.Project.closureTransferCase.__closure_ctx__] type=Core.Object
+      - #4 id=1658455 idx=4 name=closureTransferCase_local[rcAfter] type=Core.Int32
+      - #5 id=14926099 idx=5 name=closureTransferCase_local[x6] type=Core.Int32
+    Instructions:
+0 0   [ ArcProbe.sp:88] [AllocClosureContext] index:[1] info:[AllocClosureContext 1]
+1 1   [ ArcProbe.sp:88] [StoreLocal] index:[3] info:[StoreLocal __closure_ctx__]
+2 2   [ :0] [Nop] index:[0]
+3 3   [ ArcProbe.sp:8] [CallStatic] index:[0] info:[CallStatic makeObj] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeObj, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ArcProbe.sp:90] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+5 5   [ ArcProbe.sp:90] [StoreArrayIndex] index:[0] info:[StoreArrayIndex shared capture:o6] val:[0] 
+6 6   [ ArcProbe.sp:91] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+7 7   [ ArcProbe.sp:91] [LoadArrayIndex] index:[0] info:[LoadArrayIndex shared capture:o6]
+8 8   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ ArcProbe.sp:88] [StoreLocal] index:[1] info:[LocalStatement]
+10 10   [ ArcProbe.sp:92] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+11 11   [ ArcProbe.sp:92] [NewClosure] index:[0] info:[NewClosure __closure_touchCaptured_1] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ArcProbe.Project.__closure_touchCaptured_1_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ArcProbe.sp:88] [StoreLocal] index:[2] info:[LocalStatement]
+13 13   [ ArcProbe.sp:96] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+14 14   [ ArcProbe.sp:96] [LoadArrayIndex] index:[0] info:[LoadArrayIndex shared capture:o6]
+15 15   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ ArcProbe.sp:88] [StoreLocal] index:[4] info:[LocalStatement]
+17 17   [ ArcProbe.sp:97] [LoadLocal] index:[2] info:[LocalStatement]
+18 18   [ ArcProbe.sp:97] [CallClosure] index:[0] info:[CallClosure __closure_touchCaptured_1 params:0] val:[RuntimeCall{StaticRuntimeType=<null>, StaticRuntimeTypeList=[], Method=ArcProbe.Project.__closure_touchCaptured_1_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ArcProbe.sp:98] [LoadLocal] index:[3] info:[LoadLocal __closure_ctx__]
+20 20   [ ArcProbe.sp:98] [LoadArrayIndex] index:[0] info:[LoadArrayIndex shared capture:o6]
+21 21   [ ArcProbe.sp:98] [LoadNotStaticField] index:[0] info:[Member]
+22 22   [ ArcProbe.sp:88] [StoreLocal] index:[5] info:[LocalStatement]
+23 23   [ ArcProbe.sp:99] [LoadLocal] index:[4] info:[LocalStatement]
+24 24   [ ArcProbe.sp:99] [LoadConstInt32] index:[0] val: int32[1000] 
+25 25   [ ArcProbe.sp:99] [Multiply] index:[0]
+26 26   [ ArcProbe.sp:99] [LoadLocal] index:[1] info:[LocalStatement]
+27 27   [ ArcProbe.sp:99] [LoadConstInt32] index:[0] val: int32[100] 
+28 28   [ ArcProbe.sp:99] [Multiply] index:[0]
+29 29   [ ArcProbe.sp:99] [Add] index:[0]
+30 30   [ ArcProbe.sp:99] [LoadLocal] index:[5] info:[LocalStatement]
+31 31   [ ArcProbe.sp:99] [Add] index:[0]
+32 32   [ ArcProbe.sp:99] [StoreReturn] index:[0] info:[StoreReturn]
+33 33   [ :0] [BrLabel] index:[34]
+34 34   [ ArcProbe.sp:88] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ArcProbe.Project._main_
+    VirtualName: _main__Core.Void_0
+    Name: _main_
+    InterfaceMethod: False
+    Return:
+      - #0 id=1054474 idx=0 name=_local[ArcProbe.Project._main_.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=9490272 idx=0 name=_main__local[c0] type=Core.Int32
+      - #1 id=18303590 idx=1 name=_main__local[rA] type=Core.Int32
+      - #2 id=30514590 idx=2 name=_main__local[rB] type=Core.Int32
+      - #3 id=6195855 idx=3 name=_main__local[rC] type=Core.Int32
+      - #4 id=55762700 idx=4 name=_main__local[rD] type=Core.Int32
+      - #5 id=32102252 idx=5 name=_main__local[rE] type=Core.Int32
+      - #6 id=20484818 idx=6 name=_main__local[rF] type=Core.Int32
+      - #7 id=50145638 idx=7 name=_main__local[rG] type=Core.Int32
+      - #8 id=48657561 idx=8 name=_main__local[rcSlot] type=Core.Int32
+      - #9 id=35264868 idx=9 name=_main__local[rcG] type=Core.Int32
+      - #10 id=48948360 idx=10 name=_main__local[rc] type=Core.Int32
+      - #11 id=37882063 idx=11 name=_main__local[c1] type=Core.Int32
+      - #12 id=22985394 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=22985394 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=22985394 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=22985394 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=22985394 idx=16 name=_local[txt] type=Core.Object
+      - #17 id=22985394 idx=17 name=_local[txt] type=Core.Object
+      - #18 id=22985394 idx=18 name=_local[txt] type=Core.Object
+      - #19 id=22985394 idx=19 name=_local[txt] type=Core.Object
+      - #20 id=22985394 idx=20 name=_local[txt] type=Core.Object
+      - #21 id=22985394 idx=21 name=_local[txt] type=Core.Object
+      - #22 id=22985394 idx=22 name=_local[txt] type=Core.Object
+      - #23 id=22985394 idx=23 name=_local[txt] type=Core.Object
+      - #24 id=22985394 idx=24 name=_local[txt] type=Core.Object
+      - #25 id=22985394 idx=25 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ArcProbe.sp:104] [LoadConstString] index:[1] val: string[--- ARC P2/P3 transfer probe ---] 
+2 2   [ ArcProbe.sp:102] [StoreLocal] index:[12] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ArcProbe.sp:5] [LoadLocal] index:[12] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+7 7   [ :0] [CallStatic] index:[0] info:[CallStatic objectCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.objectCount, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ArcProbe.sp:102] [StoreLocal] index:[0] info:[LocalStatement]
+9 9   [ ArcProbe.sp:23] [CallStatic] index:[0] info:[CallStatic returnTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.returnTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ ArcProbe.sp:102] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ ArcProbe.sp:32] [CallStatic] index:[0] info:[CallStatic listTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.listTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ArcProbe.sp:102] [StoreLocal] index:[2] info:[LocalStatement]
+13 13   [ ArcProbe.sp:44] [CallStatic] index:[0] info:[CallStatic arrayTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.arrayTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ArcProbe.sp:102] [StoreLocal] index:[3] info:[LocalStatement]
+15 15   [ ArcProbe.sp:56] [CallStatic] index:[0] info:[CallStatic staticFieldTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.staticFieldTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ ArcProbe.sp:102] [StoreLocal] index:[4] info:[LocalStatement]
+17 17   [ ArcProbe.sp:66] [CallStatic] index:[0] info:[CallStatic instanceFieldTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.instanceFieldTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ArcProbe.sp:102] [StoreLocal] index:[5] info:[LocalStatement]
+19 19   [ ArcProbe.sp:78] [CallStatic] index:[0] info:[CallStatic globalTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.globalTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ArcProbe.sp:102] [StoreLocal] index:[6] info:[LocalStatement]
+21 21   [ ArcProbe.sp:88] [CallStatic] index:[0] info:[CallStatic closureTransferCase] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.closureTransferCase, MethodRuntimeTypeList=[], ParamCount=0}] 
+22 22   [ ArcProbe.sp:102] [StoreLocal] index:[7] info:[LocalStatement]
+23 23   [ ArcProbe.sp:114] [LoadConstString] index:[2] val: string[A return transfer   : ] 
+24 24   [ ArcProbe.sp:114] [LoadLocal] index:[1] info:[LocalStatement]
+25 25   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ ArcProbe.sp:114] [Add] index:[0]
+27 27   [ ArcProbe.sp:114] [LoadConstString] index:[3] val: string[ (want 17)] 
+28 28   [ ArcProbe.sp:114] [Add] index:[0]
+29 29   [ ArcProbe.sp:102] [StoreLocal] index:[13] info:[LocalStatement]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ ArcProbe.sp:5] [LoadLocal] index:[13] info:[LocalStatement]
+32 32   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+33 33   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+34 34   [ ArcProbe.sp:115] [LoadConstString] index:[4] val: string[B list.add transfer : ] 
+35 35   [ ArcProbe.sp:115] [LoadLocal] index:[2] info:[LocalStatement]
+36 36   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+37 37   [ ArcProbe.sp:115] [Add] index:[0]
+38 38   [ ArcProbe.sp:115] [LoadConstString] index:[5] val: string[ (want 211)] 
+39 39   [ ArcProbe.sp:115] [Add] index:[0]
+40 40   [ ArcProbe.sp:102] [StoreLocal] index:[14] info:[LocalStatement]
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ArcProbe.sp:5] [LoadLocal] index:[14] info:[LocalStatement]
+43 43   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+44 44   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+45 45   [ ArcProbe.sp:116] [LoadConstString] index:[6] val: string[C array slot xfer   : ] 
+46 46   [ ArcProbe.sp:116] [LoadLocal] index:[3] info:[LocalStatement]
+47 47   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+48 48   [ ArcProbe.sp:116] [Add] index:[0]
+49 49   [ ArcProbe.sp:116] [LoadConstString] index:[7] val: string[ (want 217)] 
+50 50   [ ArcProbe.sp:116] [Add] index:[0]
+51 51   [ ArcProbe.sp:102] [StoreLocal] index:[15] info:[LocalStatement]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ ArcProbe.sp:5] [LoadLocal] index:[15] info:[LocalStatement]
+54 54   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+55 55   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+56 56   [ ArcProbe.sp:117] [LoadConstString] index:[8] val: string[D static field xfer : ] 
+57 57   [ ArcProbe.sp:117] [LoadLocal] index:[4] info:[LocalStatement]
+58 58   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+59 59   [ ArcProbe.sp:117] [Add] index:[0]
+60 60   [ ArcProbe.sp:117] [LoadConstString] index:[9] val: string[ (want 21)] 
+61 61   [ ArcProbe.sp:117] [Add] index:[0]
+62 62   [ ArcProbe.sp:102] [StoreLocal] index:[16] info:[LocalStatement]
+63 63   [ :0] [Nop] index:[0]
+64 64   [ ArcProbe.sp:5] [LoadLocal] index:[16] info:[LocalStatement]
+65 65   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+66 66   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+67 67   [ ArcProbe.sp:118] [LoadConstString] index:[10] val: string[E field transfer    : ] 
+68 68   [ ArcProbe.sp:118] [LoadLocal] index:[5] info:[LocalStatement]
+69 69   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+70 70   [ ArcProbe.sp:118] [Add] index:[0]
+71 71   [ ArcProbe.sp:118] [LoadConstString] index:[9] val: string[ (want 21)] 
+72 72   [ ArcProbe.sp:118] [Add] index:[0]
+73 73   [ ArcProbe.sp:102] [StoreLocal] index:[17] info:[LocalStatement]
+74 74   [ :0] [Nop] index:[0]
+75 75   [ ArcProbe.sp:5] [LoadLocal] index:[17] info:[LocalStatement]
+76 76   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+77 77   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+78 78   [ ArcProbe.sp:119] [LoadConstString] index:[11] val: string[F global field xfer : ] 
+79 79   [ ArcProbe.sp:119] [LoadLocal] index:[6] info:[LocalStatement]
+80 80   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+81 81   [ ArcProbe.sp:119] [Add] index:[0]
+82 82   [ ArcProbe.sp:119] [LoadConstString] index:[9] val: string[ (want 21)] 
+83 83   [ ArcProbe.sp:119] [Add] index:[0]
+84 84   [ ArcProbe.sp:102] [StoreLocal] index:[18] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ArcProbe.sp:5] [LoadLocal] index:[18] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+89 89   [ ArcProbe.sp:120] [LoadConstString] index:[12] val: string[G closure capture   : ] 
+90 90   [ ArcProbe.sp:120] [LoadLocal] index:[7] info:[LocalStatement]
+91 91   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+92 92   [ ArcProbe.sp:120] [Add] index:[0]
+93 93   [ ArcProbe.sp:120] [LoadConstString] index:[13] val: string[ (want 2155)] 
+94 94   [ ArcProbe.sp:120] [Add] index:[0]
+95 95   [ ArcProbe.sp:102] [StoreLocal] index:[19] info:[LocalStatement]
+96 96   [ :0] [Nop] index:[0]
+97 97   [ ArcProbe.sp:5] [LoadLocal] index:[19] info:[LocalStatement]
+98 98   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+99 99   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+100 100   [ ArcProbe.sp:122] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.ArcProbeNS.ArcHolder] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+101 101   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+102 102   [ ArcProbe.sp:102] [StoreLocal] index:[8] info:[LocalStatement]
+103 103   [ ArcProbe.sp:123] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.Project] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+104 104   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+105 105   [ ArcProbe.sp:102] [StoreLocal] index:[9] info:[LocalStatement]
+106 106   [ ArcProbe.sp:124] [LoadConstString] index:[14] val: string[D static slot rc    : ] 
+107 107   [ ArcProbe.sp:124] [LoadLocal] index:[8] info:[LocalStatement]
+108 108   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+109 109   [ ArcProbe.sp:124] [Add] index:[0]
+110 110   [ ArcProbe.sp:124] [LoadConstString] index:[15] val: string[ (want 1)] 
+111 111   [ ArcProbe.sp:124] [Add] index:[0]
+112 112   [ ArcProbe.sp:102] [StoreLocal] index:[20] info:[LocalStatement]
+113 113   [ :0] [Nop] index:[0]
+114 114   [ ArcProbe.sp:5] [LoadLocal] index:[20] info:[LocalStatement]
+115 115   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+116 116   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+117 117   [ ArcProbe.sp:125] [LoadConstString] index:[16] val: string[F global slot rc    : ] 
+118 118   [ ArcProbe.sp:125] [LoadLocal] index:[9] info:[LocalStatement]
+119 119   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+120 120   [ ArcProbe.sp:125] [Add] index:[0]
+121 121   [ ArcProbe.sp:125] [LoadConstString] index:[15] val: string[ (want 1)] 
+122 122   [ ArcProbe.sp:125] [Add] index:[0]
+123 123   [ ArcProbe.sp:102] [StoreLocal] index:[21] info:[LocalStatement]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ ArcProbe.sp:5] [LoadLocal] index:[21] info:[LocalStatement]
+126 126   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+127 127   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+128 128   [ ArcProbe.sp:15] [CallStatic] index:[0] info:[CallStatic makeClaimed] val:[RuntimeCall{StaticRuntimeType=ArcProbe.Project, StaticRuntimeTypeList=[], Method=ArcProbe.Project.makeClaimed, MethodRuntimeTypeList=[], ParamCount=0}] 
+129 129   [ ArcProbe.sp:102] [StoreLocal] index:[10] info:[LocalStatement]
+130 130   [ ArcProbe.sp:128] [LoadConstString] index:[17] val: string[P2 refCount(claimed) = ] 
+131 131   [ ArcProbe.sp:128] [LoadLocal] index:[10] info:[LocalStatement]
+132 132   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+133 133   [ ArcProbe.sp:128] [Add] index:[0]
+134 134   [ ArcProbe.sp:102] [StoreLocal] index:[22] info:[LocalStatement]
+135 135   [ :0] [Nop] index:[0]
+136 136   [ ArcProbe.sp:5] [LoadLocal] index:[22] info:[LocalStatement]
+137 137   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+138 138   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+139 139   [ ArcProbe.sp:130] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.ArcProbeNS.ArcHolder] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+140 140   [ :0] [CallStatic] index:[1] info:[CallStatic release] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.release_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+141 141   [ :0] [Pop] index:[0]
+142 142   [ ArcProbe.sp:131] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ArcProbe.Project] staticOwner:[ArcProbe.Project]  field:[ArcProbe.Project.gslot]
+143 143   [ :0] [CallStatic] index:[1] info:[CallStatic release] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.release_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+144 144   [ :0] [Pop] index:[0]
+145 145   [ :0] [CallStatic] index:[0] info:[CallStatic objectCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.objectCount, MethodRuntimeTypeList=[], ParamCount=0}] 
+146 146   [ ArcProbe.sp:102] [StoreLocal] index:[11] info:[LocalStatement]
+147 147   [ ArcProbe.sp:134] [LoadConstString] index:[18] val: string[objectCount before = ] 
+148 148   [ ArcProbe.sp:134] [LoadLocal] index:[0] info:[LocalStatement]
+149 149   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+150 150   [ ArcProbe.sp:134] [Add] index:[0]
+151 151   [ ArcProbe.sp:102] [StoreLocal] index:[23] info:[LocalStatement]
+152 152   [ :0] [Nop] index:[0]
+153 153   [ ArcProbe.sp:5] [LoadLocal] index:[23] info:[LocalStatement]
+154 154   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+155 155   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+156 156   [ ArcProbe.sp:135] [LoadConstString] index:[19] val: string[objectCount after  = ] 
+157 157   [ ArcProbe.sp:135] [LoadLocal] index:[11] info:[LocalStatement]
+158 158   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+159 159   [ ArcProbe.sp:135] [Add] index:[0]
+160 160   [ ArcProbe.sp:102] [StoreLocal] index:[24] info:[LocalStatement]
+161 161   [ :0] [Nop] index:[0]
+162 162   [ ArcProbe.sp:5] [LoadLocal] index:[24] info:[LocalStatement]
+163 163   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+164 164   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+165 165   [ ArcProbe.sp:136] [LoadConstString] index:[20] val: string[ARC transfer no-leak: (c1 <= c0) -> ] 
+166 166   [ ArcProbe.sp:136] [LoadLocal] index:[11] info:[LocalStatement]
+167 167   [ ArcProbe.sp:136] [LoadLocal] index:[0] info:[LocalStatement]
+168 168   [ ArcProbe.sp:136] [Cle] index:[0]
+169 169   [ :0] [CallVirt] index:[4] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+170 170   [ ArcProbe.sp:136] [Add] index:[0]
+171 171   [ ArcProbe.sp:102] [StoreLocal] index:[25] info:[LocalStatement]
+172 172   [ :0] [Nop] index:[0]
+173 173   [ ArcProbe.sp:5] [LoadLocal] index:[25] info:[LocalStatement]
+174 174   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+175 175   [ ArcProbe.sp:3] [Nop] index:[0] info:[inline end: println]
+176 176   [ ArcProbe.sp:102] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

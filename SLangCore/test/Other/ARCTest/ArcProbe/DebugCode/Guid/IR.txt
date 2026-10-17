@@ -1,0 +1,141 @@
+-------------------IR 文件显示 开始 : Path: Guid.sl-----------------------
+Class: Core.Guid
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1251170560 idx=0 name=Core.Guid._value type=Core.String
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Guid.newGuid
+    VirtualName: newGuid_Core.String_0
+    Name: newGuid
+    InterfaceMethod: False
+    Return:
+      - #0 id=18291919 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Guid._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=47254279 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=5250475 idx=0 name=this] type=Core.Guid
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Guid.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=2391358 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=22635327 idx=0 name=this] type=Core.Guid
+    Locals: []
+    Instructions:
+
+  Method: Core.Guid._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=65578930 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=59482330 idx=0 name=this] type=Core.Guid
+      - #1 id=53339459 idx=1 name=value type=Core.String
+    Locals:
+      - #0 id=10293088 idx=0 name=autocreate_11709955 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Guid.value
+    VirtualName: value_Core.String_0
+    Name: value
+    InterfaceMethod: False
+    Return:
+      - #0 id=33039746 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=33497244 idx=0 name=this] type=Core.Guid
+    Locals: []
+    Instructions:
+
+  Method: Core.Guid.toString_1_Core.String
+    VirtualName: toString_Core.String_1_Core.String
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=61001774 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=58973758 idx=0 name=this] type=Core.Guid
+      - #1 id=12145054 idx=1 name=format type=Core.String
+    Locals:
+      - #0 id=42196623 idx=0 name=f type=Core.String
+      - #1 id=44225290 idx=1 name=autocreate_38280736 type=Core.Boolean
+      - #2 id=62483297 idx=2 name=autocreate_8982304 type=Core.Boolean
+      - #3 id=25478763 idx=3 name=autocreate_13731878 type=Core.Boolean
+      - #4 id=27982283 idx=4 name=autocreate_56478042 type=Core.Boolean
+      - #5 id=50513961 idx=5 name=autocreate_38540333 type=Core.Boolean
+      - #6 id=51972470 idx=6 name=autocreate_11318680 type=Core.Boolean
+      - #7 id=65099051 idx=7 name=autocreate_34759260 type=Core.Boolean
+      - #8 id=49020554 idx=8 name=s type=Core.String
+      - #9 id=38531802 idx=9 name=i type=Core.Int32
+      - #10 id=11241901 idx=10 name=ch type=Core.String
+      - #11 id=34068253 idx=11 name=autocreate_44397891 type=Core.Boolean
+      - #12 id=38178826 idx=12 name=autocreate_64036700 type=Core.Boolean
+      - #13 id=8065117 idx=13 name=autocreate_39459394 type=Core.Boolean
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

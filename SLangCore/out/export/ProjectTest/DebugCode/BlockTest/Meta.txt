@@ -1,0 +1,12 @@
+-------------------Meta 文件显示 开始 : Path: BlockTest.sl-----------------------
+BlockTest
+{
+    _public static fun( )
+    {
+        NSBlockTest.Class1.scopeShadowCase();
+        NSBlockTest.Class1.emptyAndStandaloneBlockCase();
+        NSBlockTest.Class1.initAndStatementMixedCase();
+        NSBlockTest.Class1.gotoIntoLabelBlockCase();
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,46 @@
+﻿[07:24:22 645] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[07:24:22 647] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ConstProbe.sp]
+[07:24:22 650] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ConstProbe.sl]
+[07:24:22 671] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ConstProbe.sp]编译File层完成]
+[07:24:22 679] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ConstProbe.sl]编译File层完成]
+[07:24:22 680] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[07:24:22 680] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[07:24:22 712] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[07:24:22 745] [Error] [ParseMeta]  [MetaCoreAssignStatementConst] Position:[ConstProbe.sl_16_0]  Info:[Error 当前左值声明为 const，不允许进行赋值或修改!!] Extend:[Error 当前左值声明为 const，不允许进行赋值或修改!! [ConstProbe.ConstField]cf  ->  public const [Core.Int32]CF = ConstExpressNode: [Int32] 10i;]
+[07:24:22 746] [Error] [ParseMeta]  [MetaCoreAssignStatementConst] Position:[ConstProbe.sl_20_0]  Info:[Error 当前左值声明为 const，不允许进行赋值或修改!!] Extend:[Error 当前左值声明为 const，不允许进行赋值或修改!! [Core.Int32]la]
+[07:24:22 747] [Error] [ParseMeta]  [MetaCoreAssignStatementConst] Position:[ConstProbe.sl_24_0]  Info:[Error 当前左值声明为 const，不允许进行赋值或修改!!] Extend:[Error 当前左值声明为 const，不允许进行赋值或修改!! [Core.Int32]lb]
+[07:24:22 747] [Error] [ParseMeta]  [MetaCoreParamConstToNonConst]  Info:[Error const 实参 '{}' 传给了非 const 形参 '{}': const 修饰的值只能传给带 const 标记的参数!!] Extend:[Error const 实参传给了非 const 形参: a] Tips:[将实参去掉 const 修饰，或给被调函数对应形参加上 const。] 
+
+[07:24:22 750] [Error] [ParseMeta]  [MetaCoreAssignStatementConst] Position:[ConstProbe.sl_37_0]  Info:[Error 当前左值声明为 const，不允许进行赋值或修改!!] Extend:[Error 当前左值声明为 const，不允许进行赋值或修改!! [Core.Int32]a]
+[07:24:22 755] [Error] [Process]  [ProcessPhaseFailed]  Info:[编译阶段[MetaCore]失败: 阶段内产生了 5 个错误]
+[07:24:22 756] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[IR]被跳过，前置阶段未成功完成]
+[07:24:22 756] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[Export]被跳过，前置阶段未成功完成]
+[07:24:22 757] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Failed] MetaCore : 阶段内产生了 5 个错误 errors: 5
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements errors: 5
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Skipped] IR : 前置阶段[MetaCore]失败
+  [Pending] TranslateIR
+[Skipped] Export : 前置阶段[MetaCore]失败
+  [Pending] ExportModule
+]

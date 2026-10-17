@@ -1,0 +1,506 @@
+-------------------FileMeta 文件显示 开始 : Path: MemberFunction2Test.sl-----------------------
+namespace MFT
+{
+    namespace NS_MF2.Base
+    {
+        class Counter
+        {
+             staticint intcount = 0i
+
+            _public int get111( )
+            {
+                ret NS_MF2.Base.Counter.count
+            }
+            _public void inc( )
+            {
+                NS_MF2.Base.Counter.count = NS_MF2.Base.Counter.count + 1i;
+            }
+            _public string labelbb( )
+
+        }
+    }
+    namespace NS_MF2.Derived
+    {
+        class FastCounter extends NS_MF2.Base.Counter
+        {
+            int intstep = 2i
+
+            _public override void inc( )
+            {
+                NS_MF2.Base.Counter.count = NS_MF2.Base.Counter.count + this.step;
+            }
+            _public override string labelbb( )
+            {
+                ret "FastCounter(step=" + this.step.toString() + ")"
+            }
+        }
+    }
+    Class1
+    {
+        _public a1func( )
+        {
+        }
+        _public b1func( )
+        {
+        }
+        _public c1func( )
+        {
+        }
+        _public d1func( )
+        {
+        }
+    }
+    Class2 extends Class1
+    {
+        _public override _init_( )
+        {
+        }
+        _public override a1func( )
+        {
+        }
+        _public override b1func( )
+        {
+        }
+        _public override c1func( )
+        {
+        }
+        _public override d1func( )
+        {
+        }
+    }
+    Class3 extends Class2
+    {
+        _public override d1func( )
+        {
+        }
+    }
+    Class4 extends Class1
+    {
+        _public override d1func( )
+        {
+        }
+    }
+    class ML_Base
+    {
+        int intlevel = 1i
+
+        _public int getLevel( )
+        {
+            ret this.level
+        }
+        _public string name( )
+        {
+            ret "ML_Base"
+        }
+        _public int calc( )
+        {
+            ret 100i
+        }
+    }
+    class ML_Mid extends ML_Base
+    {
+        int intlevel2 = 2i
+
+        _public override string name( )
+        {
+            ret "ML_Mid"
+        }
+        _public override int calc( )
+        {
+            ret base.calc() + 20i
+        }
+    }
+    class ML_Child extends ML_Mid
+    {
+        int intlevel3 = 3i
+
+        _public override string name( )
+        {
+            ret "ML_Child"
+        }
+        _public override int calc( )
+        {
+            ret base.calc() + 3i
+        }
+    }
+    class ML_GrandChild extends ML_Child
+    {
+        int intlevel4 = 4i
+
+        _public override string name( )
+        {
+            ret "ML_GrandChild"
+        }
+        _public override int calc( )
+        {
+            ret base.calc() + 4i
+        }
+        _public string chainInfo( )
+        {
+            ret base.name() + " -> " + this.name() + " level=" + this.level.toString()
+        }
+    }
+    class AbsBase
+    {
+        int intbaseVal = 50i
+
+        _public int getValue( )
+        {
+            ret this.baseVal
+        }
+        _public string describe( )
+        {
+            ret ""
+        }
+        _public int doubled( )
+        {
+            ret this.getValue() * 2i
+        }
+    }
+    class AbsChild extends AbsBase
+    {
+        int intchildVal = 200i
+
+        _public override int getValue( )
+        {
+            ret this.childVal
+        }
+        _public override string describe( )
+        {
+            ret "AbsChild childVal=" + this.childVal.toString() + " baseVal=" + base.baseVal.toString()
+        }
+    }
+    class AbsGrandChild extends AbsChild
+    {
+        int intgrandVal = 500i
+
+        _public override int getValue( )
+        {
+            ret this.grandVal
+        }
+        _public override string describe( )
+        {
+            ret "AbsGrandChild grand=" + this.grandVal.toString()
+        }
+    }
+    class FinalBase
+    {
+        _public int process( )
+        {
+            ret 10i
+        }
+        _public int lockedMethod( )
+        {
+            ret 999i
+        }
+    }
+    class FinalChild extends FinalBase
+    {
+        _public override int process( )
+        {
+            ret base.process() + 5i
+        }
+        _public int callLocked( )
+        {
+            ret base.lockedMethod()
+        }
+    }
+    class FinalGrandChild extends FinalChild
+    {
+        _public override int process( )
+        {
+            ret base.process() + 1i
+        }
+        _public int callChain( )
+        {
+            ret this.process() + this.callLocked()
+        }
+    }
+    class ParamCompatBase
+    {
+        _public int compute( int a,  int b = 10i,  int c = 20i )
+        {
+            ret a + b + c
+        }
+        _public string format( string prefix = "[",  string suffix = "]" )
+        {
+            ret prefix + "base" + suffix
+        }
+    }
+    class ParamCompatChild extends ParamCompatBase
+    {
+        _public override int compute( int a,  int b = 10i,  int c = 20i )
+        {
+            ret base.compute(a,b,c) * 2i
+        }
+        _public override string format( string prefix = "[",  string suffix = "]" )
+        {
+            ret prefix + "child" + suffix
+        }
+    }
+    class ParamExtendChild extends ParamCompatBase
+    {
+        _public int compute( int a,  int b,  int c,  int d )
+        {
+            ret a + b + c + d
+        }
+        _public string compute( string a,  string b )
+        {
+            ret a + b
+        }
+    }
+    class PolyBase
+    {
+        int intval = 0i
+
+        _public _init_( int v = 0i )
+        {
+            this.val = v;
+        }
+        _public string tag( )
+        {
+            ret "PolyBase"
+        }
+        _public int calc( )
+        {
+            ret this.val
+        }
+    }
+    class PolyChild1 extends PolyBase
+    {
+        _public override _init_( int v )
+        {
+            base._init_(v);
+        }
+        _public override string tag( )
+        {
+            ret "PolyChild1"
+        }
+        _public override int calc( )
+        {
+            ret base.calc() + 100i
+        }
+    }
+    class PolyChild2 extends PolyBase
+    {
+        _public override _init_( int v )
+        {
+            base._init_(v);
+        }
+        _public override string tag( )
+        {
+            ret "PolyChild2"
+        }
+        _public override int calc( )
+        {
+            ret base.calc() + 200i
+        }
+    }
+    class CtorBase
+    {
+        int intx = 0i
+        int inty = 0i
+        string stringtag = "CtorBase"
+
+        _public override _init_( )
+        {
+            this.x = 1i;
+            this.y = 1i;
+        }
+        _public _init_( int _x,  int _y )
+        {
+            this.x = _x;
+            this.y = _y;
+        }
+        _public _init_( int _x )
+        {
+            this.x = _x;
+            this.y = - - 1i;
+        }
+        _public string describe( )
+        {
+            ret this.tag + " x=" + this.x.toString() + " y=" + this.y.toString()
+        }
+    }
+    class CtorChild extends CtorBase
+    {
+        int intz = 0i
+
+        _public _init_( int _x,  int _y,  int _z )
+        {
+            base._init_(_x,_y);
+            this.z = _z;
+        }
+        _public override _init_( int _x )
+        {
+            base._init_(_x);
+            this.z = - - 1i;
+        }
+        _public override string describe( )
+        {
+            ret base.describe() + " z=" + this.z.toString()
+        }
+    }
+    class ChainBase
+    {
+        _public string build( )
+        {
+            ret "B"
+        }
+    }
+    class ChainMid extends ChainBase
+    {
+        _public override string build( )
+        {
+            ret "[" + base.build() + "]"
+        }
+    }
+    class ChainTop extends ChainMid
+    {
+        _public override string build( )
+        {
+            ret "{" + base.build() + "}"
+        }
+    }
+    MemberFunction2Test
+    {
+        _public static testOriginal( )
+        {
+            global.println("----- testOriginal -----");
+            Class1 c1 = Class1();
+            Class2 c2 = Class2();
+            Class4 c4 = Class4();
+            c1.a1func();
+            c1.b1func();
+            c1.c1func();
+            c1.d1func();
+            c2.a1func();
+            c2.b1func();
+            c2.d1func();
+            c4.d1func();
+            global.println("original override tests passed");
+        }
+        _public static testMultiLevel( )
+        {
+            global.println("----- testMultiLevel -----");
+            ML_Base mb = ML_Base();
+            ML_Mid mm = ML_Mid();
+            ML_Child mc = ML_Child();
+            ML_GrandChild mg = ML_GrandChild();
+            global.println("Base: name=" + mb.name() + " level=" + mb.getLevel().toString() + " calc=" + mb.calc().toString());
+            global.println("Mid: name=" + mm.name() + " level=" + mm.getLevel().toString() + " calc=" + mm.calc().toString());
+            global.println("Child: name=" + mc.name() + " level=" + mc.getLevel().toString() + " calc=" + mc.calc().toString());
+            global.println("Grand: name=" + mg.name() + " level=" + mg.getLevel().toString() + " calc=" + mg.calc().toString());
+            global.println("chainInfo -> " + mg.chainInfo());
+            ML_Base polyRef = ML_GrandChild();
+            global.println("polyRef.name -> " + polyRef.name());
+            global.println("polyRef.calc -> " + polyRef.calc().toString());
+        }
+        _public static testAbstract( )
+        {
+            global.println("----- testAbstract -----");
+            AbsBase ab = AbsBase();
+            global.println("AbsBase.getValue -> " + ab.getValue().toString());
+            global.println("AbsBase.doubled -> " + ab.doubled().toString());
+            AbsChild ac = AbsChild();
+            global.println("AbsChild.getValue -> " + ac.getValue().toString());
+            global.println("AbsChild.describe -> " + ac.describe());
+            global.println("AbsChild.doubled -> " + ac.doubled().toString());
+            AbsGrandChild agc = AbsGrandChild();
+            global.println("AbsGrandChild.getValue -> " + agc.getValue().toString());
+            global.println("AbsGrandChild.describe -> " + agc.describe());
+            global.println("AbsGrandChild.doubled -> " + agc.doubled().toString());
+            AbsBase polyRef = AbsGrandChild();
+            global.println("polyRef.getValue -> " + polyRef.getValue().toString());
+            global.println("polyRef.describe -> " + polyRef.describe());
+        }
+        _public static testFinal( )
+        {
+            global.println("----- testFinal -----");
+            FinalBase fb = FinalBase();
+            global.println("FinalBase.process -> " + fb.process().toString());
+            global.println("FinalBase.lockedMethod -> " + fb.lockedMethod().toString());
+            FinalChild fc = FinalChild();
+            global.println("FinalChild.process -> " + fc.process().toString());
+            global.println("FinalChild.callLocked -> " + fc.callLocked().toString());
+            FinalGrandChild fgc = FinalGrandChild();
+            global.println("FinalGrandChild.process -> " + fgc.process().toString());
+            global.println("FinalGrandChild.callChain -> " + fgc.callChain().toString());
+        }
+        _public static testParamCompat( )
+        {
+            global.println("----- testParamCompat -----");
+            ParamCompatBase pcb = ParamCompatBase();
+            global.println("base.compute(5) -> " + pcb.compute(5i).toString());
+            global.println("base.compute(5, 20) -> " + pcb.compute(5i,20i).toString());
+            global.println("base.compute(1, 2, 3) -> " + pcb.compute(1i,2i,3i).toString());
+            global.println("base.format() -> " + pcb.format());
+            global.println("base.format('<', '>') -> " + pcb.format("<",">"));
+            ParamCompatChild pcc = ParamCompatChild();
+            global.println("child.compute(5) -> " + pcc.compute(5i).toString());
+            global.println("child.compute(1, 2, 3) -> " + pcc.compute(1i,2i,3i).toString());
+            global.println("child.format() -> " + pcc.format());
+            global.println("child.format('<','>') -> " + pcc.format("<",">"));
+            ParamExtendChild pec = ParamExtendChild();
+            global.println("extend.compute(1,2,3,4) -> " + pec.compute(1i,2i,3i,4i).toString());
+            global.println("extend.compute('a','b') -> " + pec.compute("a","b"));
+            global.println("extend.compute(5) -> " + pec.compute(5i).toString());
+        }
+        _public static testPolymorphism( )
+        {
+            global.println("----- testPolymorphism -----");
+            PolyBase[] arr = [PolyChild1(10i),PolyChild2(20i),PolyBase(30i)];
+            
+            for item in arr
+            {
+                global.println(item.tag() + " calc=" + item.calc().toString());
+            }
+        }
+        _public static testCtorInherit( )
+        {
+            global.println("----- testCtorInherit -----");
+            CtorBase cbDefault = CtorBase();
+            global.println(cbDefault.describe());
+            CtorBase cbArgs = CtorBase(5i,6i);
+            global.println(cbArgs.describe());
+            CtorBase cbSingle = CtorBase(7i);
+            global.println(cbSingle.describe());
+            CtorChild ccFull = CtorChild(10i,20i,30i);
+            global.println(ccFull.describe());
+            CtorChild ccSingle = CtorChild(99i);
+            global.println(ccSingle.describe());
+            CtorBase polyRef = CtorChild(1i,2i,3i);
+            global.println("polyRef -> " + polyRef.describe());
+        }
+        _public static testCrossNamespace( )
+        {
+            global.println("----- testCrossNamespace -----");
+            NS_MF2.Base.Counter counter = NS_MF2.Derived.FastCounter();
+            counter.inc();
+            counter.inc();
+            global.println("counter.label -> " + counter.labelbb());
+            global.println("counter.get -> " + counter.get111().toString());
+        }
+        _public static testMethodChain( )
+        {
+            global.println("----- testMethodChain -----");
+            ChainTop top = ChainTop();
+            global.println("chain build -> " + top.build());
+        }
+        _public static fun( )
+        {
+            global.println("========== MemberFunction2Test (start) ==========");
+            MemberFunction2Test.testOriginal();
+            MemberFunction2Test.testMultiLevel();
+            MemberFunction2Test.testAbstract();
+            MemberFunction2Test.testFinal();
+            MemberFunction2Test.testParamCompat();
+            MemberFunction2Test.testPolymorphism();
+            MemberFunction2Test.testCtorInherit();
+            MemberFunction2Test.testCrossNamespace();
+            MemberFunction2Test.testMethodChain();
+            global.println("========== MemberFunction2Test (end) ==========");
+        }
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

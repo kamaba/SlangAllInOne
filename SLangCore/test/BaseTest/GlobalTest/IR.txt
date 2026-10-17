@@ -1,0 +1,250 @@
+-------------------IR 文件显示 开始 : Path: ../../../../test/BaseTest/GlobalTest.sl-----------------------
+Class: Core.GlobalTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.GlobalTest.fun
+    VirtualName: fun_Core.Object_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=38634788 idx=0 name=_local[Core.GlobalTest.fun.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=12168775 idx=0 name=fun_local[gv1] type=Core.Int32
+      - #1 id=42410114 idx=1 name=fun_local[aa] type=Core.Int32
+      - #2 id=46146710 idx=2 name=fun_local[arrRef] type=Core.Array<T><T><Core.Int32>
+      - #3 id=12667213 idx=3 name=fun_local[bb] type=Core.Float64
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/GlobalTest.sl:8] [LoadConstString] index:[251] val: string[========== GlobalTest (start) ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/GlobalTest.sl:10] [LoadConstString] index:[252] val: string[project static function print -> ok] 
+4 4   [ Core.sp:9] [CallStatic] index:[1] info:[CallStatic print] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.print_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ ../../../../test/BaseTest/GlobalTest.sl:11] [LoadConstString] index:[2] val: string[] 
+6 6   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ ../../../../test/BaseTest/GlobalTest.sl:14] [LoadConstInt32] index:[0] val: int32[12] 
+8 8   [ :0] [StoreLocal] index:[0]
+9 9   [ ../../../../test/BaseTest/GlobalTest.sl:15] [LoadStaticField] index:[4] fieldTypeIrmt:[Core.Project] staticOwner:[Core.GlobalTest] 
+10 10   [ ../../../../test/BaseTest/GlobalTest.sl:15] [LoadNotStaticField] index:[0]
+11 11   [ :0] [StoreLocal] index:[1]
+12 12   [ ../../../../test/BaseTest/GlobalTest.sl:16] [LoadConstString] index:[253] val: string[jsonc global.var1 -> ] 
+13 13   [ ../../../../test/BaseTest/GlobalTest.sl:16] [LoadLocal] index:[0]
+14 14   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ../../../../test/BaseTest/GlobalTest.sl:16] [Add] index:[0]
+16 16   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+17 17   [ ../../../../test/BaseTest/GlobalTest.sl:17] [LoadConstString] index:[254] val: string[jsonc global.vardata2.a -> ] 
+18 18   [ ../../../../test/BaseTest/GlobalTest.sl:17] [LoadLocal] index:[1]
+19 19   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ../../../../test/BaseTest/GlobalTest.sl:17] [Add] index:[0]
+21 21   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+22 22   [ ../../../../test/BaseTest/GlobalTest.sl:20] [LoadStaticField] index:[3] fieldTypeIrmt:[Core.Project] staticOwner:[Core.GlobalTest] 
+23 23   [ :0] [StoreLocal] index:[2]
+24 24   [ ../../../../test/BaseTest/GlobalTest.sl:21] [LoadConstString] index:[255] val: string[global.arrvar1 != null -> ] 
+25 25   [ ../../../../test/BaseTest/GlobalTest.sl:21] [LoadLocal] index:[2]
+26 26   [ Array.sl:96] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ ../../../../test/BaseTest/GlobalTest.sl:21] [Add] index:[0]
+28 28   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+29 29   [ ../../../../test/BaseTest/GlobalTest.sl:24] [LoadStaticField] index:[4] fieldTypeIrmt:[Core.Project] staticOwner:[Core.GlobalTest] 
+30 30   [ ../../../../test/BaseTest/GlobalTest.sl:24] [LoadNotStaticField] index:[1]
+31 31   [ :0] [StoreLocal] index:[3]
+32 32   [ ../../../../test/BaseTest/GlobalTest.sl:25] [LoadConstString] index:[256] val: string[global.vardata2.a -> ] 
+33 33   [ ../../../../test/BaseTest/GlobalTest.sl:25] [LoadLocal] index:[1]
+34 34   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ ../../../../test/BaseTest/GlobalTest.sl:25] [Add] index:[0]
+36 36   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ ../../../../test/BaseTest/GlobalTest.sl:26] [LoadConstString] index:[257] val: string[global.vardata2.b -> ] 
+38 38   [ ../../../../test/BaseTest/GlobalTest.sl:26] [LoadLocal] index:[3]
+39 39   [ Float64.sl:54] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Float64, StaticRuntimeTypeList=[], Method=Core.Float64.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ ../../../../test/BaseTest/GlobalTest.sl:26] [Add] index:[0]
+41 41   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+42 42   [ ../../../../test/BaseTest/GlobalTest.sl:27] [LoadConstString] index:[258] val: string[config data (vardata2.a+b) -> ] 
+43 43   [ ../../../../test/BaseTest/GlobalTest.sl:27] [LoadLocal] index:[1]
+44 44   [ ../../../../test/BaseTest/GlobalTest.sl:27] [LoadLocal] index:[3]
+45 45   [ ../../../../test/BaseTest/GlobalTest.sl:27] [Add] index:[0]
+46 46   [ Float64.sl:54] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Float64, StaticRuntimeTypeList=[], Method=Core.Float64.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+47 47   [ ../../../../test/BaseTest/GlobalTest.sl:27] [Add] index:[0]
+48 48   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+49 49   [ ../../../../test/BaseTest/GlobalTest.sl:29] [LoadConstString] index:[259] val: string[========== GlobalTest (end) ==========] 
+50 50   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+51 51   [ :0] [Label] index:[0]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=63575380 idx=0 name=_local[Core.Object.toString.return] type=Core.String
+    Arguments:
+      - #0 id=66716254 idx=0 name=_local[Core.Object.toString.this] type=Core.Object
+    Locals:
+      - #0 id=35307513 idx=0 name=toString_local[hc] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:65] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreLocal] index:[0]
+4 4   [ Object.sl:66] [LoadConstString] index:[61] val: string[Object:] 
+5 5   [ Object.sl:66] [LoadLocal] index:[0]
+6 6   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ Object.sl:66] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+-------------------IR 文件显示 结束 : -----------------------

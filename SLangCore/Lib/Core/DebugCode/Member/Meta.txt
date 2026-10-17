@@ -1,0 +1,60 @@
+-------------------Meta 文件显示 开始 : Path: Member.sl-----------------------
+public class Member extends Core.Object
+{
+public [Core.Object]value = null;
+public [Core.String]name = "";
+public [Core.Int32]index = 0i;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+return [Core.Member]Core.Member.toString.this  ->  [Core.Object]value.toString();
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

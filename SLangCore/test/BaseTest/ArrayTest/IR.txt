@@ -1,0 +1,2461 @@
+-------------------IR 文件显示 开始 : Path: ../../../../test/BaseTest/ArrayTest.sl-----------------------
+Class: Core.ArrayTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.ArrayTest.forIIterator_1_Core.Object
+    VirtualName: forIIterator_Core.Object_1_Core.Object
+    Name: forIIterator
+    InterfaceMethod: False
+    Return:
+      - #0 id=22205728 idx=0 name=_local[Core.ArrayTest.forIIterator.return] type=Core.Object
+    Arguments:
+      - #0 id=65633828 idx=0 name=_local[obj] type=Core.Object
+    Locals:
+      - #0 id=53833544 idx=0 name=forIIterator_local[arr] type=Core.IIterable<T><T><Core.Object>
+      - #1 id=14739853 idx=1 name=forIIterator_local[for_iterator_52983808] type=Core.IIterator<T><T><Core.Object>
+      - #2 id=65549821 idx=2 name=forIIterator_local[v] type=Core.Object
+      - #3 id=53077479 idx=3 name=forIIterator_local[autocreate_7092232] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:44] [LoadConstString] index:[428] val: string[==========forIIterator ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:46] [LoadArgument] index:[0]
+4 4   [ ../../../../test/BaseTest/ArrayTest.sl:46] [CastClass] index:[0] info:[CastClass as Core.IIterable<Core.Object>Core.Object
+] val irmt:[Core.IIterable<T><T><Core.Object>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ :0] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:47] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.IIterable<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterable<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ :0] [StoreLocal] index:[1]
+9 9   [ :0] [LoadLocal] index:[1]
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:47] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:47] [Nop] index:[0] info:[for-in: Nop loop head]
+12 12   [ :0] [LoadLocal] index:[1]
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:47] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:47] [BrFalse] index:[40] info:[for-in: BrFalse exit when !moveNext()] val:[40   [ ../../../../test/BaseTest/ArrayTest.sl:47] [Nop] index:[0] info:[for-in: Nop end]] 
+15 15   [ :0] [LoadLocal] index:[1]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:47] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ :0] [StoreLocal] index:[2]
+18 18   [ :0] [Nop] index:[0]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:49] [LoadLocal] index:[2]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:49] [LoadConstNull] index:[0] val:[null] 
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:49] [Cne] index:[0]
+23 23   [ :0] [StoreLocal] index:[3]
+24 24   [ :0] [LoadLocal] index:[3]
+25 25   [ :0] [BrFalse] index:[33] val:[33   [ :0] [Nop] index:[0]] 
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:51] [LoadConstString] index:[429] val: string[for-in -> ] 
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:51] [LoadLocal] index:[2]
+29 29   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:51] [Add] index:[0]
+31 31   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+32 32   [ :0] [Br] index:[38] val:[38   [ :0] [Nop] index:[0]] 
+33 33   [ :0] [Nop] index:[0]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:55] [LoadConstString] index:[430] val: string[for-in -> null] 
+36 36   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ :0] [Br] index:[38] val:[38   [ :0] [Nop] index:[0]] 
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:47] [Br] index:[11] info:[for-in: Br to loop head] val:[11   [ ../../../../test/BaseTest/ArrayTest.sl:47] [Nop] index:[0] info:[for-in: Nop loop head]] 
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:47] [Nop] index:[0] info:[for-in: Nop end]
+41 41   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.forObject_1_Core.Object
+    VirtualName: forObject_Core.Object_1_Core.Object
+    Name: forObject
+    InterfaceMethod: False
+    Return:
+      - #0 id=7935270 idx=0 name=_local[Core.ArrayTest.forObject.return] type=Core.Object
+    Arguments:
+      - #0 id=4308570 idx=0 name=_local[arr] type=Core.Object
+    Locals:
+      - #0 id=38777132 idx=0 name=forObject_local[iter] type=Core.Array<T><T><Core.Object>
+      - #1 id=13449869 idx=1 name=forObject_local[autocreate_49967061] type=Core.Boolean
+      - #2 id=53939958 idx=2 name=forObject_local[for_iterator_47050372] type=Core.IIterator<T><T><Core.Object>
+      - #3 id=15697576 idx=3 name=forObject_local[v] type=Core.Object
+      - #4 id=7060460 idx=4 name=forObject_local[autocreate_20800170] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:62] [LoadConstString] index:[431] val: string[==========forObject ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:64] [LoadArgument] index:[0]
+4 4   [ ../../../../test/BaseTest/ArrayTest.sl:64] [CastClass] index:[0] info:[CastClass as Core.Array<Core.Object>Core.Object
+] val irmt:[Core.Array<T><T><Core.Object>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ :0] [Nop] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:65] [LoadLocal] index:[0]
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:65] [LoadConstNull] index:[0] val:[null] 
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:65] [Cne] index:[0]
+10 10   [ :0] [StoreLocal] index:[1]
+11 11   [ :0] [LoadLocal] index:[1]
+12 12   [ :0] [BrFalse] index:[45] val:[45   [ :0] [Nop] index:[0]] 
+13 13   [ :0] [Nop] index:[0]
+14 14   [ :0] [LoadLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:67] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ :0] [StoreLocal] index:[2]
+17 17   [ :0] [LoadLocal] index:[2]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:67] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:67] [Nop] index:[0] info:[for-in: Nop loop head]
+20 20   [ :0] [LoadLocal] index:[2]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:67] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:67] [BrFalse] index:[43] info:[for-in: BrFalse exit when !moveNext()] val:[43   [ ../../../../test/BaseTest/ArrayTest.sl:67] [Nop] index:[0] info:[for-in: Nop end]] 
+23 23   [ :0] [LoadLocal] index:[2]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:67] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+25 25   [ :0] [StoreLocal] index:[3]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:69] [LoadLocal] index:[3]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:69] [LoadConstNull] index:[0] val:[null] 
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:69] [Cne] index:[0]
+31 31   [ :0] [StoreLocal] index:[4]
+32 32   [ :0] [LoadLocal] index:[4]
+33 33   [ :0] [BrFalse] index:[41] val:[41   [ :0] [Nop] index:[0]] 
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:71] [LoadConstString] index:[432] val: string[1111111111= ] 
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:71] [LoadLocal] index:[3]
+37 37   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:71] [Add] index:[0]
+39 39   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+40 40   [ :0] [Br] index:[41] val:[41   [ :0] [Nop] index:[0]] 
+41 41   [ :0] [Nop] index:[0]
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:67] [Br] index:[19] info:[for-in: Br to loop head] val:[19   [ ../../../../test/BaseTest/ArrayTest.sl:67] [Nop] index:[0] info:[for-in: Nop loop head]] 
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:67] [Nop] index:[0] info:[for-in: Nop end]
+44 44   [ :0] [Br] index:[45] val:[45   [ :0] [Nop] index:[0]] 
+45 45   [ :0] [Nop] index:[0]
+46 46   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayBasicApiTest
+    VirtualName: arrayBasicApiTest_Core.Object_0
+    Name: arrayBasicApiTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=63544148 idx=0 name=_local[Core.ArrayTest.arrayBasicApiTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=35026424 idx=0 name=arrayBasicApiTest_local[nums] type=Core.Array<T><T><Core.Int32>
+      - #1 id=46802360 idx=1 name=arrayBasicApiTest_local[lenValue] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:79] [LoadConstString] index:[433] val: string[========== Array.basic api ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:80] [LoadConstInt32] index:[0] val: int32[3] 
+4 4   [ Array.sl:10] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:81] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:81] [LoadConstInt32] index:[0] val: int32[7] 
+8 8   [ Array.sl:24] [CallVirt] index:[12] info:[CallVirt fill] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.fill_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:82] [LoadLocal] index:[0]
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:82] [LoadConstInt32] index:[0] val: int32[2] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:82] [LoadConstInt32] index:[0] val: int32[99] 
+12 12   [ Array.sl:84] [CallVirt] index:[20] info:[CallVirt setValue] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.setValue_2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:83] [LoadLocal] index:[0]
+14 14   [ Array.sl:22] [CallVirt] index:[11] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ :0] [StoreLocal] index:[1]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:84] [LoadLocal] index:[1]
+17 17   [ ../../../../test/BaseTest/ArrayTest.sl:84] [LoadConstInt32] index:[0] val: int32[1] 
+18 18   [ :0] [Add] index:[0]
+19 19   [ :0] [StoreLocal] index:[1]
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:86] [LoadConstString] index:[434] val: string[nums.length -> ] 
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:86] [LoadLocal] index:[0]
+22 22   [ Array.sl:22] [CallVirt] index:[11] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:86] [Add] index:[0]
+25 25   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:87] [LoadConstString] index:[435] val: string[lenValue -> ] 
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:87] [LoadLocal] index:[1]
+28 28   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:87] [Add] index:[0]
+30 30   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:88] [LoadConstString] index:[436] val: string[nums.getValue(0) -> ] 
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:88] [LoadLocal] index:[0]
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:88] [LoadConstInt32] index:[0] val: int32[0] 
+34 34   [ Array.sl:88] [CallVirt] index:[21] info:[CallVirt getValue] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.getValue_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+35 35   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:88] [Add] index:[0]
+37 37   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:89] [LoadConstString] index:[437] val: string[nums.getValue(2) -> ] 
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:89] [LoadLocal] index:[0]
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:89] [LoadConstInt32] index:[0] val: int32[2] 
+41 41   [ Array.sl:88] [CallVirt] index:[21] info:[CallVirt getValue] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.getValue_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+42 42   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:89] [Add] index:[0]
+44 44   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:91] [LoadLocal] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:91] [LoadConstInt32] index:[0] val: int32[2] 
+47 47   [ Array.sl:69] [CallVirt] index:[19] info:[CallVirt index] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.index_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:92] [LoadConstString] index:[438] val: string[nums.current() $ index=1 -> ] 
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:92] [LoadLocal] index:[0]
+50 50   [ Array.sl:52] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+51 51   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:92] [Add] index:[0]
+53 53   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+54 54   [ ../../../../test/BaseTest/ArrayTest.sl:93] [LoadLocal] index:[0]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:93] [LoadConstInt32] index:[0] val: int32[123] 
+56 56   [ Array.sl:56] [CallVirt] index:[16] info:[CallVirt current] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.current_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+57 57   [ ../../../../test/BaseTest/ArrayTest.sl:94] [LoadConstString] index:[439] val: string[nums.getValue(1) after set current -> ] 
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:94] [LoadLocal] index:[0]
+59 59   [ ../../../../test/BaseTest/ArrayTest.sl:94] [LoadConstInt32] index:[0] val: int32[2] 
+60 60   [ Array.sl:88] [CallVirt] index:[21] info:[CallVirt getValue] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.getValue_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+61 61   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+62 62   [ ../../../../test/BaseTest/ArrayTest.sl:94] [Add] index:[0]
+63 63   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+64 64   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayGenericElementTest
+    VirtualName: arrayGenericElementTest_Core.Object_0
+    Name: arrayGenericElementTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=18568063 idx=0 name=_local[Core.ArrayTest.arrayGenericElementTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=32894845 idx=0 name=arrayGenericElementTest_local[ttt] type=Core.ArrayTest.Level<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>
+      - #1 id=27618155 idx=1 name=arrayGenericElementTest_local[levels] type=Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>
+      - #2 id=47236811 idx=2 name=arrayGenericElementTest_local[for_iterator_47841633] type=Core.IIterator<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>
+      - #3 id=22478116 idx=3 name=arrayGenericElementTest_local[v] type=Core.ArrayTest.Level<T><T><Core.Int32>
+      - #4 id=976457 idx=4 name=arrayGenericElementTest_local[autocreate_27921517] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:99] [LoadConstString] index:[440] val: string[========== Array.generic element ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+4 4   [ :0] [Dup] index:[0]
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:100] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>, StaticRuntimeTypeList=[Core.ArrayTest.Level<T><T><Core.Int32>], Method=Core.ArrayTest.Level<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ :0] [Dup] index:[0]
+7 7   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:100] [LoadConstInt32] index:[0] val: int32[120] 
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:100] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ :0] [StoreNotStaticField2] index:[0]
+12 12   [ :0] [StoreLocal] index:[0]
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:101] [LoadConstString] index:[441] val: string[ttt -> ] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:101] [LoadLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:35] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T>, StaticRuntimeTypeList=[], Method=Core.ArrayTest.Level<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:101] [Add] index:[0]
+17 17   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:104] [LoadConstInt32] index:[0] val: int32[3] 
+19 19   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+20 20   [ :0] [Dup] index:[0]
+21 21   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+22 22   [ :0] [Dup] index:[0]
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:104] [LoadConstInt32] index:[0] val: int32[10] 
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:104] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+25 25   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+26 26   [ :0] [Dup] index:[0]
+27 27   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+28 28   [ :0] [Dup] index:[0]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:104] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ :0] [Dup] index:[0]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:104] [LoadConstInt32] index:[0] val: int32[120] 
+32 32   [ :0] [StoreNotStaticField2] index:[0]
+33 33   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+34 34   [ :0] [Dup] index:[0]
+35 35   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+36 36   [ :0] [Dup] index:[0]
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:104] [LoadConstInt32] index:[0] val: int32[30] 
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:104] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+39 39   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+40 40   [ :0] [StoreLocal] index:[1]
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:105] [LoadLocal] index:[1]
+42 42   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+43 43   [ :0] [Dup] index:[0]
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:105] [LoadNotStaticField] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:105] [LoadConstInt32] index:[0] val: int32[5] 
+46 46   [ :0] [Add] index:[0]
+47 47   [ :0] [StoreNotStaticField2] index:[0]
+48 48   [ :0] [LoadLocal] index:[1]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:106] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.ArrayTest.Level<T><T>>, StaticRuntimeTypeList=[Core.ArrayTest.Level<T><T>], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ :0] [StoreLocal] index:[2]
+51 51   [ :0] [LoadLocal] index:[2]
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:106] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.Level<T><T>>, StaticRuntimeTypeList=[Core.ArrayTest.Level<T><T>], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:106] [Nop] index:[0] info:[for-in: Nop loop head]
+54 54   [ :0] [LoadLocal] index:[2]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:106] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.Level<T><T>>, StaticRuntimeTypeList=[Core.ArrayTest.Level<T><T>], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:106] [BrFalse] index:[77] info:[for-in: BrFalse exit when !moveNext()] val:[77   [ ../../../../test/BaseTest/ArrayTest.sl:106] [Nop] index:[0] info:[for-in: Nop end]] 
+57 57   [ :0] [LoadLocal] index:[2]
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:106] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.Level<T><T>>, StaticRuntimeTypeList=[Core.ArrayTest.Level<T><T>], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+59 59   [ :0] [StoreLocal] index:[3]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ :0] [Nop] index:[0]
+62 62   [ ../../../../test/BaseTest/ArrayTest.sl:108] [LoadLocal] index:[3]
+63 63   [ ../../../../test/BaseTest/ArrayTest.sl:108] [LoadConstNull] index:[0] val:[null] 
+64 64   [ ../../../../test/BaseTest/ArrayTest.sl:108] [Cne] index:[0]
+65 65   [ :0] [StoreLocal] index:[4]
+66 66   [ :0] [LoadLocal] index:[4]
+67 67   [ :0] [BrFalse] index:[75] val:[75   [ :0] [Nop] index:[0]] 
+68 68   [ :0] [Nop] index:[0]
+69 69   [ ../../../../test/BaseTest/ArrayTest.sl:110] [LoadConstString] index:[442] val: string[level item -> ] 
+70 70   [ ../../../../test/BaseTest/ArrayTest.sl:110] [LoadLocal] index:[3]
+71 71   [ ../../../../test/BaseTest/ArrayTest.sl:35] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T>, StaticRuntimeTypeList=[], Method=Core.ArrayTest.Level<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+72 72   [ ../../../../test/BaseTest/ArrayTest.sl:110] [Add] index:[0]
+73 73   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+74 74   [ :0] [Br] index:[75] val:[75   [ :0] [Nop] index:[0]] 
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ../../../../test/BaseTest/ArrayTest.sl:106] [Br] index:[53] info:[for-in: Br to loop head] val:[53   [ ../../../../test/BaseTest/ArrayTest.sl:106] [Nop] index:[0] info:[for-in: Nop loop head]] 
+77 77   [ ../../../../test/BaseTest/ArrayTest.sl:106] [Nop] index:[0] info:[for-in: Nop end]
+78 78   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCreateInstanceIndexLoopTest
+    VirtualName: arrayCreateInstanceIndexLoopTest_Core.Object_0
+    Name: arrayCreateInstanceIndexLoopTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=8788113 idx=0 name=_local[Core.ArrayTest.arrayCreateInstanceIndexLoopTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=11984159 idx=0 name=arrayCreateInstanceIndexLoopTest_local[intvalue] type=Core.UInt16
+      - #1 id=40748571 idx=1 name=arrayCreateInstanceIndexLoopTest_local[a2] type=Core.Array<T><T><Core.Int32>
+      - #2 id=31192822 idx=2 name=arrayCreateInstanceIndexLoopTest_local[i] type=Core.Int32
+      - #3 id=12299945 idx=3 name=arrayCreateInstanceIndexLoopTest_local[autocreate_54443429] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:119] [LoadConstString] index:[443] val: string[========== createInstance / index / for-i ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:120] [LoadConstUInt16] index:[0] val:[16] 
+4 4   [ :0] [StoreLocal] index:[0]
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:121] [LoadLocal] index:[0]
+6 6   [ Array.sl:10] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ :0] [StoreLocal] index:[1]
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:123] [LoadLocal] index:[1]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:123] [LoadConstInt32] index:[0] val: int32[1] 
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:123] [LoadConstInt32] index:[0] val: int32[50] 
+11 11   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:124] [LoadLocal] index:[1]
+13 13   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+14 14   [ :0] [Dup] index:[0] val: int32[2] 
+15 15   [ :0] [LoadArrayIndexField] index:[0]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:124] [LoadConstInt32] index:[0] val: int32[100] 
+17 17   [ :0] [Add] index:[0]
+18 18   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:125] [LoadLocal] index:[1]
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:125] [LoadConstInt32] index:[0] val: int32[1] 
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:125] [LoadLocal] index:[1]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:125] [LoadArrayIndex] index:[1] val: int32[1] 
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:125] [LoadConstInt32] index:[0] val: int32[200] 
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:125] [Add] index:[0]
+25 25   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:126] [LoadLocal] index:[1]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:126] [LoadConstInt32] index:[0] val: int32[1] 
+28 28   [ :0] [Dup] index:[0] val: int32[2] 
+29 29   [ :0] [LoadArrayIndexField] index:[0]
+30 30   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+31 31   [ :0] [Minus] index:[0]
+32 32   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:127] [LoadConstString] index:[444] val: string[createInstance= ] 
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:127] [LoadLocal] index:[1]
+35 35   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+36 36   [ :0] [Convert_ToString] index:[0]
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:127] [Add] index:[0]
+38 38   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:130] [LoadConstString] index:[444] val: string[createInstance= ] 
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:130] [LoadLocal] index:[0]
+41 41   [ :0] [Convert_ToString] index:[0]
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:130] [Add] index:[0]
+43 43   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:131] [LoadConstInt32] index:[0] val: int32[40] 
+45 45   [ :0] [StoreLocal] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:132] [LoadLocal] index:[0]
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:132] [LoadConstInt32] index:[0] val: int32[13] 
+48 48   [ :0] [Minus] index:[0]
+49 49   [ :0] [StoreLocal] index:[0]
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:133] [LoadConstString] index:[444] val: string[createInstance= ] 
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:133] [LoadLocal] index:[0]
+52 52   [ :0] [Convert_ToString] index:[0]
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:133] [Add] index:[0]
+54 54   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:135] [LoadConstInt32] index:[0] val: int32[0] 
+56 56   [ :0] [StoreLocal] index:[2]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:135] [LoadLocal] index:[2]
+59 59   [ ../../../../test/BaseTest/ArrayTest.sl:135] [LoadLocal] index:[1]
+60 60   [ Array.sl:22] [CallVirt] index:[11] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+61 61   [ ../../../../test/BaseTest/ArrayTest.sl:135] [Clt] index:[0]
+62 62   [ :0] [BrFalse] index:[104] val:[104   [ :0] [Nop] index:[0]] 
+63 63   [ :0] [Nop] index:[0]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ ../../../../test/BaseTest/ArrayTest.sl:137] [LoadLocal] index:[2]
+66 66   [ ../../../../test/BaseTest/ArrayTest.sl:137] [LoadConstInt32] index:[0] val: int32[0] 
+67 67   [ ../../../../test/BaseTest/ArrayTest.sl:137] [Cgt] index:[0]
+68 68   [ :0] [StoreLocal] index:[3]
+69 69   [ :0] [LoadLocal] index:[3]
+70 70   [ :0] [BrFalse] index:[83] val:[83   [ :0] [Nop] index:[0]] 
+71 71   [ :0] [Nop] index:[0]
+72 72   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadLocal] index:[1]
+73 73   [ :0] [LoadLocal] index:[2]
+74 74   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadLocal] index:[1]
+75 75   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadLocal] index:[2]
+76 76   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadConstInt32] index:[0] val: int32[1] 
+77 77   [ ../../../../test/BaseTest/ArrayTest.sl:139] [Minus] index:[0]
+78 78   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadArrayIndexField] index:[0]
+79 79   [ ../../../../test/BaseTest/ArrayTest.sl:139] [LoadConstInt32] index:[0] val: int32[100] 
+80 80   [ ../../../../test/BaseTest/ArrayTest.sl:139] [Add] index:[0]
+81 81   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+82 82   [ :0] [Br] index:[90] val:[90   [ :0] [Nop] index:[0]] 
+83 83   [ :0] [Nop] index:[0]
+84 84   [ :0] [Nop] index:[0]
+85 85   [ ../../../../test/BaseTest/ArrayTest.sl:143] [LoadLocal] index:[1]
+86 86   [ ../../../../test/BaseTest/ArrayTest.sl:143] [LoadConstInt32] index:[0] val: int32[0] 
+87 87   [ ../../../../test/BaseTest/ArrayTest.sl:143] [LoadConstInt32] index:[0] val: int32[123] 
+88 88   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+89 89   [ :0] [Br] index:[90] val:[90   [ :0] [Nop] index:[0]] 
+90 90   [ :0] [Nop] index:[0]
+91 91   [ ../../../../test/BaseTest/ArrayTest.sl:145] [LoadConstString] index:[444] val: string[createInstance= ] 
+92 92   [ ../../../../test/BaseTest/ArrayTest.sl:145] [LoadLocal] index:[1]
+93 93   [ ../../../../test/BaseTest/ArrayTest.sl:145] [LoadLocal] index:[2]
+94 94   [ ../../../../test/BaseTest/ArrayTest.sl:145] [LoadArrayIndexField] index:[0]
+95 95   [ :0] [Convert_ToString] index:[0]
+96 96   [ ../../../../test/BaseTest/ArrayTest.sl:145] [Add] index:[0]
+97 97   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ../../../../test/BaseTest/ArrayTest.sl:135] [LoadLocal] index:[2]
+100 100   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+101 101   [ :0] [Add] index:[0]
+102 102   [ :0] [StoreLocal] index:[2]
+103 103   [ :0] [Br] index:[57] val:[57   [ :0] [Nop] index:[0]] 
+104 104   [ :0] [Nop] index:[0]
+105 105   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCovariantAndLiteralForInTest
+    VirtualName: arrayCovariantAndLiteralForInTest_Core.Object_0
+    Name: arrayCovariantAndLiteralForInTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=10758903 idx=0 name=_local[Core.ArrayTest.arrayCovariantAndLiteralForInTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=29721263 idx=0 name=arrayCovariantAndLiteralForInTest_local[boxed] type=Core.Array<T><T><Core.Object>
+      - #1 id=66164776 idx=1 name=arrayCovariantAndLiteralForInTest_local[arr2] type=Core.Array<T><T><Core.Int32>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:152] [LoadConstString] index:[445] val: string[========== ObjectArray 装箱 + literal for-in ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:157] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:157] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+9 9   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+10 10   [ :0] [Dup] index:[0]
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:157] [LoadConstInt32] index:[0] val: int32[111] 
+12 12   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+13 13   [ :0] [Dup] index:[0]
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:157] [LoadConstInt32] index:[0] val: int32[2222] 
+15 15   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+16 16   [ :0] [Dup] index:[0]
+17 17   [ ../../../../test/BaseTest/ArrayTest.sl:157] [LoadConstInt32] index:[0] val: int32[3333] 
+18 18   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+19 19   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:158] [LoadLocal] index:[0]
+21 21   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+22 22   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+23 23   [ :0] [Dup] index:[0]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:158] [LoadConstInt32] index:[0] val: int32[10] 
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:158] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:160] [LoadLocal] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:161] [LoadLocal] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:60] [CallStatic] index:[1] info:[CallStatic forObject] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forObject_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+31 31   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+32 32   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+33 33   [ :0] [Dup] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:164] [LoadConstInt32] index:[0] val: int32[1000] 
+35 35   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+36 36   [ :0] [Dup] index:[0]
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:164] [LoadConstInt32] index:[0] val: int32[2000] 
+38 38   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+39 39   [ :0] [Dup] index:[0]
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:164] [LoadConstInt32] index:[0] val: int32[3000] 
+41 41   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+42 42   [ :0] [Dup] index:[0]
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:164] [LoadConstInt32] index:[0] val: int32[1005] 
+44 44   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+45 45   [ :0] [StoreLocal] index:[1]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:165] [LoadLocal] index:[1]
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:166] [LoadLocal] index:[1]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:60] [CallStatic] index:[1] info:[CallStatic forObject] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forObject_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+50 50   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayNumberIteratorFromConcreteArrayTest
+    VirtualName: arrayNumberIteratorFromConcreteArrayTest_Core.Object_0
+    Name: arrayNumberIteratorFromConcreteArrayTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=49957660 idx=0 name=_local[Core.ArrayTest.arrayNumberIteratorFromConcreteArrayTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=46965764 idx=0 name=arrayNumberIteratorFromConcreteArrayTest_local[concrete] type=Core.Array<T><T><Core.Int32>
+      - #1 id=20038698 idx=1 name=arrayNumberIteratorFromConcreteArrayTest_local[it] type=Core.IIterator<T><T><Core.Num>
+      - #2 id=46130559 idx=2 name=arrayNumberIteratorFromConcreteArrayTest_local[it2] type=Core.IIterable<T><T><Core.Object>
+      - #3 id=12521852 idx=3 name=arrayNumberIteratorFromConcreteArrayTest_local[n] type=Core.Num
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:173] [LoadConstString] index:[446] val: string[========== IIterator<Num> <- Int32[]（只读遍历） ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:176] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:176] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:176] [LoadConstInt32] index:[0] val: int32[11] 
+9 9   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:177] [LoadLocal] index:[0]
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:177] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:177] [LoadConstInt32] index:[0] val: int32[22] 
+13 13   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:178] [LoadLocal] index:[0]
+15 15   [ Array.sl:61] [CallDynamic] index:[1] info:[CallDynamic iterator] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ :0] [StoreLocal] index:[1]
+17 17   [ ../../../../test/BaseTest/ArrayTest.sl:179] [LoadLocal] index:[0]
+18 18   [ :0] [StoreLocal] index:[2]
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:180] [LoadLocal] index:[1]
+20 20   [ IteratorInterface.sl:15] [CallDynamic] index:[1] info:[CallDynamic reset] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ :0] [Nop] index:[0]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:181] [LoadLocal] index:[1]
+23 23   [ IteratorInterface.sl:16] [CallDynamic] index:[1] info:[CallDynamic moveNext] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ :0] [BrFalse] index:[36] val:[36   [ :0] [Nop] index:[0]] 
+25 25   [ :0] [Nop] index:[0]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:183] [LoadLocal] index:[1]
+28 28   [ IteratorInterface.sl:17] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T>, StaticRuntimeTypeList=[], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ :0] [StoreLocal] index:[3]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:184] [LoadConstString] index:[447] val: string[IIterator<Num> current -> ] 
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:184] [LoadLocal] index:[3]
+32 32   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:184] [Add] index:[0]
+34 34   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+35 35   [ :0] [Br] index:[21] val:[21   [ :0] [Nop] index:[0]] 
+36 36   [ :0] [Nop] index:[0]
+37 37   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayNestedObjectTreeTest
+    VirtualName: arrayNestedObjectTreeTest_Core.Object_0
+    Name: arrayNestedObjectTreeTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=1625174 idx=0 name=_local[Core.ArrayTest.arrayNestedObjectTreeTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=14626574 idx=0 name=arrayNestedObjectTreeTest_local[aaaxx12] type=Core.Array<T><T><Core.Int32>
+      - #1 id=64530307 idx=1 name=arrayNestedObjectTreeTest_local[axxx12] type=Core.Array<T><T><Core.Int32>
+      - #2 id=43901854 idx=2 name=arrayNestedObjectTreeTest_local[axxx13] type=Core.Array<T><T><Core.Array<T><T><Core.Int32>>
+      - #3 id=59572368 idx=3 name=arrayNestedObjectTreeTest_local[axx22] type=Core.Array<T><T><Core.Int32>
+      - #4 id=66389266 idx=4 name=arrayNestedObjectTreeTest_local[axx23] type=Core.Array<T><T><Core.Object>
+      - #5 id=60632485 idx=5 name=arrayNestedObjectTreeTest_local[a1] type=Core.Array<T><T><Core.Object>
+      - #6 id=8821459 idx=6 name=arrayNestedObjectTreeTest_local[for_iterator_21704116] type=Core.IIterator<T><T><Core.Object>
+      - #7 id=12284267 idx=7 name=arrayNestedObjectTreeTest_local[v] type=Core.Object
+      - #8 id=43449544 idx=8 name=arrayNestedObjectTreeTest_local[autocreate_61119323] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:191] [LoadConstString] index:[448] val: string[========== nested Array<Object> / testArray / deep walk ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:193] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ Array.sl:10] [CallStatic] index:[1] info:[CallStatic create] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.Array<T>.create_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:194] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:194] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:194] [LoadConstInt32] index:[0] val: int32[5] 
+9 9   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:195] [LoadLocal] index:[0]
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:195] [LoadConstInt32] index:[0] val: int32[1] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:195] [LoadConstInt32] index:[0] val: int32[6] 
+13 13   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:196] [LoadLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+16 16   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+17 17   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:197] [LoadConstInt32] index:[0] val: int32[7] 
+20 20   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:197] [LoadConstInt32] index:[0] val: int32[8] 
+23 23   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:197] [LoadConstInt32] index:[0] val: int32[9] 
+26 26   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+27 27   [ :0] [Dup] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:197] [LoadConstInt32] index:[0] val: int32[5] 
+29 29   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+30 30   [ :0] [StoreLocal] index:[1]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:198] [LoadLocal] index:[1]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+33 33   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+34 34   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Int32>>] 
+35 35   [ :0] [Dup] index:[0]
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:199] [LoadLocal] index:[0]
+37 37   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+40 40   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+41 41   [ :0] [Dup] index:[0]
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:199] [LoadConstInt32] index:[0] val: int32[991] 
+43 43   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+44 44   [ :0] [Dup] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:199] [LoadConstInt32] index:[0] val: int32[992] 
+46 46   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+47 47   [ :0] [Dup] index:[0]
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:199] [LoadConstInt32] index:[0] val: int32[993] 
+49 49   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+50 50   [ :0] [Dup] index:[0]
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:199] [LoadConstInt32] index:[0] val: int32[994] 
+52 52   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+53 53   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+54 54   [ :0] [StoreLocal] index:[2]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:200] [LoadLocal] index:[2]
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+57 57   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+58 58   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+59 59   [ :0] [Dup] index:[0]
+60 60   [ ../../../../test/BaseTest/ArrayTest.sl:202] [LoadConstFloat32] index:[0] val:[100] 
+61 61   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemConvertInt32] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+62 62   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+63 63   [ :0] [Dup] index:[0]
+64 64   [ ../../../../test/BaseTest/ArrayTest.sl:202] [LoadConstString] index:[449] val: string[101] 
+65 65   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemConvertInt32] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+66 66   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+67 67   [ :0] [StoreLocal] index:[3]
+68 68   [ ../../../../test/BaseTest/ArrayTest.sl:203] [LoadLocal] index:[3]
+69 69   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+70 70   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+71 71   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+72 72   [ :0] [Dup] index:[0]
+73 73   [ ../../../../test/BaseTest/ArrayTest.sl:204] [LoadLocal] index:[3]
+74 74   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+75 75   [ :0] [StoreLocal] index:[4]
+76 76   [ ../../../../test/BaseTest/ArrayTest.sl:205] [LoadLocal] index:[4]
+77 77   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+78 78   [ ../../../../test/BaseTest/ArrayTest.sl:208] [LoadConstInt32] index:[0] val: int32[3] 
+79 79   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+80 80   [ :0] [Dup] index:[0]
+81 81   [ ../../../../test/BaseTest/ArrayTest.sl:208] [LoadConstInt32] index:[0] val: int32[1] 
+82 82   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+83 83   [ :0] [Dup] index:[0]
+84 84   [ ../../../../test/BaseTest/ArrayTest.sl:208] [LoadLocal] index:[2]
+85 85   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+86 86   [ :0] [Dup] index:[0]
+87 87   [ ../../../../test/BaseTest/ArrayTest.sl:208] [LoadLocal] index:[4]
+88 88   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+89 89   [ :0] [StoreLocal] index:[5]
+90 90   [ ../../../../test/BaseTest/ArrayTest.sl:209] [LoadLocal] index:[5]
+91 91   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+92 92   [ :0] [LoadLocal] index:[5]
+93 93   [ ../../../../test/BaseTest/ArrayTest.sl:211] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Object[T:0]>, StaticRuntimeTypeList=[Core.Object[T:0]], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+94 94   [ :0] [StoreLocal] index:[6]
+95 95   [ :0] [LoadLocal] index:[6]
+96 96   [ ../../../../test/BaseTest/ArrayTest.sl:211] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+97 97   [ ../../../../test/BaseTest/ArrayTest.sl:211] [Nop] index:[0] info:[for-in: Nop loop head]
+98 98   [ :0] [LoadLocal] index:[6]
+99 99   [ ../../../../test/BaseTest/ArrayTest.sl:211] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+100 100   [ ../../../../test/BaseTest/ArrayTest.sl:211] [BrFalse] index:[128] info:[for-in: BrFalse exit when !moveNext()] val:[128   [ ../../../../test/BaseTest/ArrayTest.sl:211] [Nop] index:[0] info:[for-in: Nop end]] 
+101 101   [ :0] [LoadLocal] index:[6]
+102 102   [ ../../../../test/BaseTest/ArrayTest.sl:211] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Object>, StaticRuntimeTypeList=[Core.Object], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+103 103   [ :0] [StoreLocal] index:[7]
+104 104   [ :0] [Nop] index:[0]
+105 105   [ :0] [Nop] index:[0]
+106 106   [ ../../../../test/BaseTest/ArrayTest.sl:213] [LoadLocal] index:[7]
+107 107   [ ../../../../test/BaseTest/ArrayTest.sl:213] [LoadConstNull] index:[0] val:[null] 
+108 108   [ ../../../../test/BaseTest/ArrayTest.sl:213] [Cne] index:[0]
+109 109   [ :0] [StoreLocal] index:[8]
+110 110   [ :0] [LoadLocal] index:[8]
+111 111   [ :0] [BrFalse] index:[119] val:[119   [ :0] [Nop] index:[0]] 
+112 112   [ :0] [Nop] index:[0]
+113 113   [ ../../../../test/BaseTest/ArrayTest.sl:215] [LoadConstString] index:[450] val: string[nested level1 -> ] 
+114 114   [ ../../../../test/BaseTest/ArrayTest.sl:215] [LoadLocal] index:[7]
+115 115   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+116 116   [ ../../../../test/BaseTest/ArrayTest.sl:215] [Add] index:[0]
+117 117   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+118 118   [ :0] [Br] index:[126] val:[126   [ :0] [Nop] index:[0]] 
+119 119   [ :0] [Nop] index:[0]
+120 120   [ :0] [Nop] index:[0]
+121 121   [ ../../../../test/BaseTest/ArrayTest.sl:229] [LoadConstString] index:[451] val: string[============index: ] 
+122 122   [ ../../../../test/BaseTest/ArrayTest.sl:229] [LoadLocal] index:[7]
+123 123   [ ../../../../test/BaseTest/ArrayTest.sl:229] [Add] index:[0]
+124 124   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+125 125   [ :0] [Br] index:[126] val:[126   [ :0] [Nop] index:[0]] 
+126 126   [ :0] [Nop] index:[0]
+127 127   [ ../../../../test/BaseTest/ArrayTest.sl:211] [Br] index:[97] info:[for-in: Br to loop head] val:[97   [ ../../../../test/BaseTest/ArrayTest.sl:211] [Nop] index:[0] info:[for-in: Nop loop head]] 
+128 128   [ ../../../../test/BaseTest/ArrayTest.sl:211] [Nop] index:[0] info:[for-in: Nop end]
+129 129   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayJagged2DAssignTest
+    VirtualName: arrayJagged2DAssignTest_Core.Object_0
+    Name: arrayJagged2DAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=66442792 idx=0 name=_local[Core.ArrayTest.arrayJagged2DAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=61114224 idx=0 name=arrayJagged2DAssignTest_local[jagged2] type=Core.Array<T><T><Core.Array<T><T><Core.Int32>>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:238] [LoadConstString] index:[452] val: string[========== jagged object[][] assign ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Int32>>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:240] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:240] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+9 9   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+10 10   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:241] [LoadLocal] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:241] [LoadConstInt32] index:[0] val: int32[1] 
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:241] [LoadConstInt32] index:[0] val: int32[10] 
+14 14   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+15 15   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:242] [LoadLocal] index:[0]
+17 17   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:242] [LoadConstInt32] index:[0] val: int32[0] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:242] [LoadConstInt32] index:[0] val: int32[999] 
+20 20   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:243] [LoadLocal] index:[0]
+22 22   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+23 23   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:243] [LoadConstInt32] index:[0] val: int32[998] 
+25 25   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:244] [LoadLocal] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:244] [LoadArrayIndex] index:[0] val: int32[0] 
+28 28   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:244] [LoadConstInt32] index:[0] val: int32[997] 
+30 30   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:245] [LoadLocal] index:[0]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:245] [LoadArrayIndex] index:[0] val: int32[0] 
+33 33   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:245] [LoadConstInt32] index:[0] val: int32[996] 
+35 35   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:246] [LoadLocal] index:[0]
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:246] [LoadConstInt32] index:[0] val: int32[1] 
+38 38   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+39 39   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+40 40   [ :0] [Dup] index:[0]
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:246] [LoadConstInt32] index:[0] val: int32[1] 
+42 42   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+43 43   [ :0] [Dup] index:[0]
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:246] [LoadConstInt32] index:[0] val: int32[100] 
+45 45   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+46 46   [ :0] [Dup] index:[0]
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:246] [LoadConstInt32] index:[0] val: int32[1000] 
+48 48   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+49 49   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:247] [LoadLocal] index:[0]
+51 51   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:247] [LoadConstInt32] index:[0] val: int32[0] 
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:247] [LoadConstInt32] index:[0] val: int32[2222] 
+54 54   [ Array.sl:84] [CallVirt] index:[20] info:[CallVirt setValue] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.setValue_2_Core.Int32_T, MethodRuntimeTypeList=[], ParamCount=2}] 
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:248] [LoadLocal] index:[0]
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+57 57   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayIntLiteralReadTest
+    VirtualName: arrayIntLiteralReadTest_Core.Object_0
+    Name: arrayIntLiteralReadTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=26952341 idx=0 name=_local[Core.ArrayTest.arrayIntLiteralReadTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=41244482 idx=0 name=arrayIntLiteralReadTest_local[a33] type=Core.Array<T><T><Core.Int32>
+      - #1 id=35656026 idx=1 name=arrayIntLiteralReadTest_local[a332] type=Core.Array<T><T><Core.Int32>
+      - #2 id=52468780 idx=2 name=arrayIntLiteralReadTest_local[aa333] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:254] [LoadConstString] index:[453] val: string[========== int[] literal read ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:255] [LoadConstInt32] index:[0] val: int32[1] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:255] [LoadConstInt32] index:[0] val: int32[2] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:255] [LoadConstInt32] index:[0] val: int32[3] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:255] [LoadConstInt32] index:[0] val: int32[4] 
+16 16   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+17 17   [ :0] [StoreLocal] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:256] [LoadConstInt32] index:[0] val: int32[4] 
+19 19   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+20 20   [ :0] [Dup] index:[0]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:256] [LoadConstInt32] index:[0] val: int32[21] 
+22 22   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+23 23   [ :0] [Dup] index:[0]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:256] [LoadConstInt32] index:[0] val: int32[22] 
+25 25   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+26 26   [ :0] [Dup] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:256] [LoadConstInt32] index:[0] val: int32[23] 
+28 28   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+29 29   [ :0] [Dup] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:256] [LoadConstInt32] index:[0] val: int32[24] 
+31 31   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+32 32   [ :0] [StoreLocal] index:[1]
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:257] [LoadLocal] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:257] [LoadConstInt32] index:[0] val: int32[3] 
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:257] [LoadConstInt32] index:[0] val: int32[123] 
+36 36   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:258] [LoadLocal] index:[1]
+38 38   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+39 39   [ :0] [StoreLocal] index:[2]
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadConstString] index:[432] val: string[1111111111= ] 
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadLocal] index:[0]
+42 42   [ :0] [LoadArrayIndex] index:[3] val: int32[3] 
+43 43   [ :0] [Convert_ToString] index:[0]
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:259] [Add] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadConstString] index:[454] val: string[-----] 
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:259] [Add] index:[0]
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadLocal] index:[0]
+48 48   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+49 49   [ :0] [Convert_ToString] index:[0]
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:259] [Add] index:[0]
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadConstString] index:[455] val: string[  xxxxx=] 
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:259] [Add] index:[0]
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:259] [LoadLocal] index:[2]
+54 54   [ :0] [Convert_ToString] index:[0]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:259] [Add] index:[0]
+56 56   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+57 57   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayRank2SparseJaggedTest
+    VirtualName: arrayRank2SparseJaggedTest_Core.Object_0
+    Name: arrayRank2SparseJaggedTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=22112815 idx=0 name=_local[Core.ArrayTest.arrayRank2SparseJaggedTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=64797609 idx=0 name=arrayRank2SparseJaggedTest_local[a335] type=Core.Array<T><T><Core.Array<T><T><Core.Int32>>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:265] [LoadConstString] index:[456] val: string[========== int[4][] sparse jagged ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Int32>>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+7 7   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[11] 
+10 10   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[22] 
+13 13   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[33] 
+16 16   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+17 17   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+20 20   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[871] 
+23 23   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[872] 
+26 26   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+27 27   [ :0] [Dup] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:266] [LoadConstInt32] index:[0] val: int32[873] 
+29 29   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+30 30   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+31 31   [ :0] [Dup] index:[0]
+32 32   [ :0] [LoadConstInt32] index:[0] val: int32[20] 
+33 33   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+34 34   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+35 35   [ :0] [StoreLocal] index:[0]
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:267] [LoadLocal] index:[0]
+37 37   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:267] [LoadConstInt32] index:[0] val: int32[1] 
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:267] [LoadConstInt32] index:[0] val: int32[123] 
+40 40   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:268] [LoadConstString] index:[432] val: string[1111111111= ] 
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:268] [LoadLocal] index:[0]
+43 43   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+44 44   [ Array.sl:96] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:268] [Add] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:268] [LoadConstString] index:[454] val: string[-----] 
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:268] [Add] index:[0]
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:268] [LoadLocal] index:[0]
+49 49   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+50 50   [ Array.sl:96] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:268] [Add] index:[0]
+52 52   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+53 53   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayMixedLiteralDollarIndexTest
+    VirtualName: arrayMixedLiteralDollarIndexTest_Core.Object_0
+    Name: arrayMixedLiteralDollarIndexTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=14114947 idx=0 name=_local[Core.ArrayTest.arrayMixedLiteralDollarIndexTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=59925661 idx=0 name=arrayMixedLiteralDollarIndexTest_local[ac] type=Core.ArrayTest.ArrClass
+      - #1 id=2460041 idx=1 name=arrayMixedLiteralDollarIndexTest_local[mixedNest] type=Core.Array<T><T><Core.Array<T><T><Core.Object>>
+      - #2 id=22140377 idx=2 name=arrayMixedLiteralDollarIndexTest_local[aa] type=Core.Int32
+      - #3 id=65045669 idx=3 name=arrayMixedLiteralDollarIndexTest_local[tt1] type=Core.Object
+      - #4 id=48540109 idx=4 name=arrayMixedLiteralDollarIndexTest_local[tt2] type=Core.ArrayTest.ArrClass
+      - #5 id=34207804 idx=5 name=arrayMixedLiteralDollarIndexTest_local[autocreate_18495050] type=Core.Boolean
+      - #6 id=39434786 idx=6 name=arrayMixedLiteralDollarIndexTest_local[aa1111] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:274] [LoadConstString] index:[457] val: string[========== mixed literal / `] 
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:274] [LoadConstString] index:[458] val: string[`] 
+3 3   [ :0] [Add] index:[0]
+4 4   [ ../../../../test/BaseTest/ArrayTest.sl:274] [LoadConstString] index:[459] val: string[ / is ArrClass ==========] 
+5 5   [ :0] [Add] index:[0]
+6 6   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:275] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ :0] [Dup] index:[0]
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:275] [LoadConstInt32] index:[0] val: int32[20] 
+12 12   [ :0] [StoreNotStaticField2] index:[0]
+13 13   [ :0] [Dup] index:[0]
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:275] [LoadConstString] index:[460] val: string[mix] 
+15 15   [ :0] [StoreNotStaticField2] index:[0]
+16 16   [ :0] [StoreLocal] index:[0]
+17 17   [ :0] [LoadConstInt32] index:[0] val: int32[5] 
+18 18   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Object>>] 
+19 19   [ :0] [Dup] index:[0]
+20 20   [ :0] [LoadConstInt32] index:[0] val: int32[5] 
+21 21   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+22 22   [ :0] [Dup] index:[0]
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[137] 
+24 24   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+25 25   [ :0] [Dup] index:[0]
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[138] 
+27 27   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+28 28   [ :0] [Dup] index:[0]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[139] 
+30 30   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+31 31   [ :0] [Dup] index:[0]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadLocal] index:[0]
+33 33   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+34 34   [ :0] [Dup] index:[0]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[148] 
+36 36   [ :0] [StoreArrayIndex] index:[4] val:[1] 
+37 37   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+40 40   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+41 41   [ :0] [Dup] index:[0]
+42 42   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+43 43   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+44 44   [ :0] [Dup] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[11] 
+46 46   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+47 47   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+48 48   [ :0] [Dup] index:[0]
+49 49   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+50 50   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+51 51   [ :0] [Dup] index:[0]
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[13] 
+53 53   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+54 54   [ :0] [Dup] index:[0]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[14] 
+56 56   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+57 57   [ :0] [Dup] index:[0]
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[15] 
+59 59   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+60 60   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+61 61   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+62 62   [ :0] [Dup] index:[0]
+63 63   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+64 64   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+65 65   [ :0] [Dup] index:[0]
+66 66   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadLocal] index:[0]
+67 67   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+68 68   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+69 69   [ :0] [Dup] index:[0]
+70 70   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+71 71   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+72 72   [ :0] [Dup] index:[0]
+73 73   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstInt32] index:[0] val: int32[1] 
+74 74   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+75 75   [ :0] [Dup] index:[0]
+76 76   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadLocal] index:[0]
+77 77   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+78 78   [ :0] [Dup] index:[0]
+79 79   [ ../../../../test/BaseTest/ArrayTest.sl:278] [LoadConstString] index:[461] val: string[aaa] 
+80 80   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+81 81   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+82 82   [ :0] [StoreLocal] index:[1]
+83 83   [ ../../../../test/BaseTest/ArrayTest.sl:281] [LoadLocal] index:[1]
+84 84   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+85 85   [ ../../../../test/BaseTest/ArrayTest.sl:283] [LoadConstInt32] index:[0] val: int32[0] 
+86 86   [ :0] [StoreLocal] index:[2]
+87 87   [ ../../../../test/BaseTest/ArrayTest.sl:286] [LoadConstString] index:[432] val: string[1111111111= ] 
+88 88   [ ../../../../test/BaseTest/ArrayTest.sl:286] [LoadLocal] index:[1]
+89 89   [ ../../../../test/BaseTest/ArrayTest.sl:286] [LoadArrayIndex] index:[1] val: int32[1] 
+90 90   [ Array.sl:96] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+91 91   [ ../../../../test/BaseTest/ArrayTest.sl:286] [Add] index:[0]
+92 92   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+93 93   [ ../../../../test/BaseTest/ArrayTest.sl:288] [LoadLocal] index:[1]
+94 94   [ ../../../../test/BaseTest/ArrayTest.sl:288] [LoadLocal] index:[2]
+95 95   [ ../../../../test/BaseTest/ArrayTest.sl:288] [LoadArrayIndexField] index:[0]
+96 96   [ ../../../../test/BaseTest/ArrayTest.sl:288] [LoadArrayIndex] index:[3] val: int32[3] 
+97 97   [ :0] [StoreLocal] index:[3]
+98 98   [ :0] [Nop] index:[0]
+99 99   [ ../../../../test/BaseTest/ArrayTest.sl:289] [LoadLocal] index:[3]
+100 100   [ ../../../../test/BaseTest/ArrayTest.sl:289] [CastClass] index:[0] info:[CastClass is Core.ArrayTest.ArrClass] val irmt:[Core.ArrayTest.ArrClass] 
+101 101   [ :0] [StoreLocal] index:[4]
+102 102   [ :0] [LoadLocal] index:[4]
+103 103   [ ../../../../test/BaseTest/ArrayTest.sl:289] [LoadConstNull] index:[0] info:[is: null literal] val:[null] 
+104 104   [ ../../../../test/BaseTest/ArrayTest.sl:289] [Cne] index:[0] info:[is: Cne (compare to null)]
+105 105   [ :0] [StoreLocal] index:[5]
+106 106   [ :0] [LoadLocal] index:[5]
+107 107   [ :0] [BrFalse] index:[121] val:[121   [ :0] [Nop] index:[0]] 
+108 108   [ :0] [Nop] index:[0]
+109 109   [ ../../../../test/BaseTest/ArrayTest.sl:291] [LoadLocal] index:[4]
+110 110   [ ../../../../test/BaseTest/ArrayTest.sl:291] [LoadConstInt32] index:[0] val: int32[200] 
+111 111   [ :0] [StoreNotStaticField2] index:[0]
+112 112   [ ../../../../test/BaseTest/ArrayTest.sl:292] [LoadLocal] index:[4]
+113 113   [ ../../../../test/BaseTest/ArrayTest.sl:292] [LoadNotStaticField] index:[0]
+114 114   [ :0] [StoreLocal] index:[6]
+115 115   [ ../../../../test/BaseTest/ArrayTest.sl:293] [LoadConstString] index:[462] val: string[22222222= ] 
+116 116   [ ../../../../test/BaseTest/ArrayTest.sl:293] [LoadLocal] index:[6]
+117 117   [ :0] [Convert_ToString] index:[0]
+118 118   [ ../../../../test/BaseTest/ArrayTest.sl:293] [Add] index:[0]
+119 119   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+120 120   [ :0] [Br] index:[121] val:[121   [ :0] [Nop] index:[0]] 
+121 121   [ :0] [Nop] index:[0]
+122 122   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayLevelMatrixTest
+    VirtualName: arrayLevelMatrixTest_Core.Object_0
+    Name: arrayLevelMatrixTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=19368760 idx=0 name=_local[Core.ArrayTest.arrayLevelMatrixTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=40101120 idx=0 name=arrayLevelMatrixTest_local[levelvar] type=Core.ArrayTest.Level<T><T><Core.Int32>
+      - #1 id=25365761 idx=1 name=arrayLevelMatrixTest_local[levelvar2] type=Core.ArrayTest.Level<T><T><Core.Int32>
+      - #2 id=26965262 idx=2 name=arrayLevelMatrixTest_local[levelGrid] type=Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:299] [LoadConstString] index:[463] val: string[========== Level<int>[][] matrix ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+4 4   [ :0] [Dup] index:[0]
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:300] [LoadConstInt32] index:[0] val: int32[100] 
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:300] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ :0] [StoreLocal] index:[0]
+8 8   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+9 9   [ :0] [Dup] index:[0]
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:301] [LoadConstInt32] index:[0] val: int32[100] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:301] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+12 12   [ :0] [StoreLocal] index:[1]
+13 13   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+14 14   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>>] 
+15 15   [ :0] [Dup] index:[0]
+16 16   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+17 17   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:302] [LoadLocal] index:[0]
+20 20   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:302] [LoadLocal] index:[0]
+23 23   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+24 24   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+25 25   [ :0] [Dup] index:[0]
+26 26   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+27 27   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+28 28   [ :0] [Dup] index:[0]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:302] [LoadLocal] index:[0]
+30 30   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+31 31   [ :0] [Dup] index:[0]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:302] [LoadLocal] index:[0]
+33 33   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+34 34   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+35 35   [ :0] [Dup] index:[0]
+36 36   [ :0] [LoadConstInt32] index:[0] val: int32[1] 
+37 37   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:302] [LoadLocal] index:[1]
+40 40   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+41 41   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+42 42   [ :0] [StoreLocal] index:[2]
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:303] [LoadLocal] index:[2]
+44 44   [ :0] [LoadArrayIndex] index:[2] val: int32[2] 
+45 45   [ :0] [LoadArrayIndex] index:[0] val: int32[0] 
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:303] [LoadConstInt32] index:[0] val: int32[200] 
+47 47   [ :0] [StoreNotStaticField2] index:[0]
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:304] [LoadLocal] index:[2]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+50 50   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayStringAndLevelVectorTest
+    VirtualName: arrayStringAndLevelVectorTest_Core.Object_0
+    Name: arrayStringAndLevelVectorTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=41360766 idx=0 name=_local[Core.ArrayTest.arrayStringAndLevelVectorTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=36702580 idx=0 name=arrayStringAndLevelVectorTest_local[a44] type=Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>
+      - #1 id=61887768 idx=1 name=arrayStringAndLevelVectorTest_local[xxx] type=Core.Int32
+      - #2 id=20119003 idx=2 name=arrayStringAndLevelVectorTest_local[i] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:309] [LoadConstString] index:[464] val: string[========== string[] + Level<int>[] vector ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:315] [LoadConstInt32] index:[0] val: int32[15] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.Level<T><T><Core.Int32>>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+7 7   [ :0] [Dup] index:[0]
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:315] [LoadConstInt32] index:[0] val: int32[200] 
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:315] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+10 10   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+11 11   [ :0] [StoreLocal] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:316] [LoadLocal] index:[0]
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:316] [LoadConstInt32] index:[0] val: int32[1] 
+14 14   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+15 15   [ :0] [Dup] index:[0]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:316] [LoadConstInt32] index:[0] val: int32[10000] 
+17 17   [ ../../../../test/BaseTest/ArrayTest.sl:316] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+18 18   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:317] [LoadConstInt32] index:[0] val: int32[2] 
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:317] [Neg] index:[0]
+21 21   [ :0] [StoreLocal] index:[1]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadLocal] index:[0]
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadLocal] index:[1]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadConstInt32] index:[0] val: int32[2] 
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:318] [Multiply] index:[0]
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadConstInt32] index:[0] val: int32[5] 
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:318] [Add] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadArrayIndexField] index:[0]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:318] [LoadConstInt32] index:[0] val: int32[100] 
+30 30   [ :0] [StoreNotStaticField2] index:[0]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:320] [LoadConstInt32] index:[0] val: int32[4] 
+32 32   [ :0] [StoreLocal] index:[2]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:320] [LoadLocal] index:[2]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:320] [LoadConstInt32] index:[0] val: int32[8] 
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:320] [Clt] index:[0]
+37 37   [ :0] [BrFalse] index:[62] val:[62   [ :0] [Nop] index:[0]] 
+38 38   [ :0] [Nop] index:[0]
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:322] [LoadLocal] index:[0]
+40 40   [ :0] [LoadLocal] index:[2]
+41 41   [ :0] [NewTemplateObject] index:[0] info:[NewCallClass] val irmt:[Core.ArrayTest.Level<T><T><Core.Int32>] 
+42 42   [ :0] [Dup] index:[0]
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:322] [LoadLocal] index:[2]
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:322] [LoadConstInt32] index:[0] val: int32[10000] 
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:322] [Multiply] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:322] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.Level<T><T><Core.Int32>, StaticRuntimeTypeList=[Core.Int32], Method=Core.ArrayTest.Level<T>._init__1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+47 47   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:323] [LoadLocal] index:[0]
+49 49   [ :0] [LoadLocal] index:[2]
+50 50   [ :0] [LoadArrayIndexField] index:[0]
+51 51   [ :0] [Dup] index:[0]
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:323] [LoadNotStaticField] index:[0]
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:323] [LoadConstInt32] index:[0] val: int32[135] 
+54 54   [ :0] [Add] index:[0]
+55 55   [ :0] [StoreNotStaticField2] index:[0]
+56 56   [ :0] [Nop] index:[0]
+57 57   [ ../../../../test/BaseTest/ArrayTest.sl:320] [LoadLocal] index:[2]
+58 58   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+59 59   [ :0] [Add] index:[0]
+60 60   [ :0] [StoreLocal] index:[2]
+61 61   [ :0] [Br] index:[33] val:[33   [ :0] [Nop] index:[0]] 
+62 62   [ :0] [Nop] index:[0]
+63 63   [ ../../../../test/BaseTest/ArrayTest.sl:326] [LoadLocal] index:[0]
+64 64   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+65 65   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayHeterogeneousObject2DTest
+    VirtualName: arrayHeterogeneousObject2DTest_Core.Object_0
+    Name: arrayHeterogeneousObject2DTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=37021121 idx=0 name=_local[Core.ArrayTest.arrayHeterogeneousObject2DTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=64754634 idx=0 name=arrayHeterogeneousObject2DTest_local[a42] type=Core.Array<T><T><Core.Array<T><T><Core.Object>>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:332] [LoadConstString] index:[465] val: string[========== heterogeneous object[][] ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Object>>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+7 7   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstFloat32] index:[0] val:[1.2] 
+10 10   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstFloat32] index:[0] val:[1.3] 
+13 13   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstFloat32] index:[0] val:[1.4] 
+16 16   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstFloat32] index:[0] val:[1.5] 
+19 19   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+20 20   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+23 23   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstInt32] index:[0] val: int32[3] 
+26 26   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+27 27   [ :0] [Dup] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstInt32] index:[0] val: int32[4] 
+29 29   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+30 30   [ :0] [Dup] index:[0]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:333] [LoadConstInt32] index:[0] val: int32[5] 
+32 32   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+33 33   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+34 34   [ :0] [StoreLocal] index:[0]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:334] [LoadLocal] index:[0]
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCtorPrimitiveAndAliasTest
+    VirtualName: arrayCtorPrimitiveAndAliasTest_Core.Object_0
+    Name: arrayCtorPrimitiveAndAliasTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=45920800 idx=0 name=_local[Core.ArrayTest.arrayCtorPrimitiveAndAliasTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=10634019 idx=0 name=arrayCtorPrimitiveAndAliasTest_local[intsByCtor] type=Core.Array<T><T><Core.Int32>
+      - #1 id=28597308 idx=1 name=arrayCtorPrimitiveAndAliasTest_local[objsByAlias] type=Core.Array<T><T><Core.Object>
+      - #2 id=56049180 idx=2 name=arrayCtorPrimitiveAndAliasTest_local[objectRows] type=Core.Array<T><T><Core.Object>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:339] [LoadConstString] index:[466] val: string[========== ctor: primitive + alias ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[5] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[1] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[2] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[3] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[4] 
+16 16   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:340] [LoadConstInt32] index:[0] val: int32[5] 
+19 19   [ :0] [StoreArrayIndex] index:[4] val:[1] 
+20 20   [ :0] [StoreLocal] index:[0]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:341] [LoadConstInt32] index:[0] val: int32[20] 
+22 22   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+23 23   [ :0] [StoreLocal] index:[1]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:342] [LoadConstInt32] index:[0] val: int32[3] 
+25 25   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+26 26   [ :0] [Dup] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:342] [LoadLocal] index:[0]
+28 28   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+29 29   [ :0] [Dup] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:342] [LoadLocal] index:[1]
+31 31   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+32 32   [ :0] [Dup] index:[0]
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:342] [LoadConstInt32] index:[0] val: int32[3] 
+34 34   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+35 35   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+36 36   [ :0] [StoreLocal] index:[2]
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:344] [LoadLocal] index:[2]
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+39 39   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCtorMultidimClassShapeTest
+    VirtualName: arrayCtorMultidimClassShapeTest_Core.Object_0
+    Name: arrayCtorMultidimClassShapeTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=34680572 idx=0 name=_local[Core.ArrayTest.arrayCtorMultidimClassShapeTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=43689693 idx=0 name=arrayCtorMultidimClassShapeTest_local[cube] type=Core.Array<T><T><Core.Array<T><T><Core.Array<T><T><Core.Int32>>>
+      - #1 id=57662920 idx=1 name=arrayCtorMultidimClassShapeTest_local[cubeValue] type=Core.Int32
+      - #2 id=49204239 idx=2 name=arrayCtorMultidimClassShapeTest_local[arrclass1] type=Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.ArrClass>>
+      - #3 id=40184969 idx=3 name=arrayCtorMultidimClassShapeTest_local[arrClass2] type=Core.Array<T><T><Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.ArrClass>>>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:349] [LoadConstString] index:[467] val: string[========== ctor: multidim class shape ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Array<T><T><Core.Int32>>>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+7 7   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Int32>>] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+10 10   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[1] 
+13 13   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[2] 
+16 16   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[3] 
+19 19   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+20 20   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+23 23   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[1] 
+26 26   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+27 27   [ :0] [Dup] index:[0]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[2] 
+29 29   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+30 30   [ :0] [Dup] index:[0]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[3] 
+32 32   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+33 33   [ :0] [Dup] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[4] 
+35 35   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+36 36   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+37 37   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+38 38   [ :0] [Dup] index:[0]
+39 39   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+40 40   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Int32>>] 
+41 41   [ :0] [Dup] index:[0]
+42 42   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+43 43   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+44 44   [ :0] [Dup] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[1] 
+46 46   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+47 47   [ :0] [Dup] index:[0]
+48 48   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[2] 
+49 49   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+50 50   [ :0] [Dup] index:[0]
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[3] 
+52 52   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+53 53   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+54 54   [ :0] [Dup] index:[0]
+55 55   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+56 56   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int32>] 
+57 57   [ :0] [Dup] index:[0]
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[5] 
+59 59   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+60 60   [ :0] [Dup] index:[0]
+61 61   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[6] 
+62 62   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+63 63   [ :0] [Dup] index:[0]
+64 64   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[7] 
+65 65   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+66 66   [ :0] [Dup] index:[0]
+67 67   [ ../../../../test/BaseTest/ArrayTest.sl:350] [LoadConstInt32] index:[0] val: int32[8] 
+68 68   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+69 69   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+70 70   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+71 71   [ :0] [StoreLocal] index:[0]
+72 72   [ ../../../../test/BaseTest/ArrayTest.sl:351] [LoadLocal] index:[0]
+73 73   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+74 74   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+75 75   [ ../../../../test/BaseTest/ArrayTest.sl:351] [LoadConstInt32] index:[0] val: int32[1] 
+76 76   [ ../../../../test/BaseTest/ArrayTest.sl:351] [LoadConstInt32] index:[0] val: int32[12] 
+77 77   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+78 78   [ ../../../../test/BaseTest/ArrayTest.sl:352] [LoadLocal] index:[0]
+79 79   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+80 80   [ ../../../../test/BaseTest/ArrayTest.sl:354] [LoadLocal] index:[0]
+81 81   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+82 82   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+83 83   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+84 84   [ :0] [StoreLocal] index:[1]
+85 85   [ ../../../../test/BaseTest/ArrayTest.sl:355] [LoadConstString] index:[468] val: string[==========cubevalue:] 
+86 86   [ ../../../../test/BaseTest/ArrayTest.sl:355] [LoadLocal] index:[1]
+87 87   [ :0] [Convert_ToString] index:[0]
+88 88   [ ../../../../test/BaseTest/ArrayTest.sl:355] [Add] index:[0]
+89 89   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+90 90   [ ../../../../test/BaseTest/ArrayTest.sl:357] [LoadConstInt32] index:[0] val: int32[10] 
+91 91   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.ArrClass>>] 
+92 92   [ :0] [StoreLocal] index:[2]
+93 93   [ ../../../../test/BaseTest/ArrayTest.sl:358] [LoadLocal] index:[2]
+94 94   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+95 95   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.ArrClass>] 
+96 96   [ Array.sl:24] [CallVirt] index:[12] info:[CallVirt fill] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.fill_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+97 97   [ ../../../../test/BaseTest/ArrayTest.sl:359] [LoadLocal] index:[2]
+98 98   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+99 99   [ :0] [LoadConstInt32] index:[0] val: int32[10] 
+100 100   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Array<T><T><Core.Array<T><T><Core.ArrayTest.ArrClass>>>] 
+101 101   [ :0] [StoreLocal] index:[3]
+102 102   [ ../../../../test/BaseTest/ArrayTest.sl:362] [LoadLocal] index:[3]
+103 103   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+104 104   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCtorLiteralMixTypeTest
+    VirtualName: arrayCtorLiteralMixTypeTest_Core.Object_0
+    Name: arrayCtorLiteralMixTypeTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=33757095 idx=0 name=_local[Core.ArrayTest.arrayCtorLiteralMixTypeTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=35378404 idx=0 name=arrayCtorLiteralMixTypeTest_local[floatsFromLiteral] type=Core.Array<T><T><Core.Float32>
+      - #1 id=49970185 idx=1 name=arrayCtorLiteralMixTypeTest_local[mixedObj] type=Core.Array<T><T><Core.Object>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:367] [LoadConstString] index:[469] val: string[========== ctor: literal mix ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Float32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:368] [LoadConstFloat32] index:[0] val:[1.2] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:368] [LoadConstFloat32] index:[0] val:[1.3] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:368] [LoadConstFloat32] index:[0] val:[1.5] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [StoreLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:369] [LoadLocal] index:[0]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+17 17   [ :0] [LoadConstInt32] index:[0] val: int32[8] 
+18 18   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Object>] 
+19 19   [ :0] [Dup] index:[0]
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:370] [LoadConstString] index:[470] val: string[aa] 
+21 21   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+22 22   [ :0] [Dup] index:[0]
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:370] [LoadConstInt32] index:[0] val: int32[1] 
+24 24   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+25 25   [ :0] [Dup] index:[0]
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:370] [LoadConstString] index:[471] val: string[232] 
+27 27   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+28 28   [ :0] [Dup] index:[0]
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:370] [LoadConstFloat32] index:[0] val:[1] 
+30 30   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+31 31   [ :0] [StoreLocal] index:[1]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:371] [LoadLocal] index:[1]
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+34 34   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayCtorFloatOverloadTest
+    VirtualName: arrayCtorFloatOverloadTest_Core.Object_0
+    Name: arrayCtorFloatOverloadTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=47078488 idx=0 name=_local[Core.ArrayTest.arrayCtorFloatOverloadTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=21053208 idx=0 name=arrayCtorFloatOverloadTest_local[a7] type=Core.Array<T><T><Core.Float32>
+      - #1 id=55261147 idx=1 name=arrayCtorFloatOverloadTest_local[a8] type=Core.Array<T><T><Core.Float32>
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:375] [LoadConstString] index:[472] val: string[========== ctor: float overload ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:376] [LoadConstInt32] index:[0] val: int32[10] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Float32>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:376] [LoadConstFloat32] index:[0] val:[1.2] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:376] [LoadConstFloat32] index:[0] val:[2.2] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:376] [LoadConstFloat32] index:[0] val:[3.4] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [StoreLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstInt32] index:[0] val: int32[20] 
+16 16   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Float32>] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstFloat32] index:[0] val:[1] 
+19 19   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+20 20   [ :0] [Dup] index:[0]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstFloat32] index:[0] val:[2] 
+22 22   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+23 23   [ :0] [Dup] index:[0]
+24 24   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstFloat32] index:[0] val:[3] 
+25 25   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+26 26   [ :0] [Dup] index:[0]
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstFloat32] index:[0] val:[5] 
+28 28   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+29 29   [ :0] [Dup] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:377] [LoadConstFloat32] index:[0] val:[3.3] 
+31 31   [ :0] [StoreArrayIndex] index:[4] val:[1] 
+32 32   [ :0] [StoreLocal] index:[1]
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:380] [LoadLocal] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:381] [LoadLocal] index:[1]
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+37 37   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayArrClassIndexAndCurrentTest
+    VirtualName: arrayArrClassIndexAndCurrentTest_Core.Object_0
+    Name: arrayArrClassIndexAndCurrentTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=27588283 idx=0 name=_local[Core.ArrayTest.arrayArrClassIndexAndCurrentTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=46967960 idx=0 name=arrayArrClassIndexAndCurrentTest_local[arr1] type=Core.Array<T><T><Core.ArrayTest.ArrClass>
+      - #1 id=20058459 idx=1 name=arrayArrClassIndexAndCurrentTest_local[i11] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:386] [LoadConstString] index:[473] val: string[========== ArrClass[]: index/current ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:387] [LoadConstInt32] index:[0] val: int32[3] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.ArrClass>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:388] [LoadConstInt32] index:[0] val: int32[2] 
+7 7   [ :0] [StoreLocal] index:[1]
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:389] [LoadLocal] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:389] [LoadConstInt32] index:[0] val: int32[0] 
+10 10   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:389] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:390] [LoadLocal] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:390] [LoadConstInt32] index:[0] val: int32[1] 
+16 16   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+17 17   [ :0] [Dup] index:[0]
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:390] [LoadConstInt32] index:[0] val: int32[111] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:390] [CallVirt] index:[10] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.ArrayTest.ArrClass._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+20 20   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:391] [LoadLocal] index:[0]
+22 22   [ :0] [LoadLocal] index:[1]
+23 23   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+24 24   [ :0] [Dup] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:391] [LoadConstInt32] index:[0] val: int32[222] 
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:391] [LoadConstString] index:[474] val: string[str222str] 
+27 27   [ ../../../../test/BaseTest/ArrayTest.sl:391] [CallVirt] index:[11] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.ArrayTest.ArrClass._init__2_Core.Int32_Core.String, MethodRuntimeTypeList=[], ParamCount=2}] 
+28 28   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:392] [LoadLocal] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:392] [LoadLocal] index:[1]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:392] [LoadArrayIndexField] index:[0]
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:392] [LoadConstInt32] index:[0] val: int32[10] 
+33 33   [ :0] [StoreNotStaticField2] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:393] [LoadLocal] index:[0]
+35 35   [ ../../../../test/BaseTest/ArrayTest.sl:393] [LoadConstInt32] index:[0] val: int32[1] 
+36 36   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+37 37   [ :0] [Dup] index:[0]
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:393] [LoadConstInt32] index:[0] val: int32[20] 
+39 39   [ :0] [StoreNotStaticField2] index:[0]
+40 40   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:394] [LoadLocal] index:[0]
+42 42   [ :0] [LoadArrayIndex] index:[1] val: int32[1] 
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:394] [LoadConstInt32] index:[0] val: int32[10000] 
+44 44   [ :0] [StoreNotStaticField2] index:[0]
+45 45   [ ../../../../test/BaseTest/ArrayTest.sl:395] [LoadLocal] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:395] [LoadArrayIndex] index:[0] val: int32[0] 
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:395] [LoadConstInt32] index:[0] val: int32[330] 
+48 48   [ :0] [StoreNotStaticField2] index:[0]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:397] [LoadLocal] index:[0]
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:397] [LoadConstInt32] index:[0] val: int32[2] 
+51 51   [ Array.sl:69] [CallVirt] index:[19] info:[CallVirt index] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.index_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:398] [LoadLocal] index:[0]
+53 53   [ Array.sl:52] [CallDynamic] index:[1] info:[CallDynamic current] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+54 54   [ ../../../../test/BaseTest/ArrayTest.sl:398] [LoadConstInt32] index:[0] val: int32[10] 
+55 55   [ :0] [StoreNotStaticField2] index:[0]
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:401] [LoadLocal] index:[0]
+57 57   [ ../../../../test/BaseTest/ArrayTest.sl:42] [CallStatic] index:[1] info:[CallStatic forIIterator] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.forIIterator_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+58 58   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayArrClassForInAssignTest
+    VirtualName: arrayArrClassForInAssignTest_Core.Object_0
+    Name: arrayArrClassForInAssignTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=27619632 idx=0 name=_local[Core.ArrayTest.arrayArrClassForInAssignTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=47250101 idx=0 name=arrayArrClassForInAssignTest_local[arr1] type=Core.Array<T><T><Core.ArrayTest.ArrClass>
+      - #1 id=22597726 idx=1 name=arrayArrClassForInAssignTest_local[for_iterator_36364960] type=Core.IIterator<T><T><Core.ArrayTest.ArrClass>
+      - #2 id=2052950 idx=2 name=arrayArrClassForInAssignTest_local[a] type=Core.ArrayTest.ArrClass
+      - #3 id=18476557 idx=3 name=arrayArrClassForInAssignTest_local[autocreate_58849189] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:406] [LoadConstString] index:[475] val: string[========== ArrClass[]: for-in assign ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:407] [LoadConstInt32] index:[0] val: int32[3] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.ArrClass>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:408] [LoadLocal] index:[0]
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:408] [LoadConstInt32] index:[0] val: int32[0] 
+8 8   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+9 9   [ :0] [Dup] index:[0]
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:408] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:409] [LoadLocal] index:[0]
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:409] [LoadConstInt32] index:[0] val: int32[1] 
+14 14   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+15 15   [ :0] [Dup] index:[0]
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:409] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:410] [LoadLocal] index:[0]
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:410] [LoadConstInt32] index:[0] val: int32[2] 
+20 20   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+21 21   [ :0] [Dup] index:[0]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:410] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+24 24   [ :0] [LoadLocal] index:[0]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:411] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.ArrayTest.ArrClass>, StaticRuntimeTypeList=[Core.ArrayTest.ArrClass], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ :0] [StoreLocal] index:[1]
+27 27   [ :0] [LoadLocal] index:[1]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:411] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.ArrClass>, StaticRuntimeTypeList=[Core.ArrayTest.ArrClass], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Nop] index:[0] info:[for-in: Nop loop head]
+30 30   [ :0] [LoadLocal] index:[1]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:411] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.ArrClass>, StaticRuntimeTypeList=[Core.ArrayTest.ArrClass], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+32 32   [ ../../../../test/BaseTest/ArrayTest.sl:411] [BrFalse] index:[71] info:[for-in: BrFalse exit when !moveNext()] val:[71   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Nop] index:[0] info:[for-in: Nop end]] 
+33 33   [ :0] [LoadLocal] index:[1]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:411] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.ArrayTest.ArrClass>, StaticRuntimeTypeList=[Core.ArrayTest.ArrClass], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ :0] [StoreLocal] index:[2]
+36 36   [ :0] [Nop] index:[0]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ../../../../test/BaseTest/ArrayTest.sl:413] [LoadLocal] index:[0]
+39 39   [ Array.sl:65] [CallVirt] index:[18] info:[CallVirt index] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.index, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:413] [LoadConstInt32] index:[0] val: int32[2] 
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:413] [Ceq] index:[0]
+42 42   [ :0] [StoreLocal] index:[3]
+43 43   [ :0] [LoadLocal] index:[3]
+44 44   [ :0] [BrFalse] index:[61] val:[61   [ :0] [Nop] index:[0]] 
+45 45   [ :0] [Nop] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:415] [LoadLocal] index:[0]
+47 47   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+48 48   [ :0] [Dup] index:[0]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:415] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ :0] [Dup] index:[0]
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:415] [LoadConstInt32] index:[0] val: int32[100] 
+52 52   [ :0] [StoreNotStaticField2] index:[0]
+53 53   [ Array.sl:56] [CallVirt] index:[16] info:[CallVirt current] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.current_1_T, MethodRuntimeTypeList=[], ParamCount=1}] 
+54 54   [ ../../../../test/BaseTest/ArrayTest.sl:416] [LoadConstString] index:[476] val: string[=========arr1: ] 
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:416] [LoadLocal] index:[2]
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:19] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.ArrayTest.ArrClass.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+57 57   [ ../../../../test/BaseTest/ArrayTest.sl:416] [Add] index:[0]
+58 58   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+59 59   [ :0] [Br] index:[29] val:[29   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Nop] index:[0] info:[for-in: Nop loop head]] 
+60 60   [ :0] [Br] index:[61] val:[61   [ :0] [Nop] index:[0]] 
+61 61   [ :0] [Nop] index:[0]
+62 62   [ ../../../../test/BaseTest/ArrayTest.sl:419] [LoadLocal] index:[2]
+63 63   [ ../../../../test/BaseTest/ArrayTest.sl:419] [LoadConstInt32] index:[0] val: int32[200] 
+64 64   [ :0] [StoreNotStaticField2] index:[0]
+65 65   [ ../../../../test/BaseTest/ArrayTest.sl:420] [LoadConstString] index:[477] val: string[=========arr111---: ] 
+66 66   [ ../../../../test/BaseTest/ArrayTest.sl:420] [LoadLocal] index:[2]
+67 67   [ ../../../../test/BaseTest/ArrayTest.sl:19] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.ArrayTest.ArrClass.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+68 68   [ ../../../../test/BaseTest/ArrayTest.sl:420] [Add] index:[0]
+69 69   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+70 70   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Br] index:[29] info:[for-in: Br to loop head] val:[29   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Nop] index:[0] info:[for-in: Nop loop head]] 
+71 71   [ ../../../../test/BaseTest/ArrayTest.sl:411] [Nop] index:[0] info:[for-in: Nop end]
+72 72   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayForInLiteralIndexTest
+    VirtualName: arrayForInLiteralIndexTest_Core.Object_0
+    Name: arrayForInLiteralIndexTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=26087949 idx=0 name=_local[Core.ArrayTest.arrayForInLiteralIndexTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=33464950 idx=0 name=arrayForInLiteralIndexTest_local[arr] type=Core.Array<T><T><Core.Int64>
+      - #1 id=32749101 idx=1 name=arrayForInLiteralIndexTest_local[for_iterator_57615760] type=Core.IIterator<T><T><Core.Int64>
+      - #2 id=26306458 idx=2 name=arrayForInLiteralIndexTest_local[a] type=Core.Int64
+      - #3 id=35431534 idx=3 name=arrayForInLiteralIndexTest_local[forInIdx] type=Core.Int32
+      - #4 id=50448354 idx=4 name=arrayForInLiteralIndexTest_local[forcontent_48779793] type=Core.Array<T><T><Core.Int64>
+      - #5 id=51382007 idx=5 name=arrayForInLiteralIndexTest_local[for_iterator_48779793] type=Core.IIterator<T><T><Core.Int64>
+      - #6 id=59784887 idx=6 name=arrayForInLiteralIndexTest_local[a] type=Core.Int64
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:426] [LoadConstString] index:[478] val: string[========== for-in literal index ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int64>] 
+5 5   [ :0] [Dup] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:427] [LoadConstInt64] index:[0] val:[111] 
+7 7   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:427] [LoadConstInt64] index:[0] val:[2222] 
+10 10   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+11 11   [ :0] [Dup] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:427] [LoadConstInt64] index:[0] val:[33] 
+13 13   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:427] [LoadConstInt64] index:[0] val:[44444444444] 
+16 16   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+17 17   [ :0] [StoreLocal] index:[0]
+18 18   [ :0] [LoadLocal] index:[0]
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:428] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ :0] [StoreLocal] index:[1]
+21 21   [ :0] [LoadLocal] index:[1]
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:428] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ../../../../test/BaseTest/ArrayTest.sl:428] [Nop] index:[0] info:[for-in: Nop loop head]
+24 24   [ :0] [LoadLocal] index:[1]
+25 25   [ ../../../../test/BaseTest/ArrayTest.sl:428] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ ../../../../test/BaseTest/ArrayTest.sl:428] [BrFalse] index:[43] info:[for-in: BrFalse exit when !moveNext()] val:[43   [ ../../../../test/BaseTest/ArrayTest.sl:428] [Nop] index:[0] info:[for-in: Nop end]] 
+27 27   [ :0] [LoadLocal] index:[1]
+28 28   [ ../../../../test/BaseTest/ArrayTest.sl:428] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ :0] [StoreLocal] index:[2]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ ../../../../test/BaseTest/ArrayTest.sl:430] [LoadLocal] index:[0]
+32 32   [ Array.sl:65] [CallVirt] index:[18] info:[CallVirt index] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.index, MethodRuntimeTypeList=[], ParamCount=0}] 
+33 33   [ ../../../../test/BaseTest/ArrayTest.sl:430] [LoadConstInt32] index:[0] val: int32[1] 
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:430] [Add] index:[0]
+35 35   [ :0] [StoreLocal] index:[3]
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:431] [LoadConstString] index:[479] val: string[=forIndex=] 
+37 37   [ ../../../../test/BaseTest/ArrayTest.sl:431] [LoadLocal] index:[0]
+38 38   [ Array.sl:65] [CallVirt] index:[18] info:[CallVirt index] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.index, MethodRuntimeTypeList=[], ParamCount=0}] 
+39 39   [ :0] [Convert_ToString] index:[0]
+40 40   [ ../../../../test/BaseTest/ArrayTest.sl:431] [Add] index:[0]
+41 41   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:428] [Br] index:[23] info:[for-in: Br to loop head] val:[23   [ ../../../../test/BaseTest/ArrayTest.sl:428] [Nop] index:[0] info:[for-in: Nop loop head]] 
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:428] [Nop] index:[0] info:[for-in: Nop end]
+44 44   [ :0] [LoadConstInt32] index:[0] val: int32[4] 
+45 45   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.Int64>] 
+46 46   [ :0] [Dup] index:[0]
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:434] [LoadConstInt64] index:[0] val:[11111111] 
+48 48   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+49 49   [ :0] [Dup] index:[0]
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:434] [LoadConstInt64] index:[0] val:[2222222222] 
+51 51   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+52 52   [ :0] [Dup] index:[0]
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:434] [LoadConstInt64] index:[0] val:[3] 
+54 54   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+55 55   [ :0] [Dup] index:[0]
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:434] [LoadConstInt64] index:[0] val:[4444444444444] 
+57 57   [ :0] [StoreArrayIndex] index:[3] val:[1] 
+58 58   [ :0] [StoreLocal] index:[4]
+59 59   [ :0] [LoadLocal] index:[4]
+60 60   [ ../../../../test/BaseTest/ArrayTest.sl:434] [CallDynamic] index:[1] info:[for-in: CallDynamic iterator()] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.Array<T>.iterator, MethodRuntimeTypeList=[], ParamCount=0}] 
+61 61   [ :0] [StoreLocal] index:[5]
+62 62   [ :0] [LoadLocal] index:[5]
+63 63   [ ../../../../test/BaseTest/ArrayTest.sl:434] [CallDynamic] index:[1] info:[for-in: CallDynamic reset() on IIterator] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.reset, MethodRuntimeTypeList=[], ParamCount=0}] 
+64 64   [ ../../../../test/BaseTest/ArrayTest.sl:434] [Nop] index:[0] info:[for-in: Nop loop head]
+65 65   [ :0] [LoadLocal] index:[5]
+66 66   [ ../../../../test/BaseTest/ArrayTest.sl:434] [CallDynamic] index:[1] info:[for-in: CallDynamic moveNext()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.moveNext, MethodRuntimeTypeList=[], ParamCount=0}] 
+67 67   [ ../../../../test/BaseTest/ArrayTest.sl:434] [BrFalse] index:[78] info:[for-in: BrFalse exit when !moveNext()] val:[78   [ ../../../../test/BaseTest/ArrayTest.sl:434] [Nop] index:[0] info:[for-in: Nop end]] 
+68 68   [ :0] [LoadLocal] index:[5]
+69 69   [ ../../../../test/BaseTest/ArrayTest.sl:434] [CallDynamic] index:[1] info:[for-in: CallDynamic get current()] val:[RuntimeCall{StaticRuntimeType=Core.IIterator<T><T><Core.Int64>, StaticRuntimeTypeList=[Core.Int64], Method=Core.IIterator<T>.current, MethodRuntimeTypeList=[], ParamCount=0}] 
+70 70   [ :0] [StoreLocal] index:[6]
+71 71   [ :0] [Nop] index:[0]
+72 72   [ ../../../../test/BaseTest/ArrayTest.sl:437] [LoadConstString] index:[480] val: string[=a==] 
+73 73   [ ../../../../test/BaseTest/ArrayTest.sl:437] [LoadLocal] index:[6]
+74 74   [ Int64.sl:110] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int64, StaticRuntimeTypeList=[], Method=Core.Int64.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+75 75   [ ../../../../test/BaseTest/ArrayTest.sl:437] [Add] index:[0]
+76 76   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+77 77   [ ../../../../test/BaseTest/ArrayTest.sl:434] [Br] index:[64] info:[for-in: Br to loop head] val:[64   [ ../../../../test/BaseTest/ArrayTest.sl:434] [Nop] index:[0] info:[for-in: Nop loop head]] 
+78 78   [ ../../../../test/BaseTest/ArrayTest.sl:434] [Nop] index:[0] info:[for-in: Nop end]
+79 79   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.arrayArrClassCountLoopWriteTest
+    VirtualName: arrayArrClassCountLoopWriteTest_Core.Object_0
+    Name: arrayArrClassCountLoopWriteTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=1193073 idx=0 name=_local[Core.ArrayTest.arrayArrClassCountLoopWriteTest.return] type=Core.Object
+    Arguments: []
+    Locals:
+      - #0 id=10737664 idx=0 name=arrayArrClassCountLoopWriteTest_local[arr1] type=Core.Array<T><T><Core.ArrayTest.ArrClass>
+      - #1 id=29530116 idx=1 name=arrayArrClassCountLoopWriteTest_local[i] type=Core.Int32
+      - #2 id=64444454 idx=2 name=arrayArrClassCountLoopWriteTest_local[autocreate_66054074] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:443] [LoadConstString] index:[481] val: string[========== ArrClass[]: count loop write ==========] 
+2 2   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:444] [LoadConstInt32] index:[0] val: int32[60] 
+4 4   [ :0] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><T><Core.ArrayTest.ArrClass>] 
+5 5   [ :0] [StoreLocal] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:445] [LoadConstInt32] index:[0] val: int32[0] 
+7 7   [ :0] [StoreLocal] index:[1]
+8 8   [ :0] [Nop] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:445] [LoadLocal] index:[1]
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:445] [LoadLocal] index:[0]
+11 11   [ Array.sl:22] [CallVirt] index:[11] info:[CallVirt length] val:[RuntimeCall{StaticRuntimeType=Core.Array<T><T>, StaticRuntimeTypeList=[], Method=Core.Array<T>.length, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:445] [Clt] index:[0]
+13 13   [ :0] [BrFalse] index:[64] val:[64   [ :0] [Nop] index:[0]] 
+14 14   [ :0] [Nop] index:[0]
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:447] [LoadLocal] index:[1]
+16 16   [ :0] [LoadConstInt8] index:[0] val: int32[1] 
+17 17   [ :0] [Add] index:[0]
+18 18   [ :0] [StoreLocal] index:[1]
+19 19   [ :0] [Nop] index:[0]
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:448] [LoadLocal] index:[1]
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:448] [LoadConstInt32] index:[0] val: int32[40] 
+22 22   [ ../../../../test/BaseTest/ArrayTest.sl:448] [Clt] index:[0]
+23 23   [ :0] [StoreLocal] index:[2]
+24 24   [ :0] [LoadLocal] index:[2]
+25 25   [ :0] [BrFalse] index:[29] val:[29   [ :0] [Nop] index:[0]] 
+26 26   [ :0] [Nop] index:[0]
+27 27   [ :0] [Br] index:[62] val:[62   [ :0] [Nop] index:[0]] 
+28 28   [ :0] [Br] index:[29] val:[29   [ :0] [Nop] index:[0]] 
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ../../../../test/BaseTest/ArrayTest.sl:453] [LoadLocal] index:[0]
+31 31   [ :0] [LoadLocal] index:[1]
+32 32   [ :0] [NewObject] index:[0] info:[IRNew] val: int32[1101770] 
+33 33   [ :0] [Dup] index:[0]
+34 34   [ ../../../../test/BaseTest/ArrayTest.sl:453] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.Object._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ :0] [StoreArrayIndexField] index:[0] val:[True] 
+36 36   [ ../../../../test/BaseTest/ArrayTest.sl:454] [LoadLocal] index:[0]
+37 37   [ :0] [LoadLocal] index:[1]
+38 38   [ :0] [LoadArrayIndexField] index:[0]
+39 39   [ ../../../../test/BaseTest/ArrayTest.sl:454] [LoadConstInt32] index:[0] val: int32[100] 
+40 40   [ :0] [StoreNotStaticField2] index:[0]
+41 41   [ ../../../../test/BaseTest/ArrayTest.sl:455] [LoadLocal] index:[0]
+42 42   [ ../../../../test/BaseTest/ArrayTest.sl:455] [LoadLocal] index:[1]
+43 43   [ ../../../../test/BaseTest/ArrayTest.sl:455] [LoadArrayIndexField] index:[0]
+44 44   [ ../../../../test/BaseTest/ArrayTest.sl:455] [LoadConstInt32] index:[0] val: int32[100] 
+45 45   [ :0] [StoreNotStaticField2] index:[0]
+46 46   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadConstString] index:[482] val: string[====index: ] 
+47 47   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadLocal] index:[1]
+48 48   [ :0] [Convert_ToString] index:[0]
+49 49   [ ../../../../test/BaseTest/ArrayTest.sl:456] [Add] index:[0]
+50 50   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadConstString] index:[483] val: string[  arrobj: ] 
+51 51   [ ../../../../test/BaseTest/ArrayTest.sl:456] [Add] index:[0]
+52 52   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadLocal] index:[0]
+53 53   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadLocal] index:[1]
+54 54   [ ../../../../test/BaseTest/ArrayTest.sl:456] [LoadArrayIndexField] index:[0]
+55 55   [ ../../../../test/BaseTest/ArrayTest.sl:19] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest.ArrClass, StaticRuntimeTypeList=[], Method=Core.ArrayTest.ArrClass.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ ../../../../test/BaseTest/ArrayTest.sl:456] [Add] index:[0]
+57 57   [ Core.sp:13] [CallStatic] index:[1] info:[CallStatic println] val:[RuntimeCall{StaticRuntimeType=Core.Project, StaticRuntimeTypeList=[], Method=Core.Project.println_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+58 58   [ ../../../../test/BaseTest/ArrayTest.sl:457] [LoadLocal] index:[1]
+59 59   [ ../../../../test/BaseTest/ArrayTest.sl:457] [LoadConstInt32] index:[0] val: int32[2] 
+60 60   [ :0] [Add] index:[0]
+61 61   [ :0] [StoreLocal] index:[1]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ :0] [Br] index:[8] val:[8   [ :0] [Nop] index:[0]] 
+64 64   [ :0] [Nop] index:[0]
+65 65   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.fun
+    VirtualName: fun_Core.Object_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=52618256 idx=0 name=_local[Core.ArrayTest.fun.return] type=Core.Object
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:77] [CallStatic] index:[0] info:[CallStatic arrayBasicApiTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayBasicApiTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:97] [CallStatic] index:[0] info:[CallStatic arrayGenericElementTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayGenericElementTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:117] [CallStatic] index:[0] info:[CallStatic arrayCreateInstanceIndexLoopTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCreateInstanceIndexLoopTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ../../../../test/BaseTest/ArrayTest.sl:150] [CallStatic] index:[0] info:[CallStatic arrayCovariantAndLiteralForInTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCovariantAndLiteralForInTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:171] [CallStatic] index:[0] info:[CallStatic arrayNumberIteratorFromConcreteArrayTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayNumberIteratorFromConcreteArrayTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:189] [CallStatic] index:[0] info:[CallStatic arrayNestedObjectTreeTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayNestedObjectTreeTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:236] [CallStatic] index:[0] info:[CallStatic arrayJagged2DAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayJagged2DAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:252] [CallStatic] index:[0] info:[CallStatic arrayIntLiteralReadTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayIntLiteralReadTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:263] [CallStatic] index:[0] info:[CallStatic arrayRank2SparseJaggedTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayRank2SparseJaggedTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ ../../../../test/BaseTest/ArrayTest.sl:272] [CallStatic] index:[0] info:[CallStatic arrayMixedLiteralDollarIndexTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayMixedLiteralDollarIndexTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:297] [CallStatic] index:[0] info:[CallStatic arrayLevelMatrixTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayLevelMatrixTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:307] [CallStatic] index:[0] info:[CallStatic arrayStringAndLevelVectorTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayStringAndLevelVectorTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:330] [CallStatic] index:[0] info:[CallStatic arrayHeterogeneousObject2DTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayHeterogeneousObject2DTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ../../../../test/BaseTest/ArrayTest.sl:337] [CallStatic] index:[0] info:[CallStatic arrayCtorPrimitiveAndAliasTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCtorPrimitiveAndAliasTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ../../../../test/BaseTest/ArrayTest.sl:347] [CallStatic] index:[0] info:[CallStatic arrayCtorMultidimClassShapeTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCtorMultidimClassShapeTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ ../../../../test/BaseTest/ArrayTest.sl:365] [CallStatic] index:[0] info:[CallStatic arrayCtorLiteralMixTypeTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCtorLiteralMixTypeTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ ../../../../test/BaseTest/ArrayTest.sl:373] [CallStatic] index:[0] info:[CallStatic arrayCtorFloatOverloadTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayCtorFloatOverloadTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ../../../../test/BaseTest/ArrayTest.sl:384] [CallStatic] index:[0] info:[CallStatic arrayArrClassIndexAndCurrentTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayArrClassIndexAndCurrentTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ../../../../test/BaseTest/ArrayTest.sl:404] [CallStatic] index:[0] info:[CallStatic arrayArrClassForInAssignTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayArrClassForInAssignTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ../../../../test/BaseTest/ArrayTest.sl:424] [CallStatic] index:[0] info:[CallStatic arrayForInLiteralIndexTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayForInLiteralIndexTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ ../../../../test/BaseTest/ArrayTest.sl:441] [CallStatic] index:[0] info:[CallStatic arrayArrClassCountLoopWriteTest] val:[RuntimeCall{StaticRuntimeType=Core.ArrayTest, StaticRuntimeTypeList=[], Method=Core.ArrayTest.arrayArrClassCountLoopWriteTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+22 22   [ :0] [Label] index:[0]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=63575380 idx=0 name=_local[Core.Object.toString.return] type=Core.String
+    Arguments:
+      - #0 id=66716254 idx=0 name=_local[Core.Object.toString.this] type=Core.Object
+    Locals:
+      - #0 id=35307513 idx=0 name=toString_local[hc] type=Core.Int32
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:65] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreLocal] index:[0]
+4 4   [ Object.sl:66] [LoadConstString] index:[61] val: string[Object:] 
+5 5   [ Object.sl:66] [LoadLocal] index:[0]
+6 6   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+7 7   [ Object.sl:66] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+Class: Core.ArrayTest.ArrClass
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals:
+      - #0 id=12603749 idx=0 name=Core.ArrayTest.ArrClass.i1 type=Core.Int32
+      - #1 id=46324881 idx=1 name=Core.ArrayTest.ArrClass.i2 type=Core.String
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33212803 idx=0 name=_local[Core.Object._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=55886094 idx=0 name=_local[Core.Object._init_.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.ArrClass.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=34220326 idx=0 name=_local[Core.ArrayTest.ArrClass.toString.return] type=Core.String
+    Arguments:
+      - #0 id=3802258 idx=0 name=_local[Core.ArrayTest.ArrClass.toString.this] type=Core.ArrayTest.ArrClass
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadConstString] index:[484] val: string[ArrClass(){ this.i1=] 
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadArgument] index:[0]
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadNotStaticField] index:[0]
+4 4   [ Int32.sl:116] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:21] [Add] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadConstString] index:[485] val: string[ this.i2= ] 
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:21] [Add] index:[0]
+8 8   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadArgument] index:[0]
+9 9   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadNotStaticField] index:[1]
+10 10   [ String.sl:33] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.String, StaticRuntimeTypeList=[], Method=Core.String.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ ../../../../test/BaseTest/ArrayTest.sl:21] [Add] index:[0]
+12 12   [ ../../../../test/BaseTest/ArrayTest.sl:21] [LoadConstString] index:[76] val: string[}] 
+13 13   [ ../../../../test/BaseTest/ArrayTest.sl:21] [Add] index:[0]
+14 14   [ :0] [StoreReturn] index:[0]
+15 15   [ :0] [BrLabel] index:[0] val:[16   [ :0] [Label] index:[0]] 
+16 16   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.ArrClass._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=20383058 idx=0 name=_local[Core.ArrayTest.ArrClass._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=39547486 idx=0 name=_local[Core.ArrayTest.ArrClass._init_.this] type=Core.ArrayTest.ArrClass
+      - #1 id=49229794 idx=1 name=_local[i1] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:10] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:10] [LoadArgument] index:[1]
+3 3   [ :0] [StoreNotStaticField2] index:[0]
+4 4   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.ArrClass._init__2_Core.Int32_Core.String
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28190407 idx=0 name=_local[Core.ArrayTest.ArrClass._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=40414969 idx=0 name=_local[Core.ArrayTest.ArrClass._init_.this] type=Core.ArrayTest.ArrClass
+      - #1 id=52387077 idx=1 name=_local[i1] type=Core.Int32
+      - #2 id=1721653 idx=2 name=_local[i2] type=Core.String
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:15] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:15] [LoadArgument] index:[1]
+3 3   [ :0] [StoreNotStaticField2] index:[0]
+4 4   [ ../../../../test/BaseTest/ArrayTest.sl:16] [LoadArgument] index:[0]
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:16] [LoadArgument] index:[2]
+6 6   [ :0] [StoreNotStaticField2] index:[1]
+7 7   [ :0] [Label] index:[0]
+
+Class: Core.ArrayTest.Level<T><T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 3741682
+      Mapping: []
+  ClassLocals:
+      - #0 id=14270750 idx=0 name=Core.ArrayTest.Level<T>.t type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.ArrayTest.Level<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=5236179 idx=0 name=_local[Core.ArrayTest.Level<T>._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=15494878 idx=0 name=_local[Core.ArrayTest.Level<T>._init_.this] type=Core.ArrayTest.Level<T><T><T[0]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ :0] [Label] index:[0]
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=5882489 idx=0 name=_local[Core.Object.type.return] type=Core.Type
+    Arguments:
+      - #0 id=30479771 idx=0 name=_local[Core.Object.type.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:10] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetType] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6719600 idx=0 name=_local[Core.Object.hashCode.return] type=Core.Int32
+    Arguments:
+      - #0 id=52942405 idx=0 name=_local[Core.Object.hashCode.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:27] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectGetHashCode] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=7416719 idx=0 name=_local[Core.Object.equals.return] type=Core.Boolean
+    Arguments:
+      - #0 id=60476403 idx=0 name=_local[Core.Object.equals.this] type=Core.Object
+      - #1 id=66750478 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:33] [LoadArgument] index:[0]
+2 2   [ Object.sl:33] [LoadArgument] index:[1]
+3 3   [ :0] [CallSystemMethod] index:[2] info:[CallSystemMethod SystemEqualObject] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ :0] [StoreReturn] index:[0]
+5 5   [ :0] [BrLabel] index:[0] val:[6   [ :0] [Label] index:[0]] 
+6 6   [ :0] [Label] index:[0]
+
+  Method: Core.Object.ref
+    VirtualName: ref_Core.Object_0
+    Name: ref
+    InterfaceMethod: False
+    Return:
+      - #0 id=38079613 idx=0 name=_local[Core.Object.ref.return] type=Core.Object
+    Arguments:
+      - #0 id=63883391 idx=0 name=_local[Core.Object.ref.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:38] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRef] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refWeak
+    VirtualName: refWeak_Core.Object_0
+    Name: refWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=64549801 idx=0 name=_local[Core.Object.refWeak.return] type=Core.Object
+    Arguments:
+      - #0 id=7172200 idx=0 name=_local[Core.Object.refWeak.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:44] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefWeak] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.refCount
+    VirtualName: refCount_Core.Int32_0
+    Name: refCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=61151353 idx=0 name=_local[Core.Object.refCount.return] type=Core.Int32
+    Arguments:
+      - #0 id=44077297 idx=0 name=_local[Core.Object.refCount.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:50] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRefCount] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [StoreReturn] index:[0]
+4 4   [ :0] [BrLabel] index:[0] val:[5   [ :0] [Label] index:[0]] 
+5 5   [ :0] [Label] index:[0]
+
+  Method: Core.Object.free
+    VirtualName: free_Core.Void_0
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=54312533 idx=0 name=_local[Core.Object.free.return] type=Core.Void
+    Arguments:
+      - #0 id=13491266 idx=0 name=_local[Core.Object.free.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:56] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectFree] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.Object.release
+    VirtualName: release_Core.Void_0
+    Name: release
+    InterfaceMethod: False
+    Return:
+      - #0 id=37239078 idx=0 name=_local[Core.Object.release.return] type=Core.Void
+    Arguments:
+      - #0 id=19050756 idx=0 name=_local[Core.Object.release.this] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Object.sl:60] [LoadArgument] index:[0]
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemObjectRelease] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.Level<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=21477321 idx=0 name=_local[Core.ArrayTest.Level<T>.toString.return] type=Core.String
+    Arguments:
+      - #0 id=47125611 idx=0 name=_local[Core.ArrayTest.Level<T>.toString.this] type=Core.ArrayTest.Level<T><T><T[0]>
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:37] [LoadConstString] index:[486] val: string[Level<T>(] 
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:37] [LoadArgument] index:[0]
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:37] [LoadNotStaticField] index:[0]
+4 4   [ Object.sl:63] [CallVirt] index:[9] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ ../../../../test/BaseTest/ArrayTest.sl:37] [Add] index:[0]
+6 6   [ ../../../../test/BaseTest/ArrayTest.sl:37] [LoadConstString] index:[69] val: string[)] 
+7 7   [ ../../../../test/BaseTest/ArrayTest.sl:37] [Add] index:[0]
+8 8   [ :0] [StoreReturn] index:[0]
+9 9   [ :0] [BrLabel] index:[0] val:[10   [ :0] [Label] index:[0]] 
+10 10   [ :0] [Label] index:[0]
+
+  Method: Core.ArrayTest.Level<T>._init__1_Core.Object
+    VirtualName: _init__Core.Void_1_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=61941440 idx=0 name=_local[Core.ArrayTest.Level<T>._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=59078165 idx=0 name=_local[Core.ArrayTest.Level<T>._init_.this] type=Core.ArrayTest.Level<T><T><T[0]>
+      - #1 id=20602051 idx=1 name=_local[obj] type=Core.Object
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ../../../../test/BaseTest/ArrayTest.sl:33] [LoadArgument] index:[0]
+2 2   [ ../../../../test/BaseTest/ArrayTest.sl:33] [LoadArgument] index:[1]
+3 3   [ ../../../../test/BaseTest/ArrayTest.sl:33] [CastClass] index:[0] info:[CastClass as Core.Object] val irmt:[Core.Object[T:0]] 
+4 4   [ :0] [StoreNotStaticField2] index:[0]
+5 5   [ :0] [Label] index:[0]
+
+-------------------IR 文件显示 结束 : -----------------------

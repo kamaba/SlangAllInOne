@@ -1,0 +1,46 @@
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:00000275F10F2F70 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:00000275F10F1A70 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:00000275F10F2010 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:00000275F10F2910 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:00000275F10F2F10 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:00000275F10F2670 (executing class=Std.FileMode)
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:00000275F10F4710 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:00000275F10F3B10 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileAccess)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:00000275F10F2F10 (executing class=SFRepro.SFReproTest)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:00000275F10F2F70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:00000275F10F1A70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:00000275F10F2010 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:00000275F10F2910 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:00000275F10F2F10 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:00000275F10F2670 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:00000275F10F4710 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[FS-DBG] open path=sf_repro_a.txt mode=9 fmode=w+b
+[FS-DBG] open ok slot=0 handle=1
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:00000275F10F4710 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:00000275F10F3B10 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] file_write handle=1 buf_id=2
+[FS-DBG] write handle=1 len=17 f=00000275EA4CAA70
+[FS-DBG] write ret=17
+[FS-DBG] flush handle=1 f=00000275EA4CAA70
+[FS-DBG] close handle=1 f=00000275EA4CAA70
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:00000275F10F2F70 (executing class=SFRepro.SFReproTest)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=0 -> obj:00000275F10F2F70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=1 -> obj:00000275F10F1A70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=2 -> obj:00000275F10F2010 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=3 -> obj:00000275F10F2910 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=4 -> obj:00000275F10F2F10 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileMode field=5 -> obj:00000275F10F2670 (executing class=Std.FileStream)
+[FS-DBG] open path=sf_repro_a.txt mode=2 fmode=wb
+[FS-DBG] open ok slot=0 handle=1
+[VM-DBG] LoadStaticField Std.FileAccess field=0 -> obj:00000275F10F4710 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=1 -> obj:00000275F10F3B10 (executing class=Std.FileStream)
+[VM-DBG] LoadStaticField Std.FileAccess field=2 -> obj:00000275F10F3E70 (executing class=Std.FileStream)
+[VM-DBG] file_read handle=1 buf_id=3 count=32
+[FS-DBG] read handle=1 len=32 f=00000275EA4CAA70

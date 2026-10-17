@@ -1,0 +1,11 @@
+step1: nvcuda=00007FF8A5A30000
+step2: procs resolved
+step3: cuInit=0
+step4: deviceCount=1
+step5: ctxCreate=0 ctx=000001587CC41F30
+step6a: alloc(explicit ctx, OLD unversioned)=201 d=0
+step6b: alloc(explicit ctx, v2)=0 d=206800000
+step7: retain=0 ctx=000001587CC2C240
+step8: setCurrent=0
+step9: alloc(primary ctx, 4K)=0 d=20d000000
+done

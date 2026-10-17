@@ -1,0 +1,1327 @@
+-------------------IR 文件显示 开始 : Path: Class1Test.sl-----------------------
+Class: ProjectTest.N1.N2.N3.ClassN1_2_3_1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=47250101 idx=0 name=ProjectTest.N1.N2.N3.ClassN1_2_3_1.X1 type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.ClassG1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.N1.N2.N3.Class1_2_3_1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.N1.N2.N3.Class1_2_3_1.Class1_2_3_11_1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.N1.N2.N3.N4.N5.ClassN1_2_3_4_3
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1111861375
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.N1.ClassN1_1
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.Class1Expand.ClassDefineBase
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=38841670 idx=0 name=ProjectTest.Class1Expand.ClassDefineBase.baseValue type=Core.Int32
+      - #1 id=22597726 idx=1 name=ProjectTest.Class1Expand.ClassDefineBase.partialValue type=Core.Int32
+  ClassStatics:
+      - #0 id=2052950 idx=0 name=ProjectTest.Class1Expand.ClassDefineBase.staticSeed type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=61627937 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=6847548 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase._init_.this] type=ProjectTest.Class1Expand.ClassDefineBase
+      - #1 id=17780525 idx=1 name=_local[value] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:52] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class1Test.sl:52] [LoadArgument] index:[1] info:[Argument]
+3 3   [ Class1Test.sl:50] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ Class1Test.sl:50] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase.baseProp
+    VirtualName: baseProp_Core.Int32_0
+    Name: baseProp
+    InterfaceMethod: False
+    Return:
+      - #0 id=30936422 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.baseProp.return] type=Core.Int32
+    Arguments:
+      - #0 id=25807001 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.baseProp.this] type=ProjectTest.Class1Expand.ClassDefineBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:57] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class1Test.sl:57] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ Class1Test.sl:57] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ Class1Test.sl:55] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase.virtualName
+    VirtualName: virtualName_Core.String_0
+    Name: virtualName
+    InterfaceMethod: False
+    Return:
+      - #0 id=4074007 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.virtualName.return] type=Core.String
+    Arguments:
+      - #0 id=22822288 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.virtualName.this] type=ProjectTest.Class1Expand.ClassDefineBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:62] [LoadConstString] index:[771] val: string[base:] 
+2 2   [ Class1Test.sl:62] [LoadArgument] index:[0] info:[Argument]
+3 3   [ Class1Test.sl:62] [LoadNotStaticField] index:[0] info:[Member]
+4 4   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ Class1Test.sl:62] [Add] index:[0]
+6 6   [ Class1Test.sl:62] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ Class1Test.sl:60] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase.sumBase
+    VirtualName: sumBase_Core.Int32_0
+    Name: sumBase
+    InterfaceMethod: False
+    Return:
+      - #0 id=17161430 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.sumBase.return] type=Core.Int32
+    Arguments:
+      - #0 id=61559149 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.sumBase.this] type=ProjectTest.Class1Expand.ClassDefineBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class2Test.sl:10] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class2Test.sl:10] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ Class2Test.sl:10] [LoadArgument] index:[0] info:[Argument]
+4 4   [ Class2Test.sl:10] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ Class2Test.sl:10] [Add] index:[0]
+6 6   [ Class2Test.sl:10] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ Class2Test.sl:8] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.Class1Expand.ClassDefineBase.ClassDefineNested
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=18476557 idx=0 name=ProjectTest.Class1Expand.ClassDefineBase.ClassDefineNested.nestedValue type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.Class1Expand.ClassDefineChild
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1396563861
+      Mapping: []
+  ClassLocals:
+      - #0 id=38841670 idx=0 name=ProjectTest.Class1Expand.ClassDefineBase.baseValue type=Core.Int32
+      - #1 id=22597726 idx=1 name=ProjectTest.Class1Expand.ClassDefineBase.partialValue type=Core.Int32
+      - #2 id=14030717 idx=2 name=ProjectTest.Class1Expand.ClassDefineChild.childValue type=Core.Int32
+  ClassStatics:
+      - #0 id=2052950 idx=0 name=ProjectTest.Class1Expand.ClassDefineBase.staticSeed type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=61627937 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=6847548 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase._init_.this] type=ProjectTest.Class1Expand.ClassDefineBase
+      - #1 id=17780525 idx=1 name=_local[value] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:52] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class1Test.sl:52] [LoadArgument] index:[1] info:[Argument]
+3 3   [ Class1Test.sl:50] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ Class1Test.sl:50] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase.baseProp
+    VirtualName: baseProp_Core.Int32_0
+    Name: baseProp
+    InterfaceMethod: False
+    Return:
+      - #0 id=30936422 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.baseProp.return] type=Core.Int32
+    Arguments:
+      - #0 id=25807001 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.baseProp.this] type=ProjectTest.Class1Expand.ClassDefineBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:57] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class1Test.sl:57] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ Class1Test.sl:57] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ Class1Test.sl:55] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineChild.virtualName
+    VirtualName: virtualName_Core.String_0
+    Name: virtualName
+    InterfaceMethod: False
+    Return:
+      - #0 id=28433869 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild.virtualName.return] type=Core.String
+    Arguments:
+      - #0 id=47898561 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild.virtualName.this] type=ProjectTest.Class1Expand.ClassDefineChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:83] [LoadConstString] index:[772] val: string[virtualName baseValue:] 
+2 2   [ Class1Test.sl:83] [LoadArgument] index:[0] info:[Argument]
+3 3   [ Class1Test.sl:83] [LoadNotStaticField] index:[0] info:[Member]
+4 4   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+5 5   [ Class1Test.sl:83] [Add] index:[0]
+6 6   [ Class1Test.sl:83] [LoadConstString] index:[773] val: string[  childValue:] 
+7 7   [ Class1Test.sl:83] [Add] index:[0]
+8 8   [ Class1Test.sl:83] [LoadArgument] index:[0] info:[Argument]
+9 9   [ Class1Test.sl:83] [LoadNotStaticField] index:[2] info:[Member]
+10 10   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+11 11   [ Class1Test.sl:83] [Add] index:[0]
+12 12   [ Class1Test.sl:83] [StoreReturn] index:[0] info:[StoreReturn]
+13 13   [ :0] [BrLabel] index:[14]
+14 14   [ Class1Test.sl:81] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineBase.sumBase
+    VirtualName: sumBase_Core.Int32_0
+    Name: sumBase
+    InterfaceMethod: False
+    Return:
+      - #0 id=17161430 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.sumBase.return] type=Core.Int32
+    Arguments:
+      - #0 id=61559149 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineBase.sumBase.this] type=ProjectTest.Class1Expand.ClassDefineBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class2Test.sl:10] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class2Test.sl:10] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ Class2Test.sl:10] [LoadArgument] index:[0] info:[Argument]
+4 4   [ Class2Test.sl:10] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ Class2Test.sl:10] [Add] index:[0]
+6 6   [ Class2Test.sl:10] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ Class2Test.sl:8] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineChild._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=58761073 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=21442089 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild._init_.this] type=ProjectTest.Class1Expand.ClassDefineChild
+      - #1 id=59087616 idx=1 name=_local[value] type=Core.Int32
+      - #2 id=62026502 idx=2 name=_local[child] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:77] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class1Test.sl:77] [LoadArgument] index:[1] info:[Argument]
+3 3   [ Class1Test.sl:50] [CallStatic] index:[1] info:[CallStatic _init_] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineBase, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineBase._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+4 4   [ Class1Test.sl:78] [LoadArgument] index:[0] info:[Argument]
+5 5   [ Class1Test.sl:78] [LoadArgument] index:[2] info:[Argument]
+6 6   [ Class1Test.sl:75] [StoreNotStaticField2] index:[2] info:[Member]
+7 7   [ Class1Test.sl:75] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.Class1Expand.ClassDefineChild.sumAll
+    VirtualName: sumAll_Core.Int32_0
+    Name: sumAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=58090788 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild.sumAll.return] type=Core.Int32
+    Arguments:
+      - #0 id=21367612 idx=0 name=_local[ProjectTest.Class1Expand.ClassDefineChild.sumAll.this] type=ProjectTest.Class1Expand.ClassDefineChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:88] [LoadArgument] index:[0] info:[Argument]
+2 2   [ Class2Test.sl:8] [CallVirt] index:[10] info:[CallVirt sumBase] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineBase, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineBase.sumBase, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemConvertInt32] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+4 4   [ Class1Test.sl:88] [LoadArgument] index:[0] info:[Argument]
+5 5   [ Class1Test.sl:88] [LoadNotStaticField] index:[2] info:[Member]
+6 6   [ Class1Test.sl:88] [Add] index:[0]
+7 7   [ Class1Test.sl:88] [StoreReturn] index:[0] info:[StoreReturn]
+8 8   [ :0] [BrLabel] index:[9]
+9 9   [ Class1Test.sl:86] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.Class1TestSmoke
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.Class1TestSmoke.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=7733362 idx=0 name=_local[ProjectTest.Class1TestSmoke.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=2491394 idx=0 name=fun_local[c1] type=ProjectTest.Class1Expand.ClassDefineChild
+      - #1 id=22422552 idx=1 name=fun_local[nested] type=ProjectTest.Class1Expand.ClassDefineBase.ClassDefineNested
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ Class1Test.sl:97] [LoadConstString] index:[774] val: string[========== Class1Test (start) ==========] 
+2 2   [ Class1Test.sl:95] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ Class1Test.sl:98] [LoadConstString] index:[775] val: string[本文件为 partial、Std 前缀类、多级 namespace 与 extends 链的声明样例，无运行时断言。] 
+8 8   [ Class1Test.sl:95] [StoreLocal] index:[3] info:[LocalStatement]
+9 9   [ :0] [Nop] index:[0]
+10 10   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+11 11   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+12 12   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+13 13   [ Class1Test.sl:95] [NewObject] index:[0] info:[IRNew] val: int32[445377028] 
+14 14   [ :0] [Dup] index:[0]
+15 15   [ Class1Test.sl:99] [LoadConstInt32] index:[0] val: int32[11] 
+16 16   [ Class1Test.sl:99] [LoadConstInt32] index:[0] val: int32[22] 
+17 17   [ Class1Test.sl:99] [CallVirt] index:[11] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineChild, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineChild._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+18 18   [ Class1Test.sl:95] [StoreLocal] index:[0] info:[LocalStatement]
+19 19   [ Class1Test.sl:95] [NewObject] index:[0] info:[IRNew] val: int32[-1008198583] 
+20 20   [ Class1Test.sl:100] [ArcRetain] index:[0] info:[ARC claim owned new local: nested]
+21 21   [ Class1Test.sl:95] [StoreLocal] index:[1] info:[LocalStatement]
+22 22   [ Class1Test.sl:101] [LoadConstString] index:[776] val: string[Class1Expand child virtualName -> ] 
+23 23   [ Class1Test.sl:101] [LoadLocal] index:[0] info:[LocalStatement]
+24 24   [ Class1Test.sl:81] [CallVirt] index:[9] info:[CallVirt virtualName] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineChild, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineChild.virtualName, MethodRuntimeTypeList=[], ParamCount=0}] 
+25 25   [ Class1Test.sl:101] [Add] index:[0]
+26 26   [ Class1Test.sl:95] [StoreLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [Nop] index:[0]
+28 28   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+29 29   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+30 30   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+31 31   [ Class1Test.sl:102] [LoadConstString] index:[777] val: string[Class1Expand child sumAll -> ] 
+32 32   [ Class1Test.sl:102] [LoadLocal] index:[0] info:[LocalStatement]
+33 33   [ Class1Test.sl:86] [CallVirt] index:[12] info:[CallVirt sumAll] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineChild, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineChild.sumAll, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ Class1Test.sl:102] [Add] index:[0]
+36 36   [ Class1Test.sl:95] [StoreLocal] index:[5] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ Class1Test.sl:103] [LoadConstString] index:[778] val: string[Class1Expand baseProp/static/nested -> ] 
+42 42   [ Class1Test.sl:103] [LoadLocal] index:[0] info:[LocalStatement]
+43 43   [ Class1Test.sl:55] [CallVirt] index:[8] info:[CallVirt baseProp] val:[RuntimeCall{StaticRuntimeType=ProjectTest.Class1Expand.ClassDefineBase, StaticRuntimeTypeList=[], Method=ProjectTest.Class1Expand.ClassDefineBase.baseProp, MethodRuntimeTypeList=[], ParamCount=0}] 
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ Class1Test.sl:103] [Add] index:[0]
+46 46   [ Class1Test.sl:103] [LoadConstString] index:[779] val: string[/] 
+47 47   [ Class1Test.sl:103] [Add] index:[0]
+48 48   [ Class1Test.sl:103] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.Class1Expand.ClassDefineBase] staticOwner:[ProjectTest.Class1TestSmoke] 
+49 49   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+50 50   [ Class1Test.sl:103] [Add] index:[0]
+51 51   [ Class1Test.sl:103] [LoadConstString] index:[779] val: string[/] 
+52 52   [ Class1Test.sl:103] [Add] index:[0]
+53 53   [ Class1Test.sl:103] [LoadLocal] index:[1] info:[LocalStatement]
+54 54   [ Class1Test.sl:103] [LoadNotStaticField] index:[0] info:[Member]
+55 55   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ Class1Test.sl:103] [Add] index:[0]
+57 57   [ Class1Test.sl:95] [StoreLocal] index:[6] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ Class1Test.sl:104] [LoadConstString] index:[780] val: string[========== Class1Test (end) ==========] 
+63 63   [ Class1Test.sl:95] [StoreLocal] index:[7] info:[LocalStatement]
+64 64   [ :0] [Nop] index:[0]
+65 65   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+66 66   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+67 67   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+68 68   [ Class1Test.sl:95] [Label] index:[0] info:[FunEndLabel]
+69 69   [ Class1Test.sl:95] [LoadLocal] index:[1] info:[ARC release: LoadLocal fun_local[nested]]
+70 70   [ Class1Test.sl:95] [ArcRelease] index:[0] info:[ARC release owned local: fun_local[nested]]
+71 71   [ Class1Test.sl:95] [StoreLocal] index:[1] info:[ARC release: StoreLocal fun_local[nested]]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

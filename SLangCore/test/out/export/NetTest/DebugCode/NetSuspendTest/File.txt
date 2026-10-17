@@ -1,0 +1,179 @@
+-------------------FileMeta 文件显示 开始 : Path: NetSuspendTest.sl-----------------------
+ ;
+ ;
+NetSuspendTest
+{
+     staticstring stringg_b3Data = ""
+
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            Console.println("[NetSuspendTest] " + name + " : OK");
+        }
+        else
+        {
+            Console.println("[NetSuspendTest] " + name + " : FAIL");
+        }
+    }
+    _public static throws Int32 sfB1Accept( Net.TcpServer srv,  Channel<object> ch )
+    {
+        Net.TcpStream c = srv.accept();
+        ByteBuffer acc = ByteBuffer(64i);
+        while acc.readableBytes < 4i
+        {
+            ByteBuffer b = ByteBuffer(64i);
+            Int32 n = c.read(b);
+            if n <= 0i
+            {
+                break
+            }
+            acc.writeBytes(b);
+        }
+        string got = acc.readString(acc.readableBytes);
+        ch.send(got);
+        c.close();
+        ret 1i
+    }
+    _public static throws Int32 sfB2Echo( Net.TcpServer srv,  Channel<object> notifyCh )
+    {
+        Net.TcpStream c = srv.accept();
+        notifyCh.send("accepted");
+        while true
+        {
+            ByteBuffer b = ByteBuffer(64i);
+            Int32 n = c.read(b);
+            if n <= 0i
+            {
+                break
+            }
+            c.write(b);
+        }
+        c.close();
+        ret 1i
+    }
+    _public static throws Int32 sfB3Accept( Net.TcpServer srv )
+    {
+        Net.TcpStream c = srv.accept();
+        ByteBuffer acc = ByteBuffer(64i);
+        while acc.readableBytes < 5i
+        {
+            ByteBuffer b = ByteBuffer(64i);
+            Int32 n = c.read(b);
+            if n <= 0i
+            {
+                break
+            }
+            acc.writeBytes(b);
+        }
+        string got = acc.readString(acc.readableBytes);
+        NetSuspendTest.g_b3Data = got;
+        c.close();
+        srv.close();
+        NetSuspendTest.check("B3 guard kept VM alive for late delivery",NetSuspendTest.g_b3Data == "b3-ok");
+        ret 1i
+    }
+    _public static throws Int32 sfB3Connect( Int32 port )
+    {
+        Net.TcpStream c = Net.Tcp.connect("127.0.0.1",port);
+        ByteBuffer w = ByteBuffer(64i);
+        w.writeString("b3-ok");
+        c.write(w);
+        c.close();
+        ret 1i
+    }
+    _public static Func<int,int> isoB3WorkerFn( )
+    {
+        var f = function(  int port )
+            {
+                Coroutine.delay(400i);
+                Int32 ok = 0i;
+                object o = try? try? NetSuspendTest.sfB3Connect(port);
+                if o != null
+                {
+                    ok = 1i;
+                }
+                ret ok
+            }
+        ret f
+    }
+    _public static testGroupB( )
+    {
+        Console.println("========== B: 挂起与唤醒 ==========");
+        Net.TcpServer srv1 = Net.Tcp.listen(19303i);
+        Channel<object> ch1 = Channel<object>.create(4i);
+        var b1Fn = function(  )
+            {
+                object r = try? try? NetSuspendTest.sfB1Accept(srv1,ch1);
+            }
+        Task st1 = Coroutine.spawnClosure0(b1Fn);
+        Coroutine.delay(100i);
+        bool b1a = st1.status == CoroutineStatus.Suspended && st1.blockedReason == CoroutineBlockReason.IO;
+        check("B1 accept suspended",b1a);
+        Net.TcpStream c1 = Net.Tcp.connect("127.0.0.1",19303i);
+        Coroutine.delay(100i);
+        bool b1b = st1.status == CoroutineStatus.Suspended && st1.blockedReason == CoroutineBlockReason.IO;
+        check("B1 recv suspended",b1b);
+        ByteBuffer w1 = ByteBuffer(64i);
+        w1.writeString("wake");
+        c1.write(w1);
+        object o1 = ch1.recv();
+        string got1 = o1as string;
+        check("B1 wakeup round-trip",got1 == "wake");
+        Coroutine.awaitTask(st1);
+        c1.close();
+        srv1.close();
+        Net.TcpServer srv2 = Net.Tcp.listen(19304i);
+        Channel<object> notifyCh = Channel<object>.create(4i);
+        var b2Fn = function(  )
+            {
+                object r = try? try? NetSuspendTest.sfB2Echo(srv2,notifyCh);
+            }
+        Task st2 = Coroutine.spawnClosure0(b2Fn);
+        Net.TcpStream c2 = Net.Tcp.connect("127.0.0.1",19304i);
+        object nmsg = notifyCh.recv();
+        string ns = nmsgas string;
+        Coroutine.delay(150i);
+        bool b2a = ns == "accepted" && st2.status == CoroutineStatus.Suspended && st2.blockedReason == CoroutineBlockReason.IO;
+        check("B2 server suspended on recv",b2a);
+        ByteBuffer w2 = ByteBuffer(64i);
+        w2.writeString("b2-ping");
+        c2.write(w2);
+        ByteBuffer acc2 = ByteBuffer(64i);
+        while acc2.readableBytes < 7i
+        {
+            ByteBuffer rb2 = ByteBuffer(64i);
+            Int32 n2 = c2.read(rb2);
+            if n2 <= 0i
+            {
+                break
+            }
+            acc2.writeBytes(rb2);
+        }
+        string got2 = acc2.readString(acc2.readableBytes);
+        check("B2 echo after wakeup",got2 == "b2-ping");
+        c2.closeWrite();
+        Coroutine.awaitTask(st2);
+        c2.close();
+        srv2.close();
+        Net.TcpServer srv3 = Net.Tcp.listen(19305i);
+        var b3Fn = function(  )
+            {
+                object r = try? try? NetSuspendTest.sfB3Accept(srv3);
+            }
+        Task st3 = Coroutine.spawnClosure0(b3Fn);
+        Coroutine.delay(100i);
+        bool b3a = st3.status == CoroutineStatus.Suspended && st3.blockedReason == CoroutineBlockReason.IO;
+        check("B3 server suspended on accept before root returns",b3a);
+        Func<int,int> b3Entry = NetSuspendTest.isoB3WorkerFn();
+        SystemIsolateSpawn(b3Entry,19305i);
+        Console.println("[NetSuspendTest] B3 root returning (server suspended on accept)");
+    }
+    _public static fun( )
+    {
+        Console.println("===== NetSuspendTest start =====");
+        testGroupB();
+        Console.println("===== NetSuspendTest end =====");
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

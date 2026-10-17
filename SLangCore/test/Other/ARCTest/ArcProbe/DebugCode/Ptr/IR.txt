@@ -1,0 +1,318 @@
+-------------------IR 文件显示 开始 : Path: Ptr.sl-----------------------
+Class: Core.Ptr
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-559763480 idx=0 name=Core.Ptr._address type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.zero
+    VirtualName: zero_Core.Ptr_0
+    Name: zero
+    InterfaceMethod: False
+    Return:
+      - #0 id=11774121 idx=0 name=return] type=Core.Ptr
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.size
+    VirtualName: size_Core.Int32_0
+    Name: size
+    InterfaceMethod: False
+    Return:
+      - #0 id=14179779 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.alloc_1_Core.Int32
+    VirtualName: alloc_Core.Ptr_1_Core.Int32
+    Name: alloc
+    InterfaceMethod: False
+    Return:
+      - #0 id=7711478 idx=0 name=return] type=Core.Ptr
+    Arguments:
+      - #0 id=2294440 idx=0 name=byteCount type=Core.Int32
+    Locals:
+      - #0 id=20649961 idx=0 name=addr type=Core.Int64
+    Instructions:
+
+  Method: Core.Ptr.free_1_Core.Ptr
+    VirtualName: free_Core.Boolean_1_Core.Ptr
+    Name: free
+    InterfaceMethod: False
+    Return:
+      - #0 id=62034116 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=21436136 idx=0 name=p type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57687380 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58605492 idx=0 name=this] type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=42166233 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49424379 idx=0 name=this] type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr._init__1_Core.Int64
+    VirtualName: _init__Core.Void_1_Core.Int64
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=3324704 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60021735 idx=0 name=this] type=Core.Ptr
+      - #1 id=29922341 idx=1 name=address type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=7790523 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=865613 idx=0 name=this] type=Core.Ptr
+      - #1 id=3005847 idx=1 name=address type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.toInt64
+    VirtualName: toInt64_Core.Int64_0
+    Name: toInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=42147045 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=27052626 idx=0 name=this] type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.toInt32
+    VirtualName: toInt32_Core.Int32_0
+    Name: toInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=56445345 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=58467488 idx=0 name=this] type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.equals_1_Core.Ptr
+    VirtualName: equals_Core.Boolean_1_Core.Ptr
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=10923387 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=8670250 idx=0 name=this] type=Core.Ptr
+      - #1 id=31201619 idx=1 name=other type=Core.Ptr
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.add_1_Core.Int32
+    VirtualName: add_Core.Ptr_1_Core.Int32
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=63184231 idx=0 name=return] type=Core.Ptr
+    Arguments:
+      - #0 id=44303172 idx=0 name=this] type=Core.Ptr
+      - #1 id=31787174 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.subtract_1_Core.Int32
+    VirtualName: subtract_Core.Ptr_1_Core.Int32
+    Name: subtract
+    InterfaceMethod: False
+    Return:
+      - #0 id=20292006 idx=0 name=return] type=Core.Ptr
+    Arguments:
+      - #0 id=24624288 idx=0 name=this] type=Core.Ptr
+      - #1 id=48410331 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.readByte_1_Core.Int32
+    VirtualName: readByte_Core.Int32_1_Core.Int32
+    Name: readByte
+    InterfaceMethod: False
+    Return:
+      - #0 id=58978167 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=28922751 idx=0 name=this] type=Core.Ptr
+      - #1 id=61041458 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.readInt32_1_Core.Int32
+    VirtualName: readInt32_Core.Int32_1_Core.Int32
+    Name: readInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=6046746 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45411103 idx=0 name=this] type=Core.Ptr
+      - #1 id=54420716 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.readInt64_1_Core.Int32
+    VirtualName: readInt64_Core.Int64_1_Core.Int32
+    Name: readInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=11363535 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=46001857 idx=0 name=this] type=Core.Ptr
+      - #1 id=35162951 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.readFloat64_1_Core.Int32
+    VirtualName: readFloat64_Core.Num_1_Core.Int32
+    Name: readFloat64
+    InterfaceMethod: False
+    Return:
+      - #0 id=65314517 idx=0 name=return] type=Core.Num
+    Arguments:
+      - #0 id=29626789 idx=0 name=this] type=Core.Ptr
+      - #1 id=50959748 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.writeByte_2_Core.Int32_Core.Int32
+    VirtualName: writeByte_Core.Int32_2_Core.Int32_Core.Int32
+    Name: writeByte
+    InterfaceMethod: False
+    Return:
+      - #0 id=38455150 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=34098956 idx=0 name=this] type=Core.Ptr
+      - #1 id=10552036 idx=1 name=offset type=Core.Int32
+      - #2 id=27859461 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.writeInt32_2_Core.Int32_Core.Int32
+    VirtualName: writeInt32_Core.Int32_2_Core.Int32_Core.Int32
+    Name: writeInt32
+    InterfaceMethod: False
+    Return:
+      - #0 id=42670757 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=42023897 idx=0 name=this] type=Core.Ptr
+      - #1 id=48492497 idx=1 name=offset type=Core.Int32
+      - #2 id=33779294 idx=2 name=value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.writeInt64_2_Core.Int32_Core.Int64
+    VirtualName: writeInt64_Core.Int32_2_Core.Int32_Core.Int64
+    Name: writeInt64
+    InterfaceMethod: False
+    Return:
+      - #0 id=63261775 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=51768328 idx=0 name=this] type=Core.Ptr
+      - #1 id=32485067 idx=1 name=offset type=Core.Int32
+      - #2 id=23930149 idx=2 name=value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.writeFloat64_2_Core.Int32_Core.Num
+    VirtualName: writeFloat64_Core.Int32_2_Core.Int32_Core.Num
+    Name: writeFloat64
+    InterfaceMethod: False
+    Return:
+      - #0 id=63882937 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=59293887 idx=0 name=this] type=Core.Ptr
+      - #1 id=38075525 idx=1 name=offset type=Core.Int32
+      - #2 id=7135413 idx=2 name=value type=Core.Num
+    Locals: []
+    Instructions:
+
+  Method: Core.Ptr.getMemberVar<T2>_1_Core.Int32
+    VirtualName: getMemberVar_T2_1_Core.Int32
+    Name: getMemberVar
+    InterfaceMethod: False
+    Return:
+      - #0 id=34333880 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=41097577 idx=0 name=this] type=Core.Ptr
+      - #1 id=40569470 idx=1 name=offset type=Core.Int32
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

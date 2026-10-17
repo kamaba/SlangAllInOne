@@ -1,0 +1,37 @@
+-------------------FileMeta 文件显示 开始 : Path: ArcProbeDefs.sl-----------------------
+ArcProbeNS.ArcCtor
+{
+    int intx = 0i
+
+    _public _init_( )
+    {
+        this.x = 1i;
+    }
+}
+ArcProbeNS.ArcNoCtor
+{
+    int intx = 0i
+
+}
+ArcProbeNS.ArcFieldInit
+{
+    int intx = 0i
+    int inty = 42i
+
+}
+ArcProbeNS.ArcHolder
+{
+     staticArcProbeT ArcProbeTslot = null
+
+}
+ArcProbeNS.ArcBox
+{
+    ArcProbeT ArcProbeTitem = null
+
+}
+ArcProbeT
+{
+    int intx = 0i
+
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

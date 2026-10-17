@@ -1,0 +1,83 @@
+-------------------IR 文件显示 开始 : Path: Environment/Platform_Dev.sl-----------------------
+Class: Core.Environment.Platform.device
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=1872967074 idx=0 name=Core.Environment.Platform.device.none type=Core.Member
+      - #1 id=-1141739314 idx=1 name=Core.Environment.Platform.device.cpu type=Core.Member
+      - #2 id=543793 idx=2 name=Core.Environment.Platform.device.gpu type=Core.Member
+      - #3 id=-4263223 idx=3 name=Core.Environment.Platform.device.npu type=Core.Member
+      - #4 id=-70420229 idx=4 name=Core.Environment.Platform.device.dsp type=Core.Member
+      - #5 id=441140233 idx=5 name=Core.Environment.Platform.device.fpga type=Core.Member
+      - #6 id=1436637869 idx=6 name=Core.Environment.Platform.device.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.ai
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1885525826 idx=0 name=Core.Environment.Platform.ai.none type=Core.Member
+      - #1 id=-1238273230 idx=1 name=Core.Environment.Platform.ai.onnxruntime type=Core.Member
+      - #2 id=-1179742269 idx=2 name=Core.Environment.Platform.ai.tensorRT type=Core.Member
+      - #3 id=-946916671 idx=3 name=Core.Environment.Platform.ai.openVINO type=Core.Member
+      - #4 id=-1514089557 idx=4 name=Core.Environment.Platform.ai.tflite type=Core.Member
+      - #5 id=947345485 idx=5 name=Core.Environment.Platform.ai.coreML type=Core.Member
+      - #6 id=-434319608 idx=6 name=Core.Environment.Platform.ai.cann type=Core.Member
+      - #7 id=1780734522 idx=7 name=Core.Environment.Platform.ai.rknn type=Core.Member
+      - #8 id=-904573002 idx=8 name=Core.Environment.Platform.ai.cambricon type=Core.Member
+      - #9 id=-262469828 idx=9 name=Core.Environment.Platform.ai.qnn type=Core.Member
+      - #10 id=-1156634896 idx=10 name=Core.Environment.Platform.ai.snpe type=Core.Member
+      - #11 id=-46363464 idx=11 name=Core.Environment.Platform.ai.horizonBpu type=Core.Member
+      - #12 id=1233908506 idx=12 name=Core.Environment.Platform.ai.sophon type=Core.Member
+      - #13 id=-1618452852 idx=13 name=Core.Environment.Platform.ai.ane type=Core.Member
+      - #14 id=-1309322386 idx=14 name=Core.Environment.Platform.ai.torch type=Core.Member
+      - #15 id=1159789028 idx=15 name=Core.Environment.Platform.ai.tensorFlow type=Core.Member
+      - #16 id=-1247852633 idx=16 name=Core.Environment.Platform.ai.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.render
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-123225896 idx=0 name=Core.Environment.Platform.render.none type=Core.Member
+      - #1 id=383936084 idx=1 name=Core.Environment.Platform.render.d3d11 type=Core.Member
+      - #2 id=308311322 idx=2 name=Core.Environment.Platform.render.d3d12 type=Core.Member
+      - #3 id=2076656474 idx=3 name=Core.Environment.Platform.render.vulkan type=Core.Member
+      - #4 id=-1813995129 idx=4 name=Core.Environment.Platform.render.metal type=Core.Member
+      - #5 id=-949585070 idx=5 name=Core.Environment.Platform.render.openGL type=Core.Member
+      - #6 id=-1765801281 idx=6 name=Core.Environment.Platform.render.openGLES type=Core.Member
+      - #7 id=-1183608137 idx=7 name=Core.Environment.Platform.render.webGPU type=Core.Member
+      - #8 id=-1127299861 idx=8 name=Core.Environment.Platform.render.software type=Core.Member
+      - #9 id=-1029318696 idx=9 name=Core.Environment.Platform.render.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+Class: Core.Environment.Platform.shaderModel
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-27864016 idx=0 name=Core.Environment.Platform.shaderModel.unknown type=Core.Member
+      - #1 id=1902251197 idx=1 name=Core.Environment.Platform.shaderModel.sm_5_0 type=Core.Member
+      - #2 id=1929444619 idx=2 name=Core.Environment.Platform.shaderModel.sm_6_0 type=Core.Member
+      - #3 id=1425634857 idx=3 name=Core.Environment.Platform.shaderModel.sm_6_5 type=Core.Member
+      - #4 id=1435789979 idx=4 name=Core.Environment.Platform.shaderModel.sm_6_6 type=Core.Member
+      - #5 id=-158328928 idx=5 name=Core.Environment.Platform.shaderModel.sm_6_7 type=Core.Member
+      - #6 id=1541925161 idx=6 name=Core.Environment.Platform.shaderModel.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

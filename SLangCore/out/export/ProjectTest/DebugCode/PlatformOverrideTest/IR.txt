@@ -1,0 +1,653 @@
+-------------------IR 文件显示 开始 : Path: PlatformOverrideTest.sl-----------------------
+Class: ProjectTest.PlatformOverrideTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.PlatformOverrideTest.check_2_Core.String_Core.Boolean
+    VirtualName: check_Core.Void_2_Core.String_Core.Boolean
+    Name: check
+    InterfaceMethod: False
+    Return:
+      - #0 id=14992050 idx=0 name=_local[ProjectTest.PlatformOverrideTest.check.return] type=Core.Void
+    Arguments:
+      - #0 id=710726 idx=0 name=_local[name] type=Core.String
+      - #1 id=6396536 idx=1 name=_local[cond] type=Core.Boolean
+    Locals:
+      - #0 id=57568825 idx=0 name=check_local[autocreate_15925039] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+2 2   [ PlatformOverrideTest.sl:23] [LoadArgument] index:[1] info:[Argument]
+3 3   [ PlatformOverrideTest.sl:21] [StoreLocal] index:[0] info:[if/elif store condition var]
+4 4   [ PlatformOverrideTest.sl:21] [LoadLocal] index:[0] info:[if/elif load condition var]
+5 5   [ PlatformOverrideTest.sl:23] [BrFalse] index:[14] info:[if/elif BrFalse]
+6 6   [ :0] [Nop] index:[0]
+7 7   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+8 8   [ PlatformOverrideTest.sl:25] [LoadArgument] index:[0] info:[Argument]
+9 9   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+10 10   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+11 11   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+12 12   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+13 13   [ PlatformOverrideTest.sl:26] [Br] index:[23] info:[if/elif/else block end Br]
+14 14   [ PlatformOverrideTest.sl:27] [Label] index:[1] info:[if/elif/else branch start]
+15 15   [ :0] [Nop] index:[0]
+16 16   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+17 17   [ PlatformOverrideTest.sl:29] [LoadArgument] index:[0] info:[Argument]
+18 18   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+19 19   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+20 20   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+21 21   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+22 22   [ PlatformOverrideTest.sl:30] [Br] index:[23] info:[if/elif/else block end Br]
+23 23   [ PlatformOverrideTest.sl:30] [Label] index:[2] info:[if end]
+24 24   [ PlatformOverrideTest.sl:21] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.PlatformOverrideTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=24633528 idx=0 name=_local[ProjectTest.PlatformOverrideTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=20375168 idx=0 name=fun_local[rawMem] type=Core.Int64
+      - #1 id=49158788 idx=1 name=fun_local[rawAvx2] type=Core.Boolean
+      - #2 id=710726 idx=2 name=_local[name] type=Core.String
+      - #3 id=6396536 idx=3 name=_local[cond] type=Core.Boolean
+      - #4 id=57568825 idx=4 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #5 id=710726 idx=5 name=_local[name] type=Core.String
+      - #6 id=6396536 idx=6 name=_local[cond] type=Core.Boolean
+      - #7 id=57568825 idx=7 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #8 id=710726 idx=8 name=_local[name] type=Core.String
+      - #9 id=6396536 idx=9 name=_local[cond] type=Core.Boolean
+      - #10 id=57568825 idx=10 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #11 id=710726 idx=11 name=_local[name] type=Core.String
+      - #12 id=6396536 idx=12 name=_local[cond] type=Core.Boolean
+      - #13 id=57568825 idx=13 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #14 id=710726 idx=14 name=_local[name] type=Core.String
+      - #15 id=6396536 idx=15 name=_local[cond] type=Core.Boolean
+      - #16 id=57568825 idx=16 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #17 id=710726 idx=17 name=_local[name] type=Core.String
+      - #18 id=6396536 idx=18 name=_local[cond] type=Core.Boolean
+      - #19 id=57568825 idx=19 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #20 id=710726 idx=20 name=_local[name] type=Core.String
+      - #21 id=6396536 idx=21 name=_local[cond] type=Core.Boolean
+      - #22 id=57568825 idx=22 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #23 id=710726 idx=23 name=_local[name] type=Core.String
+      - #24 id=6396536 idx=24 name=_local[cond] type=Core.Boolean
+      - #25 id=57568825 idx=25 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #26 id=710726 idx=26 name=_local[name] type=Core.String
+      - #27 id=6396536 idx=27 name=_local[cond] type=Core.Boolean
+      - #28 id=57568825 idx=28 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #29 id=710726 idx=29 name=_local[name] type=Core.String
+      - #30 id=6396536 idx=30 name=_local[cond] type=Core.Boolean
+      - #31 id=57568825 idx=31 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #32 id=710726 idx=32 name=_local[name] type=Core.String
+      - #33 id=6396536 idx=33 name=_local[cond] type=Core.Boolean
+      - #34 id=57568825 idx=34 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #35 id=710726 idx=35 name=_local[name] type=Core.String
+      - #36 id=6396536 idx=36 name=_local[cond] type=Core.Boolean
+      - #37 id=57568825 idx=37 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #38 id=710726 idx=38 name=_local[name] type=Core.String
+      - #39 id=6396536 idx=39 name=_local[cond] type=Core.Boolean
+      - #40 id=57568825 idx=40 name=check_local[autocreate_15925039] type=Core.Boolean
+      - #41 id=710726 idx=41 name=_local[name] type=Core.String
+      - #42 id=6396536 idx=42 name=_local[cond] type=Core.Boolean
+      - #43 id=57568825 idx=43 name=check_local[autocreate_15925039] type=Core.Boolean
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ PlatformOverrideTest.sl:35] [LoadConstString] index:[1836] val: string[========== PlatformOverrideTest (start) ==========] 
+2 2   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+3 3   [ :0] [CallStatic] index:[0] info:[CallStatic totalMemMB] val:[RuntimeCall{StaticRuntimeType=Core.Environment.probe, StaticRuntimeTypeList=[], Method=Core.Environment.probe.totalMemMB, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[0] info:[LocalStatement]
+5 5   [ PlatformOverrideTest.sl:38] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[Core.Environment.Platform.isa] staticOwner:[ProjectTest.PlatformOverrideTest] 
+6 6   [ :0] [CallStatic] index:[1] info:[CallStatic isaHas] val:[RuntimeCall{StaticRuntimeType=Core.Environment.probe, StaticRuntimeTypeList=[], Method=Core.Environment.probe.isaHas_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+7 7   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[1] info:[LocalStatement]
+8 8   [ PlatformOverrideTest.sl:41] [LoadConstString] index:[1837] val: string[SET source(memory) == jsonc] 
+9 9   [ PlatformOverrideTest.sl:41] [LoadConstString] index:[1804] val: string[memory] 
+10 10   [ :0] [CallStatic] index:[1] info:[CallStatic source] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.source_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+11 11   [ PlatformOverrideTest.sl:41] [LoadConstString] index:[1838] val: string[jsonc] 
+12 12   [ PlatformOverrideTest.sl:41] [Ceq] index:[0]
+13 13   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[3] info:[LocalStatement]
+14 14   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ :0] [Nop] index:[0]
+16 16   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+17 17   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[4] info:[if/elif store condition var]
+19 19   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[4] info:[if/elif load condition var]
+20 20   [ PlatformOverrideTest.sl:23] [BrFalse] index:[29] info:[if/elif BrFalse]
+21 21   [ :0] [Nop] index:[0]
+22 22   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+23 23   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[2] info:[LocalStatement]
+24 24   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+25 25   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+26 26   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ PlatformOverrideTest.sl:26] [Br] index:[38] info:[if/elif/else block end Br]
+29 29   [ PlatformOverrideTest.sl:27] [Label] index:[1] info:[if/elif/else branch start]
+30 30   [ :0] [Nop] index:[0]
+31 31   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+32 32   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[2] info:[LocalStatement]
+33 33   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+34 34   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+35 35   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ PlatformOverrideTest.sl:30] [Br] index:[38] info:[if/elif/else block end Br]
+38 38   [ PlatformOverrideTest.sl:30] [Label] index:[2] info:[if end]
+39 39   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+40 40   [ PlatformOverrideTest.sl:42] [LoadConstString] index:[1839] val: string[SET getValue(memory) == 256] 
+41 41   [ PlatformOverrideTest.sl:42] [LoadConstString] index:[1804] val: string[memory] 
+42 42   [ :0] [CallStatic] index:[1] info:[CallStatic getValue] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.getValue_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+43 43   [ PlatformOverrideTest.sl:42] [LoadConstString] index:[1840] val: string[256] 
+44 44   [ PlatformOverrideTest.sl:42] [Ceq] index:[0]
+45 45   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[6] info:[LocalStatement]
+46 46   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[5] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+49 49   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[6] info:[LocalStatement]
+50 50   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[7] info:[if/elif store condition var]
+51 51   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[7] info:[if/elif load condition var]
+52 52   [ PlatformOverrideTest.sl:23] [BrFalse] index:[61] info:[if/elif BrFalse]
+53 53   [ :0] [Nop] index:[0]
+54 54   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+55 55   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[5] info:[LocalStatement]
+56 56   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+57 57   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+58 58   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ PlatformOverrideTest.sl:26] [Br] index:[70] info:[if/elif/else block end Br]
+61 61   [ PlatformOverrideTest.sl:27] [Label] index:[3] info:[if/elif/else branch start]
+62 62   [ :0] [Nop] index:[0]
+63 63   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+64 64   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[5] info:[LocalStatement]
+65 65   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+66 66   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+67 67   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+68 68   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+69 69   [ PlatformOverrideTest.sl:30] [Br] index:[70] info:[if/elif/else block end Br]
+70 70   [ PlatformOverrideTest.sl:30] [Label] index:[4] info:[if end]
+71 71   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+72 72   [ PlatformOverrideTest.sl:43] [LoadConstString] index:[1841] val: string[SET current.totalMemMB == 256] 
+73 73   [ :0] [CallStatic] index:[0] info:[CallStatic totalMemMB] val:[RuntimeCall{StaticRuntimeType=Core.Environment.current, StaticRuntimeTypeList=[], Method=Core.Environment.current.totalMemMB, MethodRuntimeTypeList=[], ParamCount=0}] 
+74 74   [ PlatformOverrideTest.sl:43] [LoadConstInt32] index:[0] val: int32[256] 
+75 75   [ PlatformOverrideTest.sl:43] [Ceq] index:[0]
+76 76   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[9] info:[LocalStatement]
+77 77   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[8] info:[LocalStatement]
+78 78   [ :0] [Nop] index:[0]
+79 79   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+80 80   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[9] info:[LocalStatement]
+81 81   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[10] info:[if/elif store condition var]
+82 82   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[10] info:[if/elif load condition var]
+83 83   [ PlatformOverrideTest.sl:23] [BrFalse] index:[92] info:[if/elif BrFalse]
+84 84   [ :0] [Nop] index:[0]
+85 85   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+86 86   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[8] info:[LocalStatement]
+87 87   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+88 88   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+89 89   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+90 90   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+91 91   [ PlatformOverrideTest.sl:26] [Br] index:[101] info:[if/elif/else block end Br]
+92 92   [ PlatformOverrideTest.sl:27] [Label] index:[5] info:[if/elif/else branch start]
+93 93   [ :0] [Nop] index:[0]
+94 94   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+95 95   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[8] info:[LocalStatement]
+96 96   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+97 97   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+98 98   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+99 99   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+100 100   [ PlatformOverrideTest.sl:30] [Br] index:[101] info:[if/elif/else block end Br]
+101 101   [ PlatformOverrideTest.sl:30] [Label] index:[6] info:[if end]
+102 102   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+103 103   [ PlatformOverrideTest.sl:44] [LoadConstString] index:[1842] val: string[SET probe.totalMemMB unchanged] 
+104 104   [ :0] [CallStatic] index:[0] info:[CallStatic totalMemMB] val:[RuntimeCall{StaticRuntimeType=Core.Environment.probe, StaticRuntimeTypeList=[], Method=Core.Environment.probe.totalMemMB, MethodRuntimeTypeList=[], ParamCount=0}] 
+105 105   [ PlatformOverrideTest.sl:44] [LoadLocal] index:[0] info:[LocalStatement]
+106 106   [ PlatformOverrideTest.sl:44] [Ceq] index:[0]
+107 107   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[12] info:[LocalStatement]
+108 108   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[11] info:[LocalStatement]
+109 109   [ :0] [Nop] index:[0]
+110 110   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+111 111   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[12] info:[LocalStatement]
+112 112   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[13] info:[if/elif store condition var]
+113 113   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[13] info:[if/elif load condition var]
+114 114   [ PlatformOverrideTest.sl:23] [BrFalse] index:[123] info:[if/elif BrFalse]
+115 115   [ :0] [Nop] index:[0]
+116 116   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+117 117   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[11] info:[LocalStatement]
+118 118   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+119 119   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+120 120   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+121 121   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+122 122   [ PlatformOverrideTest.sl:26] [Br] index:[132] info:[if/elif/else block end Br]
+123 123   [ PlatformOverrideTest.sl:27] [Label] index:[7] info:[if/elif/else branch start]
+124 124   [ :0] [Nop] index:[0]
+125 125   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+126 126   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[11] info:[LocalStatement]
+127 127   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+128 128   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+129 129   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+130 130   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+131 131   [ PlatformOverrideTest.sl:30] [Br] index:[132] info:[if/elif/else block end Br]
+132 132   [ PlatformOverrideTest.sl:30] [Label] index:[8] info:[if end]
+133 133   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+134 134   [ PlatformOverrideTest.sl:45] [LoadConstString] index:[1843] val: string[SET probe not masked (raw != 256)] 
+135 135   [ :0] [CallStatic] index:[0] info:[CallStatic totalMemMB] val:[RuntimeCall{StaticRuntimeType=Core.Environment.probe, StaticRuntimeTypeList=[], Method=Core.Environment.probe.totalMemMB, MethodRuntimeTypeList=[], ParamCount=0}] 
+136 136   [ PlatformOverrideTest.sl:45] [LoadConstInt32] index:[0] val: int32[256] 
+137 137   [ PlatformOverrideTest.sl:45] [Cne] index:[0]
+138 138   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[15] info:[LocalStatement]
+139 139   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[14] info:[LocalStatement]
+140 140   [ :0] [Nop] index:[0]
+141 141   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+142 142   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[15] info:[LocalStatement]
+143 143   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[16] info:[if/elif store condition var]
+144 144   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[16] info:[if/elif load condition var]
+145 145   [ PlatformOverrideTest.sl:23] [BrFalse] index:[154] info:[if/elif BrFalse]
+146 146   [ :0] [Nop] index:[0]
+147 147   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+148 148   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[14] info:[LocalStatement]
+149 149   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+150 150   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+151 151   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+152 152   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+153 153   [ PlatformOverrideTest.sl:26] [Br] index:[163] info:[if/elif/else block end Br]
+154 154   [ PlatformOverrideTest.sl:27] [Label] index:[9] info:[if/elif/else branch start]
+155 155   [ :0] [Nop] index:[0]
+156 156   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+157 157   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[14] info:[LocalStatement]
+158 158   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+159 159   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+160 160   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+161 161   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+162 162   [ PlatformOverrideTest.sl:30] [Br] index:[163] info:[if/elif/else block end Br]
+163 163   [ PlatformOverrideTest.sl:30] [Label] index:[10] info:[if end]
+164 164   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+165 165   [ PlatformOverrideTest.sl:48] [LoadConstString] index:[1844] val: string[ENABLE source(cpu.avx2) == jsonc] 
+166 166   [ PlatformOverrideTest.sl:48] [LoadConstString] index:[1798] val: string[cpu.avx2] 
+167 167   [ :0] [CallStatic] index:[1] info:[CallStatic source] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.source_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+168 168   [ PlatformOverrideTest.sl:48] [LoadConstString] index:[1838] val: string[jsonc] 
+169 169   [ PlatformOverrideTest.sl:48] [Ceq] index:[0]
+170 170   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[18] info:[LocalStatement]
+171 171   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[17] info:[LocalStatement]
+172 172   [ :0] [Nop] index:[0]
+173 173   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+174 174   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[18] info:[LocalStatement]
+175 175   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[19] info:[if/elif store condition var]
+176 176   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[19] info:[if/elif load condition var]
+177 177   [ PlatformOverrideTest.sl:23] [BrFalse] index:[186] info:[if/elif BrFalse]
+178 178   [ :0] [Nop] index:[0]
+179 179   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+180 180   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[17] info:[LocalStatement]
+181 181   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+182 182   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+183 183   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+184 184   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+185 185   [ PlatformOverrideTest.sl:26] [Br] index:[195] info:[if/elif/else block end Br]
+186 186   [ PlatformOverrideTest.sl:27] [Label] index:[11] info:[if/elif/else branch start]
+187 187   [ :0] [Nop] index:[0]
+188 188   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+189 189   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[17] info:[LocalStatement]
+190 190   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+191 191   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+192 192   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+193 193   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+194 194   [ PlatformOverrideTest.sl:30] [Br] index:[195] info:[if/elif/else block end Br]
+195 195   [ PlatformOverrideTest.sl:30] [Label] index:[12] info:[if end]
+196 196   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+197 197   [ PlatformOverrideTest.sl:49] [LoadConstString] index:[1845] val: string[ENABLE isDisabled(cpu.avx2) == false] 
+198 198   [ PlatformOverrideTest.sl:49] [LoadConstString] index:[1798] val: string[cpu.avx2] 
+199 199   [ :0] [CallStatic] index:[1] info:[CallStatic isDisabled] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.isDisabled_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+200 200   [ PlatformOverrideTest.sl:49] [LoadConstBoolean] index:[0] val:[False] 
+201 201   [ PlatformOverrideTest.sl:49] [Ceq] index:[0]
+202 202   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[21] info:[LocalStatement]
+203 203   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[20] info:[LocalStatement]
+204 204   [ :0] [Nop] index:[0]
+205 205   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+206 206   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[21] info:[LocalStatement]
+207 207   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[22] info:[if/elif store condition var]
+208 208   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[22] info:[if/elif load condition var]
+209 209   [ PlatformOverrideTest.sl:23] [BrFalse] index:[218] info:[if/elif BrFalse]
+210 210   [ :0] [Nop] index:[0]
+211 211   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+212 212   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[20] info:[LocalStatement]
+213 213   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+214 214   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+215 215   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+216 216   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+217 217   [ PlatformOverrideTest.sl:26] [Br] index:[227] info:[if/elif/else block end Br]
+218 218   [ PlatformOverrideTest.sl:27] [Label] index:[13] info:[if/elif/else branch start]
+219 219   [ :0] [Nop] index:[0]
+220 220   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+221 221   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[20] info:[LocalStatement]
+222 222   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+223 223   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+224 224   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+225 225   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+226 226   [ PlatformOverrideTest.sl:30] [Br] index:[227] info:[if/elif/else block end Br]
+227 227   [ PlatformOverrideTest.sl:30] [Label] index:[14] info:[if end]
+228 228   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+229 229   [ PlatformOverrideTest.sl:50] [LoadConstString] index:[1846] val: string[ENABLE current.isaHas(avx2) forced true] 
+230 230   [ PlatformOverrideTest.sl:50] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[Core.Environment.Platform.isa] staticOwner:[ProjectTest.PlatformOverrideTest] 
+231 231   [ :0] [CallStatic] index:[1] info:[CallStatic isaHas] val:[RuntimeCall{StaticRuntimeType=Core.Environment.current, StaticRuntimeTypeList=[], Method=Core.Environment.current.isaHas_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+232 232   [ PlatformOverrideTest.sl:50] [LoadConstBoolean] index:[0] val:[True] 
+233 233   [ PlatformOverrideTest.sl:50] [Ceq] index:[0]
+234 234   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[24] info:[LocalStatement]
+235 235   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[23] info:[LocalStatement]
+236 236   [ :0] [Nop] index:[0]
+237 237   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+238 238   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[24] info:[LocalStatement]
+239 239   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[25] info:[if/elif store condition var]
+240 240   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[25] info:[if/elif load condition var]
+241 241   [ PlatformOverrideTest.sl:23] [BrFalse] index:[250] info:[if/elif BrFalse]
+242 242   [ :0] [Nop] index:[0]
+243 243   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+244 244   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[23] info:[LocalStatement]
+245 245   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+246 246   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+247 247   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+248 248   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+249 249   [ PlatformOverrideTest.sl:26] [Br] index:[259] info:[if/elif/else block end Br]
+250 250   [ PlatformOverrideTest.sl:27] [Label] index:[15] info:[if/elif/else branch start]
+251 251   [ :0] [Nop] index:[0]
+252 252   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+253 253   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[23] info:[LocalStatement]
+254 254   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+255 255   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+256 256   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+257 257   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+258 258   [ PlatformOverrideTest.sl:30] [Br] index:[259] info:[if/elif/else block end Br]
+259 259   [ PlatformOverrideTest.sl:30] [Label] index:[16] info:[if end]
+260 260   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+261 261   [ PlatformOverrideTest.sl:51] [LoadConstString] index:[1847] val: string[ENABLE probe.isaHas(avx2) stays raw] 
+262 262   [ PlatformOverrideTest.sl:51] [LoadStaticField] index:[5] info:[Static] fieldTypeIrmt:[Core.Environment.Platform.isa] staticOwner:[ProjectTest.PlatformOverrideTest] 
+263 263   [ :0] [CallStatic] index:[1] info:[CallStatic isaHas] val:[RuntimeCall{StaticRuntimeType=Core.Environment.probe, StaticRuntimeTypeList=[], Method=Core.Environment.probe.isaHas_1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+264 264   [ PlatformOverrideTest.sl:51] [LoadLocal] index:[1] info:[LocalStatement]
+265 265   [ PlatformOverrideTest.sl:51] [Ceq] index:[0]
+266 266   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[27] info:[LocalStatement]
+267 267   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[26] info:[LocalStatement]
+268 268   [ :0] [Nop] index:[0]
+269 269   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+270 270   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[27] info:[LocalStatement]
+271 271   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[28] info:[if/elif store condition var]
+272 272   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[28] info:[if/elif load condition var]
+273 273   [ PlatformOverrideTest.sl:23] [BrFalse] index:[282] info:[if/elif BrFalse]
+274 274   [ :0] [Nop] index:[0]
+275 275   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+276 276   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[26] info:[LocalStatement]
+277 277   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+278 278   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+279 279   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+280 280   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+281 281   [ PlatformOverrideTest.sl:26] [Br] index:[291] info:[if/elif/else block end Br]
+282 282   [ PlatformOverrideTest.sl:27] [Label] index:[17] info:[if/elif/else branch start]
+283 283   [ :0] [Nop] index:[0]
+284 284   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+285 285   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[26] info:[LocalStatement]
+286 286   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+287 287   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+288 288   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+289 289   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+290 290   [ PlatformOverrideTest.sl:30] [Br] index:[291] info:[if/elif/else block end Br]
+291 291   [ PlatformOverrideTest.sl:30] [Label] index:[18] info:[if end]
+292 292   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+293 293   [ PlatformOverrideTest.sl:54] [LoadConstString] index:[1848] val: string[DISABLE isDisabled(device.gpu) == true] 
+294 294   [ PlatformOverrideTest.sl:54] [LoadConstString] index:[1801] val: string[device.gpu] 
+295 295   [ :0] [CallStatic] index:[1] info:[CallStatic isDisabled] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.isDisabled_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+296 296   [ PlatformOverrideTest.sl:54] [LoadConstBoolean] index:[0] val:[True] 
+297 297   [ PlatformOverrideTest.sl:54] [Ceq] index:[0]
+298 298   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[30] info:[LocalStatement]
+299 299   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[29] info:[LocalStatement]
+300 300   [ :0] [Nop] index:[0]
+301 301   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+302 302   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[30] info:[LocalStatement]
+303 303   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[31] info:[if/elif store condition var]
+304 304   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[31] info:[if/elif load condition var]
+305 305   [ PlatformOverrideTest.sl:23] [BrFalse] index:[314] info:[if/elif BrFalse]
+306 306   [ :0] [Nop] index:[0]
+307 307   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+308 308   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[29] info:[LocalStatement]
+309 309   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+310 310   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+311 311   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+312 312   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+313 313   [ PlatformOverrideTest.sl:26] [Br] index:[323] info:[if/elif/else block end Br]
+314 314   [ PlatformOverrideTest.sl:27] [Label] index:[19] info:[if/elif/else branch start]
+315 315   [ :0] [Nop] index:[0]
+316 316   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+317 317   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[29] info:[LocalStatement]
+318 318   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+319 319   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+320 320   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+321 321   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+322 322   [ PlatformOverrideTest.sl:30] [Br] index:[323] info:[if/elif/else block end Br]
+323 323   [ PlatformOverrideTest.sl:30] [Label] index:[20] info:[if end]
+324 324   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+325 325   [ PlatformOverrideTest.sl:55] [LoadConstString] index:[1849] val: string[DISABLE source(device.gpu) == jsonc] 
+326 326   [ PlatformOverrideTest.sl:55] [LoadConstString] index:[1801] val: string[device.gpu] 
+327 327   [ :0] [CallStatic] index:[1] info:[CallStatic source] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.source_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+328 328   [ PlatformOverrideTest.sl:55] [LoadConstString] index:[1838] val: string[jsonc] 
+329 329   [ PlatformOverrideTest.sl:55] [Ceq] index:[0]
+330 330   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[33] info:[LocalStatement]
+331 331   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[32] info:[LocalStatement]
+332 332   [ :0] [Nop] index:[0]
+333 333   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+334 334   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[33] info:[LocalStatement]
+335 335   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[34] info:[if/elif store condition var]
+336 336   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[34] info:[if/elif load condition var]
+337 337   [ PlatformOverrideTest.sl:23] [BrFalse] index:[346] info:[if/elif BrFalse]
+338 338   [ :0] [Nop] index:[0]
+339 339   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+340 340   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[32] info:[LocalStatement]
+341 341   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+342 342   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+343 343   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+344 344   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+345 345   [ PlatformOverrideTest.sl:26] [Br] index:[355] info:[if/elif/else block end Br]
+346 346   [ PlatformOverrideTest.sl:27] [Label] index:[21] info:[if/elif/else branch start]
+347 347   [ :0] [Nop] index:[0]
+348 348   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+349 349   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[32] info:[LocalStatement]
+350 350   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+351 351   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+352 352   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+353 353   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+354 354   [ PlatformOverrideTest.sl:30] [Br] index:[355] info:[if/elif/else block end Br]
+355 355   [ PlatformOverrideTest.sl:30] [Label] index:[22] info:[if end]
+356 356   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+357 357   [ PlatformOverrideTest.sl:58] [LoadConstString] index:[1850] val: string[no-override source(os) is empty] 
+358 358   [ PlatformOverrideTest.sl:58] [LoadConstString] index:[1851] val: string[os] 
+359 359   [ :0] [CallStatic] index:[1] info:[CallStatic source] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.source_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+360 360   [ PlatformOverrideTest.sl:58] [LoadConstString] index:[2] val: string[] 
+361 361   [ PlatformOverrideTest.sl:58] [Ceq] index:[0]
+362 362   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[36] info:[LocalStatement]
+363 363   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[35] info:[LocalStatement]
+364 364   [ :0] [Nop] index:[0]
+365 365   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+366 366   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[36] info:[LocalStatement]
+367 367   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[37] info:[if/elif store condition var]
+368 368   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[37] info:[if/elif load condition var]
+369 369   [ PlatformOverrideTest.sl:23] [BrFalse] index:[378] info:[if/elif BrFalse]
+370 370   [ :0] [Nop] index:[0]
+371 371   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+372 372   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[35] info:[LocalStatement]
+373 373   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+374 374   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+375 375   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+376 376   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+377 377   [ PlatformOverrideTest.sl:26] [Br] index:[387] info:[if/elif/else block end Br]
+378 378   [ PlatformOverrideTest.sl:27] [Label] index:[23] info:[if/elif/else branch start]
+379 379   [ :0] [Nop] index:[0]
+380 380   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+381 381   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[35] info:[LocalStatement]
+382 382   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+383 383   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+384 384   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+385 385   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+386 386   [ PlatformOverrideTest.sl:30] [Br] index:[387] info:[if/elif/else block end Br]
+387 387   [ PlatformOverrideTest.sl:30] [Label] index:[24] info:[if end]
+388 388   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+389 389   [ PlatformOverrideTest.sl:59] [LoadConstString] index:[1852] val: string[no-override isDisabled(os) == false] 
+390 390   [ PlatformOverrideTest.sl:59] [LoadConstString] index:[1851] val: string[os] 
+391 391   [ :0] [CallStatic] index:[1] info:[CallStatic isDisabled] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.isDisabled_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+392 392   [ PlatformOverrideTest.sl:59] [LoadConstBoolean] index:[0] val:[False] 
+393 393   [ PlatformOverrideTest.sl:59] [Ceq] index:[0]
+394 394   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[39] info:[LocalStatement]
+395 395   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[38] info:[LocalStatement]
+396 396   [ :0] [Nop] index:[0]
+397 397   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+398 398   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[39] info:[LocalStatement]
+399 399   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[40] info:[if/elif store condition var]
+400 400   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[40] info:[if/elif load condition var]
+401 401   [ PlatformOverrideTest.sl:23] [BrFalse] index:[410] info:[if/elif BrFalse]
+402 402   [ :0] [Nop] index:[0]
+403 403   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+404 404   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[38] info:[LocalStatement]
+405 405   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+406 406   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+407 407   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+408 408   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+409 409   [ PlatformOverrideTest.sl:26] [Br] index:[419] info:[if/elif/else block end Br]
+410 410   [ PlatformOverrideTest.sl:27] [Label] index:[25] info:[if/elif/else branch start]
+411 411   [ :0] [Nop] index:[0]
+412 412   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+413 413   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[38] info:[LocalStatement]
+414 414   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+415 415   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+416 416   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+417 417   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+418 418   [ PlatformOverrideTest.sl:30] [Br] index:[419] info:[if/elif/else block end Br]
+419 419   [ PlatformOverrideTest.sl:30] [Label] index:[26] info:[if end]
+420 420   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+421 421   [ PlatformOverrideTest.sl:60] [LoadConstString] index:[1853] val: string[no-override getValue(os) is empty] 
+422 422   [ PlatformOverrideTest.sl:60] [LoadConstString] index:[1851] val: string[os] 
+423 423   [ :0] [CallStatic] index:[1] info:[CallStatic getValue] val:[RuntimeCall{StaticRuntimeType=Core.Environment.Override, StaticRuntimeTypeList=[], Method=Core.Environment.Override.getValue_1_Core.String, MethodRuntimeTypeList=[], ParamCount=1}] 
+424 424   [ PlatformOverrideTest.sl:60] [LoadConstString] index:[2] val: string[] 
+425 425   [ PlatformOverrideTest.sl:60] [Ceq] index:[0]
+426 426   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[42] info:[LocalStatement]
+427 427   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[41] info:[LocalStatement]
+428 428   [ :0] [Nop] index:[0]
+429 429   [ PlatformOverrideTest.sl:23] [Nop] index:[0] info:[if/elif/else branch start]
+430 430   [ PlatformOverrideTest.sl:23] [LoadLocal] index:[42] info:[LocalStatement]
+431 431   [ PlatformOverrideTest.sl:33] [StoreLocal] index:[43] info:[if/elif store condition var]
+432 432   [ PlatformOverrideTest.sl:33] [LoadLocal] index:[43] info:[if/elif load condition var]
+433 433   [ PlatformOverrideTest.sl:23] [BrFalse] index:[442] info:[if/elif BrFalse]
+434 434   [ :0] [Nop] index:[0]
+435 435   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+436 436   [ PlatformOverrideTest.sl:25] [LoadLocal] index:[41] info:[LocalStatement]
+437 437   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+438 438   [ PlatformOverrideTest.sl:25] [LoadConstString] index:[1834] val: string[ : OK] 
+439 439   [ PlatformOverrideTest.sl:25] [Add] index:[0]
+440 440   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+441 441   [ PlatformOverrideTest.sl:26] [Br] index:[451] info:[if/elif/else block end Br]
+442 442   [ PlatformOverrideTest.sl:27] [Label] index:[27] info:[if/elif/else branch start]
+443 443   [ :0] [Nop] index:[0]
+444 444   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1833] val: string[[PlatformOverrideTest] ] 
+445 445   [ PlatformOverrideTest.sl:29] [LoadLocal] index:[41] info:[LocalStatement]
+446 446   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+447 447   [ PlatformOverrideTest.sl:29] [LoadConstString] index:[1835] val: string[ : FAIL] 
+448 448   [ PlatformOverrideTest.sl:29] [Add] index:[0]
+449 449   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+450 450   [ PlatformOverrideTest.sl:30] [Br] index:[451] info:[if/elif/else block end Br]
+451 451   [ PlatformOverrideTest.sl:30] [Label] index:[28] info:[if end]
+452 452   [ PlatformOverrideTest.sl:21] [Nop] index:[0] info:[inline end: check]
+453 453   [ PlatformOverrideTest.sl:62] [LoadConstString] index:[1854] val: string[========== PlatformOverrideTest (end) ==========] 
+454 454   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+455 455   [ PlatformOverrideTest.sl:33] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,604 @@
+-------------------FileMeta 文件显示 开始 : Path: IfelseTest.sl-----------------------
+IfelseTest
+{
+    Class1
+    {
+    }
+    Class2
+    {
+        i = 0i
+
+    }
+
+    _public static string getWhenInstance( )
+    {
+        Class2 a = Class2();
+        if a != null
+        {
+            ret "non-null"
+        }
+        ret ""
+    }
+    _public static int chainWithNext( )
+    {
+        m = 0i;
+        if m >= 0i && m < 100i && m != 50i
+        {
+            m = 20i;
+            if m == 14i
+            {
+                m = 10i;
+            }
+            if m == 20i
+            {
+                m = 20i;
+            }
+            else
+            {
+                m = 30i;
+            }
+        }
+        else
+        {
+            m = 20i;
+        }
+        if true
+        {
+            int x1 = 200i;
+        }
+        elif 2i == 120i && false
+        {
+            m = 300i;
+        }
+        a = 30i;
+        if a == 25i
+        {
+            m = 20i;
+        }
+        elif a == 30i && a < 35i
+        {
+        }
+        elif a == 31i
+        {
+            m = 100i;
+        }
+        if false
+        {
+            int xxx = 100i;
+        }
+        ab = 1i;
+        if true
+        {
+            a = 20i;
+        }
+        else
+        {
+            a = 30i;
+        }
+        a = 10i;
+        if true
+        {
+            a = 20i;
+        }
+        elif a == 20i
+        {
+            if a / 10i == 2i
+            {
+                a = 30i;
+            }
+        }
+        elif a == 40i
+        {
+            a = 300i;
+        }
+        else
+        {
+            a = 10i;
+        }
+        ret m
+    }
+    _public static fun( )
+    {
+        global.println("========== IfelseTest (start) ==========");
+        aa = getWhenInstance();
+        global.println("getWhenInstance -> " + aa);
+        mFinal = chainWithNext();
+        global.println("chainWithNext m -> " + mFinal.toString());
+        basicBranchTest();
+        compareConditionTest();
+        logicConditionTest();
+        boolVarConditionTest();
+        numberEdgeConditionTest();
+        nestedIfTest();
+        assignFlowTest();
+        emptyBranchTest();
+        earlyReturnTest();
+        multiElifChainTest();
+        global.println("========== IfelseTest (end) ==========");
+        FunIfCondition();
+    }
+    _public static FunIfCondition( )
+    {
+        global.println("----- FunIfCondition (planned syntax, mostly commented) -----");
+        Class2 c2 = Class2();
+        c2.i = 7i;
+        if c2 != null && c2.i != 0i
+        {
+            global.println("FunIfCondition: c2.i -> " + c2.i.toString());
+        }
+    }
+    _public static basicBranchTest( )
+    {
+        global.println("----- basicBranchTest -----");
+        int a = 10i;
+        if a == 10i
+        {
+            global.println("if-true branch -> a == 10");
+        }
+        if a == 99i
+        {
+            global.println("unexpected: a == 99");
+        }
+        if a > 0i
+        {
+            global.println("if-else -> true branch");
+        }
+        else
+        {
+            global.println("if-else -> false branch");
+        }
+        if a < 0i
+        {
+            global.println("unexpected: a < 0");
+        }
+        else
+        {
+            global.println("if-else else -> a >= 0");
+        }
+        if a == 10i
+        {
+            global.println("chain -> hit if");
+        }
+        elif a == 20i
+        {
+            global.println("unexpected: hit elif(20)");
+        }
+        else
+        {
+            global.println("unexpected: hit else");
+        }
+        if a == 1i
+        {
+            global.println("unexpected: hit if(1)");
+        }
+        elif a == 10i
+        {
+            global.println("chain -> hit elif(10)");
+        }
+        else
+        {
+            global.println("unexpected: hit else");
+        }
+        if a == 1i
+        {
+            global.println("unexpected: hit if(1)");
+        }
+        elif a == 2i
+        {
+            global.println("unexpected: hit elif(2)");
+        }
+        else
+        {
+            global.println("chain -> hit else");
+        }
+    }
+    _public static compareConditionTest( )
+    {
+        global.println("----- compareConditionTest -----");
+        int x = 10i;
+        int y = 20i;
+        if x < y
+        {
+            global.println("x < y -> true");
+        }
+        else
+        {
+            global.println("x < y -> false");
+        }
+        if x <= 10i
+        {
+            global.println("x <= 10 -> true");
+        }
+        else
+        {
+            global.println("x <= 10 -> false");
+        }
+        if y > x
+        {
+            global.println("y > x -> true");
+        }
+        else
+        {
+            global.println("y > x -> false");
+        }
+        if y >= 20i
+        {
+            global.println("y >= 20 -> true");
+        }
+        else
+        {
+            global.println("y >= 20 -> false");
+        }
+        if x == 10i
+        {
+            global.println("x == 10 -> true");
+        }
+        else
+        {
+            global.println("x == 10 -> false");
+        }
+        if x != y
+        {
+            global.println("x != y -> true");
+        }
+        else
+        {
+            global.println("x != y -> false");
+        }
+        Num f = 1.5f;
+        if f > 1.0f && f < 2.0f
+        {
+            global.println("Num f in (1.0, 2.0) -> true");
+        }
+        else
+        {
+            global.println("Num f in (1.0, 2.0) -> false");
+        }
+    }
+    _public static logicConditionTest( )
+    {
+        global.println("----- logicConditionTest -----");
+        int a = 5i;
+        if a > 0i && a < 10i
+        {
+            global.println("a>0 && a<10 -> true");
+        }
+        int probe = 0i;
+        if a > 10i && a < 100i
+        {
+            probe = 1i;
+        }
+        if probe == 0i
+        {
+            global.println("a>10 && a<100 -> false (short-circuit)");
+        }
+        if a == 5i || a == 6i
+        {
+            global.println("a==5 || a==6 -> true");
+        }
+        if a == 7i || a == 8i
+        {
+            global.println("unexpected: a==7||a==8");
+        }
+        else
+        {
+            global.println("a==7 || a==8 -> false");
+        }
+        if ! ! a > 10i
+        {
+            global.println("!(a>10) -> true");
+        }
+        if a < 0i && a > 10i || a == 5i
+        {
+            global.println("a<0 && a>10 || a==5 -> true");
+        }
+        else
+        {
+            global.println("a<0 && a>10 || a==5 -> false");
+        }
+    }
+    _public static boolVarConditionTest( )
+    {
+        global.println("----- boolVarConditionTest -----");
+        bool flag = true;
+        bool open = false;
+        if flag
+        {
+            global.println("if flag(true) -> hit");
+        }
+        else
+        {
+            global.println("unexpected: flag else");
+        }
+        if open
+        {
+            global.println("unexpected: open true");
+        }
+        else
+        {
+            global.println("if open(false) -> else hit");
+        }
+        if flag && ! ! open
+        {
+            global.println("flag && !open -> true");
+        }
+        if ! ! open
+        {
+            global.println("!open -> true");
+        }
+        bool eq = (10i == 10i);
+        if eq
+        {
+            global.println("bool eq=(10==10) -> true");
+        }
+    }
+    _public static numberEdgeConditionTest( )
+    {
+        global.println("----- numberEdgeConditionTest -----");
+        int zero = 0i;
+        int neg = - - 3i;
+        if zero == 0i
+        {
+            global.println("zero == 0 -> true");
+        }
+        if zero >= 0i
+        {
+            global.println("zero >= 0 -> true");
+        }
+        if zero < 0i
+        {
+        }
+        else
+        {
+            global.println("zero < 0 -> false");
+        }
+        if neg < zero
+        {
+            global.println("neg < zero -> true");
+        }
+        else
+        {
+            global.println("unexpected: neg >= zero");
+        }
+        if neg * - - 1i > zero
+        {
+            global.println("neg*-1 > zero -> true");
+        }
+        if neg < - - 1i && neg > - - 5i
+        {
+            global.println("neg in (-5, -1) -> true");
+        }
+    }
+    _public static nestedIfTest( )
+    {
+        global.println("----- nestedIfTest -----");
+        int level = 2i;
+        if level > 0i
+        {
+            if level == 2i
+            {
+                global.println("nested L1(true) L2(true) -> hit");
+            }
+            else
+            {
+                global.println("unexpected: L2 else");
+            }
+        }
+        else
+        {
+            global.println("unexpected: L1 else");
+        }
+        if level > 10i
+        {
+            if level == 2i
+            {
+                global.println("unexpected: inner hit");
+            }
+        }
+        else
+        {
+            global.println("outer false -> else hit, inner skipped");
+        }
+        int v = 7i;
+        if v > 0i
+        {
+            if v > 5i
+            {
+                if v == 7i
+                {
+                    global.println("nested 3-level -> hit v == 7");
+                }
+                else
+                {
+                    global.println("unexpected: 3-level else");
+                }
+            }
+        }
+        if v > 10i
+        {
+            global.println("unexpected: v > 10");
+        }
+        elif v > 5i
+        {
+            if v == 7i
+            {
+                global.println("elif(v>5) + inner if(v==7) -> hit");
+            }
+            elif v == 6i
+            {
+                global.println("unexpected: v == 6");
+            }
+        }
+        else
+        {
+            global.println("unexpected: v <= 5");
+        }
+    }
+    _public static assignFlowTest( )
+    {
+        global.println("----- assignFlowTest -----");
+        int m = 0i;
+        if m == 0i
+        {
+            m = 10i;
+        }
+        if m == 10i
+        {
+            m = 20i;
+        }
+        else
+        {
+            m = - - 1i;
+        }
+        global.println("assignFlow m -> " + m.toString());
+        int n = 5i;
+        if n > 100i
+        {
+            n = 1000i;
+        }
+        else
+        {
+            n = 50i;
+        }
+        global.println("assignFlow n -> " + n.toString());
+        int k = 3i;
+        if k == 1i
+        {
+            k = 100i;
+        }
+        elif k == 3i
+        {
+            k = 30i;
+        }
+        else
+        {
+            k = 0i;
+        }
+        global.println("assignFlow k -> " + k.toString());
+    }
+    _public static emptyBranchTest( )
+    {
+        global.println("----- emptyBranchTest -----");
+        int a = 1i;
+        if a == 1i
+        {
+        }
+        if a == 2i
+        {
+            global.println("unexpected: a == 2");
+        }
+        else
+        {
+        }
+        if a == 1i
+        {
+        }
+        global.println("emptyBranch -> after empty if, still runs");
+        if a == 1i
+        {
+            a = 2i;
+        }
+        if a == 2i
+        {
+            global.println("single-line then -> hit");
+        }
+        else
+        {
+        }
+    }
+    _public static earlyReturnTest( )
+    {
+        global.println("----- earlyReturnTest -----");
+        global.println("earlyReturn(if hit) -> " + pick(1i).toString());
+        global.println("earlyReturn(elif hit) -> " + pick(2i).toString());
+        global.println("earlyReturn(else hit) -> " + pick(9i).toString());
+        global.println("earlyReturn(nested) -> " + pickNested(5i).toString());
+    }
+    _public static int pick( int v )
+    {
+        if v == 1i
+        {
+            ret 100i
+        }
+        elif v == 2i
+        {
+            ret 200i
+        }
+        else
+        {
+            ret - - 1i
+        }
+    }
+    _public static int pickNested( int v )
+    {
+        if v > 0i
+        {
+            if v > 10i
+            {
+                ret 10i
+            }
+            ret 1i
+        }
+        ret 0i
+    }
+    _public static multiElifChainTest( )
+    {
+        global.println("----- multiElifChainTest -----");
+        int calls = 0i;
+        int s = 90i;
+        if s >= 60i
+        {
+            calls = calls + 1i;
+        }
+        elif s >= 70i
+        {
+            calls = calls + 1i;
+        }
+        elif s >= 80i
+        {
+            calls = calls + 1i;
+        }
+        else
+        {
+            calls = calls + 1i;
+        }
+        if calls == 1i
+        {
+            global.println("multiElif -> only first match evaluated");
+        }
+        else
+        {
+            global.println("unexpected: multiElif calls -> " + calls.toString());
+        }
+        grade(95i);
+        grade(85i);
+        grade(75i);
+        grade(65i);
+        grade(55i);
+        grade(0i);
+    }
+    _public static grade( int score )
+    {
+        if score >= 90i
+        {
+            global.println("grade(" + score.toString() + ") -> A");
+        }
+        elif score >= 80i
+        {
+            global.println("grade(" + score.toString() + ") -> B");
+        }
+        elif score >= 70i
+        {
+            global.println("grade(" + score.toString() + ") -> C");
+        }
+        elif score >= 60i
+        {
+            global.println("grade(" + score.toString() + ") -> D");
+        }
+        else
+        {
+            global.println("grade(" + score.toString() + ") -> F");
+        }
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

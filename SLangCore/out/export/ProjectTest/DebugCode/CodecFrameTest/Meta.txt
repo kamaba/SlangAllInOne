@@ -1,0 +1,387 @@
+-------------------Meta 文件显示 开始 : Path: CodecFrameTest.sl-----------------------
+CodecFrameMsg
+{
+    int intid = 0i
+    string stringname = ""
+
+    _public void _init_( int i,  string n )
+    {
+        this.id = i;
+        this.name = n;
+    }
+}
+data CodecUserData
+{
+    uid = 0i
+    name = ""
+    score = 0.0f
+}
+CodecFrameTest
+{
+     staticint intg_hCount = 0i
+     staticstring stringg_hNames = ""
+     staticbool boolg_hDone = false
+     staticbool boolg_hErr = false
+     staticint intg_hCount2 = 0i
+     staticbool boolg_hErr2 = false
+     staticint intg_tickCount = 0i
+     staticint intg_tickLast = 0i
+
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            global.println("[CodecFrameTest] " + name + " : OK");
+        }
+        else
+        {
+            global.println("[CodecFrameTest] " + name + " : FAIL");
+        }
+    }
+    _public static throws ByteBuffer cfEncodeMsg( object v )
+    {
+        CodecFrameMsg m = vas CodecFrameMsg;
+        w = ProtocalBuffers.newWriter();
+        w.writeInt32(1i,m.id);
+        w.writeString(2i,m.name);
+        ret ByteBuffer.fromBytes(w.toBytes())
+    }
+    _public static throws CodecFrameMsg cfDecodeMsg( ByteBuffer b )
+    {
+        r = ProtocalBuffers.newReader(b.toArray());
+        Int32 id = 0i;
+        string name = "";
+        while ! ! r.atEnd
+        {
+            PbTag t = r.readTag();
+            if t.fieldNumber == 1i
+            {
+                id = r.readInt32();
+            }
+            else
+            {
+                if t.fieldNumber == 2i
+                {
+                    name = r.readString();
+                }
+            }
+        }
+        ret CodecFrameMsg(id,name)
+    }
+    _public static throws ByteBuffer cfBinEncode( object v )
+    {
+        CodecFrameMsg m = vas CodecFrameMsg;
+        b = ByteBuffer(64i);
+        b.writeVarUint(SystemConvertInt64(m.id));
+        b.writeString(m.name);
+        ret b
+    }
+    _public static throws CodecFrameMsg cfBinDecode( ByteBuffer b )
+    {
+        u = b.readVarUint();
+        Int64 id64 = SystemConvertInt64FromUInt64(u);
+        Int32 id = SystemConvertInt32(id64);
+        string name = b.readString(b.readableBytes);
+        ret CodecFrameMsg(id,name)
+    }
+    _public static ProtoCodec<CodecFrameMsg> cfMakeCodec( )
+    {
+        var enc = function(  object v )
+            {
+                object b = try? try? CodecFrameTest.cfEncodeMsg(v);
+                ret b
+            }
+        var dec = function(  object v )
+            {
+                ByteBuffer b = vas ByteBuffer;
+                object m = try? try? CodecFrameTest.cfDecodeMsg(b);
+                ret m
+            }
+        pc = ProtoCodec(enc,dec);
+        ret pc
+    }
+    _public static testGroupA( )
+    {
+        global.println("========== A: LengthPrefix 帧原语 ==========");
+        payload1 = ByteBuffer.fromString("ABCD");
+        dst1 = ByteBuffer();
+        LengthPrefix.writeFrame(dst1,payload1);
+        check("A1 writeFrame bytes",dst1.readableBytes == 5i && dst1.toHex() == "0441424344");
+        frame1 = LengthPrefix.tryReadFrame(dst1,LengthPrefix.defaultMaxFrame());
+        check("A1 tryReadFrame roundtrip",frame1 != null && frame1.readableBytes == 4i && frame1.toString() == "ABCD");
+        UInt8[] four = Array<UInt8>.create(4i);
+        four[0i] = 222i;
+        four[1i] = 173i;
+        four[2i] = 190i;
+        four[3i] = 239i;
+        dst2 = ByteBuffer();
+        LengthPrefix.writeFrameBytes(dst2,four);
+        check("A2 writeFrameBytes",dst2.readableBytes == 5i && dst2.toHex() == "04deadbeef");
+        src3a = ByteBuffer.fromHex("05");
+        Int32 r3a = LengthPrefix.readFrameLength(src3a,65536i);
+        check("A3 half frame",r3a == - - 1i && src3a.readerIndex == 0i);
+        src3b = ByteBuffer.fromHex("2a");
+        Int32 r3b = LengthPrefix.readFrameLength(src3b,8i);
+        check("A3 over max",r3b == - - 2i && src3b.readerIndex == 0i);
+        src3c = ByteBuffer.fromHex("80");
+        Int32 r3c = LengthPrefix.readFrameLength(src3c,65536i);
+        check("A3 truncated varint",r3c == - - 1i && src3c.readerIndex == 0i);
+        src3d = ByteBuffer();
+        Int32 r3d = LengthPrefix.readFrameLength(src3d,65536i);
+        f3d = LengthPrefix.tryReadFrame(src3d,65536i);
+        check("A3 empty",r3d == - - 1i && f3d == null);
+        src4 = ByteBuffer.fromHex("024142024344");
+        f4a = LengthPrefix.tryReadFrame(src4,65536i);
+        f4b = LengthPrefix.tryReadFrame(src4,65536i);
+        f4c = LengthPrefix.tryReadFrame(src4,65536i);
+        check("A4 sticky frames",f4a != null && f4a.toString() == "AB" && f4b != null && f4b.toString() == "CD" && f4c == null);
+        acc5 = ByteBuffer(64i);
+        acc5.writeBytes(ByteBuffer.fromHex("0361"));
+        f5a = LengthPrefix.tryReadFrame(acc5,65536i);
+        acc5.writeBytes(ByteBuffer.fromHex("6263"));
+        f5b = LengthPrefix.tryReadFrame(acc5,65536i);
+        check("A5 partial resume",f5a == null && f5b != null && f5b.toString() == "abc");
+        src6 = ByteBuffer.fromHex("0a41414141414141414141");
+        bool a6 = false;
+        try
+        {
+            ;
+        }
+        catch
+        {
+            a6 = true;
+        }
+        check("A6 frame too large",a6);
+    }
+    _public static testGroupB( )
+    {
+        global.println("========== B: encodeSink + decodeStream ==========");
+        ms1 = MemoryStream();
+        StreamSink<CodecFrameMsg> k1 = LengthPrefix.encodeSink(ms1,cfMakeCodec());
+        k1.add(CodecFrameMsg(1i,"one"));
+        k1.add(CodecFrameMsg(2i,"two"));
+        k1.add(CodecFrameMsg(3i,"three"));
+        k1.close();
+        Stream<CodecFrameMsg> s1 = LengthPrefix.decodeStream(ms1,cfMakeCodec());
+        Task t1 = s1.toListThenTask();
+        object r1 = Coroutine.awaitTask(t1);
+        List<CodecFrameMsg> lst1 = r1as List<CodecFrameMsg>;
+        int b1cnt = 0i;
+        int b1sum = 0i;
+        string b1names = "";
+        if lst1 != null
+        {
+            
+            for v in lst1
+            {
+                CodecFrameMsg m = vas CodecFrameMsg;
+                if m != null
+                {
+                    b1cnt = b1cnt + 1i;
+                    b1sum = b1sum + m.id;
+                    b1names = b1names + m.name;
+                }
+            }
+        }
+        check("B1 stream roundtrip",b1cnt == 3i && b1sum == 6i && b1names == "onetwothree");
+        ms2 = MemoryStream();
+        k2 = _FrameEncodeSink(ms2,cfMakeCodec(),8i);
+        k2.add(CodecFrameMsg(1i,"one"));
+        bool b2over = false;
+        try
+        {
+            ;
+        }
+        catch
+        {
+            b2over = true;
+        }
+        string b2hex = ms2.toByteBuffer().toHex();
+        check("B2 over limit",b2over && b2hex == "07080112036f6e65");
+    }
+    _public static testGroupC( )
+    {
+        global.println("========== C: ProtoCodec 往返 ==========");
+        ProtoCodec<CodecFrameMsg> codec = cfMakeCodec();
+        CodecFrameMsg msg = CodecFrameMsg(42i,"rt");
+        ByteBuffer b = Serialize.toBytes(msg,codec);
+        check("C1 proto encode hex",b.toHex() == "082a12027274");
+        CodecFrameMsg back = Serialize.fromBytes(b,codec);
+        check("C2 proto decode",back != null && back.id == 42i && back.name == "rt");
+    }
+    _public static testGroupD( )
+    {
+        global.println("========== D: Utf8Codec ==========");
+        Utf8Codec u8 = Utf8Codec();
+        Array<UInt8> enc = u8.encode("你好SL");
+        check("D1 utf8 encode",enc != null && enc.length == 8i);
+        string dec = u8.decode(enc);
+        check("D2 utf8 decode",dec == "你好SL");
+    }
+    _public static testGroupE( )
+    {
+        global.println("========== E: BinaryCodec ==========");
+        var benc = function(  object v )
+            {
+                object b = try? try? CodecFrameTest.cfBinEncode(v);
+                ret b
+            }
+        var bdec = function(  object v )
+            {
+                ByteBuffer b = vas ByteBuffer;
+                object m = try? try? CodecFrameTest.cfBinDecode(b);
+                ret m
+            }
+        BinaryCodec bc = BinaryCodec.of(benc,bdec);
+        CodecFrameMsg em = CodecFrameMsg(7i,"bc");
+        ByteBuffer eb = bc.encode(em);
+        check("E1 binary encode hex",eb.toHex() == "076263");
+        object edo = bc.decode(eb);
+        CodecFrameMsg ed = edoas CodecFrameMsg;
+        check("E2 binary decode",ed != null && ed.id == 7i && ed.name == "bc");
+    }
+    _public static testGroupF( )
+    {
+        global.println("========== F: JsonCodec ==========");
+        JsonCodec<CodecUserData> jc = JsonCodec();
+        CodecUserData ud = CodecUserData(){uid = 7i,name = "json",score = 1.5f};
+        string txt = Serialize.toText(ud,jc);
+        CodecUserData back = Serialize.fromText(txt,jc);
+        check("F1 json roundtrip",back != null && back.uid == 7i && back.name == "json" && back.score > 1.4f && back.score < 1.6f);
+    }
+    _public static testGroupG( )
+    {
+        global.println("========== G: Serialize ==========");
+        ProtoCodec<CodecFrameMsg> codec = cfMakeCodec();
+        CodecFrameMsg msg = CodecFrameMsg(42i,"rt");
+        ms1 = MemoryStream();
+        Task t1 = Serialize.toStream(msg,ms1,codec);
+        object r1 = Coroutine.awaitTask(t1);
+        Task t2 = Serialize.fromStream(ms1,codec);
+        object r2 = Coroutine.awaitTask(t2);
+        CodecFrameMsg g1back = r2as CodecFrameMsg;
+        check("G1 toStream/fromStream",g1back != null && g1back.id == 42i && g1back.name == "rt");
+        ms2 = MemoryStream();
+        StreamSink<CodecFrameMsg> k2 = LengthPrefix.encodeSink(ms2,codec);
+        k2.add(CodecFrameMsg(1i,"e1"));
+        k2.add(CodecFrameMsg(2i,"e2"));
+        k2.close();
+        Stream<CodecFrameMsg> s2 = Serialize.toElementStream(ms2,codec);
+        Task t3 = s2.toListThenTask();
+        object r3 = Coroutine.awaitTask(t3);
+        List<CodecFrameMsg> lst2 = r3as List<CodecFrameMsg>;
+        int g2cnt = 0i;
+        string g2names = "";
+        if lst2 != null
+        {
+            
+            for v in lst2
+            {
+                CodecFrameMsg m = vas CodecFrameMsg;
+                if m != null
+                {
+                    g2cnt = g2cnt + 1i;
+                    g2names = g2names + m.name;
+                }
+            }
+        }
+        check("G2 toElementStream",g2cnt == 2i && g2names == "e1e2");
+    }
+    _public static testGroupH( )
+    {
+        global.println("========== H: bindStream chunked ==========");
+        CodecFrameTest.g_hCount = 0i;
+        CodecFrameTest.g_hNames = "";
+        CodecFrameTest.g_hDone = false;
+        CodecFrameTest.g_hErr = false;
+        StreamController<ByteBuffer> ctrl1 = StreamController();
+        Stream<ByteBuffer> cs1 = ctrl1.stream;
+        Stream<CodecFrameMsg> s1 = LengthPrefix.bindStream(cs1,cfMakeCodec());
+        var onData1 = function(  object v )
+            {
+                CodecFrameMsg m = vas CodecFrameMsg;
+                if m != null
+                {
+                    CodecFrameTest.g_hCount = CodecFrameTest.g_hCount + 1i;
+                    CodecFrameTest.g_hNames = CodecFrameTest.g_hNames + m.name;
+                }
+            }
+        var onError1 = function(  object e )
+            {
+                CodecFrameTest.g_hErr = true;
+            }
+        var onDone1 = function(  )
+            {
+                CodecFrameTest.g_hDone = true;
+            }
+        s1.listen(onData1,onError1,onDone1,false);
+        ctrl1.add(ByteBuffer.fromHex("05"));
+        ctrl1.add(ByteBuffer.fromHex("080112"));
+        ctrl1.add(ByteBuffer.fromHex("01610508"));
+        ctrl1.add(ByteBuffer.fromHex("01120162"));
+        ctrl1.close();
+        Coroutine.delay(50i);
+        check("H1 chunked decode",g_hCount == 2i && g_hNames == "ab" && g_hDone && ! ! g_hErr);
+        CodecFrameTest.g_hCount2 = 0i;
+        CodecFrameTest.g_hErr2 = false;
+        StreamController<ByteBuffer> ctrl2 = StreamController();
+        Stream<ByteBuffer> cs2 = ctrl2.stream;
+        Stream<CodecFrameMsg> s2 = LengthPrefix.bindStream(cs2,cfMakeCodec());
+        var onData2 = function(  object v )
+            {
+                CodecFrameTest.g_hCount2 = CodecFrameTest.g_hCount2 + 1i;
+            }
+        var onError2 = function(  object e )
+            {
+                CodecFrameTest.g_hErr2 = true;
+            }
+        s2.listen(onData2,onError2,null,false);
+        ctrl2.add(ByteBuffer.fromHex("05080112"));
+        ctrl2.close();
+        Coroutine.delay(50i);
+        check("H2 truncated eof",g_hErr2 && g_hCount2 == 0i);
+    }
+    _public static testGroupI( )
+    {
+        global.println("========== I: Stream.periodic ==========");
+        CodecFrameTest.g_tickCount = 0i;
+        CodecFrameTest.g_tickLast = 0i;
+        var tick = function(  )
+            {
+                CodecFrameTest.g_tickCount = CodecFrameTest.g_tickCount + 1i;
+                ret CodecFrameTest.g_tickCount
+            }
+        var onTick = function(  object v )
+            {
+                int x = vas int;
+                CodecFrameTest.g_tickLast = x;
+            }
+        Stream<Int32> ps = Stream<Int32>.periodic(10i,tick);
+        StreamSubscription sub = ps.listen(onTick);
+        int spin = 0i;
+        while CodecFrameTest.g_tickCount < 3i && spin < 200i
+        {
+            Coroutine.delay(5i);
+            spin = spin + 1i;
+        }
+        int snap = CodecFrameTest.g_tickCount;
+        sub.cancel();
+        Coroutine.delay(60i);
+        check("I periodic cancel",snap >= 3i && g_tickCount == snap && g_tickLast >= 3i);
+    }
+    _public static fun( )
+    {
+        global.println("===== CodecFrameTest start =====");
+        testGroupA();
+        testGroupB();
+        testGroupC();
+        testGroupD();
+        testGroupE();
+        testGroupF();
+        testGroupG();
+        testGroupH();
+        testGroupI();
+        global.println("===== CodecFrameTest end =====");
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

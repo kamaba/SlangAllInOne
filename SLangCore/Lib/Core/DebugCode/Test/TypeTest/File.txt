@@ -1,0 +1,24 @@
+-------------------FileMeta 文件显示 开始 : Path: Test/TypeTest.sl-----------------------
+ ;
+_public _partial _class TypeTest
+{
+    _public static fun( )
+    {
+        t = float.type();
+        global.println("int.type() -> " + t.toString());
+        int i2 = 20;
+        t2 = i2.type;
+        global.println("i2.type -> " + t2.toString());
+        if t == t2
+        {
+            global.println("int.type == i2.type : true");
+        }
+        else
+        {
+            global.println("int.type == i2.type : false");
+        }
+        tg = Array<int>.type;
+        global.println("Array<int>.type -> " + tg.toString());
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

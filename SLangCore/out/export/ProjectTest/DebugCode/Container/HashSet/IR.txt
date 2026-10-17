@@ -1,0 +1,730 @@
+-------------------IR 文件显示 开始 : Path: Container/HashSet.sl-----------------------
+Class: Core.SetEntity<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1220054060 idx=0 name=Core.SetEntity<T>.hashId type=Core.Int32
+      - #1 id=1108264883 idx=1 name=Core.SetEntity<T>.value type=T[0]
+      - #2 id=452468618 idx=2 name=Core.SetEntity<T>.link type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.SetEntity<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53064224 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=50635267 idx=0 name=this] type=Core.SetEntity<T><T[0]>
+    Locals:
+      - #0 id=7815975 idx=0 name=vstr type=Core.String
+      - #1 id=3234911 idx=1 name=autocreate_30316242 type=Core.Boolean
+    Instructions:
+
+Class: Core.HashSet<T>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=2131096403 idx=0 name=Core.HashSet<T>._buckets type=Core.Array<T><Core.Int32>
+      - #1 id=816579245 idx=1 name=Core.HashSet<T>._entries type=Core.Array<T><Core.SetEntity<T><T[0]>>
+      - #2 id=1177590895 idx=2 name=Core.HashSet<T>._count type=Core.Int32
+      - #3 id=-1434464592 idx=3 name=Core.HashSet<T>._freeList type=Core.Int32
+      - #4 id=-7048930 idx=4 name=Core.HashSet<T>._freeCount type=Core.Int32
+      - #5 id=-875026846 idx=5 name=Core.HashSet<T>._index type=Core.Int32
+      - #6 id=314969601 idx=6 name=Core.HashSet<T>._current type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=51642735 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=28107703 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=22312013 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=62131436 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=66590397 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=62442668 idx=1 name=showstr type=Core.String
+      - #2 id=25113108 idx=2 name=first_ type=Core.Int32
+      - #3 id=24691380 idx=3 name=i type=Core.Int32
+      - #4 id=20895830 idx=4 name=v type=T[0]
+      - #5 id=53844748 idx=5 name=autocreate_8622890 type=Core.Boolean
+      - #6 id=14840685 idx=6 name=autocreate_10497152 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42578285 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19644001 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=47660253 idx=1 name=capacity type=Core.Int32
+    Locals:
+      - #0 id=26289097 idx=0 name=autocreate_4410728 type=Core.Boolean
+      - #1 id=35275281 idx=1 name=autocreate_39696553 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>._init__1_Core.Array<T>[-1]
+    VirtualName: _init__Core.Void_1_Core.Array<T>[-1]
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49761220 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=12985564 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=45197797 idx=1 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=4126994 idx=0 name=autocreate_21724664 type=Core.Boolean
+      - #1 id=61304253 idx=1 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.HashSet<T>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=1967662 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=22588250 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=25140036 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=25162958 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=24933735 idx=0 name=autocreate_14867369 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.isNotEmpty
+    VirtualName: isNotEmpty_Core.Boolean_0
+    Name: isNotEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=45934497 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=57299616 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=10757292 idx=0 name=autocreate_66697461 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.capacity
+    VirtualName: capacity_Core.Int32_0
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=47182091 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=57438237 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=21985640 idx=0 name=autocreate_63406242 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.capacity_1_Core.Int32
+    VirtualName: capacity_Core.Void_1_Core.Int32
+    Name: capacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=43789187 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=4865465 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=58558366 idx=1 name=value type=Core.Int32
+    Locals:
+      - #0 id=57263252 idx=0 name=autocreate_33785274 type=Core.Boolean
+      - #1 id=45607220 idx=1 name=autocreate_35632012 type=Core.Boolean
+      - #2 id=7811801 idx=2 name=autocreate_52252659 type=Core.Boolean
+      - #3 id=3197346 idx=3 name=autocreate_511887 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.grow
+    VirtualName: grow_Core.Void_0
+    Name: grow
+    InterfaceMethod: False
+    Return:
+      - #0 id=24837051 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40042374 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=22206875 idx=0 name=newCapacity type=Core.Int32
+      - #1 id=65644149 idx=1 name=autocreate_4606985 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.ensureCapacity_1_Core.Int32
+    VirtualName: ensureCapacity_Core.Void_1_Core.Int32
+    Name: ensureCapacity
+    InterfaceMethod: False
+    Return:
+      - #0 id=5965194 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=15575880 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=53686747 idx=1 name=min type=Core.Int32
+    Locals:
+      - #0 id=13418676 idx=0 name=curCap type=Core.Int32
+      - #1 id=53659222 idx=1 name=autocreate_41462866 type=Core.Boolean
+      - #2 id=13170954 idx=2 name=autocreate_37621475 type=Core.Boolean
+      - #3 id=51429730 idx=3 name=newCapacity type=Core.Int32
+      - #4 id=60214390 idx=4 name=autocreate_3048957 type=Core.Boolean
+      - #5 id=5058598 idx=5 name=autocreate_27440617 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.resize_1_Core.Int32
+    VirtualName: resize_Core.Void_1_Core.Int32
+    Name: resize
+    InterfaceMethod: False
+    Return:
+      - #0 id=41567079 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=4618564 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=38559395 idx=1 name=newSize type=Core.Int32
+    Locals:
+      - #0 id=11490242 idx=0 name=autocreate_45638969 type=Core.Boolean
+      - #1 id=36303315 idx=1 name=autocreate_8097541 type=Core.Boolean
+      - #2 id=58294385 idx=2 name=autocreate_5769005 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.getHash_1_T
+    VirtualName: getHash_Core.Int32_1_T
+    Name: getHash
+    InterfaceMethod: False
+    Return:
+      - #0 id=52327117 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=13270664 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=1182010 idx=1 name=item type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.add_1_T
+    VirtualName: add_Core.Boolean_1_T
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=56379492 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=28634009 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=37653388 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=3336177 idx=0 name=ent type=Core.SetEntity<T><T[0]>
+      - #1 id=30025596 idx=1 name=autocreate_51921052 type=Core.Boolean
+      - #2 id=1794910 idx=2 name=autocreate_64636290 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.addRange_1_Core.Array<T>[-1]
+    VirtualName: addRange_Core.Void_1_Core.Array<T>[-1]
+    Name: addRange
+    InterfaceMethod: False
+    Return:
+      - #0 id=24022075 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=54864902 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=14872087 idx=1 name=items type=Core.Array<T><T[0]>
+    Locals:
+      - #0 id=66739923 idx=0 name=autocreate_44855704 type=Core.Boolean
+      - #1 id=1048160 idx=1 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.HashSet<T>.contains_1_T
+    VirtualName: contains_Core.Boolean_1_T
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=22076423 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=24822557 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=64470080 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=43359809 idx=0 name=autocreate_9433441 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.remove_1_T
+    VirtualName: remove_Core.Boolean_1_T
+    Name: remove
+    InterfaceMethod: False
+    Return:
+      - #0 id=9234211 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=1026023 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=15999035 idx=1 name=item type=T[0]
+    Locals:
+      - #0 id=9773594 idx=0 name=autocreate_17792110 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=35590047 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11410990 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.unionWith_1_Core.HashSet<T>
+    VirtualName: unionWith_Core.Void_1_Core.HashSet<T>
+    Name: unionWith
+    InterfaceMethod: False
+    Return:
+      - #0 id=64221564 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=51874972 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=41123170 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.intersectWith_1_Core.HashSet<T>
+    VirtualName: intersectWith_Core.Void_1_Core.HashSet<T>
+    Name: intersectWith
+    InterfaceMethod: False
+    Return:
+      - #0 id=42642473 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=34564214 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=48237940 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.exceptWith_1_Core.HashSet<T>
+    VirtualName: exceptWith_Core.Void_1_Core.HashSet<T>
+    Name: exceptWith
+    InterfaceMethod: False
+    Return:
+      - #0 id=14959071 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=31488280 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=413912 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.symmetricExceptWith_1_Core.HashSet<T>
+    VirtualName: symmetricExceptWith_Core.Void_1_Core.HashSet<T>
+    Name: symmetricExceptWith
+    InterfaceMethod: False
+    Return:
+      - #0 id=33526929 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=3725214 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=33306906 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.union_1_Core.HashSet<T>
+    VirtualName: union_Core.HashSet<T>_1_Core.HashSet<T>
+    Name: union
+    InterfaceMethod: False
+    Return:
+      - #0 id=13504826 idx=0 name=return] type=Core.HashSet<T><T[0]>
+    Arguments:
+      - #0 id=31326698 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=54434571 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=20149094 idx=0 name=result type=Core.HashSet<T><T[0]>
+    Instructions:
+
+  Method: Core.HashSet<T>.intersection_1_Core.HashSet<T>
+    VirtualName: intersection_Core.HashSet<T>_1_Core.HashSet<T>
+    Name: intersection
+    InterfaceMethod: False
+    Return:
+      - #0 id=58957767 idx=0 name=return] type=Core.HashSet<T><T[0]>
+    Arguments:
+      - #0 id=21463943 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=60857861 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=10849842 idx=0 name=result type=Core.HashSet<T><T[0]>
+    Instructions:
+
+  Method: Core.HashSet<T>.difference_1_Core.HashSet<T>
+    VirtualName: difference_Core.HashSet<T>_1_Core.HashSet<T>
+    Name: difference
+    InterfaceMethod: False
+    Return:
+      - #0 id=57798198 idx=0 name=return] type=Core.HashSet<T><T[0]>
+    Arguments:
+      - #0 id=6422022 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=50421737 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=51142457 idx=0 name=result type=Core.HashSet<T><T[0]>
+    Instructions:
+
+  Method: Core.HashSet<T>.symmetricDifference_1_Core.HashSet<T>
+    VirtualName: symmetricDifference_Core.HashSet<T>_1_Core.HashSet<T>
+    Name: symmetricDifference
+    InterfaceMethod: False
+    Return:
+      - #0 id=37432067 idx=0 name=return] type=Core.HashSet<T><T[0]>
+    Arguments:
+      - #0 id=48898361 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=1344285 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=12098568 idx=0 name=result type=Core.HashSet<T><T[0]>
+    Instructions:
+
+  Method: Core.HashSet<T>.copy
+    VirtualName: copy_Core.HashSet<T>_0
+    Name: copy
+    InterfaceMethod: False
+    Return:
+      - #0 id=28595379 idx=0 name=return] type=Core.HashSet<T><T[0]>
+    Arguments:
+      - #0 id=40459966 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=56031820 idx=0 name=result type=Core.HashSet<T><T[0]>
+    Instructions:
+
+  Method: Core.HashSet<T>.isSubsetOf_1_Core.HashSet<T>
+    VirtualName: isSubsetOf_Core.Boolean_1_Core.HashSet<T>
+    Name: isSubsetOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=45008187 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=42283611 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=2420499 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.isSupersetOf_1_Core.HashSet<T>
+    VirtualName: isSupersetOf_Core.Boolean_1_Core.HashSet<T>
+    Name: isSupersetOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=19713524 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=61842715 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=43203995 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.isProperSubsetOf_1_Core.HashSet<T>
+    VirtualName: isProperSubsetOf_Core.Boolean_1_Core.HashSet<T>
+    Name: isProperSubsetOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=21655584 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=9862716 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=60682533 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=9271893 idx=0 name=autocreate_25911262 type=Core.Boolean
+      - #1 id=16338175 idx=1 name=autocreate_31874772 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.isProperSupersetOf_1_Core.HashSet<T>
+    VirtualName: isProperSupersetOf_Core.Boolean_1_Core.HashSet<T>
+    Name: isProperSupersetOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=63024590 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=21915813 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=30350400 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=4718148 idx=0 name=autocreate_18437496 type=Core.Boolean
+      - #1 id=42463340 idx=1 name=autocreate_31719739 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.overlaps_1_Core.HashSet<T>
+    VirtualName: overlaps_Core.Boolean_1_Core.HashSet<T>
+    Name: overlaps
+    InterfaceMethod: False
+    Return:
+      - #0 id=29304899 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=33082261 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=62417507 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.setEquals_1_Core.HashSet<T>
+    VirtualName: setEquals_Core.Boolean_1_Core.HashSet<T>
+    Name: setEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=2552937 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=22653281 idx=0 name=this] type=Core.HashSet<T><T[0]>
+      - #1 id=22976439 idx=1 name=other type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.toArray
+    VirtualName: toArray_Core.Array<T>[-1]_0
+    Name: toArray
+    InterfaceMethod: False
+    Return:
+      - #0 id=39717249 idx=0 name=return] type=Core.Array<T><T[0]>
+    Arguments:
+      - #0 id=49152270 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=21910925 idx=0 name=len type=Core.Int32
+      - #1 id=62980604 idx=1 name=arr type=Core.Array<T><T[0]>
+      - #2 id=29954525 idx=2 name=autocreate_17042198 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.toList
+    VirtualName: toList_Core.List<T>_0
+    Name: toList
+    InterfaceMethod: False
+    Return:
+      - #0 id=60252916 idx=0 name=return] type=Core.List<T><T[0]>
+    Arguments:
+      - #0 id=36520930 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.first
+    VirtualName: first_T_0
+    Name: first
+    InterfaceMethod: False
+    Return:
+      - #0 id=35179415 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=48648066 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=48179284 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=30960379 idx=1 name=autocreate_19162058 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.last
+    VirtualName: last_T_0
+    Name: last
+    InterfaceMethod: False
+    Return:
+      - #0 id=59624475 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=21538022 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals:
+      - #0 id=66858230 idx=0 name=arr type=Core.Array<T><T[0]>
+      - #1 id=64853160 idx=1 name=autocreate_38240801 type=Core.Boolean
+    Instructions:
+
+  Method: Core.HashSet<T>.reset
+    VirtualName: reset_Core.Void_0
+    Name: reset
+    InterfaceMethod: True
+    Return:
+      - #0 id=31386755 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33313579 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.moveNext
+    VirtualName: moveNext_Core.Boolean_0
+    Name: moveNext
+    InterfaceMethod: True
+    Return:
+      - #0 id=59299233 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=14045344 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.current
+    VirtualName: current_T_0
+    Name: current
+    InterfaceMethod: True
+    Return:
+      - #0 id=11033160 idx=0 name=return] type=T[0]
+    Arguments:
+      - #0 id=38508608 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.iterator
+    VirtualName: iterator_Core.IIterator<T>_0
+    Name: iterator
+    InterfaceMethod: True
+    Return:
+      - #0 id=57218848 idx=0 name=return] type=Core.IIterator<T><T[0]>
+    Arguments:
+      - #0 id=21270730 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.HashSet<T>.index
+    VirtualName: index_Core.Int32_0
+    Name: index
+    InterfaceMethod: False
+    Return:
+      - #0 id=37935797 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=4215088 idx=0 name=this] type=Core.HashSet<T><T[0]>
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

@@ -1,0 +1,1864 @@
+-------------------IR 文件显示 开始 : Path: ConstructionClass.sl-----------------------
+Class: ProjectTest.ConStrCC.ClassLeaf
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=53606711 idx=0 name=ProjectTest.ConStrCC.ClassLeaf.value type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassLeaf._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=19737894 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=39475801 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf._init_.this] type=ProjectTest.ConStrCC.ClassLeaf
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:45] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:45] [LoadConstInt32] index:[0] val: int32[0] 
+3 3   [ ConstructionClass.sl:43] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:43] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassLeaf._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55265559 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=43423319 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf._init_.this] type=ProjectTest.ConStrCC.ClassLeaf
+      - #1 id=27627990 idx=1 name=_local[_value] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:50] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:50] [LoadArgument] index:[1] info:[Argument]
+3 3   [ ConstructionClass.sl:48] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:48] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassLeaf.getValue
+    VirtualName: getValue_Core.Int32_0
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=23274750 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf.getValue.return] type=Core.Int32
+    Arguments:
+      - #0 id=47325326 idx=0 name=_local[ProjectTest.ConStrCC.ClassLeaf.getValue.this] type=ProjectTest.ConStrCC.ClassLeaf
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:57] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:57] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ ConstructionClass.sl:57] [StoreReturn] index:[0] info:[StoreReturn]
+4 4   [ :0] [BrLabel] index:[5]
+5 5   [ ConstructionClass.sl:55] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.ConStrCC.ClassBase
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=12698356 idx=0 name=ProjectTest.ConStrCC.ClassBase.x type=Core.Int32
+      - #1 id=47176343 idx=1 name=ProjectTest.ConStrCC.ClassBase.y type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassBase._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55859239 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=6206582 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.this] type=ProjectTest.ConStrCC.ClassBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:65] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:65] [LoadConstInt32] index:[0] val: int32[10] 
+3 3   [ ConstructionClass.sl:63] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:66] [LoadArgument] index:[0] info:[Argument]
+5 5   [ ConstructionClass.sl:66] [LoadConstInt32] index:[0] val: int32[20] 
+6 6   [ ConstructionClass.sl:63] [StoreNotStaticField2] index:[1] info:[Member]
+7 7   [ ConstructionClass.sl:63] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassBase._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28304539 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=32971110 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.this] type=ProjectTest.ConStrCC.ClassBase
+      - #1 id=53414263 idx=1 name=_local[_x] type=Core.Int32
+      - #2 id=10966323 idx=2 name=_local[_y] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:71] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:71] [LoadArgument] index:[1] info:[Argument]
+3 3   [ ConstructionClass.sl:69] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:72] [LoadArgument] index:[0] info:[Argument]
+5 5   [ ConstructionClass.sl:72] [LoadArgument] index:[2] info:[Argument]
+6 6   [ ConstructionClass.sl:69] [StoreNotStaticField2] index:[1] info:[Member]
+7 7   [ ConstructionClass.sl:69] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassBase.sum
+    VirtualName: sum_Core.Int32_0
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=15856984 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase.sum.return] type=Core.Int32
+    Arguments:
+      - #0 id=31588048 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase.sum.this] type=ProjectTest.ConStrCC.ClassBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:80] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:80] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ ConstructionClass.sl:80] [LoadArgument] index:[0] info:[Argument]
+4 4   [ ConstructionClass.sl:80] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ ConstructionClass.sl:80] [Add] index:[0]
+6 6   [ ConstructionClass.sl:80] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ ConstructionClass.sl:78] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.ConStrCC.ClassChild
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: -1788088198
+      Mapping: []
+  ClassLocals:
+      - #0 id=12698356 idx=0 name=ProjectTest.ConStrCC.ClassBase.x type=Core.Int32
+      - #1 id=47176343 idx=1 name=ProjectTest.ConStrCC.ClassBase.y type=Core.Int32
+      - #2 id=21933905 idx=2 name=ProjectTest.ConStrCC.ClassChild.z type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassBase._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55859239 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=6206582 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.this] type=ProjectTest.ConStrCC.ClassBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:65] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:65] [LoadConstInt32] index:[0] val: int32[10] 
+3 3   [ ConstructionClass.sl:63] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:66] [LoadArgument] index:[0] info:[Argument]
+5 5   [ ConstructionClass.sl:66] [LoadConstInt32] index:[0] val: int32[20] 
+6 6   [ ConstructionClass.sl:63] [StoreNotStaticField2] index:[1] info:[Member]
+7 7   [ ConstructionClass.sl:63] [Label] index:[0] info:[FunEndLabel]
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassBase._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28304539 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=32971110 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase._init_.this] type=ProjectTest.ConStrCC.ClassBase
+      - #1 id=53414263 idx=1 name=_local[_x] type=Core.Int32
+      - #2 id=10966323 idx=2 name=_local[_y] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:71] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:71] [LoadArgument] index:[1] info:[Argument]
+3 3   [ ConstructionClass.sl:69] [StoreNotStaticField2] index:[0] info:[Member]
+4 4   [ ConstructionClass.sl:72] [LoadArgument] index:[0] info:[Argument]
+5 5   [ ConstructionClass.sl:72] [LoadArgument] index:[2] info:[Argument]
+6 6   [ ConstructionClass.sl:69] [StoreNotStaticField2] index:[1] info:[Member]
+7 7   [ ConstructionClass.sl:69] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassBase.sum
+    VirtualName: sum_Core.Int32_0
+    Name: sum
+    InterfaceMethod: False
+    Return:
+      - #0 id=15856984 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase.sum.return] type=Core.Int32
+    Arguments:
+      - #0 id=31588048 idx=0 name=_local[ProjectTest.ConStrCC.ClassBase.sum.this] type=ProjectTest.ConStrCC.ClassBase
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:80] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:80] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ ConstructionClass.sl:80] [LoadArgument] index:[0] info:[Argument]
+4 4   [ ConstructionClass.sl:80] [LoadNotStaticField] index:[1] info:[Member]
+5 5   [ ConstructionClass.sl:80] [Add] index:[0]
+6 6   [ ConstructionClass.sl:80] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ ConstructionClass.sl:78] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassChild._init__3_Core.Int32_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_3_Core.Int32_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=17016957 idx=0 name=_local[ProjectTest.ConStrCC.ClassChild._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=9347313 idx=0 name=_local[ProjectTest.ConStrCC.ClassChild._init_.this] type=ProjectTest.ConStrCC.ClassChild
+      - #1 id=18934887 idx=1 name=_local[_x] type=Core.Int32
+      - #2 id=36196256 idx=2 name=_local[_y] type=Core.Int32
+      - #3 id=57330849 idx=3 name=_local[_z] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:88] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:88] [LoadArgument] index:[1] info:[Argument]
+3 3   [ ConstructionClass.sl:88] [LoadArgument] index:[2] info:[Argument]
+4 4   [ ConstructionClass.sl:69] [CallStatic] index:[2] info:[CallStatic _init_] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+5 5   [ ConstructionClass.sl:89] [LoadArgument] index:[0] info:[Argument]
+6 6   [ ConstructionClass.sl:89] [LoadArgument] index:[3] info:[Argument]
+7 7   [ ConstructionClass.sl:86] [StoreNotStaticField2] index:[2] info:[Member]
+8 8   [ ConstructionClass.sl:86] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassChild.sumAll
+    VirtualName: sumAll_Core.Int32_0
+    Name: sumAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=13287175 idx=0 name=_local[ProjectTest.ConStrCC.ClassChild.sumAll.return] type=Core.Int32
+    Arguments:
+      - #0 id=46215595 idx=0 name=_local[ProjectTest.ConStrCC.ClassChild.sumAll.this] type=ProjectTest.ConStrCC.ClassChild
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:96] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:78] [CallVirt] index:[8] info:[CallVirt sum] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase.sum, MethodRuntimeTypeList=[], ParamCount=0}] 
+3 3   [ ConstructionClass.sl:96] [LoadArgument] index:[0] info:[Argument]
+4 4   [ ConstructionClass.sl:96] [LoadNotStaticField] index:[2] info:[Member]
+5 5   [ ConstructionClass.sl:96] [Add] index:[0]
+6 6   [ ConstructionClass.sl:96] [StoreReturn] index:[0] info:[StoreReturn]
+7 7   [ :0] [BrLabel] index:[8]
+8 8   [ ConstructionClass.sl:94] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.ConStrCC.ClassHolder
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals:
+      - #0 id=63187419 idx=0 name=ProjectTest.ConStrCC.ClassHolder.leaf type=ProjectTest.ConStrCC.ClassLeaf
+      - #1 id=26948044 idx=1 name=ProjectTest.ConStrCC.ClassHolder.record type=ProjectTest.ConstructionRecord
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ClassHolder._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=22674843 idx=0 name=_local[ProjectTest.ConStrCC.ClassHolder._init_.return] type=Core.Void
+    Arguments:
+      - #0 id=2519427 idx=0 name=_local[ProjectTest.ConStrCC.ClassHolder._init_.this] type=ProjectTest.ConStrCC.ClassHolder
+      - #1 id=2747002 idx=1 name=_local[_value] type=Core.Int32
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:104] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[-1775562397] 
+3 3   [ :0] [Dup] index:[0]
+4 4   [ ConstructionClass.sl:104] [LoadArgument] index:[1] info:[Argument]
+5 5   [ ConstructionClass.sl:104] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassLeaf, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassLeaf._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+6 6   [ ConstructionClass.sl:102] [StoreNotStaticField2] index:[0] info:[Member]
+7 7   [ ConstructionClass.sl:105] [LoadArgument] index:[0] info:[Argument]
+8 8   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[2017992780] 
+9 9   [ ConstructionClass.sl:105] [LoadArgument] index:[1] info:[Argument]
+10 10   [ ConstructionClass.sl:17] [StoreNotStaticField1] index:[0]
+11 11   [ ConstructionClass.sl:105] [LoadConstString] index:[805] val: string[holder] 
+12 12   [ ConstructionClass.sl:18] [StoreNotStaticField1] index:[1]
+13 13   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[1326593809] 
+14 14   [ ConstructionClass.sl:5] [LoadConstInt32] index:[0] val: int32[0] 
+15 15   [ ConstructionClass.sl:5] [StoreNotStaticField1] index:[0]
+16 16   [ ConstructionClass.sl:6] [LoadConstInt32] index:[0] val: int32[0] 
+17 17   [ ConstructionClass.sl:6] [StoreNotStaticField1] index:[1]
+18 18   [ ConstructionClass.sl:19] [StoreNotStaticField1] index:[2]
+19 19   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[-667686184] 
+20 20   [ ConstructionClass.sl:11] [LoadConstInt32] index:[0] val: int32[0] 
+21 21   [ ConstructionClass.sl:11] [StoreNotStaticField1] index:[0]
+22 22   [ ConstructionClass.sl:12] [LoadConstBoolean] index:[0] val:[False] 
+23 23   [ ConstructionClass.sl:12] [StoreNotStaticField1] index:[1]
+24 24   [ ConstructionClass.sl:20] [StoreNotStaticField1] index:[3]
+25 25   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[588128178] 
+26 26   [ ConstructionClass.sl:22] [LoadConstInt32] index:[0] val: int32[3] 
+27 27   [ ConstructionClass.sl:22] [StoreNotStaticField1] index:[0]
+28 28   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[1255411477] 
+29 29   [ ConstructionClass.sl:24] [LoadConstString] index:[4] val: string[Shenzhen] 
+30 30   [ ConstructionClass.sl:24] [StoreNotStaticField1] index:[0]
+31 31   [ ConstructionClass.sl:25] [LoadConstInt32] index:[0] val: int32[518000] 
+32 32   [ ConstructionClass.sl:25] [StoreNotStaticField1] index:[1]
+33 33   [ ConstructionClass.sl:23] [StoreNotStaticField1] index:[1]
+34 34   [ ConstructionClass.sl:21] [StoreNotStaticField1] index:[4]
+35 35   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+36 36   [ ConstructionClass.sl:102] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.String>] 
+37 37   [ :0] [Dup] index:[0]
+38 38   [ ConstructionClass.sl:28] [LoadConstString] index:[10] val: string[class] 
+39 39   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+40 40   [ :0] [Dup] index:[0]
+41 41   [ ConstructionClass.sl:28] [LoadConstString] index:[11] val: string[data] 
+42 42   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+43 43   [ :0] [Dup] index:[0]
+44 44   [ ConstructionClass.sl:28] [LoadConstString] index:[12] val: string[construction] 
+45 45   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+46 46   [ ConstructionClass.sl:28] [StoreNotStaticField1] index:[5]
+47 47   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+48 48   [ ConstructionClass.sl:102] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>] 
+49 49   [ :0] [Dup] index:[0]
+50 50   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+51 51   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+52 52   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+53 53   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+54 54   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+55 55   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+56 56   [ :0] [Dup] index:[0]
+57 57   [ ConstructionClass.sl:102] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+58 58   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+59 59   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+60 60   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+61 61   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+62 62   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+63 63   [ ConstructionClass.sl:29] [StoreNotStaticField1] index:[6]
+64 64   [ ConstructionClass.sl:102] [StoreNotStaticField2] index:[1] info:[Member]
+65 65   [ ConstructionClass.sl:102] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ClassHolder.getLeafValue
+    VirtualName: getLeafValue_Core.Int32_0
+    Name: getLeafValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=21180630 idx=0 name=_local[ProjectTest.ConStrCC.ClassHolder.getLeafValue.return] type=Core.Int32
+    Arguments:
+      - #0 id=24723024 idx=0 name=_local[ProjectTest.ConStrCC.ClassHolder.getLeafValue.this] type=ProjectTest.ConStrCC.ClassHolder
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:113] [LoadArgument] index:[0] info:[Argument]
+2 2   [ ConstructionClass.sl:113] [LoadNotStaticField] index:[0] info:[Member]
+3 3   [ ConstructionClass.sl:55] [CallVirt] index:[8] info:[CallVirt getValue] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassLeaf, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassLeaf.getValue, MethodRuntimeTypeList=[], ParamCount=0}] 
+4 4   [ ConstructionClass.sl:113] [StoreReturn] index:[0] info:[StoreReturn]
+5 5   [ :0] [BrLabel] index:[6]
+6 6   [ ConstructionClass.sl:111] [Label] index:[0] info:[FunEndLabel]
+
+Class: ProjectTest.ConStrCC.ConstructionTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ConStrCC.ConstructionTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=37909503 idx=0 name=_local[ProjectTest.ConStrCC.ConstructionTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:121] [LoadConstString] index:[806] val: string[========== ConstructionClass tests (start) ==========] 
+2 2   [ ConstructionClass.sl:119] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ConstructionClass.sl:127] [CallStatic] index:[0] info:[CallStatic classConstructionTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ConstructionTest, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ConstructionTest.classConstructionTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ConstructionClass.sl:151] [CallStatic] index:[0] info:[CallStatic dataConstructionTest] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ConstructionTest, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ConstructionTest.dataConstructionTest, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ ConstructionClass.sl:124] [LoadConstString] index:[807] val: string[========== ConstructionClass tests (end) ==========] 
+10 10   [ ConstructionClass.sl:119] [StoreLocal] index:[1] info:[LocalStatement]
+11 11   [ :0] [Nop] index:[0]
+12 12   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+14 14   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+15 15   [ ConstructionClass.sl:119] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ConStrCC.ConstructionTest.classConstructionTest
+    VirtualName: classConstructionTest_Core.Void_0
+    Name: classConstructionTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=5641212 idx=0 name=_local[ProjectTest.ConStrCC.ConstructionTest.classConstructionTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=50770908 idx=0 name=classConstructionTest_local[baseDefault] type=ProjectTest.ConStrCC.ClassBase
+      - #1 id=54284994 idx=1 name=classConstructionTest_local[baseArgs] type=ProjectTest.ConStrCC.ClassBase
+      - #2 id=18802902 idx=2 name=classConstructionTest_local[baseBrace] type=ProjectTest.ConStrCC.ClassBase
+      - #3 id=35008393 idx=3 name=classConstructionTest_local[child] type=ProjectTest.ConStrCC.ClassChild
+      - #4 id=46640084 idx=4 name=classConstructionTest_local[holder] type=ProjectTest.ConStrCC.ClassHolder
+      - #5 id=17107576 idx=5 name=classConstructionTest_local[obj1] type=Core.Object
+      - #6 id=19750463 idx=6 name=classConstructionTest_local[obj2] type=Core.Object
+      - #7 id=43536440 idx=7 name=classConstructionTest_local[obj3] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+      - #13 id=37952469 idx=13 name=_local[txt] type=Core.Object
+      - #14 id=37952469 idx=14 name=_local[txt] type=Core.Object
+      - #15 id=37952469 idx=15 name=_local[txt] type=Core.Object
+      - #16 id=37952469 idx=16 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:129] [LoadConstString] index:[808] val: string[----- classConstructionTest -----] 
+2 2   [ ConstructionClass.sl:127] [StoreLocal] index:[8] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[-1788088198] 
+8 8   [ :0] [Dup] index:[0]
+9 9   [ ConstructionClass.sl:131] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+10 10   [ ConstructionClass.sl:127] [StoreLocal] index:[0] info:[LocalStatement]
+11 11   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[-1788088198] 
+12 12   [ :0] [Dup] index:[0]
+13 13   [ ConstructionClass.sl:132] [LoadConstInt32] index:[0] val: int32[3] 
+14 14   [ ConstructionClass.sl:132] [LoadConstInt32] index:[0] val: int32[4] 
+15 15   [ ConstructionClass.sl:132] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase._init__2_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=2}] 
+16 16   [ ConstructionClass.sl:127] [StoreLocal] index:[1] info:[LocalStatement]
+17 17   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[-1788088198] 
+18 18   [ :0] [Dup] index:[0]
+19 19   [ ConstructionClass.sl:133] [CallVirt] index:[0] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase._init_, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ :0] [Dup] index:[0]
+21 21   [ ConstructionClass.sl:133] [LoadConstInt32] index:[0] val: int32[5] 
+22 22   [ ConstructionClass.sl:127] [StoreNotStaticField2] index:[0] info:[Member]
+23 23   [ :0] [Dup] index:[0]
+24 24   [ ConstructionClass.sl:133] [LoadConstInt32] index:[0] val: int32[6] 
+25 25   [ ConstructionClass.sl:127] [StoreNotStaticField2] index:[1] info:[Member]
+26 26   [ ConstructionClass.sl:127] [StoreLocal] index:[2] info:[LocalStatement]
+27 27   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[-1149316313] 
+28 28   [ :0] [Dup] index:[0]
+29 29   [ ConstructionClass.sl:134] [LoadConstInt32] index:[0] val: int32[7] 
+30 30   [ ConstructionClass.sl:134] [LoadConstInt32] index:[0] val: int32[8] 
+31 31   [ ConstructionClass.sl:134] [LoadConstInt32] index:[0] val: int32[9] 
+32 32   [ ConstructionClass.sl:134] [CallVirt] index:[9] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassChild, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassChild._init__3_Core.Int32_Core.Int32_Core.Int32, MethodRuntimeTypeList=[], ParamCount=3}] 
+33 33   [ ConstructionClass.sl:127] [StoreLocal] index:[3] info:[LocalStatement]
+34 34   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[143501721] 
+35 35   [ :0] [Dup] index:[0]
+36 36   [ ConstructionClass.sl:135] [LoadConstInt32] index:[0] val: int32[30] 
+37 37   [ ConstructionClass.sl:135] [CallVirt] index:[7] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassHolder, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassHolder._init__1_Core.Int32, MethodRuntimeTypeList=[], ParamCount=1}] 
+38 38   [ ConstructionClass.sl:127] [StoreLocal] index:[4] info:[LocalStatement]
+39 39   [ ConstructionClass.sl:137] [LoadConstString] index:[809] val: string[baseDefault sum -> ] 
+40 40   [ ConstructionClass.sl:137] [LoadLocal] index:[0] info:[LocalStatement]
+41 41   [ ConstructionClass.sl:78] [CallVirt] index:[8] info:[CallVirt sum] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase.sum, MethodRuntimeTypeList=[], ParamCount=0}] 
+42 42   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+43 43   [ ConstructionClass.sl:137] [Add] index:[0]
+44 44   [ ConstructionClass.sl:127] [StoreLocal] index:[9] info:[LocalStatement]
+45 45   [ :0] [Nop] index:[0]
+46 46   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+47 47   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+48 48   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+49 49   [ ConstructionClass.sl:138] [LoadConstString] index:[810] val: string[baseArgs sum -> ] 
+50 50   [ ConstructionClass.sl:138] [LoadLocal] index:[1] info:[LocalStatement]
+51 51   [ ConstructionClass.sl:78] [CallVirt] index:[8] info:[CallVirt sum] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase.sum, MethodRuntimeTypeList=[], ParamCount=0}] 
+52 52   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ ConstructionClass.sl:138] [Add] index:[0]
+54 54   [ ConstructionClass.sl:127] [StoreLocal] index:[10] info:[LocalStatement]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+57 57   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+58 58   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+59 59   [ ConstructionClass.sl:139] [LoadConstString] index:[811] val: string[baseBrace sum -> ] 
+60 60   [ ConstructionClass.sl:139] [LoadLocal] index:[2] info:[LocalStatement]
+61 61   [ ConstructionClass.sl:78] [CallVirt] index:[8] info:[CallVirt sum] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassBase, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassBase.sum, MethodRuntimeTypeList=[], ParamCount=0}] 
+62 62   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+63 63   [ ConstructionClass.sl:139] [Add] index:[0]
+64 64   [ ConstructionClass.sl:127] [StoreLocal] index:[11] info:[LocalStatement]
+65 65   [ :0] [Nop] index:[0]
+66 66   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+67 67   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+68 68   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+69 69   [ ConstructionClass.sl:140] [LoadConstString] index:[812] val: string[child sumAll -> ] 
+70 70   [ ConstructionClass.sl:140] [LoadLocal] index:[3] info:[LocalStatement]
+71 71   [ ConstructionClass.sl:94] [CallVirt] index:[10] info:[CallVirt sumAll] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassChild, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassChild.sumAll, MethodRuntimeTypeList=[], ParamCount=0}] 
+72 72   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+73 73   [ ConstructionClass.sl:140] [Add] index:[0]
+74 74   [ ConstructionClass.sl:127] [StoreLocal] index:[12] info:[LocalStatement]
+75 75   [ :0] [Nop] index:[0]
+76 76   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+77 77   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+78 78   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+79 79   [ ConstructionClass.sl:141] [LoadConstString] index:[813] val: string[holder leaf value -> ] 
+80 80   [ ConstructionClass.sl:141] [LoadLocal] index:[4] info:[LocalStatement]
+81 81   [ ConstructionClass.sl:111] [CallVirt] index:[8] info:[CallVirt getLeafValue] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ConStrCC.ClassHolder, StaticRuntimeTypeList=[], Method=ProjectTest.ConStrCC.ClassHolder.getLeafValue, MethodRuntimeTypeList=[], ParamCount=0}] 
+82 82   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+83 83   [ ConstructionClass.sl:141] [Add] index:[0]
+84 84   [ ConstructionClass.sl:127] [StoreLocal] index:[13] info:[LocalStatement]
+85 85   [ :0] [Nop] index:[0]
+86 86   [ ProjectTest.sp:8] [LoadLocal] index:[13] info:[LocalStatement]
+87 87   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+88 88   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+89 89   [ ConstructionClass.sl:142] [LoadConstString] index:[814] val: string[holder record id/name -> ] 
+90 90   [ ConstructionClass.sl:142] [LoadLocal] index:[4] info:[LocalStatement]
+91 91   [ ConstructionClass.sl:142] [LoadNotStaticField] index:[1] info:[Member]
+92 92   [ ConstructionClass.sl:142] [LoadNotStaticField] index:[0] info:[Member]
+93 93   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+94 94   [ ConstructionClass.sl:142] [Add] index:[0]
+95 95   [ ConstructionClass.sl:142] [LoadConstString] index:[779] val: string[/] 
+96 96   [ ConstructionClass.sl:142] [Add] index:[0]
+97 97   [ ConstructionClass.sl:142] [LoadLocal] index:[4] info:[LocalStatement]
+98 98   [ ConstructionClass.sl:142] [LoadNotStaticField] index:[1] info:[Member]
+99 99   [ ConstructionClass.sl:142] [LoadNotStaticField] index:[1] info:[Member]
+100 100   [ ConstructionClass.sl:142] [Add] index:[0]
+101 101   [ ConstructionClass.sl:127] [StoreLocal] index:[14] info:[LocalStatement]
+102 102   [ :0] [Nop] index:[0]
+103 103   [ ProjectTest.sp:8] [LoadLocal] index:[14] info:[LocalStatement]
+104 104   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+105 105   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+106 106   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+107 107   [ ConstructionClass.sl:144] [ArcRetain] index:[0] info:[ARC claim owned new local: obj1]
+108 108   [ ConstructionClass.sl:127] [StoreLocal] index:[5] info:[LocalStatement]
+109 109   [ ConstructionClass.sl:145] [LoadLocal] index:[5] info:[LocalStatement]
+110 110   [ ConstructionClass.sl:127] [StoreLocal] index:[6] info:[LocalStatement]
+111 111   [ ConstructionClass.sl:127] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+112 112   [ ConstructionClass.sl:146] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+113 113   [ ConstructionClass.sl:127] [StoreLocal] index:[7] info:[LocalStatement]
+114 114   [ ConstructionClass.sl:147] [LoadConstString] index:[815] val: string[object alias refEquals -> ] 
+115 115   [ ConstructionClass.sl:147] [LoadLocal] index:[5] info:[LocalStatement]
+116 116   [ ConstructionClass.sl:147] [LoadLocal] index:[6] info:[LocalStatement]
+117 117   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+118 118   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+119 119   [ ConstructionClass.sl:147] [Add] index:[0]
+120 120   [ ConstructionClass.sl:127] [StoreLocal] index:[15] info:[LocalStatement]
+121 121   [ :0] [Nop] index:[0]
+122 122   [ ProjectTest.sp:8] [LoadLocal] index:[15] info:[LocalStatement]
+123 123   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+124 124   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+125 125   [ ConstructionClass.sl:148] [LoadConstString] index:[816] val: string[object distinct refEquals -> ] 
+126 126   [ ConstructionClass.sl:148] [LoadLocal] index:[5] info:[LocalStatement]
+127 127   [ ConstructionClass.sl:148] [LoadLocal] index:[7] info:[LocalStatement]
+128 128   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+129 129   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+130 130   [ ConstructionClass.sl:148] [Add] index:[0]
+131 131   [ ConstructionClass.sl:127] [StoreLocal] index:[16] info:[LocalStatement]
+132 132   [ :0] [Nop] index:[0]
+133 133   [ ProjectTest.sp:8] [LoadLocal] index:[16] info:[LocalStatement]
+134 134   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+135 135   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+136 136   [ ConstructionClass.sl:127] [Label] index:[0] info:[FunEndLabel]
+137 137   [ ConstructionClass.sl:127] [LoadLocal] index:[5] info:[ARC release: LoadLocal classConstructionTest_local[obj1]]
+138 138   [ ConstructionClass.sl:127] [ArcRelease] index:[0] info:[ARC release owned local: classConstructionTest_local[obj1]]
+139 139   [ ConstructionClass.sl:127] [StoreLocal] index:[5] info:[ARC release: StoreLocal classConstructionTest_local[obj1]]
+140 140   [ ConstructionClass.sl:127] [LoadLocal] index:[7] info:[ARC release: LoadLocal classConstructionTest_local[obj3]]
+141 141   [ ConstructionClass.sl:127] [ArcRelease] index:[0] info:[ARC release owned local: classConstructionTest_local[obj3]]
+142 142   [ ConstructionClass.sl:127] [StoreLocal] index:[7] info:[ARC release: StoreLocal classConstructionTest_local[obj3]]
+
+  Method: ProjectTest.ConStrCC.ConstructionTest.dataConstructionTest
+    VirtualName: dataConstructionTest_Core.Void_0
+    Name: dataConstructionTest
+    InterfaceMethod: False
+    Return:
+      - #0 id=56283646 idx=0 name=_local[ProjectTest.ConStrCC.ConstructionTest.dataConstructionTest.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=36790769 idx=0 name=dataConstructionTest_local[recordDefault] type=ProjectTest.ConstructionRecord
+      - #1 id=62681466 idx=1 name=dataConstructionTest_local[recordNamed] type=ProjectTest.ConstructionRecord
+      - #2 id=27262282 idx=2 name=dataConstructionTest_local[recordBrace] type=ProjectTest.ConstructionRecord
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ConstructionClass.sl:153] [LoadConstString] index:[817] val: string[----- dataConstructionTest -----] 
+2 2   [ ConstructionClass.sl:151] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[2017992780] 
+8 8   [ ConstructionClass.sl:17] [LoadConstInt32] index:[0] val: int32[0] 
+9 9   [ ConstructionClass.sl:17] [StoreNotStaticField1] index:[0]
+10 10   [ ConstructionClass.sl:18] [LoadConstString] index:[2] val: string[] 
+11 11   [ ConstructionClass.sl:18] [StoreNotStaticField1] index:[1]
+12 12   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1326593809] 
+13 13   [ ConstructionClass.sl:5] [LoadConstInt32] index:[0] val: int32[0] 
+14 14   [ ConstructionClass.sl:5] [StoreNotStaticField1] index:[0]
+15 15   [ ConstructionClass.sl:6] [LoadConstInt32] index:[0] val: int32[0] 
+16 16   [ ConstructionClass.sl:6] [StoreNotStaticField1] index:[1]
+17 17   [ ConstructionClass.sl:19] [StoreNotStaticField1] index:[2]
+18 18   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[-667686184] 
+19 19   [ ConstructionClass.sl:11] [LoadConstInt32] index:[0] val: int32[0] 
+20 20   [ ConstructionClass.sl:11] [StoreNotStaticField1] index:[0]
+21 21   [ ConstructionClass.sl:12] [LoadConstBoolean] index:[0] val:[False] 
+22 22   [ ConstructionClass.sl:12] [StoreNotStaticField1] index:[1]
+23 23   [ ConstructionClass.sl:20] [StoreNotStaticField1] index:[3]
+24 24   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[588128178] 
+25 25   [ ConstructionClass.sl:22] [LoadConstInt32] index:[0] val: int32[3] 
+26 26   [ ConstructionClass.sl:22] [StoreNotStaticField1] index:[0]
+27 27   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1255411477] 
+28 28   [ ConstructionClass.sl:24] [LoadConstString] index:[4] val: string[Shenzhen] 
+29 29   [ ConstructionClass.sl:24] [StoreNotStaticField1] index:[0]
+30 30   [ ConstructionClass.sl:25] [LoadConstInt32] index:[0] val: int32[518000] 
+31 31   [ ConstructionClass.sl:25] [StoreNotStaticField1] index:[1]
+32 32   [ ConstructionClass.sl:23] [StoreNotStaticField1] index:[1]
+33 33   [ ConstructionClass.sl:21] [StoreNotStaticField1] index:[4]
+34 34   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+35 35   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.String>] 
+36 36   [ :0] [Dup] index:[0]
+37 37   [ ConstructionClass.sl:28] [LoadConstString] index:[10] val: string[class] 
+38 38   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+39 39   [ :0] [Dup] index:[0]
+40 40   [ ConstructionClass.sl:28] [LoadConstString] index:[11] val: string[data] 
+41 41   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+42 42   [ :0] [Dup] index:[0]
+43 43   [ ConstructionClass.sl:28] [LoadConstString] index:[12] val: string[construction] 
+44 44   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+45 45   [ ConstructionClass.sl:28] [StoreNotStaticField1] index:[5]
+46 46   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+47 47   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>] 
+48 48   [ :0] [Dup] index:[0]
+49 49   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+50 50   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+51 51   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+52 52   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+53 53   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+54 54   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+55 55   [ :0] [Dup] index:[0]
+56 56   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+57 57   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+58 58   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+59 59   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+60 60   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+61 61   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+62 62   [ ConstructionClass.sl:29] [StoreNotStaticField1] index:[6]
+63 63   [ ConstructionClass.sl:155] [ArcRetain] index:[0] info:[ARC claim owned new local: recordDefault]
+64 64   [ ConstructionClass.sl:151] [StoreLocal] index:[0] info:[LocalStatement]
+65 65   [ ConstructionClass.sl:156] [LoadLocal] index:[0] info:[LocalStatement]
+66 66   [ ConstructionClass.sl:156] [LoadConstInt32] index:[0] val: int32[1] 
+67 67   [ ConstructionClass.sl:151] [StoreNotStaticField2] index:[0] info:[Member]
+68 68   [ ConstructionClass.sl:157] [LoadLocal] index:[0] info:[LocalStatement]
+69 69   [ ConstructionClass.sl:157] [LoadConstString] index:[818] val: string[default-new] 
+70 70   [ ConstructionClass.sl:151] [StoreNotStaticField2] index:[1] info:[Member]
+71 71   [ ConstructionClass.sl:158] [LoadLocal] index:[0] info:[LocalStatement]
+72 72   [ ConstructionClass.sl:158] [LoadNotStaticField] index:[2] info:[Member]
+73 73   [ ConstructionClass.sl:158] [LoadConstInt32] index:[0] val: int32[11] 
+74 74   [ ConstructionClass.sl:151] [StoreNotStaticField2] index:[0] info:[Member]
+75 75   [ ConstructionClass.sl:159] [LoadLocal] index:[0] info:[LocalStatement]
+76 76   [ ConstructionClass.sl:159] [LoadNotStaticField] index:[2] info:[Member]
+77 77   [ ConstructionClass.sl:159] [LoadConstInt32] index:[0] val: int32[12] 
+78 78   [ ConstructionClass.sl:151] [StoreNotStaticField2] index:[1] info:[Member]
+79 79   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[2017992780] 
+80 80   [ ConstructionClass.sl:161] [LoadConstInt32] index:[0] val: int32[2] 
+81 81   [ ConstructionClass.sl:17] [StoreNotStaticField1] index:[0]
+82 82   [ ConstructionClass.sl:161] [LoadConstString] index:[819] val: string[named] 
+83 83   [ ConstructionClass.sl:18] [StoreNotStaticField1] index:[1]
+84 84   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1326593809] 
+85 85   [ ConstructionClass.sl:161] [LoadConstInt32] index:[0] val: int32[21] 
+86 86   [ ConstructionClass.sl:5] [StoreNotStaticField1] index:[0]
+87 87   [ ConstructionClass.sl:161] [LoadConstInt32] index:[0] val: int32[22] 
+88 88   [ ConstructionClass.sl:6] [StoreNotStaticField1] index:[1]
+89 89   [ ConstructionClass.sl:19] [StoreNotStaticField1] index:[2]
+90 90   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[-667686184] 
+91 91   [ ConstructionClass.sl:161] [LoadConstInt32] index:[0] val: int32[2] 
+92 92   [ ConstructionClass.sl:11] [StoreNotStaticField1] index:[0]
+93 93   [ ConstructionClass.sl:161] [LoadConstBoolean] index:[0] val:[True] 
+94 94   [ ConstructionClass.sl:12] [StoreNotStaticField1] index:[1]
+95 95   [ ConstructionClass.sl:20] [StoreNotStaticField1] index:[3]
+96 96   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[588128178] 
+97 97   [ ConstructionClass.sl:22] [LoadConstInt32] index:[0] val: int32[3] 
+98 98   [ ConstructionClass.sl:22] [StoreNotStaticField1] index:[0]
+99 99   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1255411477] 
+100 100   [ ConstructionClass.sl:24] [LoadConstString] index:[4] val: string[Shenzhen] 
+101 101   [ ConstructionClass.sl:24] [StoreNotStaticField1] index:[0]
+102 102   [ ConstructionClass.sl:25] [LoadConstInt32] index:[0] val: int32[518000] 
+103 103   [ ConstructionClass.sl:25] [StoreNotStaticField1] index:[1]
+104 104   [ ConstructionClass.sl:23] [StoreNotStaticField1] index:[1]
+105 105   [ ConstructionClass.sl:21] [StoreNotStaticField1] index:[4]
+106 106   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+107 107   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.String>] 
+108 108   [ :0] [Dup] index:[0]
+109 109   [ ConstructionClass.sl:28] [LoadConstString] index:[10] val: string[class] 
+110 110   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+111 111   [ :0] [Dup] index:[0]
+112 112   [ ConstructionClass.sl:28] [LoadConstString] index:[11] val: string[data] 
+113 113   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+114 114   [ :0] [Dup] index:[0]
+115 115   [ ConstructionClass.sl:28] [LoadConstString] index:[12] val: string[construction] 
+116 116   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+117 117   [ ConstructionClass.sl:28] [StoreNotStaticField1] index:[5]
+118 118   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+119 119   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>] 
+120 120   [ :0] [Dup] index:[0]
+121 121   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+122 122   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+123 123   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+124 124   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+125 125   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+126 126   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+127 127   [ :0] [Dup] index:[0]
+128 128   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+129 129   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+130 130   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+131 131   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+132 132   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+133 133   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+134 134   [ ConstructionClass.sl:29] [StoreNotStaticField1] index:[6]
+135 135   [ ConstructionClass.sl:161] [ArcRetain] index:[0] info:[ARC claim owned new local: recordNamed]
+136 136   [ ConstructionClass.sl:151] [StoreLocal] index:[1] info:[LocalStatement]
+137 137   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[2017992780] 
+138 138   [ ConstructionClass.sl:162] [LoadConstInt32] index:[0] val: int32[3] 
+139 139   [ ConstructionClass.sl:17] [StoreNotStaticField1] index:[0]
+140 140   [ ConstructionClass.sl:162] [LoadConstString] index:[820] val: string[brace] 
+141 141   [ ConstructionClass.sl:18] [StoreNotStaticField1] index:[1]
+142 142   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1326593809] 
+143 143   [ ConstructionClass.sl:162] [LoadConstInt32] index:[0] val: int32[31] 
+144 144   [ ConstructionClass.sl:5] [StoreNotStaticField1] index:[0]
+145 145   [ ConstructionClass.sl:162] [LoadConstInt32] index:[0] val: int32[32] 
+146 146   [ ConstructionClass.sl:6] [StoreNotStaticField1] index:[1]
+147 147   [ ConstructionClass.sl:19] [StoreNotStaticField1] index:[2]
+148 148   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[-667686184] 
+149 149   [ ConstructionClass.sl:162] [LoadConstInt32] index:[0] val: int32[3] 
+150 150   [ ConstructionClass.sl:11] [StoreNotStaticField1] index:[0]
+151 151   [ ConstructionClass.sl:162] [LoadConstBoolean] index:[0] val:[False] 
+152 152   [ ConstructionClass.sl:12] [StoreNotStaticField1] index:[1]
+153 153   [ ConstructionClass.sl:20] [StoreNotStaticField1] index:[3]
+154 154   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[588128178] 
+155 155   [ ConstructionClass.sl:22] [LoadConstInt32] index:[0] val: int32[3] 
+156 156   [ ConstructionClass.sl:22] [StoreNotStaticField1] index:[0]
+157 157   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1255411477] 
+158 158   [ ConstructionClass.sl:24] [LoadConstString] index:[4] val: string[Shenzhen] 
+159 159   [ ConstructionClass.sl:24] [StoreNotStaticField1] index:[0]
+160 160   [ ConstructionClass.sl:25] [LoadConstInt32] index:[0] val: int32[518000] 
+161 161   [ ConstructionClass.sl:25] [StoreNotStaticField1] index:[1]
+162 162   [ ConstructionClass.sl:23] [StoreNotStaticField1] index:[1]
+163 163   [ ConstructionClass.sl:21] [StoreNotStaticField1] index:[4]
+164 164   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+165 165   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.String>] 
+166 166   [ :0] [Dup] index:[0]
+167 167   [ ConstructionClass.sl:28] [LoadConstString] index:[10] val: string[class] 
+168 168   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+169 169   [ :0] [Dup] index:[0]
+170 170   [ ConstructionClass.sl:28] [LoadConstString] index:[11] val: string[data] 
+171 171   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+172 172   [ :0] [Dup] index:[0]
+173 173   [ ConstructionClass.sl:28] [LoadConstString] index:[12] val: string[construction] 
+174 174   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+175 175   [ ConstructionClass.sl:28] [StoreNotStaticField1] index:[5]
+176 176   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+177 177   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>] 
+178 178   [ :0] [Dup] index:[0]
+179 179   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+180 180   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+181 181   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+182 182   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+183 183   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+184 184   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+185 185   [ :0] [Dup] index:[0]
+186 186   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+187 187   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+188 188   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+189 189   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+190 190   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+191 191   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+192 192   [ ConstructionClass.sl:29] [StoreNotStaticField1] index:[6]
+193 193   [ ConstructionClass.sl:162] [ArcRetain] index:[0] info:[ARC claim owned new local: recordBrace]
+194 194   [ ConstructionClass.sl:151] [StoreLocal] index:[2] info:[LocalStatement]
+195 195   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[2017992780] 
+196 196   [ ConstructionClass.sl:163] [LoadConstInt32] index:[0] val: int32[4] 
+197 197   [ ConstructionClass.sl:17] [StoreNotStaticField1] index:[0]
+198 198   [ ConstructionClass.sl:163] [LoadConstString] index:[821] val: string[reassign] 
+199 199   [ ConstructionClass.sl:18] [StoreNotStaticField1] index:[1]
+200 200   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1326593809] 
+201 201   [ ConstructionClass.sl:163] [LoadConstInt32] index:[0] val: int32[41] 
+202 202   [ ConstructionClass.sl:5] [StoreNotStaticField1] index:[0]
+203 203   [ ConstructionClass.sl:163] [LoadConstInt32] index:[0] val: int32[42] 
+204 204   [ ConstructionClass.sl:6] [StoreNotStaticField1] index:[1]
+205 205   [ ConstructionClass.sl:19] [StoreNotStaticField1] index:[2]
+206 206   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[-667686184] 
+207 207   [ ConstructionClass.sl:163] [LoadConstInt32] index:[0] val: int32[4] 
+208 208   [ ConstructionClass.sl:11] [StoreNotStaticField1] index:[0]
+209 209   [ ConstructionClass.sl:163] [LoadConstBoolean] index:[0] val:[True] 
+210 210   [ ConstructionClass.sl:12] [StoreNotStaticField1] index:[1]
+211 211   [ ConstructionClass.sl:20] [StoreNotStaticField1] index:[3]
+212 212   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[588128178] 
+213 213   [ ConstructionClass.sl:22] [LoadConstInt32] index:[0] val: int32[3] 
+214 214   [ ConstructionClass.sl:22] [StoreNotStaticField1] index:[0]
+215 215   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[1255411477] 
+216 216   [ ConstructionClass.sl:24] [LoadConstString] index:[4] val: string[Shenzhen] 
+217 217   [ ConstructionClass.sl:24] [StoreNotStaticField1] index:[0]
+218 218   [ ConstructionClass.sl:25] [LoadConstInt32] index:[0] val: int32[518000] 
+219 219   [ ConstructionClass.sl:25] [StoreNotStaticField1] index:[1]
+220 220   [ ConstructionClass.sl:23] [StoreNotStaticField1] index:[1]
+221 221   [ ConstructionClass.sl:21] [StoreNotStaticField1] index:[4]
+222 222   [ :0] [LoadConstInt32] index:[0] val: int32[3] 
+223 223   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><Core.String>] 
+224 224   [ :0] [Dup] index:[0]
+225 225   [ ConstructionClass.sl:28] [LoadConstString] index:[10] val: string[class] 
+226 226   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+227 227   [ :0] [Dup] index:[0]
+228 228   [ ConstructionClass.sl:28] [LoadConstString] index:[11] val: string[data] 
+229 229   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+230 230   [ :0] [Dup] index:[0]
+231 231   [ ConstructionClass.sl:28] [LoadConstString] index:[12] val: string[construction] 
+232 232   [ :0] [StoreArrayIndex] index:[2] val:[1] 
+233 233   [ ConstructionClass.sl:28] [StoreNotStaticField1] index:[5]
+234 234   [ :0] [LoadConstInt32] index:[0] val: int32[2] 
+235 235   [ ConstructionClass.sl:151] [NewArray] index:[0] info:[NewArray] val irmt:[Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>] 
+236 236   [ :0] [Dup] index:[0]
+237 237   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+238 238   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+239 239   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+240 240   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+241 241   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+242 242   [ :0] [StoreArrayIndex] index:[0] val:[1] 
+243 243   [ :0] [Dup] index:[0]
+244 244   [ ConstructionClass.sl:151] [NewObject] index:[0] info:[IRNew] val: int32[394192355] 
+245 245   [ ConstructionClass.sl:30] [LoadConstString] index:[13] val: string[default] 
+246 246   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[0]
+247 247   [ ConstructionClass.sl:30] [LoadConstInt32] index:[0] val: int32[1] 
+248 248   [ ConstructionClass.sl:30] [StoreNotStaticField1] index:[1]
+249 249   [ :0] [StoreArrayIndex] index:[1] val:[1] 
+250 250   [ ConstructionClass.sl:29] [StoreNotStaticField1] index:[6]
+251 251   [ ConstructionClass.sl:151] [StoreLocal] index:[2] info:[LocalStatement]
+252 252   [ ConstructionClass.sl:165] [LoadConstType] index:[0] info:[Ldc data type literal] val irmt:[ProjectTest.ConstructionCounter] 
+253 253   [ ConstructionClass.sl:165] [LoadConstInt32] index:[0] val: int32[3] 
+254 254   [ ConstructionClass.sl:151] [StoreStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.ConstructionCounter] staticOwner:[ProjectTest.ConStrCC.ConstructionTest] 
+255 255   [ ConstructionClass.sl:166] [LoadConstType] index:[0] info:[Ldc data type literal] val irmt:[ProjectTest.ConstructionCounter] 
+256 256   [ ConstructionClass.sl:166] [LoadLocal] index:[0] info:[LocalStatement]
+257 257   [ ConstructionClass.sl:166] [LoadNotStaticField] index:[0] info:[Member]
+258 258   [ ConstructionClass.sl:166] [LoadLocal] index:[1] info:[LocalStatement]
+259 259   [ ConstructionClass.sl:166] [LoadNotStaticField] index:[0] info:[Member]
+260 260   [ ConstructionClass.sl:166] [Add] index:[0]
+261 261   [ ConstructionClass.sl:166] [LoadLocal] index:[2] info:[LocalStatement]
+262 262   [ ConstructionClass.sl:166] [LoadNotStaticField] index:[0] info:[Member]
+263 263   [ ConstructionClass.sl:166] [Add] index:[0]
+264 264   [ ConstructionClass.sl:151] [StoreStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.ConstructionCounter] staticOwner:[ProjectTest.ConStrCC.ConstructionTest] 
+265 265   [ ConstructionClass.sl:168] [LoadConstString] index:[822] val: string[recordDefault -> ] 
+266 266   [ ConstructionClass.sl:168] [LoadLocal] index:[0] info:[LocalStatement]
+267 267   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Data, StaticRuntimeTypeList=[], Method=Core.Data.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+268 268   [ ConstructionClass.sl:168] [Add] index:[0]
+269 269   [ ConstructionClass.sl:151] [StoreLocal] index:[4] info:[LocalStatement]
+270 270   [ :0] [Nop] index:[0]
+271 271   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+272 272   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+273 273   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+274 274   [ ConstructionClass.sl:169] [LoadConstString] index:[823] val: string[recordNamed -> ] 
+275 275   [ ConstructionClass.sl:169] [LoadLocal] index:[1] info:[LocalStatement]
+276 276   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Data, StaticRuntimeTypeList=[], Method=Core.Data.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+277 277   [ ConstructionClass.sl:169] [Add] index:[0]
+278 278   [ ConstructionClass.sl:151] [StoreLocal] index:[5] info:[LocalStatement]
+279 279   [ :0] [Nop] index:[0]
+280 280   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+281 281   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+282 282   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+283 283   [ ConstructionClass.sl:170] [LoadConstString] index:[824] val: string[recordBrace -> ] 
+284 284   [ ConstructionClass.sl:170] [LoadLocal] index:[2] info:[LocalStatement]
+285 285   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Data, StaticRuntimeTypeList=[], Method=Core.Data.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+286 286   [ ConstructionClass.sl:170] [Add] index:[0]
+287 287   [ ConstructionClass.sl:151] [StoreLocal] index:[6] info:[LocalStatement]
+288 288   [ :0] [Nop] index:[0]
+289 289   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+290 290   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+291 291   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+292 292   [ ConstructionClass.sl:171] [LoadConstString] index:[825] val: string[recordDefault point chain -> ] 
+293 293   [ ConstructionClass.sl:171] [LoadLocal] index:[0] info:[LocalStatement]
+294 294   [ ConstructionClass.sl:171] [LoadNotStaticField] index:[2] info:[Member]
+295 295   [ ConstructionClass.sl:171] [LoadNotStaticField] index:[0] info:[Member]
+296 296   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+297 297   [ ConstructionClass.sl:171] [Add] index:[0]
+298 298   [ ConstructionClass.sl:171] [LoadConstString] index:[779] val: string[/] 
+299 299   [ ConstructionClass.sl:171] [Add] index:[0]
+300 300   [ ConstructionClass.sl:171] [LoadLocal] index:[0] info:[LocalStatement]
+301 301   [ ConstructionClass.sl:171] [LoadNotStaticField] index:[2] info:[Member]
+302 302   [ ConstructionClass.sl:171] [LoadNotStaticField] index:[1] info:[Member]
+303 303   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+304 304   [ ConstructionClass.sl:171] [Add] index:[0]
+305 305   [ ConstructionClass.sl:151] [StoreLocal] index:[7] info:[LocalStatement]
+306 306   [ :0] [Nop] index:[0]
+307 307   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+308 308   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+309 309   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+310 310   [ ConstructionClass.sl:172] [LoadConstString] index:[826] val: string[recordNamed meta chain -> ] 
+311 311   [ ConstructionClass.sl:172] [LoadLocal] index:[1] info:[LocalStatement]
+312 312   [ ConstructionClass.sl:172] [LoadNotStaticField] index:[3] info:[Member]
+313 313   [ ConstructionClass.sl:172] [LoadNotStaticField] index:[0] info:[Member]
+314 314   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+315 315   [ ConstructionClass.sl:172] [Add] index:[0]
+316 316   [ ConstructionClass.sl:172] [LoadConstString] index:[779] val: string[/] 
+317 317   [ ConstructionClass.sl:172] [Add] index:[0]
+318 318   [ ConstructionClass.sl:172] [LoadLocal] index:[1] info:[LocalStatement]
+319 319   [ ConstructionClass.sl:172] [LoadNotStaticField] index:[3] info:[Member]
+320 320   [ ConstructionClass.sl:172] [LoadNotStaticField] index:[1] info:[Member]
+321 321   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+322 322   [ ConstructionClass.sl:172] [Add] index:[0]
+323 323   [ ConstructionClass.sl:151] [StoreLocal] index:[8] info:[LocalStatement]
+324 324   [ :0] [Nop] index:[0]
+325 325   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+326 326   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+327 327   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+328 328   [ ConstructionClass.sl:173] [LoadConstString] index:[827] val: string[static data counter -> ] 
+329 329   [ ConstructionClass.sl:173] [LoadStaticField] index:[0] info:[Static] fieldTypeIrmt:[ProjectTest.ConstructionCounter] staticOwner:[ProjectTest.ConStrCC.ConstructionTest] 
+330 330   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+331 331   [ ConstructionClass.sl:173] [Add] index:[0]
+332 332   [ ConstructionClass.sl:173] [LoadConstString] index:[779] val: string[/] 
+333 333   [ ConstructionClass.sl:173] [Add] index:[0]
+334 334   [ ConstructionClass.sl:173] [LoadStaticField] index:[1] info:[Static] fieldTypeIrmt:[ProjectTest.ConstructionCounter] staticOwner:[ProjectTest.ConStrCC.ConstructionTest] 
+335 335   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+336 336   [ ConstructionClass.sl:173] [Add] index:[0]
+337 337   [ ConstructionClass.sl:151] [StoreLocal] index:[9] info:[LocalStatement]
+338 338   [ :0] [Nop] index:[0]
+339 339   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+340 340   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+341 341   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+342 342   [ ConstructionClass.sl:174] [LoadConstString] index:[828] val: string[static data nested chain -> ] 
+343 343   [ ConstructionClass.sl:174] [LoadStaticField] index:[4] info:[Static] fieldTypeIrmt:[ProjectTest.ConstructionRecord] staticOwner:[ProjectTest.ConStrCC.ConstructionTest] 
+344 344   [ ConstructionClass.sl:174] [LoadNotStaticField] index:[1] info:[Member]
+345 345   [ ConstructionClass.sl:174] [LoadNotStaticField] index:[0] info:[Member]
+346 346   [ ConstructionClass.sl:174] [Add] index:[0]
+347 347   [ ConstructionClass.sl:151] [StoreLocal] index:[10] info:[LocalStatement]
+348 348   [ :0] [Nop] index:[0]
+349 349   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+350 350   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+351 351   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+352 352   [ ConstructionClass.sl:151] [Label] index:[0] info:[FunEndLabel]
+353 353   [ ConstructionClass.sl:151] [LoadLocal] index:[0] info:[ARC release: LoadLocal dataConstructionTest_local[recordDefault]]
+354 354   [ ConstructionClass.sl:151] [ArcRelease] index:[0] info:[ARC release owned local: dataConstructionTest_local[recordDefault]]
+355 355   [ ConstructionClass.sl:151] [StoreLocal] index:[0] info:[ARC release: StoreLocal dataConstructionTest_local[recordDefault]]
+356 356   [ ConstructionClass.sl:151] [LoadLocal] index:[1] info:[ARC release: LoadLocal dataConstructionTest_local[recordNamed]]
+357 357   [ ConstructionClass.sl:151] [ArcRelease] index:[0] info:[ARC release owned local: dataConstructionTest_local[recordNamed]]
+358 358   [ ConstructionClass.sl:151] [StoreLocal] index:[1] info:[ARC release: StoreLocal dataConstructionTest_local[recordNamed]]
+359 359   [ ConstructionClass.sl:151] [LoadLocal] index:[2] info:[ARC release: LoadLocal dataConstructionTest_local[recordBrace]]
+360 360   [ ConstructionClass.sl:151] [ArcRelease] index:[0] info:[ARC release owned local: dataConstructionTest_local[recordBrace]]
+361 361   [ ConstructionClass.sl:151] [StoreLocal] index:[2] info:[ARC release: StoreLocal dataConstructionTest_local[recordBrace]]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: ProjectTest.ConstructionPoint
+  metaClassKind: Data
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 184775704
+      Mapping: []
+  ClassLocals:
+      - #0 id=42094334 idx=0 name=ProjectTest.ConstructionPoint.x type=Core.Int32
+      - #1 id=43304686 idx=1 name=ProjectTest.ConstructionPoint.y type=Core.Int32
+  ClassStatics:
+      - #0 id=42094334 idx=0 name=ProjectTest.ConstructionPoint.x type=Core.Int32
+      - #1 id=43304686 idx=1 name=ProjectTest.ConstructionPoint.y type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19386696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9610617 idx=0 name=this] type=Core.Data
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=40040492 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=26818564 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=24820109 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Data.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41575456 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64271818 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=38634788 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+Class: ProjectTest.ConstructionMeta
+  metaClassKind: Data
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 184775704
+      Mapping: []
+  ClassLocals:
+      - #0 id=54197854 idx=0 name=ProjectTest.ConstructionMeta.level type=Core.Int32
+      - #1 id=18018639 idx=1 name=ProjectTest.ConstructionMeta.passed type=Core.Boolean
+  ClassStatics:
+      - #0 id=54197854 idx=0 name=ProjectTest.ConstructionMeta.level type=Core.Int32
+      - #1 id=18018639 idx=1 name=ProjectTest.ConstructionMeta.passed type=Core.Boolean
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19386696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9610617 idx=0 name=this] type=Core.Data
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=40040492 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=26818564 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=24820109 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Data.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41575456 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64271818 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=38634788 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+Class: ProjectTest.ConstructionRecord
+  metaClassKind: Data
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 184775704
+      Mapping: []
+  ClassLocals:
+      - #0 id=31815862 idx=0 name=ProjectTest.ConstructionRecord.id type=Core.Int32
+      - #1 id=17907308 idx=1 name=ProjectTest.ConstructionRecord.name type=Core.String
+      - #2 id=41205809 idx=2 name=ProjectTest.ConstructionRecord.point type=ProjectTest.ConstructionPoint
+      - #3 id=35307962 idx=3 name=ProjectTest.ConstructionRecord.meta type=ProjectTest.ConstructionMeta
+      - #4 id=62262011 idx=4 name=ProjectTest.ConstructionRecord.profile type=AnonData_Lex: profile Path:ConstructionClass.sl Line: 21 Pos: 10  _
+      - #5 id=23487194 idx=5 name=ProjectTest.ConstructionRecord.tags type=Core.Array<T><Core.String>
+      - #6 id=10058158 idx=6 name=ProjectTest.ConstructionRecord.history type=Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>
+  ClassStatics:
+      - #0 id=31815862 idx=0 name=ProjectTest.ConstructionRecord.id type=Core.Int32
+      - #1 id=17907308 idx=1 name=ProjectTest.ConstructionRecord.name type=Core.String
+      - #2 id=41205809 idx=2 name=ProjectTest.ConstructionRecord.point type=ProjectTest.ConstructionPoint
+      - #3 id=35307962 idx=3 name=ProjectTest.ConstructionRecord.meta type=ProjectTest.ConstructionMeta
+      - #4 id=62262011 idx=4 name=ProjectTest.ConstructionRecord.profile type=AnonData_Lex: profile Path:ConstructionClass.sl Line: 21 Pos: 10  _
+      - #5 id=23487194 idx=5 name=ProjectTest.ConstructionRecord.tags type=Core.Array<T><Core.String>
+      - #6 id=10058158 idx=6 name=ProjectTest.ConstructionRecord.history type=Core.Array<T><AnonData_Lex: { Path:ConstructionClass.sl Line: 30 Pos: 8  _>
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19386696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9610617 idx=0 name=this] type=Core.Data
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=40040492 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=26818564 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=24820109 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Data.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41575456 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64271818 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=38634788 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+Class: ProjectTest.ConstructionCounter
+  metaClassKind: Data
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 184775704
+      Mapping: []
+  ClassLocals:
+      - #0 id=23414560 idx=0 name=ProjectTest.ConstructionCounter.createCount type=Core.Int32
+      - #1 id=9404449 idx=1 name=ProjectTest.ConstructionCounter.totalValue type=Core.Int32
+  ClassStatics:
+      - #0 id=23414560 idx=0 name=ProjectTest.ConstructionCounter.createCount type=Core.Int32
+      - #1 id=9404449 idx=1 name=ProjectTest.ConstructionCounter.totalValue type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19386696 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9610617 idx=0 name=this] type=Core.Data
+    Locals: []
+    Instructions:
+
+  Method: Core.Data.toJson
+    VirtualName: toJson_Core.String_0
+    Name: toJson
+    InterfaceMethod: False
+    Return:
+      - #0 id=40040492 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=26818564 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=24820109 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+  Method: Core.Data.toJsonPretty
+    VirtualName: toJsonPretty_Core.String_0
+    Name: toJsonPretty
+    InterfaceMethod: False
+    Return:
+      - #0 id=41575456 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64271818 idx=0 name=this] type=Core.Data
+    Locals:
+      - #0 id=38634788 idx=0 name=proto type=Core.TreeNode<T><Core.String>
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

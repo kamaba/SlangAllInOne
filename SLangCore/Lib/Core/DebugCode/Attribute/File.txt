@@ -1,0 +1,5 @@
+-------------------FileMeta 文件显示 开始 : Path: Attribute.sl-----------------------
+public _partial class Attribute extends Object
+{
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

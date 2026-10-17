@@ -1,0 +1,1074 @@
+-------------------IR 文件显示 开始 : Path: ObjectTest.sl-----------------------
+Class: ProjectTest.ObjectTest
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations:
+    RelatedClassId: 1205356647
+      Mapping: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ObjectTest.fun
+    VirtualName: fun_Core.Void_0
+    Name: fun
+    InterfaceMethod: False
+    Return:
+      - #0 id=32196376 idx=0 name=_local[ProjectTest.ObjectTest.fun.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=37952469 idx=0 name=_local[txt] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:5] [LoadConstString] index:[103] val: string[========== Object.sl tests (start) ==========] 
+2 2   [ ObjectTest.sl:3] [StoreLocal] index:[0] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[0] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:25] [CallStatic] index:[0] info:[CallStatic testReferenceEquality] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testReferenceEquality, MethodRuntimeTypeList=[], ParamCount=0}] 
+8 8   [ ObjectTest.sl:41] [CallStatic] index:[0] info:[CallStatic testEqualsMethod] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testEqualsMethod, MethodRuntimeTypeList=[], ParamCount=0}] 
+9 9   [ :0] [Nop] index:[0]
+10 10   [ ObjectTest.sl:55] [Nop] index:[0] info:[inline end: testStaticEquals]
+11 11   [ ObjectTest.sl:73] [CallStatic] index:[0] info:[CallStatic testHashCode] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testHashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ObjectTest.sl:94] [CallStatic] index:[0] info:[CallStatic testToString] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testToString, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ ObjectTest.sl:108] [CallStatic] index:[0] info:[CallStatic testRefCount] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testRefCount, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ObjectTest.sl:120] [CallStatic] index:[0] info:[CallStatic testRefWeak] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testRefWeak, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ObjectTest.sl:133] [CallStatic] index:[0] info:[CallStatic testNullHandling] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testNullHandling, MethodRuntimeTypeList=[], ParamCount=0}] 
+16 16   [ ObjectTest.sl:144] [CallStatic] index:[0] info:[CallStatic testTypeProperty] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testTypeProperty, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ ObjectTest.sl:154] [CallStatic] index:[0] info:[CallStatic testRefProperty] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testRefProperty, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ObjectTest.sl:167] [CallStatic] index:[0] info:[CallStatic testLifecycle] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testLifecycle, MethodRuntimeTypeList=[], ParamCount=0}] 
+19 19   [ ObjectTest.sl:185] [CallStatic] index:[0] info:[CallStatic testObjectAssignment] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testObjectAssignment, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ObjectTest.sl:199] [CallStatic] index:[0] info:[CallStatic testChainedEquals] val:[RuntimeCall{StaticRuntimeType=ProjectTest.ObjectTest, StaticRuntimeTypeList=[], Method=ProjectTest.ObjectTest.testChainedEquals, MethodRuntimeTypeList=[], ParamCount=0}] 
+21 21   [ ObjectTest.sl:21] [LoadConstString] index:[104] val: string[========== Object.sl tests (end) ==========] 
+22 22   [ ObjectTest.sl:3] [StoreLocal] index:[1] info:[LocalStatement]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+25 25   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+26 26   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+27 27   [ ObjectTest.sl:3] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ObjectTest.testReferenceEquality
+    VirtualName: testReferenceEquality_Core.Void_0
+    Name: testReferenceEquality
+    InterfaceMethod: False
+    Return:
+      - #0 id=21331933 idx=0 name=_local[ProjectTest.ObjectTest.testReferenceEquality.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=57769674 idx=0 name=testReferenceEquality_local[obj] type=Core.Object
+      - #1 id=50165025 idx=1 name=testReferenceEquality_local[obj2] type=Core.Object
+      - #2 id=48832041 idx=2 name=testReferenceEquality_local[obj3] type=Core.Object
+      - #3 id=36835188 idx=3 name=testReferenceEquality_local[obj4] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:27] [LoadConstString] index:[105] val: string[--- testReferenceEquality ---] 
+2 2   [ ObjectTest.sl:25] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:25] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:28] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:25] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:29] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ObjectTest.sl:25] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ ObjectTest.sl:25] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+13 13   [ ObjectTest.sl:30] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+14 14   [ ObjectTest.sl:25] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:25] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+16 16   [ ObjectTest.sl:31] [ArcRetain] index:[0] info:[ARC claim owned new local: obj4]
+17 17   [ ObjectTest.sl:25] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ ObjectTest.sl:33] [LoadConstString] index:[106] val: string[[1] alias == : (obj == obj2) -> ] 
+19 19   [ ObjectTest.sl:33] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ ObjectTest.sl:33] [LoadLocal] index:[1] info:[LocalStatement]
+21 21   [ ObjectTest.sl:33] [Ceq] index:[0]
+22 22   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ObjectTest.sl:33] [Add] index:[0]
+24 24   [ ObjectTest.sl:25] [StoreLocal] index:[5] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ ObjectTest.sl:34] [LoadConstString] index:[107] val: string[[2] distinct == : (obj == obj3) -> ] 
+30 30   [ ObjectTest.sl:34] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ ObjectTest.sl:34] [LoadLocal] index:[2] info:[LocalStatement]
+32 32   [ ObjectTest.sl:34] [Ceq] index:[0]
+33 33   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ ObjectTest.sl:34] [Add] index:[0]
+35 35   [ ObjectTest.sl:25] [StoreLocal] index:[6] info:[LocalStatement]
+36 36   [ :0] [Nop] index:[0]
+37 37   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+38 38   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+39 39   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+40 40   [ ObjectTest.sl:35] [LoadConstString] index:[108] val: string[[3] alias refEquals : Object.refEquals(obj, obj2) -> ] 
+41 41   [ ObjectTest.sl:35] [LoadLocal] index:[0] info:[LocalStatement]
+42 42   [ ObjectTest.sl:35] [LoadLocal] index:[1] info:[LocalStatement]
+43 43   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ ObjectTest.sl:35] [Add] index:[0]
+46 46   [ ObjectTest.sl:25] [StoreLocal] index:[7] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+49 49   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+50 50   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+51 51   [ ObjectTest.sl:36] [LoadConstString] index:[109] val: string[[4] distinct refEquals : Object.refEquals(obj3, obj4) -> ] 
+52 52   [ ObjectTest.sl:36] [LoadLocal] index:[2] info:[LocalStatement]
+53 53   [ ObjectTest.sl:36] [LoadLocal] index:[3] info:[LocalStatement]
+54 54   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+55 55   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+56 56   [ ObjectTest.sl:36] [Add] index:[0]
+57 57   [ ObjectTest.sl:25] [StoreLocal] index:[8] info:[LocalStatement]
+58 58   [ :0] [Nop] index:[0]
+59 59   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+60 60   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+61 61   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+62 62   [ ObjectTest.sl:37] [LoadConstString] index:[110] val: string[[5] self refEquals : Object.refEquals(obj, obj) -> ] 
+63 63   [ ObjectTest.sl:37] [LoadLocal] index:[0] info:[LocalStatement]
+64 64   [ ObjectTest.sl:37] [LoadLocal] index:[0] info:[LocalStatement]
+65 65   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+66 66   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+67 67   [ ObjectTest.sl:37] [Add] index:[0]
+68 68   [ ObjectTest.sl:25] [StoreLocal] index:[9] info:[LocalStatement]
+69 69   [ :0] [Nop] index:[0]
+70 70   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+71 71   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+72 72   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+73 73   [ ObjectTest.sl:25] [Label] index:[0] info:[FunEndLabel]
+74 74   [ ObjectTest.sl:25] [LoadLocal] index:[0] info:[ARC release: LoadLocal testReferenceEquality_local[obj]]
+75 75   [ ObjectTest.sl:25] [ArcRelease] index:[0] info:[ARC release owned local: testReferenceEquality_local[obj]]
+76 76   [ ObjectTest.sl:25] [StoreLocal] index:[0] info:[ARC release: StoreLocal testReferenceEquality_local[obj]]
+77 77   [ ObjectTest.sl:25] [LoadLocal] index:[2] info:[ARC release: LoadLocal testReferenceEquality_local[obj3]]
+78 78   [ ObjectTest.sl:25] [ArcRelease] index:[0] info:[ARC release owned local: testReferenceEquality_local[obj3]]
+79 79   [ ObjectTest.sl:25] [StoreLocal] index:[2] info:[ARC release: StoreLocal testReferenceEquality_local[obj3]]
+80 80   [ ObjectTest.sl:25] [LoadLocal] index:[3] info:[ARC release: LoadLocal testReferenceEquality_local[obj4]]
+81 81   [ ObjectTest.sl:25] [ArcRelease] index:[0] info:[ARC release owned local: testReferenceEquality_local[obj4]]
+82 82   [ ObjectTest.sl:25] [StoreLocal] index:[3] info:[ARC release: StoreLocal testReferenceEquality_local[obj4]]
+
+  Method: ProjectTest.ObjectTest.testEqualsMethod
+    VirtualName: testEqualsMethod_Core.Void_0
+    Name: testEqualsMethod
+    InterfaceMethod: False
+    Return:
+      - #0 id=63081244 idx=0 name=_local[ProjectTest.ObjectTest.testEqualsMethod.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=30860289 idx=0 name=testEqualsMethod_local[obj] type=Core.Object
+      - #1 id=9307148 idx=1 name=testEqualsMethod_local[obj2] type=Core.Object
+      - #2 id=16655470 idx=2 name=testEqualsMethod_local[obj3] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:43] [LoadConstString] index:[111] val: string[--- testEqualsMethod ---] 
+2 2   [ ObjectTest.sl:41] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:41] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:44] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:41] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:45] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ObjectTest.sl:41] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ ObjectTest.sl:41] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+13 13   [ ObjectTest.sl:46] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+14 14   [ ObjectTest.sl:41] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:48] [LoadConstString] index:[112] val: string[[6] equals alias : obj.equals(obj2) -> ] 
+16 16   [ ObjectTest.sl:48] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ ObjectTest.sl:48] [LoadLocal] index:[1] info:[LocalStatement]
+18 18   [ :0] [CallVirt] index:[5] info:[CallVirt equals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.equals_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+19 19   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ObjectTest.sl:48] [Add] index:[0]
+21 21   [ ObjectTest.sl:41] [StoreLocal] index:[4] info:[LocalStatement]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+24 24   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+25 25   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+26 26   [ ObjectTest.sl:49] [LoadConstString] index:[113] val: string[[7] equals distinct : obj.equals(obj3) -> ] 
+27 27   [ ObjectTest.sl:49] [LoadLocal] index:[0] info:[LocalStatement]
+28 28   [ ObjectTest.sl:49] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ :0] [CallVirt] index:[5] info:[CallVirt equals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.equals_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+30 30   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+31 31   [ ObjectTest.sl:49] [Add] index:[0]
+32 32   [ ObjectTest.sl:41] [StoreLocal] index:[5] info:[LocalStatement]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+35 35   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+36 36   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+37 37   [ ObjectTest.sl:50] [LoadConstString] index:[114] val: string[[8] equals self : obj.equals(obj) -> ] 
+38 38   [ ObjectTest.sl:50] [LoadLocal] index:[0] info:[LocalStatement]
+39 39   [ ObjectTest.sl:50] [LoadLocal] index:[0] info:[LocalStatement]
+40 40   [ :0] [CallVirt] index:[5] info:[CallVirt equals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.equals_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+41 41   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+42 42   [ ObjectTest.sl:50] [Add] index:[0]
+43 43   [ ObjectTest.sl:41] [StoreLocal] index:[6] info:[LocalStatement]
+44 44   [ :0] [Nop] index:[0]
+45 45   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+46 46   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+47 47   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+48 48   [ ObjectTest.sl:51] [LoadConstString] index:[115] val: string[[9] equals null : obj.equals(null) -> ] 
+49 49   [ ObjectTest.sl:51] [LoadLocal] index:[0] info:[LocalStatement]
+50 50   [ ObjectTest.sl:51] [LoadConstNull] index:[0] val:[null] 
+51 51   [ :0] [CallVirt] index:[5] info:[CallVirt equals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.equals_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+52 52   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+53 53   [ ObjectTest.sl:51] [Add] index:[0]
+54 54   [ ObjectTest.sl:41] [StoreLocal] index:[7] info:[LocalStatement]
+55 55   [ :0] [Nop] index:[0]
+56 56   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+58 58   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+59 59   [ ObjectTest.sl:41] [Label] index:[0] info:[FunEndLabel]
+60 60   [ ObjectTest.sl:41] [LoadLocal] index:[0] info:[ARC release: LoadLocal testEqualsMethod_local[obj]]
+61 61   [ ObjectTest.sl:41] [ArcRelease] index:[0] info:[ARC release owned local: testEqualsMethod_local[obj]]
+62 62   [ ObjectTest.sl:41] [StoreLocal] index:[0] info:[ARC release: StoreLocal testEqualsMethod_local[obj]]
+63 63   [ ObjectTest.sl:41] [LoadLocal] index:[2] info:[ARC release: LoadLocal testEqualsMethod_local[obj3]]
+64 64   [ ObjectTest.sl:41] [ArcRelease] index:[0] info:[ARC release owned local: testEqualsMethod_local[obj3]]
+65 65   [ ObjectTest.sl:41] [StoreLocal] index:[2] info:[ARC release: StoreLocal testEqualsMethod_local[obj3]]
+
+  Method: ProjectTest.ObjectTest.testStaticEquals
+    VirtualName: testStaticEquals_Core.Void_0
+    Name: testStaticEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=15681504 idx=0 name=_local[ProjectTest.ObjectTest.testStaticEquals.return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:55] [Label] index:[0] info:[FunEndLabel]
+
+  Method: ProjectTest.ObjectTest.testHashCode
+    VirtualName: testHashCode_Core.Void_0
+    Name: testHashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=6915811 idx=0 name=_local[ProjectTest.ObjectTest.testHashCode.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=62242305 idx=0 name=testHashCode_local[obj] type=Core.Object
+      - #1 id=23309833 idx=1 name=testHashCode_local[obj2] type=Core.Object
+      - #2 id=8461910 idx=2 name=testHashCode_local[obj3] type=Core.Object
+      - #3 id=9048327 idx=3 name=testHashCode_local[hc1] type=Core.Int32
+      - #4 id=14326087 idx=4 name=testHashCode_local[hc2] type=Core.Int32
+      - #5 id=61825926 idx=5 name=testHashCode_local[hc3] type=Core.Int32
+      - #6 id=19562430 idx=6 name=testHashCode_local[hc1Again] type=Core.Int32
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+      - #8 id=37952469 idx=8 name=_local[txt] type=Core.Object
+      - #9 id=37952469 idx=9 name=_local[txt] type=Core.Object
+      - #10 id=37952469 idx=10 name=_local[txt] type=Core.Object
+      - #11 id=37952469 idx=11 name=_local[txt] type=Core.Object
+      - #12 id=37952469 idx=12 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:75] [LoadConstString] index:[116] val: string[--- testHashCode ---] 
+2 2   [ ObjectTest.sl:73] [StoreLocal] index:[7] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:73] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:76] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:73] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:77] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ObjectTest.sl:73] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ ObjectTest.sl:73] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+13 13   [ ObjectTest.sl:78] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+14 14   [ ObjectTest.sl:73] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:80] [LoadLocal] index:[0] info:[LocalStatement]
+16 16   [ :0] [CallVirt] index:[4] info:[CallVirt hashCode] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.hashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+17 17   [ ObjectTest.sl:73] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ ObjectTest.sl:81] [LoadLocal] index:[1] info:[LocalStatement]
+19 19   [ :0] [CallVirt] index:[4] info:[CallVirt hashCode] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.hashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ObjectTest.sl:73] [StoreLocal] index:[4] info:[LocalStatement]
+21 21   [ ObjectTest.sl:82] [LoadLocal] index:[2] info:[LocalStatement]
+22 22   [ :0] [CallVirt] index:[4] info:[CallVirt hashCode] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.hashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ObjectTest.sl:73] [StoreLocal] index:[5] info:[LocalStatement]
+24 24   [ ObjectTest.sl:83] [LoadConstString] index:[117] val: string[[16] hashCode alias same : (hc1 == hc2) -> ] 
+25 25   [ ObjectTest.sl:83] [LoadLocal] index:[3] info:[LocalStatement]
+26 26   [ ObjectTest.sl:83] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ ObjectTest.sl:83] [Ceq] index:[0]
+28 28   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+29 29   [ ObjectTest.sl:83] [Add] index:[0]
+30 30   [ ObjectTest.sl:73] [StoreLocal] index:[8] info:[LocalStatement]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ ProjectTest.sp:8] [LoadLocal] index:[8] info:[LocalStatement]
+33 33   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+34 34   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+35 35   [ ObjectTest.sl:84] [LoadConstString] index:[118] val: string[[17] hashCode distinct likely different : (hc1 != hc3) -> ] 
+36 36   [ ObjectTest.sl:84] [LoadLocal] index:[3] info:[LocalStatement]
+37 37   [ ObjectTest.sl:84] [LoadLocal] index:[5] info:[LocalStatement]
+38 38   [ ObjectTest.sl:84] [Cne] index:[0]
+39 39   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ ObjectTest.sl:84] [Add] index:[0]
+41 41   [ ObjectTest.sl:73] [StoreLocal] index:[9] info:[LocalStatement]
+42 42   [ :0] [Nop] index:[0]
+43 43   [ ProjectTest.sp:8] [LoadLocal] index:[9] info:[LocalStatement]
+44 44   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+45 45   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+46 46   [ ObjectTest.sl:85] [LoadConstString] index:[119] val: string[[18] hashCode value obj : ] 
+47 47   [ ObjectTest.sl:85] [LoadLocal] index:[3] info:[LocalStatement]
+48 48   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+49 49   [ ObjectTest.sl:85] [Add] index:[0]
+50 50   [ ObjectTest.sl:73] [StoreLocal] index:[10] info:[LocalStatement]
+51 51   [ :0] [Nop] index:[0]
+52 52   [ ProjectTest.sp:8] [LoadLocal] index:[10] info:[LocalStatement]
+53 53   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+54 54   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+55 55   [ ObjectTest.sl:86] [LoadConstString] index:[120] val: string[[19] hashCode value obj3 : ] 
+56 56   [ ObjectTest.sl:86] [LoadLocal] index:[5] info:[LocalStatement]
+57 57   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+58 58   [ ObjectTest.sl:86] [Add] index:[0]
+59 59   [ ObjectTest.sl:73] [StoreLocal] index:[11] info:[LocalStatement]
+60 60   [ :0] [Nop] index:[0]
+61 61   [ ProjectTest.sp:8] [LoadLocal] index:[11] info:[LocalStatement]
+62 62   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+63 63   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+64 64   [ ObjectTest.sl:89] [LoadLocal] index:[0] info:[LocalStatement]
+65 65   [ :0] [CallVirt] index:[4] info:[CallVirt hashCode] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.hashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+66 66   [ ObjectTest.sl:73] [StoreLocal] index:[6] info:[LocalStatement]
+67 67   [ ObjectTest.sl:90] [LoadConstString] index:[121] val: string[[20] hashCode stable : (hc1 == hc1Again) -> ] 
+68 68   [ ObjectTest.sl:90] [LoadLocal] index:[3] info:[LocalStatement]
+69 69   [ ObjectTest.sl:90] [LoadLocal] index:[6] info:[LocalStatement]
+70 70   [ ObjectTest.sl:90] [Ceq] index:[0]
+71 71   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+72 72   [ ObjectTest.sl:90] [Add] index:[0]
+73 73   [ ObjectTest.sl:73] [StoreLocal] index:[12] info:[LocalStatement]
+74 74   [ :0] [Nop] index:[0]
+75 75   [ ProjectTest.sp:8] [LoadLocal] index:[12] info:[LocalStatement]
+76 76   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+77 77   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+78 78   [ ObjectTest.sl:73] [Label] index:[0] info:[FunEndLabel]
+79 79   [ ObjectTest.sl:73] [LoadLocal] index:[0] info:[ARC release: LoadLocal testHashCode_local[obj]]
+80 80   [ ObjectTest.sl:73] [ArcRelease] index:[0] info:[ARC release owned local: testHashCode_local[obj]]
+81 81   [ ObjectTest.sl:73] [StoreLocal] index:[0] info:[ARC release: StoreLocal testHashCode_local[obj]]
+82 82   [ ObjectTest.sl:73] [LoadLocal] index:[2] info:[ARC release: LoadLocal testHashCode_local[obj3]]
+83 83   [ ObjectTest.sl:73] [ArcRelease] index:[0] info:[ARC release owned local: testHashCode_local[obj3]]
+84 84   [ ObjectTest.sl:73] [StoreLocal] index:[2] info:[ARC release: StoreLocal testHashCode_local[obj3]]
+
+  Method: ProjectTest.ObjectTest.testToString
+    VirtualName: testToString_Core.Void_0
+    Name: testToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=41844142 idx=0 name=_local[ProjectTest.ObjectTest.testToString.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=41052960 idx=0 name=testToString_local[obj] type=Core.Object
+      - #1 id=33932326 idx=1 name=testToString_local[obj3] type=Core.Object
+      - #2 id=36955479 idx=2 name=testToString_local[s1] type=Core.String
+      - #3 id=64163862 idx=3 name=testToString_local[s2] type=Core.String
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:96] [LoadConstString] index:[122] val: string[--- testToString ---] 
+2 2   [ ObjectTest.sl:94] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:94] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:97] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:94] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:94] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+11 11   [ ObjectTest.sl:98] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+12 12   [ ObjectTest.sl:94] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ ObjectTest.sl:100] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ObjectTest.sl:94] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ ObjectTest.sl:101] [LoadLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ObjectTest.sl:94] [StoreLocal] index:[3] info:[LocalStatement]
+19 19   [ ObjectTest.sl:102] [LoadConstString] index:[123] val: string[[21] toString obj : ] 
+20 20   [ ObjectTest.sl:102] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ ObjectTest.sl:102] [Add] index:[0]
+22 22   [ ObjectTest.sl:94] [StoreLocal] index:[5] info:[LocalStatement]
+23 23   [ :0] [Nop] index:[0]
+24 24   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+25 25   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+26 26   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+27 27   [ ObjectTest.sl:103] [LoadConstString] index:[124] val: string[[22] toString obj3 : ] 
+28 28   [ ObjectTest.sl:103] [LoadLocal] index:[3] info:[LocalStatement]
+29 29   [ ObjectTest.sl:103] [Add] index:[0]
+30 30   [ ObjectTest.sl:94] [StoreLocal] index:[6] info:[LocalStatement]
+31 31   [ :0] [Nop] index:[0]
+32 32   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+33 33   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+34 34   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+35 35   [ ObjectTest.sl:104] [LoadConstString] index:[125] val: string[[23] toString different : (s1 != s2) -> ] 
+36 36   [ ObjectTest.sl:104] [LoadLocal] index:[2] info:[LocalStatement]
+37 37   [ ObjectTest.sl:104] [LoadLocal] index:[3] info:[LocalStatement]
+38 38   [ ObjectTest.sl:104] [Cne] index:[0]
+39 39   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+40 40   [ ObjectTest.sl:104] [Add] index:[0]
+41 41   [ ObjectTest.sl:94] [StoreLocal] index:[7] info:[LocalStatement]
+42 42   [ :0] [Nop] index:[0]
+43 43   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+44 44   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+45 45   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+46 46   [ ObjectTest.sl:94] [Label] index:[0] info:[FunEndLabel]
+47 47   [ ObjectTest.sl:94] [LoadLocal] index:[0] info:[ARC release: LoadLocal testToString_local[obj]]
+48 48   [ ObjectTest.sl:94] [ArcRelease] index:[0] info:[ARC release owned local: testToString_local[obj]]
+49 49   [ ObjectTest.sl:94] [StoreLocal] index:[0] info:[ARC release: StoreLocal testToString_local[obj]]
+50 50   [ ObjectTest.sl:94] [LoadLocal] index:[1] info:[ARC release: LoadLocal testToString_local[obj3]]
+51 51   [ ObjectTest.sl:94] [ArcRelease] index:[0] info:[ARC release owned local: testToString_local[obj3]]
+52 52   [ ObjectTest.sl:94] [StoreLocal] index:[1] info:[ARC release: StoreLocal testToString_local[obj3]]
+
+  Method: ProjectTest.ObjectTest.testRefCount
+    VirtualName: testRefCount_Core.Void_0
+    Name: testRefCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=40603851 idx=0 name=_local[ProjectTest.ObjectTest.testRefCount.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=29890343 idx=0 name=testRefCount_local[obj] type=Core.Object
+      - #1 id=577635 idx=1 name=testRefCount_local[obj2] type=Core.Object
+      - #2 id=5198720 idx=2 name=testRefCount_local[refc] type=Core.Int32
+      - #3 id=46788488 idx=3 name=testRefCount_local[refcSelf] type=Core.Int32
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:110] [LoadConstString] index:[126] val: string[--- testRefCount ---] 
+2 2   [ ObjectTest.sl:108] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:108] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:111] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:108] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:112] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ObjectTest.sl:108] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ ObjectTest.sl:113] [LoadLocal] index:[1] info:[LocalStatement]
+13 13   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+14 14   [ ObjectTest.sl:108] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:114] [LoadConstString] index:[127] val: string[[24] refCount (alias obj2) : ] 
+16 16   [ ObjectTest.sl:114] [LoadLocal] index:[2] info:[LocalStatement]
+17 17   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ObjectTest.sl:114] [Add] index:[0]
+19 19   [ ObjectTest.sl:108] [StoreLocal] index:[5] info:[LocalStatement]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+22 22   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+23 23   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+24 24   [ ObjectTest.sl:115] [LoadLocal] index:[0] info:[LocalStatement]
+25 25   [ :0] [CallStatic] index:[1] info:[CallStatic refCount] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.refCount_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+26 26   [ ObjectTest.sl:108] [StoreLocal] index:[3] info:[LocalStatement]
+27 27   [ ObjectTest.sl:116] [LoadConstString] index:[128] val: string[[25] refCount (obj self) : ] 
+28 28   [ ObjectTest.sl:116] [LoadLocal] index:[3] info:[LocalStatement]
+29 29   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+30 30   [ ObjectTest.sl:116] [Add] index:[0]
+31 31   [ ObjectTest.sl:108] [StoreLocal] index:[6] info:[LocalStatement]
+32 32   [ :0] [Nop] index:[0]
+33 33   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+34 34   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+35 35   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+36 36   [ ObjectTest.sl:108] [Label] index:[0] info:[FunEndLabel]
+37 37   [ ObjectTest.sl:108] [LoadLocal] index:[0] info:[ARC release: LoadLocal testRefCount_local[obj]]
+38 38   [ ObjectTest.sl:108] [ArcRelease] index:[0] info:[ARC release owned local: testRefCount_local[obj]]
+39 39   [ ObjectTest.sl:108] [StoreLocal] index:[0] info:[ARC release: StoreLocal testRefCount_local[obj]]
+
+  Method: ProjectTest.ObjectTest.testRefWeak
+    VirtualName: testRefWeak_Core.Void_0
+    Name: testRefWeak
+    InterfaceMethod: False
+    Return:
+      - #0 id=18443210 idx=0 name=_local[ProjectTest.ObjectTest.testRefWeak.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=31771169 idx=0 name=testRefWeak_local[obj] type=Core.Object
+      - #1 id=17505069 idx=1 name=testRefWeak_local[obj3] type=Core.Object
+      - #2 id=23327895 idx=2 name=testRefWeak_local[rwA] type=Core.Object
+      - #3 id=8624464 idx=3 name=testRefWeak_local[rwB] type=Core.Object
+      - #4 id=10511313 idx=4 name=testRefWeak_local[rwSelf] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:122] [LoadConstString] index:[129] val: string[--- testRefWeak ---] 
+2 2   [ ObjectTest.sl:120] [StoreLocal] index:[5] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:120] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:123] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:120] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:120] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+11 11   [ ObjectTest.sl:124] [ArcRetain] index:[0] info:[ARC claim owned new local: obj3]
+12 12   [ ObjectTest.sl:120] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ ObjectTest.sl:125] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ :0] [CallStatic] index:[1] info:[CallStatic weakRef] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.weakRef_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+15 15   [ ObjectTest.sl:120] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ ObjectTest.sl:126] [LoadLocal] index:[1] info:[LocalStatement]
+17 17   [ :0] [CallStatic] index:[1] info:[CallStatic weakRef] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.weakRef_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+18 18   [ ObjectTest.sl:120] [StoreLocal] index:[3] info:[LocalStatement]
+19 19   [ ObjectTest.sl:127] [LoadConstString] index:[130] val: string[[26] refWeak distinct : Object.refEquals(rwA, rwB) -> ] 
+20 20   [ ObjectTest.sl:127] [LoadLocal] index:[2] info:[LocalStatement]
+21 21   [ ObjectTest.sl:127] [LoadLocal] index:[3] info:[LocalStatement]
+22 22   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+23 23   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+24 24   [ ObjectTest.sl:127] [Add] index:[0]
+25 25   [ ObjectTest.sl:120] [StoreLocal] index:[6] info:[LocalStatement]
+26 26   [ :0] [Nop] index:[0]
+27 27   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+28 28   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+29 29   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+30 30   [ ObjectTest.sl:128] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ :0] [CallStatic] index:[1] info:[CallStatic weakRef] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.weakRef_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+32 32   [ ObjectTest.sl:120] [StoreLocal] index:[4] info:[LocalStatement]
+33 33   [ ObjectTest.sl:129] [LoadConstString] index:[131] val: string[[27] refWeak self stable : Object.refEquals(rwA, rwSelf) -> ] 
+34 34   [ ObjectTest.sl:129] [LoadLocal] index:[2] info:[LocalStatement]
+35 35   [ ObjectTest.sl:129] [LoadLocal] index:[4] info:[LocalStatement]
+36 36   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+37 37   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+38 38   [ ObjectTest.sl:129] [Add] index:[0]
+39 39   [ ObjectTest.sl:120] [StoreLocal] index:[7] info:[LocalStatement]
+40 40   [ :0] [Nop] index:[0]
+41 41   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+42 42   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+43 43   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+44 44   [ ObjectTest.sl:120] [Label] index:[0] info:[FunEndLabel]
+45 45   [ ObjectTest.sl:120] [LoadLocal] index:[0] info:[ARC release: LoadLocal testRefWeak_local[obj]]
+46 46   [ ObjectTest.sl:120] [ArcRelease] index:[0] info:[ARC release owned local: testRefWeak_local[obj]]
+47 47   [ ObjectTest.sl:120] [StoreLocal] index:[0] info:[ARC release: StoreLocal testRefWeak_local[obj]]
+48 48   [ ObjectTest.sl:120] [LoadLocal] index:[1] info:[ARC release: LoadLocal testRefWeak_local[obj3]]
+49 49   [ ObjectTest.sl:120] [ArcRelease] index:[0] info:[ARC release owned local: testRefWeak_local[obj3]]
+50 50   [ ObjectTest.sl:120] [StoreLocal] index:[1] info:[ARC release: StoreLocal testRefWeak_local[obj3]]
+
+  Method: ProjectTest.ObjectTest.testNullHandling
+    VirtualName: testNullHandling_Core.Void_0
+    Name: testNullHandling
+    InterfaceMethod: False
+    Return:
+      - #0 id=27492955 idx=0 name=_local[ProjectTest.ObjectTest.testNullHandling.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=46110007 idx=0 name=testNullHandling_local[obj] type=Core.Object
+      - #1 id=37952469 idx=1 name=_local[txt] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:135] [LoadConstString] index:[132] val: string[--- testNullHandling ---] 
+2 2   [ ObjectTest.sl:133] [StoreLocal] index:[1] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[1] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:133] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:136] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:133] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:138] [LoadConstString] index:[133] val: string[[28] refEquals(null,null) : ] 
+11 11   [ ObjectTest.sl:138] [LoadConstNull] index:[0] val:[null] 
+12 12   [ ObjectTest.sl:138] [LoadConstNull] index:[0] val:[null] 
+13 13   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+14 14   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+15 15   [ ObjectTest.sl:138] [Add] index:[0]
+16 16   [ ObjectTest.sl:133] [StoreLocal] index:[2] info:[LocalStatement]
+17 17   [ :0] [Nop] index:[0]
+18 18   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+19 19   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+20 20   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+21 21   [ ObjectTest.sl:139] [LoadConstString] index:[134] val: string[[29] refEquals(obj,null) : ] 
+22 22   [ ObjectTest.sl:139] [LoadLocal] index:[0] info:[LocalStatement]
+23 23   [ ObjectTest.sl:139] [LoadConstNull] index:[0] val:[null] 
+24 24   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+25 25   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+26 26   [ ObjectTest.sl:139] [Add] index:[0]
+27 27   [ ObjectTest.sl:133] [StoreLocal] index:[3] info:[LocalStatement]
+28 28   [ :0] [Nop] index:[0]
+29 29   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+30 30   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+31 31   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+32 32   [ ObjectTest.sl:140] [LoadConstString] index:[135] val: string[[30] refEquals(null,obj) : ] 
+33 33   [ ObjectTest.sl:140] [LoadConstNull] index:[0] val:[null] 
+34 34   [ ObjectTest.sl:140] [LoadLocal] index:[0] info:[LocalStatement]
+35 35   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+36 36   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+37 37   [ ObjectTest.sl:140] [Add] index:[0]
+38 38   [ ObjectTest.sl:133] [StoreLocal] index:[4] info:[LocalStatement]
+39 39   [ :0] [Nop] index:[0]
+40 40   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+41 41   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+42 42   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+43 43   [ ObjectTest.sl:133] [Label] index:[0] info:[FunEndLabel]
+44 44   [ ObjectTest.sl:133] [LoadLocal] index:[0] info:[ARC release: LoadLocal testNullHandling_local[obj]]
+45 45   [ ObjectTest.sl:133] [ArcRelease] index:[0] info:[ARC release owned local: testNullHandling_local[obj]]
+46 46   [ ObjectTest.sl:133] [StoreLocal] index:[0] info:[ARC release: StoreLocal testNullHandling_local[obj]]
+
+  Method: ProjectTest.ObjectTest.testTypeProperty
+    VirtualName: testTypeProperty_Core.Void_0
+    Name: testTypeProperty
+    InterfaceMethod: False
+    Return:
+      - #0 id=12336887 idx=0 name=_local[ProjectTest.ObjectTest.testTypeProperty.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=43923123 idx=0 name=testTypeProperty_local[obj] type=Core.Object
+      - #1 id=59763787 idx=1 name=testTypeProperty_local[t] type=Core.Type
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:146] [LoadConstString] index:[136] val: string[--- testTypeProperty ---] 
+2 2   [ ObjectTest.sl:144] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:144] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:147] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:144] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:148] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ :0] [CallStatic] index:[0] info:[CallStatic type] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.type, MethodRuntimeTypeList=[], ParamCount=0}] 
+12 12   [ ObjectTest.sl:144] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ ObjectTest.sl:149] [LoadConstString] index:[137] val: string[[31] type not null : (t != null) -> ] 
+14 14   [ ObjectTest.sl:149] [LoadLocal] index:[1] info:[LocalStatement]
+15 15   [ ObjectTest.sl:149] [LoadConstNull] index:[0] val:[null] 
+16 16   [ ObjectTest.sl:149] [Cne] index:[0]
+17 17   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+18 18   [ ObjectTest.sl:149] [Add] index:[0]
+19 19   [ ObjectTest.sl:144] [StoreLocal] index:[3] info:[LocalStatement]
+20 20   [ :0] [Nop] index:[0]
+21 21   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+22 22   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+23 23   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+24 24   [ ObjectTest.sl:150] [LoadConstString] index:[138] val: string[[32] type toString : ] 
+25 25   [ ObjectTest.sl:150] [LoadLocal] index:[1] info:[LocalStatement]
+26 26   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Type, StaticRuntimeTypeList=[], Method=Core.Type.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+27 27   [ ObjectTest.sl:150] [Add] index:[0]
+28 28   [ ObjectTest.sl:144] [StoreLocal] index:[4] info:[LocalStatement]
+29 29   [ :0] [Nop] index:[0]
+30 30   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+31 31   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+32 32   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+33 33   [ ObjectTest.sl:144] [Label] index:[0] info:[FunEndLabel]
+34 34   [ ObjectTest.sl:144] [LoadLocal] index:[0] info:[ARC release: LoadLocal testTypeProperty_local[obj]]
+35 35   [ ObjectTest.sl:144] [ArcRelease] index:[0] info:[ARC release owned local: testTypeProperty_local[obj]]
+36 36   [ ObjectTest.sl:144] [StoreLocal] index:[0] info:[ARC release: StoreLocal testTypeProperty_local[obj]]
+
+  Method: ProjectTest.ObjectTest.testRefProperty
+    VirtualName: testRefProperty_Core.Void_0
+    Name: testRefProperty
+    InterfaceMethod: False
+    Return:
+      - #0 id=1003178 idx=0 name=_local[ProjectTest.ObjectTest.testRefProperty.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=9028608 idx=0 name=testRefProperty_local[obj] type=Core.Object
+      - #1 id=14148614 idx=1 name=testRefProperty_local[obj2] type=Core.Object
+      - #2 id=60228670 idx=2 name=testRefProperty_local[r1] type=Core.Object
+      - #3 id=5187119 idx=3 name=testRefProperty_local[r2] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:156] [LoadConstString] index:[139] val: string[--- testRefProperty ---] 
+2 2   [ ObjectTest.sl:154] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:154] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:157] [ArcRetain] index:[0] info:[ARC claim owned new local: obj]
+9 9   [ ObjectTest.sl:154] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:158] [LoadLocal] index:[0] info:[LocalStatement]
+11 11   [ ObjectTest.sl:154] [StoreLocal] index:[1] info:[LocalStatement]
+12 12   [ ObjectTest.sl:159] [LoadLocal] index:[0] info:[LocalStatement]
+13 13   [ :0] [CallStatic] index:[1] info:[CallStatic ref] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.ref_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+14 14   [ ObjectTest.sl:154] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:160] [LoadLocal] index:[1] info:[LocalStatement]
+16 16   [ :0] [CallStatic] index:[1] info:[CallStatic ref] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.ref_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+17 17   [ ObjectTest.sl:154] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ ObjectTest.sl:161] [LoadConstString] index:[140] val: string[[33] ref alias same : Object.refEquals(r1, r2) -> ] 
+19 19   [ ObjectTest.sl:161] [LoadLocal] index:[2] info:[LocalStatement]
+20 20   [ ObjectTest.sl:161] [LoadLocal] index:[3] info:[LocalStatement]
+21 21   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+22 22   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ObjectTest.sl:161] [Add] index:[0]
+24 24   [ ObjectTest.sl:154] [StoreLocal] index:[5] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ ObjectTest.sl:162] [LoadConstString] index:[141] val: string[[34] ref self same : Object.refEquals(r1, Memory.ref(obj)) -> ] 
+30 30   [ ObjectTest.sl:162] [LoadLocal] index:[2] info:[LocalStatement]
+31 31   [ ObjectTest.sl:162] [LoadLocal] index:[0] info:[LocalStatement]
+32 32   [ :0] [CallStatic] index:[1] info:[CallStatic ref] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.ref_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+33 33   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+34 34   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+35 35   [ ObjectTest.sl:162] [Add] index:[0]
+36 36   [ ObjectTest.sl:154] [StoreLocal] index:[6] info:[LocalStatement]
+37 37   [ :0] [Nop] index:[0]
+38 38   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+39 39   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+40 40   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+41 41   [ ObjectTest.sl:154] [Label] index:[0] info:[FunEndLabel]
+42 42   [ ObjectTest.sl:154] [LoadLocal] index:[0] info:[ARC release: LoadLocal testRefProperty_local[obj]]
+43 43   [ ObjectTest.sl:154] [ArcRelease] index:[0] info:[ARC release owned local: testRefProperty_local[obj]]
+44 44   [ ObjectTest.sl:154] [StoreLocal] index:[0] info:[ARC release: StoreLocal testRefProperty_local[obj]]
+
+  Method: ProjectTest.ObjectTest.testLifecycle
+    VirtualName: testLifecycle_Core.Void_0
+    Name: testLifecycle
+    InterfaceMethod: False
+    Return:
+      - #0 id=46684076 idx=0 name=_local[ProjectTest.ObjectTest.testLifecycle.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=17503500 idx=0 name=testLifecycle_local[tmp] type=Core.Object
+      - #1 id=23313778 idx=1 name=testLifecycle_local[tmp2] type=Core.Object
+      - #2 id=37952469 idx=2 name=_local[txt] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:169] [LoadConstString] index:[142] val: string[--- testLifecycle ---] 
+2 2   [ ObjectTest.sl:167] [StoreLocal] index:[2] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[2] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:167] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:170] [ArcRetain] index:[0] info:[ARC claim owned new local: tmp]
+9 9   [ ObjectTest.sl:167] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:171] [LoadConstString] index:[143] val: string[[35] tmp.hashCode before free -> ] 
+11 11   [ ObjectTest.sl:171] [LoadLocal] index:[0] info:[LocalStatement]
+12 12   [ :0] [CallVirt] index:[4] info:[CallVirt hashCode] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.hashCode, MethodRuntimeTypeList=[], ParamCount=0}] 
+13 13   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Int32, StaticRuntimeTypeList=[], Method=Core.Int32.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+14 14   [ ObjectTest.sl:171] [Add] index:[0]
+15 15   [ ObjectTest.sl:167] [StoreLocal] index:[3] info:[LocalStatement]
+16 16   [ :0] [Nop] index:[0]
+17 17   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+18 18   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+19 19   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+20 20   [ ObjectTest.sl:172] [LoadLocal] index:[0] info:[LocalStatement]
+21 21   [ :0] [CallStatic] index:[1] info:[CallStatic manual] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.manual_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+22 22   [ :0] [Pop] index:[0]
+23 23   [ ObjectTest.sl:173] [LoadConstString] index:[144] val: string[    called Memory.manual(tmp)] 
+24 24   [ ObjectTest.sl:167] [StoreLocal] index:[4] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ ObjectTest.sl:174] [LoadLocal] index:[0] info:[LocalStatement]
+30 30   [ :0] [CallStatic] index:[1] info:[CallStatic free] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.free_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+31 31   [ :0] [Pop] index:[0]
+32 32   [ ObjectTest.sl:175] [LoadConstString] index:[145] val: string[    called Memory.free(tmp)] 
+33 33   [ ObjectTest.sl:167] [StoreLocal] index:[5] info:[LocalStatement]
+34 34   [ :0] [Nop] index:[0]
+35 35   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+36 36   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+37 37   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+38 38   [ ObjectTest.sl:167] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+39 39   [ ObjectTest.sl:177] [ArcRetain] index:[0] info:[ARC claim owned new local: tmp2]
+40 40   [ ObjectTest.sl:167] [StoreLocal] index:[1] info:[LocalStatement]
+41 41   [ ObjectTest.sl:178] [LoadLocal] index:[1] info:[LocalStatement]
+42 42   [ :0] [CallStatic] index:[1] info:[CallStatic manual] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.manual_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+43 43   [ :0] [Pop] index:[0]
+44 44   [ ObjectTest.sl:179] [LoadLocal] index:[1] info:[LocalStatement]
+45 45   [ :0] [CallStatic] index:[1] info:[CallStatic retain] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.retain_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+46 46   [ :0] [Pop] index:[0]
+47 47   [ ObjectTest.sl:180] [LoadLocal] index:[1] info:[LocalStatement]
+48 48   [ :0] [CallStatic] index:[1] info:[CallStatic release] val:[RuntimeCall{StaticRuntimeType=Core.Memory, StaticRuntimeTypeList=[], Method=Core.Memory.release_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+49 49   [ :0] [Pop] index:[0]
+50 50   [ ObjectTest.sl:181] [LoadConstString] index:[146] val: string[    called Memory.release(tmp2)] 
+51 51   [ ObjectTest.sl:167] [StoreLocal] index:[6] info:[LocalStatement]
+52 52   [ :0] [Nop] index:[0]
+53 53   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+54 54   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+55 55   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+56 56   [ ObjectTest.sl:167] [Label] index:[0] info:[FunEndLabel]
+57 57   [ ObjectTest.sl:167] [LoadLocal] index:[0] info:[ARC release: LoadLocal testLifecycle_local[tmp]]
+58 58   [ ObjectTest.sl:167] [ArcRelease] index:[0] info:[ARC release owned local: testLifecycle_local[tmp]]
+59 59   [ ObjectTest.sl:167] [StoreLocal] index:[0] info:[ARC release: StoreLocal testLifecycle_local[tmp]]
+60 60   [ ObjectTest.sl:167] [LoadLocal] index:[1] info:[ARC release: LoadLocal testLifecycle_local[tmp2]]
+61 61   [ ObjectTest.sl:167] [ArcRelease] index:[0] info:[ARC release owned local: testLifecycle_local[tmp2]]
+62 62   [ ObjectTest.sl:167] [StoreLocal] index:[1] info:[ARC release: StoreLocal testLifecycle_local[tmp2]]
+
+  Method: ProjectTest.ObjectTest.testObjectAssignment
+    VirtualName: testObjectAssignment_Core.Void_0
+    Name: testObjectAssignment
+    InterfaceMethod: False
+    Return:
+      - #0 id=8497414 idx=0 name=_local[ProjectTest.ObjectTest.testObjectAssignment.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=9367865 idx=0 name=testObjectAssignment_local[a] type=Core.Object
+      - #1 id=17201924 idx=1 name=testObjectAssignment_local[b] type=Core.Object
+      - #2 id=20599592 idx=2 name=testObjectAssignment_local[c] type=Core.Object
+      - #3 id=37952469 idx=3 name=_local[txt] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:187] [LoadConstString] index:[147] val: string[--- testObjectAssignment ---] 
+2 2   [ ObjectTest.sl:185] [StoreLocal] index:[3] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[3] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:185] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:188] [ArcRetain] index:[0] info:[ARC claim owned new local: a]
+9 9   [ ObjectTest.sl:185] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:185] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+11 11   [ ObjectTest.sl:189] [ArcRetain] index:[0] info:[ARC claim owned new local: b]
+12 12   [ ObjectTest.sl:185] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ ObjectTest.sl:190] [LoadLocal] index:[0] info:[LocalStatement]
+14 14   [ ObjectTest.sl:185] [StoreLocal] index:[2] info:[LocalStatement]
+15 15   [ ObjectTest.sl:191] [LoadConstString] index:[148] val: string[[36] assign c=a, (a == c) -> ] 
+16 16   [ ObjectTest.sl:191] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ ObjectTest.sl:191] [LoadLocal] index:[2] info:[LocalStatement]
+18 18   [ ObjectTest.sl:191] [Ceq] index:[0]
+19 19   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+20 20   [ ObjectTest.sl:191] [Add] index:[0]
+21 21   [ ObjectTest.sl:185] [StoreLocal] index:[4] info:[LocalStatement]
+22 22   [ :0] [Nop] index:[0]
+23 23   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+24 24   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+25 25   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+26 26   [ ObjectTest.sl:192] [LoadConstString] index:[149] val: string[[37] assign c=a, (b == c) -> ] 
+27 27   [ ObjectTest.sl:192] [LoadLocal] index:[1] info:[LocalStatement]
+28 28   [ ObjectTest.sl:192] [LoadLocal] index:[2] info:[LocalStatement]
+29 29   [ ObjectTest.sl:192] [Ceq] index:[0]
+30 30   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+31 31   [ ObjectTest.sl:192] [Add] index:[0]
+32 32   [ ObjectTest.sl:185] [StoreLocal] index:[5] info:[LocalStatement]
+33 33   [ :0] [Nop] index:[0]
+34 34   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+35 35   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+36 36   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+37 37   [ ObjectTest.sl:193] [LoadLocal] index:[1] info:[LocalStatement]
+38 38   [ ObjectTest.sl:185] [StoreLocal] index:[2] info:[LocalStatement]
+39 39   [ ObjectTest.sl:194] [LoadConstString] index:[150] val: string[[38] reassign c=b, (a == c) -> ] 
+40 40   [ ObjectTest.sl:194] [LoadLocal] index:[0] info:[LocalStatement]
+41 41   [ ObjectTest.sl:194] [LoadLocal] index:[2] info:[LocalStatement]
+42 42   [ ObjectTest.sl:194] [Ceq] index:[0]
+43 43   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+44 44   [ ObjectTest.sl:194] [Add] index:[0]
+45 45   [ ObjectTest.sl:185] [StoreLocal] index:[6] info:[LocalStatement]
+46 46   [ :0] [Nop] index:[0]
+47 47   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+48 48   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+49 49   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+50 50   [ ObjectTest.sl:195] [LoadConstString] index:[151] val: string[[39] reassign c=b, (b == c) -> ] 
+51 51   [ ObjectTest.sl:195] [LoadLocal] index:[1] info:[LocalStatement]
+52 52   [ ObjectTest.sl:195] [LoadLocal] index:[2] info:[LocalStatement]
+53 53   [ ObjectTest.sl:195] [Ceq] index:[0]
+54 54   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+55 55   [ ObjectTest.sl:195] [Add] index:[0]
+56 56   [ ObjectTest.sl:185] [StoreLocal] index:[7] info:[LocalStatement]
+57 57   [ :0] [Nop] index:[0]
+58 58   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+59 59   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+60 60   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+61 61   [ ObjectTest.sl:185] [Label] index:[0] info:[FunEndLabel]
+62 62   [ ObjectTest.sl:185] [LoadLocal] index:[0] info:[ARC release: LoadLocal testObjectAssignment_local[a]]
+63 63   [ ObjectTest.sl:185] [ArcRelease] index:[0] info:[ARC release owned local: testObjectAssignment_local[a]]
+64 64   [ ObjectTest.sl:185] [StoreLocal] index:[0] info:[ARC release: StoreLocal testObjectAssignment_local[a]]
+65 65   [ ObjectTest.sl:185] [LoadLocal] index:[1] info:[ARC release: LoadLocal testObjectAssignment_local[b]]
+66 66   [ ObjectTest.sl:185] [ArcRelease] index:[0] info:[ARC release owned local: testObjectAssignment_local[b]]
+67 67   [ ObjectTest.sl:185] [StoreLocal] index:[1] info:[ARC release: StoreLocal testObjectAssignment_local[b]]
+
+  Method: ProjectTest.ObjectTest.testChainedEquals
+    VirtualName: testChainedEquals_Core.Void_0
+    Name: testChainedEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=51178607 idx=0 name=_local[ProjectTest.ObjectTest.testChainedEquals.return] type=Core.Void
+    Arguments: []
+    Locals:
+      - #0 id=57954280 idx=0 name=testChainedEquals_local[a] type=Core.Object
+      - #1 id=51826478 idx=1 name=testChainedEquals_local[b] type=Core.Object
+      - #2 id=63785121 idx=2 name=testChainedEquals_local[c] type=Core.Object
+      - #3 id=37195178 idx=3 name=testChainedEquals_local[d] type=Core.Object
+      - #4 id=37952469 idx=4 name=_local[txt] type=Core.Object
+      - #5 id=37952469 idx=5 name=_local[txt] type=Core.Object
+      - #6 id=37952469 idx=6 name=_local[txt] type=Core.Object
+      - #7 id=37952469 idx=7 name=_local[txt] type=Core.Object
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:201] [LoadConstString] index:[152] val: string[--- testChainedEquals ---] 
+2 2   [ ObjectTest.sl:199] [StoreLocal] index:[4] info:[LocalStatement]
+3 3   [ :0] [Nop] index:[0]
+4 4   [ ProjectTest.sp:8] [LoadLocal] index:[4] info:[LocalStatement]
+5 5   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+6 6   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+7 7   [ ObjectTest.sl:199] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+8 8   [ ObjectTest.sl:202] [ArcRetain] index:[0] info:[ARC claim owned new local: a]
+9 9   [ ObjectTest.sl:199] [StoreLocal] index:[0] info:[LocalStatement]
+10 10   [ ObjectTest.sl:199] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+11 11   [ ObjectTest.sl:203] [ArcRetain] index:[0] info:[ARC claim owned new local: b]
+12 12   [ ObjectTest.sl:199] [StoreLocal] index:[1] info:[LocalStatement]
+13 13   [ ObjectTest.sl:199] [NewObject] index:[0] info:[IRNew] val: int32[1205356647] 
+14 14   [ ObjectTest.sl:204] [ArcRetain] index:[0] info:[ARC claim owned new local: c]
+15 15   [ ObjectTest.sl:199] [StoreLocal] index:[2] info:[LocalStatement]
+16 16   [ ObjectTest.sl:205] [LoadLocal] index:[0] info:[LocalStatement]
+17 17   [ ObjectTest.sl:199] [StoreLocal] index:[3] info:[LocalStatement]
+18 18   [ ObjectTest.sl:207] [LoadConstString] index:[153] val: string[[40] chain a.equals(d).toString() -> ] 
+19 19   [ ObjectTest.sl:207] [LoadLocal] index:[0] info:[LocalStatement]
+20 20   [ ObjectTest.sl:207] [LoadLocal] index:[3] info:[LocalStatement]
+21 21   [ :0] [CallVirt] index:[5] info:[CallVirt equals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.equals_1_Core.Object, MethodRuntimeTypeList=[], ParamCount=1}] 
+22 22   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+23 23   [ ObjectTest.sl:207] [Add] index:[0]
+24 24   [ ObjectTest.sl:199] [StoreLocal] index:[5] info:[LocalStatement]
+25 25   [ :0] [Nop] index:[0]
+26 26   [ ProjectTest.sp:8] [LoadLocal] index:[5] info:[LocalStatement]
+27 27   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+28 28   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+29 29   [ ObjectTest.sl:208] [LoadConstString] index:[154] val: string[[41] chain Object.refEquals(a, d).toString() -> ] 
+30 30   [ ObjectTest.sl:208] [LoadLocal] index:[0] info:[LocalStatement]
+31 31   [ ObjectTest.sl:208] [LoadLocal] index:[3] info:[LocalStatement]
+32 32   [ :0] [CallStatic] index:[2] info:[CallStatic refEquals] val:[RuntimeCall{StaticRuntimeType=Core.Object, StaticRuntimeTypeList=[], Method=Core.Object.refEquals_2_Core.Object_Core.Object, MethodRuntimeTypeList=[], ParamCount=2}] 
+33 33   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+34 34   [ ObjectTest.sl:208] [Add] index:[0]
+35 35   [ ObjectTest.sl:199] [StoreLocal] index:[6] info:[LocalStatement]
+36 36   [ :0] [Nop] index:[0]
+37 37   [ ProjectTest.sp:8] [LoadLocal] index:[6] info:[LocalStatement]
+38 38   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+39 39   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+40 40   [ ObjectTest.sl:209] [LoadConstString] index:[155] val: string[[42] chain (a == d).toString() -> ] 
+41 41   [ ObjectTest.sl:209] [LoadLocal] index:[0] info:[LocalStatement]
+42 42   [ ObjectTest.sl:209] [LoadLocal] index:[3] info:[LocalStatement]
+43 43   [ ObjectTest.sl:209] [Ceq] index:[0]
+44 44   [ :0] [CallVirt] index:[6] info:[CallVirt toString] val:[RuntimeCall{StaticRuntimeType=Core.Boolean, StaticRuntimeTypeList=[], Method=Core.Boolean.toString, MethodRuntimeTypeList=[], ParamCount=0}] 
+45 45   [ ObjectTest.sl:209] [Add] index:[0]
+46 46   [ ObjectTest.sl:199] [StoreLocal] index:[7] info:[LocalStatement]
+47 47   [ :0] [Nop] index:[0]
+48 48   [ ProjectTest.sp:8] [LoadLocal] index:[7] info:[LocalStatement]
+49 49   [ :0] [CallSystemMethod] index:[1] info:[CallSystemMethod SystemPrintln] val:[SimpleLanguage.Export.SLIR.Types.SLSystemMethodCallPackage] 
+50 50   [ ProjectTest.sp:6] [Nop] index:[0] info:[inline end: println]
+51 51   [ ObjectTest.sl:199] [Label] index:[0] info:[FunEndLabel]
+52 52   [ ObjectTest.sl:199] [LoadLocal] index:[0] info:[ARC release: LoadLocal testChainedEquals_local[a]]
+53 53   [ ObjectTest.sl:199] [ArcRelease] index:[0] info:[ARC release owned local: testChainedEquals_local[a]]
+54 54   [ ObjectTest.sl:199] [StoreLocal] index:[0] info:[ARC release: StoreLocal testChainedEquals_local[a]]
+55 55   [ ObjectTest.sl:199] [LoadLocal] index:[1] info:[ARC release: LoadLocal testChainedEquals_local[b]]
+56 56   [ ObjectTest.sl:199] [ArcRelease] index:[0] info:[ARC release owned local: testChainedEquals_local[b]]
+57 57   [ ObjectTest.sl:199] [StoreLocal] index:[1] info:[ARC release: StoreLocal testChainedEquals_local[b]]
+58 58   [ ObjectTest.sl:199] [LoadLocal] index:[2] info:[ARC release: LoadLocal testChainedEquals_local[c]]
+59 59   [ ObjectTest.sl:199] [ArcRelease] index:[0] info:[ARC release owned local: testChainedEquals_local[c]]
+60 60   [ ObjectTest.sl:199] [StoreLocal] index:[2] info:[ARC release: StoreLocal testChainedEquals_local[c]]
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: ProjectTest.ObjectTest.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=60019402 idx=0 name=_local[ProjectTest.ObjectTest.toString.return] type=Core.String
+    Arguments:
+      - #0 id=66321146 idx=0 name=_local[ProjectTest.ObjectTest.toString.this] type=ProjectTest.ObjectTest
+    Locals: []
+    Instructions:
+0 0   [ :0] [Nop] index:[0]
+1 1   [ ObjectTest.sl:214] [LoadConstString] index:[156] val: string[ObjectTest] 
+2 2   [ ObjectTest.sl:214] [StoreReturn] index:[0] info:[StoreReturn]
+3 3   [ :0] [BrLabel] index:[4]
+4 4   [ ObjectTest.sl:212] [Label] index:[0] info:[FunEndLabel]
+
+-------------------IR 文件显示 结束 : -----------------------

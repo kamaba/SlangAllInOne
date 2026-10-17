@@ -1,0 +1,13 @@
+F:\project\lang\simple_language\tools\LidIndexer\bin\Release\net6.0\LidIndexer.exe
+f:\project\lang\simple_language\tools\LidIndexer\bin\Release\net6.0\LidIndexer.deps.json
+f:\project\lang\simple_language\tools\LidIndexer\bin\Release\net6.0\LidIndexer.runtimeconfig.json
+F:\project\lang\simple_language\tools\LidIndexer\bin\Release\net6.0\LidIndexer.dll
+F:\project\lang\simple_language\tools\LidIndexer\bin\Release\net6.0\LidIndexer.pdb
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.GeneratedMSBuildEditorConfig.editorconfig
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.csproj.CoreCompileInputs.cache
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.sourcelink.json
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.dll
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\refint\LidIndexer.dll
+F:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.pdb
+f:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\LidIndexer.genruntimeconfig.cache
+f:\project\lang\simple_language\tools\LidIndexer\obj\Release\net6.0\ref\LidIndexer.dll

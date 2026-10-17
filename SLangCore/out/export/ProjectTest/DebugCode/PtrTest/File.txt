@@ -1,0 +1,364 @@
+-------------------FileMeta 文件显示 开始 : Path: PtrTest.sl-----------------------
+PtrTest
+{
+    _public static fun( )
+    {
+        SystemPrintln("========== PtrTest (start) ==========");
+        SystemPrintln("--- Ptr.size() ---");
+        sz = Ptr.size();
+        SystemPrintln("Ptr.size() = " + SystemConvertString(sz));
+        if sz == 4i || sz == 8i
+        {
+            SystemPrintln("Ptr.size() is 4 or 8: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Ptr.size() unexpected value!");
+        }
+        SystemPrintln("--- Ptr.zero() ---");
+        z = Ptr.zero();
+        SystemPrintln("Ptr.zero() = " + SystemConvertString(z.toInt64()));
+        if z.toInt64() == 0i
+        {
+            SystemPrintln("Ptr.zero() is 0: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Ptr.zero() is not 0!");
+        }
+        SystemPrintln("--- Ptr() default constructor ---");
+        p0 = Ptr();
+        SystemPrintln("Ptr() = " + SystemConvertString(p0.toInt64()));
+        if p0.toInt64() == 0i
+        {
+            SystemPrintln("Ptr() address is 0: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Ptr() address is not 0!");
+        }
+        SystemPrintln("--- alloc/writeInt32/readInt32 ---");
+        p1 = Ptr.alloc(64i);
+        addr1 = p1.toInt64();
+        SystemPrintln("alloc(64) address = " + SystemConvertString(addr1));
+        if addr1 != 0i
+        {
+            SystemPrintln("alloc returned non-zero: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: alloc returned 0!");
+        }
+        p1.writeInt32(0i,42i);
+        v1 = p1.readInt32(0i);
+        SystemPrintln("writeInt32(0, 42) -> readInt32(0) = " + SystemConvertString(v1));
+        if v1 == 42i
+        {
+            SystemPrintln("Int32 round trip 42: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Int32 round trip failed!");
+        }
+        p1.writeInt32(4i,100i);
+        v2 = p1.readInt32(4i);
+        SystemPrintln("writeInt32(4, 100) -> readInt32(4) = " + SystemConvertString(v2));
+        if v2 == 100i
+        {
+            SystemPrintln("Int32 round trip 100 at offset 4: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Int32 round trip at offset 4 failed!");
+        }
+        SystemPrintln("--- writeByte/readByte ---");
+        p1.writeByte(8i,255i);
+        b1 = p1.readByte(8i);
+        SystemPrintln("writeByte(8, 255) -> readByte(8) = " + SystemConvertString(b1));
+        if b1 == 255i
+        {
+            SystemPrintln("Byte round trip 255: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Byte round trip failed!");
+        }
+        p1.writeByte(9i,0i);
+        b2 = p1.readByte(9i);
+        SystemPrintln("writeByte(9, 0) -> readByte(9) = " + SystemConvertString(b2));
+        if b2 == 0i
+        {
+            SystemPrintln("Byte round trip 0: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Byte round trip 0 failed!");
+        }
+        SystemPrintln("--- writeInt64/readInt64 ---");
+        p1.writeInt64(16i,9876543210uL);
+        l1 = p1.readInt64(16i);
+        SystemPrintln("writeInt64(16, 9876543210) -> readInt64(16) = " + SystemConvertString(l1));
+        if l1 == 9876543210uL
+        {
+            SystemPrintln("Int64 round trip 9876543210: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Int64 round trip failed!");
+        }
+        SystemPrintln("--- writeFloat64/readFloat64 ---");
+        p1.writeFloat64(24i,3.1f);
+        f1 = p1.readFloat64(24i);
+        SystemPrintln("writeFloat64(24, 3.14159) -> readFloat64(24) = " + SystemConvertString(f1));
+        if f1 == 3.1f
+        {
+            SystemPrintln("Float64 round trip 3.14159: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Float64 round trip failed!");
+        }
+        SystemPrintln("--- add/subtract ---");
+        p2 = p1.add(8i);
+        SystemPrintln("p1.add(8) = " + SystemConvertString(p2.toInt64()));
+        if p2.toInt64() == addr1 + 8i
+        {
+            SystemPrintln("add(8) correct: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: add(8) incorrect!");
+        }
+        p3 = p2.subtract(4i);
+        SystemPrintln("p2.subtract(4) = " + SystemConvertString(p3.toInt64()));
+        if p3.toInt64() == addr1 + 4i
+        {
+            SystemPrintln("subtract(4) correct: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: subtract(4) incorrect!");
+        }
+        SystemPrintln("--- equals ---");
+        p4 = Ptr(addr1);
+        if p1.equals(p4)
+        {
+            SystemPrintln("p1.equals(Ptr(addr1)): OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: equals failed!");
+        }
+        if ! ! p1.equals(p2)
+        {
+            SystemPrintln("p1 not equals p2: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: different pointers should not be equal!");
+        }
+        SystemPrintln("--- toString ---");
+        ts = p1.toString();
+        SystemPrintln("p1.toString() = " + ts);
+        if SystemStringLength(ts) > 4i
+        {
+            SystemPrintln("toString has content: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: toString too short!");
+        }
+        SystemPrintln("--- free ---");
+        ok = Ptr.free(p1);
+        SystemPrintln("Ptr.free(p1) = " + SystemConvertString(ok));
+        if ok
+        {
+            SystemPrintln("free returned true: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: free failed!");
+        }
+        SystemPrintln("========== Ptr (raw) end ==========");
+        SystemPrintln("========== Ptr<T> (typed) start ==========");
+        SystemPrintln("--- Ptr<PtrData>(obj) ---");
+        pdata = PtrData();
+        pdata.a = 1i;
+        pdata.b = 2i;
+        pdata.c = 3i;
+        ptp = Ptr(pdata);
+        objAddr = ptp.toInt64();
+        SystemPrintln("Ptr<PtrData>(pdata) address = " + SystemConvertString(objAddr));
+        if objAddr != 0i
+        {
+            SystemPrintln("Typed pointer non-zero: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: typed pointer is zero!");
+        }
+        SystemPrintln("--- readInt32 via Ptr<T> ---");
+        ra = ptp.readInt32(0i);
+        SystemPrintln("readInt32(0) = " + SystemConvertString(ra));
+        if ra == 1i
+        {
+            SystemPrintln("read field a = 1: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: field a mismatch! got " + SystemConvertString(ra));
+        }
+        rb = ptp.readInt32(4i);
+        SystemPrintln("readInt32(4) = " + SystemConvertString(rb));
+        if rb == 2i
+        {
+            SystemPrintln("read field b = 2: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: field b mismatch! got " + SystemConvertString(rb));
+        }
+        rc = ptp.readInt64(8i);
+        SystemPrintln("readInt64(8) = " + SystemConvertString(rc));
+        if rc == 3i
+        {
+            SystemPrintln("read field c = 3: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: field c mismatch! got " + SystemConvertString(rc));
+        }
+        SystemPrintln("--- writeInt32 via Ptr<T> ---");
+        ptp.writeInt32(0i,42i);
+        ptp.writeInt32(4i,99i);
+        ptp.writeInt64(8i,7777i);
+        wa = ptp.readInt32(0i);
+        wb = ptp.readInt32(4i);
+        wc = ptp.readInt64(8i);
+        SystemPrintln("after write: a=" + SystemConvertString(wa) + " b=" + SystemConvertString(wb) + " c=" + SystemConvertString(wc));
+        if wa == 42i && wb == 99i && wc == 7777i
+        {
+            SystemPrintln("write fields via Ptr<T>: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: write fields failed!");
+        }
+        SystemPrintln("--- verify object reflects changes ---");
+        if pdata.a == 42i && pdata.b == 99i && pdata.c == 7777i
+        {
+            SystemPrintln("Object reflects pointer writes: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: object does not reflect changes! a=" + SystemConvertString(pdata.a) + " b=" + SystemConvertString(pdata.b));
+        }
+        SystemPrintln("--- get() recover object ---");
+        recovered = ptp.getObject();
+        SystemPrintln("recovered.a = " + SystemConvertString(recovered.a));
+        if recovered.a == 42i
+        {
+            SystemPrintln("get() recovered object: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: get() failed!");
+        }
+        SystemPrintln("--- toString ---");
+        ts2 = ptp.toString();
+        SystemPrintln("Ptr<T>.toString() = " + ts2);
+        if SystemStringLength(ts2) > 6i
+        {
+            SystemPrintln("Ptr<T> toString has content: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: Ptr<T> toString too short!");
+        }
+        SystemPrintln("--- getMemberVar<T2> ---");
+        data2 = PtrData();
+        data2.a = 100i;
+        data2.b = 200i;
+        data2.c = 300i;
+        pp = Ptr(data2);
+        m2 = pp.getMemberVar(16i);
+        if m2 != null
+        {
+            SystemPrintln("getMemberVar<PtrDataM2>(16) = non-null: OK");
+            SystemPrintln("m2.a = " + SystemConvertString(m2.a));
+            if m2.a == 20i
+            {
+                SystemPrintln("m2.a == 20 (default): OK");
+            }
+            else
+            {
+                SystemPrintln("ERROR: m2.a expected 20, got " + SystemConvertString(m2.a));
+            }
+        }
+        else
+        {
+            SystemPrintln("ERROR: getMemberVar returned null!");
+        }
+        SystemPrintln("--- modify via getMemberVar ---");
+        m2.a = 999i;
+        if data2.pmd.a == 999i
+        {
+            SystemPrintln("data2.pmd.a == 999 after modify: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: data2.pmd.a expected 999, got " + SystemConvertString(data2.pmd.a));
+        }
+        SystemPrintln("--- nested getMemberVar ---");
+        pm2 = Ptr(m2);
+        m1 = pm2.getMemberVar(8i);
+        if m1 != null
+        {
+            SystemPrintln("nested getMemberVar<PtrDataM2M1>(8) = non-null: OK");
+            SystemPrintln("m1.a = " + SystemConvertString(m1.a));
+            if m1.a == 30i
+            {
+                SystemPrintln("m1.a == 30 (default): OK");
+            }
+            else
+            {
+                SystemPrintln("ERROR: m1.a expected 30, got " + SystemConvertString(m1.a));
+            }
+        }
+        else
+        {
+            SystemPrintln("ERROR: nested getMemberVar returned null!");
+        }
+        SystemPrintln("--- nested modify ---");
+        m1.a = 555i;
+        if data2.pmd.pmd.a == 555i
+        {
+            SystemPrintln("data2.pmd.pmd.a == 555: OK");
+        }
+        else
+        {
+            SystemPrintln("ERROR: data2.pmd.pmd.a expected 555, got " + SystemConvertString(data2.pmd.pmd.a));
+        }
+        SystemPrintln("========== Ptr<T> (typed) end ==========");
+    }
+}
+PtrData
+{
+    Int32 Int32a = 0i
+    Int32 Int32b = 0i
+    Int64 Int64c = 0i
+    pmd = PtrDataM2()
+
+}
+PtrDataM2
+{
+    int inta = 20i
+    pmd = PtrDataM2M1()
+
+}
+PtrDataM2M1
+{
+    int inta = 30i
+
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

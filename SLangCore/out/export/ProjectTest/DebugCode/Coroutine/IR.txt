@@ -1,0 +1,743 @@
+-------------------IR 文件显示 开始 : Path: Coroutine.sl-----------------------
+Class: Core.CoroutineStatus
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1252692831 idx=0 name=Core.CoroutineStatus.Created type=Core.Int32
+      - #1 id=400638104 idx=1 name=Core.CoroutineStatus.Ready type=Core.Int32
+      - #2 id=348309114 idx=2 name=Core.CoroutineStatus.Running type=Core.Int32
+      - #3 id=1053367052 idx=3 name=Core.CoroutineStatus.Suspended type=Core.Int32
+      - #4 id=339026105 idx=4 name=Core.CoroutineStatus.Dead type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.CoroutineBlockReason
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=508504098 idx=0 name=Core.CoroutineBlockReason.None type=Core.Int32
+      - #1 id=1753274796 idx=1 name=Core.CoroutineBlockReason.Yield type=Core.Int32
+      - #2 id=928870822 idx=2 name=Core.CoroutineBlockReason.Sched type=Core.Int32
+      - #3 id=-64839409 idx=3 name=Core.CoroutineBlockReason.Await type=Core.Int32
+      - #4 id=236150605 idx=4 name=Core.CoroutineBlockReason.Delay type=Core.Int32
+      - #5 id=1697450006 idx=5 name=Core.CoroutineBlockReason.IO type=Core.Int32
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Task
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1676724739 idx=0 name=Core.Task._handle type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Task.awaitTask
+    VirtualName: awaitTask_Core.Object_0
+    Name: awaitTask
+    InterfaceMethod: False
+    Return:
+      - #0 id=39313476 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=41650866 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Task.cancel
+    VirtualName: cancel_Core.Boolean_0
+    Name: cancel
+    InterfaceMethod: False
+    Return:
+      - #0 id=4039578 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=30275003 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Task.status
+    VirtualName: status_Core.Int32_0
+    Name: status
+    InterfaceMethod: False
+    Return:
+      - #0 id=59171655 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=58770411 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Task.blockedReason
+    VirtualName: blockedReason_Core.Int32_0
+    Name: blockedReason
+    InterfaceMethod: False
+    Return:
+      - #0 id=52246286 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=28174764 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Task.isDead
+    VirtualName: isDead_Core.Boolean_0
+    Name: isDead
+    InterfaceMethod: False
+    Return:
+      - #0 id=36817211 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=4090801 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Task.handle
+    VirtualName: handle_Core.Int64_0
+    Name: handle
+    InterfaceMethod: False
+    Return:
+      - #0 id=63310175 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=29404085 idx=0 name=this] type=Core.Task
+    Locals: []
+    Instructions:
+
+Class: Core.Coroutine
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.spawnClosure0_1_Core.Object
+    VirtualName: spawnClosure0_Core.Task_1_Core.Object
+    Name: spawnClosure0
+    InterfaceMethod: False
+    Return:
+      - #0 id=27850555 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=49328407 idx=0 name=closure type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.spawnClosure1_2_Core.Object_Core.Object
+    VirtualName: spawnClosure1_Core.Task_2_Core.Object_Core.Object
+    Name: spawnClosure1
+    InterfaceMethod: False
+    Return:
+      - #0 id=36177998 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=57166532 idx=0 name=closure type=Core.Object
+      - #1 id=44736746 idx=1 name=arg0 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.spawnClosure2_3_Core.Object_Core.Object_Core.Object
+    VirtualName: spawnClosure2_Core.Task_3_Core.Object_Core.Object_Core.Object
+    Name: spawnClosure2
+    InterfaceMethod: False
+    Return:
+      - #0 id=66906707 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=65289456 idx=0 name=closure type=Core.Object
+      - #1 id=50734192 idx=1 name=arg0 type=Core.Object
+      - #2 id=53954550 idx=2 name=arg1 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.spawnClosure3_4_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: spawnClosure3_Core.Task_4_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: spawnClosure3
+    InterfaceMethod: False
+    Return:
+      - #0 id=8242429 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=7073000 idx=0 name=closure type=Core.Object
+      - #1 id=63657004 idx=1 name=arg0 type=Core.Object
+      - #2 id=36042131 idx=2 name=arg1 type=Core.Object
+      - #3 id=55943724 idx=3 name=arg2 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.spawnClosure_2_Core.Object_Core.Array<Core.Object>[-1]
+    VirtualName: spawnClosure_Core.Task_2_Core.Object_Core.Array<Core.Object>[-1]
+    Name: spawnClosure
+    InterfaceMethod: False
+    Return:
+      - #0 id=35147813 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=47894862 idx=0 name=closure type=Core.Object
+      - #1 id=28400574 idx=1 name=objs type=Core.Array<T><Core.Object>
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.yieldNow
+    VirtualName: yieldNow_Core.Void_0
+    Name: yieldNow
+    InterfaceMethod: False
+    Return:
+      - #0 id=18745119 idx=0 name=return] type=Core.Void
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.delay_1_Core.Int64
+    VirtualName: delay_Core.Void_1_Core.Int64
+    Name: delay
+    InterfaceMethod: False
+    Return:
+      - #0 id=34488346 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=41959665 idx=0 name=millis type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitUntil_1_Core.Function
+    VirtualName: waitUntil_Core.Void_1_Core.Function
+    Name: waitUntil
+    InterfaceMethod: False
+    Return:
+      - #0 id=42092667 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43289691 idx=0 name=predicate type=Core.Function
+    Locals:
+      - #0 id=54062905 idx=0 name=wuDone type=Core.Boolean
+      - #1 id=41959665 idx=1 name=millis type=Core.Int64
+    Instructions:
+
+  Method: Core.Coroutine.current
+    VirtualName: current_Core.Task_0
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=18955034 idx=0 name=return] type=Core.Task
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.status_1_Core.Task
+    VirtualName: status_Core.Int32_1_Core.Task
+    Name: status
+    InterfaceMethod: False
+    Return:
+      - #0 id=58962749 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=60902701 idx=0 name=cor type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.blockedReason_1_Core.Task
+    VirtualName: blockedReason_Core.Int32_1_Core.Task
+    Name: blockedReason
+    InterfaceMethod: False
+    Return:
+      - #0 id=34171757 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=39110359 idx=0 name=cor type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.awaitTask_1_Core.Task
+    VirtualName: awaitTask_Core.Object_1_Core.Task
+    Name: awaitTask
+    InterfaceMethod: False
+    Return:
+      - #0 id=13822492 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=57293570 idx=0 name=cor type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAll2_2_Core.Task_Core.Task
+    VirtualName: waitAll2_Core.Void_2_Core.Task_Core.Task
+    Name: waitAll2
+    InterfaceMethod: False
+    Return:
+      - #0 id=10267559 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25299168 idx=0 name=c0 type=Core.Task
+      - #1 id=26365928 idx=1 name=c1 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAll3_3_Core.Task_Core.Task_Core.Task
+    VirtualName: waitAll3_Core.Void_3_Core.Task_Core.Task_Core.Task
+    Name: waitAll3
+    InterfaceMethod: False
+    Return:
+      - #0 id=35966767 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=55265455 idx=0 name=c0 type=Core.Task
+      - #1 id=27627047 idx=1 name=c1 type=Core.Task
+      - #2 id=47316833 idx=2 name=c2 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAll_1_Core.Array<Core.Task>[-1]
+    VirtualName: waitAll_Core.Void_1_Core.Array<Core.Task>[-1]
+    Name: waitAll
+    InterfaceMethod: False
+    Return:
+      - #0 id=23198319 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7458280 idx=0 name=cors type=Core.Array<T><Core.Task>
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAny2_2_Core.Task_Core.Task
+    VirtualName: waitAny2_Core.Task_2_Core.Task_Core.Task
+    Name: waitAny2
+    InterfaceMethod: False
+    Return:
+      - #0 id=15663 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=140972 idx=0 name=c0 type=Core.Task
+      - #1 id=1268752 idx=1 name=c1 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAny3_3_Core.Task_Core.Task_Core.Task
+    VirtualName: waitAny3_Core.Task_3_Core.Task_Core.Task_Core.Task
+    Name: waitAny3
+    InterfaceMethod: False
+    Return:
+      - #0 id=35660089 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=52505353 idx=0 name=c0 type=Core.Task
+      - #1 id=2786131 idx=1 name=c1 type=Core.Task
+      - #2 id=25075186 idx=2 name=c2 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitAny_1_Core.Array<Core.Task>[-1]
+    VirtualName: waitAny_Core.Task_1_Core.Array<Core.Task>[-1]
+    Name: waitAny
+    InterfaceMethod: False
+    Return:
+      - #0 id=17824184 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=26199929 idx=0 name=cors type=Core.Array<T><Core.Task>
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.nextCompleted2_2_Core.Task_Core.Task
+    VirtualName: nextCompleted2_Core.Task_2_Core.Task_Core.Task
+    Name: nextCompleted2
+    InterfaceMethod: False
+    Return:
+      - #0 id=41819476 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=40830968 idx=0 name=c0 type=Core.Task
+      - #1 id=31934400 idx=1 name=c1 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.nextCompleted3_3_Core.Task_Core.Task_Core.Task
+    VirtualName: nextCompleted3_Core.Task_3_Core.Task_Core.Task_Core.Task
+    Name: nextCompleted3
+    InterfaceMethod: False
+    Return:
+      - #0 id=36549604 idx=0 name=return] type=Core.Task
+    Arguments:
+      - #0 id=60510987 idx=0 name=c0 type=Core.Task
+      - #1 id=7727977 idx=1 name=c1 type=Core.Task
+      - #2 id=2442935 idx=2 name=c2 type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.waitTimeout_2_Core.Task_Core.Int64
+    VirtualName: waitTimeout_Core.Boolean_2_Core.Task_Core.Int64
+    Name: waitTimeout
+    InterfaceMethod: False
+    Return:
+      - #0 id=63660080 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=36069813 idx=0 name=cor type=Core.Task
+      - #1 id=56192861 idx=1 name=millis type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.Coroutine.cancel_1_Core.Task
+    VirtualName: cancel_Core.Boolean_1_Core.Task
+    Name: cancel
+    InterfaceMethod: False
+    Return:
+      - #0 id=55327911 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=28189154 idx=0 name=cor type=Core.Task
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

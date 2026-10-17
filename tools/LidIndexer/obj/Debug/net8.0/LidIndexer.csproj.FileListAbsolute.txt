@@ -1,0 +1,13 @@
+D:\project\lang\SlangAllInOne\tools\LidIndexer\bin\Debug\net8.0\LidIndexer.exe
+D:\project\lang\SlangAllInOne\tools\LidIndexer\bin\Debug\net8.0\LidIndexer.deps.json
+D:\project\lang\SlangAllInOne\tools\LidIndexer\bin\Debug\net8.0\LidIndexer.runtimeconfig.json
+D:\project\lang\SlangAllInOne\tools\LidIndexer\bin\Debug\net8.0\LidIndexer.dll
+D:\project\lang\SlangAllInOne\tools\LidIndexer\bin\Debug\net8.0\LidIndexer.pdb
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.GeneratedMSBuildEditorConfig.editorconfig
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.csproj.CoreCompileInputs.cache
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.sourcelink.json
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.dll
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\refint\LidIndexer.dll
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.pdb
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\LidIndexer.genruntimeconfig.cache
+D:\project\lang\SlangAllInOne\tools\LidIndexer\obj\Debug\net8.0\ref\LidIndexer.dll

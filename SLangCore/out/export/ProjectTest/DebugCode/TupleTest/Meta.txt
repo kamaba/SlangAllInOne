@@ -1,0 +1,258 @@
+-------------------Meta 文件显示 开始 : Path: TupleTest.sl-----------------------
+TupleTest
+{
+    _public static check( string name,  bool cond )
+    {
+        if cond
+        {
+            global.println("[TupleTest] " + name + " : OK");
+        }
+        else
+        {
+            global.println("[TupleTest] " + name + " : FAIL");
+        }
+    }
+    _public static templateTuple1Test( )
+    {
+        Tuple<int> t = Tuple(100i);
+        check("Tuple<int> item1",t.item1 == 100i);
+        check("Tuple<int> length",t.length == 1i);
+        check("Tuple<int> $0",t.$0ias int == 100i);
+        check("Tuple<int> toString",t.toString() == "(100)");
+        t.$0i = 200i;
+        check("Tuple<int> setItem $0",t.item1 == 200i);
+        check("Tuple<int> getItem after set",t.$0ias int == 200i);
+        check("Tuple<int> out-of-range $1 is null",t.$1i == null);
+        t.$1i = 300i;
+        check("Tuple<int> out-of-range set ignored",t.item1 == 200i);
+        check("Tuple<int> _getItem_ call",t._getItem_(0i)as int == 200i);
+        t._setItem_(0i,400i);
+        check("Tuple<int> _setItem_ call",t.item1 == 400i);
+    }
+    _public static templateTuple2Test( )
+    {
+        Tuple<int,string> t = Tuple(1i,"one");
+        check("Tuple<int,string> item1",t.item1 == 1i);
+        check("Tuple<int,string> item2",t.item2 == "one");
+        check("Tuple<int,string> length",t.length == 2i);
+        check("Tuple<int,string> $0",t.$0ias int == 1i);
+        check("Tuple<int,string> $1",t.$1ias string == "one");
+        check("Tuple<int,string> toString",t.toString() == "(1, one)");
+        t.$0i = 10i;
+        t.$1i = "ten";
+        check("Tuple<int,string> setItem $0",t.item1 == 10i);
+        check("Tuple<int,string> setItem $1",t.item2 == "ten");
+        check("Tuple<int,string> out-of-range $2 is null",t.$2i == null);
+        Tuple<double,string> td = Tuple(3.5f,"d");
+        check("Tuple<double,string> $0",td.$0ias double == 3.5f);
+        check("Tuple<double,string> $1",td.$1ias string == "d");
+    }
+    _public static templateTuple34Test( )
+    {
+        Tuple<string,int,bool> t3 = Tuple("a",2i,true);
+        check("Tuple<T1,T2,T3> item1",t3.item1 == "a");
+        check("Tuple<T1,T2,T3> item2",t3.item2 == 2i);
+        check("Tuple<T1,T2,T3> item3",t3.item3 == true);
+        check("Tuple<T1,T2,T3> length",t3.length == 3i);
+        check("Tuple<T1,T2,T3> $0",t3.$0ias string == "a");
+        check("Tuple<T1,T2,T3> $1",t3.$1ias int == 2i);
+        check("Tuple<T1,T2,T3> $2",t3.$2ias bool == true);
+        check("Tuple<T1,T2,T3> toString",t3.toString() == "(a, 2, True)");
+        t3.$1i = 20i;
+        check("Tuple<T1,T2,T3> setItem $1",t3.item2 == 20i);
+        check("Tuple<T1,T2,T3> out-of-range $3 is null",t3.$3i == null);
+        Tuple<int,int,int,int> t4 = Tuple(1i,2i,3i,4i);
+        check("Tuple<T1..T4> length",t4.length == 4i);
+        check("Tuple<T1..T4> $0",t4.$0ias int == 1i);
+        check("Tuple<T1..T4> $3",t4.$3ias int == 4i);
+        check("Tuple<T1..T4> toString",t4.toString() == "(1, 2, 3, 4)");
+        check("Tuple<T1..T4> out-of-range $4 is null",t4.$4i == null);
+        t4.$2i = 33i;
+        check("Tuple<T1..T4> setItem $2",t4.item3 == 33i);
+    }
+    _public static templateTuple5To8Test( )
+    {
+        Tuple<int,int,int,int,int> t5 = Tuple(1i,2i,3i,4i,5i);
+        check("Tuple<T1..T5> length",t5.length == 5i);
+        check("Tuple<T1..T5> $4",t5.$4ias int == 5i);
+        check("Tuple<T1..T5> toString",t5.toString() == "(1, 2, 3, 4, 5)");
+        Tuple<int,int,int,int,int,int> t6 = Tuple(1i,2i,3i,4i,5i,6i);
+        check("Tuple<T1..T6> length",t6.length == 6i);
+        check("Tuple<T1..T6> $5",t6.$5ias int == 6i);
+        Tuple<int,int,int,int,int,int,int> t7 = Tuple(1i,2i,3i,4i,5i,6i,7i);
+        check("Tuple<T1..T7> length",t7.length == 7i);
+        check("Tuple<T1..T7> $6",t7.$6ias int == 7i);
+        Tuple<int,int,int,int,int,int,int,int> t8 = Tuple(1i,2i,3i,4i,5i,6i,7i,8i);
+        check("Tuple<T1..T8> length",t8.length == 8i);
+        check("Tuple<T1..T8> $0",t8.$0ias int == 1i);
+        check("Tuple<T1..T8> $7",t8.$7ias int == 8i);
+        t8.$7i = 80i;
+        check("Tuple<T1..T8> setItem $7",t8.item8 == 80i);
+        check("Tuple<T1..T8> out-of-range $8 is null",t8.$8i == null);
+    }
+    _public static templateTupleCreateNullTest( )
+    {
+        Tuple<int,string> tc = Tuple<int,string>.create(9i,"nine");
+        check("Tuple<int,string>.create item1",tc.item1 == 9i);
+        check("Tuple<int,string>.create item2",tc.item2 == "nine");
+        check("Tuple<int,string>.create toString",tc.toString() == "(9, nine)");
+        Tuple<int,int,int> tc3 = Tuple<int,int,int>.create(1i,2i,3i);
+        check("Tuple<T1..T3>.create length",tc3.length == 3i);
+        check("Tuple<T1..T3>.create $2",tc3.$2ias int == 3i);
+        Tuple<string,string> tn = Tuple("x",null);
+        check("Tuple null item2",tn.item2 == null);
+        check("Tuple null $1 is null",tn.$1i == null);
+        check("Tuple null toString",tn.toString() == "(x, null)");
+    }
+    _public static plainTupleCtorTest( )
+    {
+        Tuple empty = Tuple();
+        check("Tuple() length",empty.length == 0i);
+        check("Tuple() isEmpty",empty.isEmpty == true);
+        check("Tuple() toString",empty.toString() == "()");
+        check("Tuple() out-of-range $0 is null",empty.$0i == null);
+        Tuple t1 = Tuple(1i);
+        check("Tuple(1) length",t1.length == 1i);
+        check("Tuple(1) $0",t1.$0ias int == 1i);
+        check("Tuple(1) toString",t1.toString() == "(1)");
+        Tuple t2 = Tuple("a",2i);
+        check("Tuple(a,2) length",t2.length == 2i);
+        check("Tuple(a,2) $0",t2.$0ias string == "a");
+        check("Tuple(a,2) $1",t2.$1ias int == 2i);
+        check("Tuple(a,2) toString",t2.toString() == "(a, 2)");
+        Tuple t3 = Tuple(1i,2.5f,"three");
+        check("Tuple(3 args) length",t3.length == 3i);
+        check("Tuple(3 args) $0",t3.$0ias int == 1i);
+        check("Tuple(3 args) $1",t3.$1ias double == 2.5f);
+        check("Tuple(3 args) $2",t3.$2ias string == "three");
+        Tuple t4 = Tuple(1i,2i,3i,4i);
+        check("Tuple(4 args) length",t4.length == 4i);
+        check("Tuple(4 args) $3",t4.$3ias int == 4i);
+        Tuple t5 = Tuple(1i,2i,3i,4i,5i);
+        check("Tuple(5 args) length",t5.length == 5i);
+        check("Tuple(5 args) $4",t5.$4ias int == 5i);
+        Tuple t6 = Tuple(1i,2i,3i,4i,5i,6i);
+        check("Tuple(6 args) length",t6.length == 6i);
+        check("Tuple(6 args) $5",t6.$5ias int == 6i);
+        Tuple t7 = Tuple(1i,2i,3i,4i,5i,6i,7i);
+        check("Tuple(7 args) length",t7.length == 7i);
+        check("Tuple(7 args) $6",t7.$6ias int == 7i);
+        Tuple t8 = Tuple(1i,2i,3i,4i,5i,6i,7i,8i);
+        check("Tuple(8 args) length",t8.length == 8i);
+        check("Tuple(8 args) $0",t8.$0ias int == 1i);
+        check("Tuple(8 args) $7",t8.$7ias int == 8i);
+    }
+    _public static plainTupleCreateTest( )
+    {
+        Tuple t = Tuple.create(1i,2i,3i,4i,5i,6i,7i,8i,9i,10i);
+        check("Tuple.create 10 items length",t.length == 10i);
+        check("Tuple.create $0",t.$0ias int == 1i);
+        check("Tuple.create $5",t.$5ias int == 6i);
+        check("Tuple.create $9",t.$9ias int == 10i);
+        check("Tuple.create toString",t.toString() == "(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)");
+        Tuple m = Tuple.create("x",1i,2.5f,true,null);
+        check("Tuple.create mixed length",m.length == 5i);
+        check("Tuple.create mixed $0",m.$0ias string == "x");
+        check("Tuple.create mixed $1",m.$1ias int == 1i);
+        check("Tuple.create mixed $3",m.$3ias bool == true);
+        check("Tuple.create mixed $4 is null",m.$4i == null);
+        check("Tuple.create mixed toString",m.toString() == "(x, 1, 2.5, True, null)");
+        Tuple e = Tuple.create();
+        check("Tuple.create() length",e.length == 0i);
+        check("Tuple.create() toString",e.toString() == "()");
+    }
+    _public static plainTupleAddTest( )
+    {
+        Tuple t = Tuple();
+        t.add(1i).add(2i).add(3i);
+        check("add chain length",t.length == 3i);
+        check("add chain $0",t.$0ias int == 1i);
+        check("add chain $2",t.$2ias int == 3i);
+        check("add chain toString",t.toString() == "(1, 2, 3)");
+        Tuple big = Tuple();
+        
+        for i = 0i, i < 20i, i ++ 
+        {
+            big.add(i);
+        }
+        check("add 20 items length",big.length == 20i);
+        check("add 20 items $0",big.$0ias int == 0i);
+        check("add 20 items $10",big.$10ias int == 10i);
+        check("add 20 items $19",big.$19ias int == 19i);
+        Tuple ext = Tuple("a","b","c","d");
+        check("Tuple(4 args) before add",ext.length == 4i);
+        ext.add("e").add("f");
+        check("Tuple add beyond capacity length",ext.length == 6i);
+        check("Tuple add beyond capacity $4",ext.$4ias string == "e");
+        check("Tuple add beyond capacity $5",ext.$5ias string == "f");
+        check("Tuple add beyond capacity toString",ext.toString() == "(a, b, c, d, e, f)");
+    }
+    _public static plainTupleIndexTest( )
+    {
+        Tuple t = Tuple("a","b","c");
+        t.$1i = "B";
+        check("plain setItem $1",t.$1ias string == "B");
+        check("plain setItem keeps $0",t.$0ias string == "a");
+        check("plain setItem keeps $2",t.$2ias string == "c");
+        check("plain _getItem_ call",t._getItem_(0i)as string == "a");
+        t._setItem_(2i,"C");
+        check("plain _setItem_ call",t.$2ias string == "C");
+        check("plain out-of-range $3 is null",t.$3i == null);
+        check("plain _getItem_(-1) is null",t._getItem_(- - 1i) == null);
+        t.$3i = "D";
+        t._setItem_(100i,"E");
+        check("plain out-of-range set ignored",t.length == 3i);
+    }
+    _public static plainTupleSearchTest( )
+    {
+        Tuple t = Tuple(10i,20i,30i);
+        check("indexOf 20",t.indexOf(20i) == 1i);
+        check("indexOf 30",t.indexOf(30i) == 2i);
+        check("indexOf missing",t.indexOf(99i) == - - 1i);
+        check("contains 10",t.contains(10i) == true);
+        check("contains missing",t.contains(99i) == false);
+        check("before clear isEmpty",t.isEmpty == false);
+        t.clear();
+        check("after clear length",t.length == 0i);
+        check("after clear isEmpty",t.isEmpty == true);
+        check("after clear $0 is null",t.$0i == null);
+        t.add("re");
+        check("add after clear length",t.length == 1i);
+        check("add after clear $0",t.$0ias string == "re");
+    }
+    _public static nestedTupleTest( )
+    {
+        Tuple<int,Tuple<string,bool>> nested = Tuple(1i,Tuple("y",true));
+        check("nested template item1",nested.item1 == 1i);
+        check("nested template item2.item1",nested.item2.item1 == "y");
+        check("nested template item2.item2",nested.item2.item2 == true);
+        check("nested template $1.item1",((nested.$1ias Tuple<string,bool>).item1 == "y");
+        check("nested template toString",nested.toString() == "(1, (y, True))");
+        Tuple outer = Tuple(1i,Tuple(5i,"five"),"tail");
+        check("plain outer length",outer.length == 3i);
+        Tuple<int,string> inner = outer.$1ias Tuple<int,string>;
+        check("plain outer inner item1",inner.item1 == 5i);
+        check("plain outer inner item2",inner.item2 == "five");
+        check("plain outer toString",outer.toString() == "(1, (5, five), tail)");
+        Tuple<string,Tuple> nested2 = Tuple("key",Tuple(1i,2i));
+        check("template outer item2 length",nested2.item2.length == 2i);
+        check("template outer item2 $1",nested2.item2.$1ias int == 2i);
+    }
+    _public static fun( )
+    {
+        global.println("========== TupleTest (start) ==========");
+        templateTuple1Test();
+        templateTuple2Test();
+        templateTuple34Test();
+        templateTuple5To8Test();
+        templateTupleCreateNullTest();
+        plainTupleCtorTest();
+        plainTupleCreateTest();
+        plainTupleAddTest();
+        plainTupleIndexTest();
+        plainTupleSearchTest();
+        nestedTupleTest();
+        global.println("========== TupleTest (end) ==========");
+    }
+}
+-------------------Meta 文件显示 结束 : -----------------------

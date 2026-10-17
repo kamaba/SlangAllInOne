@@ -1,0 +1,261 @@
+-------------------IR 文件显示 开始 : Path: NativeBridge.sl-----------------------
+Class: Core.BridgeObject
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1157425732 idx=0 name=Core.BridgeObject.boolvalue type=Core.Boolean
+      - #1 id=1961139076 idx=1 name=Core.BridgeObject.int32value type=Core.Int32
+      - #2 id=-662620622 idx=2 name=Core.BridgeObject.int64value type=Core.Int64
+      - #3 id=-618895841 idx=3 name=Core.BridgeObject.float64value type=Core.Float64
+      - #4 id=446154544 idx=4 name=Core.BridgeObject.stringvalue type=Core.String
+      - #5 id=-1413183770 idx=5 name=Core.BridgeObject.valuetype type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.BridgeObject._init__1_Core.Boolean
+    VirtualName: _init__Core.Void_1_Core.Boolean
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43036453 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=27151449 idx=0 name=this] type=Core.BridgeObject
+      - #1 id=51783759 idx=1 name=_value type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Core.BridgeObject._init__1_Core.Int32
+    VirtualName: _init__Core.Void_1_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=33734921 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=63400648 idx=0 name=this] type=Core.BridgeObject
+      - #1 id=35178835 idx=1 name=_value type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.BridgeObject._init__1_Core.Int64
+    VirtualName: _init__Core.Void_1_Core.Int64
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=30913391 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=48174063 idx=0 name=this] type=Core.BridgeObject
+      - #1 id=9785067 idx=1 name=_value type=Core.Int64
+    Locals: []
+    Instructions:
+
+  Method: Core.BridgeObject._init__1_Core.Float64
+    VirtualName: _init__Core.Void_1_Core.Float64
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=54392930 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=20956739 idx=0 name=this] type=Core.BridgeObject
+      - #1 id=19774328 idx=1 name=_value type=Core.Float64
+    Locals: []
+    Instructions:
+
+  Method: Core.BridgeObject._init__1_Core.String
+    VirtualName: _init__Core.Void_1_Core.String
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=58216758 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43751230 idx=0 name=this] type=Core.BridgeObject
+      - #1 id=54188775 idx=1 name=_value type=Core.String
+    Locals: []
+    Instructions:
+
+Class: Core.NativeBridge
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1078648047 idx=0 name=Core.NativeBridge._kind type=Core.BridgeKind
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=23562876 idx=0 name=objA type=Core.Object
+      - #1 id=10739296 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.NativeBridge.Call_6_Core.BridgeKind_Core.String_Core.String_Core.String_Core.BridgeObject_Core.Array<Core.BridgeObject>[-1]
+    VirtualName: Call_Core.Boolean_6_Core.BridgeKind_Core.String_Core.String_Core.String_Core.BridgeObject_Core.Array<Core.BridgeObject>[-1]
+    Name: Call
+    InterfaceMethod: False
+    Return:
+      - #0 id=17936932 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27214660 idx=0 name=kind type=Core.BridgeKind
+      - #1 id=43605354 idx=1 name=dllName type=Core.String
+      - #2 id=56903870 idx=2 name=className type=Core.String
+      - #3 id=42372785 idx=3 name=method type=Core.String
+      - #4 id=45810748 idx=4 name=retObj type=Core.BridgeObject
+      - #5 id=9643552 idx=5 name=arrParams type=Core.Array<T><Core.BridgeObject>
+    Locals:
+      - #0 id=19683111 idx=0 name=autocreate_63704574 type=Core.Boolean
+      - #1 id=42930272 idx=1 name=autocreate_36470260 type=Core.Boolean
+      - #2 id=50828134 idx=2 name=autocreate_59796890 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=27997 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29829272 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=2267763 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=251973 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=42586845 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=49471114 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=41515225 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26982424 idx=0 name=this] type=Core.Object
+      - #1 id=38092711 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=53625739 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=65610739 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=12869603 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.BridgeKind
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1195366544 idx=0 name=Core.BridgeKind.SELF type=Core.Member
+      - #1 id=197027447 idx=1 name=Core.BridgeKind.CLR type=Core.Member
+      - #2 id=6206228 idx=2 name=Core.BridgeKind.JVM type=Core.Member
+      - #3 id=-865557765 idx=3 name=Core.BridgeKind.NATIVE type=Core.Member
+      - #4 id=-1974440004 idx=4 name=Core.BridgeKind.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

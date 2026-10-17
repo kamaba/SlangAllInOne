@@ -1,0 +1,195 @@
+-------------------Meta 文件显示 开始 : Path: Array.sl-----------------------
+public class Array<T extends Core.Object> extends Core.Object interface Core.IIterable<T>T
+,Core.IIterator<T>T
+
+{
+private [Core.Int32]_length = 0i;
+private [Core.Type]_type = null;
+private [Core.Int32]_index = 0i;
+private [Core.Object]_current = null;
+private [Core.Int64]_ptr = 0L;
+public  static Core.Array<T>T
+ create([Core.Int32]length)
+{
+[Core.Object]arr = ;
+return [Core.Object]arr;
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+[Core.String]showstr = "[";
+for 
+{
+    [Core.Object]i = 0;    [Core.Object]i = 1;
+
+    if ([Core.Object]i < [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.toString.this  ->  [Core.Int32]_length){break;}
+[Core.Object]cur = SystemArrayGetValueThis(this,i);
+[Core.String]showstr = ([Core.String]showstr + [Core.Object]cur.toString());
+Core.Boolean autocreate_49150562 = ([Core.Object]i < ([Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.toString.this  ->  [Core.Int32]_length - 1))
+if autocreate_49150562
+{
+[Core.String]showstr = ",";
+
+}
+
+}
+return ([Core.String]showstr + "]");
+
+}
+
+public  Core.Void _init_([Core.Int32]__len)
+{
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>._init_.this  ->  [Core.Int32]_length = [Core.Int32]__len;
+
+}
+
+public  get Core.Int32 length()
+{
+return [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.length.this  ->  [Core.Int32]_length;
+}
+
+public  Core.Void fill([Core.Object]value)
+{
+for 
+{
+    [Core.Object]i = 0;    [Core.Object]i = 1;
+
+    if ([Core.Object]i < [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.fill.this  ->  [Core.Int32]_length){break;}
+SystemArraySetValueThis(this,i,value)
+
+}
+
+
+}
+
+public  override Core.Void reset()
+{
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.reset.this  ->  [Core.Int32]_index = 0i;
+
+}
+
+public  override Core.Boolean moveNext()
+{
+[Core.Boolean]hasNext_var = ([Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.moveNext.this  ->  [Core.Int32]_index < [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.moveNext.this  ->  [Core.Int32]_length);
+Core.Boolean hasNext_var = [Core.Boolean]hasNext_var
+if hasNext_var
+{
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.moveNext.this  ->  [T]_current = SystemArrayGetValueThis(this,this._index) as Core.Object ;
+
+}
+else
+{
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.moveNext.this  ->  [T]_current = null;
+
+}
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.moveNext.this  ->  [Core.Int32]_index = 1i;
+println(" Array.moveNext-----" + this._index)
+return [Core.Boolean]hasNext_var;
+
+}
+
+public  override Core.Object current()
+{
+return [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.current.this  ->  [T]_current;
+}
+
+public  override set Core.Void current([Core.Object]val)
+{
+SystemArraySetValueThis(this,this._index,val)
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.current.this  ->  [T]_current = [T]val;
+
+
+}
+
+public  override Core.IIterator<T>T
+ iterator()
+{
+return [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.iterator.this;
+}
+
+public  get Core.Int32 index()
+{
+return [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.index.this  ->  [Core.Int32]_index;
+}
+
+public  set Core.Void index([Core.Int32]ind)
+{
+Core.Boolean autocreate_12707688 = ([Core.Int32]ind < 0)
+if autocreate_12707688
+{
+return ;
+}
+Core.Boolean autocreate_47260332 = ([Core.Int32]ind >= [Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.index.this  ->  [Core.Int32]_length)
+if autocreate_47260332
+{
+return ;
+}
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.index.this  ->  [Core.Int32]_index = [Core.Int32]ind;
+[Core.Array<T><T>[-1]]Core.Array<T:Core.Object>.index.this  ->  [T]_current = SystemArrayGetValueThis(this,ind) as Core.Object ;
+
+}
+
+public  set Core.Void setValue([Core.Int32]__index,[Core.Object]val)
+{
+SystemArraySetValueThis(this,__index,val)
+
+}
+
+public  get Core.Object getValue([Core.Int32]__index)
+{
+return SystemArrayGetValueThis(this,__index) as Core.Object ;
+}
+
+public  Core.Object setValues([Core.Int64]valPtr,[Core.Int32]len)
+{
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

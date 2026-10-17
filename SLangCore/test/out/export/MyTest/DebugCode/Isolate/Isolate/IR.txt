@@ -1,0 +1,275 @@
+-------------------IR 文件显示 开始 : Path: Isolate/Isolate.sl-----------------------
+Class: Std.Isolate
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1740797123 idx=0 name=Std.Isolate._handle type=Core.Int64
+      - #1 id=-966139514 idx=1 name=Std.Isolate._controlPortId type=Core.Int64
+      - #2 id=689426751 idx=2 name=Std.Isolate._pauseCapabilityId type=Core.Int64
+      - #3 id=458467096 idx=3 name=Std.Isolate._terminateCapabilityId type=Core.Int64
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_1_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.current
+    VirtualName: current_Std.Isolate_0
+    Name: current
+    InterfaceMethod: False
+    Return:
+      - #0 id=4074007 idx=0 name=return] type=Std.Isolate
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.exit_2_Std.SendPort_Core.Object
+    VirtualName: exit_Core.Void_2_Std.SendPort_Core.Object
+    Name: exit
+    InterfaceMethod: False
+    Return:
+      - #0 id=61559149 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=17161430 idx=0 name=port type=Std.SendPort
+      - #1 id=20235143 idx=1 name=message type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Std.Isolate._init__3_Std.SendPort_Std.Capability_Std.Capability
+    VirtualName: _init__Core.Void_3_Std.SendPort_Std.Capability_Std.Capability
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=28433869 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47898561 idx=0 name=this] type=Std.Isolate
+      - #1 id=54578237 idx=1 name=controlPort type=Std.SendPort
+      - #2 id=21442089 idx=2 name=pauseCapability type=Std.Capability
+      - #3 id=58761073 idx=3 name=terminateCapability type=Std.Capability
+    Locals:
+      - #0 id=59087616 idx=0 name=rebuilt type=Std.Isolate
+      - #1 id=62026502 idx=1 name=autocreate_53855148 type=Core.Boolean
+    Instructions:
+
+  Method: Std.Isolate.pause
+    VirtualName: pause_Std.Capability_0
+    Name: pause
+    InterfaceMethod: False
+    Return:
+      - #0 id=4287423 idx=0 name=return] type=Std.Capability
+    Arguments:
+      - #0 id=476380 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.resume_1_Std.Capability
+    VirtualName: resume_Core.Void_1_Std.Capability
+    Name: resume
+    InterfaceMethod: False
+    Return:
+      - #0 id=38523909 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11736974 idx=0 name=this] type=Std.Isolate
+      - #1 id=11170862 idx=1 name=capability type=Std.Capability
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.kill_1_Core.Int32
+    VirtualName: kill_Core.Void_1_Core.Int32
+    Name: kill
+    InterfaceMethod: False
+    Return:
+      - #0 id=32424647 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33428900 idx=0 name=this] type=Std.Isolate
+      - #1 id=23386368 idx=1 name=priority type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.ping_3_Std.SendPort_Core.Object_Core.Int32
+    VirtualName: ping_Core.Void_3_Std.SendPort_Core.Object_Core.Int32
+    Name: ping
+    InterfaceMethod: False
+    Return:
+      - #0 id=15247616 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9150720 idx=0 name=this] type=Std.Isolate
+      - #1 id=3010817 idx=1 name=responsePort type=Std.SendPort
+      - #2 id=27097356 idx=2 name=response type=Core.Object
+      - #3 id=42549619 idx=3 name=priority type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.setErrorsFatal_1_Core.Boolean
+    VirtualName: setErrorsFatal_Core.Void_1_Core.Boolean
+    Name: setErrorsFatal
+    InterfaceMethod: False
+    Return:
+      - #0 id=23967101 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47402253 idx=0 name=this] type=Std.Isolate
+      - #1 id=14377323 idx=1 name=fatal type=Core.Boolean
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.addOnExitListener_2_Std.SendPort_Core.Object
+    VirtualName: addOnExitListener_Core.Void_2_Std.SendPort_Core.Object
+    Name: addOnExitListener
+    InterfaceMethod: False
+    Return:
+      - #0 id=23712525 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62287048 idx=0 name=this] type=Std.Isolate
+      - #1 id=12086140 idx=1 name=port type=Std.SendPort
+      - #2 id=41666396 idx=2 name=response type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.addErrorListener_1_Std.SendPort
+    VirtualName: addErrorListener_Core.Void_1_Std.SendPort
+    Name: addErrorListener
+    InterfaceMethod: False
+    Return:
+      - #0 id=19534911 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39453247 idx=0 name=this] type=Std.Isolate
+      - #1 id=41596476 idx=1 name=port type=Std.SendPort
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.status
+    VirtualName: status_Core.Int32_0
+    Name: status
+    InterfaceMethod: False
+    Return:
+      - #0 id=13871385 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=38823967 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.debugName
+    VirtualName: debugName_Core.String_0
+    Name: debugName
+    InterfaceMethod: False
+    Return:
+      - #0 id=45910260 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49840382 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.handle
+    VirtualName: handle_Core.Int64_0
+    Name: handle
+    InterfaceMethod: False
+    Return:
+      - #0 id=48365314 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=27743545 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.controlPort
+    VirtualName: controlPort_Std.SendPort_0
+    Name: controlPort
+    InterfaceMethod: False
+    Return:
+      - #0 id=26161025 idx=0 name=return] type=Std.SendPort
+    Arguments:
+      - #0 id=25276401 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.pauseCapability
+    VirtualName: pauseCapability_Std.Capability_0
+    Name: pauseCapability
+    InterfaceMethod: False
+    Return:
+      - #0 id=12469873 idx=0 name=return] type=Std.Capability
+    Arguments:
+      - #0 id=38668243 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+  Method: Std.Isolate.terminateCapability
+    VirtualName: terminateCapability_Std.Capability_0
+    Name: terminateCapability
+    InterfaceMethod: False
+    Return:
+      - #0 id=30840926 idx=0 name=return] type=Std.Capability
+    Arguments:
+      - #0 id=3426769 idx=0 name=this] type=Std.Isolate
+    Locals: []
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

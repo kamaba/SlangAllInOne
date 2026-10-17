@@ -1,0 +1,343 @@
+-------------------Meta 文件显示 开始 : Path: NativeBridge.sl-----------------------
+public class BridgeKind extends Core.UInt8
+{
+public static public static [Core.Member]SELF = Core.Member().{name"SELF", value0, index0i}; = Core.Member().{name"SELF", value0, index0i};
+public static public static [Core.Member]CLR = Core.Member().{name"CLR", value1, index1i}; = Core.Member().{name"CLR", value1, index1i};
+public static public static [Core.Member]JVM = Core.Member().{name"JVM", value2, index2i}; = Core.Member().{name"JVM", value2, index2i};
+public static public static [Core.Member]NATIVE = Core.Member().{name"NATIVE", value3, index3i}; = Core.Member().{name"NATIVE", value3, index3i};
+public [Core.Array<T>Core.Member
+]values = Core.Array<Core.Member>().{[Core.Member]SELF, [Core.Member]CLR, [Core.Member]JVM, [Core.Member]NATIVE};
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  override Core.String toString()
+{
+return SystemConvertString(this);
+}
+
+public  override get Core.Int32 size()
+{
+return 8;
+}
+
+public  override get Core.Int32 byteLength()
+{
+return 1;
+}
+
+public  override Core.Num abs()
+{
+return [Core.UInt8]Core.UInt8.abs.this;
+}
+
+public  override Core.Num floor()
+{
+return SystemNumFloor(this);
+}
+
+public  override Core.Num ceil()
+{
+return [Core.UInt8]Core.UInt8.ceil.this;
+}
+
+public  override Core.Num compareTo([Core.Num]other)
+{
+Core.Boolean autocreate_24197721 = ([Core.Num]other == null)
+if autocreate_24197721
+{
+return 1;
+}
+[Core.UInt8]ov = SystemConvertUInt8(other);
+Core.Boolean autocreate_16452903 = ([Core.UInt8]Core.UInt8.compareTo.this  ->  [Core.UInt8]_value == [Core.UInt8]ov)
+if autocreate_16452903
+{
+return 0;
+}
+return ([Core.UInt8]Core.UInt8.compareTo.this  ->  [Core.UInt8]_value > [Core.UInt8]ov)  ?  1  :  (0 - 1);
+}
+
+public  Core.Boolean toBool()
+{
+return SystemConvertBool(this);
+}
+
+public  Core.Int8 toInt8([Core.UInt8]index)
+{
+return SystemConvertInt8(this,index);
+}
+
+public  Core.UInt8 toUInt8([Core.UInt8]index)
+{
+return SystemConvertUInt8(this,index);
+}
+
+public  Core.Int16 toInt16()
+{
+return SystemConvertInt16(this);
+}
+
+public  Core.UInt16 toUInt16()
+{
+return SystemConvertUInt16(this);
+}
+
+public  override Core.Int32 toInt32()
+{
+return SystemConvertInt32(this);
+}
+
+public  Core.UInt32 toUInt32()
+{
+return SystemConvertUInt32(this);
+}
+
+public  Core.Int64 toInt64()
+{
+return SystemConvertInt64(this);
+}
+
+public  Core.Int64 toUInt64()
+{
+return SystemConvertUInt64(this);
+}
+
+public  Core.Float32 toFloat32()
+{
+return SystemConvertFloat32(this);
+}
+
+public  override Core.Float64 toFloat64()
+{
+return SystemConvertFloat64(this);
+}
+
+public  Core.Void _init_([Core.UInt8]_val)
+{
+[Core.UInt8]Core.UInt8._init_.this  ->  [Core.UInt8]_value = [Core.UInt8]_val;
+
+}
+
+}
+
+public class BridgeObject extends Core.Object
+{
+public [Core.Boolean]boolvalue = False;
+public [Core.Int32]int32value = 0i;
+public [Core.Int64]int64value = 0L;
+public [Core.Float64]float64value = 0d;
+public [Core.String]stringvalue = "";
+public [Core.Int32]valuetype = 0i;
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+public  Core.Void _init_([Core.Boolean]_value)
+{
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Boolean]boolvalue = [Core.Boolean]_value;
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]valuetype = 0i;
+
+}
+
+public  Core.Void _init_([Core.Int32]_value)
+{
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]int32value = [Core.Int32]_value;
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]valuetype = 1i;
+
+}
+
+public  Core.Void _init_([Core.Int64]_value)
+{
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int64]int64value = [Core.Int64]_value;
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]valuetype = 2i;
+
+}
+
+public  Core.Void _init_([Core.Float64]_value)
+{
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Float64]float64value = [Core.Float64]_value;
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]valuetype = 3i;
+
+}
+
+public  Core.Void _init_([Core.String]_value)
+{
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.String]stringvalue = [Core.String]_value;
+[Core.BridgeObject]Core.BridgeObject._init_.this  ->  [Core.Int32]valuetype = 4i;
+
+}
+
+}
+
+public class NativeBridge extends Core.Object
+{
+private static [Core.BridgeKind]_kind = [Core.Array<T><Core.Member>[-1]]values  ->  [Core.Member]SELF;
+public  static Core.Boolean Call([Core.BridgeKind]kind,[Core.String]dllName,[Core.String]className,[Core.String]method,[Core.BridgeObject]retObj,[Core.Array<Core.BridgeObject>Core.BridgeObject
+]arrParams)
+{
+Core.Boolean autocreate_57678784 = ([Core.BridgeKind]kind == [Core.Array<T><Core.Member>[-1]]values  ->  [Core.Member]CLR)
+if autocreate_57678784
+{
+SystemCallCLRMethod(dllName,className,method,retObj,arrParams)
+
+}
+Core.Boolean autocreate_49347015 = ([Core.BridgeKind]kind == [Core.Array<T><Core.Member>[-1]]values  ->  [Core.Member]NATIVE)
+elif autocreate_49347015
+{
+SystemCallNativeMethod(dllName,className,method,retObj,arrParams)
+
+}
+Core.Boolean autocreate_41469957 = ([Core.BridgeKind]kind == [Core.Array<T><Core.Member>[-1]]values  ->  [Core.Member]JVM)
+elif autocreate_41469957
+{
+SystemCallJVMMethod(dllName,className,method,retObj,arrParams)
+
+}
+return True;
+}
+
+public  Core.Void _init_()
+{
+}
+
+public  get Core.Type type()
+{
+return SystemObjectGetType(this);
+}
+
+public  get Core.Int32 hashCode()
+{
+return SystemObjectGetHashCode(this);
+}
+
+public  Core.Boolean equals([Core.Object]obj)
+{
+return SystemEqualObject(this,obj);
+}
+
+public  get Core.Object ref()
+{
+return SystemObjectRef(this);
+}
+
+public  get Core.Object refWeak()
+{
+return SystemObjectRefWeak(this);
+}
+
+public  get Core.Int32 refCount()
+{
+return SystemObjectRefCount(this);
+}
+
+public  Core.Void free()
+{
+SystemObjectFree(this)
+
+}
+
+public  Core.Void release()
+{
+SystemObjectRelease(this)
+
+}
+
+public  Core.String toString()
+{
+[Core.Object]hc = SystemObjectGetHashCode(this);
+return ("Object:" + [Core.Int32]hc.toString());
+}
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

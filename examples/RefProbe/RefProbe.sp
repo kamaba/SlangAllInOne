@@ -1,0 +1,17 @@
+Project
+{
+    _main_()
+    {
+        RefProbe.runMain()
+    }
+    _test_()
+    {
+        RefProbe.runTest()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

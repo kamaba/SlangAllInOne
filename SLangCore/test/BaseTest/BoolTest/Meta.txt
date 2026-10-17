@@ -1,0 +1,181 @@
+-------------------Meta 文件显示 开始 : Path: ../../../../test/BaseTest/BoolTest.sl-----------------------
+public class BoolTest extends Core.Object
+{
+    public  static Core.Object compareTest()
+    {
+        println("----- compareTest -----")
+        [Core.Num]a = 3.14f;
+        [Core.Num]b = 2.5f;
+        println("a > b  = " + ((a > b).toString())
+        println("a < b  = " + ((a < b).toString())
+        println("a == b = " + ((a == b).toString())
+        println("a != b = " + ((a != b).toString())
+        println("a >= b = " + ((a >= b).toString())
+        println("a <= b = " + ((a <= b).toString())
+
+
+
+
+
+
+
+    }
+
+    public  static Core.Object boolLiteralAndNotTest()
+    {
+        println("----- boolLiteralAndNotTest -----")
+        [Core.Boolean]t = True;
+        [Core.Boolean]f = False;
+        [Core.Boolean]nt = ![Core.Boolean]t;
+        [Core.Boolean]nf = ![Core.Boolean]f;
+        println("true  -> " + t.toString())
+        println("false -> " + f.toString())
+        println("!true -> " + nt.toString())
+        println("!false -> " + nf.toString())
+
+
+
+
+
+    }
+
+    public  static Core.Object logicOperatorTest()
+    {
+        println("----- logicOperatorTest -----")
+        [Core.Boolean]a = True;
+        [Core.Boolean]b = False;
+        println("a && b -> " + ((a && b).toString())
+        println("a || b -> " + ((a || b).toString())
+        println("(a && !b) || (b && !a) -> " + ((a && ! ! b || b && ! ! a).toString())
+        println("true || false && false -> " + ((true || false && false).toString())
+        println("(true || false) && false -> " + ((true || false && false).toString())
+
+
+
+
+
+
+    }
+
+    public  static Core.Object boolFromCompareAndConditionTest()
+    {
+        println("----- boolFromCompareAndConditionTest -----")
+        [Core.Int32]x = 12i;
+        [Core.Int32]y = 7i;
+        [Core.Boolean]c1 = ([Core.Int32]x > [Core.Int32]y);
+        [Core.Boolean]c2 = ([Core.Int32]x == [Core.Int32]y);
+        [Core.Boolean]c3 = (([Core.Int32]x >= 10i) && ([Core.Int32]x <= 20i));
+        println("x > y -> " + c1.toString())
+        println("x == y -> " + c2.toString())
+        println("x in [10,20] -> " + c3.toString())
+        Core.Boolean autocreate_13202999 = ([Core.Boolean]c3 && ![Core.Boolean]c2)
+        if autocreate_13202999
+        {
+            println("if(c3 && !c2) -> true branch")
+
+        }
+        else
+        {
+            println("if(c3 && !c2) -> false branch")
+
+        }
+
+
+
+
+
+    }
+
+    public  static Core.Object boolAssignFlowTest()
+    {
+        println("----- boolAssignFlowTest -----")
+        [Core.Boolean]ok = False;
+        [Core.Int32]score = 86i;
+        [Core.Boolean]ok = ([Core.Int32]score >= 60i);
+        println("ok = score >= 60 -> " + ok.toString())
+        [Core.Boolean]ok = ([Core.Boolean]ok && ([Core.Int32]score < 100i));
+        println("ok = ok && score < 100 -> " + ok.toString())
+        [Core.Boolean]ok = ![Core.Boolean]ok;
+        println("ok = !ok -> " + ok.toString())
+        [Core.Boolean]ok = (![Core.Boolean]ok || False);
+        println("ok = !ok || false -> " + ok.toString())
+
+
+
+
+
+    }
+
+    public  static Core.Object fun()
+    {
+        println("========== BoolTest (start) ==========")
+        compareTest()
+        boolLiteralAndNotTest()
+        logicOperatorTest()
+        boolFromCompareAndConditionTest()
+        boolAssignFlowTest()
+        println("========== BoolTest (end) ==========")
+
+
+
+
+
+
+
+    }
+
+        public  Core.Void _init_()
+        {
+        }
+
+        public  get Core.Type type()
+        {
+            return SystemObjectGetType(this);
+        }
+
+        public  get Core.Int32 hashCode()
+        {
+            return SystemObjectGetHashCode(this);
+        }
+
+        public  Core.Boolean equals([Core.Object]obj)
+        {
+            return SystemEqualObject(this,obj);
+        }
+
+        public  get Core.Object ref()
+        {
+            return SystemObjectRef(this);
+        }
+
+        public  get Core.Object refWeak()
+        {
+            return SystemObjectRefWeak(this);
+        }
+
+        public  get Core.Int32 refCount()
+        {
+            return SystemObjectRefCount(this);
+        }
+
+        public  Core.Void free()
+        {
+            SystemObjectFree(this)
+
+        }
+
+        public  Core.Void release()
+        {
+            SystemObjectRelease(this)
+
+        }
+
+    public  Core.String toString()
+    {
+        [Core.Object]hc = SystemObjectGetHashCode(this);
+        return ("Object:" + [Core.Int32]hc  ->  [Core.Int32]hc.toString());
+    }
+
+}
+
+-------------------Meta 文件显示 结束 : -----------------------

@@ -1,0 +1,1924 @@
+-------------------IR 文件显示 开始 : Path: Container/Tuple.sl-----------------------
+Class: Core.Tuple<T1>
+  metaClassKind: Class
+  TemplateCount: 1
+  TemplateParameterCount: 1
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1528717286 idx=0 name=Core.Tuple<T1>.item1 type=T[0]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1>.create_1_T1
+    VirtualName: create_Core.Tuple<T1>_1_T1
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=7422478 idx=0 name=return] type=Core.Tuple<T1><T[0]>
+    Arguments:
+      - #0 id=66802302 idx=0 name=v1 type=T[0]
+    Locals:
+      - #0 id=64349806 idx=0 name=t type=Core.Tuple<T1><T[0]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=1912753 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=44951770 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1>._init__1_T1
+    VirtualName: _init__Core.Void_1_T1
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=52219897 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=20715291 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+      - #1 id=217030 idx=1 name=v1 type=T[0]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=17579482 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=1953275 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=64758253 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=14651901 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+      - #1 id=45953370 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=10927149 idx=0 name=autocreate_51812368 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=20759490 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=47045852 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+      - #1 id=52617682 idx=1 name=index type=Core.Int32
+      - #2 id=3797095 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=34173856 idx=0 name=autocreate_63658128 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=15353199 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=16618991 idx=0 name=this] type=Core.Tuple<T1><T[0]>
+      - #1 id=3961063 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=35649569 idx=0 name=autocreate_36052245 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2>
+  metaClassKind: Class
+  TemplateCount: 2
+  TemplateParameterCount: 2
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1249139262 idx=0 name=Core.Tuple<T1,T2>.item1 type=T[0]
+      - #1 id=1933144187 idx=1 name=Core.Tuple<T1,T2>.item2 type=T[1]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>.create_2_T1_T2
+    VirtualName: create_Core.Tuple<T1,T2>_2_T1_T2
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=30839753 idx=0 name=return] type=Core.Tuple<T1,T2><T[0], T[1]>
+    Arguments:
+      - #0 id=9122323 idx=0 name=v1 type=T[0]
+      - #1 id=14992050 idx=1 name=v2 type=T[1]
+    Locals:
+      - #0 id=710726 idx=0 name=t type=Core.Tuple<T1,T2><T[0], T[1]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48357378 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57568825 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>._init__2_T1_T2
+    VirtualName: _init__Core.Void_2_T1_T2
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=20375168 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=24633528 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+      - #1 id=49158788 idx=1 name=v1 type=T[0]
+      - #2 id=39775908 idx=2 name=v2 type=T[1]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=623145 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=22438859 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=51620080 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=50474807 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+      - #1 id=61927541 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=20476957 idx=0 name=autocreate_56034750 type=Core.Boolean
+      - #1 id=50074891 idx=1 name=autocreate_34550710 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55719536 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=43473761 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+      - #1 id=31713777 idx=1 name=index type=Core.Int32
+      - #2 id=16988543 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=18679162 idx=0 name=autocreate_42520941 type=Core.Boolean
+      - #1 id=33894731 idx=1 name=autocreate_47144157 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=51663671 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=13196948 idx=0 name=this] type=Core.Tuple<T1,T2><T[0], T[1]>
+      - #1 id=62319862 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=24007848 idx=0 name=autocreate_21644229 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3>
+  metaClassKind: Class
+  TemplateCount: 3
+  TemplateParameterCount: 3
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1636132307 idx=0 name=Core.Tuple<T1,T2,T3>.item1 type=T[0]
+      - #1 id=1489522582 idx=1 name=Core.Tuple<T1,T2,T3>.item2 type=T[1]
+      - #2 id=-1435339821 idx=2 name=Core.Tuple<T1,T2,T3>.item3 type=T[2]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>.create_3_T1_T2_T3
+    VirtualName: create_Core.Tuple<T1,T2,T3>_3_T1_T2_T3
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=52047770 idx=0 name=return] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+    Arguments:
+      - #0 id=65776751 idx=0 name=v1 type=T[0]
+      - #1 id=55119850 idx=1 name=v2 type=T[1]
+      - #2 id=26316604 idx=2 name=v3 type=T[2]
+    Locals:
+      - #0 id=35522846 idx=0 name=t type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=59242391 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=58778271 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>._init__3_T1_T2_T3
+    VirtualName: _init__Core.Void_3_T1_T2_T3
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=36703909 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=33904373 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+      - #1 id=61899732 idx=1 name=v1 type=T[0]
+      - #2 id=20226684 idx=2 name=v2 type=T[1]
+      - #3 id=47822428 idx=3 name=v3 type=T[2]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=48411444 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=27748670 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=59789225 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=29012868 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+      - #1 id=1232117 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=11089057 idx=0 name=autocreate_60580335 type=Core.Boolean
+      - #1 id=32692654 idx=1 name=autocreate_8352109 type=Core.Boolean
+      - #2 id=25798438 idx=2 name=autocreate_8060118 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=6941071 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=771230 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+      - #1 id=62469641 idx=1 name=index type=Core.Int32
+      - #2 id=25355861 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=26876165 idx=0 name=autocreate_5432205 type=Core.Boolean
+      - #1 id=40558897 idx=1 name=autocreate_48889850 type=Core.Boolean
+      - #2 id=29485753 idx=2 name=autocreate_37355470 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=31912141 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=48285036 idx=0 name=this] type=Core.Tuple<T1,T2,T3><T[0], T[1], T[2]>
+      - #1 id=18773818 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=34746634 idx=0 name=autocreate_654914 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3,T4>
+  metaClassKind: Class
+  TemplateCount: 4
+  TemplateParameterCount: 4
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-1563834645 idx=0 name=Core.Tuple<T1,T2,T3,T4>.item1 type=T[0]
+      - #1 id=-1685787474 idx=1 name=Core.Tuple<T1,T2,T3,T4>.item2 type=T[1]
+      - #2 id=1765724395 idx=2 name=Core.Tuple<T1,T2,T3,T4>.item3 type=T[2]
+      - #3 id=1364885560 idx=3 name=Core.Tuple<T1,T2,T3,T4>.item4 type=T[3]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>.create_4_T1_T2_T3_T4
+    VirtualName: create_Core.Tuple<T1,T2,T3,T4>_4_T1_T2_T3_T4
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=21445804 idx=0 name=return] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+    Arguments:
+      - #0 id=58794511 idx=0 name=v1 type=T[0]
+      - #1 id=59388552 idx=1 name=v2 type=T[1]
+      - #2 id=64734920 idx=2 name=v3 type=T[2]
+      - #3 id=45743368 idx=3 name=v4 type=T[3]
+    Locals:
+      - #0 id=9037129 idx=0 name=t type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=11398677 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=60918843 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>._init__4_T1_T2_T3_T4
+    VirtualName: _init__Core.Void_4_T1_T2_T3_T4
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=55245968 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=50877683 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+      - #1 id=27451669 idx=1 name=v1 type=T[0]
+      - #2 id=45738436 idx=2 name=v2 type=T[1]
+      - #3 id=8992740 idx=3 name=v3 type=T[2]
+      - #4 id=13825799 idx=4 name=v4 type=T[3]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=46147972 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=57323335 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=20330987 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=46998241 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+      - #1 id=48761158 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=36197244 idx=0 name=autocreate_5894231 type=Core.Boolean
+      - #1 id=57339740 idx=1 name=autocreate_53048087 type=Core.Boolean
+      - #2 id=46295617 idx=2 name=autocreate_7670737 type=Core.Boolean
+      - #3 id=14007370 idx=3 name=autocreate_1927776 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=29001986 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=40505145 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+      - #1 id=59691289 idx=1 name=index type=Core.Int32
+      - #2 id=350694 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=3156250 idx=0 name=autocreate_17349988 type=Core.Boolean
+      - #1 id=28406254 idx=1 name=autocreate_21932166 type=Core.Boolean
+      - #2 id=54329699 idx=2 name=autocreate_63171767 type=Core.Boolean
+      - #3 id=19205251 idx=3 name=autocreate_31674992 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=5055772 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=45300995 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4><T[0], T[1], T[2], T[3]>
+      - #1 id=45501950 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=6864370 idx=0 name=autocreate_16639474 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3,T4,T5>
+  metaClassKind: Class
+  TemplateCount: 5
+  TemplateParameterCount: 5
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=101556742 idx=0 name=Core.Tuple<T1,T2,T3,T4,T5>.item1 type=T[0]
+      - #1 id=1061193795 idx=1 name=Core.Tuple<T1,T2,T3,T4,T5>.item2 type=T[1]
+      - #2 id=-839207930 idx=2 name=Core.Tuple<T1,T2,T3,T4,T5>.item3 type=T[2]
+      - #3 id=-174136107 idx=3 name=Core.Tuple<T1,T2,T3,T4,T5>.item4 type=T[3]
+      - #4 id=-1450587810 idx=4 name=Core.Tuple<T1,T2,T3,T4,T5>.item5 type=T[4]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>.create_5_T1_T2_T3_T4_T5
+    VirtualName: create_Core.Tuple<T1,T2,T3,T4,T5>_5_T1_T2_T3_T4_T5
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=10980010 idx=0 name=return] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+    Arguments:
+      - #0 id=31711231 idx=0 name=v1 type=T[0]
+      - #1 id=16965623 idx=1 name=v2 type=T[1]
+      - #2 id=18472885 idx=2 name=v3 type=T[2]
+      - #3 id=32038241 idx=3 name=v4 type=T[3]
+      - #4 id=19908716 idx=4 name=v5 type=T[4]
+    Locals:
+      - #0 id=44960719 idx=0 name=t type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=27238907 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=17939626 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>._init__5_T1_T2_T3_T4_T5
+    VirtualName: _init__Core.Void_5_T1_T2_T3_T4_T5
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=60048837 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=58867876 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+      - #1 id=3568621 idx=1 name=v1 type=T[0]
+      - #2 id=32117589 idx=2 name=v2 type=T[1]
+      - #3 id=20622846 idx=3 name=v3 type=T[2]
+      - #4 id=51387889 idx=4 name=v4 type=T[3]
+      - #5 id=59837824 idx=5 name=v5 type=T[4]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=15025562 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=1669506 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=14890402 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=9111029 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+      - #1 id=66904761 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=65271937 idx=0 name=autocreate_15537542 type=Core.Boolean
+      - #1 id=50576524 idx=1 name=autocreate_5620158 type=Core.Boolean
+      - #2 id=52535540 idx=2 name=autocreate_50581426 type=Core.Boolean
+      - #3 id=3057817 idx=3 name=autocreate_52579650 type=Core.Boolean
+      - #4 id=27520356 idx=4 name=autocreate_3454809 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=65257631 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=7250847 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+      - #1 id=50447774 idx=1 name=index type=Core.Int32
+      - #2 id=51376790 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=59737926 idx=0 name=autocreate_31093287 type=Core.Boolean
+      - #1 id=770424 idx=1 name=autocreate_11404133 type=Core.Boolean
+      - #2 id=6933822 idx=2 name=autocreate_35528341 type=Core.Boolean
+      - #3 id=62404399 idx=3 name=autocreate_51319614 type=Core.Boolean
+      - #4 id=24768686 idx=4 name=autocreate_59223347 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=45742585 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=27452130 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5><T[0], T[1], T[2], T[3], T[4]>
+      - #1 id=9030085 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=14161903 idx=0 name=autocreate_63248075 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3,T4,T5,T6>
+  metaClassKind: Class
+  TemplateCount: 6
+  TemplateParameterCount: 6
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=613929082 idx=0 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item1 type=T[0]
+      - #1 id=500890175 idx=1 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item2 type=T[1]
+      - #2 id=-278870406 idx=2 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item3 type=T[2]
+      - #3 id=-687565143 idx=3 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item4 type=T[3]
+      - #4 id=-1961641182 idx=4 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item5 type=T[4]
+      - #5 id=-935336351 idx=5 name=Core.Tuple<T1,T2,T3,T4,T5,T6>.item6 type=T[5]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>.create_6_T1_T2_T3_T4_T5_T6
+    VirtualName: create_Core.Tuple<T1,T2,T3,T4,T5,T6>_6_T1_T2_T3_T4_T5_T6
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=62599170 idx=0 name=return] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+    Arguments:
+      - #0 id=26521624 idx=0 name=v1 type=T[0]
+      - #1 id=37368030 idx=1 name=v2 type=T[1]
+      - #2 id=767958 idx=2 name=v3 type=T[2]
+      - #3 id=6911623 idx=3 name=v4 type=T[3]
+      - #4 id=62204612 idx=4 name=v5 type=T[4]
+      - #5 id=22970596 idx=5 name=v6 type=T[5]
+    Locals:
+      - #0 id=5408778 idx=0 name=t type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=50685404 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=35457873 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>._init__6_T1_T2_T3_T4_T5_T6
+    VirtualName: _init__Core.Void_6_T1_T2_T3_T4_T5_T6
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=39784704 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=11877063 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+      - #1 id=22518022 idx=1 name=v1 type=T[0]
+      - #2 id=1335609 idx=2 name=v2 type=T[1]
+      - #3 id=12020482 idx=3 name=v3 type=T[2]
+      - #4 id=41075474 idx=4 name=v4 type=T[3]
+      - #5 id=34134946 idx=5 name=v5 type=T[4]
+      - #6 id=38779059 idx=6 name=v6 type=T[5]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=54096069 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=13467214 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43131373 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=19705455 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+      - #1 id=52638042 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=3980335 idx=0 name=autocreate_32361769 type=Core.Boolean
+      - #1 id=35823022 idx=1 name=autocreate_22820469 type=Core.Boolean
+      - #2 id=53971742 idx=2 name=autocreate_4057632 type=Core.Boolean
+      - #3 id=15983633 idx=3 name=autocreate_36518691 type=Core.Boolean
+      - #4 id=9634977 idx=4 name=autocreate_60232767 type=Core.Boolean
+      - #5 id=19605934 idx=5 name=autocreate_5223998 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=14972060 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=46402804 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+      - #1 id=530819 idx=1 name=index type=Core.Int32
+      - #2 id=4777379 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=42996411 idx=0 name=autocreate_47015983 type=Core.Boolean
+      - #1 id=51423381 idx=1 name=autocreate_20490669 type=Core.Boolean
+      - #2 id=60157251 idx=2 name=autocreate_50198296 type=Core.Boolean
+      - #3 id=4544348 idx=3 name=autocreate_49131481 type=Core.Boolean
+      - #4 id=40899139 idx=4 name=autocreate_39530145 type=Core.Boolean
+      - #5 id=32547936 idx=5 name=autocreate_20226985 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=57675884 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=51147674 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6><T[0], T[1], T[2], T[3], T[4], T[5]>
+      - #1 id=49320909 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=41234998 idx=0 name=autocreate_47825138 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>
+  metaClassKind: Class
+  TemplateCount: 7
+  TemplateParameterCount: 7
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=113002507 idx=0 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item1 type=T[0]
+      - #1 id=1072783950 idx=1 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item2 type=T[1]
+      - #2 id=-850698741 idx=2 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item3 type=T[2]
+      - #3 id=-181465384 idx=3 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item4 type=T[3]
+      - #4 id=-1455938733 idx=4 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item5 type=T[4]
+      - #5 id=-367755760 idx=5 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item6 type=T[5]
+      - #6 id=1339771526 idx=6 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.item7 type=T[6]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.create_7_T1_T2_T3_T4_T5_T6_T7
+    VirtualName: create_Core.Tuple<T1,T2,T3,T4,T5,T6,T7>_7_T1_T2_T3_T4_T5_T6_T7
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=466603 idx=0 name=return] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+    Arguments:
+      - #0 id=4199435 idx=0 name=v1 type=T[0]
+      - #1 id=37794916 idx=1 name=v2 type=T[1]
+      - #2 id=4609929 idx=2 name=v3 type=T[2]
+      - #3 id=41489361 idx=3 name=v4 type=T[3]
+      - #4 id=37859935 idx=4 name=v5 type=T[4]
+      - #5 id=5195099 idx=5 name=v6 type=T[5]
+      - #6 id=46755894 idx=6 name=v7 type=T[6]
+    Locals:
+      - #0 id=18149865 idx=0 name=t type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=10805765 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=60852964 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>._init__7_T1_T2_T3_T4_T5_T6_T7
+    VirtualName: _init__Core.Void_7_T1_T2_T3_T4_T5_T6_T7
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=25666111 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=2851790 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+      - #1 id=29668407 idx=1 name=v1 type=T[0]
+      - #2 id=65689071 idx=2 name=v2 type=T[1]
+      - #3 id=54330728 idx=3 name=v3 type=T[2]
+      - #4 id=19214507 idx=4 name=v4 type=T[3]
+      - #5 id=38712842 idx=5 name=v5 type=T[4]
+      - #6 id=12871260 idx=6 name=v6 type=T[5]
+      - #7 id=48732484 idx=7 name=v7 type=T[6]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=55017151 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35939178 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43511739 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27204259 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+      - #1 id=56061334 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=34789966 idx=0 name=autocreate_27773061 type=Core.Boolean
+      - #1 id=44674243 idx=1 name=autocreate_48630964 type=Core.Boolean
+      - #2 id=66523870 idx=2 name=autocreate_35025494 type=Core.Boolean
+      - #3 id=61843920 idx=3 name=autocreate_46793998 type=Core.Boolean
+      - #4 id=19724370 idx=4 name=autocreate_18492804 type=Core.Boolean
+      - #5 id=43301605 idx=5 name=autocreate_32217513 type=Core.Boolean
+      - #6 id=54170131 idx=6 name=autocreate_21522166 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=62253449 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=44199752 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+      - #1 id=23410136 idx=1 name=index type=Core.Int32
+      - #2 id=9364637 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=17172873 idx=0 name=autocreate_59481773 type=Core.Boolean
+      - #1 id=20338133 idx=1 name=autocreate_65573909 type=Core.Boolean
+      - #2 id=48825474 idx=2 name=autocreate_53294272 type=Core.Boolean
+      - #3 id=36776090 idx=3 name=autocreate_9886408 type=Core.Boolean
+      - #4 id=62549356 idx=4 name=autocreate_21868813 type=Core.Boolean
+      - #5 id=26073299 idx=5 name=autocreate_62601592 type=Core.Boolean
+      - #6 id=33333103 idx=6 name=autocreate_26543418 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=12937084 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=1437453 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7><T[0], T[1], T[2], T[3], T[4], T[5], T[6]>
+      - #1 id=49324898 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=41270904 idx=0 name=autocreate_37564172 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>
+  metaClassKind: Class
+  TemplateCount: 8
+  TemplateParameterCount: 8
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=426380119 idx=0 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item1 type=T[0]
+      - #1 id=539435282 idx=1 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item2 type=T[1]
+      - #2 id=-761455273 idx=2 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item3 type=T[2]
+      - #3 id=-352760444 idx=3 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item4 type=T[3]
+      - #4 id=-1225891825 idx=4 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item5 type=T[4]
+      - #5 id=-171819700 idx=5 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item6 type=T[5]
+      - #6 id=1343031770 idx=6 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item7 type=T[6]
+      - #7 id=122267310 idx=7 name=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.item8 type=T[7]
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.create_8_T1_T2_T3_T4_T5_T6_T7_T8
+    VirtualName: create_Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>_8_T1_T2_T3_T4_T5_T6_T7_T8
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=11579382 idx=0 name=return] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+    Arguments:
+      - #0 id=37105578 idx=0 name=v1 type=T[0]
+      - #1 id=65514753 idx=1 name=v2 type=T[1]
+      - #2 id=52761866 idx=2 name=v3 type=T[2]
+      - #3 id=5094752 idx=3 name=v4 type=T[3]
+      - #4 id=45852771 idx=4 name=v5 type=T[4]
+      - #5 id=10021756 idx=5 name=v6 type=T[5]
+      - #6 id=23086940 idx=6 name=v7 type=T[6]
+      - #7 id=6455868 idx=7 name=v8 type=T[7]
+    Locals:
+      - #0 id=58102813 idx=0 name=t type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=11257801 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=8707407 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>._init__8_T1_T2_T3_T4_T5_T6_T7_T8
+    VirtualName: _init__Core.Void_8_T1_T2_T3_T4_T5_T6_T7_T8
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=19656228 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=39466727 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+      - #1 id=42688329 idx=1 name=v1 type=T[0]
+      - #2 id=48650648 idx=2 name=v2 type=T[1]
+      - #3 id=35202648 idx=3 name=v3 type=T[2]
+      - #4 id=48388379 idx=4 name=v4 type=T[3]
+      - #5 id=32842235 idx=5 name=v5 type=T[4]
+      - #6 id=27144664 idx=6 name=v6 type=T[5]
+      - #7 id=42975387 idx=7 name=v7 type=T[6]
+      - #8 id=51234165 idx=8 name=v8 type=T[7]
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=56326682 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=58454303 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=58635765 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=66167408 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+      - #1 id=57959838 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=51876502 idx=0 name=autocreate_2533231 type=Core.Boolean
+      - #1 id=64235341 idx=1 name=autocreate_22799085 type=Core.Boolean
+      - #2 id=41247165 idx=2 name=autocreate_3865173 type=Core.Boolean
+      - #3 id=35680165 idx=3 name=autocreate_34786562 type=Core.Boolean
+      - #4 id=52686031 idx=4 name=autocreate_44643603 type=Core.Boolean
+      - #5 id=4412237 idx=5 name=autocreate_66248115 type=Core.Boolean
+      - #6 id=39710134 idx=6 name=autocreate_59362130 type=Core.Boolean
+      - #7 id=21846893 idx=7 name=autocreate_64497130 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=66717520 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=29782679 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+      - #1 id=63586770 idx=1 name=index type=Core.Int32
+      - #2 id=35410022 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=50254750 idx=0 name=autocreate_43603258 type=Core.Boolean
+      - #1 id=49639570 idx=1 name=autocreate_56885004 type=Core.Boolean
+      - #2 id=44102946 idx=2 name=autocreate_42202994 type=Core.Boolean
+      - #3 id=61382201 idx=3 name=autocreate_44282627 type=Core.Boolean
+      - #4 id=15568903 idx=4 name=autocreate_62999330 type=Core.Boolean
+      - #5 id=5902405 idx=5 name=autocreate_30123063 type=Core.Boolean
+      - #6 id=53121653 idx=6 name=autocreate_2672115 type=Core.Boolean
+      - #7 id=8332830 idx=7 name=autocreate_24049039 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8>._valueToString_1_Core.Object
+    VirtualName: _valueToString_Core.String_1_Core.Object
+    Name: _valueToString
+    InterfaceMethod: False
+    Return:
+      - #0 id=19987085 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9677327 idx=0 name=this] type=Core.Tuple<T1,T2,T3,T4,T5,T6,T7,T8><T[0], T[1], T[2], T[3], T[4], T[5], T[6], T[7]>
+      - #1 id=45666040 idx=1 name=v type=Core.Object
+    Locals:
+      - #0 id=8341177 idx=0 name=autocreate_15114764 type=Core.Boolean
+    Instructions:
+
+Class: Core.Tuple
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=325098330 idx=0 name=Core.Tuple._values type=Core.Array<T><Core.Object>
+      - #1 id=821011691 idx=1 name=Core.Tuple._length type=Core.Int32
+      - #2 id=991269416 idx=2 name=Core.Tuple._capacity type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple.create_1_Core.Array<Core.Object>[-1]
+    VirtualName: create_Core.Tuple_1_Core.Array<Core.Object>[-1]
+    Name: create
+    InterfaceMethod: False
+    Return:
+      - #0 id=46636132 idx=0 name=return] type=Core.Tuple
+    Arguments:
+      - #0 id=17072009 idx=0 name=values type=Core.Array<T><Core.Object>
+    Locals:
+      - #0 id=19430358 idx=0 name=t type=Core.Tuple
+      - #1 id=40655501 idx=1 name=autocreate_1815156 type=Core.Boolean
+      - #2 id=30355189 idx=2 name=count type=Core.Int32
+      - #3 id=4761248 idx=3 name=i type=Core.Int32
+    Instructions:
+
+  Method: Core.Tuple._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57801875 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=28792051 idx=0 name=this] type=Core.Tuple
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=51440330 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=50454834 idx=0 name=this] type=Core.Tuple
+    Locals:
+      - #0 id=60309786 idx=0 name=s type=Core.String
+      - #1 id=5917164 idx=1 name=i type=Core.Int32
+      - #2 id=53254482 idx=2 name=cur type=Core.Object
+      - #3 id=9528291 idx=3 name=autocreate_61374531 type=Core.Boolean
+      - #4 id=18645762 idx=4 name=autocreate_15499871 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple._init__1_Core.Object
+    VirtualName: _init__Core.Void_1_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=7619075 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=60498887 idx=0 name=this] type=Core.Tuple
+      - #1 id=1462819 idx=1 name=val1 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__2_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_2_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=51379511 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=13165375 idx=0 name=this] type=Core.Tuple
+      - #1 id=59762422 idx=1 name=val1 type=Core.Object
+      - #2 id=990892 idx=2 name=val2 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__3_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_3_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=13153450 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8918034 idx=0 name=this] type=Core.Tuple
+      - #1 id=51272187 idx=1 name=val1 type=Core.Object
+      - #2 id=58796504 idx=2 name=val2 type=Core.Object
+      - #3 id=59406488 idx=3 name=val3 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__4_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_4_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=47196242 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=64896350 idx=0 name=this] type=Core.Tuple
+      - #1 id=22112997 idx=1 name=val1 type=Core.Object
+      - #2 id=64799248 idx=2 name=val2 type=Core.Object
+      - #3 id=46322324 idx=3 name=val3 type=Core.Object
+      - #4 id=14247739 idx=4 name=val4 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__5_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_5_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=13216186 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=61120788 idx=0 name=this] type=Core.Tuple
+      - #1 id=51836813 idx=1 name=val1 type=Core.Object
+      - #2 id=63878134 idx=2 name=val2 type=Core.Object
+      - #3 id=38032294 idx=3 name=val3 type=Core.Object
+      - #4 id=6746326 idx=4 name=val4 type=Core.Object
+      - #5 id=60716935 idx=5 name=val5 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__6_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_6_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=19124697 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=9581506 idx=0 name=this] type=Core.Tuple
+      - #1 id=37904547 idx=1 name=val1 type=Core.Object
+      - #2 id=5596611 idx=2 name=val2 type=Core.Object
+      - #3 id=50369505 idx=3 name=val3 type=Core.Object
+      - #4 id=50672366 idx=4 name=val4 type=Core.Object
+      - #5 id=53398115 idx=5 name=val5 type=Core.Object
+      - #6 id=10820994 idx=6 name=val6 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__7_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_7_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=4085285 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=30280082 idx=0 name=this] type=Core.Tuple
+      - #1 id=36767573 idx=1 name=val1 type=Core.Object
+      - #2 id=62472706 idx=2 name=val2 type=Core.Object
+      - #3 id=25383445 idx=3 name=val3 type=Core.Object
+      - #4 id=27124415 idx=4 name=val4 type=Core.Object
+      - #5 id=42793145 idx=5 name=val5 type=Core.Object
+      - #6 id=49593988 idx=6 name=val6 type=Core.Object
+      - #7 id=43692714 idx=7 name=val7 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._init__8_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    VirtualName: _init__Core.Void_8_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object_Core.Object
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=49448911 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57690106 idx=0 name=this] type=Core.Tuple
+      - #1 id=42387016 idx=1 name=val1 type=Core.Object
+      - #2 id=45938832 idx=2 name=val2 type=Core.Object
+      - #3 id=10796311 idx=3 name=val3 type=Core.Object
+      - #4 id=30057943 idx=4 name=val4 type=Core.Object
+      - #5 id=2086031 idx=5 name=val5 type=Core.Object
+      - #6 id=18774281 idx=6 name=val6 type=Core.Object
+      - #7 id=34750807 idx=7 name=val7 type=Core.Object
+      - #8 id=44321808 idx=8 name=val8 type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple.add_1_Core.Object
+    VirtualName: add_Core.Tuple_1_Core.Object
+    Name: add
+    InterfaceMethod: False
+    Return:
+      - #0 id=33296724 idx=0 name=return] type=Core.Tuple
+    Arguments:
+      - #0 id=63351959 idx=0 name=this] type=Core.Tuple
+      - #1 id=31235064 idx=1 name=value type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple.length
+    VirtualName: length_Core.Int32_0
+    Name: length
+    InterfaceMethod: False
+    Return:
+      - #0 id=20457137 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47012257 idx=0 name=this] type=Core.Tuple
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple.isEmpty
+    VirtualName: isEmpty_Core.Boolean_0
+    Name: isEmpty
+    InterfaceMethod: False
+    Return:
+      - #0 id=15085294 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=46415386 idx=0 name=this] type=Core.Tuple
+    Locals:
+      - #0 id=1549920 idx=0 name=autocreate_16336406 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple._getItem__1_Core.Int32
+    VirtualName: _getItem__Core.Object_1_Core.Int32
+    Name: _getItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=35587488 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=56149948 idx=0 name=this] type=Core.Tuple
+      - #1 id=51851944 idx=1 name=index type=Core.Int32
+    Locals:
+      - #0 id=64014316 idx=0 name=autocreate_12809933 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple._setItem__2_Core.Int32_Core.Object
+    VirtualName: _setItem__Core.Void_2_Core.Int32_Core.Object
+    Name: _setItem_
+    InterfaceMethod: False
+    Return:
+      - #0 id=30656991 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=25775953 idx=0 name=this] type=Core.Tuple
+      - #1 id=7477471 idx=1 name=index type=Core.Int32
+      - #2 id=188376 idx=2 name=value type=Core.Object
+    Locals:
+      - #0 id=1695389 idx=0 name=autocreate_48180537 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple.indexOf_1_Core.Object
+    VirtualName: indexOf_Core.Int32_1_Core.Object
+    Name: indexOf
+    InterfaceMethod: False
+    Return:
+      - #0 id=50485194 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=27979087 idx=0 name=this] type=Core.Tuple
+      - #1 id=51713565 idx=1 name=value type=Core.Object
+    Locals:
+      - #0 id=62768905 idx=0 name=i type=Core.Int32
+      - #1 id=28049240 idx=1 name=autocreate_30971651 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple.contains_1_Core.Object
+    VirtualName: contains_Core.Boolean_1_Core.Object
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=26948387 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=32820427 idx=0 name=this] type=Core.Tuple
+      - #1 id=41208892 idx=1 name=value type=Core.Object
+    Locals:
+      - #0 id=35335711 idx=0 name=autocreate_10309404 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple.clear
+    VirtualName: clear_Core.Void_0
+    Name: clear
+    InterfaceMethod: False
+    Return:
+      - #0 id=43588958 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57039000 idx=0 name=this] type=Core.Tuple
+    Locals: []
+    Instructions:
+
+  Method: Core.Tuple._appendValue_1_Core.Object
+    VirtualName: _appendValue_Core.Void_1_Core.Object
+    Name: _appendValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=41044720 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=56756307 idx=0 name=this] type=Core.Tuple
+      - #1 id=33858167 idx=1 name=val type=Core.Object
+    Locals:
+      - #0 id=36288047 idx=0 name=autocreate_25675773 type=Core.Boolean
+      - #1 id=58156970 idx=1 name=autocreate_29755367 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Tuple._grow
+    VirtualName: _grow_Core.Void_0
+    Name: _grow
+    InterfaceMethod: False
+    Return:
+      - #0 id=51895228 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=57961919 idx=0 name=this] type=Core.Tuple
+    Locals:
+      - #0 id=64403869 idx=0 name=newCapacity type=Core.Int32
+      - #1 id=42763917 idx=1 name=autocreate_66471715 type=Core.Boolean
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

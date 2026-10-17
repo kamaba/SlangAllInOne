@@ -1,0 +1,47 @@
+﻿[09:16:46 461] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[09:16:46 467] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:FinalLib.sp]
+[09:16:46 489] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:FinalLib.sl]
+[09:16:46 566] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[FinalLib.sp]编译File层完成]
+[09:16:46 599] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[FinalLib.sl]编译File层完成]
+[09:16:46 602] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[09:16:46 605] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[09:16:46 700] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[09:16:46 805] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[09:16:46 806] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[09:16:46 808] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[09:16:46 809] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[09:16:46 837] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[09:16:46 977] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[09:16:46 978] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[09:16:46 985] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[09:16:46 987] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[09:16:47 236] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: D:\project\lang\simple_language\test\out\export\FinalLib\FinalLib.module.json]
+[09:16:47 236] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]

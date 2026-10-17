@@ -1,0 +1,62 @@
+-------------------FileMeta 文件显示 开始 : Path: UInt64.sl-----------------------
+public _partial class UInt64 extends Num
+{
+    publicUInt64 MaxValue = 0xffffffffffffffff
+    publicUInt64 MinValue = 0
+    publicUInt64 _value = 0ui
+
+    _public override int size( )
+    {
+        ret 64
+    }
+    _public override int byteLength( )
+    {
+        ret 8
+    }
+    public static UInt64 parse( string s )
+    {
+        ret SystemConvertUInt64(s)
+    }
+    _public _init_( UInt64 _val )
+    {
+        this._value = _val;
+    }
+    public override Int32 toInt32( )
+    {
+        ret this._value
+    }
+    public override Float64 toFloat64( )
+    {
+        ret this._value
+    }
+    public override Num abs( )
+    {
+        ret this
+    }
+    public override Num floor( )
+    {
+        ret SystemNumFloor(this)
+    }
+    public override Num ceil( )
+    {
+        ret this
+    }
+    public override Int32 compareTo( Num other )
+    {
+        if other == null
+        {
+            ret 1
+        }
+        UInt64 ov = SystemConvertUInt64(other);
+        if this._value == ov
+        {
+            ret 0
+        }
+        ret this._value > ov ? 1 : 0 - 1
+    }
+    _public override String toString( )
+    {
+        ret SystemConvertString(this)
+    }
+}
+-------------------FileMeta 文件显示 结束 : -----------------------

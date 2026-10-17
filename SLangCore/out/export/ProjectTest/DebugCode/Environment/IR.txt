@@ -1,0 +1,4989 @@
+-------------------IR 文件显示 开始 : Path: Environment.sl-----------------------
+Class: Core.Environment.OSVersionNumber
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.OSVersionNumber.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=57664987 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=43689923 idx=0 name=this] type=Core.Environment.OSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.OSVersionNumber.major
+    VirtualName: major_Core.Int32_0
+    Name: major
+    InterfaceMethod: False
+    Return:
+      - #0 id=27626671 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=40352332 idx=0 name=this] type=Core.Environment.OSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.OSVersionNumber.minor
+    VirtualName: minor_Core.Int32_0
+    Name: minor
+    InterfaceMethod: False
+    Return:
+      - #0 id=7184552 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=23167904 idx=0 name=this] type=Core.Environment.OSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.OSVersionNumber.build
+    VirtualName: build_Core.Int32_0
+    Name: build
+    InterfaceMethod: False
+    Return:
+      - #0 id=3047552 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45077859 idx=0 name=this] type=Core.Environment.OSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.OSVersionNumber.patch
+    VirtualName: patch_Core.Int32_0
+    Name: patch
+    InterfaceMethod: False
+    Return:
+      - #0 id=7073466 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45525183 idx=0 name=this] type=Core.Environment.OSVersionNumber
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeOSVersionNumber
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeOSVersionNumber.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=56283746 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=36079911 idx=0 name=this] type=Core.Environment.ProbeOSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeOSVersionNumber.major
+    VirtualName: major_Core.Int32_0
+    Name: major
+    InterfaceMethod: False
+    Return:
+      - #0 id=27335113 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=62689558 idx=0 name=this] type=Core.Environment.ProbeOSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeOSVersionNumber.minor
+    VirtualName: minor_Core.Int32_0
+    Name: minor
+    InterfaceMethod: False
+    Return:
+      - #0 id=63074124 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=66660559 idx=0 name=this] type=Core.Environment.ProbeOSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeOSVersionNumber.build
+    VirtualName: build_Core.Int32_0
+    Name: build
+    InterfaceMethod: False
+    Return:
+      - #0 id=11464716 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=8730397 idx=0 name=this] type=Core.Environment.ProbeOSVersionNumber
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeOSVersionNumber.patch
+    VirtualName: patch_Core.Int32_0
+    Name: patch
+    InterfaceMethod: False
+    Return:
+      - #0 id=36279478 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=56226836 idx=0 name=this] type=Core.Environment.ProbeOSVersionNumber
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Cpu
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Cpu.topology
+    VirtualName: topology_Core.Int32_0
+    Name: topology
+    InterfaceMethod: False
+    Return:
+      - #0 id=6847548 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=52956621 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.physicalCores
+    VirtualName: physicalCores_Core.Int32_0
+    Name: physicalCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=25807001 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17780525 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.logicalCores
+    VirtualName: logicalCores_Core.Int32_0
+    Name: logicalCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=22822288 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=9992350 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.hasHyperThreading
+    VirtualName: hasHyperThreading_Core.Boolean_0
+    Name: hasHyperThreading
+    InterfaceMethod: False
+    Return:
+      - #0 id=61559149 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=36666067 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.numaNodes
+    VirtualName: numaNodes_Core.Int32_0
+    Name: numaNodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=47898561 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=20235143 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.freqMHz
+    VirtualName: freqMHz_Core.Int32_0
+    Name: freqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=21442089 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=54578237 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.maxFreqMHz
+    VirtualName: maxFreqMHz_Core.Int32_0
+    Name: maxFreqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=62026502 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=59087616 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.cacheL1KB
+    VirtualName: cacheL1KB_Core.Int32_0
+    Name: cacheL1KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=53055045 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=58090788 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.cacheL2KB
+    VirtualName: cacheL2KB_Core.Int32_0
+    Name: cacheL2KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=22422552 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=2491394 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.cacheL3KB
+    VirtualName: cacheL3KB_Core.Int32_0
+    Name: cacheL3KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=38586810 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=4287423 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.perfCores
+    VirtualName: perfCores_Core.Int32_0
+    Name: perfCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=11170862 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=38523909 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Cpu.efficiencyCores
+    VirtualName: efficiencyCores_Core.Int32_0
+    Name: efficiencyCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=23386368 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=32424647 idx=0 name=this] type=Core.Environment.Cpu
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeCpu
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.topology
+    VirtualName: topology_Core.Int32_0
+    Name: topology
+    InterfaceMethod: False
+    Return:
+      - #0 id=3010817 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=15247616 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.physicalCores
+    VirtualName: physicalCores_Core.Int32_0
+    Name: physicalCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=47402253 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=42549619 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.logicalCores
+    VirtualName: logicalCores_Core.Int32_0
+    Name: logicalCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=62287048 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=14377323 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.hasHyperThreading
+    VirtualName: hasHyperThreading_Core.Boolean_0
+    Name: hasHyperThreading
+    InterfaceMethod: False
+    Return:
+      - #0 id=41666396 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12086140 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.numaNodes
+    VirtualName: numaNodes_Core.Int32_0
+    Name: numaNodes
+    InterfaceMethod: False
+    Return:
+      - #0 id=41596476 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=19534911 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.freqMHz
+    VirtualName: freqMHz_Core.Int32_0
+    Name: freqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=57733603 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=13871385 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.maxFreqMHz
+    VirtualName: maxFreqMHz_Core.Int32_0
+    Name: maxFreqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=10539156 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45910260 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.cacheL1KB
+    VirtualName: cacheL1KB_Core.Int32_0
+    Name: cacheL1KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=32634650 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=48365314 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.cacheL2KB
+    VirtualName: cacheL2KB_Core.Int32_0
+    Name: cacheL2KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=34122633 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=26161025 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.cacheL3KB
+    VirtualName: cacheL3KB_Core.Int32_0
+    Name: cacheL3KB
+    InterfaceMethod: False
+    Return:
+      - #0 id=45119994 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12469873 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.perfCores
+    VirtualName: perfCores_Core.Int32_0
+    Name: perfCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=9132882 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=30840926 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeCpu.efficiencyCores
+    VirtualName: efficiencyCores_Core.Int32_0
+    Name: efficiencyCores
+    InterfaceMethod: False
+    Return:
+      - #0 id=14093819 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=1565979 idx=0 name=this] type=Core.Environment.ProbeCpu
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Ai
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Ai.has_1_Core.Int32
+    VirtualName: has_Core.Boolean_1_Core.Int32
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=6738088 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=748676 idx=0 name=this] type=Core.Environment.Ai
+      - #1 id=60642794 idx=1 name=stackId type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Ai.version_1_Core.Int32
+    VirtualName: version_Core.String_1_Core.Int32
+    Name: version
+    InterfaceMethod: False
+    Return:
+      - #0 id=50964406 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=13119252 idx=0 name=this] type=Core.Environment.Ai
+      - #1 id=56026474 idx=1 name=stackId type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Ai.any
+    VirtualName: any_Core.Boolean_0
+    Name: any
+    InterfaceMethod: False
+    Return:
+      - #0 id=41110918 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=41850582 idx=0 name=this] type=Core.Environment.Ai
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Ai.preferred
+    VirtualName: preferred_Core.String_0
+    Name: preferred
+    InterfaceMethod: False
+    Return:
+      - #0 id=39306505 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=41650091 idx=0 name=this] type=Core.Environment.Ai
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeAi
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeAi.has_1_Core.Int32
+    VirtualName: has_Core.Boolean_1_Core.Int32
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=66066743 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=29710370 idx=0 name=this] type=Core.Environment.ProbeAi
+      - #1 id=57729775 idx=1 name=stackId type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeAi.version_1_Core.Int32
+    VirtualName: version_Core.String_1_Core.Int32
+    Name: version
+    InterfaceMethod: False
+    Return:
+      - #0 id=7748772 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=45600217 idx=0 name=this] type=Core.Environment.ProbeAi
+      - #1 id=2630087 idx=1 name=stackId type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeAi.any
+    VirtualName: any_Core.Boolean_0
+    Name: any
+    InterfaceMethod: False
+    Return:
+      - #0 id=38285619 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=11710498 idx=0 name=this] type=Core.Environment.ProbeAi
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeAi.preferred
+    VirtualName: preferred_Core.String_0
+    Name: preferred
+    InterfaceMethod: False
+    Return:
+      - #0 id=60038205 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=14127452 idx=0 name=this] type=Core.Environment.ProbeAi
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Render
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Render.api
+    VirtualName: api_Core.Int32_0
+    Name: api
+    InterfaceMethod: False
+    Return:
+      - #0 id=12872118 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=31256397 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.apiList
+    VirtualName: apiList_Core.Array<Core.String>[-1]_0
+    Name: apiList
+    InterfaceMethod: False
+    Return:
+      - #0 id=55642234 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=36008632 idx=0 name=this] type=Core.Environment.Render
+    Locals:
+      - #0 id=31018066 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Environment.Render.shaderModel
+    VirtualName: shaderModel_Core.Int32_0
+    Name: shaderModel
+    InterfaceMethod: False
+    Return:
+      - #0 id=63592346 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=29435437 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.hasRayTracing
+    VirtualName: hasRayTracing_Core.Boolean_0
+    Name: hasRayTracing
+    InterfaceMethod: False
+    Return:
+      - #0 id=53704644 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=50706425 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.hasMeshShader
+    VirtualName: hasMeshShader_Core.Boolean_0
+    Name: hasMeshShader
+    InterfaceMethod: False
+    Return:
+      - #0 id=26218460 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=55108945 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.hasCompute
+    VirtualName: hasCompute_Core.Boolean_0
+    Name: hasCompute
+    InterfaceMethod: False
+    Return:
+      - #0 id=54340147 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=43320496 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.hasHdr
+    VirtualName: hasHdr_Core.Boolean_0
+    Name: hasHdr
+    InterfaceMethod: False
+    Return:
+      - #0 id=19737894 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39475801 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.maxTextureSize
+    VirtualName: maxTextureSize_Core.Int32_0
+    Name: maxTextureSize
+    InterfaceMethod: False
+    Return:
+      - #0 id=27627990 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55265559 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.displays
+    VirtualName: displays_Core.Int32_0
+    Name: displays
+    InterfaceMethod: False
+    Return:
+      - #0 id=8146160 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=23274750 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.primaryWidth
+    VirtualName: primaryWidth_Core.Int32_0
+    Name: primaryWidth
+    InterfaceMethod: False
+    Return:
+      - #0 id=32971110 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=55859239 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.primaryHeight
+    VirtualName: primaryHeight_Core.Int32_0
+    Name: primaryHeight
+    InterfaceMethod: False
+    Return:
+      - #0 id=10966323 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=53414263 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Render.refreshHz
+    VirtualName: refreshHz_Core.Int32_0
+    Name: refreshHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=8495130 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=15856984 idx=0 name=this] type=Core.Environment.Render
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeRender
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.api
+    VirtualName: api_Core.Int32_0
+    Name: api
+    InterfaceMethod: False
+    Return:
+      - #0 id=18934887 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17016957 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.apiList
+    VirtualName: apiList_Core.Array<Core.String>[-1]_0
+    Name: apiList
+    InterfaceMethod: False
+    Return:
+      - #0 id=46215595 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=57330849 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals:
+      - #0 id=13287175 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.shaderModel
+    VirtualName: shaderModel_Core.Int32_0
+    Name: shaderModel
+    InterfaceMethod: False
+    Return:
+      - #0 id=22674843 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=2519427 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.hasRayTracing
+    VirtualName: hasRayTracing_Core.Boolean_0
+    Name: hasRayTracing
+    InterfaceMethod: False
+    Return:
+      - #0 id=21180630 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=24723024 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.hasMeshShader
+    VirtualName: hasMeshShader_Core.Boolean_0
+    Name: hasMeshShader
+    InterfaceMethod: False
+    Return:
+      - #0 id=5641212 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=37909503 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.hasCompute
+    VirtualName: hasCompute_Core.Boolean_0
+    Name: hasCompute
+    InterfaceMethod: False
+    Return:
+      - #0 id=18802902 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=54284994 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.hasHdr
+    VirtualName: hasHdr_Core.Boolean_0
+    Name: hasHdr
+    InterfaceMethod: False
+    Return:
+      - #0 id=17107576 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=46640084 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.maxTextureSize
+    VirtualName: maxTextureSize_Core.Int32_0
+    Name: maxTextureSize
+    InterfaceMethod: False
+    Return:
+      - #0 id=56283646 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=43536440 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.displays
+    VirtualName: displays_Core.Int32_0
+    Name: displays
+    InterfaceMethod: False
+    Return:
+      - #0 id=27262282 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=62681466 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.primaryWidth
+    VirtualName: primaryWidth_Core.Int32_0
+    Name: primaryWidth
+    InterfaceMethod: False
+    Return:
+      - #0 id=9979846 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=60761195 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.primaryHeight
+    VirtualName: primaryHeight_Core.Int32_0
+    Name: primaryHeight
+    InterfaceMethod: False
+    Return:
+      - #0 id=27551015 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=3061223 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeRender.refreshHz
+    VirtualName: refreshHz_Core.Int32_0
+    Name: refreshHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=19140135 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=17039762 idx=0 name=this] type=Core.Environment.ProbeRender
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Network
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Network.netType
+    VirtualName: netType_Core.Int32_0
+    Name: netType
+    InterfaceMethod: False
+    Return:
+      - #0 id=61624137 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=6847126 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.linkState
+    VirtualName: linkState_Core.Int32_0
+    Name: linkState
+    InterfaceMethod: False
+    Return:
+      - #0 id=28166553 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=25499238 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.isOnline
+    VirtualName: isOnline_Core.Boolean_0
+    Name: isOnline
+    InterfaceMethod: False
+    Return:
+      - #0 id=65213800 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66898301 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.isLocalOnly
+    VirtualName: isLocalOnly_Core.Boolean_0
+    Name: isLocalOnly
+    InterfaceMethod: False
+    Return:
+      - #0 id=27784979 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=47826462 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.interfaces
+    VirtualName: interfaces_Core.Int32_0
+    Name: interfaces
+    InterfaceMethod: False
+    Return:
+      - #0 id=55481787 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35990804 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.hasProxy
+    VirtualName: hasProxy_Core.Boolean_0
+    Name: hasProxy
+    InterfaceMethod: False
+    Return:
+      - #0 id=46687245 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=64839795 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Network.proxyUrl
+    VirtualName: proxyUrl_Core.String_0
+    Name: proxyUrl
+    InterfaceMethod: False
+    Return:
+      - #0 id=10808059 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=23570516 idx=0 name=this] type=Core.Environment.Network
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeNetwork
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.netType
+    VirtualName: netType_Core.Int32_0
+    Name: netType
+    InterfaceMethod: False
+    Return:
+      - #0 id=27338368 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=3037596 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.linkState
+    VirtualName: linkState_Core.Int32_0
+    Name: linkState
+    InterfaceMethod: False
+    Return:
+      - #0 id=65447007 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=66924213 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.isOnline
+    VirtualName: isOnline_Core.Boolean_0
+    Name: isOnline
+    InterfaceMethod: False
+    Return:
+      - #0 id=63575268 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66716242 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.isLocalOnly
+    VirtualName: isLocalOnly_Core.Boolean_0
+    Name: isLocalOnly
+    InterfaceMethod: False
+    Return:
+      - #0 id=41254304 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=49323054 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.interfaces
+    VirtualName: interfaces_Core.Int32_0
+    Name: interfaces
+    InterfaceMethod: False
+    Return:
+      - #0 id=9616944 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=53264332 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.hasProxy
+    VirtualName: hasProxy_Core.Boolean_0
+    Name: hasProxy
+    InterfaceMethod: False
+    Return:
+      - #0 id=31430389 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=40774967 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeNetwork.proxyUrl
+    VirtualName: proxyUrl_Core.String_0
+    Name: proxyUrl
+    InterfaceMethod: False
+    Return:
+      - #0 id=28631516 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=62833603 idx=0 name=this] type=Core.Environment.ProbeNetwork
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Script
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Script.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=1518871 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=37451465 idx=0 name=this] type=Core.Environment.Script
+      - #1 id=13669843 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Script.has_2_Core.String_Core.String
+    VirtualName: has_Core.Boolean_2_Core.String_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=33203949 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=33515489 idx=0 name=this] type=Core.Environment.Script
+      - #1 id=30400092 idx=1 name=name type=Core.String
+      - #2 id=5165373 idx=2 name=minVersion type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Script.version_1_Core.String
+    VirtualName: version_Core.String_1_Core.String
+    Name: version
+    InterfaceMethod: False
+    Return:
+      - #0 id=7461047 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=15742086 idx=0 name=this] type=Core.Environment.Script
+      - #1 id=40559 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Script.path_1_Core.String
+    VirtualName: path_Core.String_1_Core.String
+    Name: path
+    InterfaceMethod: False
+    Return:
+      - #0 id=29567523 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=3285280 idx=0 name=this] type=Core.Environment.Script
+      - #1 id=64781122 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Script.available
+    VirtualName: available_Core.Array<Core.String>[-1]_0
+    Name: available
+    InterfaceMethod: False
+    Return:
+      - #0 id=47906786 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=12779516 idx=0 name=this] type=Core.Environment.Script
+    Locals:
+      - #0 id=28507895 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+Class: Core.Environment.ProbeScript
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeScript.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=45616947 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=27438171 idx=0 name=this] type=Core.Environment.ProbeScript
+      - #1 id=7899342 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeScript.has_2_Core.String_Core.String
+    VirtualName: has_Core.Boolean_2_Core.String_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=54367574 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=35867003 idx=0 name=this] type=Core.Environment.ProbeScript
+      - #1 id=19546120 idx=1 name=name type=Core.String
+      - #2 id=41697354 idx=2 name=minVersion type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeScript.version_1_Core.String
+    VirtualName: version_Core.String_1_Core.String
+    Name: version
+    InterfaceMethod: False
+    Return:
+      - #0 id=64164835 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=22042507 idx=0 name=this] type=Core.Environment.ProbeScript
+      - #1 id=40612608 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeScript.path_1_Core.String
+    VirtualName: path_Core.String_1_Core.String
+    Name: path
+    InterfaceMethod: False
+    Return:
+      - #0 id=11582368 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=1286929 idx=0 name=this] type=Core.Environment.ProbeScript
+      - #1 id=37132456 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeScript.available
+    VirtualName: available_Core.Array<Core.String>[-1]_0
+    Name: available
+    InterfaceMethod: False
+    Return:
+      - #0 id=24688256 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=54938922 idx=0 name=this] type=Core.Environment.ProbeScript
+    Locals:
+      - #0 id=20867713 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+Class: Core.Environment.Embedded
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Embedded.family
+    VirtualName: family_Core.Int32_0
+    Name: family
+    InterfaceMethod: False
+    Return:
+      - #0 id=45960129 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12563221 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.chip
+    VirtualName: chip_Core.String_0
+    Name: chip
+    InterfaceMethod: False
+    Return:
+      - #0 id=17611282 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=31782970 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.vendor
+    VirtualName: vendor_Core.String_0
+    Name: vendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=20831783 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=17227723 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.coreName
+    VirtualName: coreName_Core.String_0
+    Name: coreName
+    InterfaceMethod: False
+    Return:
+      - #0 id=19766715 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9652842 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.bareMetal
+    VirtualName: bareMetal_Core.Boolean_0
+    Name: bareMetal
+    InterfaceMethod: False
+    Return:
+      - #0 id=48638545 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=57600065 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.rtos
+    VirtualName: rtos_Core.Int32_0
+    Name: rtos
+    InterfaceMethod: False
+    Return:
+      - #0 id=24019444 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47408069 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.rtosVersion
+    VirtualName: rtosVersion_Core.String_0
+    Name: rtosVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=61870584 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=66526832 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.flashKB
+    VirtualName: flashKB_Core.Int32_0
+    Name: flashKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=6499254 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45461382 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.ramKB
+    VirtualName: ramKB_Core.Int32_0
+    Name: ramKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=40336211 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=56677584 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.stackFreeKB
+    VirtualName: stackFreeKB_Core.Int32_0
+    Name: stackFreeKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=11415673 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=46007650 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.heapFreeKB
+    VirtualName: heapFreeKB_Core.Int32_0
+    Name: heapFreeKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=526619 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=52254296 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.hasFpu
+    VirtualName: hasFpu_Core.Boolean_0
+    Name: hasFpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=48361012 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=42656148 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.hasMmu
+    VirtualName: hasMmu_Core.Boolean_0
+    Name: hasMmu
+    InterfaceMethod: False
+    Return:
+      - #0 id=23024263 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=24927872 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.hasMpu
+    VirtualName: hasMpu_Core.Boolean_0
+    Name: hasMpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=7471967 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=53026001 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.hasDsp
+    VirtualName: hasDsp_Core.Boolean_0
+    Name: hasDsp
+    InterfaceMethod: False
+    Return:
+      - #0 id=11246416 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=1249601 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.cpuFreqMHz
+    VirtualName: cpuFreqMHz_Core.Int32_0
+    Name: cpuFreqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=11355891 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=38544467 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.toolchain
+    VirtualName: toolchain_Core.String_0
+    Name: toolchain
+    InterfaceMethod: False
+    Return:
+      - #0 id=24054701 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=47411987 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.peripherals
+    VirtualName: peripherals_Core.Array<Core.String>[-1]_0
+    Name: peripherals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20463720 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=2273746 idx=0 name=this] type=Core.Environment.Embedded
+    Locals:
+      - #0 id=49955752 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Environment.Embedded.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=44739342 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=19884118 idx=0 name=this] type=Core.Environment.Embedded
+      - #1 id=901 idx=1 name=peripheral type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Embedded.isConstrained
+    VirtualName: isConstrained_Core.Boolean_0
+    Name: isConstrained
+    InterfaceMethod: False
+    Return:
+      - #0 id=657479 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=73053 idx=0 name=this] type=Core.Environment.Embedded
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeEmbedded
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.family
+    VirtualName: family_Core.Int32_0
+    Name: family
+    InterfaceMethod: False
+    Return:
+      - #0 id=9540645 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=53255854 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.chip
+    VirtualName: chip_Core.String_0
+    Name: chip
+    InterfaceMethod: False
+    Return:
+      - #0 id=42917658 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=34594790 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.vendor
+    VirtualName: vendor_Core.String_0
+    Name: vendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=14242537 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=53778287 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.coreName
+    VirtualName: coreName_Core.String_0
+    Name: coreName
+    InterfaceMethod: False
+    Return:
+      - #0 id=48045022 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=12794876 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.bareMetal
+    VirtualName: bareMetal_Core.Boolean_0
+    Name: bareMetal
+    InterfaceMethod: False
+    Return:
+      - #0 id=61102986 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=66441544 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.rtos
+    VirtualName: rtos_Core.Int32_0
+    Name: rtos
+    InterfaceMethod: False
+    Return:
+      - #0 id=50900362 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=50394838 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.rtosVersion
+    VirtualName: rtosVersion_Core.String_0
+    Name: rtosVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=62271039 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=29288625 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.flashKB
+    VirtualName: flashKB_Core.Int32_0
+    Name: flashKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=29995926 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=10789421 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.ramKB
+    VirtualName: ramKB_Core.Int32_0
+    Name: ramKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=56649665 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=13750947 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.stackFreeKB
+    VirtualName: stackFreeKB_Core.Int32_0
+    Name: stackFreeKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=25654779 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=25220152 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.heapFreeKB
+    VirtualName: heapFreeKB_Core.Int32_0
+    Name: heapFreeKB
+    InterfaceMethod: False
+    Return:
+      - #0 id=46070087 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=64771222 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.hasFpu
+    VirtualName: hasFpu_Core.Boolean_0
+    Name: hasFpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=30661937 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=40689584 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.hasMmu
+    VirtualName: hasMmu_Core.Boolean_0
+    Name: hasMmu
+    InterfaceMethod: False
+    Return:
+      - #0 id=5300362 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=588929 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.hasMpu
+    VirtualName: hasMpu_Core.Boolean_0
+    Name: hasMpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=38758958 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26676172 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.hasDsp
+    VirtualName: hasDsp_Core.Boolean_0
+    Name: hasDsp
+    InterfaceMethod: False
+    Return:
+      - #0 id=2449345 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=52467932 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.cpuFreqMHz
+    VirtualName: cpuFreqMHz_Core.Int32_0
+    Name: cpuFreqMHz
+    InterfaceMethod: False
+    Return:
+      - #0 id=40742509 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=64179269 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.toolchain
+    VirtualName: toolchain_Core.String_0
+    Name: toolchain
+    InterfaceMethod: False
+    Return:
+      - #0 id=39171493 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=11808928 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.peripherals
+    VirtualName: peripherals_Core.Array<Core.String>[-1]_0
+    Name: peripherals
+    InterfaceMethod: False
+    Return:
+      - #0 id=34751460 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=18774354 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals:
+      - #0 id=44327687 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.has_1_Core.String
+    VirtualName: has_Core.Boolean_1_Core.String
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=35520730 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=33772909 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+      - #1 id=51251115 idx=1 name=peripheral type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeEmbedded.isConstrained
+    VirtualName: isConstrained_Core.Boolean_0
+    Name: isConstrained
+    InterfaceMethod: False
+    Return:
+      - #0 id=49535170 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=57699690 idx=0 name=this] type=Core.Environment.ProbeEmbedded
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.DeviceInfo
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-146610 idx=0 name=Core.Environment.DeviceInfo._dev type=Core.Int32
+      - #1 id=1024555187 idx=1 name=Core.Environment.DeviceInfo._index type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=6570122 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=52925796 idx=0 name=this] type=Core.Environment.DeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=24889743 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=62417850 idx=0 name=this] type=Core.Environment.DeviceInfo
+      - #1 id=22681099 idx=1 name=dev type=Core.Int32
+      - #2 id=2803303 idx=2 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo.vendor
+    VirtualName: vendor_Core.String_0
+    Name: vendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=25741004 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=25229732 idx=0 name=this] type=Core.Environment.DeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo.name
+    VirtualName: name_Core.String_0
+    Name: name
+    InterfaceMethod: False
+    Return:
+      - #0 id=41819089 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=4646565 idx=0 name=this] type=Core.Environment.DeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo.computeCapability
+    VirtualName: computeCapability_Core.Int32_0
+    Name: computeCapability
+    InterfaceMethod: False
+    Return:
+      - #0 id=18691797 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=31903028 idx=0 name=this] type=Core.Environment.DeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.DeviceInfo.memoryMB
+    VirtualName: memoryMB_Core.Int64_0
+    Name: memoryMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=3220827 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=37640571 idx=0 name=this] type=Core.Environment.DeviceInfo
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.Device
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.Device.kind
+    VirtualName: kind_Core.Int32_0
+    Name: kind
+    InterfaceMethod: False
+    Return:
+      - #0 id=66281838 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=59560431 idx=0 name=this] type=Core.Environment.Device
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Device.has_1_Core.Int32
+    VirtualName: has_Core.Boolean_1_Core.Int32
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=1078370 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=119818 idx=0 name=this] type=Core.Environment.Device
+      - #1 id=9705331 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Device.count_1_Core.Int32
+    VirtualName: count_Core.Int32_1_Core.Int32
+    Name: count
+    InterfaceMethod: False
+    Return:
+      - #0 id=28755990 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=47934352 idx=0 name=this] type=Core.Environment.Device
+      - #1 id=57477322 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Device.info_1_Core.Int32
+    VirtualName: info_Core.Environment.DeviceInfo_1_Core.Int32
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=25036876 idx=0 name=return] type=Core.Environment.DeviceInfo
+    Arguments:
+      - #0 id=25151496 idx=0 name=this] type=Core.Environment.Device
+      - #1 id=24005299 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Device.info_2_Core.Int32_Core.Int32
+    VirtualName: info_Core.Environment.DeviceInfo_2_Core.Int32_Core.Int32
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=51558469 idx=0 name=return] type=Core.Environment.DeviceInfo
+    Arguments:
+      - #0 id=65381042 idx=0 name=this] type=Core.Environment.Device
+      - #1 id=61373038 idx=1 name=dev type=Core.Int32
+      - #2 id=15486430 idx=2 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeDeviceInfo
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=1877182386 idx=0 name=Core.Environment.ProbeDeviceInfo._dev type=Core.Int32
+      - #1 id=-1391510449 idx=1 name=Core.Environment.ProbeDeviceInfo._index type=Core.Int32
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=15318330 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=46441279 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo._init__2_Core.Int32_Core.Int32
+    VirtualName: _init__Core.Void_2_Core.Int32_Core.Int32
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=26991739 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=32825243 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+      - #1 id=41599065 idx=1 name=dev type=Core.Int32
+      - #2 id=38847270 idx=2 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo.vendor
+    VirtualName: vendor_Core.String_0
+    Name: vendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=59621178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=14081115 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo.name
+    VirtualName: name_Core.String_0
+    Name: name
+    InterfaceMethod: False
+    Return:
+      - #0 id=44403789 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=64586077 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo.computeCapability
+    VirtualName: computeCapability_Core.Int32_0
+    Name: computeCapability
+    InterfaceMethod: False
+    Return:
+      - #0 id=23890167 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=39937165 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDeviceInfo.memoryMB
+    VirtualName: memoryMB_Core.Int64_0
+    Name: memoryMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=34736162 idx=0 name=return] type=Core.Int64
+    Arguments:
+      - #0 id=56055356 idx=0 name=this] type=Core.Environment.ProbeDeviceInfo
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.ProbeDevice
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+  Method: Core.Environment.ProbeDevice.kind
+    VirtualName: kind_Core.Int32_0
+    Name: kind
+    InterfaceMethod: False
+    Return:
+      - #0 id=22620416 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=62165703 idx=0 name=this] type=Core.Environment.ProbeDevice
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDevice.has_1_Core.Int32
+    VirtualName: has_Core.Boolean_1_Core.Int32
+    Name: has
+    InterfaceMethod: False
+    Return:
+      - #0 id=48612303 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=20314447 idx=0 name=this] type=Core.Environment.ProbeDevice
+      - #1 id=34857543 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDevice.count_1_Core.Int32
+    VirtualName: count_Core.Int32_1_Core.Int32
+    Name: count
+    InterfaceMethod: False
+    Return:
+      - #0 id=43998472 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=4888719 idx=0 name=this] type=Core.Environment.ProbeDevice
+      - #1 id=60441935 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDevice.info_1_Core.Int32
+    VirtualName: info_Core.Environment.ProbeDeviceInfo_1_Core.Int32
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=38756276 idx=0 name=return] type=Core.Environment.ProbeDeviceInfo
+    Arguments:
+      - #0 id=63958576 idx=0 name=this] type=Core.Environment.ProbeDevice
+      - #1 id=13262169 idx=1 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.ProbeDevice.info_2_Core.Int32_Core.Int32
+    VirtualName: info_Core.Environment.ProbeDeviceInfo_2_Core.Int32_Core.Int32
+    Name: info
+    InterfaceMethod: False
+    Return:
+      - #0 id=4445458 idx=0 name=return] type=Core.Environment.ProbeDeviceInfo
+    Arguments:
+      - #0 id=493939 idx=0 name=this] type=Core.Environment.ProbeDevice
+      - #1 id=40009126 idx=1 name=dev type=Core.Int32
+      - #2 id=24537816 idx=2 name=index type=Core.Int32
+    Locals: []
+    Instructions:
+
+Class: Core.Environment.current
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.os
+    VirtualName: os_Core.Int32_0
+    Name: os
+    InterfaceMethod: False
+    Return:
+      - #0 id=41406050 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.osName
+    VirtualName: osName_Core.String_0
+    Name: osName
+    InterfaceMethod: False
+    Return:
+      - #0 id=65555736 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.osFamily
+    VirtualName: osFamily_Core.Int32_0
+    Name: osFamily
+    InterfaceMethod: False
+    Return:
+      - #0 id=8414436 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.osVersionNumber
+    VirtualName: osVersionNumber_Core.Environment.OSVersionNumber_0
+    Name: osVersionNumber
+    InterfaceMethod: False
+    Return:
+      - #0 id=10480683 idx=0 name=return] type=Core.Environment.OSVersionNumber
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.form
+    VirtualName: form_Core.Int32_0
+    Name: form
+    InterfaceMethod: False
+    Return:
+      - #0 id=43629015 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.arch
+    VirtualName: arch_Core.Int32_0
+    Name: arch
+    InterfaceMethod: False
+    Return:
+      - #0 id=44289360 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.archBits
+    VirtualName: archBits_Core.Int32_0
+    Name: archBits
+    InterfaceMethod: False
+    Return:
+      - #0 id=30668413 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.endian
+    VirtualName: endian_Core.Int32_0
+    Name: endian
+    InterfaceMethod: False
+    Return:
+      - #0 id=1113543 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.triple
+    VirtualName: triple_Core.String_0
+    Name: triple
+    InterfaceMethod: False
+    Return:
+      - #0 id=23088149 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.cpuCount
+    VirtualName: cpuCount_Core.Int32_0
+    Name: cpuCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=58200784 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.cpuVendor
+    VirtualName: cpuVendor_Core.String_0
+    Name: cpuVendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=16643039 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.cpuModel
+    VirtualName: cpuModel_Core.String_0
+    Name: cpuModel
+    InterfaceMethod: False
+    Return:
+      - #0 id=5908907 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.isaHas_1_Core.Int32
+    VirtualName: isaHas_Core.Boolean_1_Core.Int32
+    Name: isaHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=8859419 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12625908 idx=0 name=isa type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.deviceHas_1_Core.Int32
+    VirtualName: deviceHas_Core.Boolean_1_Core.Int32
+    Name: deviceHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=16065622 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=10372872 idx=0 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.deviceCount_1_Core.Int32
+    VirtualName: deviceCount_Core.Int32_1_Core.Int32
+    Name: deviceCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=34896342 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=45631627 idx=0 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.runtime
+    VirtualName: runtime_Core.Int32_0
+    Name: runtime
+    InterfaceMethod: False
+    Return:
+      - #0 id=5174319 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.runtimeVersion
+    VirtualName: runtimeVersion_Core.String_0
+    Name: runtimeVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=16466658 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.build
+    VirtualName: build_Core.Int32_0
+    Name: build
+    InterfaceMethod: False
+    Return:
+      - #0 id=58730959 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.totalMemMB
+    VirtualName: totalMemMB_Core.Int64_0
+    Name: totalMemMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=59587228 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.availMemMB
+    VirtualName: availMemMB_Core.Int64_0
+    Name: availMemMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=61836145 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.libExists_1_Core.String
+    VirtualName: libExists_Core.Boolean_1_Core.String
+    Name: libExists
+    InterfaceMethod: False
+    Return:
+      - #0 id=42671863 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48502452 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.libVersion_1_Core.String
+    VirtualName: libVersion_Core.String_1_Core.String
+    Name: libVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=36384517 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=59025204 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.libHas_2_Core.String_Core.String
+    VirtualName: libHas_Core.Boolean_2_Core.String_Core.String
+    Name: libHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=16312252 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12592542 idx=0 name=name type=Core.String
+      - #1 id=46224020 idx=1 name=minVersion type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.libPath_1_Core.String
+    VirtualName: libPath_Core.String_1_Core.String
+    Name: libPath
+    InterfaceMethod: False
+    Return:
+      - #0 id=53158116 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=8661001 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.cpu
+    VirtualName: cpu_Core.Environment.Cpu_0
+    Name: cpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=30452481 idx=0 name=return] type=Core.Environment.Cpu
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.ai
+    VirtualName: ai_Core.Environment.Ai_0
+    Name: ai
+    InterfaceMethod: False
+    Return:
+      - #0 id=50731910 idx=0 name=return] type=Core.Environment.Ai
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.render
+    VirtualName: render_Core.Environment.Render_0
+    Name: render
+    InterfaceMethod: False
+    Return:
+      - #0 id=15644031 idx=0 name=return] type=Core.Environment.Render
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.network
+    VirtualName: network_Core.Environment.Network_0
+    Name: network
+    InterfaceMethod: False
+    Return:
+      - #0 id=59206997 idx=0 name=return] type=Core.Environment.Network
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.script
+    VirtualName: script_Core.Environment.Script_0
+    Name: script
+    InterfaceMethod: False
+    Return:
+      - #0 id=31037423 idx=0 name=return] type=Core.Environment.Script
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.embedded
+    VirtualName: embedded_Core.Environment.Embedded_0
+    Name: embedded
+    InterfaceMethod: False
+    Return:
+      - #0 id=31003317 idx=0 name=return] type=Core.Environment.Embedded
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.current.device
+    VirtualName: device_Core.Environment.Device_0
+    Name: device
+    InterfaceMethod: False
+    Return:
+      - #0 id=28240785 idx=0 name=return] type=Core.Environment.Device
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.probe
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.os
+    VirtualName: os_Core.Int32_0
+    Name: os
+    InterfaceMethod: False
+    Return:
+      - #0 id=5802216 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.osName
+    VirtualName: osName_Core.String_0
+    Name: osName
+    InterfaceMethod: False
+    Return:
+      - #0 id=217508 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.osFamily
+    VirtualName: osFamily_Core.Int32_0
+    Name: osFamily
+    InterfaceMethod: False
+    Return:
+      - #0 id=17618221 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.osVersionNumber
+    VirtualName: osVersionNumber_Core.Environment.ProbeOSVersionNumber_0
+    Name: osVersionNumber
+    InterfaceMethod: False
+    Return:
+      - #0 id=17789802 idx=0 name=return] type=Core.Environment.ProbeOSVersionNumber
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.form
+    VirtualName: form_Core.Int32_0
+    Name: form
+    InterfaceMethod: False
+    Return:
+      - #0 id=31687876 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.arch
+    VirtualName: arch_Core.Int32_0
+    Name: arch
+    InterfaceMethod: False
+    Return:
+      - #0 id=16581154 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.archBits
+    VirtualName: archBits_Core.Int32_0
+    Name: archBits
+    InterfaceMethod: False
+    Return:
+      - #0 id=896237 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.endian
+    VirtualName: endian_Core.Int32_0
+    Name: endian
+    InterfaceMethod: False
+    Return:
+      - #0 id=5486348 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.triple
+    VirtualName: triple_Core.String_0
+    Name: triple
+    InterfaceMethod: False
+    Return:
+      - #0 id=41741032 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.cpuCount
+    VirtualName: cpuCount_Core.Int32_0
+    Name: cpuCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=25580392 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.cpuVendor
+    VirtualName: cpuVendor_Core.String_0
+    Name: cpuVendor
+    InterfaceMethod: False
+    Return:
+      - #0 id=58745844 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.cpuModel
+    VirtualName: cpuModel_Core.String_0
+    Name: cpuModel
+    InterfaceMethod: False
+    Return:
+      - #0 id=60792949 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.isaHas_1_Core.Int32
+    VirtualName: isaHas_Core.Boolean_1_Core.Int32
+    Name: isaHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=25281875 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=26210288 idx=0 name=isa type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.deviceHas_1_Core.Int32
+    VirtualName: deviceHas_Core.Boolean_1_Core.Int32
+    Name: deviceHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=42658596 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48383044 idx=0 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.deviceCount_1_Core.Int32
+    VirtualName: deviceCount_Core.Int32_1_Core.Int32
+    Name: deviceCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=26712487 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=39085796 idx=0 name=dev type=Core.Int32
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.runtime
+    VirtualName: runtime_Core.Int32_0
+    Name: runtime
+    InterfaceMethod: False
+    Return:
+      - #0 id=11832897 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.runtimeVersion
+    VirtualName: runtimeVersion_Core.String_0
+    Name: runtimeVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=18940582 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.build
+    VirtualName: build_Core.Int32_0
+    Name: build
+    InterfaceMethod: False
+    Return:
+      - #0 id=57792188 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.totalMemMB
+    VirtualName: totalMemMB_Core.Int64_0
+    Name: totalMemMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=50655658 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.availMemMB
+    VirtualName: availMemMB_Core.Int64_0
+    Name: availMemMB
+    InterfaceMethod: False
+    Return:
+      - #0 id=9467673 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.libExists_1_Core.String
+    VirtualName: libExists_Core.Boolean_1_Core.String
+    Name: libExists
+    InterfaceMethod: False
+    Return:
+      - #0 id=28684081 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=56830139 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.libVersion_1_Core.String
+    VirtualName: libVersion_Core.String_1_Core.String
+    Name: libVersion
+    InterfaceMethod: False
+    Return:
+      - #0 id=39838562 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=23002745 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.libHas_2_Core.String_Core.String
+    VirtualName: libHas_Core.Boolean_2_Core.String_Core.String
+    Name: libHas
+    InterfaceMethod: False
+    Return:
+      - #0 id=51283066 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=58894414 idx=0 name=name type=Core.String
+      - #1 id=60287683 idx=1 name=minVersion type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.libPath_1_Core.String
+    VirtualName: libPath_Core.String_1_Core.String
+    Name: libPath
+    InterfaceMethod: False
+    Return:
+      - #0 id=51464189 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=60524524 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.cpu
+    VirtualName: cpu_Core.Environment.ProbeCpu_0
+    Name: cpu
+    InterfaceMethod: False
+    Return:
+      - #0 id=3539410 idx=0 name=return] type=Core.Environment.ProbeCpu
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.ai
+    VirtualName: ai_Core.Environment.ProbeAi_0
+    Name: ai
+    InterfaceMethod: False
+    Return:
+      - #0 id=18256764 idx=0 name=return] type=Core.Environment.ProbeAi
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.render
+    VirtualName: render_Core.Environment.ProbeRender_0
+    Name: render
+    InterfaceMethod: False
+    Return:
+      - #0 id=2402898 idx=0 name=return] type=Core.Environment.ProbeRender
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.network
+    VirtualName: network_Core.Environment.ProbeNetwork_0
+    Name: network
+    InterfaceMethod: False
+    Return:
+      - #0 id=60417086 idx=0 name=return] type=Core.Environment.ProbeNetwork
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.script
+    VirtualName: script_Core.Environment.ProbeScript_0
+    Name: script
+    InterfaceMethod: False
+    Return:
+      - #0 id=61945765 idx=0 name=return] type=Core.Environment.ProbeScript
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.embedded
+    VirtualName: embedded_Core.Environment.ProbeEmbedded_0
+    Name: embedded
+    InterfaceMethod: False
+    Return:
+      - #0 id=51551089 idx=0 name=return] type=Core.Environment.ProbeEmbedded
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.probe.device
+    VirtualName: device_Core.Environment.ProbeDevice_0
+    Name: device
+    InterfaceMethod: False
+    Return:
+      - #0 id=14888714 idx=0 name=return] type=Core.Environment.ProbeDevice
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.Override
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Override.isDisabled_1_Core.String
+    VirtualName: isDisabled_Core.Boolean_1_Core.String
+    Name: isDisabled
+    InterfaceMethod: False
+    Return:
+      - #0 id=65135191 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=49345813 idx=0 name=key type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Override.source_1_Core.String
+    VirtualName: source_Core.String_1_Core.String
+    Name: source
+    InterfaceMethod: False
+    Return:
+      - #0 id=37587916 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=2746927 idx=0 name=key type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Override.getValue_1_Core.String
+    VirtualName: getValue_Core.String_1_Core.String
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=21174538 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=56353115 idx=0 name=key type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.env
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.env.getValue_1_Core.String
+    VirtualName: getValue_Core.String_1_Core.String
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=1199620 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=10796581 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.env.setValue_2_Core.String_Core.String
+    VirtualName: setValue_Core.Boolean_2_Core.String_Core.String
+    Name: setValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=2107829 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=18970462 idx=0 name=name type=Core.String
+      - #1 id=36516433 idx=1 name=value type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.env.exists_1_Core.String
+    VirtualName: exists_Core.Boolean_1_Core.String
+    Name: exists
+    InterfaceMethod: False
+    Return:
+      - #0 id=5041122 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=45370106 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.custom
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.custom.getValue_1_Core.String
+    VirtualName: getValue_Core.String_1_Core.String
+    Name: getValue
+    InterfaceMethod: False
+    Return:
+      - #0 id=51099989 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57246722 idx=0 name=key type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.sys
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.currentDirectory
+    VirtualName: currentDirectory_Core.String_0
+    Name: currentDirectory
+    InterfaceMethod: False
+    Return:
+      - #0 id=6472929 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.setCurrentDirectory_1_Core.String
+    VirtualName: setCurrentDirectory_Core.Boolean_1_Core.String
+    Name: setCurrentDirectory
+    InterfaceMethod: False
+    Return:
+      - #0 id=54545236 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=21145081 idx=0 name=path type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.newLine
+    VirtualName: newLine_Core.String_0
+    Name: newLine
+    InterfaceMethod: False
+    Return:
+      - #0 id=35029990 idx=0 name=return] type=Core.String
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.tickCount
+    VirtualName: tickCount_Core.Int32_0
+    Name: tickCount
+    InterfaceMethod: False
+    Return:
+      - #0 id=18856923 idx=0 name=return] type=Core.Int32
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.tickCount64
+    VirtualName: tickCount64_Core.Int64_0
+    Name: tickCount64
+    InterfaceMethod: False
+    Return:
+      - #0 id=51015809 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.sys.nowMillis
+    VirtualName: nowMillis_Core.Int64_0
+    Name: nowMillis
+    InterfaceMethod: False
+    Return:
+      - #0 id=38639871 idx=0 name=return] type=Core.Int64
+    Arguments: []
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.legacy
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=61002694 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=12153337 idx=0 name=objA type=Core.Object
+      - #1 id=42271171 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.legacy.getVariable_1_Core.String
+    VirtualName: getVariable_Core.String_1_Core.String
+    Name: getVariable
+    InterfaceMethod: False
+    Return:
+      - #0 id=42821886 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=49852662 idx=0 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.legacy.setVariable_2_Core.String_Core.String
+    VirtualName: setVariable_Core.Boolean_2_Core.String_Core.String
+    Name: setVariable
+    InterfaceMethod: False
+    Return:
+      - #0 id=11533784 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=36695198 idx=0 name=name type=Core.String
+      - #1 id=61821327 idx=1 name=value type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=10483995 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=8621428 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._enter_
+    VirtualName: _enter__Core.Object_0
+    Name: _enter_
+    InterfaceMethod: False
+    Return:
+      - #0 id=43897299 idx=0 name=return] type=Core.Object
+    Arguments:
+      - #0 id=27247099 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._exit_
+    VirtualName: _exit__Core.Void_0
+    Name: _exit_
+    InterfaceMethod: False
+    Return:
+      - #0 id=57311924 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=66020315 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=11754296 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=46045275 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=46056421 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=12573920 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=20699582 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=39582655 idx=0 name=this] type=Core.Object
+      - #1 id=52078514 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=48728718 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=57610085 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=35905280 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+-------------------IR 文件显示 结束 : -----------------------

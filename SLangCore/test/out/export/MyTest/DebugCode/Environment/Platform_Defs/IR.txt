@@ -1,0 +1,230 @@
+-------------------IR 文件显示 开始 : Path: Environment/Platform_Defs.sl-----------------------
+Class: Core.Environment.Platform.DefItem
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals:
+      - #0 id=-2142403510 idx=0 name=Core.Environment.Platform.DefItem.value type=Core.Int32
+      - #1 id=-35822790 idx=1 name=Core.Environment.Platform.DefItem.name type=Core.String
+      - #2 id=-769612551 idx=2 name=Core.Environment.Platform.DefItem.aliases type=Core.Array<T><Core.String>
+      - #3 id=-134679866 idx=3 name=Core.Environment.Platform.DefItem.describe type=Core.String
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.Platform.defs
+  metaClassKind: Class
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics: []
+  GlobalBindings: []
+
+  Method: Core.Object.refEquals_2_Core.Object_Core.Object
+    VirtualName: refEquals_Core.Boolean_2_Core.Object_Core.Object
+    Name: refEquals
+    InterfaceMethod: False
+    Return:
+      - #0 id=42709316 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=48839530 idx=0 name=objA type=Core.Object
+      - #1 id=36902586 idx=1 name=objB type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Platform.defs.lookup_2_Core.Environment.Platform.DefKind_Core.String
+    VirtualName: lookup_Core.Environment.Platform.DefItem_2_Core.Environment.Platform.DefKind_Core.String
+    Name: lookup
+    InterfaceMethod: False
+    Return:
+      - #0 id=56842496 idx=0 name=return] type=Core.Environment.Platform.DefItem
+    Arguments:
+      - #0 id=41820417 idx=0 name=kind type=Core.Environment.Platform.DefKind
+      - #1 id=40839433 idx=1 name=name type=Core.String
+    Locals:
+      - #0 id=32010577 idx=0 name=v type=Core.Int32
+      - #1 id=19659738 idx=1 name=item type=Core.Environment.Platform.DefItem
+      - #2 id=42719917 idx=2 name=autocreate_7691275 type=Core.Boolean
+    Instructions:
+
+  Method: Core.Environment.Platform.defs.contains_2_Core.Environment.Platform.DefKind_Core.String
+    VirtualName: contains_Core.Boolean_2_Core.Environment.Platform.DefKind_Core.String
+    Name: contains
+    InterfaceMethod: False
+    Return:
+      - #0 id=4307190 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=38764716 idx=0 name=kind type=Core.Environment.Platform.DefKind
+      - #1 id=13338129 idx=1 name=name type=Core.String
+    Locals: []
+    Instructions:
+
+  Method: Core.Environment.Platform.defs.names_1_Core.Environment.Platform.DefKind
+    VirtualName: names_Core.Array<Core.String>[-1]_1_Core.Environment.Platform.DefKind
+    Name: names
+    InterfaceMethod: False
+    Return:
+      - #0 id=6646677 idx=0 name=return] type=Core.Array<T><Core.String>
+    Arguments:
+      - #0 id=59820093 idx=0 name=kind type=Core.Environment.Platform.DefKind
+    Locals:
+      - #0 id=1509928 idx=0 name=r type=Core.Array<T><Core.String>
+    Instructions:
+
+  Method: Core.Object._init_
+    VirtualName: _init__Core.Void_0
+    Name: _init_
+    InterfaceMethod: False
+    Return:
+      - #0 id=42729680 idx=0 name=return] type=Core.Void
+    Arguments:
+      - #0 id=19660823 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.type
+    VirtualName: type_Core.Type_0
+    Name: type
+    InterfaceMethod: False
+    Return:
+      - #0 id=38552084 idx=0 name=return] type=Core.Type
+    Arguments:
+      - #0 id=49022807 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.hashCode
+    VirtualName: hashCode_Core.Int32_0
+    Name: hashCode
+    InterfaceMethod: False
+    Return:
+      - #0 id=52964449 idx=0 name=return] type=Core.Int32
+    Arguments:
+      - #0 id=35711100 idx=0 name=this] type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.equals_1_Core.Object
+    VirtualName: equals_Core.Boolean_1_Core.Object
+    Name: equals
+    InterfaceMethod: False
+    Return:
+      - #0 id=23487194 idx=0 name=return] type=Core.Boolean
+    Arguments:
+      - #0 id=62262011 idx=0 name=this] type=Core.Object
+      - #1 id=10058158 idx=1 name=obj type=Core.Object
+    Locals: []
+    Instructions:
+
+  Method: Core.Object.toString
+    VirtualName: toString_Core.String_0
+    Name: toString
+    InterfaceMethod: False
+    Return:
+      - #0 id=17531178 idx=0 name=return] type=Core.String
+    Arguments:
+      - #0 id=9404449 idx=0 name=this] type=Core.Object
+    Locals:
+      - #0 id=23562876 idx=0 name=hc type=Core.Int32
+    Instructions:
+
+Class: Core.Environment.Platform.DefKind
+  metaClassKind: Enum
+  TemplateCount: 0
+  TemplateParameterCount: 0
+  TemplateTypes: []
+  TemplateRelations: []
+  ClassLocals: []
+  ClassStatics:
+      - #0 id=-1705270574 idx=0 name=Core.Environment.Platform.DefKind.OS type=Core.Member
+      - #1 id=-1882310159 idx=1 name=Core.Environment.Platform.DefKind.OSVersion type=Core.Member
+      - #2 id=1545312288 idx=2 name=Core.Environment.Platform.DefKind.Arch type=Core.Member
+      - #3 id=-1383917019 idx=3 name=Core.Environment.Platform.DefKind.Cpu type=Core.Member
+      - #4 id=-1379753444 idx=4 name=Core.Environment.Platform.DefKind.ISA type=Core.Member
+      - #5 id=403466619 idx=5 name=Core.Environment.Platform.DefKind.Device type=Core.Member
+      - #6 id=1893851873 idx=6 name=Core.Environment.Platform.DefKind.AI type=Core.Member
+      - #7 id=2014261653 idx=7 name=Core.Environment.Platform.DefKind.Gfx type=Core.Member
+      - #8 id=1239027296 idx=8 name=Core.Environment.Platform.DefKind.ShaderModel type=Core.Member
+      - #9 id=-2137480600 idx=9 name=Core.Environment.Platform.DefKind.Network type=Core.Member
+      - #10 id=1818385930 idx=10 name=Core.Environment.Platform.DefKind.Link type=Core.Member
+      - #11 id=-12179834 idx=11 name=Core.Environment.Platform.DefKind.McuFamily type=Core.Member
+      - #12 id=428763206 idx=12 name=Core.Environment.Platform.DefKind.Rtos type=Core.Member
+      - #13 id=437135192 idx=13 name=Core.Environment.Platform.DefKind.Runtime type=Core.Member
+      - #14 id=1854831610 idx=14 name=Core.Environment.Platform.DefKind.BuildMode type=Core.Member
+      - #15 id=1828831984 idx=15 name=Core.Environment.Platform.DefKind.Endian type=Core.Member
+      - #16 id=1917406980 idx=16 name=Core.Environment.Platform.DefKind.values type=Core.Array<T><Core.Member>
+  GlobalBindings: []
+
+-------------------IR 文件显示 结束 : -----------------------

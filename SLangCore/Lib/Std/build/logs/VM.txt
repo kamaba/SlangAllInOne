@@ -1,0 +1,73 @@
+[09:04:05] [Info] [Project] [LID=10002] Resolved input path: F:\project\lang\simple_language\out\export\Std\Std.module.json
+[09:04:05] [Info] [Project] [LID=10002] Warning: could not load module reference '../../../source/Front/Lib/Core' (resolved: F:\project\lang\simple_language\out\export\Std/../../../source/Front/Lib/Core), skipping
+[09:04:05] [Info] [Project] [LID=10002] Runtime load success. root=F:\project\lang\simple_language\out\export\Std\Std.module.json packageCount=1
+[09:04:05] [Info] [Project] [LID=10002] SLIR loaded. root=F:\project\lang\simple_language\out\export\Std\Std.module.json, format=json, packageCount=1
+[09:04:05] [Info] [Project] [LID=10002] Selected entry method: Std.Project._main_ instructionCount=2 codeLength=10
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListInit id=2076290368
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListGetValueThis id=-189438755
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListSetValueThis id=-1777067416
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListGetCapacity id=-867337391
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListSetCapacity id=-1945706885
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListRemoveValueThis id=88900750
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListRemoveIndexValueThis id=230419442
+[09:04:05] [Warning] [Process] [LID=10003] system call not registered in cvm. name=SystemListClearValueThis id=212565473
+[09:04:05] [Info] [Runtime] [LID=10002] Runtime assembly ready. classCount=41 methodCount=1394
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.Project] begin. code_length=432
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.Project] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.IsolateStatus] begin. code_length=132
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.IsolateStatus] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.IsolateError] begin. code_length=198
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.IsolateError] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.IO.SearchOption] begin. code_length=441
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FB950} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FD2A0} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.IO.SearchOption] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.FileError] begin. code_length=456
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA3C0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FD480} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.FileError] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.Http.EMethod] begin. code_length=575
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FC490} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBA40} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FD660} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FB680} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.Http.EMethod] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.Data.Tree.ETreeEtype] begin. code_length=657
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA5A0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBB30} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FD750} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FCB20} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FC0D0} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.Data.Tree.ETreeEtype] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.DB.SQLITE_OPEN] begin. code_length=1171
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87F9C40} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBFE0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA000} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FC1C0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBC20} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FAB40} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87F9D30} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87F9E20} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA1E0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FA4B0} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.DB.SQLITE_OPEN] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [__static_field_init__Std.DB.SqliteErrorCode] begin. code_length=1842
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA690} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FAFF0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FAE10} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FC850} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FB1D0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA0F0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBE00} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA780} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FBD10} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA2D0} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FC670} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FB590} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Member id=2029953218 ptr=000001BDC87FA870} source={name=Member id=2029953218 ptr=000001BDC87FB950} target_tpl_cnt=0 source_tpl_cnt=0
+[09:04:05] [Info] [Runtime] [LID=10002] [DEBUG] validate_generic_ref target={name=Array<T> id=-1552845935 ptr=000001BDC87FA960} source={name=Array<T> id=-1552845935 ptr=000001BDCA5147F0} target_tpl_cnt=1 source_tpl_cnt=1
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[__static_field_init__Std.DB.SqliteErrorCode] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run [(null)] begin. code_length=10
+[09:04:05] [Info] [Runtime] [LID=10002] vm_run=[(null)] end. error_code=0
+[09:04:05] [Info] [Runtime] [LID=10002] VM finished successfully.

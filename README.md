@@ -113,6 +113,29 @@ dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -o SlangAllInOne\pa
 dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\package\debug
 ```
 
+**一键发布 GitHub Release**（2026-10-17，维护机专用）：工作区根
+`scripts\release-slang.ps1` 把整条 publish 链 + 打包 + 发布串成一键，产出
+https://github.com/kamaba/SlangAllInOne 上的 tag `v<版本>`、Release
+`slang_release <版本>` 与附件 zip：
+
+```powershell
+cd d:\project\lang
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1                 # 发布 0.0.1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.2
+```
+
+流程：preflight（tag/Release 查重、token 校验）→ `dotnet publish -c Release`（上方全自动
+四步）→ 冒烟（临时目录 run-disk 包内 Std/Math，防止 VM 日志 `build\logs` 污染包）→ 压
+`package\dist\slang_release_<版本>_win-x64.zip`（顶层文件夹 `slang_release_<版本>`）→
+git 提交（`release: slang_release <版本>`）+ 打 tag + push → 创建 GitHub Release 并上传
+zip。参数：`-Draft`（草稿）、`-SkipBuild`（复用现包重压）、`-NoCommit`（工作区脏则中止
+而非自动提交）、`-NoPush`（本地到 tag 为止）、`-Token <t>`（显式指定）。鉴权默认取
+git 凭据管理器里的 GitHub token（即 `git push` 用的那个，需 `repo` 权限）。
+
+仓库卫生：`package\` 产物自 v0.0.1 起**不再入库**（`.gitignore` 早已声明 `/package`，脚本
+自动 `git rm -r --cached package` 清理历史残留跟踪）——二进制分发统一走 GitHub Releases，
+发布提交只含源码改动。
+
 **产物名 `slang`**：csproj 设 `<AssemblyName>slang</AssemblyName>`，发布包主程序为
 `slang.exe` / `slang.dll`（工程目录与命名空间仍是 SlangAllInOne；publish target 用
 `$(AssemblyName)` 自举，pack-modules / pack-docs 自动跟随）。

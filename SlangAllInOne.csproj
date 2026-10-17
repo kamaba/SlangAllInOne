@@ -43,7 +43,12 @@
        so the output depends only on its own directory.
        CvmBackend.Locate prefers <app dir>\bin\ over the dev build trees. -->
   <Target Name="PackCvmRuntime" AfterTargets="Publish">
-    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig)" />
+    <!-- BINARY_HARDENING.md: Release packages carry the hardened VM
+         (SLVM_HARDEN=ON startup anti-debug); Debug packages stay debuggable. -->
+    <PropertyGroup>
+      <CvmHardenFlag Condition="'$(CvmBuildConfig)' == 'Release'">-Harden</CvmHardenFlag>
+    </PropertyGroup>
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig) $(CvmHardenFlag)" />
     <ItemGroup>
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
       <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
@@ -121,6 +126,14 @@
       <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.deps.json" />
       <ReleaseJunk Include="$(PublishDir)SimpleLanguageFront.runtimeconfig.json" />
       <ReleaseJunk Include="$(PublishDir)*.pdb" />
+      <!-- BINARY_HARDENING.md P0: binary-artifact blacklist under bin\ (defense
+           in depth - PackCvmRuntime only copies the two runtime dlls, but any
+           future copy pattern must not leak symbol/linker artifacts). -->
+      <ReleaseJunk Include="$(PublishDir)bin\*.map" />
+      <ReleaseJunk Include="$(PublishDir)bin\*.pdb" />
+      <ReleaseJunk Include="$(PublishDir)bin\*.exp" />
+      <ReleaseJunk Include="$(PublishDir)bin\*.ilk" />
+      <ReleaseJunk Include="$(PublishDir)bin\*.lib" />
     </ItemGroup>
     <Delete Files="@(ReleaseJunk)" />
   </Target>

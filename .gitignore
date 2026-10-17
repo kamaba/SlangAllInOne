@@ -25,3 +25,5 @@
 /tools/llvm/mlir-opt.exe
 /tools/llvm/mlir-transform-opt.exe
 /tools/llvm/mlir-translate.exe
+/out/export
+/SLangCore/out

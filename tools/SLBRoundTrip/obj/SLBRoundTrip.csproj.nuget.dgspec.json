@@ -32,7 +32,14 @@
           "net8.0": {
             "framework": "net8.0",
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "D:\\project\\simple_language_plugins\\csharp_mono\\frontend\\SLCSharpMonoFrontend.csproj": {
+                "projectPath": "D:\\project\\simple_language_plugins\\csharp_mono\\frontend\\SLCSharpMonoFrontend.csproj"
+              },
+              "D:\\project\\simple_language_plugins\\java_hotspot\\frontend\\SLJavaHotspotFrontend.csproj": {
+                "projectPath": "D:\\project\\simple_language_plugins\\java_hotspot\\frontend\\SLJavaHotspotFrontend.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

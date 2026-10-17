@@ -49,6 +49,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
+          "D:\\project\\simple_language_plugins\\csharp_mono\\frontend\\SLCSharpMonoFrontend.csproj": "1.0.0",
+          "D:\\project\\simple_language_plugins\\java_hotspot\\frontend\\SLJavaHotspotFrontend.csproj": "1.0.0",
           "System.Diagnostics.Debug": "4.3.0"
         },
         "compile": {
@@ -336,5 +338,25 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "找不到项目“D:\\project\\simple_language_plugins\\java_hotspot\\frontend\\SLJavaHotspotFrontend.csproj”。请检查项目引用是否有效以及项目文件是否存在。",
+      "libraryId": "D:\\project\\simple_language_plugins\\java_hotspot\\frontend\\SLJavaHotspotFrontend.csproj",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    },
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "找不到项目“D:\\project\\simple_language_plugins\\csharp_mono\\frontend\\SLCSharpMonoFrontend.csproj”。请检查项目引用是否有效以及项目文件是否存在。",
+      "libraryId": "D:\\project\\simple_language_plugins\\csharp_mono\\frontend\\SLCSharpMonoFrontend.csproj",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

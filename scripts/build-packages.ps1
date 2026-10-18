@@ -5,15 +5,18 @@
 # Package forms (2026-10-18 user directive; authoritative doc RELEASE.md):
 #   *-debug   : Front (.NET Debug assemblies + pdb) + C VM Debug dll/so (+pdb) -
 #               both ends source-debuggable, framework-dependent (.NET 8 runtime
-#               needed on the target); the Debug C VM has no JIT by design.
+#               needed on the target); the Debug C VM has no JIT by design;
+#               lib\ packs the *.module.json debug copies next to the slb by
+#               default (csproj PackStdModules --config Debug).
 #   *-release : Native AOT single-file native slang (zero .NET dependency) +
 #               hardened C VM Release runtime with the JIT compiled in and ON
 #               by default (--no-jit / SL_JIT=0 turns it off).
 #
 # The .NET side needs NO extra flags - `dotnet publish -c <Cfg>` auto-selects
-# AOT (Release), the default RID (host OS) and the default output dir
-# package\<flavor>-<config> (csproj, 2026-10-18). The Linux halves run inside
-# WSL because Native AOT cannot cross-compile across OSes; lib\ and md\ are
+# AOT (Release), the host RID and the platform-qualified output dir
+# package\<platform>-<config> (csproj, 2026-10-18). The Linux halves run inside
+# WSL because Native AOT cannot cross-compile across OSes; there the same
+# zero-flag publish lands in package\linux-<config>. lib\ and md\ are
 # platform-independent and are copied from the same-config Windows package
 # (built first automatically when needed).
 #
@@ -163,9 +166,9 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     }
     Write-Ok 'libcsimple_lang_dll.so built'
 
-    # b) .NET side. No -r / -o needed: the csproj defaults the RID (linux host)
-    #    and the output dir to this package dir; Windows-only pack targets are
-    #    host-gated off inside WSL.
+    # b) .NET side. No flags needed: the csproj defaults the RID (linux host)
+    #    and the output dir to package\linux-<config>; Windows-only pack
+    #    targets are host-gated off inside WSL.
     if (Test-Path $dir) { Remove-Item $dir -Recurse -Force -Confirm:$false }
     $cmd = 'cd ' + $wslRepo + ' && dotnet publish SlangAllInOne/SlangAllInOne.csproj -c ' + $Config
     if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  dotnet publish (WSL) failed (see log above)' -ForegroundColor Red; return $false }

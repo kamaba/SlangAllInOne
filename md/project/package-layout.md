@@ -16,7 +16,8 @@
 
 ## 二、迁移记录（2026-10-18）
 
-1. **`module\` → `lib\`**：PackModulesCommand 打包目录更名；四包（win32/linux × debug/release）与 release-slang.ps1 / build-packages.ps1 布局校验、冒烟路径同步。
+0. **CompileStdlib 直通包目录（同日晚些增补）**：CompileStdlib 驱动（core/math/std/all 预设）编译成功后自动把产物（R15 slb+json 双产物，`--format binary --export-json` 内置）同步到四个包目录的 `lib\`——slb 恒同步、json 副本仅 `*-debug` 目录、math_lib.dll 仅 `win32-*`；与 publish 的 pack-modules 同一落位，VS 里 F5 任意预设即可在包目录 `lib\` 看到新鲜产物（显式工程路径 selector 不属于标准库，不同步）。
+1. **`module\` → `lib\`**：PackModulesCommand 打包目录更名；发布包目录 = `package\{win32|linux}-{debug|release}` 四目录（csproj 零旗标 publish 默认；编译产物按 debug/release 分别落对应平台包的 lib\），与 release-slang.ps1 / build-packages.ps1 布局校验、冒烟路径同步。
 2. **官方库直查改链**：references 写纯模块名（"Core"/"Std"/"Math"）时——
    - Front 编译期：`ProjectReferenceModuleLoader.TryResolveRuntimeModuleDirPath`（Strategy 4）按 `<exe>\lib\` → `<exe>\modules\` 顺序直查 `<名>.module.slb|json`（slb 优先）；
    - C VM 运行期：`sl_load_references` ④（`csimple_lang/src/vm/load/slir_json_module_loader.c`）同序直查 `<exe_dir>/lib/` → `<exe_dir>/modules/`。

@@ -269,22 +269,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\releas
 
 流程全自动：preflight 查重 → Windows AOT 包 → Linux AOT 包（WSL）→ 双平台冒烟 → 压缩 → git 提交 + tag + push → GitHub Release 附双资产。C VM Release 构建默认加固（LTO + 符号剥离 + 启动反调试）且 **JIT 默认开启**。
 
-### 本地四包（package\ 目录）
+### 本地发布包（package\ 目录）
 
-`dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug` / `-c Release` **零旗标**自动生成到 `SlangAllInOne\package\`：
+`dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug` / `-c Release` **零旗标**直接生成到 `SlangAllInOne\package\` 下对应平台包目录（平台 = 宿主 OS：Windows 出 win32-*，WSL/Linux 出 linux-*）：
 
 | 目录 | 形态 |
 |------|------|
-| `win32-debug` / `linux-debug` | Front（.NET Debug + pdb）+ C VM Debug（+pdb）——**双端可源码级调试**（目标机需 .NET 8 运行时） |
-| `win32-release` / `linux-release` | **Native AOT 一体化原生二进制**（零 .NET 依赖）+ 加固 C VM（**JIT 默认开启**） |
+| `win32-debug` / `linux-debug` | Front（.NET Debug + pdb）+ C VM Debug（+pdb）——**双端可源码级调试**（目标机需 .NET 8 运行时）；`lib\` 默认附带 `*.module.json` 调试副本（slb 主产物 + json 对照） |
+| `win32-release` / `linux-release` | **Native AOT 一体化原生二进制**（零 .NET 依赖）+ 加固 C VM（**JIT 默认开启**）；`lib\` 仅 `*.module.slb` |
 
-一键四包（linux 包自动经 WSL 构建并复用 Windows 包的 `lib\`+`md\`，含布局校验与冒烟）：
+双平台四包一键同建（linux 包自动经 WSL 构建并复用 Windows 包的 `lib\`+`md\`，含布局校验与冒烟）：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1 [-Packages win32-debug,linux-release] [-NoSmoke]
 ```
 
-详见 [RELEASE.md](RELEASE.md)「本地四包目录方案」。
+详见 [RELEASE.md](RELEASE.md)「本地发布包目录方案」。
 
 ## 调试
 

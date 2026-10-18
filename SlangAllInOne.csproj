@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- ===== 发布形态与默认输出目录（2026-10-18 用户指令）=====
+  <!-- ===== 发布形态与默认输出目录（2026-10-18 用户指令，三次定稿）=====
        Debug   : Front（.NET Debug 程序集 + pdb）+ C VM Debug dll（+pdb 侧车）——
                  双端可源码级调试的框架依赖包（目标机需 .NET 8 运行时）；C VM Debug
                  树不编入 JIT（JIT_DESIGN.md §6.1 默认，保持解释器可调试语义）。
+                 Debug 包默认附带一份 json 内容：lib\ 下除 *.module.slb 主产物外
+                 另打包 *.module.json 调试副本（PackModulesCommand includeJson，
+                 配置即默认，无需任何旗标）。
        Release : Native AOT 单文件自包含原生二进制（一体化 slang.exe / linux slang，
                  目标机零 .NET 依赖）；C VM 取 Release 加固树——JIT 已编入且运行期
                  默认开启（CLI 旗标 no-jit / 环境变量 SL_JIT=0 关闭），发布链脚本
@@ -12,9 +15,12 @@
        -p:PublishAot=true，要退回经典托管发布显式传 -p:PublishAot=false）；
        RID 缺省按宿主 OS 补 win-x64 / linux-x64（Native AOT 不支持跨 OS 交叉
        编译，linux 包必须在 WSL/Linux 侧发布）。
-       默认输出目录 package\{win32|linux}-{debug|release}（"win32" 是用户指定的
-       命名约定 = Windows x64，非 32 位；平台 = 目标 RID 优先，无 RID 时按宿主
-       OS；显式 -o / -p:PublishDir 覆盖本默认）。 -->
+       默认输出目录 package\{win32|linux}-{debug|release} 四目录：编译产物（含
+       标准库）按 debug/release 分别落对应平台包的 lib\（"win32" = Windows 平台
+       包 x64 命名约定，非 32 位；平台 = 目标 RID 优先，无 RID 时按宿主 OS：
+       Windows 宿主 → win32-*、WSL/Linux 宿主 → linux-*）。双平台四包同建 =
+       Windows 侧 publish 出 win32-* + WSL 侧 publish 出 linux-*（或
+       scripts\build-packages.ps1 一键）。显式 -o / -p:PublishDir 恒覆盖。 -->
   <PropertyGroup>
     <_HostIsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</_HostIsWindows>
     <_HostIsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</_HostIsLinux>

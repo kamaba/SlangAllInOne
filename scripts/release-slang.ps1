@@ -208,8 +208,9 @@ if ($SkipBuild) {
     # Bundled example: bare-name official-library reference probe, ships with
     # every release so `slang run test\RefProbe\RefProbe` works out of the box
     # (RELEASE.md "官方库直查"). Copied after publish because the script wipes
-    # the package dir up front.
-    $exampleSrc = Join-Path $AioDir 'examples\RefProbe'
+    # the package dir up front. Source lives in the test tree (the historical
+    # examples\RefProbe path no longer exists - fixed 2026-10-18).
+    $exampleSrc = Join-Path $AioDir 'SLangCore\test\Other\RefProbe'
     if (Test-Path $exampleSrc) {
         robocopy $exampleSrc (Join-Path $PkgWinDir 'test\RefProbe') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
         Write-Ok 'bundled example: test\RefProbe (bare-name official-library references)'
@@ -267,7 +268,7 @@ if ($SkipBuild) {
 
     # same bundled example as the Windows package (platform-independent sources;
     # re-derived here so -SkipBuild runs work too)
-    $exampleSrc = Join-Path $AioDir 'examples\RefProbe'
+    $exampleSrc = Join-Path $AioDir 'SLangCore\test\Other\RefProbe'
     if (Test-Path $exampleSrc) {
         robocopy $exampleSrc (Join-Path $PkgLinuxDir 'test\RefProbe') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
         Write-Ok 'bundled example: test\RefProbe (linux package)'

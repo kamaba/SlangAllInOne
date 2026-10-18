@@ -2,7 +2,7 @@
   "project":
   {
     "name": "RefProbe",
-    "desc": "Official-library direct-lookup probe: references use bare module names (Core/Std) resolved from the slang runtime module dir",
+    "desc": "Official-library direct-lookup probe: references use bare module names (Core/Std) resolved from the slang runtime lib dir (lib\\, see md/project/package-layout.md)",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 1,

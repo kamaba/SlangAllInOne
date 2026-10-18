@@ -1,309 +1,281 @@
-# SlangAllInOne — FrontEnd + Backend 统合宿主
+# SlangAllInOne — SLang 语言一体化工具链
 
-一个 .NET 8 进程内完成「Front 编译 → SLIR 包内存直传 → C VM 运行」：
-`slang run <工程>` 即**编译即运行**，`module.json` 不落盘。
+**中文** | [English](README_EN.md)
 
-> 🔥 **全仓开发入口 = [SlangAllInOne.sln](SlangAllInOne.sln)**（2026-10-17 仓库重组后）：
-> 24 个工程覆盖宿主 / Front（simple_language）/ 标准库编译器 / 测试宿主 / C VM（csimple_lang
-> vcxproj）/ 插件 / 工具——VS 打开这一个 sln 即可构建全仓；`simple_language\SimpleLanguage.sln`
-> 已废弃（引用大量已迁移工程）。本目录同时承载标准库源码（`SLangCore\Lib`）、测试用例集
-> （`SLangCore\test`）、用户文档（`md\`）与工具（`tools\`）；标准库编译产物统一落
-> `SlangAllInOne\out\export\`（`Project\Compile*` 三驱动工程）。
-
-## 定位与结构
+**SLang** 是一门从零构建的静态类型语言，工具链由三个开源仓库组成：编译器前端（C#/.NET 8）、虚拟机（C99）、以及本仓库——胶水层与分发总包。
 
 ```
-SlangAllInOne/
-├── SlangAllInOne.sln             ★ 全仓统一入口（宿主/Front/编译器/测试宿主/C VM vcxproj/插件/工具）
-├── SlangAllInOne.csproj          net8.0 Exe；ProjectReference → simple_language\source\SimpleLanguageFront.csproj
-├── Program.cs                    统合 CLI（命令解析 + help）
-├── FrontEnd/FrontendService.cs   进程内调用 Front CommandExecutor（compile -e ir [--in-memory]）
-├── Backend/
-│   ├── CvmInterop.cs             P/Invoke：cli_main / cli_run_module_in_memory + SLVM_MEM_FLAG_* 常量 + 手动 UTF-8 组参
-│   └── CvmBackend.cs             定位 C VM 运行时（发布包 bin\ 优先，回退构建树）+ RunInMemory / RunCli
-├── Project\                      编译/测试/native 工程（Compile*、CSimpleVM*Test、cvm_math_lib…）
-├── SLangCore\Lib\                标准库源码（Core/Math/Std/SLang：Server/Render/Mysql/Tensora）
-├── SLangCore\test\               测试用例集（BaseTest/ExpendTest/MathTest/SpecialTest/BenchMark…）
-├── md\                           全部用户文档（syntax/lib/project/log/plugins + ai 内部文档）
-├── tools\                        LidIndexer / ExtractLogs / SLBRoundTrip
-└── out\export\                   标准库与测试工程编译产物根（module.json/slb + Logs/DebugCode）
+.sl 源码 ──► Front 编译器（C#）──► SLIR 模块包（json / slb）──► C99 虚拟机执行
+                simple_language            ▲        csimple_lang
+                        └── 本仓库统合宿主 slang：编译→内存直传→运行 ──┘
 ```
 
-- **FrontEnd**：不派生 `dotnet run SimpleLanguageFront.csproj` 子进程，直接进程内调 `CommandExecutor.Execute`；
-  `--in-memory` 时导出阶段只产 JSON 文本（`SLModulePackageWriter.BuildPackageJson`），不写 module.json。
-- **Backend**：P/Invoke 加载 `csimple_lang_dll.dll`；`run` 走内存入口，`run-disk`/`info` 走经典 `cli_main`。
+本仓库的统合宿主 **`slang`** 在单个 .NET 8 进程内完成「Front 进程内编译 → SLIR 包内存直传 → C VM P/Invoke 执行」：`slang run <工程>` 即**编译即运行**，中间产物不落盘。
 
-## 内存直传链路（run 命令）
+## 相关开源仓库
 
-```
-.sl 源码
-  → Front 进程内编译（compile -e ir --in-memory）
-  → BuildPackageJson：SLIR 包 JSON 文本（与磁盘写出字节级一致）
-  → P/Invoke cli_run_module_in_memory(json, baseDir, flags, programArgs)
-  → slir_json_read_packages_in_execution_order_from_memory（根包以 @memory:root 伪路径入 visited 去重）
-  → slir_json_parse_package_text 解析 + sl_load_references 装载引用包（引用仍从磁盘按绝对路径递归装载）
-  → C VM 执行，print 直写控制台
-```
+| 仓库 | 定位 | 技术栈 |
+|------|------|--------|
+| **SlangAllInOne**（本仓库） | 一体化总包：统合宿主 `slang` + 标准库源码 + 测试用例集 + 用户文档 + 构建/发布脚本 | C#/.NET 8 |
+| [kamaba/simple_language](https://github.com/kamaba/simple_language) — **FrontEnd 编译器** | 词法/结构解析、语义与类型系统、IR 生成、SLIR 导出、CLI；opcode 枚举与 C VM 逐项对齐 | C#/.NET 8 |
+| [kamaba/csimple_lang](https://github.com/kamaba/csimple_lang) — **C99 虚拟机** | 执行引擎：GC、协程调度、isolate、运行时 JIT、FFI、SLB 二进制格式、WebAssembly 移植；`md/design/` 收录深度设计文档 | C99 |
 
-直传三要素：
+三个仓库各司其职：Front 编译产出 SLIR，VM 执行 SLIR，本仓库把两者粘合为一条命令，并承载标准库、测试与文档。**从源码构建时三个仓库需放在同一父目录下平级摆放**（工程引用为跨仓库相对路径），见[「从源码构建」](#从源码构建)。
 
-| 要素 | 内容 |
+## 语言特性
+
+- **静态类型系统**：类 / 继承 / 接口 / 枚举 / 泛型模板（`template`）/ 类型别名 / attribute 注解系统（PreCompile / Compiling / Preload / Runtime 四时点）
+- **现代并发**：协程（`spawn` / `await` / `yield` 关键字 + `Task` / `Channel`），isolate 隔离岛（跨堆并行 + 端口消息通信，支持零拷贝转移）
+- **表达式能力**：闭包、内联 lambda（`=>` 调用点编译期展开）、`Range`、字符串插值 `$x`、`data` 动态对象、异常（`try / catch / throws`）
+- **低精度浮点**：`Float8` / `Float8_E5M2` / `Float16` / `Float16_Brain` 原生字面量与运算语义
+- **跨语言互操作**：FFI 外部函数调用（`@DllImport`）、系统方法下沉（热点函数绑定 C VM 原生实现，如矩阵运算直调 `math_lib.dll`）、插件系统（`@csharp_mono(){}` 内联 C#、Java Hotspot 等）
+- **多目标形态**：SLIR JSON / SLB 二进制模块包（体积约 JSON 的 2%）、AOT 导出（LLVM IR `.ll`）、WebAssembly（浏览器 Playground）
+
+## 标准库一览
+
+| 模块 | 内容 |
 |------|------|
-| 包 JSON 文本 | 宿主持有；引用包（Core 等）不在文本里——Front 已把它们解析为**绝对路径**写入 `moduleReferences` |
-| baseDir | = module.json 本应写出的 outDir；`moduleReferences` / 插件 lib **相对它**解析；`NULL`/空回退 CWD |
-| flags + program args | `SLVM_MEM_FLAG_*` 位或（对齐 `csimple_lang/src/cli/cli.h`）；`--` 后参数填 `Project._inputArgs`（源码 `global._inputArgs` 读取） |
+| **Core** | 容器（List / Map / Set / Queue / Stack / LinkedList / Tuple / Channel）、JSON / XML / YAML / TOML / CSV、ByteBuffer / Codec / LengthPrefix、Lz4 压缩、Protobuf 编解码、Stream 元素流 |
+| **Math** | 三精度数学（Mathd / Mathf / Mathh，FFI 直调原生库）、向量与矩阵（三精度 9 向量 + 6 矩阵值类型）、动态矩阵、BigNumber / BigDecimal / Factor 大数与数论 |
+| **Std** | IO（File / Directory / Console）、Net（TCP / UDP / TLS / HTTP/1.1 / WebSocket / MQTT，协程化挂起读写）、Sqlite、Redis、Log / Profiling / Trace / Monitor、isolate、Base64 / Sha1、GZip / Zip、DateTime / Process / Timer |
+| **SLang.Server** | HTTP / WebSocket 服务框架（路由 / 请求 / 响应链式 / BodyParser） |
+| **SLang.Render** | 渲染类型（Mesh / Material / Texture / Shader / Camera…） |
+| **Tensora** | 张量 / 张量算子 / 自动微分 / 优化器 / Transformer（建设中） |
+| **SLMysql** | MySQL 客户端（⚠ 静态链接 GPL-2.0 的 MySQL Connector/C，**不随官方发布包分发**） |
 
-执行语义与磁盘路径完全一致：`entryMethodId`、引用递归装载、平台校验、program args 行为均不变，只是省掉一次写盘 + 一次读盘。
+## 快速开始
 
-## 命令
+### 1. 从 Release 获取（目标机零依赖）
+
+从 [Releases](https://github.com/kamaba/SlangAllInOne/releases) 下载最新版并解压（每版双平台同发）：
+
+- `slang_release_<v>_win-x64.zip`（Windows x64）
+- `slang_release_<v>_linux-x64.tar.gz`（Linux x64，glibc ≥ 2.43）
+
+`slang` 主程序为 **Native AOT 自包含原生二进制**，无需安装 .NET 运行时。包内容：
+
+```
+slang_release_<v>/
+├── slang[.exe]         # 统合宿主：Front 编译 + C VM 运行（AOT 单文件）
+├── bin\                # C VM 运行时（hardened Release：LTO + 启动反调试）+ sqlite
+├── module\             # 标准库 Core/Math/Std *.module.slb（平铺单目录）
+├── test\RefProbe\      # 开箱示例：纯名引用官方库的最小工程
+├── md\                 # ~93 篇用户文档（语法 / 库 / 工程 / 日志 / 插件）
+└── licenses\           # 第三方协议合规包（NOTICE + 各组件协议全文）
+```
+
+### 2. 开箱即跑
+
+```powershell
+# Windows（Linux 同构：./slang run test/RefProbe/RefProbe）
+slang.exe run test\RefProbe\RefProbe
+```
+
+用户工程的 `references` 直接写官方库名（`Core` / `Std` / `Math`）即可——Front 编译期与 C VM 运行期都会在 `<slang 目录>\module\` 下按名直查（slb 优先），零相对路径配置。
+
+### 3. SLang 代码长这样
+
+```sl
+import Core;
+import Std;
+
+class Greeter
+{
+    string name = "";
+
+    _init_( string name )
+    {
+        this.name = name;
+    }
+
+    string hello()
+    {
+        ret "Hello, " + this.name + "!";
+    }
+}
+
+Project
+{
+    int add2( int a, int b )
+    {
+        ret a + b;
+    }
+
+    _main_()
+    {
+        greeter = Greeter( "SLang" );
+        SystemPrintln( greeter.hello() );
+
+        # 容器
+        List<int> nums = new();
+        nums.add( 1 );
+        nums.add( 2 );
+        nums.add( 3 );
+        for n in nums
+        {
+            SystemPrintln( "n = $n" );
+        }
+
+        # 协程
+        Task task = spawn add2( 20, 22 );
+        int sum = await task as int;
+        SystemPrintln( "20 + 22 = $sum" );
+    }
+}
+```
+
+### 从源码构建
+
+前置：.NET SDK 8、CMake ≥ 3.18、clang（脚本可自动补装 cmake/ninja）、MSVC（native 工程）；Linux 侧走 WSL。
+
+```powershell
+# 三个仓库平级摆放（宿主工程跨仓库引用 Front 与 C VM 源码）
+#   <root>/SlangAllInOne
+#   <root>/simple_language
+#   <root>/csimple_lang
+cd <root>
+
+# 1. 构建 C VM（→ csimple_lang\build\Debug\bin\csimple_lang_dll.dll）
+powershell -File SlangAllInOne\scripts\build-vm-win.ps1 -Config Debug
+
+# 2. 编译即运行：Front 进程内编译 → SLIR 内存直传 → C VM 执行
+dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
+
+# 3. 一键全流程：VM 双平台构建 → 标准库 → 6 用例集编译 + 运行
+powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
+```
+
+全仓开发入口 = [SlangAllInOne.sln](SlangAllInOne.sln)（VS 打开一个 sln 构建全部：宿主 / Front / 编译器 / 测试宿主 / C VM vcxproj / 插件 / 工具；工程清单与路径映射见 [PROJECTS.md](PROJECTS.md)）。
+
+## slang 命令
 
 | 命令 | 说明 |
 |------|------|
-| `compile <project>` | Front 进程内编译；默认磁盘导出，`--in-memory` 时包（JSON 文本或 SLB 字节，按 `--format`）留在内存 |
-| `run <project>` | **编译即运行**：内存编译 → C VM 内存入口（不写 module.json；`--format binary` 时 SLB 字节直传 `cli_run_module_in_memory_binary`） |
-| `run-disk <module.json\|module.slb>` | 经典路径：对已导出的包走 `cli_main run`（两种格式，magic 自动探测） |
-| `info <module.json\|module.slb>` | 模块元数据（`cli_main info`） |
-| `pack-modules` | 编译标准库三件套（Core → Math → Std）并平铺打进 `module\`（slb 直排单目录，无按模块子树；`--dest <dir>` 默认 exe 目录；`--config Debug` = slb + json，`Release` = 仅 slb + math_lib.dll）；`dotnet publish` 自动调起（见「正式发布包」） |
-| `pack-docs` | 把 FrontEnd 用户文档拷进 `md\`（根入口 5 篇 + `syntax/lib/project/log/plugins` 目录镜像 + `source\Front\Lib` 各库说明 → `md\src-lib\`；排除内部 `md\ai\`、`md\vm\` 与 `cvm_*` C 侧工程，共 ~92 篇）；`dotnet publish` 自动调起 |
-| `version` | Front 版本 + C VM DLL 路径/配置 |
+| `compile <工程>` | Front 进程内编译，默认磁盘导出；`--in-memory` 时包留在内存 |
+| `run <工程>` | **编译即运行**：内存编译 → C VM 内存入口，模块不落盘 |
+| `run-disk <module.slb\|module.json>` | 运行已导出的模块包（两种格式，magic 自动探测） |
+| `info <module.slb\|module.json>` | 查看模块元数据 |
+| `version` | Front 版本 + C VM DLL 路径 / 配置 |
+| `pack-modules` | 编译标准库三件套并平铺打进 `module\`（发布包自动调起） |
+| `pack-docs` | 打包用户文档进 `md\`（发布包自动调起） |
 
-## 选项
+常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary`（SLB 二进制导出）｜`--in-memory`｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
 
-| 选项 | 说明 |
+退出码：`0` 成功；`1` Front 编译失败或参数错误；`4` 找不到 C VM DLL（先跑步骤 1）；其他非 0 为 C VM 运行失败原样透传。
+
+## 仓库结构
+
+```
+SlangAllInOne/
+├── SlangAllInOne.sln / .csproj / Program.cs   # 统合宿主 slang（全仓开发入口）
+├── FrontEnd/   # 进程内调 Front CommandExecutor（compile -e ir --in-memory）
+├── Backend/    # C VM P/Invoke（内存直传入口 + DLL 定位）
+├── Pack/       # pack-modules / pack-docs 打包命令（publish 自举）
+├── Project/    # 标准库编译驱动（CompileCore/Math/Std）、测试宿主（CSimpleVM*Test、Test、Test2）、native 库（cvm_math_lib…）
+├── SLangCore/
+│   ├── Lib/    # 标准库源码（Core / Math / Std / SLang：Server、Render、Mysql、Tensora）
+│   ├── test/   # 测试用例集（BaseTest / ExpendTest / MathTest / SpecialTest / BenchMark / RenderTest / TensoraTest…）
+│   └── samples/# 示例（HelloWorld / GUI / 斐波那契…）
+├── md/         # 全部用户文档（syntax / lib / project / log / plugins + ai 内部文档）
+├── scripts/    # 一键脚本（build-all / build-vm-win|linux / compile-* / run-tests-* / release-slang）
+├── tools/      # ExtractLogs / LidIndexer / SLBRoundTrip（slb↔json 往返验证）
+└── out/export/ # 编译产物根（*.module.json / *.module.slb + Logs / DebugCode 调试快照）
+```
+
+Front 编译流水线（排障主干）：`Code → Token → Node → File → Meta → IR → module.json`，各阶段快照落在 `out/export/<模块>/DebugCode/`，日志在 `Logs/`（看最早一条 Error）。
+
+## 文档导航
+
+总入口：[md/INDEX.md](md/INDEX.md)（全仓 md 总索引）。各分组摘要如下。
+
+### 语法（md/syntax/）
+
+| 分组 | 文档 |
 |------|------|
-| `-p, --project <path>` | 工程路径（目录或 .sp 文件） |
-| `-O0..-O3` | Front 优化级别 |
-| `--format <json\|binary>` | 导出格式二选一（透传 Front `--format`；binary = SLB `.module.slb`，规范见 `csimple_lang/md/design/SLB_DESIGN.md`）。`run --in-memory --format binary` 为 SLB 内存直传链路（P2） |
-| `--export-json` / `--no-export-json` | compile 磁盘导出：是否附带 `.module.json` 调试副本（覆盖 jsonc `export.binary.exportJson`，仅 `--format binary` 时生效） |
-| `--in-memory` | compile：包 JSON 留内存（隐含 `-e ir`） |
-| `-t, --test` | 向 C VM 传 `-test`（⚠ 当前为占位，见下） |
-| `--no-banner` | 抑制 banner |
-| `--debug` | C VM 调试模式（指令追踪） |
-| `--force-run` | 跳过 C VM 平台硬校验 |
-| `--strict-plugins` | 插件 disable 视为 C VM 错误 |
-| `--cvm <Debug\|Release>` | 选 C VM 构建树（默认 Debug；找不到回退另一配置） |
-| `-- <args...>` | 之后所有参数进 `Project._inputArgs` |
+| 基础 | [introduction](md/syntax/introduction.md)（总述）、[keywords](md/syntax/keywords.md)（关键字与语法糖总表）、[namespace](md/syntax/namespace.md)、[variable](md/syntax/variable.md)、[local](md/syntax/local.md)、[global](md/syntax/global.md) |
+| 类型与运算 | [number](md/syntax/number.md)、[float8_16](md/syntax/float8_16.md)（Float8/Float16）、[string](md/syntax/string.md)、[data](md/syntax/data.md)、[array](md/syntax/array.md)、[type](md/syntax/type.md)、[typealias](md/syntax/typealias.md)、[express](md/syntax/express.md)、[operator](md/syntax/operator.md)、[cast](md/syntax/cast.md) |
+| 控制流 | [if](md/syntax/if.md)、[switch](md/syntax/switch.md)、[forwhiledowhile](md/syntax/forwhiledowhile.md)、[range](md/syntax/range.md)、[labelgoto](md/syntax/labelgoto.md)、[try](md/syntax/try.md)（异常） |
+| 面向对象 | [class](md/syntax/class.md)、[object](md/syntax/object.md)、[interface](md/syntax/interface.md)、[extend](md/syntax/extend.md)（继承）、[function](md/syntax/function.md)、[enum](md/syntax/enum.md)、[attribute](md/syntax/attribute.md)（注解）、[bind](md/syntax/bind.md) |
+| 高级机制 | [template](md/syntax/template.md)（泛型）、[marco](md/syntax/marco.md)（宏）、[coroutine](md/syntax/coroutine.md)（协程权威）、[isolate](md/syntax/isolate.md)、[inline_lambda](md/syntax/inline_lambda.md)、[system_method](md/syntax/system_method.md)、[result](md/syntax/result.md) |
 
-## 退出码
+### 库（md/lib/）
 
-| 码 | 含义 |
-|----|------|
-| 0 | 成功 |
-| 1 | Front 编译失败（`Log.errorCount > 0` 或执行返回 false）或参数错误 |
-| 4 | 找不到 `csimple_lang_dll.dll`（先构建 C VM） |
-| 非 0（其他） | C VM 运行失败，原样透传 |
+| 分组 | 文档 |
+|------|------|
+| 容器 | [List](md/lib/Std/Contraint/List.md)、[Map](md/lib/Std/Contraint/Map.md)、[HasSet](md/lib/Std/Contraint/HasSet.md)（Set）、[Tuple](md/lib/Std/Contraint/Tuple.md)、[Queue](md/lib/Std/Contraint/Queue.md)、[Stack](md/lib/Std/Contraint/Stack.md)、[LinkedList](md/lib/Std/Contraint/LinkedList.md) |
+| Core | [Lz4](md/lib/Core/Lz4.md)、[ProtocalBuffers](md/lib/Core/ProtocalBuffers.md)（protobuf）、[Stream](md/lib/Core/Stream.md)（元素流） |
+| Math | [总览](md/lib/Math/Math.md)、[数学函数](md/lib/Math/Math-Functions.md)、[大数](md/lib/Math/Math-BigNumbers.md)、[向量](md/lib/Math/Math-Vectors.md)、[矩阵](md/lib/Math/Math-Matrices.md)、[动态矩阵](md/lib/Math/Matrix.md) |
+| Std | [Env](md/lib/Std/Env.md)、[Component](md/lib/Std/Component.md)、[Sqlite](md/lib/Std/Sqlite.md) |
+| 网络（md/lib/Std/net/） | [Net 总览](md/lib/Std/net/Net.md)、[Tcp](md/lib/Std/net/Tcp.md)、[Udp](md/lib/Std/net/Udp.md)、[StreamImplent](md/lib/Std/net/StreamImplent.md)（流实现）、[Http](md/lib/Std/net/Http.md)、[Websocket](md/lib/Std/net/Websocket.md)、[Mqtt](md/lib/Std/net/Mqtt.md) |
+| 服务框架 | [Server](md/lib/Server.md)（HTTP/WS 服务框架） |
 
-## 构建 / 运行
+### 工程（md/project/）
 
-前置：C VM 已构建出 `csimple_lang\build\{Debug,Release}\bin\csimple_lang_dll.dll`
-（构建方式见根 `AGENTS.md` §5，如 `powershell scripts\build-vm-win.ps1 -Config Debug`）。
+| 文档 | 内容 |
+|------|------|
+| [project.md](md/project/project.md) | 工程概念：编译文件列表、入口与全局变量 |
+| [project-config-jsonc-guide.md](md/project/project-config-jsonc-guide.md) | **`.jsonc` 工程配置权威说明**（compileFiles / systemCalls / export…） |
+| [project_sp-guide.md](md/project/project_sp-guide.md) | `.sp` 入口：`_main_` / `_test_`、`Project{}`、`global.data` |
+| [project-module.md](md/project/project-module.md) | 模块与类组织方式 |
+| [project_arguments.md](md/project/project_arguments.md) | CLI 程序入参 `global._inputArgs` |
+| [static-if.md](md/project/static-if.md) | `global.macro` 宏数据面与注入优先级链 |
+| [optimization.md](md/project/optimization.md) | 编译优化等级 `-O0..-O3` |
+| [environment-guide.md](md/project/environment-guide.md) | `Environment.*` 平台环境与 jsonc `platform` 段 |
+| [ffi.md](md/project/ffi.md) | **FFI 外部函数接口**（`@DllImport` / `FFI.Library` / `dllImports`） |
+| [project-system-method-call-guide.md](md/project/project-system-method-call-guide.md) | 系统方法下沉 C VM 的完整链路 |
+| [exporter.md](md/project/exporter.md) | AOT Exporter：IR → LLVM IR `.ll` |
+| [test-guide.md](md/project/test-guide.md) | **测试引导**：用例集 ↔ 宿主工程对照与运行方式 |
 
-```powershell
-cd d:\project\lang
-# 编译即运行（module.json 不落盘）
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run simple_language\test\BaseTest\ProjectTest
-# 传参：-- 之后进 global._inputArgs
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run simple_language\test\Other\MiniSmoke\MiniSmoke -- hello 42 world
-# 经典磁盘路径
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run-disk simple_language\out\export\ProjectTest\ProjectTest.module.json
-```
+### 日志 / 插件 / 根级
 
-注意：`run` 在进 C VM 前把 CWD 切到工程目录（用例含 `Resources/` 等相对路径，与 CSimpleVMTest 宿主行为一致）；编译阶段沿用启动 CWD。
+| 文档 | 内容 |
+|------|------|
+| [log/log-system-guide.md](md/log/log-system-guide.md)、[log/log-debug-usage.md](md/log/log-debug-usage.md) | 日志系统与 `Log / Logger / Profiling / Trace / Monitor` 使用 |
+| [plugins/CSharp_Mono.md](md/plugins/CSharp_Mono.md) | `@csharp_mono(){}` 内联 C# |
+| [plugins/PLUGIN_TEMPLATE.md](md/plugins/PLUGIN_TEMPLATE.md) | 插件开发标准模板 |
+| [CLI.md](md/CLI.md)、[GUIDE.md](md/GUIDE.md) | `cx` 命令体系 / 文档引导 |
+| [SL语法与编码规范总表.md](md/SL语法与编码规范总表.md) | 语法与编码规范单点引用总表（48 篇语法提炼） |
+| [PROJECTS.md](PROJECTS.md) | **工程清单与新旧路径映射**（改工程先读） |
+| [RELEASE.md](RELEASE.md) | **发布策略唯一权威**（AOT-only 双平台） |
 
-## 经典发布包（package\debug | package\release，本地开发用）
+### 深度设计文档（csimple_lang 仓库）
 
-🔥 **发布渠道策略（2026-10-17 用户指令）：GitHub Release 今后只发 Native AOT 包**
-（见下方「Native AOT 发布」与「一键发布」节）；经典 Release/Debug 包不再对外发布，
-仅作本地开发 / 调试使用。
+VM 侧设计真源在 [csimple_lang/md/design](https://github.com/kamaba/csimple_lang/tree/main/md/design)：[SLB 二进制模块格式](https://github.com/kamaba/csimple_lang/blob/main/md/design/SLB_DESIGN.md)、[运行时 JIT](https://github.com/kamaba/csimple_lang/blob/main/md/design/JIT_DESIGN.md)、[GC](https://github.com/kamaba/csimple_lang/blob/main/md/design/GC_DESIGN.md)、[Net 网络层](https://github.com/kamaba/csimple_lang/blob/main/md/design/NET_DESIGN.md)、[插件系统与 `@tag{}`](https://github.com/kamaba/csimple_lang/blob/main/md/design/PLUGIN_SYSTEM_DESIGN.md)、[attribute 四时点](https://github.com/kamaba/csimple_lang/blob/main/md/design/ATTRIBUTE_DESIGN.md)、[payload 二进制格式](https://github.com/kamaba/csimple_lang/blob/main/md/design/PAYLOAD_BINARY_FORMAT.md)等。
 
-`dotnet publish` **一条命令**产出自包含发布包。publish 过程全自动四步：
-① 增量构建对应配置的 C VM（Ninja，无变化秒过）→ ② 拷 C VM 运行时到 `bin\` →
-③ **编译标准库三件套并打进包内**（`PackStdModules` target 调起刚发布的 exe 执行
-`pack-modules`，制作逻辑全部在工程代码 `Pack/PackModulesCommand.cs` 里，无手工脚本）→
-④ **拷 FrontEnd 用户文档进包内 `md\`**（`PackDocs` target 调起 `pack-docs`，
-清单在 `Pack/PackDocsCommand.cs`：根入口 5 篇 + `syntax/lib/project/log/plugins`
-目录镜像 + `source\Front\Lib` 各库说明 → `md\src-lib\`，排除 `md\ai\`、`md\vm\`
-内部文档与 `cvm_*` C 侧工程）：
+## 测试
 
-```powershell
-cd d:\project\lang
-dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -o SlangAllInOne\package\release
-dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug   -o SlangAllInOne\package\debug
-```
+| 用例集 | 覆盖 | 宿主工程（Project\） |
+|--------|------|----------------------|
+| BaseTest | 语言核心语法（类/泛型/协程/容器/Float8…，60+ `.sl`） | CSimpleVMCoreTest、Test |
+| ExpendTest | 标准库/扩展库（Json/Xml/File/Sqlite/Isolate/Attribute/Server…） | CSimpleVMStdTest、Test2 |
+| MathTest | 数学库（FFI 数学/矩阵/大数） | CSimpleVMMathTest |
+| SpecialTest | FFI/跨语言/AOT/进程执行 | CSimpleVMSpecialTest |
+| BenchMark | 性能基准（Fibonacci/Levenshtein/Loop…） | CSimpleVMBenchMarkTest |
+| RenderTest / TensoraTest / MysqlTest | 渲染 / 张量 / MySQL | RenderTest / 传参运行 |
 
-**一键发布 GitHub Release**（🔥 2026-10-17 起 **AOT-only + 双平台同发**，维护机专用；权威策略文档见 [RELEASE.md](RELEASE.md)）：`scripts\release-slang.ps1` 全自动产出
-https://github.com/kamaba/SlangAllInOne 上的 tag `v<版本>`、Release
-`slang_release <版本>` 与**两个资产**：win-x64 zip（`package\aot`）+
-linux-x64 tar.gz（`package\aot-linux`，WSL 构建，目标机无需 .NET 运行时）：
+联合测试宿主 = C# Front 编译用例 → C VM 执行（Debug = P/Invoke 进程内可同进程调试，Release = 独立进程）。完整说明见 [md/project/test-guide.md](md/project/test-guide.md)。
 
 ```powershell
-cd d:\project\lang
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.3
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.3 -Draft
+powershell -File scripts\compile-tests.ps1          # 编译用例集
+powershell -File scripts\run-tests-win.ps1          # Windows 运行 + 退出码汇总
+powershell -File scripts\build-all.ps1 -Run         # 一键全流程
 ```
 
-流程：preflight（tag/Release 查重、token 校验、`-Version` 必填、WSL 工具链+dotnet SDK）→
-Windows AOT 包（`-r win-x64 -p:PublishAot=true`，布局校验）→ Linux AOT 包（WSL：cmake
-ReleaseLinux hardened `.so` + `-r linux-x64` AOT 发布 + bin 组装 + module/md 复用）→
-双平台冒烟（win run-disk Std/Math；linux run-disk Std + `run MiniSmoke` Front E2E）→
-压 zip + tar.gz（WSL 内 tar 保 exec 位）→ git 提交 + tag + push → GitHub Release 附双资产。
-参数：`-Draft`（草稿）、`-SkipBuild`（复用现包重压）、`-NoCommit`（工作区脏则中止
-而非自动提交）、`-NoPush`（本地到 tag 为止）、`-Token <t>`（显式指定）。鉴权默认取
-git 凭据管理器里的 GitHub token（即 `git push` 用的那个，需 `repo` 权限）。
+## 发布
 
-仓库卫生：`package\` 产物自 v0.0.1 起**不再入库**（`.gitignore` 早已声明 `/package`，脚本
-自动 `git rm -r --cached package` 清理历史残留跟踪）——二进制分发统一走 GitHub Releases，
-发布提交只含源码改动。
-
-**产物名 `slang`**：csproj 设 `<AssemblyName>slang</AssemblyName>`，发布包主程序为
-`slang.exe` / `slang.dll`（工程目录与命名空间仍是 SlangAllInOne；publish target 用
-`$(AssemblyName)` 自举，pack-modules / pack-docs 自动跟随）。
-
-任一步失败 publish 即失败（不打缺运行时/缺模块的坏包）。
-
-**Release 包卫生措施**（csproj 两个 hygiene target，2026-10-13）：`dotnet publish`
-从不清理输出目录，历史残留（旧 dll、`1.cmd`、运行日志 `build\logs`、test 草稿）
-会永久堆积，故 Release 发布时——
-- **发布拷贝前**整树清空输出目录（`WipeReleasePackage`，挂 `_CopyFilesToPublishFolder`
-  之前；⚠ 不能挂 `Publish`——那个钩子在依赖链拷贝**之后**才执行，会把刚拷出的产物
-  连带 pack 自举用的 slang.exe 一起删掉，MSB3073/9009）。安全护栏：`-o` 路径含
-  `package` 字样才执行，`publish -o <任意目录>` 不会误清无关目录；
-- **全链结束后**剪掉运行不需要的文件（`TrimReleasePackage`）：被引用 Exe 工程的
-  `SimpleLanguageFront.exe` / `.deps.json` / `.runtimeconfig.json`（宿主进程内编译只
-  用它的 `.dll`，依赖解析走宿主自己的 `slang.deps.json`；pack 命令自举走本应用 exe）
-  与根目录 `*.pdb`。最终 Release 根目录仅：`slang.exe` / `slang.dll` /
-  `slang.deps.json` / `slang.runtimeconfig.json` + `SimpleLanguageFront.dll` +
-  插件 frontend 两 dll（`SLCSharpMonoFrontend` / `SLJavaHotspotFrontend`，Front 编译
-  插件工程时反射装载，必留）。
-Debug 包保留 publish 原始产物（现场调试用），不做这两步。
-
-包内容对比：
-
-| 目录 | Debug 包 | Release 包 |
-|------|----------|------------|
-| `slang.exe + *.dll` | .NET 应用 + Front 编译器（发布产物名 `slang`，见下）+ publish 原始产物全量 | 同左（另自动剪掉 Front 的 exe/deps.json/runtimeconfig.json 与根 `*.pdb`，只留运行必需件，见上方卫生措施） |
-| `bin\` | csimple_lang_dll.dll（~3MB 带边界检查）+ sqlite3.dll + pdb | csimple_lang_dll.dll（~1.6MB）+ sqlite3.dll |
-| `module\` | `*.module.slb` **+ `*.module.json` 调试副本**，**平铺单目录**（无按模块子树） | **仅必须的 `*.module.slb`**，平铺单目录 |
-| `module\math_lib.dll` | ✓（FFI 原生库，vmDllImports 预载 + 静态绑定） | ✓ |
-| `md\` | ✓ 用户文档 ~92 篇（语法/库/工程/日志/插件 + 各库说明） | ✓ 同左 |
-| 定位 | 编译 + 运行 + 调试全功能 | 运行包（跑已编译 slb） |
-
-**平铺布局**：包内模块不再镜像仓库 `out\export\<模块>\` 子树，`module\` 单目录直排
-`<模块>.module.slb`（Debug 另有 `.module.json` 调试副本）+ `math_lib.dll`。模块间
-引用（`moduleReferences`，基准 = 主包所在目录）由 C VM 装载器回退解析：原样相对
-路径落空时按 basename 回退 `<主包目录>\<名>.module.json`（json 或 slb 任一存在即
-尝试，SLB 优先重定向）；FFI `dllImports` 同理按 `<主包目录>\<basename>` 直查。
-仓库开发布局（`out\export\<模块>\` 深层路径）不受影响，仍走原路径直接装载。
-
-**包内使用**（整包拷到任意位置，脱离仓库运行）：
+发布策略（[RELEASE.md](RELEASE.md) 唯一权威）：**只发 Native AOT 包，每版双平台同发**——同一 GitHub Release 挂 `slang_release_<v>_win-x64.zip` 与 `slang_release_<v>_linux-x64.tar.gz`，目标机无需 .NET 运行时；经典 .NET 依赖包仅本地开发用。一键发布（维护机）：
 
 ```powershell
-# Release 包：跑已编译模块 —— 用户 slb 放包内 module\ 即可
-slang.exe run-disk module\MyProj.module.slb
-
-# 编译 + 运行用户工程：工程放包内任意位置（甚至包外），jsonc 的 references
-# 直接写官方库名即可（2026-10-17 官方库直查）——Core/Std/Math 及任何放进
-# module\ 的官方库都按名字在 <slang 目录>\module\ 直查，无需易碎的相对路径：
-#   "references": [ { "path": "Core", "name": "Core.module.json" },
-#                   { "path": "Std", "name": "Std.module.json" } ]
-# 开箱示例：包内 test\RefProbe\（纯名引用 Core/Std 的最小工程），直接
-slang.exe run test\RefProbe\RefProbe
-slang.exe run test\MyProj\MyProj
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version <x.y.z> [-Draft] [-SkipBuild] [-NoCommit] [-NoPush]
 ```
 
-官方库引用解析链（Front 编译期与 C VM 运行期双侧一致）：常规相对路径 →
-`<slang 目录>\module\<名>.module.slb|json`（slb 优先；工程跨盘/包外时 C VM
-侧再兜底 `<exe 目录>\module\` 直查）。开发布局（`bin\` 下无 `module\`）
-自然落空，不影响仓库内开发。
+流程全自动：preflight 查重 → Windows AOT 包 → Linux AOT 包（WSL）→ 双平台冒烟 → 压缩 → git 提交 + tag + push → GitHub Release 附双资产。C VM Release 构建默认加固（LTO + 符号剥离 + 启动反调试），第三方协议合规文件随包注入 `licenses\`。
 
-注意：**用户模块必须与包内标准库同源编译**（引用装载有 uuid 校验，旧模块配新
-标准库仅 Warning 但类装配可能错位）；标准库更新后用户模块需重新 compile。
+## 调试
 
-| 项 | 说明 |
-|----|------|
-| C VM 配置联动 | `-c Debug` → 打包 Debug 树 C VM；`-c Release` → Release 树；显式 `-p:CvmBuildConfig=<cfg>` 最优先；`pack-modules --config` 随之联动 |
-| 标准库编译模型 | Core → Math → Std，每模块一个干净子进程（publish 出的 exe 自举 `compile -O3 --format binary --export-json`，R15）；成功判据 = exit 0 + slb mtime fresh（对齐 scripts\compile-stdlib.ps1） |
-| Math 的 vmDlls | 编译 Math 时 Front 自动 MSBuild 构建 `cvm_math_lib.vcxproj` 并拷出 math_lib.dll（MSBuild 缺失仅跳过并复用已有 dll，缺失则打包失败） |
-| DLL 定位优先级 | `<exe 目录>\bin\csimple_lang_dll.dll`（打包布局，优先）→ `csimple_lang\build\{Debug,Release}\bin`（开发布局，回退） |
-| 手动重打模块 | `slang.exe pack-modules [--dest <dir>] [--config Debug|Release]`（默认 dest = exe 目录） |
-| 手动重打文档 | `slang.exe pack-docs [--dest <dir>]`（默认 dest = exe 目录；不在仓库内运行时报错跳过） |
+- **VS F5 混合调试（主推）**：打开 `SlangAllInOne.csproj`，选 launchSettings 的 `run MiniSmoke (C# + C VM mixed)` profile——C# 断点打在 `simple_language\source\**`，C 断点直接打在 `csimple_lang\src\**`（P/Invoke 进程内加载，符号天然对上）。
+- **运行输出不对**：先看 `out/export/<模块>/Logs/Result.txt`（print 镜像）→ `VM.txt` → `Front.txt`（最早一条 Error）→ `DebugCode/` 各阶段快照反查。
 
-## Native AOT 发布（★ 官方发布渠道，2026-10-17 起 AOT-only + 双平台同发）
+## 许可证
 
-GitHub Release 今后**只发本节产物**（用户指令 2026-10-17，权威文档见 [RELEASE.md](RELEASE.md)）；
-一键发布走 `scripts\release-slang.ps1 -Version <v>`（见上节），每版双平台同发：
-Windows 包（`package\aot`）+ Linux 包（`package\aot-linux`）。
-
-`dotnet publish` 加 `-r win-x64 -p:PublishAot=true` 即产出 **Native AOT 单文件 exe**（~9.9MB，
-自带 Front 编译器全量 native 代码，无需 .NET 运行时），其余包结构与经典发布一致
-（`bin\` C VM 运行时 + `module\` 标准库 slb + `md\` 用户文档，publish 四步链全自动不变）：
-
-```powershell
-cd d:\project\lang
-dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Release -r win-x64 -p:PublishAot=true -o SlangAllInOne\package\aot
-```
-
-### 为 AOT 做的兼容改造（均在普通构建下行为不变）
-
-| # | 改动 | 原因 |
-|---|------|------|
-| 1 | 插件 frontend 两工程 TFM `netstandard2.0` → `net8.0` | AOT 要求引用链全部 TFM 支持 AOT（netstandard → `NETSDK1207`） |
-| 2 | [LogManager.cs](../simple_language/source/Front/Log/LogManager.cs) 移除 `Assembly.GetCallingAssembly()` | AOT 无运行期栈回溯 → `PlatformNotSupportedException` |
-| 3 | [MetaEnum.cs](../simple_language/source/Front/Core/MetaEnum.cs) 枚举成员自增 `dynamic` → `object` + `DynamicEnumAddOne`（复刻 C# 数值提升/unchecked 回绕语义） | AOT 不支持 `dynamic`（CallSite/Microsoft.CSharp） |
-| 4 | **SLIR/插件契约 JSON 全面迁移 source-gen**：新增 `FrontJsonContext.cs`（`[JsonSerializable]` 登记根类型），`SerializePackage`/`Read`/插件 Parse/Build/IRData 遗留 JSON 全部改走 `FrontJsonOptions`；`payload` byte[] 的 Latin1 编码改属性级 `[JsonConverter]`；宏注入 `SerializeToElement(字典)` 改手工 Utf8JsonWriter | **核心硬墙**：STJ 反射序列化运行期 `MakeGenericType` 展开 `JsonPropertyInfo<T>`，AOT 必炸；source-gen 编译期生成元数据，产物与反射版字节级一致（694,409 行 diff 仅 `globalStaticVariableList[].id` 等逐进程随机哈希值，经典构建同样逐次不同） |
-| 5 | csproj：AOT 发布时 `TrimmerRootAssembly`（SimpleLanguageFront + 两插件 frontend，类型/成员/嵌入资源全保形）+ `JsonSerializerIsReflectionEnabledByDefault=true`（CompileBeforeManager 基元 `SerializeToElement` 等残余反射点） | 裁剪器按静态可达性裁类型，Front 大量"按名字字符串反射"会 MissingMetadata / GetType 返回 null |
-| 6 | csproj：AOT 发布时 `DebugType=none`（不产出 ~50MB 原生 slang.pdb）+ `TrimReleasePackage` 的 `PublishDir` 先绝对化再通配 | 前者：AOT 发布里 pdb 的 Delete/Wipe 实测失效——junk 列表正确（含 pdb）、exit 0，文件却原样驻留（发布后手动删除正常；推测 Trim 落在 pack-modules/pack-docs `<Exec>` 运行 AOT exe 的窗口内，机制未深挖），故源头关掉 pdb 生成一劳永逸，且包体省 50MB（Release 哲学只运行不发调试）。后者：`msbuild -p:PublishDir=<相对>` 直跑 target 时 SDK 按工程目录规范化 → 双层路径错位 → glob 落空 |
-
-### 已知限制（AOT 形态）
-
-- **C# 导出目标不可用**：`Export/CSharp/IL/CSharpEmitter.cs` 走 `System.Reflection.Emit`（运行期
-  动态程序集），AOT 下调用即抛 `PlatformNotSupportedException`。AllInOne 主链路只走 `-e ir`，不受影响。
-- **插件 frontend 只能使用内置（编译进 exe）的程序集**：`Assembly.LoadFrom` 在 AOT 下无法运行期加载
-  管理程序集；`PluginFrontendParser.FindLoadedAssembly` 旁路命中 exe 内已 AOT 化的插件程序集
-  （TrimmerRootAssembly 保形后 `GetType/GetMethod/Invoke` 可用），但磁盘上新编译的插件 dll
-  需重新 publish 才生效。`@csharp_mono` 全链路（含 mono 运行时）未在 AOT 形态实测。
-- 发布构建仍有 IL2026/IL3050 警告残留（反射 API 的"可能不兼容"提示，类型已保形 + source-gen
-  接线后实际路径安全）；启动性能、编译吞吐与 JIT 版的对比未做基准测量。
-
-## 调试（Frontend C# + C VM C 同进程混合）
-
-**VS F5（主推）**：用 VS 打开 `SlangAllInOne\SlangAllInOne.csproj`，选 `Properties\launchSettings.json` 里的
-`run MiniSmoke (C# + C VM mixed)` profile（`nativeDebugging: true`）按 F5：
-
-- **Frontend**：直接在 `simple_language\source\Front\**` 打 C# 断点；
-- **C VM**：直接在 `csimple_lang\src\**` 打 C 断点（P/Invoke 进程内加载 `build\Debug\bin\csimple_lang_dll.dll`，
-  同目录 `.pdb` 源码路径与本仓库一致，符号天然对上）；
-- 换调试用例：改 launchSettings 的 `commandLineArgs`，或命令行 `dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run <工程>`；
-- 命令行裸 `dotnet run`（不带 `--`）即走默认 profile 的参数。
-
-**调试发布包**：`package\debug\bin\` 已含 `csimple_lang_dll.pdb`（publish 自动打包，Debug 树产物），
-VS「调试 → 附加到进程」选 `slang.exe`（或在包目录直接用 VS 打开 exe 调试）即可在
-C VM 源码断点；`.NET` 侧 Debug 包带自身 pdb，Frontend 断点同样可用。
-`package\release` 无 pdb（Release 树不产出），只用于运行不发调试。
-
-已知噪音：Front 编译失败写日志时可能触发 `Log.cs` 的 F: 盘硬编码路径异常（独立已知问题，与本链路无关）。
-
-## 已知限制：`-t` 是占位
-
-C VM `-test` 目前只解析不生效（`opts.test` 全源码只写不读，`cli_command.h` 注释 "currently same entry"），
-且 Front 导出包只带 `_main_` 的 `entryMethodId`（`SLModulePackageWriter` 只认 `_main_` 入口）。
-因此磁盘与内存路径都实际执行 `_main_`。切换 `_test_` 入口需改 SLIR 协议（Front 写入口 + C VM 选入口两侧）。
-
-## 验证记录（2026-10-08）
-
-| 项 | 结果 |
-|----|------|
-| `run BaseTest\ProjectTest`（编译→内存→运行） | ✅ `_main_` 跑通，exit 0 |
-| 内存模式不落盘 | ✅ module.json mtime 保持不变 |
-| `compile` 磁盘导出对照 | ✅ mtime 更新 |
-| `run-disk` / `info` | ✅ |
-| `-- a b c` → `global._inputArgs` | ✅ args count = 3 |
-| 负例（ConstProbe 等故意报错探针） | ✅ exit 1 正确传播 |
-| 自包含发布包（2026-10-09） | ✅ package\release 内 JsonTest/ExportPermTest exit 0，DLL 来自包内 lib\；整包拷 %TEMP% 脱离仓库运行同样通过（`DLL: ...\lib\csimple_lang_dll.dll (package)`） |
-| 正式发布包·平铺布局（2026-10-13） | ✅ publish 全自动（`bin\` 运行时 + `module\` slb 直排单目录 + math_lib.dll）：Release 包 run-disk Std（packageCount=2）、Math（packageCount=3 + math_lib FFI 预载 40/40）exit 0；Debug 包（slb + json）包内 `run` 用户工程（references 写 `{ "path": "../../module", "name": "Core.module.json" }`）：Front 装载 `module\Core.module.json`、C VM SLB 优先直指 `module\Core.module.slb`、packageCount=2，exit 0；仓库开发布局（`out\export\` 深层路径）回归无退化 |
-| 用户文档打包（2026-10-13） | ✅ `pack-docs` 随 publish 自动执行，双包各 92 篇：根 5 + syntax 38 + lib 26 + project 12 + log 2 + plugins 2 + src-lib 7；`cvm_sl_mysql_lib` 等 C 侧工程与 `md\ai\`、`md\vm\` 正确排除；`--dest` 手动模式抽查通过 |
-| 产物名改为 slang（2026-10-13） | ✅ `<AssemblyName>slang</AssemblyName>`：双包产出 `slang.exe`/`slang.dll`，publish 自举 targets（pack-modules / pack-docs，走 `$(AssemblyName)`）正常；Release `slang.exe version` 与 Debug `slang.exe run-disk Core.module.slb` 均 exit 0 |
-| Native AOT 发布（2026-10-17） | ✅ `-r win-x64 -p:PublishAot=true`：publish 四步链全绿（slang.exe 9.87MB 单文件 + `bin\` C VM 运行时 + `module\` 三件套 slb + math_lib.dll + `md\` 93 篇，包内无 pdb——DebugType=none）；Core.module.json 与反射版 694,409 行结构逐行一致（仅逐进程随机哈希值不同，AOT 自跑两次同样不同）；AOT exe `run BaseTest\ProjectTest` 全链路（Front 编译→SLIR 内存直传→C VM 执行）exit 0、`run MiniSmoke` exit 0；兼容改造清单与已知限制见「Native AOT 发布」节 |
-| Release 包卫生清理（2026-10-13） | ✅ Wipe（挂 `_CopyFilesToPublishFolder` 前）+ Trim（挂 PackDocs 后）随 publish 自动执行：根目录仅剩 slang 四件套 + `SimpleLanguageFront.dll` + 插件 frontend 两 dll，`1.cmd`/`SimpleLanguageFront.exe`/根 `*.pdb`/`build\logs`/test 草稿全消失；回归 `run-disk Std.module.slb`（packageCount=2）、`Math.module.slb`（packageCount=3 + math_lib FFI 预载 40/40）均 exit 0 |
-
-相关文档：C VM 宿主 API 见 `csimple_lang\md\cli.md`；Front 内存导出模式见 `simple_language\md\ai\EXPORT_PATHS.md`。
+[Apache-2.0](LICENSE)。C VM 静态链接的第三方组件（yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite）协议全文见 [csimple_lang/third_party/LICENSES](https://github.com/kamaba/csimple_lang/tree/main/third_party/LICENSES)，并随发布包注入 `licenses\`；`sl_mysql_lib`（GPL-2.0 静链）不随官方发布包分发。

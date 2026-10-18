@@ -214,11 +214,10 @@
 | [CLI.md](./CLI.md) | CLI 说明（`cx` 命令体系） |
 | [code.md](./code.md) | 代码相关说明 |
 | [SL语法与编码规范总表.md](./SL语法与编码规范总表.md) | **语法与编码规范单点引用总表**（由 syntax/ 48 篇 + code.md 提炼去重）：编码规范（命名/对齐/注释/提交/Core 库）、关键字总表（词法保留 + 非词法保留 + 类型词）、语法糖总表、语法速查 21 节（声明与语句格式）、Core 类型清单、16 条已知坑 |
-| [../README_CN.md](../README_CN.md) / [../README.md](../README.md) | 项目主自述（中/英） |
-| [../PRD.md](../PRD.md) | 产品说明 |
-| [../Release_CN.md](../Release_CN.md) / [../Release.md](../Release.md) | 发布说明 |
-| [../target.md](../target.md) | 目标与规划 |
-| [../source/Front/Lib/Core/Core.md](../source/Front/Lib/Core/Core.md) | Core 库说明（源码树内） |
+| [../README.md](../README.md) / [../README_EN.md](../README_EN.md) | 项目主自述（中 / 英，2026-10-18 重写：含关联开源仓库地址与文档导航） |
+| [../PROJECTS.md](../PROJECTS.md) | 工程清单与新旧路径映射（改工程先读） |
+| [../RELEASE.md](../RELEASE.md) | 发布策略（AOT-only 双平台，唯一权威） |
+| [../SLangCore/Lib/Core/Core.md](../SLangCore/Lib/Core/Core.md) | Core 库说明（标准库源码树内） |
 
 ---
 

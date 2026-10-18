@@ -22,7 +22,7 @@
 |------|------|------|------|------|
 | host | **SlangAllInOne** | `SlangAllInOne.csproj` | csproj/Exe | 统合宿主 `slang`：Front 进程内编译 + C VM P/Invoke；publish 自举 pack-modules/pack-docs |
 | front | **SimpleLanguageFront** | `..\simple_language\source\SimpleLanguageFront.csproj` | csproj/Exe | Front 编译器（opcode 真源 `IROpEnum.cs`） |
-| compile | **SimpleLanguageCompileCore / Math / Std** | `Project\Compile*\SimpleLanguageCompile*.csproj` | csproj/Exe | 标准库三驱动（仅引用 Front）；编译产物 → `SlangAllInOne\out\export\` |
+| compile | **SimpleLanguageCompileStdlib** | `Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj` | csproj/Exe | 标准库编译驱动（2026-10-18 三合一：core/math/std 预设 + all 子进程三连编 + launchSettings 分流；仅引用 Front）；编译产物 → `SlangAllInOne\out\export\` |
 | test | **CSimpleVMCoreTest / StdTest / MathTest / SpecialTest / BenchMarkTest / Test / RenderTest** | `Project\CSimpleVM*\*.csproj`、`Project\CSimpleVMRenderTest\RenderTest.csproj` | csproj/Exe | 联合测试宿主（Front 编译用例 → C VM 执行）；Debug=P/Invoke 进程内，Release=独立进程 |
 | native-cvm | **csimple_lang_lib / csimple_lang_exe** | `..\csimple_lang\project\vs\vm_lib\…`、`..\csimple_lang\project\vs\vm_exe\…` | vcxproj | C VM DLL（宿主 P/Invoke 载的就是它）与独立 CLI exe |
 | native-libs | **cvm_math_lib / cvm_sl_mysql_lib / CLangdll** | `Project\*\*.vcxproj` | vcxproj | Math FFI（Math.jsonc `vmDlls` 构建它 → `math_lib.dll`）、Mysql FFI、CLangdll |
@@ -38,7 +38,7 @@
 |------|------|
 | `simple_language\source\Front\` | `simple_language\source\`（Front 子层拍平） |
 | `simple_language\source\Front\Lib\` | `SlangAllInOne\SLangCore\Lib\`（Core/Math/Std/SLang：Server、Render、Mysql、Tensora） |
-| `simple_language\source\CompileCore|CompileMath|CompileStd\` | `SlangAllInOne\Project\Compile*\` |
+| `simple_language\source\CompileCore|CompileMath|CompileStd\` | `SlangAllInOne\Project\Compile*\` → 2026-10-18 三合一为 `Project\CompileStdlib\`（core/math/std/all 预设） |
 | `simple_language\source\MathNativeImpl|StdNativeImpl|CLangdll\` | `SlangAllInOne\Project\`（前两个已删除——旧 C# VM 外部函数机制） |
 | `simple_language\project\CSimpleVM*Test\` | `SlangAllInOne\Project\CSimpleVM*Test\` |
 | `simple_language\project\cvm_math_lib\` | `SlangAllInOne\Project\cvm_math_lib\`（Math.jsonc `vmDlls[].project` 现指向 `../../../Project/cvm_math_lib/…`） |
@@ -67,10 +67,9 @@
 # Front 编译（.sl → module.json）
 dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <.sp> -e ir
 
-# 标准库三件套（→ SlangAllInOne\out\export\）
-dotnet run --project SlangAllInOne\Project\CompileCore\SimpleLanguageCompileCore.csproj   # 先 Core
-dotnet run --project SlangAllInOne\Project\CompileMath\SimpleLanguageCompileMath.csproj  # 含 vmDll 构建 math_lib.dll
-dotnet run --project SlangAllInOne\Project\CompileStd\SimpleLanguageCompileStd.csproj
+# 标准库（→ SlangAllInOne\out\export\；三合一驱动，预设 core|math|std|all，缺省 all）
+dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- core   # 单编 Core（math/std 同理）
+dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj          # Core→Math→Std 全编（Math 含 vmDll 构建 math_lib.dll）
 
 # 编译即运行（Front → SLIR 内存直传 → C VM）
 dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner

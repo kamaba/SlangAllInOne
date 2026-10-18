@@ -169,7 +169,7 @@ SlangAllInOne/
 ├── FrontEnd/   # 进程内调 Front CommandExecutor（compile -e ir --in-memory）
 ├── Backend/    # C VM P/Invoke（内存直传入口 + DLL 定位）
 ├── Pack/       # pack-modules / pack-docs 打包命令（publish 自举）
-├── Project/    # 标准库编译驱动（CompileCore/Math/Std）、测试宿主（CSimpleVM*Test、Test、Test2）、native 库（cvm_math_lib…）
+├── Project/    # 标准库编译驱动（CompileStdlib：core/math/std 分流）、测试宿主（CSimpleVM*Test、Test、Test2）、native 库（cvm_math_lib…）
 ├── SLangCore/
 │   ├── Lib/    # 标准库源码（Core / Math / Std / SLang：Server、Render、Mysql、Tensora）
 │   ├── test/   # 测试用例集（BaseTest / ExpendTest / MathTest / SpecialTest / BenchMark / RenderTest / TensoraTest…）

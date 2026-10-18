@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "All (default)": {
+      "commandName": "Project"
+    },
+    "Core": {
+      "commandName": "Project",
+      "commandLineArgs": "core"
+    },
+    "Math": {
+      "commandName": "Project",
+      "commandLineArgs": "math"
+    },
+    "Std": {
+      "commandName": "Project",
+      "commandLineArgs": "std"
+    }
+  }
+}

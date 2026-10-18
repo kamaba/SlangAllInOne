@@ -169,7 +169,7 @@ SlangAllInOne/
 ├── FrontEnd/   # In-process invocation of the Front CommandExecutor (compile -e ir --in-memory)
 ├── Backend/    # C VM P/Invoke (in-memory entry + DLL discovery)
 ├── Pack/       # pack-modules / pack-docs commands (self-bootstrapped on publish)
-├── Project/    # Stdlib compile drivers (CompileCore/Math/Std), test hosts (CSimpleVM*Test, Test, Test2), native libs (cvm_math_lib…)
+├── Project/    # Stdlib compile driver (CompileStdlib: core/math/std presets), test hosts (CSimpleVM*Test, Test, Test2), native libs (cvm_math_lib…)
 ├── SLangCore/
 │   ├── Lib/    # Standard library sources (Core / Math / Std / SLang: Server, Render, Mysql, Tensora)
 │   ├── test/   # Test suites (BaseTest / ExpendTest / MathTest / SpecialTest / BenchMark / RenderTest / TensoraTest…)

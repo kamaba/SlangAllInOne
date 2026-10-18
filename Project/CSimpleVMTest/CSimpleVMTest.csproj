@@ -11,4 +11,22 @@
     <ProjectReference Include="..\..\..\simple_language\source\SimpleLanguageFront.csproj" />
   </ItemGroup>
 
+  <!-- 2026-10-18 八宿主合一（CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest +
+       Test/Test2 → 本工程 launchSettings.json profile 分流），C VM 构建沿用多数宿主模式：
+       VS(Full MSBuild) 引用解决方案中手工维护的 csimple_lang_lib.vcxproj——
+       Debug|x64 产出 csimple_lang_dll.dll（本工程 Debug P/Invoke 加载）、
+       Release|x64 产出 csimple_lang.exe（本工程 Release 进程模式调用），
+       均落在 csimple_lang\build\<Config>\bin\；
+       dotnet CLI（Core）无 VC targets，跳过引用直接复用已有产物
+       （C VM 主构建走 scripts\build-vm-win.ps1 的 CMake/Ninja 树）。 -->
+  <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Full'">
+    <ProjectReference Include="..\..\..\csimple_lang\project\vs\vm_lib\csimple_lang_lib.vcxproj">
+      <Project>{1de0cc1e-2c43-457c-9b9c-860c54ffa58c}</Project>
+      <Name>csimple_lang_lib</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworks>true</SkipGetTargetFrameworks>
+      <SetPlatform>Platform=x64</SetPlatform>
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

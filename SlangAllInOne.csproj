@@ -131,8 +131,8 @@
        the mandatory .slb (+ math_lib.dll).
        The whole build recipe lives in the app itself
        (Pack/PackModulesCommand.cs) and runs here through the just-published
-       exe: one clean child process per module, same model as
-       CompileCore/CompileMath/CompileStd. A non-zero exit fails the publish
+       exe: one clean child process per module, same model as the stdlib
+       driver (Project\CompileStdlib). A non-zero exit fails the publish
        (never ship a broken package). -->
   <Target Name="PackStdModules" AfterTargets="PackCvmRuntime"
           Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">

@@ -2,9 +2,11 @@
 # Dot-source this file from the other scripts in this folder.
 # ASCII only (PowerShell 5.1 encoding safe).
 #
-# Pipeline facts (verified on disk):
-#   Front compile : dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p <sp> -e ir   (cwd = simple_language)
-#   Stdlib        : dotnet run --project source\Compile{Core,Math,Std}\*.csproj                              (cwd = simple_language)
+# Pipeline facts (verified on disk, 2026-10-18):
+#   Front compile : dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <sp> -e ir
+#   Stdlib        : dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- core|math|std
+#                   (CompileCore/CompileMath/CompileStd merged into one driver; "all" = Core -> Math -> Std
+#                    with one clean child process per module, built into the driver)
 #   VM Windows    : clang preferred (csimple_lang\scripts\cmake-build-clang.ps1 -> build\<C>\bin\csimple_lang.exe);
 #                   without clang, falls back to incremental build of the existing configured tree build\<C>
 #                   (this machine was configured with MSVC + ninja inside VS).
@@ -23,18 +25,24 @@ $RepoRoot  = Split-Path -Parent $PSScriptRoot
 if (-not (Test-Path (Join-Path $RepoRoot 'csimple_lang'))) {
     $RepoRoot  = Split-Path -Parent $RepoRoot
 }
+$AllInOneDir = Join-Path $RepoRoot 'SlangAllInOne'
 $SLDir     = Join-Path $RepoRoot 'simple_language'
+$SLCoreDir = Join-Path $AllInOneDir 'SLangCore'    # test suites live at $SLCoreDir\test\... since the 2026-10-17 reorg
 $VMDir     = Join-Path $RepoRoot 'csimple_lang'
-$ExportDir = Join-Path $SLDir 'out\export'
-$FrontProj = Join-Path $SLDir 'source\Front\SimpleLanguageFront.csproj'
+$ExportDir = Join-Path $AllInOneDir 'out\export'
+$FrontProj = Join-Path $SLDir 'source\SimpleLanguageFront.csproj'
 
-$StdlibProjects = @(
-    @{ Name = 'Core'; Csproj = 'source\CompileCore\SimpleLanguageCompileCore.csproj'; Module = 'Core\Core.module.json' },
-    @{ Name = 'Math'; Csproj = 'source\CompileMath\SimpleLanguageCompileMath.csproj'; Module = 'Math\Math.module.json' },
-    @{ Name = 'Std';  Csproj = 'source\CompileStd\SimpleLanguageCompileStd.csproj';  Module = 'Std\Std.module.json' }
+# 2026-10-18: CompileCore/CompileMath/CompileStd merged into one driver -
+# core/math/std presets (launchSettings.json profiles in that project), plus
+# all (Core -> Math -> Std, one clean child process per module, built in).
+$StdlibDriverCsproj = Join-Path $AllInOneDir 'Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj'
+$StdlibModules = @(
+    @{ Name = 'Core'; Preset = 'core'; Module = 'Core\Core.module.json' },
+    @{ Name = 'Math'; Preset = 'math'; Module = 'Math\Math.module.json' },
+    @{ Name = 'Std';  Preset = 'std';  Module = 'Std\Std.module.json' }
 )
 
-# name -> @{ Sp = .sp path relative to simple_language; Module = module.json relative to out\export;
+# name -> @{ Sp = .sp path relative to SlangAllInOne\SLangCore; Module = module.json relative to out\export;
 #           Broken = skip reason (optional); ExitOkLinux = expected exit code on Linux (optional, default 0);
 #           NoteWin / NoteLinux = known-issues note shown in the run summary (optional) }
 $TestMap = [ordered]@{
@@ -273,15 +281,16 @@ function Invoke-BuildVmLinux([string]$Config, [switch]$Harden) {
 
 function Invoke-CompileStdlib {
     Write-Header 'Compile stdlib (Core -> Math -> Std)'
-    Push-Location $SLDir
+    # One preset run per module (not a single "-- all"): keeps the per-module
+    # exit-code + module.json freshness verdicts, same granularity as before.
+    Push-Location $AllInOneDir
     $ok = $true
     try {
-        foreach ($p in $StdlibProjects) {
-            $csproj  = Join-Path $SLDir $p.Csproj
+        foreach ($p in $StdlibModules) {
             $modPath = Join-Path $ExportDir $p.Module
             $start = Get-Date
-            Write-Host ('--- ' + $p.Name + ' : dotnet run --project ' + $p.Csproj)
-            dotnet run --project $csproj | Out-Host
+            Write-Host ('--- ' + $p.Name + ' : dotnet run --project ...CompileStdlib -- ' + $p.Preset)
+            dotnet run --project $StdlibDriverCsproj -- $p.Preset | Out-Host
             $exit = $LASTEXITCODE
             $fresh = Get-ModuleFresh $modPath $start
             if ($exit -eq 0 -and $fresh) {
@@ -299,7 +308,7 @@ function Invoke-CompileStdlib {
 
 function Invoke-CompileTests([string[]]$Tests) {
     Write-Header ('Compile test suites : ' + ($Tests -join ', '))
-    Push-Location $SLDir
+    Push-Location $SLCoreDir
     $failed = @()
     try {
         foreach ($t in $Tests) {
@@ -308,7 +317,7 @@ function Invoke-CompileTests([string[]]$Tests) {
                 Write-Host ($t + ' SKIPPED (broken: ' + $info.Broken + ')') -ForegroundColor Yellow
                 continue
             }
-            $spPath = Join-Path $SLDir $info.Sp
+            $spPath = Join-Path $SLCoreDir $info.Sp
             if (-not (Test-Path $spPath)) {
                 Write-Host ($t + ' FAILED : .sp not found: ' + $info.Sp) -ForegroundColor Red
                 $failed += $t
@@ -317,7 +326,7 @@ function Invoke-CompileTests([string[]]$Tests) {
             $modPath = Join-Path $ExportDir $info.Module
             $start = Get-Date
             Write-Host ('--- ' + $t + ' : compile -p ' + $info.Sp + ' -e ir')
-            dotnet run --project $FrontProj -- compile -p $info.Sp -e ir | Out-Host
+            dotnet run --project $FrontProj -- compile -p $spPath -e ir | Out-Host
             $exit = $LASTEXITCODE
             $fresh = Get-ModuleFresh $modPath $start
             if ($exit -eq 0 -and $fresh) {

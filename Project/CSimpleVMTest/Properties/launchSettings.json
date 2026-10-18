@@ -1,6 +1,35 @@
 {
   "profiles": {
-    "NullIfPorject": {
+    "ExpendTest (default)": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    },
+    "BaseTest": {
+      "commandName": "Project",
+      "commandLineArgs": "BaseTest",
+      "nativeDebugging": true
+    },
+    "MathTest": {
+      "commandName": "Project",
+      "commandLineArgs": "MathTest",
+      "nativeDebugging": true
+    },
+    "SpecialTest": {
+      "commandName": "Project",
+      "commandLineArgs": "SpecialTest",
+      "nativeDebugging": true
+    },
+    "BenchMark": {
+      "commandName": "Project",
+      "commandLineArgs": "BenchMark",
+      "nativeDebugging": true
+    },
+    "RenderTest": {
+      "commandName": "Project",
+      "commandLineArgs": "RenderTest",
+      "nativeDebugging": true
+    },
+    "NullFast": {
       "commandName": "Project",
       "commandLineArgs": "NullFast",
       "nativeDebugging": true

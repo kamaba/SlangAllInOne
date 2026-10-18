@@ -141,10 +141,10 @@ Net.MqttClient cli = Net.MqttClient.connect( "broker.example.com", 1883, opt )
 - 运行：
 
 ```powershell
-cd d:\project\lang\simple_language
-dotnet run --project source\CompileStd\SimpleLanguageCompileStd.csproj          # 重编 Std（改了 Mqtt.sl 才需要）
-dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\ExpendTest\ProjectTest.sp -e ir
-dotnet run --project project\CSimpleVMStdTest
+cd d:\project\lang
+dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- std   # 重编 Std（改了 Mqtt.sl 才需要）
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\test\ExpendTest\ProjectTest.sp -e ir
+dotnet run --project SlangAllInOne\Project\CSimpleVMStdTest
 ```
 
 预期输出 `===== MqttTest start =====` … `MqttTest end : pass=63 fail=0`。

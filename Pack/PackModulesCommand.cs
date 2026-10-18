@@ -8,7 +8,7 @@ namespace SlangAllInOne.Pack;
 /// target 调起刚发布的 exe 执行本命令，无需任何手工脚本。
 ///
 /// 编译模型：每模块一个干净子进程（本 exe 自举 compile），与 scripts\compile-
-/// stdlib.ps1 及 CompileCore/CompileMath/CompileStd 驱动完全同构；导出参数
+/// stdlib.ps1 及 CompileStdlib 驱动（core/math/std 预设）完全同构；导出参数
 /// --format binary --export-json（R15：slb 主产物 + json 调试副本）；成功判据
 /// 对齐 compile-stdlib.ps1 —— exit 0 且 slb mtime fresh（Front 编译失败时
 /// 退出码仍可能为 0，mtime 才是硬证据）。

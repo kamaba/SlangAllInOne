@@ -7,8 +7,62 @@ using SimpleLanguage.Project;
 
 namespace CSimpleVMTest;
 
+/// <summary>
+/// 联合测试宿主（2026-10-18 由 CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest
+/// 与 Test/Test2 八个宿主工程合一）：
+/// Front 进程内编译（-start=false 走 dotnet 子进程）→ 解析 module 包 → C VM 执行
+/// （Debug = P/Invoke csimple_lang_dll.dll 进程内、C#/C 可同进程断点调试；
+///   Release = csimple_lang.exe 独立进程）。
+///
+/// 用例选择（第一个非 - 开头参数；IDE 里对应 Properties\launchSettings.json 各 profile）：
+///   BaseTest | ExpendTest（缺省） | MathTest | SpecialTest | BenchMark | RenderTest
+///       —— 六大用例集预设（合并自八个旧宿主的默认入口）；
+///   NullFast | JsonTest | … | GameTank —— 原 CSimpleVMTest 的命名用例（Other/ 探针、
+///       负例与 samples 等，全表见 Presets）；
+///   其他 —— 视为显式工程路径（相对/绝对均可）。
+/// 其余选项：-test（跑 _test_ 入口）、-start true/false（false 走 dotnet 子进程编译）、
+/// -debug（Release 进程模式下启动前暂停挂调试器）、-O0..-O3（转发 Front）、
+/// "--" 之后的 token 原样透传给 C VM 作 Project._inputArgs 程序参数。
+/// </summary>
 internal static class Program
 {
+    /// <summary>用例预设：名称 → 工程路径（相对 SlangAllInOne 根）；缺省 = ExpendTest。</summary>
+    static readonly (string Name, string Path)[] Presets =
+    {
+        // 六大用例集（合并自八个旧宿主）
+        ("BaseTest",    Path.Combine("SLangCore", "test", "BaseTest", "ProjectTest")),
+        ("ExpendTest",  Path.Combine("SLangCore", "test", "ExpendTest", "ProjectTest")),
+        ("MathTest",    Path.Combine("SLangCore", "test", "MathTest", "ProjectTest")),
+        ("SpecialTest", Path.Combine("SLangCore", "test", "SpecialTest", "ProjectTest")),
+        ("BenchMark",   Path.Combine("SLangCore", "test", "BenchMark", "BenchMark")),
+        ("RenderTest",  Path.Combine("SLangCore", "test", "RenderTest", "ProjectTest")),
+        // 命名用例（原 CSimpleVMTest）
+        ("NullFast",                   Path.Combine("SLangCore", "test", "Other", "NullFastTest", "ProjectTest")),
+        ("JsonTest",                   Path.Combine("SLangCore", "test", "Other", "JsonTest", "JsonTest")),
+        ("PlatformAotNegTest",         Path.Combine("SLangCore", "test", "Other", "PlatformAotNegTest", "PlatformAotNegTest")),
+        ("PlatformNegTest",            Path.Combine("SLangCore", "test", "Other", "PlatformNegTest", "PlatformNegTest")),
+        ("PlatformOverrideNegTest",    Path.Combine("SLangCore", "test", "Other", "PlatformOverrideNegTest", "PlatformOverrideNegTest")),
+        ("PlatformVariantNegTest",     Path.Combine("SLangCore", "test", "Other", "PlatformVariantNegTest", "PlatformVariantNegTest")),
+        ("PlatformVariantTest",        Path.Combine("SLangCore", "test", "Other", "PlatformVariantTest", "PlatformVariantTest")),
+        ("InlineLambdaTest",           Path.Combine("SLangCore", "test", "Other", "InlineLambdaTest", "ProjectTest")),
+        ("InlineLambdaForbiddenTest",  Path.Combine("SLangCore", "test", "Other", "InlineLambdaForbiddenTest", "ProjectTest")),
+        ("AutoInlineTest",             Path.Combine("SLangCore", "test", "Other", "AutoInlineTest", "ProjectTest")),
+        ("InlineMethodTest",           Path.Combine("SLangCore", "test", "Other", "InlineMethodTest", "ProjectTest")),
+        ("ARCTest",                    Path.Combine("SLangCore", "test", "Other", "ARCTest", "ArcProbe")),
+        ("CoroGCProbe",                Path.Combine("SLangCore", "test", "Other", "CoroGCProbe", "CoroGCProbe")),
+        ("MiProbe",                    Path.Combine("SLangCore", "test", "Other", "MiProbe", "MiProbe")),
+        ("NestedGCProbe",              Path.Combine("SLangCore", "test", "Other", "NestedGCProbe", "NestedGCProbe")),
+        ("OOMProbe",                   Path.Combine("SLangCore", "test", "Other", "OOMProbe", "OOMProbe")),
+        ("SBAProbe",                   Path.Combine("SLangCore", "test", "Other", "SBAProbe", "SBAProbe")),
+        ("SFRepro",                    Path.Combine("SLangCore", "test", "Other", "SFRepro", "SFRepro")),
+        ("TLSFProbe",                  Path.Combine("SLangCore", "test", "Other", "TLSFProbe", "TLSFProbe")),
+        ("AtSignLabel",                Path.Combine("SLangCore", "test", "Other", "AtSignLabel", "AtSignNegativeTest")),
+        ("NetTest",                    Path.Combine("SLangCore", "test", "Other", "NetTest", "ProjectTest")),
+        ("HttpWebTest",                Path.Combine("SLangCore", "test", "Other", "HttpWebTest", "HttpWebTest")),
+        ("MyTest",                     Path.Combine("SLangCore", "test", "Other", "MyTest", "MyTest")),
+        ("GameTank",                   Path.Combine("SLangCore", "samples", "Game", "TankGame", "TankGame")),
+    };
+
     static int Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
@@ -16,132 +70,28 @@ internal static class Program
 
         string repoRoot = GetRepoRoot();
 
-        // Usage:
-        //   dotnet run --project source/CSimpleVMTest2/CSimpleVMTest2.csproj -- <projectPathWithoutSpOrWithSp> [-test]
-        // Example:
-        //   ... -- E:\project\lang\simple_language\test\ExpendTest\ProjectTest
-        string projectPath = "";
-        if (args.Length == 1 )
+        if (args.Length >= 1 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?"))
         {
-            string arg = args[0];
-            if (arg == "-h" || arg == "--help" || arg == "/?")
-            {
-                Console.WriteLine("Usage:");
-                Console.WriteLine("  dotnet run --project source/CSimpleVMTest2/CSimpleVMTest2.csproj -- <projectPathWithoutSpOrWithSp> [-test]");
-                Console.WriteLine("Example:");
-                Console.WriteLine("  ... -- E:\\project\\lang\\simple_language\\test\\ExpendTest\\ProjectTest");
-                return 0;
-            }
-            else if (arg == "NullFast")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "NullFastTest", "ProjectTest");
-            }
-            else if (arg == "JsonTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "JsonTest", "JsonTest");
-            }
-            else if (arg == "PlatformAotNegTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "PlatformAotNegTest", "PlatformAotNegTest");
-            }
-            else if (arg == "PlatformNegTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "PlatformNegTest", "PlatformNegTest");
-            }
-            else if (arg == "PlatformOverrideNegTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "PlatformOverrideNegTest", "PlatformOverrideNegTest");
-            }
-            else if (arg == "PlatformVariantNegTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "PlatformVariantNegTest", "PlatformVariantNegTest");
-            }
-            else if (arg == "PlatformVariantTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "PlatformVariantTest", "PlatformVariantTest");
-            }
-            else if (arg == "InlineLambdaTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "InlineLambdaTest", "ProjectTest");
-            }
-            else if (arg == "InlineLambdaForbiddenTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "InlineLambdaForbiddenTest", "ProjectTest");
-            }
-            else if (arg == "AutoInlineTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "AutoInlineTest", "ProjectTest");
-            }
-            else if (arg == "InlineMethodTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "InlineMethodTest", "ProjectTest");
-            }
-            else if (arg == "ARCTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "ARCTest", "ArcProbe");
-            }
-            else if (arg == "CoroGCProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "CoroGCProbe", "CoroGCProbe");
-            }
-            else if (arg == "MiProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "MiProbe", "MiProbe");
-            }
-            else if (arg == "NestedGCProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "NestedGCProbe", "NestedGCProbe");
-            }
-            else if (arg == "OOMProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "OOMProbe", "OOMProbe");
-            }
-            else if (arg == "SBAProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "SBAProbe", "SBAProbe");
-            }
-            else if (arg == "SFRepro")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "SFRepro", "SFRepro");
-            }
-            else if (arg == "TLSFProbe")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "TLSFProbe", "TLSFProbe");
-            }
-            else if (arg == "AtSignLabel")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "AtSignLabel", "AtSignNegativeTest");
-            }
-            else if (arg == "NetTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "NetTest", "ProjectTest");
-            }
-            else if (arg == "HttpWebTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "HttpWebTest", "HttpWebTest");
-            }
-            else if (arg == "MyTest")
-            {
-                projectPath = Path.Combine(repoRoot, "SLangCore", "test", "Other", "MyTest", "MyTest");
-            }            
-            else if (arg == "GameTank")
-            {
-                projectPath = Path.Combine(repoRoot, "samples", "Game", "TankGame", "TankGame");
-            }
-            
+            PrintUsage();
+            return 0;
+        }
 
-        }
-        else
-        {
-            projectPath = Path.Combine(repoRoot, "SLangCore", "test", "ExpendTest", "ProjectTest");
-        }
+        // 用例选择：第一个非 - 开头参数（"--" 之后的 token 是程序参数，不参与解析）。
+        string? selector = GetProjectPathArg(args);
+        string projectPath = ResolvePreset(selector, repoRoot)
+            ?? selector
+            ?? Path.Combine(repoRoot, "SLangCore", "test", "ExpendTest", "ProjectTest");
+
         bool runTestEntry = args.Any(a => string.Equals(a, "-test", StringComparison.OrdinalIgnoreCase));
         bool start = TryGetBoolArg(args, "start", defaultValue: true);
         bool debug = args.Any(a => string.Equals(a, "-debug", StringComparison.OrdinalIgnoreCase));
         // -O0..-O3 / -o0..-o3 forwarded to the Front compile step (absent = compiler default level)
         string? optLevelArg = GetOptimizeLevelArg(args);
+        // 程序参数（Project._inputArgs）："--" 之后所有 token 原样透传给 C VM
+        // 例：dotnet run --project ... -- BenchMark -- -- w3   ->   C VM 收到 "-- w3"
+        List<string> programArgs = GetProgramArgs(args);
 
-        if (args.Length == 0)
+        if (selector == null)
         {
             Console.WriteLine("No args provided, using defaults:");
             Console.WriteLine($"  projectPath = {projectPath}");
@@ -195,7 +145,7 @@ internal static class Program
         {
             Environment.CurrentDirectory = projectDir;
         }
-        int cvmExit = RunCVM(packagePath, runTestEntry, repoRoot, debug);
+        int cvmExit = RunCVM(packagePath, runTestEntry, repoRoot, debug, programArgs);
         if (cvmExit != 0)
         {
             Console.WriteLine($"C VM run failed, exit code: {cvmExit}");
@@ -206,9 +156,40 @@ internal static class Program
         return 0;
     }
 
-    static int RunCVM(string packagePath, bool runTestEntry, string repoRoot, bool debug = false)
+    static void PrintUsage()
     {
-        // Resolve csimple_lang exe/dll path
+        Console.WriteLine("Usage:");
+        Console.WriteLine("  dotnet run --project Project/CSimpleVMTest/CSimpleVMTest.csproj -- [suite|case|projectPath] [options] [-- programArgs]");
+        Console.WriteLine("Suites    : " + string.Join(", ", Presets.Take(6).Select(p => p.Name)));
+        Console.WriteLine("Named     : " + string.Join(", ", Presets.Skip(6).Select(p => p.Name)));
+        Console.WriteLine("Options   : -test | -start true/false | -debug | -O0..-O3");
+        Console.WriteLine("Default   : ExpendTest");
+        Console.WriteLine("Example:");
+        Console.WriteLine("  ... -- MathTest -test          (compile MathTest and run _test_ entry)");
+        Console.WriteLine("  ... -- BenchMark -- -- w3      (pass program args to Project._inputArgs)");
+    }
+
+    /// <summary>预设名 → 绝对路径；未命中返回 null（selector 本身作为工程路径）。</summary>
+    static string? ResolvePreset(string? selector, string repoRoot)
+    {
+        if (string.IsNullOrEmpty(selector))
+            return null;
+        foreach (var p in Presets)
+        {
+            if (selector.Equals(p.Name, StringComparison.OrdinalIgnoreCase))
+                return Path.Combine(repoRoot, p.Path);
+        }
+        return null;
+    }
+
+    static int RunCVM(string packagePath, bool runTestEntry, string repoRoot, bool debug = false, List<string>? programArgs = null)
+    {
+        // Resolve csimple_lang exe/dll path (VS output: csimple_lang\build\<Config>\bin).
+        // Match the C# build configuration to the VM build configuration:
+        // Debug  -> build\Debug\bin   (P/Invoke DLL, can attach C debugger)
+        // Release-> build\Release\bin (optimized /O2 + RELEASE=1 exe)
+        // 找不到时回退另一配置。
+#if DEBUG
         string cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Debug", "bin"));
         string cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
 
@@ -217,11 +198,29 @@ internal static class Program
             cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Release", "bin"));
             cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
         }
+#else
+        string cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Release", "bin"));
+        string cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
+
+        if (!File.Exists(cvmExe))
+        {
+            // vcxproj Release|x64 (Application) outputs csimple_lang_lib.exe into the same bin dir
+            string libExe = Path.Combine(cvmDir, "csimple_lang_lib.exe");
+            if (File.Exists(libExe))
+                cvmExe = libExe;
+        }
+
+        if (!File.Exists(cvmExe))
+        {
+            cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Debug", "bin"));
+            cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
+        }
+#endif
 
         if (!File.Exists(cvmExe))
         {
             Console.WriteLine("csimple_lang.exe not found. Build the C VM first:");
-            Console.WriteLine("  cd ../csimple_lang && cmake -B build && cmake --build build --config Debug");
+            Console.WriteLine("  .\\scripts\\build-vm-win.ps1 -Configuration Debug");
             return 4;
         }
 
@@ -229,6 +228,14 @@ internal static class Program
         if (runTestEntry)
         {
             cvmArgs.Add("-test");
+        }
+        // 程序参数（Project._inputArgs）：仅透传宿主命令行 "--" 之后的 token，
+        // 无 "--" 时不注入（_inputArgs 为空数组，全量回归不受影响）。
+        // InputArgsTest 三参数路径：dotnet run --project ... -- -- hello 42 world
+        if (programArgs != null && programArgs.Count > 0)
+        {
+            cvmArgs.Add("--");
+            cvmArgs.AddRange(programArgs);
         }
 
 #if DEBUG
@@ -506,6 +513,9 @@ internal static class Program
         for (int i = 0; i < args.Length; i++)
         {
             var a = args[i];
+            // "--" 之后的 token 属于程序参数（透传给 C VM），不参与本宿主选项解析
+            if (a == "--")
+                break;
             if (string.IsNullOrEmpty(a) || a.StartsWith('-'))
                 continue;
             // "-start true/false" takes the next token as its value, not a project path
@@ -514,6 +524,18 @@ internal static class Program
             return a;
         }
         return null;
+    }
+
+    static List<string> GetProgramArgs(string[] args)
+    {
+        var result = new List<string>();
+        int idx = Array.IndexOf(args, "--");
+        if (idx >= 0)
+        {
+            for (int i = idx + 1; i < args.Length; i++)
+                result.Add(args[i]);
+        }
+        return result;
     }
 
     static string? GetOptimizeLevelArg(string[] args)
@@ -531,7 +553,6 @@ internal static class Program
 
     static string GetRepoRoot()
     {
-        // source/CSimpleVMTest2 -> source -> repo root
         string dir = AppContext.BaseDirectory;
         var d = new DirectoryInfo(dir);
         while (d != null && !File.Exists(Path.Combine(d.FullName, "SlangAllInOne.csproj")))

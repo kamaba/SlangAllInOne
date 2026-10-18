@@ -7,7 +7,7 @@
 - **测试用例集**：[`test/`](../../test/) 下的 SimpleLanguage 源码，每个子目录一个主题（`ProjectTest.sp` + `ProjectTest.jsonc` + 若干 `.sl`）。
 - **测试宿主工程**：[`project/`](../../project/) 下的 C# 控制台工程，负责「调用 C# 前端编译测试集 → 导出模块 JSON → 交给 VM 运行」。
   - `CSimpleVM*` 系列 → **C VM**（`../csimple_lang`，`csimple_lang.exe` / `csimple_lang_dll.dll`）
-  - `Test` / `Test2` → **C# VM**（`source/VM/SimpleLanuageVM.csproj`）
+  - `Test` / `Test2` → **C VM**（2026-10-18 复活改造；原 C# VM 宿主，`source/VM/SimpleLanuageVM.csproj` 已删除）
 
 ---
 
@@ -15,9 +15,9 @@
 
 | 目录 | 测什么 | 代表用例 | 推荐宿主工程 |
 |------|--------|----------|--------------|
-| `BaseTest/` | 语言核心语法：变量/作用域、类/继承/接口、泛型与模板、enum/data、闭包、协程、控制流、容器（List/Map/Set/Queue/Stack/Tuple）、Float8/16、指针/引用、Result、goto 等（60+ 个 `.sl`） | `GlobalTest.sl`、`StringTest.sl`、`GenClass.sl`、`ClosureTest.sl`、`CoroutineTest.sl`、`TryTest.sl`、`Float8Test.sl` | `CSimpleVMCoreTest`（C VM）/ `Test`（C# VM） |
+| `BaseTest/` | 语言核心语法：变量/作用域、类/继承/接口、泛型与模板、enum/data、闭包、协程、控制流、容器（List/Map/Set/Queue/Stack/Tuple）、Float8/16、指针/引用、Result、goto 等（60+ 个 `.sl`） | `GlobalTest.sl`、`StringTest.sl`、`GenClass.sl`、`ClosureTest.sl`、`CoroutineTest.sl`、`TryTest.sl`、`Float8Test.sl` | `CSimpleVMCoreTest` / `Test`（均为 C VM，Test 为轻量入口） |
 | `NullFastTest/` | Null 相关快速回归（单文件） | `NullFastTest.sl` | `CSimpleVMTest`（传参 `1`） |
-| `ExpendTest/` | 标准库与扩展库：IO（Console/File/Directory/DateTime）、数据格式（Json/Xml/Yaml/Toml/Csv）、嵌入式数据库（Sqlite3）、容器（List/Map/LinkedList/Sort）、Isolate、宏、Attribute、模块与跨语言调用 | `JsonTest.sl`、`FileTest.sl`、`Sqlite3Test.sl`、`ListTest.sl`、`IsolateTest.sl`、`AttributeTest.sl` | `CSimpleVMStdTest`（C VM）/ `Test2`（C# VM） |
+| `ExpendTest/` | 标准库与扩展库：IO（Console/File/Directory/DateTime）、数据格式（Json/Xml/Yaml/Toml/Csv）、嵌入式数据库（Sqlite3）、容器（List/Map/LinkedList/Sort）、Isolate、宏、Attribute、模块与跨语言调用 | `JsonTest.sl`、`FileTest.sl`、`Sqlite3Test.sl`、`ListTest.sl`、`IsolateTest.sl`、`AttributeTest.sl` | `CSimpleVMStdTest` / `Test2`（均为 C VM，Test2 为轻量入口） |
 | `MathTest/` | 数学库：内置 Math 成员函数、MathVMLib 系统方法、运算符分派、矩阵（3x3/4x4/任意尺寸）、FFI 数学、大数（BigNumber/BigDecimal）、因数分解 | `MathTest.sl`、`FFIMathTest.sl`、`Matrix4x4Test.sl`、`MatrixBigTest.sl` | `CSimpleVMMathTest` |
 | `SpecialTest/` | FFI 与跨语言互操作、MLIR AOT 实验、外部进程执行（Std.OS.Process） | `FFITest.sl`、`CSharpCall.sl`、`CPythonCall.sl`、`JavascriptCall.sl`、`LuaCall.sl`、`AOTTest.sl`、`ProcessTest.sl` | `CSimpleVMSpecialTest` |
 | `BenchMark/` | 性能基准 | `Fibonacci.sl`、`Loop.sl`、`Levenshtein.sl`、`StringBench.sl` | `CSimpleVMBenchMarkTest` |
@@ -38,8 +38,8 @@
 | `CSimpleVMSpecialTest`（csproj 名为 `CSimpeVMSpecialTest.csproj`） | `test\SpecialTest\ProjectTest` | C | FFI / 互操作 / AOT |
 | `CSimpleVMBenchMarkTest` | `test\BenchMark\BenchMark` | C | 性能基准 |
 | `CSimpleVMRenderTest`（csproj 名为 `RenderTest.csproj`） | `test\ExpendTest\ProjectTest`（跑渲染用例需传 `test\RenderTest\ProjectTest`） | C | 渲染 |
-| `Test`（`SimpleLanguageTest.csproj`） | `test\BaseTest\ProjectTest` | C# | C# 前端 + C# VM 全链路 |
-| `Test2`（`SimpleLanguageTest2.csproj`） | `test\ExpendTest\ProjectTest` | C# | 同 `Test`（第二套） |
+| `Test`（`SimpleLanguageTest.csproj`） | `test\BaseTest\ProjectTest` | C | C# 前端 + C VM 全链路（轻量入口，等价 `CSimpleVMCoreTest`；2026-10-18 复活改造） |
+| `Test2`（`SimpleLanguageTest2.csproj`） | `test\ExpendTest\ProjectTest` | C | 同 `Test`（轻量入口，等价 `CSimpleVMStdTest`） |
 
 ### C VM 构建方式（csproj 内 `BuildCVM` Target）
 
@@ -112,5 +112,7 @@ dotnet run --project project\CSimpleVMTest\CSimpleVMTest.csproj -- 1
 ## 5. 常见问题
 
 - **`csimple_lang.exe not found`**：C VM 尚未构建。用 Ninja 树模式的工程在 VS / dotnet 构建时会自动构建；手动构建：`cd csimple_lang && cmake --build build\Debug --target csimple_lang csimple_lang_dll`。
+- **跑 ExpendTest 报 `SLangServer` 引用找不到（import 解析失败）**：ExpendTest 依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，references 白名单 Core/Std）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary --export-json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
+- **`test\Other\*` 用例集 references 路径**：比主套件深一层，jsonc `references` 须 4 级上跳（`../../../../out/export/<X>`，指向 `SlangAllInOne\out\export`）；2026-10-18 已统一修正 45 个 jsonc（此前 2/3 级上跳会解析到不存在的 `SLangCore\out\export\Core`，报 `SystemPrintln` 解析链错误）。
 - **字符串错乱 / 断言随机失败**：通常是新旧两棵构建树互相覆盖 DLL 所致，坚持只用 `csimple_lang\build\Debug` 这棵 Ninja 树（见第 2 节构建方式说明）。
 - **前端编译失败**：看 `out/export/<测试集名>/` 与 `build/logs/` 下的日志定位（详见 [`md/ai/DEBUG_WORKFLOW.md`](../ai/DEBUG_WORKFLOW.md)、[`md/ai/EXPORT_PATHS.md`](../ai/EXPORT_PATHS.md)）。

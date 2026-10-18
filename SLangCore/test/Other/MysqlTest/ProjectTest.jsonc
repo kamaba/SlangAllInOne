@@ -51,9 +51,9 @@
     }
   },
   "references": [
-    { "path": "../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" },
-    { "path": "../../out/export/Std", "uuid":"456456456456", "name": "Std.module.json" },
-    { "path": "../../out/export/SLMysql", "uuid":"2dce7a34c06436ceca45d8557a5f137f", "name": "SLMysql.module.json" }
+    { "path": "../../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" },
+    { "path": "../../../../out/export/Std", "uuid":"456456456456", "name": "Std.module.json" },
+    { "path": "../../../../out/export/SLMysql", "uuid":"2dce7a34c06436ceca45d8557a5f137f", "name": "SLMysql.module.json" }
   ],
   "struct": [
   ],

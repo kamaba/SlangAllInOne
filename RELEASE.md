@@ -35,7 +35,8 @@ slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 ├── module\                    # 标准库 Core/Math/Std *.module.slb（平铺单目录）
 │   └── Windows 另含 math_lib.dll（Math 的 FFI 原生库；Linux 侧不捆绑，见下）
 ├── test\RefProbe\             # 开箱示例：纯名引用官方库的最小工程（slang run test\RefProbe\RefProbe）
-└── md\                        # ~93 篇用户文档
+├── md\                        # ~93 篇用户文档
+└── licenses\                  # 第三方协议合规包：NOTICE.md + 各组件协议全文（C VM 静态链 yyjson/lz4/zlib/mimalloc/tlsf/mbedtls，真源 csimple_lang\third_party\LICENSES\；csproj PackThirdPartyLicenses target + 发布脚本双保险注入）
 ```
 
 **官方库直查（2026-10-17 起）**：用户工程 jsonc 的 `references` 直接写官方库名

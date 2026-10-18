@@ -35,7 +35,7 @@
     ]
   },
   "references": [
-    { "path": "../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" }
+    { "path": "../../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" }
   ],
   "export": {
     "moduleName": "WasmDemo",

@@ -1,10 +1,16 @@
-extern alias VMRuntime;
+//****************************************************************************
+//  SimpleLanguageTest2 : ExpendTest 用例集宿主（轻量入口，等价 CSimpleVMStdTest）。
+//  2026-10-18 复活改造：原 VM 段引用已删除的 C# VM 工程（SimpleLanuageVM），
+//  改走 C VM —— Debug 走 P/Invoke（csimple_lang_dll.dll 进程内，C#/C 可同进程
+//  断点调试），Release/子进程模式走 csimple_lang.exe，与 CSimpleVM* 宿主同款。
+//****************************************************************************
 
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using SimpleLanguage.Logging;
 using SimpleLanguage.Project;
-using SimpleLanguage.VM;
 
 namespace SimpleLanguageTest;
 
@@ -18,16 +24,13 @@ internal static class Program
         string repoRoot = GetRepoRoot();
 
         // Usage:
-        //   dotnet run --project source/Test/SimpleLanguageTest.csproj -- <projectPathWithoutSpOrWithSp> [-test]
-        // Example:
-        //   ... -- E:\project\lang\simple_language\test\BaseTest\ProjectTest
+        //   dotnet run --project Project/Test2/SimpleLanguageTest2.csproj -- <projectPath> [-test] [-start=false]
+        // Default: ExpendTest suite.
         string defaultProjectPath = Path.Combine(repoRoot, "SLangCore", "test", "ExpendTest", "ProjectTest");
         string projectPath = args.Length == 0 ? defaultProjectPath : args[0];
         bool runTestEntry = args.Any(a => string.Equals(a, "-test", StringComparison.OrdinalIgnoreCase));
         // Default to in-process mode for easier single-process debugging.
         bool start = TryGetBoolArg(args, "start", defaultValue: true);
-        string frontProject = Path.Combine(repoRoot, "..", "simple_language", "source", "SimpleLanguageFront.csproj");
-        string vmProject = Path.Combine(repoRoot, "source", "VM", "SimpleLanuageVM.csproj");
 
         if (args.Length == 0)
         {
@@ -35,11 +38,13 @@ internal static class Program
             Console.WriteLine($"  projectPath = {projectPath}");
         }
 
+        // Step 1: Compile with Front (in-process or via dotnet run)
         int frontExit = start
             ? RunFrontInProcess(projectPath)
             : RunDotnet(new List<string>
             {
-                "run", "--project", Quote(frontProject), "--",
+                "run", "--project",
+                Quote(Path.Combine(repoRoot, "..", "simple_language", "source", "SimpleLanguageFront.csproj")), "--",
                 "compile", "-e", "ir", "-p", projectPath, "--no-banner"
             }, "Front compile", repoRoot);
         if (frontExit != 0)
@@ -48,6 +53,7 @@ internal static class Program
             return frontExit;
         }
 
+        // Step 2: Resolve compiled module package path
         string packagePath = ResolveModulePackagePath(repoRoot, projectPath);
         if (!File.Exists(packagePath))
         {
@@ -58,24 +64,115 @@ internal static class Program
 
         Console.WriteLine($"Package: {packagePath}");
 
-        int vmExit = start
-            ? RunVmInProcess(packagePath, runTestEntry)
-            : RunVmViaProcess(vmProject, packagePath, runTestEntry, repoRoot);
+        // Step 3: Run C VM (csimple_lang) — P/Invoke in-process or external exe
+        int vmExit = RunCVM(packagePath, runTestEntry, repoRoot);
         if (vmExit != 0)
         {
-            Console.WriteLine($"VM run failed, exit code: {vmExit}");
+            Console.WriteLine($"C VM run failed, exit code: {vmExit}");
             return vmExit;
         }
 
-        Console.WriteLine("Front compile + VM run completed.");
+        Console.WriteLine("Front compile + C VM run completed.");
         return 0;
     }
 
+    static int RunCVM(string packagePath, bool runTestEntry, string repoRoot)
+    {
+        // Resolve csimple_lang exe/dll path (VS output: csimple_lang\build\<Config>\bin)
+        string cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Debug", "bin"));
+        string cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
+
+        if (!File.Exists(cvmExe))
+        {
+            cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Release", "bin"));
+            cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
+        }
+
+        if (!File.Exists(cvmExe))
+        {
+            Console.WriteLine("csimple_lang.exe not found. Build the C VM first:");
+            Console.WriteLine("  .\\scripts\\build-vm-win.ps1 -Configuration Debug");
+            return 4;
+        }
+
+        var cvmArgs = new List<string> { "run", Quote(packagePath) };
+        if (runTestEntry)
+        {
+            cvmArgs.Add("-test");
+        }
+
+#if DEBUG
+        // Debug: P/Invoke into csimple_lang_dll.dll (in-process, can attach C debugger)
+        string dllPath = Path.Combine(cvmDir, "csimple_lang_dll.dll");
+        if (!File.Exists(dllPath))
+        {
+            Console.WriteLine($"csimple_lang_dll.dll not found at {dllPath}, falling back to process mode.");
+            return RunProcess(cvmExe, cvmArgs, "C VM run (csimple_lang)");
+        }
+
+        Console.WriteLine("=== C VM run (P/Invoke) ===");
+        Console.WriteLine($"DLL: {dllPath}");
+
+        // Add DLL directory to search path so DllImport can find it
+        if (OperatingSystem.IsWindows())
+            SetDllDirectory(cvmDir);
+
+        // Build argv: ["csimple_lang", "run", packagePath, ...]
+        var argv = new List<string> { "csimple_lang" };
+        argv.AddRange(cvmArgs);
+        return CallCliMain(argv.ToArray());
+#else
+        // Release: process invocation
+        return RunProcess(cvmExe, cvmArgs, "C VM run (csimple_lang)");
+#endif
+    }
+
+#if DEBUG
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    static extern bool SetDllDirectory(string lpPathName);
+
+    [DllImport("csimple_lang_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern int cli_main(int argc, IntPtr argv);
+
+    static int CallCliMain(string[] args)
+    {
+        int argc = args.Length;
+        var argvPtrs = new IntPtr[argc];
+        try
+        {
+            for (int i = 0; i < argc; i++)
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(args[i] + "\0");
+                argvPtrs[i] = Marshal.AllocHGlobal(bytes.Length);
+                Marshal.Copy(bytes, 0, argvPtrs[i], bytes.Length);
+            }
+            IntPtr nativeArgv = Marshal.AllocHGlobal(IntPtr.Size * argc);
+            Marshal.Copy(argvPtrs, 0, nativeArgv, argc);
+            int ret = cli_main(argc, nativeArgv);
+            Marshal.FreeHGlobal(nativeArgv);
+            return ret;
+        }
+        finally
+        {
+            for (int i = 0; i < argc; i++)
+            {
+                if (argvPtrs[i] != IntPtr.Zero)
+                    Marshal.FreeHGlobal(argvPtrs[i]);
+            }
+        }
+    }
+#endif
+
     static int RunDotnet(List<string> args, string stepName, string? workingDirectory = null)
+    {
+        return RunProcess("dotnet", args, stepName, workingDirectory);
+    }
+
+    static int RunProcess(string fileName, List<string> args, string stepName, string? workingDirectory = null)
     {
         var psi = new ProcessStartInfo
         {
-            FileName = "dotnet",
+            FileName = fileName,
             Arguments = string.Join(" ", args),
             WorkingDirectory = string.IsNullOrWhiteSpace(workingDirectory) ? Environment.CurrentDirectory : workingDirectory,
             UseShellExecute = false,
@@ -87,19 +184,16 @@ internal static class Program
         };
 
         using var p = new Process { StartInfo = psi };
-        var sb = new StringBuilder();
 
         p.OutputDataReceived += (_, e) =>
         {
             if (e.Data == null) return;
-            sb.AppendLine(e.Data);
             Console.WriteLine(e.Data);
         };
         p.ErrorDataReceived += (_, e) =>
         {
             if (e.Data == null) return;
-            sb.AppendLine(e.Data);
-            Console.WriteLine(e.Data);
+            Console.Error.WriteLine(e.Data);
         };
 
         Console.WriteLine($"=== {stepName} ===");
@@ -113,67 +207,31 @@ internal static class Program
         return p.ExitCode;
     }
 
-    static int RunVmViaProcess(string vmProject, string packagePath, bool runTestEntry, string repoRoot)
-    {
-        var vmArgs = new List<string>
-        {
-            "run", "--project", Quote(vmProject), "--", Quote(packagePath)
-        };
-        if (runTestEntry)
-        {
-            vmArgs.Add("-test");
-        }
-        return RunDotnet(vmArgs, "VM run", repoRoot);
-    }
-
     static int RunFrontInProcess(string projectPath)
     {
         try
         {
             Console.WriteLine("=== Front compile (in-process) ===");
-            var frontArgs = new[] { "compile", "-e", "ir", "-p", projectPath, "--no-banner" };
-            var inputArgs = new CommandInputArgs(frontArgs);
-            _ = CommandExecutor.Execute(inputArgs);
-            return 0;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            return 1;
-        }
-    }
-
-    static int RunVmInProcess(string packagePath, bool runTestEntry)
-    {
-        try
-        {
-            Console.WriteLine("=== VM run (in-process) ===");
-            var vmArgs = runTestEntry
-                ? new[] { packagePath, "-test" }
-                : new[] { packagePath };
-
-            VMRuntime::SimpleLanguage.Logging.LogManager.Initialize("");
-            VMRuntime::SimpleLanguage.Logging.Log.ResetFixedLogFileForNewSession();
-            VmRunResultSink.Initialize();
-
-            var loadModel = SLIRRuntimeLoader.LoadInExecutionOrder(packagePath);
-            var parseResult = SLIRModuleParse.Parse(loadModel, vmArgs);
-            if (parseResult == null)
+            var frontArgs = new List<string> { "compile", "-e", "ir", "-p", projectPath, "--no-banner" };
+#if DEBUG
+            // Debug：改走二进制导出（.module.slb 必产物），并附带导出 module.json 调试副本
+            frontArgs.Add("--format");
+            frontArgs.Add("binary");
+            frontArgs.Add("--export-json");
+#endif
+            var inputArgs = new CommandInputArgs(frontArgs.ToArray());
+            bool ok = CommandExecutor.Execute(inputArgs);
+            if (!ok || Log.errorCount > 0)
             {
-                return 2;
+                Console.WriteLine($"Front compile failed, error count: {Log.errorCount}");
+                return 1;
             }
-
-            SLIRModuleParse.EntryPoint(parseResult);
             return 0;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
             return 1;
-        }
-        finally
-        {
-            VmRunResultSink.Shutdown();
         }
     }
 
@@ -217,7 +275,7 @@ internal static class Program
 
     static string GetRepoRoot()
     {
-        // source/Test -> source -> repo root
+        // Project/Test2 -> SlangAllInOne root
         string dir = AppContext.BaseDirectory;
         var d = new DirectoryInfo(dir);
         while (d != null && !File.Exists(Path.Combine(d.FullName, "SlangAllInOne.csproj")))

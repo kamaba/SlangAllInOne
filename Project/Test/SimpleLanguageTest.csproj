@@ -9,8 +9,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\simple_language\source\SimpleLanguageFront.csproj" />
-    <ProjectReference Include="..\VM\SimpleLanuageVM.csproj">
-      <Aliases>global,VMRuntime</Aliases>
+  </ItemGroup>
+
+  <!-- 2026-10-18 复活改造：原引用 ..\VM\SimpleLanuageVM.csproj（已删除的 C# VM）移除，
+       VM 执行改走 C VM，与 CSimpleVM* 宿主同款：
+       VS(Full MSBuild) 驱动 vcxproj 构建——Debug|x64 产出 csimple_lang_dll.dll
+       （本工程 Debug P/Invoke 加载）、Release 产出 csimple_lang.exe（进程模式调用），
+       均落 csimple_lang\build\<Config>\bin\；dotnet CLI（Core）无 VC targets，
+       跳过引用直接复用已有产物。 -->
+  <ItemGroup Condition="'$(MSBuildRuntimeType)' == 'Full'">
+    <ProjectReference Include="..\..\..\csimple_lang\project\vs\vm_lib\csimple_lang_lib.vcxproj">
+      <Project>{1de0cc1e-2c43-457c-9b9c-860c54ffa58c}</Project>
+      <Name>csimple_lang_lib</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworks>true</SkipGetTargetFrameworks>
+      <SetPlatform>Platform=x64</SetPlatform>
     </ProjectReference>
   </ItemGroup>
 

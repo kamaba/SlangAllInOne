@@ -150,6 +150,23 @@
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 
+  <!-- Third-party license compliance: the C VM statically links
+       yyjson / lz4 / zlib / mimalloc / tlsf / mbed TLS (see
+       ..\csimple_lang\third_party\LICENSES\NOTICE.md). MIT / BSD / zlib /
+       Apache-2.0 require the license texts to accompany binary
+       redistribution, so every publish carries the consolidated LICENSES
+       bundle under <package>\licenses\. Unconditional (all RIDs): the
+       release script's linux-x64 publish relies on it too (the other pack
+       targets are Windows-PE-gated and skipped for linux RIDs). -->
+  <Target Name="PackThirdPartyLicenses" AfterTargets="Publish">
+    <ItemGroup>
+      <ThirdPartyLicenseFiles Include="$(MSBuildThisFileDirectory)..\csimple_lang\third_party\LICENSES\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ThirdPartyLicenseFiles)"
+          DestinationFiles="@(ThirdPartyLicenseFiles->'$(PublishDir)licenses\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <!-- Release-package hygiene (part 1/2, BEFORE the publish copy): dotnet
        publish never cleans the output directory, so stale files from older
        publishes (old host/frontend assemblies, test scratch dirs, runtime

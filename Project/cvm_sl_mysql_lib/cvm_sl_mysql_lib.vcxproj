@@ -47,11 +47,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <!-- MySQL Connector/C（官方发行包，x64）已随库源码一起放在
-       source\Front\Lib\SLMysql\cvm_sl_mysql_lib\mysqlclient。
+       SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\mysqlclient。
        静态链接 lib\vs14\mysqlclient.lib 而非动态 libmysql.dll：这样本工程产出
        的 sl_mysql_lib.dll 自包含，导出流水线只需拷贝这一个 DLL。 -->
   <PropertyGroup>
-    <MySqlClientRoot>$(ProjectDir)..\..\source\Front\Lib\SLMysql\cvm_sl_mysql_lib\mysqlclient</MySqlClientRoot>
+    <MySqlClientRoot>$(ProjectDir)..\..\SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\mysqlclient</MySqlClientRoot>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -101,7 +101,7 @@
     <ClCompile Include="..\..\SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\sl_mysql_lib.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\Front\Lib\SLMysql\cvm_sl_mysql_lib\vm_sl_mysql.h" />
+    <ClInclude Include="..\..\SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\vm_sl_mysql.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

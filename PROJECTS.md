@@ -29,7 +29,7 @@
 | plugins | **SLCSharpMonoFrontend / SLJavaHotspotFrontend**（csproj）+ **cvm_csharp_mono / cvm_java_hotspot**（vcxproj） | `..\simple_language_plugins\…` | 混合 | 插件 Front 层（Front 反射转调）与 CVM 层 |
 | tools | **ExtractLogs / LidIndexer / SLBRoundTrip** | `tools\*\*.csproj` | csproj | 日志工具 / LID 索引 / SLB 往返测试（引用 Front，验证 slb/json 双向一致） |
 
-⛔ **死工程（不在 sln，勿构建勿引用）**：`Project\Test`、`Project\Test2`（C# VM 对照宿主）、`Project\StdNativeImpl`、`Project\MathNativeImpl` —— 引用已删除的 C# VM 工程/`ISLExternalFunctionModule` 接口，构建必炸（CS0246/断链）。文件保留仅作历史参考。
+✅ **`Project\Test`、`Project\Test2`（C VM 轻量宿主）**：2026-10-18 复活改造——原 C# VM 宿主（引用已删除的 `..\VM\SimpleLanuageVM.csproj`），VM 段改走 C VM（Debug P/Invoke / Release 进程模式），已收录 sln（test 文件夹）。⛔ **`Project\StdNativeImpl`、`Project\MathNativeImpl` 已于 2026-10-18 删除**——旧 C# VM `ISLExternalFunctionModule` 外部函数机制示例，机制随 C# VM 废弃（C VM 等价物 = C DLL + jsonc `systemCalls.cvmFunction`，`CLangdll`/`cvm_math_lib` 已覆盖；删除留档见 `md/ai/troubleshooting/06-build-engineering.md` 2026-10-18 条）。
 ⛔ **废弃 sln**：`simple_language\SimpleLanguage.sln`（引用大量已迁移路径）；`csimple_lang\csimple_lang.sln`（引用不存在工程）。
 
 ## 3. 路径映射（旧 → 新，排障反查用）
@@ -39,7 +39,7 @@
 | `simple_language\source\Front\` | `simple_language\source\`（Front 子层拍平） |
 | `simple_language\source\Front\Lib\` | `SlangAllInOne\SLangCore\Lib\`（Core/Math/Std/SLang：Server、Render、Mysql、Tensora） |
 | `simple_language\source\CompileCore|CompileMath|CompileStd\` | `SlangAllInOne\Project\Compile*\` |
-| `simple_language\source\MathNativeImpl|StdNativeImpl|CLangdll\` | `SlangAllInOne\Project\`（前两个已死） |
+| `simple_language\source\MathNativeImpl|StdNativeImpl|CLangdll\` | `SlangAllInOne\Project\`（前两个已删除——旧 C# VM 外部函数机制） |
 | `simple_language\project\CSimpleVM*Test\` | `SlangAllInOne\Project\CSimpleVM*Test\` |
 | `simple_language\project\cvm_math_lib\` | `SlangAllInOne\Project\cvm_math_lib\`（Math.jsonc `vmDlls[].project` 现指向 `../../../Project/cvm_math_lib/…`） |
 | `simple_language\test\` | `SlangAllInOne\SLangCore\test\` |
@@ -87,7 +87,7 @@ powershell -File scripts\release-slang.ps1 -Version <x.y.z>   # 发布策略：A
 | sln 解析（`dotnet sln list`） | ✅ 24 工程 |
 | 标准库三件套编译 | ✅ Core/Math/Std → `SlangAllInOne\out\export\`（Math 含 cvm_math_lib 新路径构建 + math_lib.dll 落位） |
 | 全链路 | ✅ `run SLangCore\test\BaseTest\ProjectTest` exit 0 |
-| C# 工程构建回归 | ✅ 宿主 + 7 测试宿主 + Compile×3 + 插件 frontend×2 + tools×3 全过（死工程除外） |
+| C# 工程构建回归 | ✅ 宿主 + 9 测试宿主（含 Test/Test2）+ Compile×3 + 插件 frontend×2 + tools×3 全过（2026-10-18 死工程清理后） |
 | 文档路径残留 | ✅ AGENTS.md/README 旧路径零残留 |
 
 ⚠ 已知缺失：`SLangCore\test\Other\` 未随迁的旧用例子目录（NullFastTest、JsonTest、Platform*、InlineLambda*、CoroGCProbe、OOMProbe、SBAProbe、TLSFProbe 等）——`CSimpleVMTest` 具名用例运行会找不到，需要时从 git 历史恢复。

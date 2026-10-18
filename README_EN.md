@@ -2,12 +2,12 @@
 
 English | **[中文](README.md)**
 
-**SLang** is a statically typed language built from scratch. Its toolchain is split across three open-source repositories: the compiler front end (C#/.NET 8), the virtual machine (C99), and this repository — the glue layer and distribution package.
+**SLang** is a statically typed language built from scratch: the compiler front end (C#/.NET 8) compiles `.sl` sources into SLIR module packages, and a C99 virtual machine executes them. This repository is the unified host and distribution package gluing both together.
 
 ```
-.sl source ──► Front compiler (C#) ──► SLIR module package (json / slb) ──► C99 VM execution
-                simple_language            ▲        csimple_lang
-                        └── unified host `slang` (this repo): compile → in-memory handoff → run ──┘
+.sl source ──► Front compiler (C#, simple_language) ──► SLIR module package (json / slb) ──► C99 VM execution
+                                  ▲
+                unified host `slang` (this repo) chains it all: compile → in-memory handoff → run
 ```
 
 The unified host **`slang`** in this repository performs "Front in-process compile → SLIR in-memory handoff → C VM P/Invoke execution" inside a single .NET 8 process: `slang run <project>` compiles and runs in one command, with no intermediate files written to disk.
@@ -18,9 +18,8 @@ The unified host **`slang`** in this repository performs "Front in-process compi
 |------|------|------|
 | **SlangAllInOne** (this repo) | All-in-one package: unified host `slang` + standard library sources + test suites + user docs + build/release scripts | C#/.NET 8 |
 | [kamaba/simple_language](https://github.com/kamaba/simple_language) — **FrontEnd compiler** | Lexer/parser, semantics and type system, IR generation, SLIR export, CLI; opcode enum kept in strict lockstep with the C VM | C#/.NET 8 |
-| [kamaba/csimple_lang](https://github.com/kamaba/csimple_lang) — **C99 virtual machine** | Execution engine: GC, coroutine scheduler, isolates, runtime JIT, FFI, SLB binary format, WebAssembly port; deep design docs live in `md/design/` | C99 |
 
-Each repository has one job: the Front compiles SLIR, the VM executes SLIR, and this repo glues both into a single command while carrying the standard library, tests, and documentation. **When building from source, the three repositories must sit as siblings under the same parent directory** (project references use cross-repo relative paths) — see [Build from Source](#build-from-source).
+The Front compiles SLIR, the C VM executes SLIR, and this repo glues both into a single command while carrying the standard library, tests, and documentation (the C VM ships as runtime binaries in `bin\` of the release packages). **When building from source, this repo and simple_language must sit as siblings under the same parent directory** (project references use cross-repo relative paths) — see [Build from Source](#build-from-source).
 
 ## Language Features
 
@@ -129,13 +128,12 @@ Project
 Prerequisites: .NET SDK 8, CMake ≥ 3.18, clang (the script can auto-install cmake/ninja), MSVC (for native projects); Linux builds go through WSL.
 
 ```powershell
-# Place the three repos side by side (the host project references Front and C VM sources cross-repo)
+# Place this repo and the Front compiler repo side by side (the host project references Front sources cross-repo)
 #   <root>/SlangAllInOne
 #   <root>/simple_language
-#   <root>/csimple_lang
 cd <root>
 
-# 1. Build the C VM (→ csimple_lang\build\Debug\bin\csimple_lang_dll.dll)
+# 1. Build the C VM runtime (→ csimple_lang_dll.dll; the script locates the workspace automatically)
 powershell -File SlangAllInOne\scripts\build-vm-win.ps1 -Config Debug
 
 # 2. Compile-and-run: Front in-process compile → SLIR in-memory handoff → C VM execution
@@ -145,7 +143,7 @@ dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLa
 powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 ```
 
-The workspace-wide development entry point is [SlangAllInOne.sln](SlangAllInOne.sln) (open one solution in Visual Studio to build everything: host / Front / compilers / test hosts / C VM vcxproj / plugins / tools; see [PROJECTS.md](PROJECTS.md) for the project inventory and path mapping).
+The workspace-wide development entry point is [SlangAllInOne.sln](SlangAllInOne.sln) (open one solution in Visual Studio to build everything: host / Front / compilers / test hosts / native libs / plugins / tools; see [PROJECTS.md](PROJECTS.md) for the project inventory and path mapping).
 
 ## The `slang` CLI
 
@@ -238,10 +236,6 @@ Master index: [md/INDEX.md](md/INDEX.md). Summary by group below. (Docs are writ
 | [PROJECTS.md](PROJECTS.md) | **Project inventory & old→new path mapping** (read before touching projects) |
 | [RELEASE.md](RELEASE.md) | **Release policy** (sole authority, AOT-only dual platform) |
 
-### Deep Design Docs (csimple_lang repository)
-
-The design sources for the VM side live in [csimple_lang/md/design](https://github.com/kamaba/csimple_lang/tree/main/md/design): [SLB binary module format](https://github.com/kamaba/csimple_lang/blob/main/md/design/SLB_DESIGN.md), [runtime JIT](https://github.com/kamaba/csimple_lang/blob/main/md/design/JIT_DESIGN.md), [GC](https://github.com/kamaba/csimple_lang/blob/main/md/design/GC_DESIGN.md), [Net layer](https://github.com/kamaba/csimple_lang/blob/main/md/design/NET_DESIGN.md), [plugin system & `@tag{}`](https://github.com/kamaba/csimple_lang/blob/main/md/design/PLUGIN_SYSTEM_DESIGN.md), [attribute phases](https://github.com/kamaba/csimple_lang/blob/main/md/design/ATTRIBUTE_DESIGN.md), [payload binary format](https://github.com/kamaba/csimple_lang/blob/main/md/design/PAYLOAD_BINARY_FORMAT.md), and more.
-
 ## Testing
 
 | Suite | Coverage | Host project (Project\) |
@@ -273,9 +267,9 @@ The pipeline is fully automated: preflight checks → Windows AOT package → Li
 
 ## Debugging
 
-- **VS F5 mixed debugging (recommended)**: open `SlangAllInOne.csproj` and pick the `run MiniSmoke (C# + C VM mixed)` profile from launchSettings — set C# breakpoints anywhere under `simple_language\source\**` and C breakpoints directly in `csimple_lang\src\**` (P/Invoke loads the DLL in-process, so symbols line up naturally).
+- **VS F5 mixed debugging (recommended)**: open `SlangAllInOne.csproj` and pick the `run MiniSmoke (C# + C VM mixed)` profile from launchSettings — set C# breakpoints anywhere under `simple_language\source\**` and C breakpoints directly in the C VM sources (P/Invoke loads the DLL in-process, so symbols line up naturally).
 - **Wrong runtime output**: check `out/export/<module>/Logs/Result.txt` (print mirror) first → `VM.txt` → `Front.txt` (earliest Error) → `DebugCode/` stage snapshots.
 
 ## License
 
-[Apache-2.0](LICENSE). Full license texts of the third-party components statically linked into the C VM (yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite) live in [csimple_lang/third_party/LICENSES](https://github.com/kamaba/csimple_lang/tree/main/third_party/LICENSES) and are injected into release packages under `licenses\`; `sl_mysql_lib` (GPL-2.0 static link) is not distributed in official release packages.
+[Apache-2.0](LICENSE). Full license texts of the third-party components statically linked into the C VM (yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite) are injected into release packages under `licenses\` (NOTICE + each license); `sl_mysql_lib` (GPL-2.0 static link) is not distributed in official release packages.

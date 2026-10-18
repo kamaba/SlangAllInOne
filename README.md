@@ -2,12 +2,12 @@
 
 **中文** | [English](README_EN.md)
 
-**SLang** 是一门从零构建的静态类型语言，工具链由三个开源仓库组成：编译器前端（C#/.NET 8）、虚拟机（C99）、以及本仓库——胶水层与分发总包。
+**SLang** 是一门从零构建的静态类型语言：编译器前端（C#/.NET 8）把 `.sl` 源码编译为 SLIR 模块包，C99 虚拟机负责执行；本仓库是统合两者的宿主与分发总包。
 
 ```
-.sl 源码 ──► Front 编译器（C#）──► SLIR 模块包（json / slb）──► C99 虚拟机执行
-                simple_language            ▲        csimple_lang
-                        └── 本仓库统合宿主 slang：编译→内存直传→运行 ──┘
+.sl 源码 ──► Front 编译器（C#，simple_language）──► SLIR 模块包（json / slb）──► C99 虚拟机执行
+                                  ▲
+               本仓库统合宿主 slang 串起全链路：编译 → 内存直传 → 运行
 ```
 
 本仓库的统合宿主 **`slang`** 在单个 .NET 8 进程内完成「Front 进程内编译 → SLIR 包内存直传 → C VM P/Invoke 执行」：`slang run <工程>` 即**编译即运行**，中间产物不落盘。
@@ -18,9 +18,8 @@
 |------|------|--------|
 | **SlangAllInOne**（本仓库） | 一体化总包：统合宿主 `slang` + 标准库源码 + 测试用例集 + 用户文档 + 构建/发布脚本 | C#/.NET 8 |
 | [kamaba/simple_language](https://github.com/kamaba/simple_language) — **FrontEnd 编译器** | 词法/结构解析、语义与类型系统、IR 生成、SLIR 导出、CLI；opcode 枚举与 C VM 逐项对齐 | C#/.NET 8 |
-| [kamaba/csimple_lang](https://github.com/kamaba/csimple_lang) — **C99 虚拟机** | 执行引擎：GC、协程调度、isolate、运行时 JIT、FFI、SLB 二进制格式、WebAssembly 移植；`md/design/` 收录深度设计文档 | C99 |
 
-三个仓库各司其职：Front 编译产出 SLIR，VM 执行 SLIR，本仓库把两者粘合为一条命令，并承载标准库、测试与文档。**从源码构建时三个仓库需放在同一父目录下平级摆放**（工程引用为跨仓库相对路径），见[「从源码构建」](#从源码构建)。
+Front 编译产出 SLIR，C VM 执行 SLIR，本仓库把两者粘合为一条命令，并承载标准库、测试与文档（C VM 以运行时二进制随发布包 `bin\` 分发）。**从源码构建时本仓库与 simple_language 需放在同一父目录下平级摆放**（工程引用为跨仓库相对路径），见[「从源码构建」](#从源码构建)。
 
 ## 语言特性
 
@@ -129,13 +128,12 @@ Project
 前置：.NET SDK 8、CMake ≥ 3.18、clang（脚本可自动补装 cmake/ninja）、MSVC（native 工程）；Linux 侧走 WSL。
 
 ```powershell
-# 三个仓库平级摆放（宿主工程跨仓库引用 Front 与 C VM 源码）
+# 本仓库与 Front 编译器仓库平级摆放（宿主工程跨仓库引用 Front 源码）
 #   <root>/SlangAllInOne
 #   <root>/simple_language
-#   <root>/csimple_lang
 cd <root>
 
-# 1. 构建 C VM（→ csimple_lang\build\Debug\bin\csimple_lang_dll.dll）
+# 1. 构建 C VM 运行时（→ csimple_lang_dll.dll，脚本自动定位工作区）
 powershell -File SlangAllInOne\scripts\build-vm-win.ps1 -Config Debug
 
 # 2. 编译即运行：Front 进程内编译 → SLIR 内存直传 → C VM 执行
@@ -145,7 +143,7 @@ dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLa
 powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 ```
 
-全仓开发入口 = [SlangAllInOne.sln](SlangAllInOne.sln)（VS 打开一个 sln 构建全部：宿主 / Front / 编译器 / 测试宿主 / C VM vcxproj / 插件 / 工具；工程清单与路径映射见 [PROJECTS.md](PROJECTS.md)）。
+全仓开发入口 = [SlangAllInOne.sln](SlangAllInOne.sln)（VS 打开一个 sln 构建全部：宿主 / Front / 编译器 / 测试宿主 / native 库 / 插件 / 工具；工程清单与路径映射见 [PROJECTS.md](PROJECTS.md)）。
 
 ## slang 命令
 
@@ -238,10 +236,6 @@ Front 编译流水线（排障主干）：`Code → Token → Node → File → 
 | [PROJECTS.md](PROJECTS.md) | **工程清单与新旧路径映射**（改工程先读） |
 | [RELEASE.md](RELEASE.md) | **发布策略唯一权威**（AOT-only 双平台） |
 
-### 深度设计文档（csimple_lang 仓库）
-
-VM 侧设计真源在 [csimple_lang/md/design](https://github.com/kamaba/csimple_lang/tree/main/md/design)：[SLB 二进制模块格式](https://github.com/kamaba/csimple_lang/blob/main/md/design/SLB_DESIGN.md)、[运行时 JIT](https://github.com/kamaba/csimple_lang/blob/main/md/design/JIT_DESIGN.md)、[GC](https://github.com/kamaba/csimple_lang/blob/main/md/design/GC_DESIGN.md)、[Net 网络层](https://github.com/kamaba/csimple_lang/blob/main/md/design/NET_DESIGN.md)、[插件系统与 `@tag{}`](https://github.com/kamaba/csimple_lang/blob/main/md/design/PLUGIN_SYSTEM_DESIGN.md)、[attribute 四时点](https://github.com/kamaba/csimple_lang/blob/main/md/design/ATTRIBUTE_DESIGN.md)、[payload 二进制格式](https://github.com/kamaba/csimple_lang/blob/main/md/design/PAYLOAD_BINARY_FORMAT.md)等。
-
 ## 测试
 
 | 用例集 | 覆盖 | 宿主工程（Project\） |
@@ -273,9 +267,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -V
 
 ## 调试
 
-- **VS F5 混合调试（主推）**：打开 `SlangAllInOne.csproj`，选 launchSettings 的 `run MiniSmoke (C# + C VM mixed)` profile——C# 断点打在 `simple_language\source\**`，C 断点直接打在 `csimple_lang\src\**`（P/Invoke 进程内加载，符号天然对上）。
+- **VS F5 混合调试（主推）**：打开 `SlangAllInOne.csproj`，选 launchSettings 的 `run MiniSmoke (C# + C VM mixed)` profile——C# 断点打在 `simple_language\source\**`，C 断点可直接打在 C VM 源码（P/Invoke 进程内加载，符号天然对上）。
 - **运行输出不对**：先看 `out/export/<模块>/Logs/Result.txt`（print 镜像）→ `VM.txt` → `Front.txt`（最早一条 Error）→ `DebugCode/` 各阶段快照反查。
 
 ## 许可证
 
-[Apache-2.0](LICENSE)。C VM 静态链接的第三方组件（yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite）协议全文见 [csimple_lang/third_party/LICENSES](https://github.com/kamaba/csimple_lang/tree/main/third_party/LICENSES)，并随发布包注入 `licenses\`；`sl_mysql_lib`（GPL-2.0 静链）不随官方发布包分发。
+[Apache-2.0](LICENSE)。C VM 静态链接的第三方组件（yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite）协议全文随发布包注入 `licenses\`（NOTICE + 各组件协议）；`sl_mysql_lib`（GPL-2.0 静链）不随官方发布包分发。

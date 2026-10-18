@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using SimpleLanguage.Logging;
 using SimpleLanguage.Project;
@@ -10,9 +9,16 @@ namespace CSimpleVMTest;
 /// <summary>
 /// 联合测试宿主（2026-10-18 由 CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest
 /// 与 Test/Test2 八个宿主工程合一）：
-/// Front 进程内编译（-start=false 走 dotnet 子进程）→ 解析 module 包 → C VM 执行
-/// （Debug = P/Invoke csimple_lang_dll.dll 进程内、C#/C 可同进程断点调试；
-///   Release = csimple_lang.exe 独立进程）。
+/// Front 进程内编译（-start=false 走 dotnet 子进程）→ 解析 module 包 → 发布包
+/// slang 应用执行（2026-10-18 用户指令，取代旧的 csimple_lang 直调/P-Invoke）：
+///   Debug   -> package\win32-debug\slang.exe（框架依赖宿主 + bin\ 调试 C VM，
+///              标准库取包内 lib\，slb + json 调试副本齐备）；
+///   Release -> package\win32-release\slang.exe（Native AOT 一体化 + bin\ 加固
+///              C VM（JIT 默认开），标准库取包内 lib\ 仅 slb）。
+/// 模块产物先拷入包内 &lt;package&gt;\&lt;Module&gt;\ 再 run-disk：moduleReferences
+/// 的相对解析在包内落空 → 走官方库直查 &lt;exe&gt;\lib\（sl_exe_dir = slang.exe
+/// 所在目录），标准库即来自包内 lib\；子目录深度与 out\export\&lt;Module&gt;
+/// 一致，插件 lib 按 module.json 所在目录回仓库的相对路径保持可达。
 ///
 /// 用例选择（第一个非 - 开头参数；IDE 里对应 Properties\launchSettings.json 各 profile）：
 ///   BaseTest | ExpendTest（缺省） | MathTest | SpecialTest | BenchMark | RenderTest
@@ -21,7 +27,7 @@ namespace CSimpleVMTest;
 ///       负例与 samples 等，全表见 Presets）；
 ///   其他 —— 视为显式工程路径（相对/绝对均可）。
 /// 其余选项：-test（跑 _test_ 入口）、-start true/false（false 走 dotnet 子进程编译）、
-/// -debug（Release 进程模式下启动前暂停挂调试器）、-O0..-O3（转发 Front）、
+/// -debug（启动 slang 前暂停，便于挂调试器到子进程）、-O0..-O3（转发 Front）、
 /// "--" 之后的 token 原样透传给 C VM 作 Project._inputArgs 程序参数。
 /// </summary>
 internal static class Program
@@ -106,12 +112,11 @@ internal static class Program
         if (optLevelArg != null)
             dotnetFrontArgs.Add(optLevelArg);
         dotnetFrontArgs.Add("--no-banner");
-#if DEBUG
-        // Debug：改走二进制导出（.module.slb 必产物），并附带导出 module.json 调试副本
+        // R15：供运行的模块一律二进制导出（slb 主产物 + json 调试副本），
+        // 包内 run-disk 优先装载 slb
         dotnetFrontArgs.Add("--format");
         dotnetFrontArgs.Add("binary");
         dotnetFrontArgs.Add("--export-json");
-#endif
 
         int frontExit = start
             ? RunFrontInProcess(projectPath, optLevelArg)
@@ -137,7 +142,8 @@ internal static class Program
 
         Console.WriteLine($"Package: {packagePath}");
 
-        // Step 3: Run C VM (csimple_lang.exe) as external process
+        // Step 3: run the module via the packaged slang app (2026-10-18 用户指令：
+        // Debug -> package\win32-debug / Release -> package\win32-release)。
         // C VM 测试用例使用相对路径（如 Sqlite3Test 的 Resources/ttest），
         // VS 启动时 CWD 是 bin\Debug\net8.0，需切到测试工程目录，与命令行运行环境一致
         string? projectDir = Path.GetDirectoryName(Path.GetFullPath(projectPath));
@@ -145,9 +151,18 @@ internal static class Program
         {
             Environment.CurrentDirectory = projectDir;
         }
-        int cvmExit = RunCVM(packagePath, runTestEntry, repoRoot, debug, programArgs);
+        int cvmExit = RunCVM(packagePath, runTestEntry, repoRoot, debug, programArgs, out string? runOutput);
         if (cvmExit != 0)
         {
+            // 运行期负例：预期退出码 + 输出标记双命中 = 通过（如 PlatformVariantNegTest
+            // 的 linux-only 变体在 windows 宿主必然拒跑）
+            var negRun = TryGetNegativeRunCase(args);
+            if (negRun != null && cvmExit == negRun.ExpectedExitCode
+                && runOutput != null && runOutput.Contains(negRun.OutputContains))
+            {
+                Console.WriteLine($"Negative runtime test passed: slang exited {negRun.ExpectedExitCode} as expected (marker hit).");
+                return 0;
+            }
             Console.WriteLine($"C VM run failed, exit code: {cvmExit}");
             return cvmExit;
         }
@@ -163,6 +178,8 @@ internal static class Program
         Console.WriteLine("Suites    : " + string.Join(", ", Presets.Take(6).Select(p => p.Name)));
         Console.WriteLine("Named     : " + string.Join(", ", Presets.Skip(6).Select(p => p.Name)));
         Console.WriteLine("Options   : -test | -start true/false | -debug | -O0..-O3");
+        Console.WriteLine("Runtime   : packaged slang app (Debug -> package\\win32-debug, Release -> package\\win32-release);");
+        Console.WriteLine("            module staged into <package>\\<Module>\\, stdlib resolved from <package>\\lib\\");
         Console.WriteLine("Default   : ExpendTest");
         Console.WriteLine("Example:");
         Console.WriteLine("  ... -- MathTest -test          (compile MathTest and run _test_ entry)");
@@ -182,131 +199,118 @@ internal static class Program
         return null;
     }
 
-    static int RunCVM(string packagePath, bool runTestEntry, string repoRoot, bool debug = false, List<string>? programArgs = null)
+    static int RunCVM(string packagePath, bool runTestEntry, string repoRoot, bool debug, List<string>? programArgs, out string? runOutput)
     {
-        // Resolve csimple_lang exe/dll path (VS output: csimple_lang\build\<Config>\bin).
-        // Match the C# build configuration to the VM build configuration:
-        // Debug  -> build\Debug\bin   (P/Invoke DLL, can attach C debugger)
-        // Release-> build\Release\bin (optimized /O2 + RELEASE=1 exe)
-        // 找不到时回退另一配置。
+        runOutput = null;
+        // 发布包布局（2026-10-18 package\{win32|linux}-{debug|release}）：
+        //   Debug   -> package\win32-debug  ：框架依赖 slang.exe + bin\ 调试 C VM
+        //              （pdb 侧车）+ lib\ slb+json 官方库 + plugins\ 前端插件程序集；
+        //   Release -> package\win32-release：Native AOT slang.exe + bin\ 加固 C VM
+        //              （JIT 默认开）+ lib\ 仅 slb 官方库。
+        // 包不存在时提示先跑 build-packages.ps1（不回退 dev 树——本宿主的意义即验证发布包）。
 #if DEBUG
-        string cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Debug", "bin"));
-        string cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
-
-        if (!File.Exists(cvmExe))
-        {
-            cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Release", "bin"));
-            cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
-        }
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-debug");
 #else
-        string cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Release", "bin"));
-        string cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
-
-        if (!File.Exists(cvmExe))
-        {
-            // vcxproj Release|x64 (Application) outputs csimple_lang_lib.exe into the same bin dir
-            string libExe = Path.Combine(cvmDir, "csimple_lang_lib.exe");
-            if (File.Exists(libExe))
-                cvmExe = libExe;
-        }
-
-        if (!File.Exists(cvmExe))
-        {
-            cvmDir = Path.GetFullPath(Path.Combine(repoRoot, "..", "csimple_lang", "build", "Debug", "bin"));
-            cvmExe = Path.Combine(cvmDir, "csimple_lang.exe");
-        }
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-release");
 #endif
-
-        if (!File.Exists(cvmExe))
+        string slangExe = Path.Combine(pkgDir, "slang.exe");
+        if (!File.Exists(slangExe))
         {
-            Console.WriteLine("csimple_lang.exe not found. Build the C VM first:");
-            Console.WriteLine("  .\\scripts\\build-vm-win.ps1 -Configuration Debug");
+            Console.WriteLine($"slang.exe not found in package: {pkgDir}");
+            Console.WriteLine("Build the packages first:");
+            Console.WriteLine("  powershell -ExecutionPolicy Bypass -File SlangAllInOne\\scripts\\build-packages.ps1");
             return 4;
         }
 
-        var cvmArgs = new List<string> { "run", Quote(packagePath) };
+        // 模块产物先拷入包内 <pkg>\<Module>\ 再跑（两重目的）：
+        //  1) moduleReferences 的 "../Core/Core.module" 相对解析在包内落空，
+        //     C VM 走官方库直查 <exe_dir>\lib\（sl_exe_dir_join_name 取
+        //     slang.exe 所在目录），标准库即取自包内 lib\ 目录；
+        //  2) 子目录深度与 out\export\<Module> 一致（lang 根下第 4 层），
+        //     SpecialTest 等插件 lib "../../../../simple_language_plugins/..."
+        //     这类按 module.json 所在目录回仓库的相对路径保持可达。
+        string? runModule = CopyModuleIntoPackage(packagePath, pkgDir);
+        if (runModule == null)
+        {
+            Console.WriteLine($"Failed to stage module package into: {pkgDir}");
+            return 4;
+        }
+
+        var slangArgs = new List<string> { "run-disk", Quote(runModule) };
         if (runTestEntry)
         {
-            cvmArgs.Add("-test");
+            slangArgs.Add("-t");
         }
         // 程序参数（Project._inputArgs）：仅透传宿主命令行 "--" 之后的 token，
         // 无 "--" 时不注入（_inputArgs 为空数组，全量回归不受影响）。
         // InputArgsTest 三参数路径：dotnet run --project ... -- -- hello 42 world
         if (programArgs != null && programArgs.Count > 0)
         {
-            cvmArgs.Add("--");
-            cvmArgs.AddRange(programArgs);
+            slangArgs.Add("--");
+            slangArgs.AddRange(programArgs);
         }
 
-#if DEBUG
-        // Debug: P/Invoke into csimple_lang_dll.dll (in-process, can attach C debugger)
-        string dllPath = Path.Combine(cvmDir, "csimple_lang_dll.dll");
-        if (!File.Exists(dllPath))
-        {
-            Console.WriteLine($"csimple_lang_dll.dll not found at {dllPath}, falling back to process mode.");
-            return RunProcess(cvmExe, cvmArgs, "C VM run (csimple_lang)");
-        }
-
-        Console.WriteLine("=== C VM run (P/Invoke) ===");
-        Console.WriteLine($"DLL: {dllPath}");
-
-        // Add DLL directory to search path so DllImport can find it
-        if (OperatingSystem.IsWindows())
-            SetDllDirectory(cvmDir);
-
-        // Build argv: ["csimple_lang", "run", packagePath, ...]
-        var argv = new List<string> { "csimple_lang" };
-        argv.AddRange(cvmArgs);
-        return CallCliMain(argv.ToArray());
-#else
-        // Release: process invocation
+        Console.WriteLine($"Package dir: {pkgDir}");
         if (debug)
         {
-            Console.WriteLine("=== C VM debug mode (csimple_lang) ===");
-            Console.WriteLine($"{cvmExe} {string.Join(" ", cvmArgs)}");
-            Console.WriteLine("Press Enter to start C VM...");
+            Console.WriteLine("=== slang run (package, debug pause) ===");
+            Console.WriteLine($"{slangExe} {string.Join(' ', slangArgs)}");
+            Console.WriteLine("Press Enter to start slang...");
             Console.ReadLine();
-            return RunProcessDirect(cvmExe, cvmArgs, Environment.CurrentDirectory);
+            return RunProcessDirect(slangExe, slangArgs, Environment.CurrentDirectory);
         }
-        return RunProcess(cvmExe, cvmArgs, "C VM run (csimple_lang)");
-#endif
+        return RunProcess(slangExe, slangArgs, "slang run (package)", null, out runOutput);
     }
 
-#if DEBUG
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    static extern bool SetDllDirectory(string lpPathName);
-
-    [DllImport("csimple_lang_dll.dll", CallingConvention = CallingConvention.Cdecl)]
-    static extern int cli_main(int argc, IntPtr argv);
-
-    static int CallCliMain(string[] args)
+    /// <summary>把 out\export\&lt;Dir&gt;\ 的运行产物（*.module.json / *.module.slb +
+    /// plugins\ 载荷，不含 Logs\DebugCode 调试快照）拷入发布包 &lt;pkgDir&gt;\&lt;Dir&gt;\，
+    /// 返回包内模块文件路径（优先与传入 json 同名的 .slb 主产物，无则 .json）；失败返回 null。
+    /// 产物文件名以 jsonc project.name 为准（≠ export.moduleName 时目录名与文件名不同，
+    /// 如 NullFast：目录 NullFastTest\ 文件 ProjectTest.module.slb），故按实际文件名定位，
+    /// 不能按目录名推导。</summary>
+    static string? CopyModuleIntoPackage(string moduleJsonPath, string pkgDir)
     {
-        int argc = args.Length;
-        var argvPtrs = new IntPtr[argc];
         try
         {
-            for (int i = 0; i < argc; i++)
-            {
-                byte[] bytes = Encoding.UTF8.GetBytes(args[i] + "\0");
-                argvPtrs[i] = Marshal.AllocHGlobal(bytes.Length);
-                Marshal.Copy(bytes, 0, argvPtrs[i], bytes.Length);
-            }
-            IntPtr nativeArgv = Marshal.AllocHGlobal(IntPtr.Size * argc);
-            Marshal.Copy(argvPtrs, 0, nativeArgv, argc);
-            int ret = cli_main(argc, nativeArgv);
-            Marshal.FreeHGlobal(nativeArgv);
-            return ret;
+            string moduleDir = Path.GetDirectoryName(Path.GetFullPath(moduleJsonPath))
+                ?? throw new InvalidOperationException("module path has no directory");
+            string dirName = Path.GetFileName(moduleDir.TrimEnd('\\', '/'));
+            if (dirName.Length == 0)
+                throw new InvalidOperationException("cannot derive module dir name from: " + moduleDir);
+            string destDir = Path.Combine(pkgDir, dirName);
+            Directory.CreateDirectory(destDir);
+
+            foreach (string f in Directory.GetFiles(moduleDir, "*.module.*"))
+                File.Copy(f, Path.Combine(destDir, Path.GetFileName(f)), overwrite: true);
+
+            // 插件载荷子树（如 echo 插件 lib 由 Front 拷入 out\export\<Module>\plugins\）
+            string pluginsSrc = Path.Combine(moduleDir, "plugins");
+            if (Directory.Exists(pluginsSrc))
+                CopyDirectoryRecursive(pluginsSrc, Path.Combine(destDir, "plugins"));
+
+            string jsonName = Path.GetFileName(moduleJsonPath);
+            string slbName = Path.GetFileNameWithoutExtension(jsonName) + ".slb";
+            string slb = Path.Combine(destDir, slbName);
+            if (File.Exists(slb))
+                return slb;
+            string json = Path.Combine(destDir, jsonName);
+            return File.Exists(json) ? json : null;
         }
-        finally
+        catch (Exception ex)
         {
-            for (int i = 0; i < argc; i++)
-            {
-                if (argvPtrs[i] != IntPtr.Zero)
-                    Marshal.FreeHGlobal(argvPtrs[i]);
-            }
+            Console.WriteLine(ex);
+            return null;
         }
     }
-#endif
+
+    static void CopyDirectoryRecursive(string srcDir, string destDir)
+    {
+        Directory.CreateDirectory(destDir);
+        foreach (string f in Directory.GetFiles(srcDir))
+            File.Copy(f, Path.Combine(destDir, Path.GetFileName(f)), overwrite: true);
+        foreach (string d in Directory.GetDirectories(srcDir))
+            CopyDirectoryRecursive(d, Path.Combine(destDir, Path.GetFileName(d)));
+    }
 
     static int RunProcessDirect(string fileName, List<string> args, string workingDirectory)
     {
@@ -326,8 +330,10 @@ internal static class Program
         return p.ExitCode;
     }
 
-    static int RunProcess(string fileName, List<string> args, string stepName, string? workingDirectory = null)
+    static int RunProcess(string fileName, List<string> args, string stepName, string? workingDirectory, out string? captureOutput)
     {
+        captureOutput = null;
+        var capture = new StringBuilder();
         var psi = new ProcessStartInfo
         {
             FileName = fileName,
@@ -347,11 +353,13 @@ internal static class Program
         {
             if (e.Data == null) return;
             Console.WriteLine(e.Data);
+            capture.AppendLine(e.Data);
         };
         p.ErrorDataReceived += (_, e) =>
         {
             if (e.Data == null) return;
             Console.Error.WriteLine(e.Data);
+            capture.AppendLine(e.Data);
         };
 
         Console.WriteLine($"=== {stepName} ===");
@@ -362,14 +370,14 @@ internal static class Program
         p.BeginErrorReadLine();
         p.WaitForExit();
 
+        captureOutput = capture.ToString();
         return p.ExitCode;
     }
 
     static int RunDotnet(List<string> args, string stepName, string? workingDirectory = null)
     {
-        return RunProcess("dotnet", args, stepName, workingDirectory);
+        return RunProcess("dotnet", args, stepName, workingDirectory, out _);
     }
-
     static int RunFrontInProcess(string projectPath, string? optLevelArg = null)
     {
         try
@@ -379,12 +387,10 @@ internal static class Program
             if (optLevelArg != null)
                 frontArgs.Add(optLevelArg);
             frontArgs.Add("--no-banner");
-#if DEBUG
-            // Debug：改走二进制导出（.module.slb 必产物），并附带导出 module.json 调试副本
+            // R15：供运行的模块一律二进制导出（slb 主产物 + json 调试副本）
             frontArgs.Add("--format");
             frontArgs.Add("binary");
             frontArgs.Add("--export-json");
-#endif
             Console.WriteLine("Front: " + string.Join(' ', frontArgs));
             var inputArgs = new CommandInputArgs(frontArgs.ToArray());
             bool ok = CommandExecutor.Execute(inputArgs);
@@ -428,6 +434,68 @@ internal static class Program
                 ("MetaCoreInlineLambdaBodyForbiddenExceptionFrame", 1),
             }
         },
+        new NegativeFrontCase
+        {
+            ArgName = "PlatformNegTest",
+            ExportModuleName = "PlatformNegTest",
+            // 4 个非法平台值 (linuxx/arm65/sse5/vulkn) 各拦截一次
+            ExpectedLids = new[]
+            {
+                ("ProjectPlatformRequireValueInvalid", 4),
+            }
+        },
+        new NegativeFrontCase
+        {
+            ArgName = "PlatformOverrideNegTest",
+            ExportModuleName = "PlatformOverrideNegTest",
+            // 3 个非法 override 平台值各拦截一次
+            ExpectedLids = new[]
+            {
+                ("ProjectPlatformRequireValueInvalid", 3),
+            }
+        },
+        new NegativeFrontCase
+        {
+            ArgName = "PlatformAotNegTest",
+            ExportModuleName = "PlatformAotNegTest",
+            // aot 与 platform 声明冲突拦截
+            ExpectedLids = new[]
+            {
+                ("ProjectPlatformAotFeatureConflict", 1),
+            }
+        },
+        new NegativeFrontCase
+        {
+            ArgName = "AtSignLabel",   // → AtSignNegativeTest：@csharp_mono 块通道负例
+            ExportModuleName = "AtSignNegativeTest",
+            // sp 注释自明：编译期必失败（驱动只断言 LID 计数，不运行 VM）。
+            // 6 处通道语法负例（var 入通道×4 / 中段通道行 / 未知类型）+ 1 处双出通道冲突
+            ExpectedLids = new[]
+            {
+                ("ProcessAtSignLabelChannelSyntaxError", 6),
+                ("ProcessAtSignLabelOutChannelMultiple", 1),
+            }
+        },
+    };
+
+    /// <summary>运行期负例：Front 编译成功，C VM 装载/校验层预期拒跑
+    /// （退出码 + 输出标记双判据，命中即视为通过）。</summary>
+    private sealed class NegativeRunCase
+    {
+        public string ArgName = "";        // 命令行启动项名 (args[0])
+        public int ExpectedExitCode = 1;   // C VM 预期退出码
+        public string OutputContains = ""; // 输出必须包含的标记片段
+    }
+
+    private static readonly NegativeRunCase[] s_negativeRunCases = new[]
+    {
+        new NegativeRunCase
+        {
+            ArgName = "PlatformVariantNegTest",
+            ExpectedExitCode = 1,
+            // linux-only 平台变体在 windows 宿主必然不匹配（--force-run 才可跳过）
+            OutputContains = "平台变体均不匹配",
+        },
     };
 
     static NegativeFrontCase? TryGetNegativeFrontCase(string[] args)
@@ -435,6 +503,13 @@ internal static class Program
         if (args.Length == 0)
             return null;
         return s_negativeFrontCases.FirstOrDefault(c => c.ArgName == args[0]);
+    }
+
+    static NegativeRunCase? TryGetNegativeRunCase(string[] args)
+    {
+        if (args.Length == 0)
+            return null;
+        return s_negativeRunCases.FirstOrDefault(c => c.ArgName == args[0]);
     }
 
     // 校验负例: 按行统计 Front.txt 中 "[LID]" 出现次数, 预期全部达标 = 通过

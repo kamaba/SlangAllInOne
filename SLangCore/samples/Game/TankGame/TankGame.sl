@@ -575,6 +575,21 @@ TankGame
         Console.resetColor()
         SystemPrintln("坦克大战开始！w/a/s/d 移动，f/空格 开火，q 退出。")
 
+        # 自动化模式（CI/联合测试宿主回归用）：Project._inputArgs 含 "auto"
+        # 时跑满 60 帧（约 3.6s）自动退出——Windows 管道下 keyAvailable 恒
+        # false，交互键无法注入；交互运行不传参即不受影响。
+        bool autoMode = false
+        inputArgs = global._inputArgs
+        if inputArgs != null
+        {
+            Int32 ai = 0
+            while ai < inputArgs.length
+            {
+                if inputArgs[ai] == "auto" { autoMode = true }
+                ai = ai + 1
+            }
+        }
+
         while this.running == true
         {
             # 1) 非阻塞读入本轮所有按键
@@ -603,6 +618,11 @@ TankGame
             this.draw()
             Console.sleep(60)
             this.frame = this.frame + 1
+
+            if autoMode == true && this.frame >= 60
+            {
+                this.running = false
+            }
         }
 
         # 收尾

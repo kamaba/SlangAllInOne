@@ -205,3 +205,22 @@
 - **删除留档**（无 git，永久移除前记录）：`StdNativeImpl\ConsoleExternalModule.cs` 实现旧 C# VM 外部函数注册（`ISLExternalFunctionModule.Register` + `registrar.Register(name, Func<object[],object>)`），注册 `Console.println/print/write/input/readLine/readKey`；`MathNativeImpl\MathExternalModule.cs` 同机制注册 `Math.sin/cos/tan/asin/acos/atan/atan2/sinh/cosh/tanh/pow/sqrt/exp/log/log10/ceil/floor/round/truncate`（float 包装 + ReadFloat 参数归一）。SL 侧调用形态为 `SystemCallExternalFunction("Math.sin", ...)`——该体系已不存在。
 - 如何快速验证：两个 csproj `dotnet build` 0 警告 0 错误；`dotnet run Test`（BaseTest 73 文件）与 `dotnet run Test2`（ExpendTest）Front 编译 + C VM P/Invoke 全链路 exit 0；sln 全量 MSBuild exit 0（27 工程）。
 - 预防建议：① 删除机制承载工程前先确认等价物已落地（本次 C DLL + cvmFunction 体系早已覆盖才删）；② **sln 全量构建偶发 `C1083 Permission denied`（写 vcxproj obj）= 并行竞态**：`CSimpleVMCoreTest` 的 `build_cvm.bat`（BeforeTargets=Build 的独立 MSBuild 进程）与 Test/Test2/SpecialTest 等 ProjectReference 触发的同一 vcxproj 构建并行写同一 obj 目录——MSBuild 的 ProjectReference 去重管不到 bat 开的外部进程；复现时直接重跑即可，根治方案是 CoreTest 弃 bat 改 ProjectReference（未在本次做，改动面大）；③ Test/Test2 与 CoreTest/StdTest 功能等价（轻量入口定位），新增宿主别再复制这条链路，优先复用现有 7+2 个宿主。
+
+### [2026-10-18] ExpendTest 全线 Front 失败（21464×16）：R15 slb 优先引用装载丢 attributeContracts——SLB 补 tag 0x16 + META 未知 tag「真跳过」修正
+- 现象：CSimpleVMTest 跑 ExpendTest，Front 编译期 `MetaCoreAttributeStageTargetsNotFound`（21464）连出 16 条 Error（Exclude/Nickname/Serializable/SerializeField/NonSerialized）→ MetaCore 阶段失败、Export 跳过；BaseTest 等无属性用例不受影响。
+- 首个异常阶段：RefModule 引用装载（Front）——不是"最早 Error"直觉里的 ParseMeta，而是更早的装载通道问题：`@Exclude` 等属性类的 stage/targets 契约取不到。
+- 根因（两层）：① **SLB 不编码 attributeContracts**（旧注释自认"JSON-only：CVM 不读"——漏了 Front 引用装载也是读方）：R15 后引用装载 slb 优先（`ReadPackageForReference`），跨模块 @X 契约唯一数据源是 module.json 顶层 attributeContracts，slb 通道丢失 → 21464 Error 级连锁；② **META 未知 tag 并非真跳过**：补 tag 0x16 后 C VM 拒载报"META tag 值有尾部冗余字节: tag=0x16"——C#/C 两侧 default 分支都不消费 value 字节，循环尾"尾部冗余"校验必然失败，规范声称的前向兼容实为"任何新增 META tag 打崩所有旧读器"（0x16 首例实锤）。
+- 修复点（文件/模块）：① `SLBFormat.cs` 新增 `MetaTagAttributeContracts=0x16`；② `SLBWriter.cs` META 段补编（count × {poolRef name; uvarint stage; uvarint targets}）；③ `SLBReader.cs` 补解码 case + `SkipAll()` 真跳过 default；④ C VM `slb_decoder.c` 镜像 `slb_dec_skip_all` + default 真跳过（尾部冗余校验只对已知 tag 生效）；⑤ `SLIRTypes.cs`/`SLModulePackageWriter.cs`/`ProjectReferenceModuleLoader.cs` 过时注释同步。
+- 如何快速复现：移走 out\export\Core\Core.module.slb（强制 json 引用装载）编译 ExpendTest 同样 16 错 → 证明与 slb 通道无关的 A/B 反证不成立，问题在装载通道本身；恢复 slb 复现主路径。
+- 如何快速验证：`CompileStdlib` 重编（slb 带契约）→ ExpendTest 250 OK / 0 FAIL exit 0；C VM 侧跑带 0x16 的 slb 正常装载（未知 tag 消费窗口后无冗余报错）。
+- 预防建议：① **"只有 X 消费字段 Y"的判断必须审计所有读方**（导出格式的字段裁剪尤其如此——运行时、引用装载、工具链各有读面）；② TLV 格式的"未知 tag 跳过"承诺要有测试覆盖（写一个带未知 tag 的样本喂旧读器），否则承诺是纸面的；③ META 新增 tag 时同步 C#/C 两侧 default 跳过语义（本次修正后才真正成立）。
+
+### [2026-10-18] CSimpleVMTest 执行端切换发布包 slang 应用：四个负例注册 + RenderTest/GameTank 工程修复 + 两个 Front 既有 bug 顺手修复
+- 现象：宿主按用户指令改为「Debug → package\win32-debug、Release → package\win32-release 的 slang.exe run-disk 执行（标准库取自包 lib\）」后跑全量，暴露一批此前 P/Invoke/直调路径下被掩盖或既有即坏的问题。
+- 修复点（文件/模块）：
+  1. `CSimpleVMTest.csproj`：移除 csimple_lang_lib.vcxproj 条件引用（执行端不再依赖开发树 C VM）；`Program.cs`：`RunCVM` 重写为「产物拷入 `<package>\<Dir>\`（按 jsonc project.name 定位文件，不按目录名——NullFast 目录 NullFastTest\ 文件 ProjectTest.module.slb 不同的坑）→ slang.exe run-disk」；负例注册表扩充 `s_negativeFrontCases`（PlatformNegTest=RequireValueInvalid×4、PlatformOverrideNegTest=×3、PlatformAotNegTest=AotFeatureConflict×1、AtSignLabel=ChannelSyntaxError×6+OutChannelMultiple×1）+ 新增 `s_negativeRunCases`（PlatformVariantNegTest：预期 exit 1 + "平台变体均不匹配"标记）。
+  2. `IRBlockStatements.cs`：补 `MetaInlineLambdaDefineStatements` 显式空 case——此前落 default 插桩分支每条 lambda 定义记一条 Error（InlineLambdaTest 11 定义=11 错，JSON/slb 双通道 A/B 证明与 R15 无关的既有 bug）。
+  3. `MetaClass.cs`：Project 特殊类成员不再系统级标 const——const 左值拦截契约只拦用户显式 const（isExplicitConst），系统标记让 .sp 全局成员不可赋值（ARCTest globalTransferCase `global.gslot = o5` 被拒）。
+  4. 用例工程修复：RenderTest 残缺 jsonc（引用 8 个不存在的文件、缺 Math 引用、moduleName ProjectTest2 撞名）收敛为单文件 MathTest.sl 冒烟；TankGame.jsonc references 少一级上跳（3 级指到不存在的 SLangCore\out\export）修为 4 级；TankGame.sl 加 `-- auto` 自动模式（Windows 管道 keyAvailable 恒 false，交互键无法注入 CI）。
+- 如何快速验证：Debug 22 套件 + 6 负例 + GameTank(auto) 全 exit 0（BaseTest 24 FAIL 为已验证既有基线：协程 5 + Monitor P5 调试帧 9 + Tuple.create 10）；Release 同表 exit 0（ExpendTest 多 1 项 MiTest mimalloc "current falls" 断言，开发树 Release csimple_lang 直跑同样复现=既有，非包特有）。
+- 预防建议：① 宿主执行端切换是「换镜」不是等价替换——会系统性暴露路径假设类问题（文件名≠目录名、references 层级、交互用例无输入源）；② 交互式用例自动化必须设计显式退出通道（参数开关），别指望管道注入按键；③ 阶段级 Error 计数聚合（IR 阶段 11 错）要先展开逐条定位，"恰好=N 个定义数"这类对应关系是 batch 误报的强信号。

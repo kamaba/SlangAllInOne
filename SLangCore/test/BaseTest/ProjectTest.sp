@@ -73,6 +73,7 @@ Project
         Float16Test.fun()
         IfelseTest.fun()
         NSClosureTest.ClosureTest.fun()
+        NSMethodRefTest.MethodRefTest.fun()
         #PtrTest.fun()
         
 

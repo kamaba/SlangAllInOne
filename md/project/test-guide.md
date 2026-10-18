@@ -5,7 +5,7 @@
 仓库测试分两层：
 
 - **测试用例集**：[`test/`](../../test/) 下的 SimpleLanguage 源码，每个子目录一个主题（`ProjectTest.sp` + `ProjectTest.jsonc` + 若干 `.sl`）。
-- **测试宿主工程**：[`project/`](../../project/) 下的 **唯一** C# 控制台工程 `CSimpleVMTest`（2026-10-18 八合一：原 `CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest` 与 `Test`/`Test2` 均已并入），负责「调用 C# 前端编译测试集 → 导出模块 JSON → 交给 C VM（`../csimple_lang`，`csimple_lang.exe` / `csimple_lang_dll.dll`）运行」；用例集经命令行参数或 VS launchSettings.json profile 分流。
+- **测试宿主工程**：[`project/`](../../project/) 下的 **唯一** C# 控制台工程 `CSimpleVMTest`（2026-10-18 八合一：原 `CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest` 与 `Test`/`Test2` 均已并入），负责「调用 C# 前端编译测试集 → 导出模块包 → **拷入发布包经包内 slang 应用 run-disk 执行**（2026-10-18 晚起：Debug → `package\win32-debug`、Release → `package\win32-release`，标准库取自包内 `lib\`）」；用例集经命令行参数或 VS launchSettings.json profile 分流。
 
 ---
 
@@ -43,10 +43,10 @@
 
 其余选项：`-test`（跑 `_test_` 入口）、`-start=false`（跳过前端编译直接运行上次导出模块）、`-debug`（Release 进程模式启动前暂停挂调试器）、`-O0..-O3`（转发 Front）、`--` 之后 token 透传 `Project._inputArgs`；负例工程（如 `InlineLambdaForbiddenTest`）Front 编译预期失败时按预期 LID 命中数判定通过。
 
-### C VM 构建方式
+### C VM / 发布包构建方式
 
 - **主路径（推荐）**：`scripts\build-vm-win.ps1 -Configuration Debug`（CMake + Ninja/clang 树，`csimple_lang\build\Debug\bin\` 同时产出 `csimple_lang.exe` 与 `csimple_lang_dll.dll`），与命令行开发共用同一棵树。
-- **VS 联动构建**：`CSimpleVMTest.csproj` 条件引用 `csimple_lang_lib.vcxproj`（仅 VS / Full MSBuild 生效；Debug|x64 → dll、Release|x64 → exe，均落 `csimple_lang\build\<Config>\bin`）；dotnet CLI 无 VC targets，跳过引用直接复用已有产物。
+- **发布包（宿主执行端依赖）**：`scripts\build-packages.ps1` 一键四包；宿主 csproj 已不再引用 `csimple_lang_lib.vcxproj`（2026-10-18 晚随执行端切换移除），C VM 运行时由发布包 `bin\` 提供。
 
 ---
 
@@ -98,10 +98,16 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 ### Debug 与 Release 的行为差异（`CSimpleVMTest` 宿主）
 
-| 配置 | C VM 运行方式 | Front 导出参数 | 适合场景 |
+2026-10-18 晚起执行端统一改为 **发布包 slang 应用**（用户指令，取代旧的 P/Invoke / csimple_lang.exe 直调）：宿主把编译产物拷入包内 `<package>\<Module>\`，再调用包内 `slang.exe run-disk` 执行；`moduleReferences` 相对解析在包内落空 → C VM 走官方库直查 `<slang.exe 目录>\lib\`，**标准库即取自包内 lib\ 目录**。子目录深度与 `out\export\<Module>` 一致，SpecialTest 等插件 lib 按相对路径回仓库原位加载。
+
+| 配置 | 运行方式（包） | Front 导出参数 | 适合场景 |
 |------|---------------|----------------|----------|
-| Debug | **P/Invoke** 进程内加载 `csimple_lang\build\Debug\bin\csimple_lang_dll.dll` | `--format binary --export-json`（`#if DEBUG` 追加，2026-10-12 起）：走 SLB 二进制导出（`.module.slb` 必产物）并附带导出 `module.json` 调试副本；VM 运行链路不变（仍装载 module.json） | C# 与 C 代码可在同一进程断点调试；json 副本便于人工对照排查 |
-| Release | 启动独立进程 `csimple_lang.exe run <module.json>`（优先 `build\Release\bin`，回退 `build\Debug\bin`，再回退同目录 `csimple_lang_lib.exe`）；**2026-10-17 起 Release 树 JIT 默认编入并默认启用**（`--jit` 无需传参；关闭：`--no-jit` 或环境变量 `SL_JIT=0`，见 `csimple_lang/md/cli.md` JIT 节） | 无追加（缺省 json 导出） | 性能 / 接近真实部署（含热点 JIT） |
+| Debug | `package\win32-debug\slang.exe`（框架依赖宿主 + bin\ 调试 C VM + lib\ slb+json 官方库） | `--format binary --export-json`（slb 主产物 + json 调试副本，两配置统一） | 验证 Debug 发布包；json 副本便于人工对照排查 |
+| Release | `package\win32-release\slang.exe`（Native AOT 一体化 + bin\ 加固 C VM，**JIT 默认开**，`--no-jit`/`SL_JIT=0` 关闭） | 同上 | 性能 / 接近真实分发形态 |
+
+包需先构建：`powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1`（或分别 `dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug|Release`）；改了 Front/C VM 后需重编标准库（`CompileStdlib` 自动同步四包 lib\）再发布。
+
+**负例工程**（编译期预期失败 = 通过）：宿主内置注册表（`Program.cs` `s_negativeFrontCases` / `s_negativeRunCases`）校验预期 LID 全部命中 / 预期退出码+输出标记双命中——PlatformNegTest、PlatformOverrideNegTest、PlatformAotNegTest（Front LID 拦截）、AtSignLabel（@csharp_mono 通道负例）、InlineLambdaForbiddenTest、PlatformVariantNegTest（运行期 linux-only 变体在 windows 必拒跑）。**交互式用例**：GameTank 为键盘游戏，自动化回归传 `-- auto`（跑 60 帧自动退出；Windows 管道下 `keyAvailable` 恒 false，交互键无法注入）。
 
 ### 常用参数
 
@@ -118,7 +124,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 ## 5. 常见问题
 
-- **`csimple_lang.exe not found`**：C VM 尚未构建。VS 构建宿主时经 vcxproj 引用自动构建；手动构建：`powershell -File scripts\build-vm-win.ps1 -Configuration Debug`（或 `cd csimple_lang && cmake --build build\Debug --target csimple_lang csimple_lang_dll`）。
+- **`slang.exe not found in package`**：发布包尚未构建。执行：`powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1`；改过 Front/C VM 后先重编标准库再发布（宿主不回退开发树——其意义即验证发布包形态）。
 - **跑 ExpendTest 报 `SLangServer` 引用找不到（import 解析失败）**：ExpendTest 依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，references 白名单 Core/Std）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary --export-json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
 - **`test\Other\*` 用例集 references 路径**：比主套件深一层，jsonc `references` 须 4 级上跳（`../../../../out/export/<X>`，指向 `SlangAllInOne\out\export`）；2026-10-18 已统一修正 45 个 jsonc（此前 2/3 级上跳会解析到不存在的 `SLangCore\out\export\Core`，报 `SystemPrintln` 解析链错误）。
 - **字符串错乱 / 断言随机失败**：通常是新旧两棵构建树互相覆盖 DLL 所致，坚持只用 `csimple_lang\build\Debug` 这棵 Ninja 树（见第 2 节构建方式说明）。

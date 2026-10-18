@@ -9,6 +9,9 @@ import Std as S
 # 字符串 import + 别名：import "Std:IO" as IOx → 直接指向 Std 模块的 IO 命名空间
 # （IO 命名空间真实成员 = Directory/Path/SearchOption，均为 .sl 显式限定声明；Console/FileMode/FileStream 在模块根）
 import "Std:IO" as IOx
+# 无引号 模块:命名空间 直达（2026-10-18 用户规则）：import Std:IO → 直接搜索
+# IO 命名空间下的成员（Directory/Path/SearchOption 无前缀直达）
+import Std:IO
 
 typealias LibIntList = List<int>
 typealias LibMapSS = Map<string, string>
@@ -77,6 +80,9 @@ AliasProbeTests
         # typealias 目标用模块别名 / 字符串 import 别名前缀（enum 成员访问验证别名指向）
         Console.println( "LibSFileMode.Create = " + LibSFileMode.Create.toString() )
         Console.println( "LibIOxSearch.TopDirectoryOnly = " + LibIOxSearch.TopDirectoryOnly.toString() )
+        # 无引号 模块:命名空间 直达（import Std:IO）：命名空间成员无前缀直接搜索
+        Console.println( "Directory.exists('.') = " + Directory.exists( "." ).toString() )
+        Console.println( "SearchOption.TopDirectoryOnly = " + SearchOption.TopDirectoryOnly.toString() )
     }
 
     # ---- typealias 基础 ----

@@ -49,9 +49,9 @@
     }
   },
   "references": [
-    { "path": "../../../out/export/Core",    "uuid": "123123123213", "name": "Core.module.json" },
-    { "path": "../../../out/export/Math",    "uuid": "456456456456", "name": "Math.module.json" },
-    { "path": "../../../out/export/Tensora", "uuid": "789789789789", "name": "Tensora.module.json" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Math.module.slb" },
+    { "path": "../../../out/export/Tensora/Tensora.module.json" }
   ],
   "struct": [
     { "namespace": "TensoraTest", "children": [

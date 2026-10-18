@@ -285,20 +285,33 @@
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `path` | string | `""` | 引用目录（如 `"./lib"`，相对本 jsonc 所在目录解析）；**空则条目丢弃** |
-| `uuid` | string | `""` | 随导出 `moduleReferences[].uuid`（装载时按已加载包实际值回填覆盖） |
-| `name` | string | `""` | 引用模块名或文件名；与 `path` 拼成标准路径定位具体文件（缺失时从已加载包回填） |
+| `path` | string | `""` | **指向 module.json/slb 的位置**（相对本 jsonc 所在目录解析）——推荐直接写产物文件路径（`"./lib/Core.module.slb"`、`"../../../out/export/X/X.module.json"`）；兼容旧目录/裸名形态（目录内产物扫描 + 源目录产物推导）；**空则条目丢弃** |
+| `uuid` | string | `""` | 可选；随导出 `moduleReferences[].uuid`（装载时按已加载包实际值回填覆盖） |
+| `name` | string | `""` | 可选；**工程内别名**，`import <name>:` 按它解析——不写则自动用模块自身名称；定义了就必须与 import 对应。旧文件名形态（`"Core.module.slb"`）仍兼容（剥后缀作别名） |
 
 引用插件（plugin.jsonc）时，其 `refModule` 段声明的模块与 systemCalls 会在 RefModule 阶段自动加载，无需在本工程重复声明。
 
 ⚠ 引用模块未在本段声明、或声明了但尚未完成编译导出（其 `export.outputDir` 下无 `*.module.json`）时，源码中对该模块的 `import` 会报 **Error**（「没有找到 import 模块」）并**阻断编译、不导出 module.json**（2026-10-13 起，详见 `md/syntax/namespace.md`「import 导入失败的处理」）——请先编译被引用模块再编译本工程。
 
-**`name` 的两种形态与查找语义（2026-10-18 用户语义定稿）**：
+**装载规则（2026-10-18 用户规则定稿）**：
 
-- **裸名**（无 `.slb`/`.json` 尾段，如 `"Core"`）：宽松查找——引用目录扫描（`.module.json`）→ 引用方 export 产物推导 → 源码 struct 壳 → 官方库运行目录直查（`<exe>\lib\`、`<exe>\modules\` 下 `<名>.module.slb|json`，slb 优先）；全落空仅记 Info 日志、编译继续。
-- **显式后缀**（`name` 尾段为 `.slb` 或 `.json`，如 `"Core.module.slb"`）：**严格语义，只认 `name` 指定的格式**——`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向、不换格式。查找顺序：① 当前工程目录 `path + name` 拼接（如 `./lib/Core.module.slb`）→ ② 官方库运行目录（`<exe>\lib\`、`<exe>\modules\`，按原样文件名直查）。**均未找到即硬报错（LID 20042）并中止编译**（后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）；C VM 运行期同样只认该格式，装载失败硬报错中止执行。
+1. `path` 工程内命中即装载：直接文件 → 目录内产物（`.module.slb` 优先 → `.package.json` → `.module.json`）→ 源目录产物推导（读其 jsonc 的 `export.outputDir`）→ 源码 struct 壳。
+2. **Core/Std/Math 系统库**（按 `path` 尾段推断模块名；`name` 是别名不作识别依据）工程内未命中 → **自动回落运行目录官方库直查**：`<exe>\lib\` → `<exe>\modules\` 下 `<名>.module.slb|json`（slb 优先；发布包平铺布局见 `md/project/package-layout.md`）。
+3. **其它模块未命中即报错中止编译**（不做运行目录回落；后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）。
+4. `name` 为工程内别名供 `import` 解析；缺省自动取模块名。`import <模块>` 引入整模块、`import <模块>:<命名空间>`（无引号冒号形式，2026-10-18）与 `import "<模块>:<命名空间>"`（字符串形式）直达命名空间（成员无前缀直接搜索）；Core 被引用后自动可用无需 import。语法详见 `md/syntax/namespace.md` §4。
 
-官方库（Core/Std/Math 等）在发布包内平铺于宿主 exe 同级 `lib\` 目录（见 `md/project/package-layout.md`），工程无需写易碎相对路径：`path` 写引用目录（如 `"./lib"` 或纯模块名）、`name` 写 `Core.module.slb`（或裸名 `"Core"`）即可在发布包内命中；开发布局官方库直查自然落空，按上述两种形态的规则处理——例外：CSimpleVMTest 联合测试宿主进程内编译前会把发布包 `lib\` 镜像进宿主 `bin\lib\`（`StagePackageLibForFrontCompile`），显式后缀引用在该宿主下同样可命中官方库。
+**显式后缀兼容形态**（`name` 尾段带 `.slb`/`.json`，如 `{ "path": "./lib", "name": "Core.module.slb" }`）：严格只认指定格式（`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向）——工程内 `path+name` 拼接落空时，系统库同样回落官方库直查（原样文件名）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式。
+
+**官方库推荐写法**（name/uuid 省略，导出侧自动回填真实 name/uuid/版本）：
+
+```jsonc
+"references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
+]
+```
+
+例外提示：开发布局（Front CLI 直编、exe 目录无 `lib\`）下官方库直查自然落空——系统库引用须在有 `lib\` 镜像的宿主（CSimpleVMTest 会把发布包 `lib\` 镜像进宿主 `bin\lib\`，`StagePackageLibForFrontCompile`）或发布包 `slang` 内编译。
 
 ### 4.10 `dllImports[]`（兼容旧 `lib[]`）—— FFI 导入表
 

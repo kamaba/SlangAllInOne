@@ -35,8 +35,8 @@
     ]
   },
   "references": [
-    { "path": "../../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" },
-    { "path": "../../../../out/export/Std", "uuid":"123123123214", "name": "Std.module.json" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
   ],
   "export": {
     "moduleName": "ReDebug",

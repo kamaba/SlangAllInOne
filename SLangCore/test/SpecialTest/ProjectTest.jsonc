@@ -176,8 +176,8 @@
     { "path": "../../source/CLangdll/x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "cl" }
   ],
   "references": [
-    { "path": "../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" },
-    { "path": "../../../out/export/Std", "uuid":"456456456456", "name": "Std.module.json" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
   ],
   "struct": [
   ],

@@ -33,7 +33,7 @@
     ]
   },
   "references": [
-    { "path": "../../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" }
+    { "path": "./lib/Core.module.slb" }
   ],
   "struct": [
       { "namespace": "SBAProbe", "children": [] }

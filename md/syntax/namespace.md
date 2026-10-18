@@ -176,6 +176,22 @@ IOx.SearchOption.TopDirectoryOnly.toString()   # enum 成员
 typealias LibIOxSearch = IOx.SearchOption       # typealias 目标前缀（类型位置，见 typealias.md）
 ```
 
+### 4. 模块:命名空间直达导入：`import 模块:命名空间`（2026-10-18 用户规则）
+
+无引号冒号形式，与字符串形态同语义——把**引用模块内指定命名空间**的成员直接引入本文件作用域（**无前缀直接搜索**），不再需要 `as` 别名或模块前缀：
+
+```sl
+import Std:IO        # Std 模块 IO 命名空间直达
+
+Directory.exists( "." )                        # 等价 Std.IO.Directory.exists，无前缀直达
+SearchOption.TopDirectoryOnly.toString()      # enum 成员同样直达
+```
+
+- 命名空间部分可为点分链（`import Std:OS.Files`）；冒号后为空报 Error。
+- 与整模块导入的关系：`import Std` 引入模块根（成员按 `Std.X` / 前缀链访问）；`import Std:IO` 只引入 IO 命名空间（成员无前缀直达）。
+- **Core 自动导入**：Core 模块被 references 引用后即自动可用（基础类型 int/string/List 等本就内置），源码中无需写 `import Core`；写了也不冲突（按模块根导入处理）。
+- 引用模块自身的 references 别名（jsonc `references[].name`）也可作冒号前的模块名——`name` 是工程内别名，`import <别名>:<命名空间>` 同样命中。
+
 ### 与 typealias 配合
 
 typealias 的目标类型可以以 import 别名作为路径前缀（三种别名形态均可），详见 [typealias.md](typealias.md)：

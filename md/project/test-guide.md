@@ -125,7 +125,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 ## 5. 常见问题
 
 - **`slang.exe not found in package`**：发布包尚未构建。执行：`powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1`；改过 Front/C VM 后先重编标准库再发布（宿主不回退开发树——其意义即验证发布包形态）。
-- **跑 ExpendTest 报 `SLangServer` 引用找不到（import 解析失败）**：ExpendTest 依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，references 白名单 Core/Std）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary+json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
-- **`test\Other\*` 用例集 references 路径**：比主套件深一层，jsonc `references` 须 4 级上跳（`../../../../out/export/<X>`，指向 `SlangAllInOne\out\export`）；2026-10-18 已统一修正 45 个 jsonc（此前 2/3 级上跳会解析到不存在的 `SLangCore\out\export\Core`，报 `SystemPrintln` 解析链错误）。
+- **跑 ExpendTest 报 `SLangServer` 引用找不到（references 未命中，编译中止）**：ExpendTest 依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，非 Core/Std/Math 系统库，不享受运行目录 lib\ 官方库回落）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary+json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
+- **`test\Other\*` 用例集 references 形态（2026-10-18 规则定稿）**：全部 53 个测试工程 jsonc 已统一为 `{ "path": "./lib/<名>.module.slb" }`（Core/Std/Math 系统库，工程内落空自动回落运行目录 lib\ 官方库直查，name/uuid 省略由导出侧自动回填）；非系统库引用（SLangServer/Tensora/SLMysql/ConstLib/FinalLib）path 直指产物文件 `<上跳>/out/export/<模块>/<模块>.module.json`，未命中即报错中止编译（2026-10-18 前的 `../../../../out/export/<X>` 全量旧路径已废弃）。
 - **字符串错乱 / 断言随机失败**：通常是新旧两棵构建树互相覆盖 DLL 所致，坚持只用 `csimple_lang\build\Debug` 这棵 Ninja 树（见第 2 节构建方式说明）。
 - **前端编译失败**：看 `out/export/<测试集名>/` 与 `build/logs/` 下的日志定位（详见 [`md/ai/DEBUG_WORKFLOW.md`](../ai/DEBUG_WORKFLOW.md)、[`md/ai/EXPORT_PATHS.md`](../ai/EXPORT_PATHS.md)）。

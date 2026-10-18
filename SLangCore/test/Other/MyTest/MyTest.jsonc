@@ -35,8 +35,8 @@
     ]
   },
   "references": [
-    { "path": "./lib", "uuid":"123123123213", "name": "Core.module.slb" },
-    { "path": "./lib", "uuid":"456456456456", "name": "Std.module.slb" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
   ],
   "struct": [
       { "namespace": "MyTest", "children": [] }

@@ -50,9 +50,9 @@
     }
   },
   "references": [
-    { "path": "../../../../out/export/Core", "uuid":"123123123213", "name": "Core.module.json" },
-    { "path": "../../../../out/export/Std", "uuid":"456456456456", "name": "Std.module.json" },
-    { "path": "../../../../out/export/SLangServer", "uuid":"789789789789", "name": "SLangServer.module.json" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "path": "../../../../out/export/SLangServer/SLangServer.module.json" }
   ],
   "struct": [
   ],

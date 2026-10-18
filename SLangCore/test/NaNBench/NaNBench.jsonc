@@ -40,8 +40,8 @@
     }
   },
   "references": [
-    { "path": "../../../out/export/Core", "uuid":"123123123214", "name": "Core.module.json" },
-    { "path": "../../../out/export/Std", "uuid":"456456456457", "name": "Std.module.json" }
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
   ],
   "struct": [
   ],

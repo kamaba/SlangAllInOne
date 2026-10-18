@@ -320,6 +320,15 @@
 - 如何快速验证：ExpendTest 编译通过 + 全量运行 293/293 OK（BaseTest 同批无回归）。
 - 预防建议：① 闭包形参作调用对象是类型解析弱位（realMetaType 常为空），新增调用形态处理先查空再解引用；② NRE 修复链「修一处挪一处」属正常推进，按栈逐层兜底直到编译通过，但每层兜底须回退到语义正确值（ownerMetaClass）而非吞错返回 null 泄漏到下游。
 
+### [2026-10-18] 方法引用特性带参方法全部报 MetaCoreParseCallNodeNotFoundInClass、0 参方法却通过：`GetMetaMemberFunctionByParamCount` vs `GetMetaMemberFunctionListByParamCount` 一字之差（精确 key vs key≥N 汇总）
+- 现象：MethodRefTest.sl 注册进 ProjectTest 后首次编译，所有**带参**方法的方法引用（staticAdd/instanceAdd/bump/twicePlus 等，最早 Error `MethodRefTest.sl_64_0`）一致报 21473 前身的 `MetaCoreParseCallNodeNotFoundInClass`；而 0 参的 `describe` 引用无报错——同一钩子一分为二的成功/失败分布是最强排查线索。
+- 首个异常阶段：Meta（语义分析，MetaCallNode 成员解析回退钩子 TryCreateMethodReference）。
+- 根因：`MetaCallNode.TryCreateMethodReference` 里取同名重载候选用了 `GetMetaMemberFunctionByParamCount(0)`——该方法语义是「只取**恰好** 0 个形参的重载」（按 `metaParamFunctionDict` 精确 key 命中），带参方法天然 miss 返回 null → 回退链走不到、落到 NotFoundInClass。正确 API 是 `GetMetaMemberFunctionListByParamCount(0)`：按 key ≥ 0 汇总全部非模板重载（且永不为 null）。
+- 修复点（文件/模块）：`simple_language/source/Core/MetaCallNode.cs` TryCreateMethodReference——一行改用 `GetMetaMemberFunctionListByParamCount( 0 )`。
+- 如何快速复现：编译含 `var f = Class.staticAdd;`（staticAdd 带参）形式非调用方法引用的工程。
+- 如何快速验证：ProjectTest 重编译 "export module success" 无 Error；C VM 运行 MethodRefTest 7 案例全对（静态/实例 receiver 捕获/this/覆写虚重分派/三来源同参/forEach 回调/引用作返回值），整套 74 文件 exit_code=0。
+- 预防建议：① 同名词典 API 存在「精确/汇总」成对变体时（By vs ListBy），调用点语义先核对再选——按语义意图选 API，不靠名字直觉；②「部分成功部分失败」二分现象优先怀疑公共过滤条件（此处=参数个数），而非各自独立 bug；③ 方法引用取候选后仍须逐个过滤 `isGet/isSet/isConstructInitFunction`，与 21475 约束一致。
+
 
 
 

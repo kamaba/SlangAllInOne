@@ -1,5 +1,8 @@
-[07:55:23] [Info] [Project] [LID=10002] Resolved input path: F:\project\lang\simple_language\out\export\PlatformVariantNegTest\PlatformVariantNegTest.module.json
-[07:55:23] [Info] [Project] [LID=10002] Runtime load success. root=F:\project\lang\simple_language\out\export\PlatformVariantNegTest\PlatformVariantNegTest.module.json packageCount=2
-[07:55:23] [Error] [Runtime] [LID=10025] Module 'PlatformVariantNegTest' rejected: no platform variant matched.
-[07:55:23] [Error] [Runtime] [LID=10025] Platform requirements not met, load rejected: F:\project\lang\simple_language\out\export\PlatformVariantNegTest\PlatformVariantNegTest.module.json
-[07:55:23] [Error] [Runtime] [LID=10010] Load SLIR packages failed: F:\project\lang\simple_language\out\export\PlatformVariantNegTest\PlatformVariantNegTest.module.json
+[16:06:36] [Info] [Project] [LID=10002] Resolved input path: D:\project\lang\SlangAllInOne\package\win32-release\PlatformVariantNegTest\PlatformVariantNegTest.module.slb
+[16:06:36] [Info] [Project] [LID=10002] Warning: could not load module reference '../../../../out/export/Core/Core.module' (resolved: D:\project\lang\SlangAllInOne\package\win32-release\PlatformVariantNegTest/../../../../out/export/Core/Core.module), skipping
+[16:06:36] [Info] [Project] [LID=10002]   Fallback: trying official module dir: D:\project\lang\SlangAllInOne\package\win32-release\lib/Core.module.json
+[16:06:36] [Info] [Project] [LID=10002] SLB preferred over json: D:\project\lang\SlangAllInOne\package\win32-release\lib/Core.module.slb
+[16:06:36] [Info] [Project] [LID=10002] Runtime load success. root=D:\project\lang\SlangAllInOne\package\win32-release\PlatformVariantNegTest\PlatformVariantNegTest.module.slb packageCount=2
+[16:06:36] [Error] [Runtime] [LID=10025] Module 'PlatformVariantNegTest' rejected: no platform variant matched.
+[16:06:36] [Error] [Runtime] [LID=10025] Platform requirements not met, load rejected: D:\project\lang\SlangAllInOne\package\win32-release\PlatformVariantNegTest\PlatformVariantNegTest.module.slb
+[16:06:36] [Info] [Runtime] [LID=10010] Load SLIR packages failed: D:\project\lang\SlangAllInOne\package\win32-release\PlatformVariantNegTest\PlatformVariantNegTest.module.slb

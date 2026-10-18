@@ -1,19 +1,19 @@
-﻿[08:19:03 491] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
-[08:19:03 492] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sp]
-[08:19:03 493] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sl]
-[08:19:03 493] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sp]编译File层完成]
-[08:19:03 493] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sl]编译File层完成]
-[08:19:03 494] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
-[08:19:03 494] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
-[08:19:03 497] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
-[08:19:03 502] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
-[08:19:03 503] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
-[08:19:03 503] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
-[08:19:03 504] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
-[08:19:03 504] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
-[08:19:03 505] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
-[08:19:03 505] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
-[08:19:03 506] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+﻿[05:27:23 632] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[05:27:23 633] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sp]
+[05:27:23 634] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:MiniSmoke.sl]
+[05:27:23 634] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sp]编译File层完成]
+[05:27:23 635] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[MiniSmoke.sl]编译File层完成]
+[05:27:23 635] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[05:27:23 635] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[05:27:23 638] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[05:27:23 642] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[05:27:23 642] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[05:27:23 643] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[05:27:23 643] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[05:27:23 644] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[05:27:23 644] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[05:27:23 645] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[05:27:23 645] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
   [Completed] LoadRefModules
 [Completed] File
   [Completed] PrepareFiles
@@ -41,6 +41,6 @@
 [Pending] Export
   [Pending] ExportModule
 ]
-[08:19:03 506] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
-[08:19:03 557] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (in-memory): /mnt/d/project/lang/simple_language/test/Other/MiniSmoke/..\..\out\export/MiniSmoke/MiniSmoke.module.json]
-[08:19:03 557] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]
+[05:27:23 646] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[05:27:23 713] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (in-memory): /mnt/d/project/lang/SlangAllInOne/SLangCore/test/Other/MiniSmoke/..\..\out\export/MiniSmoke/MiniSmoke.module.json]
+[05:27:23 714] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]

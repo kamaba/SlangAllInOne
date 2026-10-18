@@ -349,7 +349,9 @@ Write-Ok 'linux Std.module.slb exit 0'
 # exact flow a Linux user exercises with `slang run <project>`.
 # SL_FORCE_RUN=1: test jsonc platform checks are hardcoded win64 (known repo
 # policy, AGENTS.md "Known expected differences") - Linux runs skip the check.
-$cmd = 'cd ' + $WslRepo + ' && SL_FORCE_RUN=1 ' + $WslPkgLinux + '/slang run simple_language/test/Other/MiniSmoke/MiniSmoke --no-banner'
+# 2026-10-18: MiniSmoke moved with the test tree reorg (2026-10-17) from
+# simple_language\test\ to SlangAllInOne\SLangCore\test\ (same fix as RefProbe).
+$cmd = 'cd ' + $WslRepo + ' && SL_FORCE_RUN=1 ' + $WslPkgLinux + '/slang run SlangAllInOne/SLangCore/test/Other/MiniSmoke/MiniSmoke --no-banner'
 if ((Invoke-WslBash $cmd) -ne 0) { Fail 'Linux MiniSmoke compile-and-run failed (see log above)' }
 Write-Ok 'linux MiniSmoke compile-and-run exit 0'
 

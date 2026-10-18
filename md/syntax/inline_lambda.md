@@ -290,6 +290,8 @@ arr.forEach((x) => x * 2);           # 作为实参跨函数边界
 
 语义分流点：`=>` 形态在 StructParse 层（`=` 后遇 `(` 时——紧跟 `=>` + 表达式走内联路径；`function` 关键字 + `{ }` 走闭包路径）；`inline` 修饰符在方法声明解析中与 `static` 等 token 并列识别（`ETokenType.Inline`），仅打 `isInline` 标记，语义层不动。
 
+> 除上表三种形态外，第四种函数值来源是**方法引用**（`Class.staticFn` / `obj.instanceFn` 非调用形态，C# 方法组语义）——与 `function` 闭包共享 `Function` 基类、可互换传参；实例引用绑定 receiver 且按运行时类虚重分派。详见 [function.md](./function.md)「方法引用」章节。
+
 ---
 
 ## 测试

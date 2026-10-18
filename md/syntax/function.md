@@ -141,6 +141,62 @@ public void set Count(Int32 v) { this._count = v; }
 
 ---
 
+## 方法引用（Method Reference，函数值）
+
+类似 C# 的方法组（`Action`/`Func` 委托语义）：**方法名本身可以作为值**传给形参、存进变量、作为返回值，运行时按名调用。三种来源统一覆盖：
+
+| 形态 | 语法 | 语义 |
+|------|------|------|
+| 静态方法引用 | `Class.staticFn` | 引用不绑定实例，调用时按编译期 methodId 直调 |
+| 实例方法引用 | `obj.instanceFn` | **捕获该 obj 为 receiver**，调用时 receiver 作为隐式 `this` |
+| this 方法引用 | `this.instanceFn` | 同上，receiver = 当前实例 |
+
+```s
+class MethodRefDemo {
+    Int32 base = 100;
+    static Int32 staticAdd(Int32 a, Int32 b) { ret a + b; }
+    Int32 instanceAdd(Int32 a, Int32 b) { ret this.base + a + b; }
+}
+
+// 引用值类型统一为 Function（闭包基类），可与匿名函数混用同一形参
+callWith(Function f, Int32 x, Int32 y) {
+    ret f(x, y);
+}
+
+class MethodRefTest {
+    void fun() {
+        var d = MethodRefDemo();
+        Int32 r1 = callWith(MethodRefDemo.staticAdd, 3, 4);   // 静态引用 → 7
+        Int32 r2 = callWith(d.instanceAdd, 2, 3);              // 实例引用 → 105（100+2+3）
+        Int32 r3 = callWith(function(Int32 a, Int32 b) { ret a * b; }, 4, 5);  // 匿名闭包 → 20
+    }
+}
+```
+
+**判别规则**：`obj.fn(args)` 仍是普通调用；只有**非调用形态**的 `obj.fn`（后面不跟参数表）才产生方法引用。引用值通过闭包调用语法 `f(实参…)` 执行。
+
+**运行时行为**：
+
+- 实例引用调用时 receiver 按其**运行时类虚重分派**——父类引用指向子类实例时执行子类覆写（C# 虚方法语义），`LoudDemo extends MethodRefDemo` 的引用示例见测试案例 4；
+- receiver 状态与原对象实时联动（引用不复制对象）；
+- 引用可作为函数参数、返回值、容器元素（如 `Array.forEach(MethodRefDemo.staticAdd)` 形式的回调传递）。
+
+**约束与错误码**：
+
+| 场景 | 错误 | 说明 |
+|------|------|------|
+| 同名重载不唯一 | 21474 `MetaCoreMethodReferenceAmbiguous` | 非调用形态无法凭实参消歧，要求同名方法唯一；调用形态不受影响 |
+| 引用模板方法 / 构造函数 `_init_` / `get`·`set` 访问器 | 21475 `MetaCoreMethodReferenceUnsupported` | 模板方法需调用点显式实例化，不产生可引用实体；访问器请包装为匿名闭包 |
+| IR 层目标方法解析失败 | 21476 `IRMethodReferenceTargetNotFound` | 跨模块方法需确认 references 已加载 |
+
+**与匿名闭包的边界**：方法引用值是特殊的闭包对象（复用 `CLSR` 结构、以标志位区分，无捕获上下文数组），两者同以 `Function` 为基类、可互换使用。差异：方法引用**零捕获成本**（仅 methodId + receiver），且实例引用天然携带 `this`；匿名闭包适合内联逻辑、方法引用适合复用具名方法。
+
+**VM 侧注**：方法引用闭包不携带 ctx 上下文数组，凡按「闭包上下文协议」工作的接口（协程 spawn、Debug.watch 订阅等）不支持直接传入方法引用，需包装为 `function(...){ ... }`（C VM 侧运行期拒绝并给出提示）。
+
+完整 7 案例（静态/实例/this/覆写重分派/三来源同参/forEach 回调/引用作返回值）见 `test/BaseTest/MethodRefTest.sl`；`=>` 内联表达式的另一形态见 [inline_lambda.md](./inline_lambda.md)。
+
+---
+
 ## 示例集合
 
 完整示例展示类方法、模板与构造：

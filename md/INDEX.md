@@ -87,7 +87,7 @@
 | [syntax/extend.md](./syntax/extend.md) | 继承 |
 | [syntax/attribute.md](./syntax/attribute.md) | 特性 / 注解（四时点 PreCompile/Compiling/Preload/Runtime × 五注册点 Class/Data/Enum/Field/Method；`_enter_`/`_exit_` 触发 + 三查询 API；内建全景与旧语法迁移） |
 | [../../csimple_lang/md/design/ATTRIBUTE_DESIGN.md](../../csimple_lang/md/design/ATTRIBUTE_DESIGN.md) | attribute 系统四时点重构（C VM 侧设计真源：PreCompile/Compiling/Preload/Runtime × 五注册点 × enter/exit；内建迁移映射 + P1..P8 分期） |
-| [syntax/function.md](./syntax/function.md) | 方法 / 函数 |
+| [syntax/function.md](./syntax/function.md) | 方法 / 函数；方法引用（C# 方法组语义：`Class.staticFn` / `obj.instanceFn` 函数值，三来源统一 Function 基类，虚重分派，错误码 21474/21475/21476） |
 | [syntax/enum.md](./syntax/enum.md) | 枚举 |
 
 ### 3.5 模板、宏与高级机制

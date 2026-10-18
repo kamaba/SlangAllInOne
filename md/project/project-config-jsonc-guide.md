@@ -139,17 +139,15 @@
     "moduleName": "MyProject",         // 模块名；导出目录名第一优先级
     "outputDir": "..\\..\\out\\export", // 导出根目录（相对 jsonc 目录），缺省 "Export/SLVMCode"
     "publicExport": "public",          // none/public(缺省)/extern，public 类导出门槛三态（见 §4.14）
-    "format": "json",                  // json(缺省)/binary，导出格式二选一；CLI --format 可覆盖
-    "binary": {                        // 仅 format="binary" 生效（SLB，见 csimple_lang/md/design/SLB_DESIGN.md）
+    "format": "json",                  // json(缺省)/binary/binary+json（binary+json = slb 主产物 + <M>.module.json 调试副本，R15）；CLI --format 可覆盖
+    "binary": {                        // 仅 format="binary"/"binary+json" 生效（SLB，见 csimple_lang/md/design/SLB_DESIGN.md）
       "compressed": true,              // 缺省 true，DataArea 整体 zlib 压缩
       "includeDebugInfo": true,        // 缺省 true，是否写 DEBUG 段
-      "strictDigest": false,           // 缺省 false，P5 预留
-      "exportJson": false },           // 缺省 false，binary 导出时附带写一份 <M>.module.json 调试副本（slb 必产物恒导出）；CLI --export-json/--no-export-json 覆盖
+      "strictDigest": false },         // 缺省 false，P5 预留
     "versionMain": 0,                  // 与 project.mainVersion 同字段（export 块后解析，同写时覆盖 project 块）
     "versionSub": 0,                   // 同上（project.subVersion）
     "versionPatch": 0,                 // 同上（project.buildVersion）
     "nativeDll": "",                   // 原生 DLL 文件名，写入 module.json，VM 同目录查找
-    "guide": false,                    // 项目向导 Markdown 开关；CLI --guide/--no-guide 覆盖
     "includeMetadata": true,           // ⚠ 已解析未消费
     "stringPoolAsBlob": true,         // ⚠ 已解析未消费
     "aot": {                           // MLIR AOT 导出子块
@@ -240,7 +238,7 @@
 | `ignore` | bool | false | true 时该文件不参与编译（常用于条件排除历史用例） |
 | `priority` | int | 0 | 编译顺序权重，越大越先编 |
 
-`sl new classfile` 会向该数组做**文本插入**注册新文件，要求数组结构存在且格式基本正常。
+`slang new class <Name>`（宿主）会向该数组做**文本插入**注册新文件，要求数组结构存在且格式基本正常。
 
 ### 4.5 `compileFilter` —— 编译过滤
 
@@ -287,13 +285,20 @@
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `path` | string | `""` | 引用模块路径（相对 jsonc 目录）；**空则条目丢弃**；loader 按 module.json / plugin.jsonc 三级回退加载 |
-| `uuid` | string | `""` | 随导出 `moduleReferences[].uuid` |
-| `name` | string | `""` | 引用模块名（缺失时从已加载包回填） |
+| `path` | string | `""` | 引用目录（如 `"./lib"`，相对本 jsonc 所在目录解析）；**空则条目丢弃** |
+| `uuid` | string | `""` | 随导出 `moduleReferences[].uuid`（装载时按已加载包实际值回填覆盖） |
+| `name` | string | `""` | 引用模块名或文件名；与 `path` 拼成标准路径定位具体文件（缺失时从已加载包回填） |
 
 引用插件（plugin.jsonc）时，其 `refModule` 段声明的模块与 systemCalls 会在 RefModule 阶段自动加载，无需在本工程重复声明。
 
 ⚠ 引用模块未在本段声明、或声明了但尚未完成编译导出（其 `export.outputDir` 下无 `*.module.json`）时，源码中对该模块的 `import` 会报 **Error**（「没有找到 import 模块」）并**阻断编译、不导出 module.json**（2026-10-13 起，详见 `md/syntax/namespace.md`「import 导入失败的处理」）——请先编译被引用模块再编译本工程。
+
+**`name` 的两种形态与查找语义（2026-10-18 用户语义定稿）**：
+
+- **裸名**（无 `.slb`/`.json` 尾段，如 `"Core"`）：宽松查找——引用目录扫描（`.module.json`）→ 引用方 export 产物推导 → 源码 struct 壳 → 官方库运行目录直查（`<exe>\lib\`、`<exe>\modules\` 下 `<名>.module.slb|json`，slb 优先）；全落空仅记 Info 日志、编译继续。
+- **显式后缀**（`name` 尾段为 `.slb` 或 `.json`，如 `"Core.module.slb"`）：**严格语义，只认 `name` 指定的格式**——`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向、不换格式。查找顺序：① 当前工程目录 `path + name` 拼接（如 `./lib/Core.module.slb`）→ ② 官方库运行目录（`<exe>\lib\`、`<exe>\modules\`，按原样文件名直查）。**均未找到即硬报错（LID 20042）并中止编译**（后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）；C VM 运行期同样只认该格式，装载失败硬报错中止执行。
+
+官方库（Core/Std/Math 等）在发布包内平铺于宿主 exe 同级 `lib\` 目录（见 `md/project/package-layout.md`），工程无需写易碎相对路径：`path` 写引用目录（如 `"./lib"` 或纯模块名）、`name` 写 `Core.module.slb`（或裸名 `"Core"`）即可在发布包内命中；开发布局官方库直查自然落空，按上述两种形态的规则处理——例外：CSimpleVMTest 联合测试宿主进程内编译前会把发布包 `lib\` 镜像进宿主 `bin\lib\`（`StagePackageLibForFrontCompile`），显式后缀引用在该宿主下同样可命中官方库。
 
 ### 4.10 `dllImports[]`（兼容旧 `lib[]`）—— FFI 导入表
 
@@ -380,12 +385,10 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `moduleName` | string | `""` | 导出模块名（生成 `<moduleName>.module.json`）；导出目录名第一优先级 |
 | `outputDir` | string | `"Export/SLVMCode"` | 导出根目录（相对 jsonc 目录解析）；驱动 Logs/DebugCode 目录创建与进程内状态派生（`ProjectOutputEnvironment.Current*`；Front 不再写环境变量，`SIMPLELANG_*` 仅作外部只读覆盖） |
 | `publicExport` | string | `"public"` | public 类导出门槛三态：`none`/`public`/`extern`（见下表）；非法值 Error |
-| `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；一次导出只产一个文件（唯一例外见 `binary.exportJson`）；非法值 Error 20039；CLI `--format` 覆盖 |
-| `binary` | object | — | SLB 选项（仅 format="binary" 生效）：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留）、`exportJson`（默认 false） |
-| `binary.exportJson` | bool | `false` | binary 导出时是否**附带**写一份 `<M>.module.json` 调试副本（slb 必产物恒导出，副本仅供人工排查，不构成双格式模式）；CLI `--export-json`/`--no-export-json` 覆盖；仅磁盘导出生效（内存模式不落盘） |
+| `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；`"binary+json"`=slb 主产物 + `<M>.module.json` 调试副本（R15，仅磁盘导出生效；`json+binary` 同义归一）；非法值 Error 20039；CLI `--format` 覆盖 |
+| `binary` | object | — | SLB 选项（format="binary"/"binary+json" 生效）：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留）。~~`exportJson`~~ 已删（2026-10-18）：双产物改由 `format: "binary+json"` 单值表达 |
 | `versionMain` / `versionSub` / `versionPatch` | int | 0 / 1 / 0 | 与 `project.mainVersion/subVersion/buildVersion` 同字段；**export 块后解析，两处同写时以 export 块为准** |
 | `nativeDll` | string | `""` | 原生 DLL 文件名，写入 module.json，VM 同目录查找 |
-| `guide` | bool | false | 项目向导 Markdown 开关：置 true 编译时在 `.sp`/`.jsonc` 同目录生成 `<ProjectName>.md`（模板 `source/Front/Project/Templates/ProjectGuideTemplate.md`，含 `AI-DESCRIPTION:BEGIN/END` 标记区，重生成时保留区内 AI 描述）；CLI `--guide`/`--no-guide` 覆盖（优先级 CLI > jsonc > 默认 false） |
 | `includeMetadata` | bool | true | 已解析未消费 |
 | `stringPoolAsBlob` | bool | true | 已解析未消费 |
 | `aot` | object | — | MLIR AOT 导出子块（详见 `source/Front/Export/MLIR/MLIR_AOT_实现与待办.md`） |
@@ -473,9 +476,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 
 | 配置面 | jsonc 键 | 覆盖源 |
 |--------|----------|--------|
-| 导出格式 | `export.format` | CLI `--format json\|binary` |
-| 二进制 json 调试副本 | `export.binary.exportJson` | CLI `--export-json` / `--no-export-json`（优先级 CLI > jsonc > 默认 false；仅 `--format binary` 磁盘导出生效） |
-| 项目向导 | `export.guide` | CLI `--guide` / `--no-guide`（优先级 CLI > jsonc > 默认 false） |
+| 导出格式（含双产物） | `export.format` | CLI `--format json\|binary\|binary+json`（`binary+json` = slb 主产物 + json 调试副本，仅磁盘导出生效；2026-10-18 起 `--export-json`/`--guide` 旗标与 jsonc `export.binary.exportJson`/`export.guide` 已删） |
 | 优化级别 | （无 jsonc 键） | CLI `-O<n>` → module.json `optimizeLevel`（jsonc 里只有布尔 `compile.optimize`→buildMode） |
 | 宏 | `global.macro` | 环境变量 `SL_MACRO_*` < CLI `--macro name=value`（可重复）< `Project._before_()` 钩子 |
 | 输出目录 | `export.outputDir` + 模块名 | 由 jsonc 派生存入进程内状态（`ProjectOutputEnvironment.Current*`，Front 不再写环境变量）；`SIMPLELANG_EXPORT_OUTDIR` / `SIMPLELANG_LOGS_DIR` / `SIMPLELANG_DEBUGCODE_ROOT` 仅作外部只读覆盖。`SIMPLELANG_VM_RESULT_DIR` 为过期条目（当前代码无实现） |
@@ -484,18 +485,18 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 常用命令：
 
 ```powershell
-dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p <.sp 路径> -e ir
-# CLI 动词：compile | build | run | new | version | help（缩写 c/b/r/e…）
-# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <.sp 路径> -e ir
+# CLI 动词：compile | export | clean | version | help（缩写 c/b/e/v/h；run/new 已删——运行归 C VM，脚手架归宿主 `slang new`）
+# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token  --format
 ```
 
-### `sl new project -p [path] [name]`
+### `slang new project <Name> [-p <dir>]`（宿主命令，2026-10-18 自 Front CLI 迁入）
 
-生成 `<name>.sp` + `<name>.jsonc` + `<name>.md`（项目向导；`--no-guide` 跳过）。生成的 `.jsonc` 不含 `"export"."guide"`，后续编译缺省不再生成/覆盖该 `.md`；需刷新模板（保留 AI 描述区）时用 `sl c -p <project> --guide` 或 jsonc 配 `"guide": true`。
+在 `<dir>\<Name>\` 下生成成套工程：`<Name>.sp` + `<Name>.jsonc` + `<Name>.sl` + `<Name>.md`（项目向导；模板内嵌于宿主 `SlangAllInOne\Templates\ProjectGuideTemplate.md`，含 `AI-DESCRIPTION:BEGIN/END` 标记区，重跑重生成时保留区内 AI 描述）。全部 UTF-8 BOM（R16）；已存在同名 .sp/.jsonc/.sl 时拒绝覆盖；`.md` 已存在则按"重生成"处理。
 
-### `sl new classfile [filename]`
+### `slang new class <Name> [-p <dir>]`（宿主命令）
 
-创建 `*.sl` 并以文本插入方式注册进 `compileFiles.files`。
+在 `<dir>` 找到的 `.sp` 旁创建 `<Name>.sl` 并以文本插入方式注册进 `compileFiles.files`（已注册则跳过；改写 jsonc 保持原 BOM 形态）。
 
 ## 7. 易错点速查
 

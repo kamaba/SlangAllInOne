@@ -1,6 +1,7 @@
 using System.Text;
 using SlangAllInOne.Backend;
 using SlangAllInOne.FrontEnd;
+using SlangAllInOne.New;
 using SlangAllInOne.Pack;
 
 namespace SlangAllInOne;
@@ -27,11 +28,9 @@ internal static class Program
         public bool Help = false;
         public string CvmConfig = "Debug";
         public int OptimizeLevel = -1;
-        /// <summary>Export format: "" = compiler default (json), "json", "binary" (SLB).</summary>
+        /// <summary>Export format: "" = compiler default; "json" | "binary" (SLB) |
+        /// "binary+json" (SLB main + .module.json debug copy, R15).</summary>
         public string Format = "";
-        /// <summary>compile: null = compiler default; true/false = --export-json/--no-export-json
-        /// (json debug copy next to the SLB, disk export only).</summary>
-        public bool? ExportJson = null;
         /// <summary>pack-modules: package root; "" = exe directory.</summary>
         public string DestPath = "";
         /// <summary>pack-modules: package config — Debug = slb + json, Release = slb only.</summary>
@@ -43,6 +42,12 @@ internal static class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         Console.InputEncoding = Encoding.UTF8;
+
+        // new: 原生工程/类脚手架（2026-10-18 自 Front CLI 迁入——CLI 三分后
+        // Front 只保留 compile/export，`new` 归宿主）。在宿主 Options 解析之前
+        // 拦截：`new` 有自己的文法（New\NewCommand.cs）。
+        if (args.Length > 0 && args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
+            return NewCommand.Run(args.Skip(1).ToArray());
 
         var opts = ParseArgs(args);
         if (opts == null)
@@ -71,7 +76,7 @@ internal static class Program
     // compile: Front in-process compile (disk export unless --in-memory)
     static int RunCompile(Options opts)
     {
-        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format, opts.ExportJson);
+        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format);
         if (!result.Success)
             return 1;
         if (opts.InMemory)
@@ -283,21 +288,17 @@ internal static class Program
             else if (a == "--format" && i + 1 < args.Length)
             {
                 var f = args[++i];
+                // 同义归一：json+binary == binary+json（与 Front ExportLangManager 一致）
+                if (string.Equals(f, "json+binary", StringComparison.OrdinalIgnoreCase))
+                    f = "binary+json";
                 if (!string.Equals(f, "json", StringComparison.OrdinalIgnoreCase)
-                    && !string.Equals(f, "binary", StringComparison.OrdinalIgnoreCase))
+                    && !string.Equals(f, "binary", StringComparison.OrdinalIgnoreCase)
+                    && !string.Equals(f, "binary+json", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Unknown format: {f} (expected json|binary)");
+                    Console.WriteLine($"Unknown format: {f} (expected json|binary|binary+json)");
                     return null;
                 }
                 opts.Format = f.ToLowerInvariant();
-            }
-            else if (a == "--export-json")
-            {
-                opts.ExportJson = true;
-            }
-            else if (a == "--no-export-json")
-            {
-                opts.ExportJson = false;
             }
             else if (a == "--dest" && i + 1 < args.Length)
             {
@@ -393,7 +394,13 @@ Commands:
   run-disk <module.json>    Run an exported module.json via the C VM (classic).
   info <module.json>        Show module metadata via the C VM.
   version                   Show Front/Backend versions.
-  pack-modules              Compile the stdlib (Core -> Math -> Std, slb +
+  new <project|class> ...   原生脚手架（2026-10-18 自 Front CLI 迁入，
+                             Front 只保留 compile/export）:
+                              slang new project MyApp   (Name.sp/.jsonc/.sl/.md
+                               成套落盘，UTF-8 BOM，含 guide)
+                              slang new project -p <dir> MyApp
+                              slang new class MyClass   (.sl + jsonc 登记)
+  pack-modules              Compile the stdlib (Core -> Std -> Math, slb +
    [--dest <dir>]             json debug copy) and pack it into <dest>\out\
    [--config Debug|Release]   export\ mirroring the repo layout so package
                               references resolve unchanged. Debug keeps
@@ -415,10 +422,9 @@ Options:
                              both disk and memory paths run the _main_ entry)
   -O0..-O3                  Front optimize level
   --in-memory               compile: keep the package JSON in memory
-  --format <json|binary>    Export format (binary = SLB; with --export-json
-                             also writes the .module.json debug copy)
-  --export-json             compile: json debug copy next to the SLB
-  --no-export-json          compile: skip the json co-export
+  --format <json|binary|binary+json>
+                             Export format: binary = SLB; binary+json = SLB
+                             main + .module.json debug copy (R15)
   --no-banner               Suppress banners
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
@@ -427,15 +433,16 @@ Options:
   -- [args...]              Everything after -- goes to Project._inputArgs
 
 Examples:
-  slang run simple_language\test\BaseTest\ProjectTest
-  slang run simple_language\test\ExpendTest\ProjectTest -t
+  slang new project MyApp
+  slang run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest
+  slang run SlangAllInOne\SLangCore\test\ExpendTest\ProjectTest -t
   slang run MyProject -- arg1 arg2
   slang compile MyProject
   slang compile MyProject --in-memory
-  slang compile MyProject --format binary --export-json
+  slang compile MyProject --format binary+json
   slang pack-modules --config Release
-  slang run-disk simple_language\out\export\ProjectTest\ProjectTest.module.json
-  slang info simple_language\out\export\ProjectTest\ProjectTest.module.json");
+  slang run-disk SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json
+  slang info SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json");
         return 0;
     }
 }

@@ -69,7 +69,7 @@ dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compil
 
 # 标准库（→ SlangAllInOne\out\export\；三合一驱动，预设 core|math|std|all，缺省 all）
 dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- core   # 单编 Core（math/std 同理）
-dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj          # Core→Math→Std 全编（Math 含 vmDll 构建 math_lib.dll）
+dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj          # Core→Std→Math 全编（Math 含 vmDll 构建 math_lib.dll）
 
 # 编译即运行（Front → SLIR 内存直传 → C VM）
 dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner

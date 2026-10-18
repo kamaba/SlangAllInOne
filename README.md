@@ -157,10 +157,11 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 | `run-disk <module.slb\|module.json>` | 运行已导出的模块包（两种格式，magic 自动探测） |
 | `info <module.slb\|module.json>` | 查看模块元数据 |
 | `version` | Front 版本 + C VM DLL 路径 / 配置 |
+| `new <project\|class> …` | 创建工程或类文件（**宿主原生脚手架**，2026-10-18 自 Front CLI 迁入）：`slang new project MyApp` 在 `<dir>\MyApp\` 生成 .sp/.jsonc/.sl/.md 成套（UTF-8 BOM，guide 含 AI 描述保留区；重生成保留 AI-DESCRIPTION 标记区）；`slang new class MyClass` 建 .sl 并登记进 jsonc `compileFiles.files[]`（已注册跳过；`-p <dir>` 缺省当前目录） |
 | `pack-modules` | 编译标准库三件套并平铺打进 `lib\`（发布包自动调起） |
 | `pack-docs` | 打包用户文档进 `md\`（发布包自动调起） |
 
-常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary`（SLB 二进制导出）｜`--in-memory`｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
+常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary|binary+json`（binary=SLB；binary+json=slb 主产物+json 调试副本，R15）｜`--in-memory`｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
 
 退出码：`0` 成功；`1` Front 编译失败或参数错误；`4` 找不到 C VM DLL（先跑步骤 1）；其他非 0 为 C VM 运行失败原样透传。
 

@@ -111,6 +111,9 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- 静态 CRT（2026-10-18，与 csimple_lang CMakeLists 同步）：math_lib.dll 随
+          发布包分发（lib\math_lib.dll），不得依赖 VC++ 运行库。 -->
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\csimple_lang\src\vm\system_method_call;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -130,9 +133,13 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- 静态 CRT（2026-10-18）：math_lib.dll 随发布包分发（lib\math_lib.dll），
+          /MT 烘进 CRT——不再依赖 VCRUNTIME140.dll（此前 vmDlls 走 Debug 配置，
+           产物链 VCRUNTIME140D/ucrtbased，目标机必然 DllNotFound，v0.0.4 实录）。 -->
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\csimple_lang\src\vm\system_method_call;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\csimple_lang\src\vm\system_method_call;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

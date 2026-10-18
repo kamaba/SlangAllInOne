@@ -224,3 +224,11 @@
   4. 用例工程修复：RenderTest 残缺 jsonc（引用 8 个不存在的文件、缺 Math 引用、moduleName ProjectTest2 撞名）收敛为单文件 MathTest.sl 冒烟；TankGame.jsonc references 少一级上跳（3 级指到不存在的 SLangCore\out\export）修为 4 级；TankGame.sl 加 `-- auto` 自动模式（Windows 管道 keyAvailable 恒 false，交互键无法注入 CI）。
 - 如何快速验证：Debug 22 套件 + 6 负例 + GameTank(auto) 全 exit 0（BaseTest 24 FAIL 为已验证既有基线：协程 5 + Monitor P5 调试帧 9 + Tuple.create 10）；Release 同表 exit 0（ExpendTest 多 1 项 MiTest mimalloc "current falls" 断言，开发树 Release csimple_lang 直跑同样复现=既有，非包特有）。
 - 预防建议：① 宿主执行端切换是「换镜」不是等价替换——会系统性暴露路径假设类问题（文件名≠目录名、references 层级、交互用例无输入源）；② 交互式用例自动化必须设计显式退出通道（参数开关），别指望管道注入按键；③ 阶段级 Error 计数聚合（IR 阶段 11 错）要先展开逐条定位，"恰好=N 个定义数"这类对应关系是 batch 误报的强信号。
+
+### [2026-10-18] SDK 10 发布链重构致 WipeReleasePackage 死链：win32-release 残留物跨发布存活
+- 现象：`dotnet publish -c Release`（零旗标 AOT → package\win32-release）exit 0，但包内残留上次 CSimpleVMTest 拷入的 `MathTest\`（19MB module.json + slb）等非本发布产物；同日 20:10 前后包内 slang.exe 一度失踪（时间点与一次外部 MSBuild 启动吻合，中断过程无日志可考）——包不再满足"只含本次发布产物"的卫生契约。
+- 根因：.NET SDK 9/10 重构发布拷贝链（本机 `dotnet --list-sdks` 仅 10.0.401、无 global.json）：`CopyFilesToPublishDirectory` 依赖改为 `_IncrementalCleanPublishDirectory + _CopyResolvedFilesToPublish*`，`_CopyFilesToPublishFolder` 只剩 ClickOnce(PublishOnly) 路径引用。csproj 的 `WipeReleasePackage` 挂 `BeforeTargets="_CopyFilesToPublishFolder"` = 静默死链（正常 dotnet publish 永不触发、零报错）。SDK 自带孤儿清理只删"历史发布记录过的文件"，测试流程直写的 MathTest\ 不在其管辖 → 永久累积。
+- 修复点（文件/模块）：`SlangAllInOne.csproj` WipeReleasePackage 改双入口挂钩 `_IncrementalCleanPublishDirectory`（新链拷贝阶段最先跑，语义与旧挂点等价）+ `_CopyFilesToPublishFolder`（SDK 8 兜底，目标不存在/不跑时挂点自然落空、无害）；新增 `_WipeReleasePackageDone` 守卫防极端管线双入口先后触发时第二次 wipe 误删已拷入的新产物。
+- 如何快速复现：发布前确认包内有非发布产物残留（MathTest\ 实锤）→ 旧挂钩下 `dotnet publish -c Release` exit 0 后残留仍在。
+- 如何快速验证：修复后同命令 exit 0 → 残留全清（Test-Path MathTest = False），bin\lib\md 目录 mtime 全部刷新为本次发布，包内容 = slang.exe(9.9MB 原生单文件 AOT) + bin\ + lib\ + md\；`slang.exe version` 冒烟正确识别包内 bin\ 运行时。
+- 预防建议：① 挂 SDK 内部 target 的 hook 是对 SDK 私有管线的隐式契约，跨 SDK 大版本（8→9/10）必须重验——依赖链重构不会报错，只让 hook 静默失效；② 机器 SDK 漂移（无 global.json 钉版本）时，csproj 里的 SDK 内部挂点优先怀疑；③ wipe 类 target 的验证别只看 exit 0，要看"非发布产物是否消失"。

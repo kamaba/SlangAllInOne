@@ -31,11 +31,9 @@ internal sealed class FrontendService
     /// <param name="projectPath">Project path (directory or .sp file).</param>
     /// <param name="inMemory">true = keep the exported package (json text or SLB bytes) in memory.</param>
     /// <param name="optimizeLevel">-1 = compiler default, otherwise 0..3 (-O0..-O3).</param>
-    /// <param name="format">"" = compiler default (jsonc export.format); "json" | "binary" overrides it.</param>
-    /// <param name="exportJson">null = compiler default (jsonc export.binary.exportJson);
-    /// true/false forwards --export-json/--no-export-json (json debug copy next to the SLB,
-    /// disk export only; ignored in-memory). Used by pack-modules per R15.</param>
-    public static CompileResult Compile(string projectPath, bool inMemory, int optimizeLevel = -1, string format = "", bool? exportJson = null)
+    /// <param name="format">"" = compiler default (jsonc export.format);
+    /// "json" | "binary" (SLB) | "binary+json" (SLB main + .module.json debug copy, R15) overrides it.</param>
+    public static CompileResult Compile(string projectPath, bool inMemory, int optimizeLevel = -1, string format = "")
     {
         var result = new CompileResult();
 
@@ -46,10 +44,6 @@ internal sealed class FrontendService
             frontArgs.Add("--in-memory");
         if (!string.IsNullOrEmpty(format))
             frontArgs.AddRange(new[] { "--format", format });
-        if (exportJson == true)
-            frontArgs.Add("--export-json");
-        else if (exportJson == false)
-            frontArgs.Add("--no-export-json");
         frontArgs.Add("--no-banner");
 
         Console.WriteLine("=== Front compile (in-process) ===");

@@ -110,7 +110,7 @@ handler 内抛异常：已暂存响应照常写出，未响应则 500；全局�
 
 ```powershell
 # 库改动后先编库，再编消费工程（顺序不可颠倒）
-dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p source\Front\Lib\SLang\Server\Server.sp -e ir --format binary --export-json
-dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\ExpendTest\ProjectTest.sp -e ir --format binary --export-json
-csimple_lang.exe run out\export\ProjectTest2\ProjectTest.module.json
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary+json --no-banner
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\test\ExpendTest\ProjectTest.sp --format binary+json --no-banner
+csimple_lang.exe run SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json
 ```

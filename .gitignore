@@ -26,6 +26,8 @@
 /tools/llvm/mlir-transform-opt.exe
 /tools/llvm/mlir-translate.exe
 /out/export
+/out
+/Project/cvm_math_lib/cvm_math_lib/x64
 /SLangCore/out
 /Project/cvm_sl_mysql_lib/x64
 /Project/CSimpleVMTest/bin

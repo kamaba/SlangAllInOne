@@ -56,7 +56,7 @@
 - **`references`**：引用其它目录/库。
 - **`struct`**：结构树（命名空间/类等）供工程组织与校验使用。
 
-完整字段说明、示例与 CLI（`sl new project`、`sl new classfile`、`sl c`、`sl c -e ir`）见 [**工程配置（JSONC）**](../project/project-config-jsonc-guide.md)。
+完整字段说明、示例与 CLI（宿主 `slang new project` / `slang new class` 脚手架、`sl c`、`sl c -e ir`）见 [**工程配置（JSONC）**](../project/project-config-jsonc-guide.md)。
 
 ### 2.4 `.sp` 里要表达什么（方向）
 

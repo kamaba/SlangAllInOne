@@ -5,7 +5,7 @@
 # Pipeline facts (verified on disk, 2026-10-18):
 #   Front compile : dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <sp> -e ir
 #   Stdlib        : dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- core|math|std
-#                   (CompileCore/CompileMath/CompileStd merged into one driver; "all" = Core -> Math -> Std
+#                   (CompileCore/CompileMath/CompileStd merged into one driver; "all" = Core -> Std -> Math
 #                    with one clean child process per module, built into the driver)
 #   VM Windows    : clang preferred (csimple_lang\scripts\cmake-build-clang.ps1 -> build\<C>\bin\csimple_lang.exe);
 #                   without clang, falls back to incremental build of the existing configured tree build\<C>
@@ -34,12 +34,14 @@ $FrontProj = Join-Path $SLDir 'source\SimpleLanguageFront.csproj'
 
 # 2026-10-18: CompileCore/CompileMath/CompileStd merged into one driver -
 # core/math/std presets (launchSettings.json profiles in that project), plus
-# all (Core -> Math -> Std, one clean child process per module, built in).
+# all (Core -> Std -> Math, one clean child process per module, built in;
+# Std only references Core, Math references Core+Std - order makes a clean
+# out\export build fully self-bootstrapping).
 $StdlibDriverCsproj = Join-Path $AllInOneDir 'Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj'
 $StdlibModules = @(
     @{ Name = 'Core'; Preset = 'core'; Module = 'Core\Core.module.json' },
-    @{ Name = 'Math'; Preset = 'math'; Module = 'Math\Math.module.json' },
-    @{ Name = 'Std';  Preset = 'std';  Module = 'Std\Std.module.json' }
+    @{ Name = 'Std';  Preset = 'std';  Module = 'Std\Std.module.json' },
+    @{ Name = 'Math'; Preset = 'math'; Module = 'Math\Math.module.json' }
 )
 
 # name -> @{ Sp = .sp path relative to SlangAllInOne\SLangCore; Module = module.json relative to out\export;
@@ -288,7 +290,7 @@ function Invoke-BuildVmLinux([string]$Config, [switch]$Harden) {
 }
 
 function Invoke-CompileStdlib {
-    Write-Header 'Compile stdlib (Core -> Math -> Std)'
+    Write-Header 'Compile stdlib (Core -> Std -> Math)'
     # One preset run per module (not a single "-- all"): keeps the per-module
     # exit-code + module.json freshness verdicts, same granularity as before.
     Push-Location $AllInOneDir

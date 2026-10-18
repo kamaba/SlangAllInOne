@@ -1,7 +1,7 @@
 # build-all.ps1 - One-click build for the whole repo:
 #   1. C VM, Windows (clang + ninja)   -> csimple_lang\build\<Config>\bin\csimple_lang.exe
 #   2. C VM, WSL Linux (clang + ninja) -> csimple_lang\build\<Config>Linux\bin\csimple_lang
-#   3. Stdlib modules (Core -> Math -> Std)
+#   3. Stdlib modules (Core -> Std -> Math)
 #   4. Test suites (default set, or -Tests ...)
 #   5. -Run : also run the suites on both platforms
 # Usage:

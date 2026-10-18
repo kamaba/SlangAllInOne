@@ -8,12 +8,14 @@ namespace SimpleLanguageCompileStdlib;
 /// 标准库编译驱动（2026-10-18 由 CompileCore / CompileMath / CompileStd 三工程合一）。
 /// 第一个非 - 开头参数作为选择器：
 ///   core | math | std —— 单编对应标准库（进程内编译，与旧三驱动行为一致）；
-///   all（缺省）      —— Core → Math → Std 依序全编，每模块自举一个干净子进程
-///                        （与 Pack/PackModulesCommand 同模型，隔离 Front 静态状态）；
+///   all（缺省）      —— Core → Std → Math 依序全编，每模块自举一个干净子进程
+///                        （与 Pack/PackModulesCommand 同模型，隔离 Front 静态状态；
+///                         Std 只引用 Core、Math 引用 Core+Std，改序后清空 out\export
+///                         首编完全自举，2026-10-18 由 Core→Math→Std 改序）；
 ///   其他             —— 视为显式工程路径（如某测试工程的 .sp）。
 /// 其余参数原样转发 Front CLI（显式 --format 等可覆盖内置旗标）。
-/// 预设模块编译成功后自动把产物（R15：slb 主产物 + json 调试副本，--format binary
-/// --export-json 内置）同步到 package\{win32|linux}-{debug|release}\lib 四目录
+/// 预设模块编译成功后自动把产物（R15：slb 主产物 + json 调试副本，--format binary+json 内置）
+/// 同步到 package\{win32|linux}-{debug|release}\lib 四目录
 /// （2026-10-18 用户指令，与 publish 的 pack-modules 同一落位；显式工程路径不同步）。
 /// IDE 经 Properties\launchSettings.json 的 All/Core/Math/Std 配置分流
 /// （All 为默认 profile 且不带 commandLineArgs：dotnet run 会把 profile 参数与
@@ -21,12 +23,13 @@ namespace SimpleLanguageCompileStdlib;
 /// </summary>
 internal static class Program
 {
-    /// <summary>标准库预设：名称 → 工程路径（相对 SlangAllInOne 根）；数组顺序即 all 的编译顺序。</summary>
+    /// <summary>标准库预设：名称 → 工程路径（相对 SlangAllInOne 根）；数组顺序即 all 的编译顺序
+    /// （Core → Std → Math：Std 只引用 Core，Math 引用 Core+Std，清空产物后首编完全自举）。</summary>
     static readonly (string Name, string Path)[] Presets =
     {
         ("core", Path.Combine("SLangCore", "Lib", "Core", "Core")),
-        ("math", Path.Combine("SLangCore", "Lib", "Math", "Math")),
         ("std",  Path.Combine("SLangCore", "Lib", "Std", "Std")),
+        ("math", Path.Combine("SLangCore", "Lib", "Math", "Math")),
     };
 
     /// <summary>Main 里赋值（GetRepoRoot 结果），供 CompileOne/SyncToPackageLibs
@@ -117,7 +120,7 @@ internal static class Program
         return failures == 0 ? 0 : 1;
     }
 
-    /// <summary>单编（进程内）：compile -e ir -p <路径> -o3 --format binary --export-json
+    /// <summary>单编（进程内）：compile -e ir -p <路径> -o3 --format binary+json
     /// --no-banner + 转发参数；成功（slb mtime fresh，Front 失败时退出码仍 0，
     /// mtime 才是硬证据）后把产物同步进四个包目录的 lib\（2026-10-18 用户指令：
     /// 标准库编译产物按 debug/release 分别落 package\{win32|linux}-{debug|release}\lib，
@@ -126,7 +129,7 @@ internal static class Program
     static int CompileOne(string projectPath, List<string> forwardArgs, string? presetName = null)
     {
         var cliArgs = new List<string> { "compile", "-e", "ir", "-p", projectPath, "-o3",
-            "--format", "binary", "--export-json", "--no-banner" };
+            "--format", "binary+json", "--no-banner" };
         cliArgs.AddRange(forwardArgs);
 
         Console.WriteLine($"CompileStdlib: project = {projectPath}");
@@ -139,7 +142,7 @@ internal static class Program
             Console.Out.Flush();
 
             /* 产物落位 = {export.outputDir}/{moduleName}/；R15 双产物：
-             * slb 主产物恒导出 + json 调试副本（--export-json）。 */
+             * slb 主产物恒导出 + json 调试副本（--format binary+json）。 */
             if (presetName == null)
                 return 0;
 

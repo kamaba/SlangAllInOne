@@ -20,6 +20,12 @@ namespace CSimpleVMTest;
 /// 所在目录），标准库即来自包内 lib\；子目录深度与 out\export\&lt;Module&gt;
 /// 一致，插件 lib 按 module.json 所在目录回仓库的相对路径保持可达。
 ///
+/// Front 编译期官方库直查布防（2026-10-18）：进程内编译的直查终点是宿主
+/// bin\lib\（AppContext.BaseDirectory 下），Main 第一步先把发布包 lib\
+/// 镜像进来（StagePackageLibForFrontCompile，与 RunCVM 同款包目录选择）——
+/// 显式后缀 references（如 MyTest 的 "Core.module.slb"）在工程内 path 拼接
+/// 落空时靠这里命中，否则严格语义直接硬报错中止编译；包不存在时静默跳过。
+///
 /// 用例选择（第一个非 - 开头参数；IDE 里对应 Properties\launchSettings.json 各 profile）：
 ///   BaseTest | ExpendTest（缺省） | MathTest | SpecialTest | BenchMark | RenderTest
 ///       —— 六大用例集预设（合并自八个旧宿主的默认入口）；
@@ -103,6 +109,10 @@ internal static class Program
             Console.WriteLine($"  projectPath = {projectPath}");
         }
 
+        // Front 编译期官方库直查需要宿主 bin\lib\（显式后缀 references 严格装载的
+        // 回退链终点），先把发布包 lib\ 镜像进来（与 RunCVM 同款包目录选择）
+        StagePackageLibForFrontCompile(repoRoot);
+
         // Step 1: Compile with Front (in-process or via dotnet run)
         var dotnetFrontArgs = new List<string>
         {
@@ -115,8 +125,7 @@ internal static class Program
         // R15：供运行的模块一律二进制导出（slb 主产物 + json 调试副本），
         // 包内 run-disk 优先装载 slb
         dotnetFrontArgs.Add("--format");
-        dotnetFrontArgs.Add("binary");
-        dotnetFrontArgs.Add("--export-json");
+        dotnetFrontArgs.Add("binary+json");
 
         int frontExit = start
             ? RunFrontInProcess(projectPath, optLevelArg)
@@ -262,6 +271,34 @@ internal static class Program
         return RunProcess(slangExe, slangArgs, "slang run (package)", null, out runOutput);
     }
 
+    /// <summary>把发布包 lib\（官方标准库 slb/json）镜像进宿主 bin\lib\，供 Front
+    /// 进程内编译的官方库直查（ProjectReferenceModuleLoader 探测 AppContext.BaseDirectory
+    /// 下 lib\|modules\）——显式后缀 references（如 MyTest 的 "Core.module.slb"）在工程内
+    /// path 拼接落空时靠这里命中，否则严格语义直接硬报错中止编译。包不存在时静默跳过
+    /// （RunCVM 阶段自会提示先跑 build-packages.ps1）。</summary>
+    static void StagePackageLibForFrontCompile(string repoRoot)
+    {
+#if DEBUG
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-debug");
+#else
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-release");
+#endif
+        string srcLib = Path.Combine(pkgDir, "lib");
+        if (!Directory.Exists(srcLib))
+            return;
+        try
+        {
+            string dstLib = Path.Combine(AppContext.BaseDirectory, "lib");
+            Directory.CreateDirectory(dstLib);
+            foreach (string f in Directory.GetFiles(srcLib))
+                File.Copy(f, Path.Combine(dstLib, Path.GetFileName(f)), overwrite: true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warn: stage package lib for Front compile failed: {ex.Message}");
+        }
+    }
+
     /// <summary>把 out\export\&lt;Dir&gt;\ 的运行产物（*.module.json / *.module.slb +
     /// plugins\ 载荷，不含 Logs\DebugCode 调试快照）拷入发布包 &lt;pkgDir&gt;\&lt;Dir&gt;\，
     /// 返回包内模块文件路径（优先与传入 json 同名的 .slb 主产物，无则 .json）；失败返回 null。
@@ -389,8 +426,7 @@ internal static class Program
             frontArgs.Add("--no-banner");
             // R15：供运行的模块一律二进制导出（slb 主产物 + json 调试副本）
             frontArgs.Add("--format");
-            frontArgs.Add("binary");
-            frontArgs.Add("--export-json");
+            frontArgs.Add("binary+json");
             Console.WriteLine("Front: " + string.Join(' ', frontArgs));
             var inputArgs = new CommandInputArgs(frontArgs.ToArray());
             bool ok = CommandExecutor.Execute(inputArgs);

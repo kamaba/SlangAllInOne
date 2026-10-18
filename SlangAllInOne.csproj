@@ -73,6 +73,14 @@
     <Content Include="resources\S语言图标-方案B-极简线性.ico" />
   </ItemGroup>
 
+  <!-- 2026-10-18 CLI 三分：new 脚手架的 guide 模板自 Front（Project\Templates\）
+       迁入本工程，内嵌资源供 New\NewCommand.cs 读取（slang new project 生成；
+       Front 只保留 compile/export）。 -->
+  <ItemGroup>
+    <None Remove="Templates\ProjectGuideTemplate.md" />
+    <EmbeddedResource Include="Templates\ProjectGuideTemplate.md" />
+  </ItemGroup>
+
   <!-- 2026-10-17 仓库重组：编译/测试工程、库源树、工具随迁入本目录后，SDK 的
        默认 **/*.cs glob 会把它们全部吞进宿主工程（多份 Program.cs 类型冲突，
        CS0111）。这里是宿主（Backend/FrontEnd/Pack/Program.cs），其余子树各有
@@ -158,8 +166,7 @@
        bin\(.so) / module\ / md\（scripts\build-packages.ps1 与 release-slang.ps1，
        module\ + md\ 平台无关直接复用 Windows 包产物）。
        手动逃逸：-p:SkipCvmPack=true。 -->
-  <Target Name="PackCvmRuntime" AfterTargets="Publish"
-          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+  <Target Name="PackCvmRuntime" AfterTargets="Publish" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <!-- BINARY_HARDENING.md: Release packages carry the hardened VM
          (SLVM_HARDEN=ON startup anti-debug); Debug packages stay debuggable. -->
     <PropertyGroup>
@@ -181,8 +188,8 @@
   </Target>
 
   <!-- Official release packaging: compile the standard library modules
-       (Core, then Math, then Std; R15: format binary + export-json = SLB
-       main + json debug copy) and pack them flat under <package>\module\
+       (Core → Std → Math; R15: format binary+json = SLB
+       main + json debug copy) and pack them flat under <package>\lib\
        (one directory, no per-module sub-trees). The deep relative paths
        embedded in the modules (moduleReferences "../Core", FFI dllImports
        "../../out/export/Math/math_lib.dll") resolve through the C VM
@@ -195,8 +202,7 @@
        exe: one clean child process per module, same model as the stdlib
        driver (Project\CompileStdlib). A non-zero exit fails the publish
        (never ship a broken package). -->
-  <Target Name="PackStdModules" AfterTargets="PackCvmRuntime"
-          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+  <Target Name="PackStdModules" AfterTargets="PackCvmRuntime" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-modules --config $(CvmBuildConfig)" />
   </Target>
 
@@ -206,8 +212,7 @@
        md\vm\) and cvm_* C-side project docs are excluded. Recipe lives in
        Pack/PackDocsCommand.cs and runs here through the just-published exe,
        same self-bootstrap model as pack-modules. -->
-  <Target Name="PackDocs" AfterTargets="PackStdModules"
-          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+  <Target Name="PackDocs" AfterTargets="PackStdModules" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 
@@ -224,9 +229,7 @@
       <PluginFrontendFiles Include="$(PublishDir)SLCSharpMonoFrontend.*" />
       <PluginFrontendFiles Include="$(PublishDir)SLJavaHotspotFrontend.*" />
     </ItemGroup>
-    <Move SourceFiles="@(PluginFrontendFiles)"
-          DestinationFolder="$(PublishDir)plugins\"
-          Condition="'@(PluginFrontendFiles)' != ''" />
+    <Move SourceFiles="@(PluginFrontendFiles)" DestinationFolder="$(PublishDir)plugins\" Condition="'@(PluginFrontendFiles)' != ''" />
   </Target>
 
   <!-- 2026-10-18 用户指令：licenses\ 不再随包导出（原 PackThirdPartyLicenses
@@ -239,15 +242,27 @@
        publishes (old host/frontend assemblies, test scratch dirs, runtime
        build\logs) would accumulate forever. Wipe the whole package directory
        first so the result contains ONLY what the current publish produces.
-       NOTE: must hook _CopyFilesToPublishFolder, NOT Publish — a
+       NOTE: must hook the publish-copy entry, NOT Publish — a
        BeforeTargets="Publish" hook runs AFTER Publish's dependency chain
        (which already copied the files), so it would delete the fresh output
        and the pack targets would then find no slang.exe (MSB3073/9009).
+       🔥 2026-10-18 复盘（本机 dotnet 10.0.401 实测死链）：SDK 9/10 重构了发布
+       拷贝链——CopyFilesToPublishDirectory 的依赖改为
+       _IncrementalCleanPublishDirectory + _CopyResolvedFilesToPublish*，
+       _CopyFilesToPublishFolder 只剩 ClickOnce(PublishOnly) 路径引用；继续挂
+       它 = wipe 静默不触发（实证：win32-release 里 19MB MathTest 测试残留跨
+       多次发布存活）。改为双入口：_IncrementalCleanPublishDirectory（新链，
+       拷贝阶段最先跑，语义与旧挂点等价）+ _CopyFilesToPublishFolder（SDK 8
+       兜底；目标不存在/不跑时挂点自然落空，无害）。_WipeReleasePackageDone
+       守卫防极端管线下双入口先后触发时第二次 wipe 误删已拷入的新产物。
        Guarded by "the PublishDir lies under a package folder" so an
        accidental "publish -o <precious dir>" cannot wipe anything unrelated. -->
-  <Target Name="WipeReleasePackage" BeforeTargets="_CopyFilesToPublishFolder" Condition="'$(Configuration)' == 'Release' and $([System.String]::Copy('$(PublishDir)').Contains('package'))">
+  <Target Name="WipeReleasePackage" BeforeTargets="_IncrementalCleanPublishDirectory;_CopyFilesToPublishFolder" Condition="'$(Configuration)' == 'Release' and '$(_WipeReleasePackageDone)' != 'true' and $([System.String]::Copy('$(PublishDir)').Contains('package'))">
     <RemoveDir Directories="$(PublishDir)" Condition="Exists('$(PublishDir)')" />
     <MakeDir Directories="$(PublishDir)" />
+    <PropertyGroup>
+      <_WipeReleasePackageDone>true</_WipeReleasePackageDone>
+    </PropertyGroup>
   </Target>
 
   <!-- Release-package hygiene (part 2/2, AFTER all pack targets): the runtime

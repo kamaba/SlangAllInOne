@@ -205,16 +205,9 @@ if ($SkipBuild) {
     $code = $LASTEXITCODE
     Pop-Location
     if ($code -ne 0) { Fail 'dotnet publish (win-x64) failed (see log above)' }
-    # Bundled example: bare-name official-library reference probe, ships with
-    # every release so `slang run test\RefProbe\RefProbe` works out of the box
-    # (RELEASE.md "官方库直查"). Copied after publish because the script wipes
-    # the package dir up front. Source lives in the test tree (the historical
-    # examples\RefProbe path no longer exists - fixed 2026-10-18).
-    $exampleSrc = Join-Path $AioDir 'SLangCore\test\Other\RefProbe'
-    if (Test-Path $exampleSrc) {
-        robocopy $exampleSrc (Join-Path $PkgWinDir 'test\RefProbe') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
-        Write-Ok 'bundled example: test\RefProbe (bare-name official-library references)'
-    }
+    # 2026-10-18 user directive: release packages no longer bundle the test\
+    # example (test\RefProbe was removed from v0.0.5 on - the package ships
+    # only slang.exe + bin\ + lib\ + md\; examples stay in the repo test tree).
     Write-Ok 'publish ok (Native AOT single-file slang.exe + hardened C VM + stdlib modules + docs)'
 }
 Write-Ok 'windows package built'
@@ -265,14 +258,6 @@ if ($SkipBuild) {
     $mathLib = Join-Path $PkgLinuxDir 'lib\math_lib.dll'
     if (Test-Path $mathLib) { Remove-Item $mathLib -Force -Confirm:$false }
     Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll excluded)'
-
-    # same bundled example as the Windows package (platform-independent sources;
-    # re-derived here so -SkipBuild runs work too)
-    $exampleSrc = Join-Path $AioDir 'SLangCore\test\Other\RefProbe'
-    if (Test-Path $exampleSrc) {
-        robocopy $exampleSrc (Join-Path $PkgLinuxDir 'test\RefProbe') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
-        Write-Ok 'bundled example: test\RefProbe (linux package)'
-    }
 }
 Write-Ok 'linux package built'
 

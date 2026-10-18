@@ -1,4 +1,4 @@
-# compile-stdlib.ps1 - Compile the standard library modules (Core -> Math -> Std).
+# compile-stdlib.ps1 - Compile the standard library modules (Core -> Std -> Math).
 # Usage:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\compile-stdlib.ps1
 

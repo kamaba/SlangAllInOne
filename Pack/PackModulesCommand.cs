@@ -3,13 +3,13 @@ using System.Diagnostics;
 namespace SlangAllInOne.Pack;
 
 /// <summary>
-/// pack-modules：编译标准库三件套（Core → Math → Std）并把产物打进发布目录，
+/// pack-modules：编译标准库三件套（Core → Std → Math）并把产物打进发布目录，
 /// 制作过程全部内置在工程里 —— dotnet publish 时由 csproj 的 PackStdModules
 /// target 调起刚发布的 exe 执行本命令，无需任何手工脚本。
 ///
 /// 编译模型：每模块一个干净子进程（本 exe 自举 compile），与 scripts\compile-
 /// stdlib.ps1 及 CompileStdlib 驱动（core/math/std 预设）完全同构；导出参数
-/// --format binary --export-json（R15：slb 主产物 + json 调试副本）；成功判据
+/// --format binary+json（R15：slb 主产物 + json 调试副本）；成功判据
 /// 对齐 compile-stdlib.ps1 —— exit 0 且 slb mtime fresh（Front 编译失败时
 /// 退出码仍可能为 0，mtime 才是硬证据）。
 ///
@@ -31,15 +31,17 @@ namespace SlangAllInOne.Pack;
 /// </summary>
 internal static class PackModulesCommand
 {
-    /// <summary>标准库三件套；顺序即编译顺序（Math/Std 引用 Core，Front 的引用
-    /// 装载 Strategy 1/2 读磁盘上的 Core 产物，故 Core 必须先行）。
+    /// <summary>标准库三件套；顺序即编译顺序。依赖：Std 只引用 Core；Math 引用
+    /// Core + Std —— Core → Std → Math 保证每步只依赖磁盘上本轮已产出的模块，
+    /// 清空 out\export 后首次编译（如 CI / publish 前置）完全自举（2026-10-18
+    /// 由 Core→Math→Std 改序：旧序的 Math 依赖磁盘上一轮残留的 Std 产物）。
     /// 2026-10-17 仓库重组：库源码自 simple_language\source\Front\Lib\ 迁至
     /// SlangAllInOne\SLangCore\Lib\（export.outputDir → SlangAllInOne\out\export）。</summary>
     private static readonly (string Name, string Project)[] StdlibProjects =
     {
         ("Core", @"SlangAllInOne\SLangCore\Lib\Core\Core"),
-        ("Math", @"SlangAllInOne\SLangCore\Lib\Math\Math"),
         ("Std",  @"SlangAllInOne\SLangCore\Lib\Std\Std"),
+        ("Math", @"SlangAllInOne\SLangCore\Lib\Math\Math"),
     };
 
     /// <param name="destDir">包根目录；空 = exe 所在目录（publish 集成默认，
@@ -81,9 +83,9 @@ internal static class PackModulesCommand
             // 子进程编译；CWD 与 compile-stdlib.ps1 一致（SlangAllInOne\，库源树根）。
             string slbPath = Path.Combine(exportRoot, name, $"{name}.module.slb");
             var start = DateTime.Now;
-            Console.WriteLine($"--- {name}: compile {projectRel} -O3 --format binary --export-json");
+            Console.WriteLine($"--- {name}: compile {projectRel} -O3 --format binary+json");
             int exit = RunChild(selfExe,
-                $"compile \"{projectPath}\" -O3 --format binary --export-json --no-banner",
+                $"compile \"{projectPath}\" -O3 --format binary+json --no-banner",
                 Path.Combine(repoRoot, "SlangAllInOne"));
             bool fresh = File.Exists(slbPath) && File.GetLastWriteTime(slbPath) >= start.AddSeconds(-5);
             if (exit != 0 || !fresh)

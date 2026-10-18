@@ -221,8 +221,8 @@ refusedLabel:
 - 运行：
 
 ```powershell
-cd d:\project\lang\simple_language
-dotnet run --project project\CSimpleVMStdTest -- test\Other\NetTest\ProjectTest.sp
+cd d:\project\lang
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\NetTest\ProjectTest
 ```
 
 （宿主自动完成 Front 编译 + C VM 运行；只跑单个 .sl 组可参考 [test-guide](../../../md/project/test-guide.md)。）

@@ -57,11 +57,14 @@ The `slang` binary is a **self-contained Native AOT executable** — no .NET run
 slang_release_<v>/
 ├── slang[.exe]         # Unified host: Front compile + C VM run (single AOT file)
 ├── bin\                # C VM runtime (hardened Release: LTO + anti-debug) + sqlite
-├── module\             # Standard library Core/Math/Std *.module.slb (flat directory)
+├── lib\                # System built-in stdlib Core/Math/Std *.module.slb (flat directory)
+├── modules\            # (future) user package dir for spm.exe, the package manager - created on demand
+├── plugins\            # Plugin directory: install & management home for plugins (distinct from plain packages)
 ├── test\RefProbe\      # Out-of-the-box example: minimal project with bare-name references
-├── md\                 # ~93 user docs (syntax / libraries / project / logging / plugins)
-└── licenses\           # Third-party license compliance bundle (NOTICE + full texts)
+└── md\                 # ~93 user docs (syntax / libraries / project / logging / plugins)
 ```
+
+> The directory scheme's decision record lives in [md/project/package-layout.md](md/project/package-layout.md) (`lib` = system built-in libraries, `modules` = future spm.exe package management, `plugins` = plugins).
 
 ### 2. Run It Right Away
 
@@ -70,7 +73,7 @@ slang_release_<v>/
 slang.exe run test\RefProbe\RefProbe
 ```
 
-User projects can reference official libraries by bare name (`Core` / `Std` / `Math`) — both the Front at compile time and the C VM at run time look them up in `<slang dir>\module\` (slb first). No fragile relative paths.
+User projects can reference official libraries by bare name (`Core` / `Std` / `Math`) — both the Front at compile time and the C VM at run time look them up in `<slang dir>\lib\` (slb first; packages installed by the future spm are found the same way under `modules\`). No fragile relative paths.
 
 ### 3. What SLang Looks Like
 
@@ -154,7 +157,7 @@ The workspace-wide development entry point is [SlangAllInOne.sln](SlangAllInOne.
 | `run-disk <module.slb\|module.json>` | Run an exported module package (both formats, magic auto-detected) |
 | `info <module.slb\|module.json>` | Show module metadata |
 | `version` | Front version + C VM DLL path / config |
-| `pack-modules` | Compile the stdlib trio and pack them flat into `module\` (invoked automatically on publish) |
+| `pack-modules` | Compile the stdlib trio and pack them flat into `lib\` (invoked automatically on publish) |
 | `pack-docs` | Pack user docs into `md\` (invoked automatically on publish) |
 
 Common options: `-p, --project <path>` | `-O0..-O3` (optimize level) | `--format json|binary` (SLB binary export) | `--in-memory` | `--debug` (C VM instruction trace) | `--force-run` (skip platform check) | `--cvm Debug|Release` (pick the C VM build tree) | `-- <args…>` (everything after goes into `Project._inputArgs`, read from source via `global._inputArgs`).
@@ -238,16 +241,17 @@ Master index: [md/INDEX.md](md/INDEX.md). Summary by group below. (Docs are writ
 
 ## Testing
 
-| Suite | Coverage | Host project (Project\) |
+| Suite | Coverage | Host entry (single host `CSimpleVMTest`, merged 2026-10-18) |
 |--------|------|----------------------|
-| BaseTest | Core language (classes/generics/coroutines/containers/Float8…, 60+ `.sl`) | CSimpleVMCoreTest, Test |
-| ExpendTest | Stdlib / extensions (Json/Xml/File/Sqlite/Isolate/Attribute/Server…) | CSimpleVMStdTest, Test2 |
-| MathTest | Math library (FFI math / matrices / big numbers) | CSimpleVMMathTest |
-| SpecialTest | FFI / cross-language / AOT / process execution | CSimpleVMSpecialTest |
-| BenchMark | Benchmarks (Fibonacci/Levenshtein/Loop…) | CSimpleVMBenchMarkTest |
-| RenderTest / TensoraTest / MysqlTest | Rendering / tensors / MySQL | RenderTest / pass as arg |
+| BaseTest | Core language (classes/generics/coroutines/containers/Float8…, 60+ `.sl`) | `-- BaseTest` |
+| ExpendTest | Stdlib / extensions (Json/Xml/File/Sqlite/Isolate/Attribute/Server…) | default, no args (`-- ExpendTest`) |
+| MathTest | Math library (FFI math / matrices / big numbers) | `-- MathTest` |
+| SpecialTest | FFI / cross-language / AOT / process execution | `-- SpecialTest` |
+| BenchMark | Benchmarks (Fibonacci/Levenshtein/Loop…) | `-- BenchMark` |
+| RenderTest / TensoraTest / MysqlTest | Rendering / tensors / MySQL | `-- RenderTest` / pass an explicit project path |
+| Named cases (probes/negative) | NullFast/JsonTest/Platform*/Inline*/GC probes/GameTank… | `-- <name>` (full table in the host `Program.cs`) |
 
-Joint test hosts = C# Front compiles the suite → C VM executes it (Debug = in-process P/Invoke, debuggable in one process; Release = standalone process). Full details in [md/project/test-guide.md](md/project/test-guide.md).
+The joint test host = C# Front compiles the suite → C VM executes it (Debug = in-process P/Invoke, debuggable in one process; Release = standalone process); in VS, suites are selected via launchSettings.json profiles. Full details in [md/project/test-guide.md](md/project/test-guide.md).
 
 ```powershell
 powershell -File scripts\compile-tests.ps1          # compile test suites
@@ -263,7 +267,7 @@ Release policy (see [RELEASE.md](RELEASE.md), the sole authority): **Native AOT 
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version <x.y.z> [-Draft] [-SkipBuild] [-NoCommit] [-NoPush]
 ```
 
-The pipeline is fully automated: preflight checks → Windows AOT package → Linux AOT package (WSL) → dual-platform smoke tests → packaging → git commit + tag + push → GitHub Release with both assets. C VM Release builds are hardened by default (LTO + symbol stripping + startup anti-debug), and third-party license compliance files are injected into `licenses\`.
+The pipeline is fully automated: preflight checks → Windows AOT package → Linux AOT package (WSL) → dual-platform smoke tests → packaging → git commit + tag + push → GitHub Release with both assets. C VM Release builds are hardened by default (LTO + symbol stripping + startup anti-debug) with the JIT compiled in and on by default.
 
 ## Debugging
 
@@ -272,4 +276,4 @@ The pipeline is fully automated: preflight checks → Windows AOT package → Li
 
 ## License
 
-[Apache-2.0](LICENSE). Full license texts of the third-party components statically linked into the C VM (yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite) are injected into release packages under `licenses\` (NOTICE + each license); `sl_mysql_lib` (GPL-2.0 static link) is not distributed in official release packages.
+[Apache-2.0](LICENSE). Full license texts and NOTICE for the third-party components statically linked into the C VM (yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite) live in the repo at [`csimple_lang/third_party/LICENSES/`](../csimple_lang/third_party/LICENSES/) (as of 2026-10-18 release packages no longer carry a `licenses\` bundle - fetch from the repo when needed); `sl_mysql_lib` (GPL-2.0 static link) is not distributed in official release packages.

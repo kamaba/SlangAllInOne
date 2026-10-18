@@ -1,5 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- ===== 发布形态与默认输出目录（2026-10-18 用户指令）=====
+       Debug   : Front（.NET Debug 程序集 + pdb）+ C VM Debug dll（+pdb 侧车）——
+                 双端可源码级调试的框架依赖包（目标机需 .NET 8 运行时）；C VM Debug
+                 树不编入 JIT（JIT_DESIGN.md §6.1 默认，保持解释器可调试语义）。
+       Release : Native AOT 单文件自包含原生二进制（一体化 slang.exe / linux slang，
+                 目标机零 .NET 依赖）；C VM 取 Release 加固树——JIT 已编入且运行期
+                 默认开启（CLI 旗标 no-jit / 环境变量 SL_JIT=0 关闭），发布链脚本
+                 会显式 pin -DVM_JIT_ENABLE=ON 防 CMake 旧缓存 OFF。
+       发布命令零旗标：dotnet publish -c Debug|Release（Release 自动等价
+       -p:PublishAot=true，要退回经典托管发布显式传 -p:PublishAot=false）；
+       RID 缺省按宿主 OS 补 win-x64 / linux-x64（Native AOT 不支持跨 OS 交叉
+       编译，linux 包必须在 WSL/Linux 侧发布）。
+       默认输出目录 package\{win32|linux}-{debug|release}（"win32" 是用户指定的
+       命名约定 = Windows x64，非 32 位；平台 = 目标 RID 优先，无 RID 时按宿主
+       OS；显式 -o / -p:PublishDir 覆盖本默认）。 -->
+  <PropertyGroup>
+    <_HostIsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</_HostIsWindows>
+    <_HostIsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</_HostIsLinux>
+    <PublishAot Condition="'$(Configuration)' == 'Release' and '$(PublishAot)' == ''">true</PublishAot>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(PublishAot)' == 'true' and '$(_HostIsWindows)' == 'true'">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(PublishAot)' == 'true' and '$(_HostIsLinux)' == 'true'">linux-x64</RuntimeIdentifier>
+    <_PackagePlatform Condition="'$(_PackagePlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">linux</_PackagePlatform>
+    <_PackagePlatform Condition="'$(_PackagePlatform)' == '' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win'))">win32</_PackagePlatform>
+    <_PackagePlatform Condition="'$(_PackagePlatform)' == '' and '$(_HostIsWindows)' == 'true'">win32</_PackagePlatform>
+    <_PackagePlatform Condition="'$(_PackagePlatform)' == '' and '$(_HostIsLinux)' == 'true'">linux</_PackagePlatform>
+    <_PackageConfigName Condition="'$(Configuration)' == 'Debug'">debug</_PackageConfigName>
+    <_PackageConfigName Condition="'$(Configuration)' == 'Release'">release</_PackageConfigName>
+    <PublishDir Condition="'$(PublishDir)' == '' and '$(_PackagePlatform)' != '' and '$(_PackageConfigName)' != ''">$(MSBuildThisFileDirectory)package\$(_PackagePlatform)-$(_PackageConfigName)\</PublishDir>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
@@ -18,9 +48,19 @@
     <!-- Native AOT 会产出 ~50MB 原生 slang.pdb；运行包只运行不发调试（Release 哲学，
          C VM 侧 bin\*.pdb 也已按包卫生排除），且实测 TrimReleasePackage 的 Delete
          成功（exit 0）后 pdb 仍驻留包内（CT 未变、首次执行时 WT 被 touch，复活
-         机制未定位）——源头关掉 pdb 生成，一劳永逸。仅 AOT 发布生效，普通构建不受影响。 -->
+         机制未定位）——源头关掉 pdb 生成，一劳永逸。仅 AOT 发布生效，普通构建不受影响。
+         2026-10-18 修正：DebugSymbols/DebugType 压不住 ILC 的原生 pdb（零旗标 AOT
+         化首跑实测 47.7MB slang.pdb 仍落包），ILC 侧真正的开关是 StripSymbols——
+         publish 链不生成/剥离原生符号（与 BINARY_HARDENING 符号卫生策略同向）。 -->
     <DebugSymbols Condition="'$(PublishAot)' == 'true'">false</DebugSymbols>
     <DebugType Condition="'$(PublishAot)' == 'true'">none</DebugType>
+    <!-- 2026-10-18 定案（pdb 复活真相）：ILCompiler 包的 _CopyAotSymbols target
+         （AfterTargets="Publish"）无条件把 bin\<C>\net8.0\<rid>\native\slang.pdb 复制
+         进包，且执行顺序晚于本工程挂在 Publish 后的 Trim/Strip targets——Delete 成功
+         后再被复制，即注释记载的"复活"。官方开关 CopyOutputSymbolsToPublishDirectory
+         =false 让 _CopyAotSymbols 整体不跑，pdb 从源头不进包（StripSymbols 仅对
+         非 Windows 平台生效，win 侧无效，勿再走弯路）。 -->
+    <CopyOutputSymbolsToPublishDirectory Condition="'$(PublishAot)' == 'true'">false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,6 +94,19 @@
     <!-- FrontEnd: SimpleLanguage compiler (in-process compile) -->
     <ProjectReference Include="..\simple_language\source\SimpleLanguageFront.csproj" />
   </ItemGroup>
+
+  <!-- NETSDK1150 处置（2026-10-18 零旗标 AOT 化的配套）：自包含宿主（Native AOT
+       隐含 SelfContained=true）引用框架依赖的 Exe 工程（Front）会被 SDK 拦截
+       （ValidateExecutableReferences）。旧发布链靠命令行全局 -r win-x64 让 Front
+       同构自包含绕过；csproj 内部属性不传导给 ProjectReference 的设计时求值，
+       且强推 Front 走 SC 构建会引入按 RID 的恢复分区问题。此处仅对自动 AOT 场景
+       关闭该校验：宿主从不运行 SimpleLanguageFront.exe（其部署件 exe/deps.json/
+       runtimeconfig.json 被 TrimReleasePackage 删除），AOT 链接消费的是
+       SimpleLanguageFront.dll 的 IL，FDD/SC 构建产物完全一致，关闭无副作用。
+       普通 Debug 构建/发布不受影响（条件为假，校验保持默认开启）。 -->
+  <PropertyGroup Condition="'$(PublishAot)' == 'true'">
+    <ValidateExecutableReferencesMatchSelfContained>false</ValidateExecutableReferencesMatchSelfContained>
+  </PropertyGroup>
 
   <!-- Native AOT 发布支持（2026-10-17，-p:PublishAot=true 时生效）：
        Front 与插件 frontend 是反射重度用户——SLIR 反射 JSON（SLModulePackage 全图）、
@@ -91,23 +144,25 @@
   <!-- Publish is self-contained: build the C VM tree (incremental Ninja build,
        a no-op when unchanged) and pack the runtime next to the app under bin\
        so the output depends only on its own directory.
-       CvmBackend.Locate prefers <app dir>\bin\ over the dev build trees. -->
-  <!-- Linux AOT 发布（2026-10-17，双平台发版）：以 -r linux-x64 发布时（无论宿主是
-       Windows 还是 WSL），跳过三个 Windows 专属打包 target——PackCvmRuntime 调
-       build-vm-win.ps1（PowerShell/MSVC），PackStdModules/PackDocs 的 Exec 跑
-       "$(PublishDir)$(AssemblyName).exe"（Windows PE）。Linux 包的 bin\（.so）/
-       module\（slb）由发布脚本在 WSL 侧用 Linux slang 二进制自举组装。
-       PackStdModules/PackDocs 挂在前一 target 的 AfterTargets 上，前置被跳过时
-       本身也不再触发，此处三个都显式加条件以防将来挂钩方式变化。
+       CvmBackend.Locate prefers <app dir>\bin\ over the dev build trees.
+       2026-10-18 门控升级：三个 Windows 专属 pack target 只在「宿主是 Windows
+       且目标不是 linux RID」时运行——build-vm-win.ps1 是 PowerShell，且
+       pack-modules/pack-docs 要执行刚发布的 slang.exe（Windows PE）。linux 包
+       （在 WSL/Linux 侧 dotnet publish，或跨发 -r linux-x64）由脚本负责组装
+       bin\(.so) / module\ / md\（scripts\build-packages.ps1 与 release-slang.ps1，
+       module\ + md\ 平台无关直接复用 Windows 包产物）。
        手动逃逸：-p:SkipCvmPack=true。 -->
   <Target Name="PackCvmRuntime" AfterTargets="Publish"
-          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <!-- BINARY_HARDENING.md: Release packages carry the hardened VM
          (SLVM_HARDEN=ON startup anti-debug); Debug packages stay debuggable. -->
     <PropertyGroup>
       <CvmHardenFlag Condition="'$(CvmBuildConfig)' == 'Release'">-Harden</CvmHardenFlag>
     </PropertyGroup>
-    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig) $(CvmHardenFlag)" />
+    <!-- 2026-10-18 修复：scripts 自工作区根迁入 SlangAllInOne\scripts\ 后，此处的
+         ..\scripts\build-vm-win.ps1 旧路径失效（classic publish 自迁移后一直未被
+         触发，首次重跑即暴露）——改为工程内 scripts\ 相对路径。 -->
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig) $(CvmHardenFlag)" />
     <ItemGroup>
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
       <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
@@ -135,7 +190,7 @@
        driver (Project\CompileStdlib). A non-zero exit fails the publish
        (never ship a broken package). -->
   <Target Name="PackStdModules" AfterTargets="PackCvmRuntime"
-          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-modules --config $(CvmBuildConfig)" />
   </Target>
 
@@ -146,26 +201,32 @@
        Pack/PackDocsCommand.cs and runs here through the just-published exe,
        same self-bootstrap model as pack-modules. -->
   <Target Name="PackDocs" AfterTargets="PackStdModules"
-          Condition="'$(SkipCvmPack)' != 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+          Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
   </Target>
 
-  <!-- Third-party license compliance: the C VM statically links
-       yyjson / lz4 / zlib / mimalloc / tlsf / mbed TLS (see
-       ..\csimple_lang\third_party\LICENSES\NOTICE.md). MIT / BSD / zlib /
-       Apache-2.0 require the license texts to accompany binary
-       redistribution, so every publish carries the consolidated LICENSES
-       bundle under <package>\licenses\. Unconditional (all RIDs): the
-       release script's linux-x64 publish relies on it too (the other pack
-       targets are Windows-PE-gated and skipped for linux RIDs). -->
-  <Target Name="PackThirdPartyLicenses" AfterTargets="Publish">
+  <!-- 2026-10-18 目录方案（用户指令，设计记录 md/project/package-layout.md）：
+       包根的插件 frontend 程序集（SLCSharpMonoFrontend / SLJavaHotspotFrontend
+       + pdb——Front 工程 ProjectReference 的发布伴生物）移入 <package>\plugins\。
+       plugins\ = 插件内容目录（区别于普通包：插件带 plugin.jsonc/cvm/frontend/
+       slang 多层结构与 @tag{} 能力点，故独立于未来的 modules\ 包目录）；
+       Front 侧 PluginFrontendParser.FindPluginsParent 已增加 <exe>\plugins\
+       探测，插件管理器把整插件目录装进 plugins\<id>\ 后即可被 @tag 路由。
+       Native AOT（Release）发布不产出这些托管 dll，列表为空即静默跳过。 -->
+  <Target Name="RelocatePluginFrontends" AfterTargets="Publish">
     <ItemGroup>
-      <ThirdPartyLicenseFiles Include="$(MSBuildThisFileDirectory)..\csimple_lang\third_party\LICENSES\**\*.*" />
+      <PluginFrontendFiles Include="$(PublishDir)SLCSharpMonoFrontend.*" />
+      <PluginFrontendFiles Include="$(PublishDir)SLJavaHotspotFrontend.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(ThirdPartyLicenseFiles)"
-          DestinationFiles="@(ThirdPartyLicenseFiles->'$(PublishDir)licenses\%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+    <Move SourceFiles="@(PluginFrontendFiles)"
+          DestinationFolder="$(PublishDir)plugins\"
+          Condition="'@(PluginFrontendFiles)' != ''" />
   </Target>
+
+  <!-- 2026-10-18 用户指令：licenses\ 不再随包导出（原 PackThirdPartyLicenses
+       target 已删）。第三方协议文本真源保留在仓库
+       ..\csimple_lang\third_party\LICENSES\（NOTICE.md + 各组件协议全文），
+       需要合规材料时从仓库获取。 -->
 
   <!-- Release-package hygiene (part 1/2, BEFORE the publish copy): dotnet
        publish never cleans the output directory, so stale files from older
@@ -196,8 +257,11 @@
            package (plugin frontend pdbs, referenced project pdbs). The C VM
            sidecar pdb under bin\ is handled by PackCvmRuntime's Exists()
            condition and is not packed for Release builds.
-       Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend)
-       stay: Front loads them via reflection when compiling plugin projects. -->
+       Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend):
+       2026-10-18 起 RelocatePluginFrontends target 把它们移入 <package>\
+       plugins\（插件内容目录）；Native AOT（Release 默认形态）发布本身不
+       产出这些托管 dll，仅在经典托管 Release 发布（-p:PublishAot=false）
+       时经该 target 归位。 -->
   <Target Name="TrimReleasePackage" AfterTargets="PackDocs" Condition="'$(Configuration)' == 'Release'">
     <!-- 相对 PublishDir 加固（2026-10-17）：dotnet publish -o 传入的已是绝对路径；
          但经 msbuild -p:PublishDir=<相对> 直跑本 target 时，SDK 按工程目录规范化
@@ -208,6 +272,10 @@
     </PropertyGroup>
     <ItemGroup>
       <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.exe" />
+      <!-- Linux apphost 无 .exe 后缀（裸名 SimpleLanguageFront）——release-slang.ps1
+           v0.0.3 的 linux 包曾带过它（无害但臃肿的死重）。Windows 下此裸名不存在，
+           Delete 静默跳过，两侧共用一条。 -->
+      <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront" />
       <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.deps.json" />
       <ReleaseJunk Include="$(PublishDirAbsolute)SimpleLanguageFront.runtimeconfig.json" />
       <ReleaseJunk Include="$(PublishDirAbsolute)*.pdb" />
@@ -219,6 +287,9 @@
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.exp" />
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.ilk" />
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.lib" />
+      <!-- RelocatePluginFrontends 把插件 pdb 也移进 plugins\（经典托管
+           Release 发布时存在）——运行包同样不带走。 -->
+      <ReleaseJunk Include="$(PublishDirAbsolute)plugins\*.pdb" />
     </ItemGroup>
     <Delete Files="@(ReleaseJunk)" />
   </Target>

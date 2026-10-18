@@ -446,8 +446,8 @@ dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\
 csimple_lang\build\Debug\bin\csimple_lang.exe run out\export\ProjectTest2\ProjectTest.module.json
 ```
 
-- MonitorTest 所在的 BaseTest 用例集：联合测试宿主 `project/CSimpleVMCoreTest`（默认用例集即 BaseTest）。
-- ExpendTest 用例集：联合测试宿主 `project/CSimpleVMStdTest`。
+- MonitorTest 所在的 BaseTest 用例集：联合测试宿主 `project\CSimpleVMTest -- BaseTest`。
+- ExpendTest 用例集：联合测试宿主 `project\CSimpleVMTest`（无参默认即 ExpendTest）。
 - **跑 MonitorTest 的前提**：`test/BaseTest/ProjectTest.jsonc` 中 `compile.debug=true` 且 `optimize=false`（当前已如此配置）。
 
 ***

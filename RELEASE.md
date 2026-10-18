@@ -1,12 +1,13 @@
 # SlangAllInOne 发布策略（RELEASE POLICY）
 
-> 🔥 **本文档是发布渠道的唯一权威**（2026-10-17 用户指令确立，此后所有发版按此执行）。
+> 🔥 **本文档是发布渠道的唯一权威**（2026-10-17 用户指令确立，此后所有发版按此执行；
+> 2026-10-18 增补四包目录方案，见下）。
 
 ## 策略
 
 1. **只发 Native AOT 包**：每个版本的发布产物都是 `-p:PublishAot=true` 打出的
-   自包含原生二进制，**目标机无需安装 .NET 运行时**。经典 .NET 依赖包
-   （`package\release` / `package\debug`）不再对外发布，仅本地开发/调试使用。
+   自包含原生二进制，**目标机无需安装 .NET 运行时**。框架依赖的 Debug 包
+   （`package\win32-debug` / `package\linux-debug`）不对外发布，仅本地开发/调试使用。
 2. **每次发版两个包，挂同一个 GitHub Release**（缺一不可，双平台必须同发）：
    | 产物 | 目标平台 | 压缩格式 |
    |------|----------|----------|
@@ -16,7 +17,7 @@
    发版命令（维护机，工作区根）：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version 0.0.4
+powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\release-slang.ps1 -Version 0.0.4
 ```
 
 脚本全自动：preflight（tag/Release 查重、token 校验）→ 构建 Windows AOT 包 →
@@ -24,20 +25,51 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -V
 GitHub Release 附加**两个**资产。参数：`-Draft` / `-SkipBuild`（复用现包重压）/
 `-NoCommit` / `-NoPush` / `-Token <t>`（默认取 git 凭据管理器 token，需 `repo` 权限）。
 
-## 两个包的内容
+## 本地四包目录方案（2026-10-18 用户指令）
+
+`dotnet publish SlangAllInOne\SlangAllInOne.csproj -c <Debug|Release>`（**零旗标**）
+自动落到 `SlangAllInOne\package\` 下四个固定目录；csproj 已内置形态与输出目录逻辑：
+
+| 目录 | 形态 | C VM | 大小参考 |
+|------|------|------|----------|
+| `win32-debug` | 框架依赖（.NET 8 Debug 程序集 + pdb，目标机需 .NET 8 运行时） | Debug dll + pdb 侧车（**双端可源码调试**；JIT 不编入，解释器语义可调试） | ~87 MB |
+| `win32-release` | **Native AOT** 单文件 `slang.exe`（一体化，零 .NET 依赖） | Release 加固 dll（LTO+反调试；**JIT 编入且默认开启**，`--no-jit`/`SL_JIT=0` 关闭） | ~17 MB |
+| `linux-debug` | 同 win32-debug（WSL/Linux 侧发布） | Debug .so | ~73 MB |
+| `linux-release` | Native AOT 单文件 `slang` | Release 加固 .so（JIT 同上） | ~17 MB |
+
+- 命名约定：**"win32" 指 Windows 平台包（x64），非 32 位**。
+- Release 自动等价 `-p:PublishAot=true`（要退回经典托管发布显式传
+  `-p:PublishAot=false`）；RID 缺省按宿主 OS 补 `win-x64`/`linux-x64`——Native AOT
+  不能跨 OS 交叉编译，**linux 包必须在 WSL/Linux 侧发布**；显式 `-o` 覆盖默认目录。
+- 一键四包（含依赖编排：linux 包自动补建同配置 win32 包取 `module\`+`md\`；
+  每包布局校验 + 冒烟）：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1
+#   -Packages win32-debug,linux-release   # 子集（逗号分隔）
+#   -NoSmoke                              # 跳过冒烟
+```
+
+- WSL 侧冒烟对 Debug 包带 `DOTNET_ROLL_FORWARD=Major`（发行版只有 dotnet-sdk-10，
+  net8.0 框架依赖包前滚到 10.x 运行时，官方支持路径）。
+
+## 两个发布包的内容
 
 ```
 slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 ├── slang[.exe]                # 统合宿主：Front 编译 + C VM 运行（Native AOT 单文件）
-├── bin\                       # C VM 运行时（hardened Release：LTO + 启动反调试）
+├── bin\                       # C VM 运行时（hardened Release：LTO + 启动反调试，JIT 默认开）
 │   ├── Windows: csimple_lang_dll.dll + sqlite3.dll
 │   └── Linux : libcsimple_lang_dll.so + libsqlite3.so.0（捆绑，零 LD_LIBRARY_PATH 配置）
 ├── module\                    # 标准库 Core/Math/Std *.module.slb（平铺单目录）
 │   └── Windows 另含 math_lib.dll（Math 的 FFI 原生库；Linux 侧不捆绑，见下）
 ├── test\RefProbe\             # 开箱示例：纯名引用官方库的最小工程（slang run test\RefProbe\RefProbe）
-├── md\                        # ~93 篇用户文档
-└── licenses\                  # 第三方协议合规包：NOTICE.md + 各组件协议全文（C VM 静态链 yyjson/lz4/zlib/mimalloc/tlsf/mbedtls，真源 csimple_lang\third_party\LICENSES\；csproj PackThirdPartyLicenses target + 发布脚本双保险注入）
+└── md\                        # ~93 篇用户文档
 ```
+
+> 🔥 2026-10-18 用户指令：`licenses\` **不再随包导出**（csproj `PackThirdPartyLicenses`
+> target 与发布脚本注入步骤均已删除）；第三方协议文本真源在仓库
+> `csimple_lang\third_party\LICENSES\`（NOTICE.md + 各组件协议全文），需要时从仓库获取。
 
 **官方库直查（2026-10-17 起）**：用户工程 jsonc 的 `references` 直接写官方库名
 （`{ "path": "Core", "name": "Core.module.json" }`）即可——Front 编译期与
@@ -48,11 +80,12 @@ C VM 运行期都会在 `<slang 目录>\module\` 下按名直查（slb 优先；
 
 | 步骤 | Windows | Linux |
 |------|---------|-------|
-| AOT 编译 | 本机 `dotnet publish -r win-x64 -p:PublishAot=true` | WSL 内同命令（`-r linux-x64`）；SDK 取 WSL apt 版（Ubuntu 25.10 源只有 SDK 10，与 Windows 侧一致，net8.0 目标兼容已验证） |
-| C VM 运行时 | `build-vm-win.ps1 -Config Release -Harden` → `csimple_lang_dll.dll` | WSL cmake（clang+Ninja，`SLVM_HARDEN=ON`）→ `build/ReleaseLinux/libcsimple_lang_dll.so` |
-| 标准库打包 | publish 自举（csproj `PackStdModules` target） | `module\*.slb` 平台无关 → 直接复用 Windows 包产物（csproj 已对 linux RID 门控 Windows 专属 pack target）；Linux 侧冒烟含 `run MiniSmoke` Front 编译 E2E |
+| AOT 编译 | 本机 `dotnet publish -c Release`（csproj 自动 AOT + win-x64） | WSL 内同命令（csproj 自动 linux-x64）；SDK 取 WSL apt 版（Ubuntu 25.10 源只有 SDK 10，与 Windows 侧一致，net8.0 目标兼容已验证） |
+| C VM 运行时 | csproj PackCvmRuntime → `build-vm-win.ps1 -Config Release -Harden`（common.ps1 对 Release 树 pin `-DVM_JIT_ENABLE=ON`） | WSL cmake（clang+Ninja，`SLVM_HARDEN=ON -DVM_JIT_ENABLE=ON`）→ `build/ReleaseLinux/libcsimple_lang_dll.so` |
+| 标准库打包 | publish 自举（csproj `PackStdModules` target） | `module\*.slb` 平台无关 → 直接复用 Windows 包产物（csproj 已对 linux RID/非 Windows 宿主门控 Windows 专属 pack target）；Linux 侧冒烟含 `run MiniSmoke` Front 编译 E2E |
 | sqlite | 捆绑 `third_party\sqlite\sqlite3.dll` | 捆绑系统 `libsqlite3.so.0`（C VM 链接系统 sqlite3） |
 | 宿主动库加载 | `SetDllDirectory(bin)` | `NativeLibrary` DllImportResolver 按绝对路径 dlopen + sqlite 预载（见 `Backend/CvmBackend.cs`） |
+| 原生 pdb | csproj `CopyOutputSymbolsToPublishDirectory=false`（见下方 pdb 复活实录） | 同（Linux 侧 ILC 默认 StripSymbols） |
 
 ## Linux 包已知限制
 
@@ -61,8 +94,27 @@ C VM 运行期都会在 `<slang 目录>\module\` 下按名直查（slb 优先；
   包内不携带；Math 模块本身正常加载。
 - 插件 `@csharp_mono`（mono 运行时）与 Windows-only FFI 同理不可用。
 
+## 排障实录（发布链）
+
+- **slang.pdb "删完复活"（2026-10-18 定案）**：ILCompiler 包的 `_CopyAotSymbols`
+  target（`AfterTargets="Publish"`，受 `CopyOutputSymbolsToPublishDirectory` 控制，
+  默认 true）把 `bin\<C>\net8.0\<rid>\native\slang.pdb`（~48MB）复制进包，且执行
+  顺序晚于工程挂在 Publish 后的 Trim targets——先删后复制即"复活"；`DebugType=none`
+  只挡住新 pdb 生成、挡不住旧缓存复制，`StripSymbols` 仅对非 Windows 平台生效。
+  **正解 = csproj `CopyOutputSymbolsToPublishDirectory=false`**（`_CopyAotSymbols`
+  整体不跑）。release-slang.ps1 仍保留归档前兜底删除。
+- **NETSDK1150（自动 AOT 化配套）**：csproj 内部设置的 RID 不传导给 ProjectReference
+  的设计时求值，自包含宿主引用框架依赖的 Front Exe 被 SDK 拦截；工程内
+  `ValidateExecutableReferencesMatchSelfContained=false`（仅 AOT 场景）放行——宿主
+  从不运行 SimpleLanguageFront.exe（部署件被 Trim 删除），AOT 链接消费的 IL 与
+  FDD/SC 构建完全一致。
+- **Linux 裸名 apphost**：Linux apphost 无 `.exe` 后缀（裸名 `SimpleLanguageFront`），
+  v0.0.3 linux 包曾带过；TrimReleasePackage 与 release-slang.ps1 forbidden 列表
+  已补裸名条目。
+
 ## 验证记录
 
 | 版本 | 双包结果 |
 |------|----------|
-| v0.0.3（2026-10-17） | ✅ 首个双平台 AOT 版：win zip 8.2MB + linux tgz 8.1MB（同一 Release 两资产）；双平台冒烟全过——win run-disk Std/Math exit 0、linux run-disk Std exit 0、linux `run MiniSmoke`（Front 编译→SLIR 内存直传→C VM 执行 `_main_`）exit 0。发布链修复实录：① wsl 调用 stdout 混入返回值导致预检假失败（`Out-Host` 修）；② AOT obj 缓存复活 slang.pdb（归档前兜底删除）；③ Linux 系统方法全挂 error_code=-13——C VM 注册表走 `dlsym(dlopen(NULL))` 查主程序全局符号表，.NET 默认 `RTLD_LOCAL` dlopen 使 `.so` 符号不可见，宿主改 `RTLD_GLOBAL` dlopen（对齐 exe `-rdynamic` 语义，`Backend/CvmInterop.cs` + `CvmBackend.cs`）；④ 测试工程 jsonc 平台校验硬编码 win64，Linux 冒烟需 `SL_FORCE_RUN=1`（既有预期差异） |
+| v0.0.3（2026-10-17） | ✅ 首个双平台 AOT 版：win zip 8.2MB + linux tgz 8.1MB（同一 Release 两资产）；双平台冒烟全过——win run-disk Std/Math exit 0、linux run-disk Std exit 0、linux `run MiniSmoke`（Front 编译→SLIR 内存直传→C VM 执行 `_main_`）exit 0。发布链修复实录：① wsl 调用 stdout 混入返回值导致预检假失败（`Out-Host` 修）；② AOT obj 缓存复活 slang.pdb（归档前兜底删除，根因后于 2026-10-18 定位见上）；③ Linux 系统方法全挂 error_code=-13——C VM 注册表走 `dlsym(dlopen(NULL))` 查主程序全局符号表，.NET 默认 `RTLD_LOCAL` dlopen 使 `.so` 符号不可见，宿主改 `RTLD_GLOBAL` dlopen（对齐 exe `-rdynamic` 语义，`Backend/CvmInterop.cs` + `CvmBackend.cs`）；④ 测试工程 jsonc 平台校验硬编码 win64，Linux 冒烟需 `SL_FORCE_RUN=1`（既有预期差异） |
+| 四包方案（2026-10-18） | ✅ `build-packages.ps1` 全绿：win32-debug 87.4MB（FDD+双端 pdb）/ win32-release 17MB（AOT，pdb 已从源头根除）/ linux-debug 72.8MB（冒烟 `DOTNET_ROLL_FORWARD=Major`）/ linux-release ~17MB（裸名 apphost 已清理）；win32-release dll 实测 `SL_JIT` 符号在 + `--jit-stats` 输出正常（JIT 编入且默认开启） |

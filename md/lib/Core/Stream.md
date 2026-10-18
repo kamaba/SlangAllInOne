@@ -139,7 +139,7 @@ var bounded = StreamController<Int32>( 1 )
 
 ## 5. 测试
 
-`test/BaseTest/StreamTest.sl`（Core 宿主 `CSimpleVMCoreTest`，与 `CoroutineTest.sl`/`ByteBufferTest.sl` 同列），15 项断言全绿：
+`test/BaseTest/StreamTest.sl`（宿主 `CSimpleVMTest -- BaseTest`，与 `CoroutineTest.sl`/`ByteBufferTest.sl` 同列），15 项断言全绿：
 
 | 组 | 覆盖 |
 |----|------|

@@ -4,8 +4,8 @@
 #   SlangAllInOne\RELEASE.md):
 #   - ONLY Native AOT packages are released - self-contained native binaries,
 #     no .NET runtime needed on target machines. The classic .NET-dependent
-#     packages (package\release / package\debug) are local dev tools only and
-#     are never released.
+#     debug packages (package\win32-debug / package\linux-debug) are local dev
+#     tools only and are never released.
 #   - EVERY release ships BOTH Windows and Linux packages as two assets of the
 #     SAME GitHub Release: slang_release_<v>_win-x64.zip and
 #     slang_release_<v>_linux-x64.tar.gz.
@@ -14,6 +14,11 @@
 #   -> layout checks -> off-tree smoke on BOTH platforms -> zip + tar.gz ->
 #   git commit + tag + push -> GitHub Release with BOTH assets:
 #   https://github.com/kamaba/SlangAllInOne/releases/tag/v<Version>
+#
+# 2026-10-18: the csproj now auto-AOTs Release publishes (dotnet publish -c
+#   Release) and defaults the output dir to package\win32-release /
+#   package\linux-release; the explicit -o / -r flags below stay for
+#   determinism. Local four-package builds (no GitHub): build-packages.ps1.
 #
 # Usage (workspace root, maintenance machine; Linux half needs WSL with
 # clang/cmake/ninja/libsqlite3-dev + dotnet SDK - see RELEASE.md):
@@ -87,8 +92,8 @@ if (-not (Test-Path (Join-Path $RepoRoot 'csimple_lang'))) {
 }
 $AioDir       = Join-Path $RepoRoot 'SlangAllInOne'
 $ProjFile     = Join-Path $AioDir 'SlangAllInOne.csproj'
-$PkgWinDir    = Join-Path $AioDir 'package\aot'         # Windows AOT package
-$PkgLinuxDir  = Join-Path $AioDir 'package\aot-linux'  # Linux AOT package
+$PkgWinDir    = Join-Path $AioDir 'package\win32-release'   # Windows AOT package
+$PkgLinuxDir  = Join-Path $AioDir 'package\linux-release'   # Linux AOT package
 $DistDir      = Join-Path $AioDir 'package\dist'
 $WslRepo      = Convert-ToWslPath $RepoRoot
 $WslPkgWin    = Convert-ToWslPath $PkgWinDir
@@ -186,7 +191,7 @@ Pop-Location
 Write-Step 'Build Windows AOT package (dotnet publish -r win-x64)'
 # =====================================================================
 if ($SkipBuild) {
-    Write-Host '  -SkipBuild: reusing the existing package\aot tree' -ForegroundColor Yellow
+    Write-Host '  -SkipBuild: reusing the existing package\win32-release tree' -ForegroundColor Yellow
 } else {
     # Pre-wipe the package dir: the csproj WipeReleasePackage should cover this,
     # but AOT publishes showed stale-file anomalies (a pdb once survived both
@@ -194,7 +199,9 @@ if ($SkipBuild) {
     # stale files from a previous publish.
     if (Test-Path $PkgWinDir) { Remove-Item $PkgWinDir -Recurse -Force -Confirm:$false }
     Push-Location $RepoRoot
-    & dotnet publish $ProjFile -c Release -r win-x64 -p:PublishAot=true -o $PkgWinDir
+    # -c Release alone now implies PublishAot + win-x64 RID + this output dir
+    # (csproj 2026-10-18); the explicit flags stay for determinism.
+    & dotnet publish $ProjFile -c Release -r win-x64 -o $PkgWinDir
     $code = $LASTEXITCODE
     Pop-Location
     if ($code -ne 0) { Fail 'dotnet publish (win-x64) failed (see log above)' }
@@ -215,22 +222,24 @@ Write-Ok 'windows package built'
 Write-Step 'Build Linux AOT package (WSL: C VM .so + dotnet publish -r linux-x64)'
 # =====================================================================
 if ($SkipBuild) {
-    Write-Host '  -SkipBuild: reusing the existing package\aot-linux tree' -ForegroundColor Yellow
+    Write-Host '  -SkipBuild: reusing the existing package\linux-release tree' -ForegroundColor Yellow
 } else {
-    # a) Linux C VM runtime (incremental cmake, hardened Release; the SHARED
-    #    library lands in build/ReleaseLinux/ - CMAKE_LIBRARY_OUTPUT_DIRECTORY
-    #    is unset so only the exe target goes to bin\).
-    Write-Host '  building libcsimple_lang_dll.so (cmake Release + SLVM_HARDEN=ON)...'
-    $cmd = 'cd ' + $WslRepo + '/csimple_lang && cmake -S . -B build/ReleaseLinux -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=/usr/bin/ninja -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=' + $WslRepo + '/csimple_lang/build/ReleaseLinux/bin -DSLVM_HARDEN=ON && cmake --build build/ReleaseLinux --target csimple_lang_dll -j8'
+    # a) Linux C VM runtime (incremental cmake, hardened Release with the JIT
+    #    compiled in and ON by default; the SHARED library lands in
+    #    build/ReleaseLinux/ - CMAKE_LIBRARY_OUTPUT_DIRECTORY is unset so only
+    #    the exe target goes to bin\). -DVM_JIT_ENABLE=ON pins the JIT against
+    #    older CMake caches holding the pre-2026-10-17 default OFF.
+    Write-Host '  building libcsimple_lang_dll.so (cmake Release + SLVM_HARDEN=ON + VM_JIT_ENABLE=ON)...'
+    $cmd = 'cd ' + $WslRepo + '/csimple_lang && cmake -S . -B build/ReleaseLinux -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_MAKE_PROGRAM=/usr/bin/ninja -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=' + $WslRepo + '/csimple_lang/build/ReleaseLinux/bin -DSLVM_HARDEN=ON -DVM_JIT_ENABLE=ON && cmake --build build/ReleaseLinux --target csimple_lang_dll -j8'
     if ((Invoke-WslBash $cmd) -ne 0) { Fail 'Linux C VM build failed (see log above)' }
-    Write-Ok 'libcsimple_lang_dll.so built'
+    Write-Ok 'libcsimple_lang_dll.so built (JIT compiled in, on by default)'
 
     # b) Native AOT publish (linux-x64). The csproj pack targets are gated off
     #    for linux RIDs (build-vm-win.ps1 / Windows-PE bootstrap would fail),
     #    so this produces ONLY the native slang binary.
     if (Test-Path $PkgLinuxDir) { Remove-Item $PkgLinuxDir -Recurse -Force -Confirm:$false }
-    Write-Host '  dotnet publish -r linux-x64 (Native AOT, ILC)...'
-    $cmd = 'cd ' + $WslRepo + ' && dotnet publish SlangAllInOne/SlangAllInOne.csproj -c Release -r linux-x64 -p:PublishAot=true -o ' + $WslPkgLinux
+    Write-Host '  dotnet publish -c Release (Native AOT, ILC)...'
+    $cmd = 'cd ' + $WslRepo + ' && dotnet publish SlangAllInOne/SlangAllInOne.csproj -c Release -r linux-x64 -o ' + $WslPkgLinux
     if ((Invoke-WslBash $cmd) -ne 0) { Fail 'linux-x64 AOT publish failed (see log above)' }
     Write-Ok 'slang (linux-x64 AOT) published'
 
@@ -241,17 +250,20 @@ if ($SkipBuild) {
     if ((Invoke-WslBash $cmd) -ne 0) { Fail 'linux bin assembly failed (libsqlite3.so.0 not found?)' }
     Write-Ok 'bin assembled (libcsimple_lang_dll.so + libsqlite3.so.0)'
 
-    # d) module\ + md\ are platform-independent content - copy from the
+    # d) lib\ + md\ are platform-independent content - copy from the
     #    Windows package (built above; the win pack-modules compiled them).
-    robocopy (Join-Path $PkgWinDir 'module') (Join-Path $PkgLinuxDir 'module') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
-    if ($LASTEXITCODE -ge 8) { Fail 'robocopy module\ (win -> linux package) failed' }
+    #    lib\ = system built-in stdlib (renamed from module\, 2026-10-18 -
+    #    see md\project\package-layout.md; modules\ (spm) / plugins\ are
+    #    created on demand by the future package/plugin managers).
+    robocopy (Join-Path $PkgWinDir 'lib') (Join-Path $PkgLinuxDir 'lib') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) { Fail 'robocopy lib\ (win -> linux package) failed' }
     robocopy (Join-Path $PkgWinDir 'md') (Join-Path $PkgLinuxDir 'md') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
     if ($LASTEXITCODE -ge 8) { Fail 'robocopy md\ (win -> linux package) failed' }
     # math_lib.dll is a Windows PE - Math FFI is a documented Linux limitation,
     # do not ship a dead binary in the linux package.
-    $mathLib = Join-Path $PkgLinuxDir 'module\math_lib.dll'
+    $mathLib = Join-Path $PkgLinuxDir 'lib\math_lib.dll'
     if (Test-Path $mathLib) { Remove-Item $mathLib -Force -Confirm:$false }
-    Write-Ok 'module\ + md\ copied from the Windows package (math_lib.dll excluded)'
+    Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll excluded)'
 
     # same bundled example as the Windows package (platform-independent sources;
     # re-derived here so -SkipBuild runs work too)
@@ -264,42 +276,28 @@ if ($SkipBuild) {
 Write-Ok 'linux package built'
 
 # =====================================================================
-Write-Step 'Third-party licenses (both packages)'
-# =====================================================================
-# License compliance: the C VM statically links yyjson / lz4 / zlib / mimalloc /
-# tlsf / mbed TLS (MIT / BSD / zlib / Apache-2.0) - their license texts must
-# accompany binary redistribution. The csproj PackThirdPartyLicenses target
-# already puts licenses\ into fresh publishes; this step re-applies it so
-# -SkipBuild re-zips of trees built before that target existed are covered too.
-$licensesSrc = Join-Path $RepoRoot 'csimple_lang\third_party\LICENSES'
-if (-not (Test-Path (Join-Path $licensesSrc 'NOTICE.md'))) { Fail "third-party license bundle missing: $licensesSrc" }
-robocopy $licensesSrc (Join-Path $PkgWinDir 'licenses') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
-if ($LASTEXITCODE -ge 8) { Fail 'robocopy licenses -> windows package failed' }
-robocopy $licensesSrc (Join-Path $PkgLinuxDir 'licenses') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
-if ($LASTEXITCODE -ge 8) { Fail 'robocopy licenses -> linux package failed' }
-Write-Ok 'licenses\ bundled into both packages (NOTICE.md + per-component texts)'
-
-# =====================================================================
 Write-Step 'Layout checks'
 # =====================================================================
+# 2026-10-18 user directive: licenses\ no longer ships in any package
+# (csproj PackThirdPartyLicenses removed); the license texts' source of
+# truth stays in the repo at csimple_lang\third_party\LICENSES\.
 foreach ($must in @(
     'slang.exe', 'bin\csimple_lang_dll.dll', 'bin\sqlite3.dll',
-    'module\Core.module.slb', 'module\Math.module.slb', 'module\Std.module.slb', 'module\math_lib.dll',
-    'licenses\NOTICE.md'
+    'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb', 'lib\math_lib.dll'
 )) {
     if (-not (Test-Path (Join-Path $PkgWinDir $must))) { Fail "windows package incomplete, missing: $must (build without -SkipBuild)" }
 }
 foreach ($must in @(
     'slang', 'bin\libcsimple_lang_dll.so', 'bin\libsqlite3.so.0',
-    'module\Core.module.slb', 'module\Math.module.slb', 'module\Std.module.slb',
-    'licenses\NOTICE.md'
+    'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb'
 )) {
     if (-not (Test-Path (Join-Path $PkgLinuxDir $must))) { Fail "linux package incomplete, missing: $must (build without -SkipBuild)" }
 }
 # Managed artifacts would mean the wrong (classic) publish ran - hard fail.
+# (Bare "SimpleLanguageFront" = the Linux apphost, same dead weight as the exe.)
 foreach ($forbidden in @(
     'slang.dll', 'slang.deps.json', 'slang.runtimeconfig.json',
-    'SimpleLanguageFront.exe', 'SimpleLanguageFront.dll'
+    'SimpleLanguageFront.exe', 'SimpleLanguageFront.dll', 'SimpleLanguageFront'
 )) {
     if (Test-Path (Join-Path $PkgWinDir $forbidden))   { Fail "windows AOT package must not contain: $forbidden (run the AOT publish, not the classic one)" }
     if (Test-Path (Join-Path $PkgLinuxDir $forbidden)) { Fail "linux AOT package must not contain: $forbidden (run the AOT publish, not the classic one)" }
@@ -330,7 +328,7 @@ $slangExe = Join-Path $PkgWinDir 'slang.exe'
 $smokeFail = $false
 Push-Location $smokeDir
 foreach ($m in @('Std', 'Math')) {
-    & $slangExe run-disk (Join-Path $PkgWinDir "module\$m.module.slb")
+    & $slangExe run-disk (Join-Path $PkgWinDir "lib\$m.module.slb")
     if ($LASTEXITCODE -ne 0) {
         $smokeFail = $true
         Write-Host "  win $m.module.slb exit $LASTEXITCODE" -ForegroundColor Red
@@ -343,7 +341,7 @@ Remove-Item $smokeDir -Recurse -Force -Confirm:$false -ErrorAction SilentlyConti
 if ($smokeFail) { Fail 'Windows smoke test failed - release aborted' }
 
 # --- Linux (WSL): module load + Front compile-and-run (packaged user flow) ---
-$cmd = 'rm -rf /tmp/slang-release-smoke && mkdir -p /tmp/slang-release-smoke && cd /tmp/slang-release-smoke && ' + $WslPkgLinux + '/slang run-disk ' + $WslPkgLinux + '/module/Std.module.slb --no-banner'
+$cmd = 'rm -rf /tmp/slang-release-smoke && mkdir -p /tmp/slang-release-smoke && cd /tmp/slang-release-smoke && ' + $WslPkgLinux + '/slang run-disk ' + $WslPkgLinux + '/lib/Std.module.slb --no-banner'
 if ((Invoke-WslBash $cmd) -ne 0) { Fail 'Linux Std.module.slb smoke failed (see log above)' }
 Write-Ok 'linux Std.module.slb exit 0'
 # Front compile-to-run end to end: in-process Front compile -> C VM run, the
@@ -453,13 +451,13 @@ Write-Step "GitHub release $Tag on $OwnerRepo (both assets)"
 $notes = @"
 $RelTitle - dual-platform self-contained packages (Native AOT; no .NET runtime needed on the target machine).
 
-Contents (both packages share one layout: slang CLI + bin\ C VM runtime + module\ stdlib + md\ user docs + licenses\ third-party notices)
+Contents (both packages share one layout: slang CLI + bin\ C VM runtime + lib\ system stdlib + md\ user docs)
 - slang_release_${Version}_win-x64.zip      : slang.exe + csimple_lang_dll.dll + sqlite3.dll + math_lib.dll
 - slang_release_${Version}_linux-x64.tar.gz : slang + libcsimple_lang_dll.so + libsqlite3.so.0
 
 Quick start (unzip/untar anywhere)
-  slang run-disk module\Std.module.slb
-  slang run <project>       # compile-and-run; project jsonc references point to module\
+  slang run-disk lib\Std.module.slb
+  slang run <project>       # compile-and-run; project jsonc references point to lib\
 
 Requirements
 - win-x64 : Windows x64

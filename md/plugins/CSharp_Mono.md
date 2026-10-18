@@ -412,7 +412,7 @@ CVM 运行
 
 **正向用例**（`test/SpecialTest/CSharpTest.sl` + `test/SpecialTest/CSharpTest2.sl`
 + `test/SpecialTest/CSharpTest3.sl`，
-宿主 `project/CSimpleVMSpecialTest`，SpecialTest 全量 **CSharpTest 26 passed +
+宿主 `project\CSimpleVMTest -- SpecialTest`，SpecialTest 全量 **CSharpTest 26 passed +
 CSharpTest2 9 passed + CSharpTest3 2 passed / 0 failed**）：
 
 - `testAtSignMono()`：入+出通道完整往返（30+12=42）、无出通道块（`AtSignLabelCallVoid`）、

@@ -368,6 +368,6 @@ Stream<ByteBuffer> chunks = Stream.fromByteStream( conn, RawCodec() )
 - 运行：
 
 ```powershell
-cd d:\project\lang\simple_language
-dotnet run --project project\CSimpleVMStdTest -- test\Other\NetTest\ProjectTest.sp
+cd d:\project\lang
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\NetTest\ProjectTest
 ```

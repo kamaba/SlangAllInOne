@@ -202,9 +202,9 @@ connect: {
 | 爬虫实战 | `test/Other/CrawlerTest/` | HttpClient + Json 组合的真实抓取流程 |
 
 ```powershell
-cd d:\project\lang\simple_language
+cd d:\project\lang
 # 回环（需先有 HttpTest 组的本地回环服务器，随用例自建，端口 19361~19363）
-dotnet run --project project\CSimpleVMStdTest -- test\Other\NetTest\ProjectTest.sp
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\NetTest\ProjectTest
 # 公网（需外网可达；全组对 readTimeoutMs 显式配置，不会卡死）
-dotnet run --project project\CSimpleVMStdTest -- test\Other\HttpWebTest\HttpWebTest.sp
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\HttpWebTest\HttpWebTest
 ```

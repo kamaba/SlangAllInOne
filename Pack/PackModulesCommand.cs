@@ -13,12 +13,15 @@ namespace SlangAllInOne.Pack;
 /// 对齐 compile-stdlib.ps1 —— exit 0 且 slb mtime fresh（Front 编译失败时
 /// 退出码仍可能为 0，mtime 才是硬证据）。
 ///
-/// 包内布局为平铺单目录 &lt;dest&gt;\module\（slb / json / math_lib.dll 直排，
-/// 不再镜像仓库 out\export\ 多层结构）。模块内嵌的深层相对路径由 C VM
-/// 装载器回退兼容：moduleReferences（"../Core"）回退 &lt;dir&gt;\Core.module.json
+/// 包内布局为平铺单目录 &lt;dest&gt;\lib\（slb / json / math_lib.dll 直排，
+/// 不再镜像仓库 out\export\ 多层结构；2026-10-18 目录更名 module\ → lib\，
+/// 设计记录 md/project/package-layout.md——lib\ = 系统自带标准库，
+/// modules\ 留给未来 spm.exe 包管理器，plugins\ 存插件）。模块内嵌的深层
+/// 相对路径由 C VM 装载器回退兼容：moduleReferences（"../Core"）回退
+/// &lt;dir&gt;\Core.module.json
 /// （json 或 slb 任一存在即尝试，SLB 优先重定向自动改指同名 .slb）；FFI
 /// dllImports（"../../out/export/Math/math_lib.dll"）第三重回退按文件名在
-/// 包目录内直查（module\math_lib.dll）。
+/// pkg_dir 内直查（lib\math_lib.dll）。
 ///
 /// 包内容（config 决定）：
 ///   Debug   = &lt;M&gt;.module.slb + &lt;M&gt;.module.json（json 调试副本：C VM
@@ -96,8 +99,9 @@ internal static class PackModulesCommand
             if (name == "Math")
                 sources.Add(Path.Combine(exportRoot, name, "math_lib.dll"));
 
-            // 平铺单目录：所有模块产物直排 <dest>\module\，无按模块子目录。
-            string destModuleDir = Path.Combine(destRoot, "module");
+            // 平铺单目录：所有模块产物直排 <dest>\lib\（2026-10-18 更名），
+            // 无按模块子目录。lib\ = 系统自带标准库（官方库直查目录）。
+            string destModuleDir = Path.Combine(destRoot, "lib");
             Directory.CreateDirectory(destModuleDir);
             foreach (var src in sources)
             {
@@ -108,10 +112,10 @@ internal static class PackModulesCommand
                 }
                 File.Copy(src, Path.Combine(destModuleDir, Path.GetFileName(src)), overwrite: true);
             }
-            Console.WriteLine($"[OK]   {name} -> module\\: {string.Join(", ", sources.Select(Path.GetFileName))}");
+            Console.WriteLine($"[OK]   {name} -> lib\\: {string.Join(", ", sources.Select(Path.GetFileName))}");
         }
 
-        Console.WriteLine($"Standard library packed into {Path.Combine(destRoot, "module")}");
+        Console.WriteLine($"Standard library packed into {Path.Combine(destRoot, "lib")}");
         Console.WriteLine(includeJson
             ? "Debug package: .module.slb + .module.json (debug copies) per module."
             : "Release package: mandatory .module.slb (+ math_lib.dll) only.");

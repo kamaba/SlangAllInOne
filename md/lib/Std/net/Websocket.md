@@ -256,6 +256,6 @@ wsBlock: {
 | 协议层 A~H 组 | `test/Other/WebsocketTest/WebsocketTest.sl` | 握手/帧编解码/掩码方向/分片重组/控制帧/Close 协商/错误码；messages() Stream 消费；H 组 connectAsync 两路并发 + waitAll2 + echo 往返（端口 19378） |
 
 ```powershell
-cd d:\project\lang\simple_language
-dotnet run --project project\CSimpleVMStdTest -- test\Other\WebsocketTest\WebsocketTest.sp
+cd d:\project\lang
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\WebsocketTest\WebsocketTest
 ```

@@ -237,7 +237,15 @@ function Invoke-HardenVmWin([string]$Config, [switch]$BuildOnly) {
         return $true
     }
     Write-Header ('Harden C VM - Windows ' + $Config + ' (SLVM_HARDEN=ON; full rebuild expected when the tree was last built without it)')
-    & $cmake -S $VMDir -B $buildDir -DSLVM_HARDEN=ON | Out-Host
+    # Release packages ship the JIT compiled in and ON by default (JIT_DESIGN.md
+    # 6.1; 2026-10-18 user directive). CMakeLists defaults VM_JIT_ENABLE=ON only
+    # for trees WITHOUT a cached value - an older cache holding OFF would keep
+    # the JIT out. Pin it explicitly here so every Release package build is
+    # guaranteed a JIT-enabled VM. Debug trees stay unpinned (JIT OFF by design,
+    # interpreter stays source-debuggable).
+    $cmakeArgs = @('-S', $VMDir, '-B', $buildDir, '-DSLVM_HARDEN=ON')
+    if ($Config -eq 'Release') { $cmakeArgs += '-DVM_JIT_ENABLE=ON' }
+    & $cmake @cmakeArgs | Out-Host
     if ($LASTEXITCODE -ne 0) {
         Write-Host ('C VM hardening reconfigure FAILED (exit ' + $LASTEXITCODE + ')') -ForegroundColor Red
         return $false

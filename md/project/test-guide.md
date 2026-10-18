@@ -5,47 +5,48 @@
 仓库测试分两层：
 
 - **测试用例集**：[`test/`](../../test/) 下的 SimpleLanguage 源码，每个子目录一个主题（`ProjectTest.sp` + `ProjectTest.jsonc` + 若干 `.sl`）。
-- **测试宿主工程**：[`project/`](../../project/) 下的 C# 控制台工程，负责「调用 C# 前端编译测试集 → 导出模块 JSON → 交给 VM 运行」。
-  - `CSimpleVM*` 系列 → **C VM**（`../csimple_lang`，`csimple_lang.exe` / `csimple_lang_dll.dll`）
-  - `Test` / `Test2` → **C VM**（2026-10-18 复活改造；原 C# VM 宿主，`source/VM/SimpleLanuageVM.csproj` 已删除）
+- **测试宿主工程**：[`project/`](../../project/) 下的 **唯一** C# 控制台工程 `CSimpleVMTest`（2026-10-18 八合一：原 `CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest` 与 `Test`/`Test2` 均已并入），负责「调用 C# 前端编译测试集 → 导出模块 JSON → 交给 C VM（`../csimple_lang`，`csimple_lang.exe` / `csimple_lang_dll.dll`）运行」；用例集经命令行参数或 VS launchSettings.json profile 分流。
 
 ---
 
 ## 1. 测试用例集（`test/`）
 
-| 目录 | 测什么 | 代表用例 | 推荐宿主工程 |
+| 目录 | 测什么 | 代表用例 | 宿主入口（`CSimpleVMTest -- <选择器>`） |
 |------|--------|----------|--------------|
-| `BaseTest/` | 语言核心语法：变量/作用域、类/继承/接口、泛型与模板、enum/data、闭包、协程、控制流、容器（List/Map/Set/Queue/Stack/Tuple）、Float8/16、指针/引用、Result、goto 等（60+ 个 `.sl`） | `GlobalTest.sl`、`StringTest.sl`、`GenClass.sl`、`ClosureTest.sl`、`CoroutineTest.sl`、`TryTest.sl`、`Float8Test.sl` | `CSimpleVMCoreTest` / `Test`（均为 C VM，Test 为轻量入口） |
-| `NullFastTest/` | Null 相关快速回归（单文件） | `NullFastTest.sl` | `CSimpleVMTest`（传参 `1`） |
-| `ExpendTest/` | 标准库与扩展库：IO（Console/File/Directory/DateTime）、数据格式（Json/Xml/Yaml/Toml/Csv）、嵌入式数据库（Sqlite3）、容器（List/Map/LinkedList/Sort）、Isolate、宏、Attribute、模块与跨语言调用 | `JsonTest.sl`、`FileTest.sl`、`Sqlite3Test.sl`、`ListTest.sl`、`IsolateTest.sl`、`AttributeTest.sl` | `CSimpleVMStdTest` / `Test2`（均为 C VM，Test2 为轻量入口） |
-| `MathTest/` | 数学库：内置 Math 成员函数、MathVMLib 系统方法、运算符分派、矩阵（3x3/4x4/任意尺寸）、FFI 数学、大数（BigNumber/BigDecimal）、因数分解 | `MathTest.sl`、`FFIMathTest.sl`、`Matrix4x4Test.sl`、`MatrixBigTest.sl` | `CSimpleVMMathTest` |
-| `SpecialTest/` | FFI 与跨语言互操作、MLIR AOT 实验、外部进程执行（Std.OS.Process） | `FFITest.sl`、`CSharpCall.sl`、`CPythonCall.sl`、`JavascriptCall.sl`、`LuaCall.sl`、`AOTTest.sl`、`ProcessTest.sl` | `CSimpleVMSpecialTest` |
-| `BenchMark/` | 性能基准 | `Fibonacci.sl`、`Loop.sl`、`Levenshtein.sl`、`StringBench.sl` | `CSimpleVMBenchMarkTest` |
-| `MysqlTest/` | MySQL 库（需本机数据库环境） | `MysqlTest.sl`、`MysqlApiTest.sl` | 无专属宿主，向任一宿主传参运行 |
-| `RenderTest/` | 渲染相关（进行中） | `MathTest.sl` | `CSimpleVMRenderTest`（需传参，见下） |
-| `TensoraTest/` | 张量与机器学习库：张量、自动微分、CNN/NN、经典 ML、TTS | `TensorTest.sl`、`AutogradTest.sl`、`CnnTest.sl` | 无专属宿主，向任一宿主传参运行 |
+| `BaseTest/` | 语言核心语法：变量/作用域、类/继承/接口、泛型与模板、enum/data、闭包、协程、控制流、容器（List/Map/Set/Queue/Stack/Tuple）、Float8/16、指针/引用、Result、goto 等（60+ 个 `.sl`） | `GlobalTest.sl`、`StringTest.sl`、`GenClass.sl`、`ClosureTest.sl`、`CoroutineTest.sl`、`TryTest.sl`、`Float8Test.sl` | `BaseTest` |
+| `NullFastTest/` | Null 相关快速回归（单文件，`Other/` 下） | `NullFastTest.sl` | `NullFast` |
+| `ExpendTest/` | 标准库与扩展库：IO（Console/File/Directory/DateTime）、数据格式（Json/Xml/Yaml/Toml/Csv）、嵌入式数据库（Sqlite3）、容器（List/Map/LinkedList/Sort）、Isolate、宏、Attribute、模块与跨语言调用 | `JsonTest.sl`、`FileTest.sl`、`Sqlite3Test.sl`、`ListTest.sl`、`IsolateTest.sl`、`AttributeTest.sl` | 无参默认（`ExpendTest`） |
+| `MathTest/` | 数学库：内置 Math 成员函数、MathVMLib 系统方法、运算符分派、矩阵（3x3/4x4/任意尺寸）、FFI 数学、大数（BigNumber/BigDecimal）、因数分解 | `MathTest.sl`、`FFIMathTest.sl`、`Matrix4x4Test.sl`、`MatrixBigTest.sl` | `MathTest` |
+| `SpecialTest/` | FFI 与跨语言互操作、MLIR AOT 实验、外部进程执行（Std.OS.Process） | `FFITest.sl`、`CSharpCall.sl`、`CPythonCall.sl`、`JavascriptCall.sl`、`LuaCall.sl`、`AOTTest.sl`、`ProcessTest.sl` | `SpecialTest` |
+| `BenchMark/` | 性能基准 | `Fibonacci.sl`、`Loop.sl`、`Levenshtein.sl`、`StringBench.sl` | `BenchMark` |
+| `MysqlTest/` | MySQL 库（需本机数据库环境） | `MysqlTest.sl`、`MysqlApiTest.sl` | 传显式工程路径 |
+| `RenderTest/` | 渲染相关（进行中） | `MathTest.sl` | `RenderTest` |
+| `TensoraTest/` | 张量与机器学习库：张量、自动微分、CNN/NN、经典 ML、TTS | `TensorTest.sl`、`AutogradTest.sl`、`CnnTest.sl` | 传显式工程路径 |
+| `Other/*`（探针/负例等） | JsonTest、Platform*×6、InlineLambda*、AutoInline、InlineMethod、ARC/GC 探针（CoroGC/Mi/NestedGC/OOM/SBA/TLSF）、AtSignLabel、NetTest、HttpWebTest、MyTest、SFRepro… | — | `-- <命名用例>`（全表见宿主 `Program.cs` `Presets`） |
 
 ---
 
-## 2. 测试宿主工程（`project/`）
+## 2. 测试宿主工程（`project\CSimpleVMTest`，唯一）
 
-| 工程（csproj） | 默认测试集（无参数时） | VM | 说明 |
-|----------------|------------------------|----|------|
-| `CSimpleVMCoreTest` | `test\BaseTest\ProjectTest` | C | 语言核心语法回归 |
-| `CSimpleVMTest` | `test\ExpendTest\ProjectTest`；传参 `1` → `test\NullFastTest\ProjectTest` | C | 通用回归 |
-| `CSimpleVMStdTest` | `test\ExpendTest\ProjectTest` | C | 标准库 / 扩展库 |
-| `CSimpleVMMathTest` | `test\MathTest\ProjectTest` | C | 数学库 |
-| `CSimpleVMSpecialTest`（csproj 名为 `CSimpeVMSpecialTest.csproj`） | `test\SpecialTest\ProjectTest` | C | FFI / 互操作 / AOT |
-| `CSimpleVMBenchMarkTest` | `test\BenchMark\BenchMark` | C | 性能基准 |
-| `CSimpleVMRenderTest`（csproj 名为 `RenderTest.csproj`） | `test\ExpendTest\ProjectTest`（跑渲染用例需传 `test\RenderTest\ProjectTest`） | C | 渲染 |
-| `Test`（`SimpleLanguageTest.csproj`） | `test\BaseTest\ProjectTest` | C | C# 前端 + C VM 全链路（轻量入口，等价 `CSimpleVMCoreTest`；2026-10-18 复活改造） |
-| `Test2`（`SimpleLanguageTest2.csproj`） | `test\ExpendTest\ProjectTest` | C | 同 `Test`（轻量入口，等价 `CSimpleVMStdTest`） |
+2026-10-18 八合一后仅此一个宿主；用例集由「第一个非 `-` 开头参数」选择（VS 内对应 `Properties\launchSettings.json` 的 profile）：
 
-### C VM 构建方式（csproj 内 `BuildCVM` Target）
+| 选择器 | 测试集 | 等价旧宿主 | 说明 |
+|--------|--------|-----------|------|
+| 无参（缺省） | `test\ExpendTest\ProjectTest` | CSimpleVMTest / CSimpleVMStdTest / Test2 | 通用回归 / 标准库扩展库 |
+| `BaseTest` | `test\BaseTest\ProjectTest` | CSimpleVMCoreTest / Test | 语言核心语法 |
+| `MathTest` | `test\MathTest\ProjectTest` | CSimpleVMMathTest | 数学库 |
+| `SpecialTest` | `test\SpecialTest\ProjectTest` | CSimpleVMSpecialTest | FFI / 互操作 / AOT |
+| `BenchMark` | `test\BenchMark\BenchMark` | CSimpleVMBenchMarkTest | 性能基准 |
+| `RenderTest` | `test\RenderTest\ProjectTest` | CSimpleVMRenderTest（原传参入口） | 渲染 |
+| `NullFast` 等命名用例 | `test\Other\<名>\…`、`samples\Game\TankGame` | （原 CSimpleVMTest 专属） | 探针/负例/示例，全表见宿主 `Program.cs` `Presets` |
+| 显式路径 | 任意（相对仓库根或绝对，可不带 `.sp`） | （各宿主通用能力） | 如 `test\MysqlTest\ProjectTest` |
 
-- **Ninja/clang 树（推荐，已统一）**：`CSimpleVMTest` / `CSimpleVMStdTest` / `CSimpleVMMathTest` / `CSimpleVMSpecialTest` 构建时自动用 CMake（Ninja + clang）构建 `csimple_lang\build\Debug`，与命令行开发共用**同一棵树**，同时产出 `csimple_lang.exe` 与 `csimple_lang_dll.dll`。
-- **VS vcxproj**：`CSimpleVMCoreTest` 通过 `build_cvm.bat`（vswhere 定位 VS MSBuild）构建 `csimple_lang\project\vs\vm_lib\csimple_lang_lib.vcxproj`。
-- **旧 VS 生成器树（待迁移）**：`CSimpleVMBenchMarkTest` / `CSimpleVMRenderTest` 仍用 `cmake -B build`（VS 多配置树）。⚠️ 其输出目录与 Ninja 树相同，两边交替构建会互相覆盖 DLL，引发 P/Invoke 加载旧版 DLL 等问题。
+其余选项：`-test`（跑 `_test_` 入口）、`-start=false`（跳过前端编译直接运行上次导出模块）、`-debug`（Release 进程模式启动前暂停挂调试器）、`-O0..-O3`（转发 Front）、`--` 之后 token 透传 `Project._inputArgs`；负例工程（如 `InlineLambdaForbiddenTest`）Front 编译预期失败时按预期 LID 命中数判定通过。
+
+### C VM 构建方式
+
+- **主路径（推荐）**：`scripts\build-vm-win.ps1 -Configuration Debug`（CMake + Ninja/clang 树，`csimple_lang\build\Debug\bin\` 同时产出 `csimple_lang.exe` 与 `csimple_lang_dll.dll`），与命令行开发共用同一棵树。
+- **VS 联动构建**：`CSimpleVMTest.csproj` 条件引用 `csimple_lang_lib.vcxproj`（仅 VS / Full MSBuild 生效；Debug|x64 → dll、Release|x64 → exe，均落 `csimple_lang\build\<Config>\bin`）；dotnet CLI 无 VC targets，跳过引用直接复用已有产物。
 
 ---
 
@@ -74,44 +75,50 @@ test/BaseTest/
 
 ### Visual Studio
 
-打开 csproj（或解决方案）直接 **F5 调试 / Ctrl+F5 运行**。构建时会先自动触发 C VM 构建（见上节）。宿主运行前会把工作目录切到测试集目录，因此用例里的相对路径资源（如 `Sqlite3Test` 的 `Resources/`）在 VS 与命令行下行为一致。
+打开 `CSimpleVMTest`（或解决方案）在 launchSettings.json 里选好 profile（`ExpendTest (default)` / `BaseTest` / `MathTest` / `SpecialTest` / `BenchMark` / `RenderTest` / `NullFast`…）后 **F5 调试 / Ctrl+F5 运行**。VS(Full MSBuild) 构建时会先自动触发 C VM 构建（见上节）。宿主运行前会把工作目录切到测试集目录，因此用例里的相对路径资源（如 `Sqlite3Test` 的 `Resources/`）在 VS 与命令行下行为一致。
 
 ### 命令行（dotnet）
 
 ```powershell
-# 按工程默认测试集跑（Debug 配置）
-dotnet run --project project\CSimpleVMMathTest\CSimpleVMMathTest.csproj -c Debug
+# 默认测试集（ExpendTest，Debug 配置）
+dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -c Debug
 
-# Release 配置
-dotnet run --project project\CSimpleVMStdTest\CSimpleVMStdTest.csproj -c Release
+# 指定套件（套件预设选择器）
+dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- MathTest -c Release
 
-# 用任意宿主跑任意测试集：第一个参数传测试集路径（不带 .sp 也可）
-dotnet run --project project\CSimpleVMStdTest\CSimpleVMStdTest.csproj -- test\MysqlTest\ProjectTest
+# 命名用例（NullFast 快速回归等）
+dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- NullFast
 
-# CSimpleVMTest 传 "1" 跑 NullFastTest
-dotnet run --project project\CSimpleVMTest\CSimpleVMTest.csproj -- 1
+# 任意工程路径（不带 .sp 也可）：MysqlTest / TensoraTest 等
+dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- SLangCore\test\Other\MysqlTest\ProjectTest
+
+# 程序参数透传（"--" 之后 token 进 Project._inputArgs）
+dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- -- w3
 ```
 
-### Debug 与 Release 的行为差异（`CSimpleVM*` 宿主）
+### Debug 与 Release 的行为差异（`CSimpleVMTest` 宿主）
 
 | 配置 | C VM 运行方式 | Front 导出参数 | 适合场景 |
 |------|---------------|----------------|----------|
 | Debug | **P/Invoke** 进程内加载 `csimple_lang\build\Debug\bin\csimple_lang_dll.dll` | `--format binary --export-json`（`#if DEBUG` 追加，2026-10-12 起）：走 SLB 二进制导出（`.module.slb` 必产物）并附带导出 `module.json` 调试副本；VM 运行链路不变（仍装载 module.json） | C# 与 C 代码可在同一进程断点调试；json 副本便于人工对照排查 |
-| Release | 启动独立进程 `csimple_lang.exe run <module.json>`（优先 `build\Debug\bin`，回退 `build\Release\bin`）；**2026-10-17 起 Release 树 JIT 默认编入并默认启用**（`--jit` 无需传参；关闭：`--no-jit` 或环境变量 `SL_JIT=0`，见 `csimple_lang/md/cli.md` JIT 节） | 无追加（缺省 json 导出） | 性能 / 接近真实部署（含热点 JIT） |
+| Release | 启动独立进程 `csimple_lang.exe run <module.json>`（优先 `build\Release\bin`，回退 `build\Debug\bin`，再回退同目录 `csimple_lang_lib.exe`）；**2026-10-17 起 Release 树 JIT 默认编入并默认启用**（`--jit` 无需传参；关闭：`--no-jit` 或环境变量 `SL_JIT=0`，见 `csimple_lang/md/cli.md` JIT 节） | 无追加（缺省 json 导出） | 性能 / 接近真实部署（含热点 JIT） |
 
 ### 常用参数
 
 | 参数 | 作用 |
 |------|------|
-| `<测试集路径>` | 指定要编译运行的测试集（可相对仓库根或绝对路径，可不带 `.sp`） |
+| `<套件|命名用例|工程路径>` | 第一个非 `-` 开头参数：套件预设（BaseTest/ExpendTest/MathTest/SpecialTest/BenchMark/RenderTest）、命名用例（NullFast…）或显式工程路径（可不带 `.sp`） |
 | `-test` | 运行工程入口的 `_test_` 而不是 `_main_` |
 | `-start=false` | 跳过前端编译，直接运行上一次导出的模块 |
+| `-debug` | Release 进程模式下启动 C VM 前暂停（挂调试器用） |
+| `-O0..-O3` | 转发 Front 编译优化级别（缺省 = 编译器默认级别） |
+| `-- <token…>` | 之后所有 token 透传给 C VM 作 `Project._inputArgs` 程序参数 |
 
 ---
 
 ## 5. 常见问题
 
-- **`csimple_lang.exe not found`**：C VM 尚未构建。用 Ninja 树模式的工程在 VS / dotnet 构建时会自动构建；手动构建：`cd csimple_lang && cmake --build build\Debug --target csimple_lang csimple_lang_dll`。
+- **`csimple_lang.exe not found`**：C VM 尚未构建。VS 构建宿主时经 vcxproj 引用自动构建；手动构建：`powershell -File scripts\build-vm-win.ps1 -Configuration Debug`（或 `cd csimple_lang && cmake --build build\Debug --target csimple_lang csimple_lang_dll`）。
 - **跑 ExpendTest 报 `SLangServer` 引用找不到（import 解析失败）**：ExpendTest 依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，references 白名单 Core/Std）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary --export-json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
 - **`test\Other\*` 用例集 references 路径**：比主套件深一层，jsonc `references` 须 4 级上跳（`../../../../out/export/<X>`，指向 `SlangAllInOne\out\export`）；2026-10-18 已统一修正 45 个 jsonc（此前 2/3 级上跳会解析到不存在的 `SLangCore\out\export\Core`，报 `SystemPrintln` 解析链错误）。
 - **字符串错乱 / 断言随机失败**：通常是新旧两棵构建树互相覆盖 DLL 所致，坚持只用 `csimple_lang\build\Debug` 这棵 Ninja 树（见第 2 节构建方式说明）。

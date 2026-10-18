@@ -57,11 +57,14 @@ Front 编译产出 SLIR，C VM 执行 SLIR，本仓库把两者粘合为一条�
 slang_release_<v>/
 ├── slang[.exe]         # 统合宿主：Front 编译 + C VM 运行（AOT 单文件）
 ├── bin\                # C VM 运行时（hardened Release：LTO + 启动反调试）+ sqlite
-├── module\             # 标准库 Core/Math/Std *.module.slb（平铺单目录）
+├── lib\                # 系统自带标准库 Core/Math/Std *.module.slb（平铺单目录）
+├── modules\            # （未来）spm.exe 包管理器的用户包目录——按需创建
+├── plugins\            # 插件目录：插件安装与管理位（区别于普通包）
 ├── test\RefProbe\      # 开箱示例：纯名引用官方库的最小工程
-├── md\                 # ~93 篇用户文档（语法 / 库 / 工程 / 日志 / 插件）
-└── licenses\           # 第三方协议合规包（NOTICE + 各组件协议全文）
+└── md\                 # ~93 篇用户文档（语法 / 库 / 工程 / 日志 / 插件）
 ```
+
+> 目录方案决策记录见 [md/project/package-layout.md](md/project/package-layout.md)（`lib` = 系统自带库、`modules` = 未来 spm.exe 包管理、`plugins` = 插件）。
 
 ### 2. 开箱即跑
 
@@ -70,7 +73,7 @@ slang_release_<v>/
 slang.exe run test\RefProbe\RefProbe
 ```
 
-用户工程的 `references` 直接写官方库名（`Core` / `Std` / `Math`）即可——Front 编译期与 C VM 运行期都会在 `<slang 目录>\module\` 下按名直查（slb 优先），零相对路径配置。
+用户工程的 `references` 直接写官方库名（`Core` / `Std` / `Math`）即可——Front 编译期与 C VM 运行期都会在 `<slang 目录>\lib\` 下按名直查（slb 优先；未来 spm 安装的包在 `modules\` 下同链查找），零相对路径配置。
 
 ### 3. SLang 代码长这样
 
@@ -154,7 +157,7 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 | `run-disk <module.slb\|module.json>` | 运行已导出的模块包（两种格式，magic 自动探测） |
 | `info <module.slb\|module.json>` | 查看模块元数据 |
 | `version` | Front 版本 + C VM DLL 路径 / 配置 |
-| `pack-modules` | 编译标准库三件套并平铺打进 `module\`（发布包自动调起） |
+| `pack-modules` | 编译标准库三件套并平铺打进 `lib\`（发布包自动调起） |
 | `pack-docs` | 打包用户文档进 `md\`（发布包自动调起） |
 
 常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary`（SLB 二进制导出）｜`--in-memory`｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
@@ -238,16 +241,17 @@ Front 编译流水线（排障主干）：`Code → Token → Node → File → 
 
 ## 测试
 
-| 用例集 | 覆盖 | 宿主工程（Project\） |
+| 用例集 | 覆盖 | 宿主入口（唯一宿主 `CSimpleVMTest`，2026-10-18 八合一） |
 |--------|------|----------------------|
-| BaseTest | 语言核心语法（类/泛型/协程/容器/Float8…，60+ `.sl`） | CSimpleVMCoreTest、Test |
-| ExpendTest | 标准库/扩展库（Json/Xml/File/Sqlite/Isolate/Attribute/Server…） | CSimpleVMStdTest、Test2 |
-| MathTest | 数学库（FFI 数学/矩阵/大数） | CSimpleVMMathTest |
-| SpecialTest | FFI/跨语言/AOT/进程执行 | CSimpleVMSpecialTest |
-| BenchMark | 性能基准（Fibonacci/Levenshtein/Loop…） | CSimpleVMBenchMarkTest |
-| RenderTest / TensoraTest / MysqlTest | 渲染 / 张量 / MySQL | RenderTest / 传参运行 |
+| BaseTest | 语言核心语法（类/泛型/协程/容器/Float8…，60+ `.sl`） | `-- BaseTest` |
+| ExpendTest | 标准库/扩展库（Json/Xml/File/Sqlite/Isolate/Attribute/Server…） | 无参默认（`-- ExpendTest`） |
+| MathTest | 数学库（FFI 数学/矩阵/大数） | `-- MathTest` |
+| SpecialTest | FFI/跨语言/AOT/进程执行 | `-- SpecialTest` |
+| BenchMark | 性能基准（Fibonacci/Levenshtein/Loop…） | `-- BenchMark` |
+| RenderTest / TensoraTest / MysqlTest | 渲染 / 张量 / MySQL | `-- RenderTest` / 传显式工程路径 |
+| 探针/负例等命名用例 | NullFast/JsonTest/Platform*/Inline*/GC 探针/GameTank… | `-- <名>`（全表见宿主 `Program.cs`） |
 
-联合测试宿主 = C# Front 编译用例 → C VM 执行（Debug = P/Invoke 进程内可同进程调试，Release = 独立进程）。完整说明见 [md/project/test-guide.md](md/project/test-guide.md)。
+联合测试宿主 = C# Front 编译用例 → C VM 执行（Debug = P/Invoke 进程内可同进程调试，Release = 独立进程）；VS 内经 launchSettings.json profile 分流。完整说明见 [md/project/test-guide.md](md/project/test-guide.md)。
 
 ```powershell
 powershell -File scripts\compile-tests.ps1          # 编译用例集
@@ -257,13 +261,30 @@ powershell -File scripts\build-all.ps1 -Run         # 一键全流程
 
 ## 发布
 
-发布策略（[RELEASE.md](RELEASE.md) 唯一权威）：**只发 Native AOT 包，每版双平台同发**——同一 GitHub Release 挂 `slang_release_<v>_win-x64.zip` 与 `slang_release_<v>_linux-x64.tar.gz`，目标机无需 .NET 运行时；经典 .NET 依赖包仅本地开发用。一键发布（维护机）：
+发布策略（[RELEASE.md](RELEASE.md) 唯一权威）：**只发 Native AOT 包，每版双平台同发**——同一 GitHub Release 挂 `slang_release_<v>_win-x64.zip` 与 `slang_release_<v>_linux-x64.tar.gz`，目标机无需 .NET 运行时；框架依赖的 Debug 包仅本地开发用。一键发布（维护机）：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -Version <x.y.z> [-Draft] [-SkipBuild] [-NoCommit] [-NoPush]
+powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\release-slang.ps1 -Version <x.y.z> [-Draft] [-SkipBuild] [-NoCommit] [-NoPush]
 ```
 
-流程全自动：preflight 查重 → Windows AOT 包 → Linux AOT 包（WSL）→ 双平台冒烟 → 压缩 → git 提交 + tag + push → GitHub Release 附双资产。C VM Release 构建默认加固（LTO + 符号剥离 + 启动反调试），第三方协议合规文件随包注入 `licenses\`。
+流程全自动：preflight 查重 → Windows AOT 包 → Linux AOT 包（WSL）→ 双平台冒烟 → 压缩 → git 提交 + tag + push → GitHub Release 附双资产。C VM Release 构建默认加固（LTO + 符号剥离 + 启动反调试）且 **JIT 默认开启**。
+
+### 本地四包（package\ 目录）
+
+`dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug` / `-c Release` **零旗标**自动生成到 `SlangAllInOne\package\`：
+
+| 目录 | 形态 |
+|------|------|
+| `win32-debug` / `linux-debug` | Front（.NET Debug + pdb）+ C VM Debug（+pdb）——**双端可源码级调试**（目标机需 .NET 8 运行时） |
+| `win32-release` / `linux-release` | **Native AOT 一体化原生二进制**（零 .NET 依赖）+ 加固 C VM（**JIT 默认开启**） |
+
+一键四包（linux 包自动经 WSL 构建并复用 Windows 包的 `lib\`+`md\`，含布局校验与冒烟）：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1 [-Packages win32-debug,linux-release] [-NoSmoke]
+```
+
+详见 [RELEASE.md](RELEASE.md)「本地四包目录方案」。
 
 ## 调试
 
@@ -272,4 +293,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\release-slang.ps1 -V
 
 ## 许可证
 
-[Apache-2.0](LICENSE)。C VM 静态链接的第三方组件（yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite）协议全文随发布包注入 `licenses\`（NOTICE + 各组件协议）；`sl_mysql_lib`（GPL-2.0 静链）不随官方发布包分发。
+[Apache-2.0](LICENSE)。C VM 静态链接的第三方组件（yyjson / LZ4 / zlib / mimalloc / TLSF / Mbed TLS / SQLite）协议全文与 NOTICE 见仓库 [`csimple_lang/third_party/LICENSES/`](../csimple_lang/third_party/LICENSES/)（2026-10-18 起不再随发布包分发 `licenses\`，需要时从仓库获取）；`sl_mysql_lib`（GPL-2.0 静链）不随官方发布包分发。

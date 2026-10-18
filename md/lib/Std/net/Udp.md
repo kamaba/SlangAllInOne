@@ -131,8 +131,8 @@ Int32  fromPort = u.lastFromPort()
 - 运行：
 
 ```powershell
-cd d:\project\lang\simple_language
-dotnet run --project project\CSimpleVMStdTest -- test\Other\NetTest\ProjectTest.sp
+cd d:\project\lang
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\NetTest\ProjectTest
 ```
 
 （整组入口在 `ProjectTest.sp` 的 `_main_`；D 组端口 19311~19313。）

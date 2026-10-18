@@ -33,6 +33,7 @@
 | [project/exporter.md](./project/exporter.md) | **AOT Exporter**：项目 IR → LLVM IR 文本（`.ll`）导出（类型映射、对象=运行时不透明指针、指令降级分期），供 LLVM 工具链后续原生编译 |
 | [../../csimple_lang/md/design/SLB_DESIGN.md](../../csimple_lang/md/design/SLB_DESIGN.md) | **SLB 二进制模块包格式**（设计真源）：`export.format = json/binary` 二选一导出 `.module.slb`、SLB 容器 v1.0 字节级规范（头部/段表/池化/zlib 压缩/四道校验门）、P0-P5 分期与执行记录、SLBRoundTrip 工具用法 |
 | [project/project_arguments.md](./project/project_arguments.md) | InputArgsTest 工程说明：`global._inputArgs`（系统集成的 CLI 程序参数）专用测试用例 |
+| [project/package-layout.md](./project/package-layout.md) | 🔥 **发布包目录布局（决策记录）**：`lib\`（系统自带标准库）/ `modules\`（未来 spm.exe 包管理器用户包目录）/ `plugins\`（插件安装与管理位，插件 ≠ 普通包）；module→lib 迁移实录、官方库直查 lib→modules 查找链、spm.exe 愿景备忘 |
 | [project/test-guide.md](./project/test-guide.md) | **测试引导**：`test/` 各测试用例集（测什么、代表用例）与 `project/` 各测试宿主工程（默认测试集、C VM / C# VM）对照表、运行方式（VS / dotnet / Debug vs Release） |
 
 ---

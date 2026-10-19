@@ -283,8 +283,15 @@ Write-Step 'VSCode extension (.vsix) - optional third asset, SOFT-FAIL'
 # line never aborts on the optional asset.
 try {
     if (-not (Test-Path (Join-Path $VscodePluginDir 'package.json'))) { throw 'slang_vscode_plugin\package.json not found' }
-    $pluginPkg = Get-Content (Join-Path $VscodePluginDir 'package.json') -Raw | ConvertFrom-Json
-    $pluginVer = "$($pluginPkg.version)"
+    # NOTE: do NOT use Get-Content | ConvertFrom-Json here - under a -File
+    # host, PS5.1 reads the BOM-less UTF-8 package.json as ANSI/GBK; the
+    # mojibake swallows the '\' in "。\n" (GBK trail byte 0x5C) and the
+    # parser dies at line 180. [IO.File]::ReadAllText defaults to UTF-8
+    # (BOM-tolerant, ACP-independent); a regex suffices since only the
+    # version field is consumed.
+    $pluginRaw = [System.IO.File]::ReadAllText((Join-Path $VscodePluginDir 'package.json'))
+    $pluginVer = [regex]::Match($pluginRaw, '"version"\s*:\s*"([^"]+)"').Groups[1].Value
+    if (-not $pluginVer) { throw 'cannot parse "version" from slang_vscode_plugin\package.json' }
     if ($pluginVer -ne $Version) {
         Write-Host "  WARNING: plugin version $pluginVer != release version $Version - shipping anyway (alignment policy: 09_packaging_release.md §2)" -ForegroundColor Yellow
     }
@@ -455,6 +462,17 @@ if ($trackedPkg.Count -gt 0) {
     Write-Host "  untracking $($trackedPkg.Count) build-output file(s) under package\ (gitignored; binaries ship via GitHub Releases)" -ForegroundColor Yellow
     git rm -r -q --cached -- package | Out-Null
     if ($LASTEXITCODE -ne 0) { Pop-Location; Fail 'git rm -r --cached package failed' }
+}
+
+# MiniSmoke (linux smoke stage) rewrites tracked test logs - one path even
+# contains U+F05C junk from a Windows-style ..\..\out\export log path computed
+# on Linux. Restore them BEFORE the dirty check so they never enter the
+# release commit. Globs via pathspec magic avoid escaping the junk char.
+foreach ($spec in @(
+    ':(glob)SLangCore/test/Other/MiniSmoke/build/logs/*.txt',
+    ':(glob)SLangCore/test/Other/MiniSmoke/**/Logs/Front.txt'
+)) {
+    git checkout -- $spec 2>$null
 }
 
 $dirty = @(git status --porcelain)

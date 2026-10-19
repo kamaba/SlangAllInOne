@@ -188,9 +188,9 @@ SearchOption.TopDirectoryOnly.toString()      # enum 成员同样直达
 ```
 
 - 命名空间部分可为点分链（`import Std:OS.Files`）；冒号后为空报 Error。
-- 与整模块导入的关系：`import Std` 引入模块根（成员按 `Std.X` / 前缀链访问）；`import Std:IO` 只引入 IO 命名空间（成员无前缀直达）。
-- **Core 自动导入**：Core 模块被 references 引用后即自动可用（基础类型 int/string/List 等本就内置），源码中无需写 `import Core`；写了也不冲突（按模块根导入处理）。
-- 引用模块自身的 references 别名（jsonc `references[].name`）也可作冒号前的模块名——`name` 是工程内别名，`import <别名>:<命名空间>` 同样命中。
+- 与整模块导入的关系：`import Std` 引入模块根，**裸模块名前缀链**（`Std.Console.println` / `Std.FileMode` 类型位置）与 as 别名同机制续解（2026-10-18 补全）；`import Std:IO` 只引入 IO 命名空间（成员无前缀直达）。
+- **Core 自动导入**：Core 模块被 references 引用后即自动可用（基础类型 int/string/List 等本就内置），源码中无需写 `import Core`；写了也不冲突（按模块根导入处理）。用例见 `test\Other\CoreAutoProbe\`（零 import 用 List/Map/string + `import Core:Environment` 命名空间直达）。
+- 引用模块自身的 references 别名（jsonc `references[].name`）也可作冒号前的模块名——`name` 是工程内别名，`import <别名>:<命名空间>` 同样命中；别名与 `as` 可组合（`import SLStd as SS` → `SS.Console.println` 前缀链直达），裸别名前缀链（`import SLStd` → `SLStd.Console.println`）同样可用。用例见 `test\Other\AliasProbe\`（jsonc `name=SLStd` + `import SLStd as SS` / `import SLStd` / `import SLStd:IO`）。
 
 ### 与 typealias 配合
 

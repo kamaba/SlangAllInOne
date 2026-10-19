@@ -37,7 +37,9 @@
   },
   "references": [
     { "path": "./lib/Core.module.slb" },
-    { "path": "./lib/Std.module.slb" }
+    // name = 工程内别名（2026-10-18 用户规则）：import 按别名命中 Std 模块
+    //（真实名 Std 经 ModuleManager 照常可用；导出侧回填真实 uuid/版本）
+    { "path": "./lib/Std.module.slb", "name": "SLStd" }
   ],
   "struct": [
       { "namespace": "AliasNS", "children": [ { "namespace": "Sub", "children": [] } ] }

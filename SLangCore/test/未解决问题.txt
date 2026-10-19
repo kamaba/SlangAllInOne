@@ -10,8 +10,6 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 
 现在对cvm解析运行的代码  都要选遍历所有的执行代码 遍历过程，但我看到是N个这样的遍历，能不能合到一个遍历里边，然后使用if判断，具体的逻辑处理呀。
 
-关于refence的机制 path 就是指向module.json/slb的位置  如果是Core/Std/Math 一些系统库，识别到后，开始没有索引到这个地址，自动去运行目录的lib下边查找  其它的则报错，   name 是指在工程里边是别名，如果有重复的，可以自己定义名称，如果不写name,也没事，自动按照这个module的名称算，  这个name 是在import Module:的时候使用的，也就是说 name定义了，就必要要和import 对应上    改完后，记的把测试的一些用例的jsonc里边的改的正确了
-
 关于import 的使用  对了，Core是自动导入的，不用再import 后边再写一次     import Std也是自动引入模块    其它的也一样  都是模板 再增加后边的具体的命名空间比如 import Std:Os  import Std:DB 就能直接搜索到这个命名空间下边的方法 了
 
 接完nodejs后，看看能不能贴合到nodejs里边 然后他们的服务

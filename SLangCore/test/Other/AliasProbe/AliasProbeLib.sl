@@ -12,6 +12,12 @@ import "Std:IO" as IOx
 # 无引号 模块:命名空间 直达（2026-10-18 用户规则）：import Std:IO → 直接搜索
 # IO 命名空间下的成员（Directory/Path/SearchOption 无前缀直达）
 import Std:IO
+# jsonc references name 别名（2026-10-18 用户规则）：name=SLStd →
+# import 按别名命中 Std 模块（as 再起本地前缀别名）+ 别名冒号形式直达命名空间
+import SLStd as SS
+import SLStd:IO
+# 裸模块名/别名前缀链（2026-10-18 补全）：import 后 <名字>.X.Y 与 as 别名同机制续解
+import SLStd
 
 typealias LibIntList = List<int>
 typealias LibMapSS = Map<string, string>
@@ -83,6 +89,14 @@ AliasProbeTests
         # 无引号 模块:命名空间 直达（import Std:IO）：命名空间成员无前缀直接搜索
         Console.println( "Directory.exists('.') = " + Directory.exists( "." ).toString() )
         Console.println( "SearchOption.TopDirectoryOnly = " + SearchOption.TopDirectoryOnly.toString() )
+        # jsonc name 别名（import SLStd as SS）：别名命中的是同一个 Std 模块
+        Console.println( "SS.FileMode.Append = " + SS.FileMode.Append.toString() )
+        SS.Console.println( "SS.Console.println works (via jsonc name alias)" )
+        # 裸模块名/别名前缀链（2026-10-18 补全）：<名字>.X.Y 直接续解模块根成员
+        SLStd.Console.println( "SLStd.Console.println works (bare prefix)" )
+        Console.println( "Std.FileMode.Append = " + Std.FileMode.Append.toString() )
+        SLStd.FileStream bfs = null
+        Console.println( "bfs == null : " + ( bfs == null ).toString() )
     }
 
     # ---- typealias 基础 ----

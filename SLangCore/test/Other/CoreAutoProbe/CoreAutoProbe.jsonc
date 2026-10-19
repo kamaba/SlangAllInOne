@@ -1,0 +1,60 @@
+{
+  "project":
+  {
+    "name": "CoreAutoProbe",
+    "desc": "Core auto-import probe - Core types usable with zero import Core; import Core:Environment namespace direct access (2026-10-18 reference rules)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "CoreAutoProbe1.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+    ],
+    "replace": {
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "CoreAutoProbe",
+    "outputDir": "..\\..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  }
+}

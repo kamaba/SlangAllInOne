@@ -72,6 +72,7 @@ internal static class Program
         ("NetTest",                    Path.Combine("SLangCore", "test", "Other", "NetTest", "ProjectTest")),
         ("HttpWebTest",                Path.Combine("SLangCore", "test", "Other", "HttpWebTest", "HttpWebTest")),
         ("MyTest",                     Path.Combine("SLangCore", "test", "Other", "MyTest", "MyTest")),
+        ("CoreAutoProbe",              Path.Combine("SLangCore", "test", "Other", "CoreAutoProbe", "CoreAutoProbe")),
         ("GameTank",                   Path.Combine("SLangCore", "samples", "Game", "TankGame", "TankGame")),
     };
 

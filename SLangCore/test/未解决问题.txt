@@ -8,9 +8,8 @@ TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
 写更多的使用用例，测试cvm的功能点。
 jsonc整体，增加 AOT, Mix, PureCVM,
 
-现在对cvm解析运行的代码  都要选遍历所有的执行代码 遍历过程，但我看到是N个这样的遍历，能不能合到一个遍历里边，然后使用if判断，具体的逻辑处理呀。
+GetDebugCodeDir 这个的路径，直接输出到，编译文件的路径下边，比如编译MyTest的工程 就在这个路径下识别后，再进行增加export/DebugCode这样的目录
 
-关于import 的使用  对了，Core是自动导入的，不用再import 后边再写一次     import Std也是自动引入模块    其它的也一样  都是模板 再增加后边的具体的命名空间比如 import Std:Os  import Std:DB 就能直接搜索到这个命名空间下边的方法 了
 
 接完nodejs后，看看能不能贴合到nodejs里边 然后他们的服务
 我的虚拟机跑在nodejs里边 只针对nodejs但编译的时候，我这边用我自己的代码，写一个逻辑
@@ -23,11 +22,6 @@ libcurl
 但做mysql数据库，需要动态引入dll的vm层代码 独立的工程
 ffmpeg的dll 引入
 找一个轻量级的 webview一类的，做成 dll
-
-引用模块机制的变化
-{ "path": "Core", "uuid":"123123123213", "name": "Core.module.json" },
-{ "path": "Std", "uuid":"456456456456", "name": "Std.module.json" }
-
 
 优化FrontEnd层
 
@@ -45,14 +39,12 @@ ffmpeg的dll 引入
 
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
 
-
 优化：
 优化cvm里边的加法的过程
-检查使用第三方库，是否有协议的法律问题
 
 制作vscode插件
 
-制作http server相关的逻辑
+制作http server相关的逻辑  
 然后使用http server 写一个若依平台
 然后做一个网站  包括，首页，下载，运行，关于
 制作结合SLangQT的工程
@@ -66,14 +58,5 @@ SLangTorch 的制作
 
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
 
-把Front工程里边的run 移植掉吧，因为这个要在cvm里边实现了，原来的没有用了FrontEnd层的没有用了，而且这个run里边带着的逻辑也删除掉吧 
- 买受人NewProject/NewClassFile 都移动allinone里边吧     总体来说cli分三部分 一部分是FrontEnd 主要涉及到的是编译 相关的，比如工程，代码，参数宏开关，优先o(n),独立的导出， verbose  no-banner  导出相关的  是否是debug/release的开关。
-            else if (string.Equals(args[i], "--export-json", StringComparison.OrdinalIgnoreCase))
-            {
-                exportJson = true;
-            }
-            else if (string.Equals(args[i], "--no-export-json", StringComparison.OrdinalIgnoreCase))
-            {
-                exportJson = false;
-            } 这两个直接就使用format 的方式就行 
-exportGuide 也合并到allinone里边 配合new使用的
+
+打印的编译日志 的时候，需要把文件名称:  行号: 位置: 更清晰的打印出来，  还有要把现在的提示错误，也翻译成英文的在csv里边  然后在Log里边传参可以 显示英文的提示。

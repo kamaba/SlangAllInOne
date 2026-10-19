@@ -20,6 +20,13 @@
 #   package\linux-release; the explicit -o / -r flags below stay for
 #   determinism. Local four-package builds (no GitHub): build-packages.ps1.
 #
+# 2026-10-19: the release also ships the VSCode extension (.vsix) - copied
+#   into BOTH archives under vsix\ AND attached as a third GitHub Release
+#   asset. SOFT-FAIL by design: node missing / extension build failure only
+#   warns and the release continues without it - the dual-platform main
+#   line must never be aborted by the optional asset (authoritative design:
+#   slang_vscode_plugin\09_packaging_release.md §3).
+#
 # Usage (workspace root, maintenance machine; Linux half needs WSL with
 # clang/cmake/ninja/libsqlite3-dev + dotnet SDK - see RELEASE.md):
 #   powershell -NoProfile -ExecutionPolicy Bypass -File SlangAllInOne\scripts\release-slang.ps1 -Version 0.0.3
@@ -106,6 +113,10 @@ $ZipName      = "slang_release_${Version}_win-x64.zip"
 $TgzName      = "slang_release_${Version}_linux-x64.tar.gz"
 $ZipPath      = Join-Path $DistDir $ZipName
 $TgzPath      = Join-Path $DistDir $TgzName
+# Slang for VSCode extension (optional third asset; see header comment 2026-10-19)
+$VscodePluginDir = Join-Path $RepoRoot 'slang_vscode_plugin'
+$VsixPath     = $null
+$sizeVsix     = 0
 
 # =====================================================================
 Write-Step 'Preflight'
@@ -260,6 +271,63 @@ if ($SkipBuild) {
     Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll excluded)'
 }
 Write-Ok 'linux package built'
+
+# =====================================================================
+Write-Step 'VSCode extension (.vsix) - optional third asset, SOFT-FAIL'
+# =====================================================================
+# Design (slang_vscode_plugin\09_packaging_release.md §3): build once on the
+# Windows side, copy into BOTH package roots under vsix\ (the win zip is
+# robocopy /MIR-staged and the linux tar cp -r's the whole package dir, so
+# both archives pick vsix\ up automatically) and attach as a third GitHub
+# Release asset later. Any failure here only WARNS - the dual-platform main
+# line never aborts on the optional asset.
+try {
+    if (-not (Test-Path (Join-Path $VscodePluginDir 'package.json'))) { throw 'slang_vscode_plugin\package.json not found' }
+    $pluginPkg = Get-Content (Join-Path $VscodePluginDir 'package.json') -Raw | ConvertFrom-Json
+    $pluginVer = "$($pluginPkg.version)"
+    if ($pluginVer -ne $Version) {
+        Write-Host "  WARNING: plugin version $pluginVer != release version $Version - shipping anyway (alignment policy: 09_packaging_release.md §2)" -ForegroundColor Yellow
+    }
+    # release naming family slang_vscode_<v>.vsix (vsce's natural name uses a dash)
+    $VsixName  = "slang_vscode_$pluginVer.vsix"
+    $builtVsix = Join-Path $VscodePluginDir $VsixName
+
+    $needBuild = $true
+    if ($SkipBuild -and (Test-Path $builtVsix)) {
+        $needBuild = $false
+        Write-Host '  -SkipBuild: reusing the existing .vsix' -ForegroundColor Yellow
+    }
+    if ($needBuild) {
+        if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'node not found in PATH' }
+        Push-Location $VscodePluginDir
+        try {
+            if (-not (Test-Path 'node_modules')) {
+                & npm install --no-audit --no-fund
+                if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
+            }
+            if (Test-Path $builtVsix) { Remove-Item $builtVsix -Force -Confirm:$false }
+            # vscode:prepublish (package.json) makes this self-contained:
+            # tsc + esbuild run inside vsce before bundling
+            & npx vsce package --no-dependencies
+            if ($LASTEXITCODE -ne 0) { throw 'vsce package failed' }
+            $vsceName = "slang-vscode-$pluginVer.vsix"   # vsce natural name uses dashes
+            if ((Test-Path $vsceName) -and $vsceName -ne $VsixName) {
+                Move-Item $vsceName $VsixName -Force
+            }
+            if (-not (Test-Path $builtVsix)) { throw "expected .vsix not produced: $builtVsix" }
+        } finally { Pop-Location }
+    }
+    $VsixPath  = $builtVsix
+    $sizeVsix  = [math]::Round((Get-Item $VsixPath).Length / 1KB, 1)
+    foreach ($pkg in @($PkgWinDir, $PkgLinuxDir)) {
+        New-Item -ItemType Directory -Path (Join-Path $pkg 'vsix') -Force | Out-Null
+        Copy-Item $VsixPath (Join-Path $pkg 'vsix') -Force
+    }
+    Write-Ok "vsix built: $VsixName ($sizeVsix KB) -> vsix\ in both packages"
+} catch {
+    $VsixPath = $null
+    Write-Host "  WARNING: VSCode extension not shipped ($_)" -ForegroundColor Yellow
+}
 
 # =====================================================================
 Write-Step 'Layout checks'
@@ -419,6 +487,7 @@ if ($NoPush) {
     Write-Host "  tag    : $Tag (NOT pushed, no GitHub release created)"
     Write-Host "  win zip: $ZipPath ($sizeZip MB)"
     Write-Host "  linux  : $TgzPath ($sizeTgz MB)"
+    if ($VsixPath) { Write-Host "  vscode : $VsixPath ($sizeVsix KB, in both archives vsix\)" }
     exit 0
 }
 
@@ -436,12 +505,17 @@ Write-Ok "pushed $branch + $Tag"
 # =====================================================================
 Write-Step "GitHub release $Tag on $OwnerRepo (both assets)"
 # =====================================================================
+$vsixLine = ''
+if ($VsixPath) {
+    $vsixLine = "- $(Split-Path -Leaf $VsixPath) : Slang for VSCode extension (also inside both archives under vsix\; install: code --install-extension)"
+}
 $notes = @"
 $RelTitle - dual-platform self-contained packages (Native AOT; no .NET runtime needed on the target machine).
 
 Contents (both packages share one layout: slang CLI + bin\ C VM runtime + lib\ system stdlib + md\ user docs)
 - slang_release_${Version}_win-x64.zip      : slang.exe + csimple_lang_dll.dll + sqlite3.dll + math_lib.dll
 - slang_release_${Version}_linux-x64.tar.gz : slang + libcsimple_lang_dll.so + libsqlite3.so.0
+$vsixLine
 
 Quick start (unzip/untar anywhere)
   slang run-disk lib\Std.module.slb
@@ -469,12 +543,26 @@ $uploadTgz = "https://uploads.github.com/repos/$OwnerRepo/releases/$($rel.id)/as
 try { $null = Invoke-RestMethod -Method Post -Uri $uploadTgz -Headers $headers -ContentType 'application/gzip' -InFile $TgzPath -ErrorAction Stop }
 catch { Fail ('linux tgz upload failed: ' + $_.Exception.Message + " (release exists, attach manually: " + $rel.html_url + ")") }
 
+# optional third asset: VSCode extension - a failure here only warns (soft)
+if ($VsixPath) {
+    $uploadVsix = "https://uploads.github.com/repos/$OwnerRepo/releases/$($rel.id)/assets?name=$(Split-Path -Leaf $VsixPath)"
+    try {
+        $null = Invoke-RestMethod -Method Post -Uri $uploadVsix -Headers $headers -ContentType 'application/octet-stream' -InFile $VsixPath -ErrorAction Stop
+        Write-Ok "vsix uploaded (third asset: $(Split-Path -Leaf $VsixPath))"
+    } catch {
+        Write-Host ('  WARNING: vsix upload failed - attach manually: ' + $rel.html_url) -ForegroundColor Yellow
+    }
+} else {
+    Write-Host '  vsix skipped (not built in this run)' -ForegroundColor Yellow
+}
+
 # =====================================================================
 Write-Step 'Done'
 # =====================================================================
 Write-Host "  version : $Version (tag $Tag)"
 Write-Host "  win zip : $ZipPath ($sizeZip MB, sha256 $shaZip)"
 Write-Host "  linux   : $TgzPath ($sizeTgz MB, sha256 $shaTgz)"
+if ($VsixPath) { Write-Host "  vscode  : $VsixPath ($sizeVsix KB, in both archives vsix\ + third asset)" }
 Write-Host "  release : $($rel.html_url)"
 if ($Draft) { Write-Host '  draft release - publish it on the GitHub releases page when ready' -ForegroundColor Yellow }
 exit 0

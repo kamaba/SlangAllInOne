@@ -13,6 +13,7 @@
    |------|----------|----------|
    | `slang_release_<v>_win-x64.zip` | Windows x64 | zip（顶层文件夹 `slang_release_<v>`） |
    | `slang_release_<v>_linux-x64.tar.gz` | Linux x64 | tar.gz（顶层文件夹同上） |
+   | `slang_vscode_<v>.vsix`（可选第三资产） | VSCode 插件 | vsix（2026-10-19 起；见下方「VSCode 插件资产」） |
 3. 版本号：`v<x.y.z>` tag + `slang_release <x.y.z>` Release，发布后不可复用。
    发版命令（维护机，工作区根）：
 
@@ -67,9 +68,17 @@ slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 ├── lib\                       # 系统自带标准库 Core/Math/Std *.module.slb（平铺单目录）
 │   └── Windows 另含 math_lib.dll（Math 的 FFI 原生库；Linux 侧不捆绑，见下）
 ├── plugins\                   # 插件目录（Debug 包含插件 frontend 程序集；插件安装与管理位）
+├── vsix\                      # Slang for VSCode 插件安装包（slang_vscode_<v>.vsix；2026-10-19 起随包附带）
 ├── test\RefProbe\             # 开箱示例：纯名引用官方库的最小工程（slang run test\RefProbe\RefProbe）
 └── md\                        # ~93 篇用户文档
 ```
+
+> **VSCode 插件资产**（2026-10-19 起，权威设计 = `slang_vscode_plugin\09_packaging_release.md` §3）：
+> `release-slang.ps1` 在双包构建后追加「VSCode extension (.vsix)」步骤——工作区 `slang_vscode_plugin\`
+> 执行 `npx vsce package`（`vscode:prepublish` 自动 tsc+esbuild），产物改名为 `slang_vscode_<v>.vsix`
+> 放入**两个包根的 `vsix\`**（zip/tar.gz 内均含），并作为第三资产挂 GitHub Release。
+> **软降级**：node 缺失 / 插件构建失败只黄字告警，绝不阻断双平台主线；版本不一致（插件 version ≠
+> 发版 version）告警后照发。`-SkipBuild` 时若已有现成 .vsix 则直接复用。
 
 > 🔥 **2026-10-18 用户指令：包目录方案**——`module\` 更名 `lib\`（系统自带文件）；
 > `modules\`（用户包）与 `plugins\`（插件）为未来 `spm.exe` 包管理器 / 插件管理器

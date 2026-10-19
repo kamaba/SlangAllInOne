@@ -129,11 +129,17 @@
        的 Enum.Parse/ToObject。AOT/裁剪器默认按静态可达性裁类型，仅按名字字符串反射的
        类型会被裁掉（运行期 MissingMetadataException / 插件 GetType 返回 null）。
        把三个程序集整体置为裁剪根：类型+成员+嵌入资源全保形（代价：exe 变大）。
-       普通（非 AOT）publish 不受影响。 -->
+       普通（非 AOT）publish 不受影响。
+       2026-10-19 增补（宿主自身 slang 也置根）：LSP 链路 LspServer.WriteRaw/Respond/
+       Notify 与 LspCompileCommand 的 payload 全是匿名类型经 JsonSerializer.Serialize(object)
+       反射序列化——匿名类型属性 getter 无静态引用点，不置根会被裁空 → AOT 实测 stdout
+       仅 "{}"（initialize 无 capabilities、lsp-compile 无 diagnostics，2026-10-19 取证）；
+       置根后经 Delegate.CreateDelegate 装箱访问器恢复（同上 2026-10-17 结论）。 -->
   <ItemGroup Condition="'$(PublishAot)' == 'true'">
     <TrimmerRootAssembly Include="SimpleLanguageFront" />
     <TrimmerRootAssembly Include="SLCSharpMonoFrontend" />
     <TrimmerRootAssembly Include="SLJavaHotspotFrontend" />
+    <TrimmerRootAssembly Include="slang" />
   </ItemGroup>
 
   <ItemGroup>

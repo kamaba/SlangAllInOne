@@ -1,6 +1,7 @@
 using System.Text;
 using SlangAllInOne.Backend;
 using SlangAllInOne.FrontEnd;
+using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
 using SlangAllInOne.Pack;
 
@@ -48,6 +49,17 @@ internal static class Program
         // 拦截：`new` 有自己的文法（New\NewCommand.cs）。
         if (args.Length > 0 && args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
             return NewCommand.Run(args.Skip(1).ToArray());
+
+        // lsp: 内嵌 LSP 服务器（stdio JSON-RPC；VSCode 插件 P2 消费，
+        // slang_vscode_plugin\07_language_server_lsp.md §2）。同样在 Options
+        // 解析前拦截——LSP 模式接管 stdio，不走常规命令面。
+        if (args.Length > 0 && args[0].Equals("lsp", StringComparison.OrdinalIgnoreCase))
+            return LspServer.Run(args.Skip(1).ToArray());
+
+        // lsp-compile: LSP 专用诊断编译子命令（新进程一次编译 + 结构化 JSON 到
+        // stdout；由 slang lsp 每轮 spawn 自身调用，规避 Front 进程内重入残留）。
+        if (args.Length > 0 && args[0].Equals("lsp-compile", StringComparison.OrdinalIgnoreCase))
+            return LspCompileCommand.Run(args.Skip(1).ToArray());
 
         var opts = ParseArgs(args);
         if (opts == null)
@@ -400,6 +412,9 @@ Commands:
                                成套落盘，UTF-8 BOM，含 guide)
                               slang new project -p <dir> MyApp
                               slang new class MyClass   (.sl + jsonc 登记)
+  lsp [--stdio]              Start the embedded LSP 3.17 server over stdio
+                             (diagnostics push + symbol completion; consumed
+                             by the Slang VSCode extension, engine=lsp).
   pack-modules              Compile the stdlib (Core -> Std -> Math, slb +
    [--dest <dir>]             json debug copy) and pack it into <dest>\out\
    [--config Debug|Release]   export\ mirroring the repo layout so package

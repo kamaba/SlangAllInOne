@@ -77,6 +77,15 @@ test/BaseTest/
 
 打开 `CSimpleVMTest`（或解决方案）在 launchSettings.json 里选好 profile（`ExpendTest (default)` / `BaseTest` / `MathTest` / `SpecialTest` / `BenchMark` / `RenderTest` / `NullFast`…）后 **F5 调试 / Ctrl+F5 运行**。VS(Full MSBuild) 构建时会先自动触发 C VM 构建（见上节）。宿主运行前会把工作目录切到测试集目录，因此用例里的相对路径资源（如 `Sqlite3Test` 的 `Resources/`）在 VS 与命令行下行为一致。
 
+### VSCode（运行与调试，SLang 工程级）
+
+仓库根 `.vscode\launch.json` 已为**全部测试工程**预置 SLang DAP 调试配置（2026-10-20 起，62 项，`type: "slang"`，`program` = 各工程 `.sp` 入口）：调试面板下拉选「**调试 SLang: \<名\>**」→ **F5 调试 / Ctrl+F5 运行**。断点打在 `.sl` 源文件（slang_vscode_plugin P3-1 DAP：断点/单步/变量树/表达式求值；调试会话即禁 JIT）。
+
+- **覆盖清单**：六大用例集 + TensoraTest、`test\Other\*` 全部探针与功能用例（Json/Yaml/Xml/Websocket/Net/HttpWeb/Inline*×3/ARC·GC 探针×6/Const*·Final*·Hook 系/MiniSmoke/WasmDemo/GlobalSlot/ExportPerm/Crawler/Ref·Return·ReDebug·MemberInit 等）、NaNBench/EqBench、负例工程（名称带「负例」标注，F5 即走查预期 LID 拦截或平台拒跑）、示例 GameTank（默认 `args: ["auto"]` 自动化）。
+- **通用入口**：「调试 SLang: 当前工程」随活动编辑器自动定位（活动文件是 `.module.json` 用它，否则取当前 `.sp` 工程）；各配置可加 `"stopOnEntry": true` / `"args": ["…"]`（程序参数，透传 `Project._inputArgs`）。
+- **前提**：安装 slang_vscode_plugin（提供 `slang` DAP 类型）；`settings.json` 的 `slang.executable.path` 指向的宿主已构建（现为 `SlangAllInOne\bin\Debug\net8.0\slang.exe`，`dotnet build SlangAllInOne` 更新）。
+- （宿主 C# 侧调试仍走 VS：打开 `SlangAllInOne.sln` 选 `CSimpleVMTest` 的 launchSettings profile。）
+
 ### 命令行（dotnet）
 
 ```powershell

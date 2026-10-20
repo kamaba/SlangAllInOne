@@ -57,6 +57,9 @@ SLangTorch 的制作
 
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
 
+把slCSharpMonoFrontend 改成纯c语言， 因为 我要FrontEnd改成AOT后 不方便再调 用.netcore的包，所以 要改成c语言写的，这部分逻辑，然后在FrontEnd的调 用plugin的front部分也要改成c语言写的
+
+
 
 打印的编译日志 的时候，需要把文件名称:  行号: 位置: 更清晰的打印出来，  还有要把现在的提示错误，也翻译成英文的在csv里边  然后在Log里边传参可以 显示英文的提示。
 

@@ -177,6 +177,7 @@
 | [vm/VM_FileRoles.md](./vm/VM_FileRoles.md) | VM 侧文件角色说明 |
 | [vm/VirtualMachine.md](./vm/VirtualMachine.md) | 虚拟机相关语法与概念（IR 语句） |
 | [../../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md](../../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md) | C VM x86-64 内联汇编快路径（设计评审稿）：加法/比较最热形态整段融合汇编（lib/asm 平台层 + vm 侧 #if 门控）、MSVC/wasm C 兜底矩阵、WSL clang 树 A/B 协议与 kill 判据 |
+| [../../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md](../../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md) | **C VM 调试协议 SLDP 设计真源**：NDJSON over TCP localhost（CLI `--debug-server=<port>`，等号式）、~15 条命令全表、调试泵（主循环指令边界单点注入）、per-method 断点指令位图、D-P0..D-P4 分期（D-P1 已交付：断点→resume→stopped→stack 手测全绿，§8.1 实录）；D-P3 = 插件侧 DAP adapter |
 
 ---
 

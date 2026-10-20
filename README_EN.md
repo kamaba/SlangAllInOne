@@ -180,10 +180,10 @@ SlangAllInOne/
 ├── md/         # All user docs (syntax / lib / project / log / plugins + internal ai docs)
 ├── scripts/    # One-command scripts (build-all / build-vm-win|linux / compile-* / run-tests-* / release-slang)
 ├── tools/      # ExtractLogs / LidIndexer / SLBRoundTrip (slb↔json round-trip verification)
-└── out/export/ # Compile output root (*.module.json / *.module.slb + Logs / DebugCode snapshots)
+└── out/export/ # Compile output root (*.module.json / *.module.slb + Logs; DebugCode snapshots live under each project's export/DebugCode/)
 ```
 
-Front compile pipeline (troubleshooting backbone): `Code → Token → Node → File → Meta → IR → module.json`. Stage snapshots land in `out/export/<module>/DebugCode/`, logs in `Logs/` (always start from the earliest Error).
+Front compile pipeline (troubleshooting backbone): `Code → Token → Node → File → Meta → IR → module.json`. Stage snapshots land in the **project directory** under `export/DebugCode/`, logs in `out/export/<module>/Logs/` (always start from the earliest Error).
 
 ## Documentation Map
 

@@ -1,6 +1,6 @@
 # SimpleLanguage 调试产物与排查顺序（权威）
 
-本文说明 **`{export.outputDir}/{export.moduleName}/`** 下各文件含义，以及推荐阅读顺序。所有与「编译 / 导出 / VM 运行」相关的排查都应先对齐本目录结构。
+本文说明 **`{export.outputDir}/{export.moduleName}/`** 下各文件含义，以及推荐阅读顺序。所有与「编译 / 导出 / VM 运行」相关的排查都应先对齐本目录结构。**唯一例外**：`DebugCode/` 不在模块导出根下，🔥 2026-10-19 起固定落在**工程目录**（`.sp`/`.jsonc` 所在目录）的 **`export/DebugCode/`**（路径约定见 `EXPORT_PATHS.md`）。
 
 完整路径约定见 `EXPORT_PATHS.md`。目录由 `.jsonc`（`export.outputDir` + 模块名）派生并保存在进程内状态（`ProjectOutputEnvironment.Current*`）；`SIMPLELANG_EXPORT_OUTDIR` / `SIMPLELANG_LOGS_DIR` / `SIMPLELANG_DEBUGCODE_ROOT` 仅作**外部只读手动覆盖入口**。
 
@@ -14,7 +14,7 @@
 | **`Logs/VM.txt`** | VM **运行时**结构化文本日志（加载、解析、执行中的 Info/Error 等）。 |
 | **`Logs/Front.txt`** | **编译期** Front 固定文本日志（Token/File/Meta/IR 等阶段的错误与信息）。 |
 | **`*.module.json`**（如 `Core.module.json`） | 从 IR **导出**的 VM 指令包（指令集、类/方法元数据等），**供 VM 执行**。 |
-| **`DebugCode/`** | **编译期**按阶段落盘的调试文本；**每个子文件夹对应一个源文件**（相对路径与 `.sl` 一致）。 |
+| **`DebugCode/`**（位于**工程目录**下：`{工程目录}/export/DebugCode/`） | **编译期**按阶段落盘的调试文本；**每个子文件夹对应一个源文件**（相对路径与 `.sl` 一致）。 |
 
 ---
 

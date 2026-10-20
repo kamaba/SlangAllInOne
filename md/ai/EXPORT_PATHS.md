@@ -1,6 +1,6 @@
 # SLIR 导出路径（约定）
 
-**调试时各文件含义与阅读顺序**：见同目录 **`DEBUG_WORKFLOW.md`**（与 Cursor 规则 `.cursor/rules/simplelang-debug-artifacts.mdc` 一致）。
+**调试时各文件含义与阅读顺序**：见同目录 **`DEBUG_WORKFLOW.md`**。
 
 在 `jsonc` 的 **`export.outputDir`** 下再建一层 **`export.moduleName`**（未填则用 `project.name` / `.sp` 主名），得到模块根目录：
 
@@ -9,8 +9,13 @@
 该目录下固定包含：
 
 - **`Logs/`**：`Front.txt`（Front 固定文本日志）、`VM.txt`（VM 固定文本日志）、`Result.txt`（`print`/`println` 镜像）。
-- **`DebugCode/`**：Front 各阶段调试文本（`Code.txt`、`Token.txt`、…），按源文件相对路径分子目录（`Common.GetDebugCodeDir`）。
-- **VM 包**：**`{project.name}.module.json`**（如 `Core.module.json`），与上两项同级，由 `ExportLangManager` → `SLModulePackageWriter.Write` 写入该模块目录。
+- **VM 包**：**`{project.name}.module.json`**（如 `Core.module.json`），与 Logs 同级，由 `ExportLangManager` → `SLModulePackageWriter.Write` 写入该模块目录。
+
+**`DebugCode/`**（Front 各阶段调试文本 `Code.txt`、`Token.txt`、…，按源文件相对路径分子目录，`Common.GetDebugCodeDir`）**不在此目录下**：🔥 2026-10-19 起固定落在**工程目录**（`.sp`/`.jsonc` 所在目录）：
+
+`{工程目录}/export/DebugCode/{源文件相对路径}/`
+
+例如编译 `SLangCore\test\Other\MyTest` 工程时，快照写到 `…\MyTest\export\DebugCode\MyTest1\IR.txt`。
 
 ## 环境变量（外部只读手动覆盖入口）
 
@@ -23,7 +28,7 @@ Front 内部与测试宿主统一经 `ProjectOutputEnvironment.GetEffective*()` 
 
 - **`SIMPLELANG_EXPORT_OUTDIR`**：上述模块根目录（`*.module.json` 所在目录）。
 - **`SIMPLELANG_LOGS_DIR`**：`{export.outputDir}/{moduleName}/Logs/`。
-- **`SIMPLELANG_DEBUGCODE_ROOT`**：`{export.outputDir}/{moduleName}/DebugCode/`。
+- **`SIMPLELANG_DEBUGCODE_ROOT`**：DebugCode 根目录（缺省派生为 `{工程目录}/export/DebugCode/`）。
 
 未走 `LoadProject`（或 `export.outputDir` 缺失）时可设置它们手动指定落点。`export.debugText.outputDir` 不再作为调试文本根路径；**`debugText` 块以各阶段开关为主**（`code`/`token`/…）。
 

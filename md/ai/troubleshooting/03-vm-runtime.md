@@ -129,3 +129,12 @@
 - 如何快速复现：DebugJit 树 `--jit --jit-stats` 跑 BenchMark，观察 fib 段耗时显著高于解释器且 `runs(yield)` 计数巨大。
 - 如何快速验证：on/off 背靠背 A/B，fib 段不再出现倍数级劣化；输出仍逐字节一致。
 - 预防建议：① 任何"每次退场/每 BB/每指令"级别的插桩或日志，交工前必须确认有**编译期常量或一次性缓存的开关门控** + 限量计数，且把门控参数写进注释；② 移除/门控插桩后必须重跑一次 A/B——插桩本身可能就是性能差异的全部来源；③ A/B 差额与插桩调用次数×单次成本数量级吻合时，先算账再找代码布局/竞态等复杂解释。
+
+### [2026-10-19] SLDP D-P2 落地暴露三处调试链路缺陷：泵探测索引停早一条 + Front di 携带方法声明行 + skip 锚点跨方法误清
+- 现象：① 断点命中时上一语句的 StoreLocal 尚未执行（locals 缺一步赋值，`b` 应为 4 却 null）；② 单步 over 从调用语句行直接停在被调方**方法声明行**；③ resume/step 走过一次函数调用（进被调方再弹回）后，断点行剩余指令再次命中断点原地重停。
+- 首个异常阶段：VM（调试泵）+ Front（IR di 归属）双侧——三缺陷独立成立，冒烟逐项暴露。
+- 根因：① 泵注入点在主循环 `execute_index++` 后、`switch` 前——`execute_index` 指向**下一条**指令，D-P1 的 `sl_debugger_bp_hit`/`sld_current_line` 误用它当"当前位置"（停早一条；且跳转目标指令永不入探测窗口）；② Front 三处 Store/Call 指令 di 缺省取方法 token（`IRDefineVarStatements` 的补设代码被注释、`IRAssignStatements` 未设、`IRCall.ApplyCallInstructionDebug` 取**被调方** token）——语句行被抹平成声明行；③ skip 锚点清除条件先后两版都错：D-P1 仅"他行断点命中才清"（无断点路径永不清）、D-P2 初版"方法或行号变化即清"在进入被调方时误清锚点（弹回后同行剩余指令失去 skip 保护）。
+- 修复点：① 调试器侧统一改读 `execute_index-1`（待执行指令）——bp_hit 位图探测、current_line、stopped/stack/status 行号读点共五处，"行首停"语义自此成立；② Front 三文件按语句 token 补设 di（定义/赋值按变量 token、Call* 按调用点 `mfc.token`）；③ skip 收紧为「**同方法**下行号变化才清」（跨方法保留锚点，直至调用方行变化——循环回边断点可再次命中）。
+- 如何快速验证：`node SlangAllInOne\SLangCore\test\Other\DebugSmoke\smoke.js`（26 项断言：行首变量态/step 三型/协程 threadId/断点复发路径）。
+- 预防建议：① 在"取指后、执行前"型注入点写探测逻辑，先写清 `execute_index` 的语义基准（本轮待执行 = `execute_index-1`），与主循环取指协议对表；② IR 指令 di 的归属基准 = **用户语句**，任何"缺省取方法 token"的便利路径都会抹平行号（断点/单步/stack 三处同时受害）；③ 状态锚点的失效条件要先枚举"跨边界往返"场景（进被调方再弹回）再定，单一维度的变化判定（行 OR 方法）必错，正确形态是限定同主体内的变化。
+- 详见 `csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md` §8.2（三缺陷对照表 + 26 项冒烟覆盖）。

@@ -157,7 +157,7 @@
       "cpu": "",                       // llc -mcpu 目标 CPU
       "features": "" },                // llc -mattr 特性表，如 "+sse4.2,+avx2"；与 platform.require.cpu 一致性校验
     "debugText": {                     // DebugCode 调试快照开关
-      "outputDir": "DebugCode",        // 快照输出目录名，缺省 "DebugCode"
+      "outputDir": "DebugCode",        // ⚠ 已失效（兼容保留）：快照根固定为 {工程目录}/export/DebugCode/
       "code": true, "token": true, "node": true,   // 六个快照开关均缺省 true
       "file": true, "meta": true, "ir": true }
   },
@@ -396,7 +396,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
 | `moduleName` | string | `""` | 导出模块名（生成 `<moduleName>.module.json`）；导出目录名第一优先级 |
-| `outputDir` | string | `"Export/SLVMCode"` | 导出根目录（相对 jsonc 目录解析）；驱动 Logs/DebugCode 目录创建与进程内状态派生（`ProjectOutputEnvironment.Current*`；Front 不再写环境变量，`SIMPLELANG_*` 仅作外部只读覆盖） |
+| `outputDir` | string | `"Export/SLVMCode"` | 导出根目录（相对 jsonc 目录解析）；驱动模块根/Logs 目录创建与进程内状态派生（`ProjectOutputEnvironment.Current*`；Front 不再写环境变量，`SIMPLELANG_*` 仅作外部只读覆盖）。⚠ DebugCode 不在其下：2026-10-19 起固定落 `{工程目录}/export/DebugCode/` |
 | `publicExport` | string | `"public"` | public 类导出门槛三态：`none`/`public`/`extern`（见下表）；非法值 Error |
 | `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；`"binary+json"`=slb 主产物 + `<M>.module.json` 调试副本（R15，仅磁盘导出生效；`json+binary` 同义归一）；非法值 Error 20039；CLI `--format` 覆盖 |
 | `binary` | object | — | SLB 选项（format="binary"/"binary+json" 生效）：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留）。~~`exportJson`~~ 已删（2026-10-18）：双产物改由 `format: "binary+json"` 单值表达 |
@@ -411,7 +411,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `aot.cpu` | string | `""` | llc `-mcpu` 目标 CPU |
 | `aot.features` | string | `""` | llc `-mattr` 特性表（如 `"+avx2,+fma"`、`"-name"`=禁用）；非空时与 `platform.require.cpu` 一致性校验（Error 20037） |
 | `debugText` | object | — | DebugCode 调试快照开关（语义见 `md/ai/DEBUG_WORKFLOW.md`） |
-| `debugText.outputDir` | string | `"DebugCode"` | 快照输出目录名 |
+| `debugText.outputDir` | string | `"DebugCode"` | ⚠ 已失效（兼容保留）：快照根固定为 `{工程目录}/export/DebugCode/`，不受此字段影响 |
 | `debugText.code/token/node/file/meta/ir` | bool | 全部 true | Code/Token/Node/File/Meta/IR.txt 六个快照开关 |
 
 **publicExport 三态**（源码中类级显式导出标记为 `extern` 关键字；`publicExport` 只决定**未显式标记**的类的导出）：
@@ -500,7 +500,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 ```powershell
 dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <.sp 路径> -e ir
 # CLI 动词：compile | export | clean | version | help（缩写 c/b/e/v/h；run/new 已删——运行归 C VM，脚手架归宿主 `slang new`）
-# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token  --format
+# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token  --format  --lang <zh|en>（2026-10-19 起，en=英文日志消息）
 ```
 
 ### `slang new project <Name> [-p <dir>]`（宿主命令，2026-10-18 自 Front CLI 迁入）

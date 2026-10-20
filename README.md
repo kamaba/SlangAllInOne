@@ -184,10 +184,10 @@ SlangAllInOne/
 ├── md/         # 全部用户文档（syntax / lib / project / log / plugins + ai 内部文档）
 ├── scripts/    # 一键脚本（build-all / build-vm-win|linux / compile-* / run-tests-* / release-slang）
 ├── tools/      # ExtractLogs / LidIndexer / SLBRoundTrip（slb↔json 往返验证）
-└── out/export/ # 编译产物根（*.module.json / *.module.slb + Logs / DebugCode 调试快照）
+└── out/export/ # 编译产物根（*.module.json / *.module.slb + Logs 日志；DebugCode 快照在各自工程目录 export/DebugCode/）
 ```
 
-Front 编译流水线（排障主干）：`Code → Token → Node → File → Meta → IR → module.json`，各阶段快照落在 `out/export/<模块>/DebugCode/`，日志在 `Logs/`（看最早一条 Error）。
+Front 编译流水线（排障主干）：`Code → Token → Node → File → Meta → IR → module.json`，各阶段快照落在**工程目录**的 `export/DebugCode/`，日志在 `out/export/<模块>/Logs/`（看最早一条 Error）。
 
 ## 文档导航
 

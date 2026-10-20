@@ -36,6 +36,10 @@ internal static class Program
         public string DestPath = "";
         /// <summary>pack-modules: package config — Debug = slb + json, Release = slb only.</summary>
         public string PackConfig = "Debug";
+        /// <summary>run-disk: SLDP debug server port (0 = off). Passed through to the
+        /// C VM as `--debug-server=&lt;port&gt;` (DEBUG_PROTOCOL_DESIGN.md D-P3; consumed by
+        /// the VSCode extension's DAP adapter).</summary>
+        public int DebugServer = 0;
         public List<string> ProgramArgs = new();
     }
 
@@ -175,6 +179,7 @@ internal static class Program
         if (opts.ForceRun) cliArgs.Add("--force-run");
         if (opts.DebugVm) cliArgs.Add("--debug");
         if (opts.StrictPlugins) cliArgs.Add("--strict-plugins");
+        if (opts.DebugServer > 0) cliArgs.Add($"--debug-server={opts.DebugServer}");
         if (opts.ProgramArgs.Count > 0)
         {
             cliArgs.Add("--");
@@ -292,6 +297,17 @@ internal static class Program
             else if (a == "--strict-plugins")
             {
                 opts.StrictPlugins = true;
+            }
+            else if (a.StartsWith("--debug-server=", StringComparison.Ordinal))
+            {
+                // SLDP debug server port (run-disk only; equal-sign form, mirrors the C VM CLI)
+                var ps = a.Substring("--debug-server=".Length);
+                if (!int.TryParse(ps, out var port) || port < 1 || port > 65535)
+                {
+                    Console.WriteLine($"Invalid debug server port: {ps} (expected 1..65535)");
+                    return null;
+                }
+                opts.DebugServer = port;
             }
             else if (a == "--cvm" && i + 1 < args.Length)
             {
@@ -444,6 +460,9 @@ Options:
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
   --strict-plugins          Treat plugin disable as a C VM error
+  --debug-server=<port>     run-disk: start the SLDP debug server on
+                             127.0.0.1:<port> (NDJSON over TCP; the VSCode
+                             extension's DAP adapter connects to it)
   --cvm <Debug|Release>     C VM build tree to use (default Debug)
   -- [args...]              Everything after -- goes to Project._inputArgs
 

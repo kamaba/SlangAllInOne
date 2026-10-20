@@ -109,7 +109,7 @@ dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\
 dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\Other\SomeTest\ProjectTest -O3
 ```
 
-验证方式：编译产物 `out/export/<模块>/DebugCode/<源文件>/IR.txt` 中查看调用点是否仍有 `Call` 指令（自动 inline 生效后小函数调用点无 `Call`）；或对比 `Logs/Result.txt` 运行输出（各等级应完全一致）。
+验证方式：工程目录 `export/DebugCode/<源文件>/IR.txt` 中查看调用点是否仍有 `Call` 指令（自动 inline 生效后小函数调用点无 `Call`）；或对比 `Logs/Result.txt` 运行输出（各等级应完全一致）。
 
 ---
 

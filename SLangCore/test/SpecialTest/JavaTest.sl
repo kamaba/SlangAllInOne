@@ -5,7 +5,7 @@ import Core;
 # JavaTest — java_hotspot 插件端到端测试（P3，HOTSPOT_JNI_INTEGRATION_DESIGN.md §8）
 #
 # 链路：@java_hotspot(){} 块 → Front 哨兵脱糖 CallAtSignLabel(124) → 导出期
-# AtSignLabelBuildManager 转调插件 frontend（SLLabelParser 生成 Entry_N.java
+# PluginManager（AtSignLabel 构建段）转调插件 frontend（SLLabelParser 生成 Entry_N.java
 # + SLLabelBuilder javac 合并编译部署 classes 目录树）→ CVM 经模块
 # atSignLabel[] 绑定懒 resolve 到 sl_java_hotspot labelExec →
 # jvm_bridge_run_entry（URLClassLoader 挂 classes → loadClass("SLAtSign.Entry_N")

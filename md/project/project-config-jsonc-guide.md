@@ -398,7 +398,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `moduleName` | string | `""` | 导出模块名（生成 `<moduleName>.module.json`）；导出目录名第一优先级 |
 | `outputDir` | string | `"Export/SLVMCode"` | 导出根目录（相对 jsonc 目录解析）；驱动模块根/Logs 目录创建与进程内状态派生（`ProjectOutputEnvironment.Current*`；Front 不再写环境变量，`SIMPLELANG_*` 仅作外部只读覆盖）。⚠ DebugCode 不在其下：2026-10-19 起固定落 `{工程目录}/export/DebugCode/` |
 | `publicExport` | string | `"public"` | public 类导出门槛三态：`none`/`public`/`extern`（见下表）；非法值 Error |
-| `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；`"binary+json"`=slb 主产物 + `<M>.module.json` 调试副本（R15，仅磁盘导出生效；`json+binary` 同义归一）；非法值 Error 20039；CLI `--format` 覆盖 |
+| `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；`"binary+json"`=slb 主产物 + `<M>.module.json` 调试副本（R15；`json+binary` 同义归一）——磁盘导出（output/temp 两态）双落，`--export-mode memory` 时 slb 留内存不压缩直传 C VM、json 系另产内存 JSON 文本（§8.2 导出三态）；非法值 Error 20039；CLI `--format` 覆盖 |
 | `binary` | object | — | SLB 选项（format="binary"/"binary+json" 生效）：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留）。~~`exportJson`~~ 已删（2026-10-18）：双产物改由 `format: "binary+json"` 单值表达 |
 | `versionMain` / `versionSub` / `versionPatch` | int | 0 / 1 / 0 | 与 `project.mainVersion/subVersion/buildVersion` 同字段；**export 块后解析，两处同写时以 export 块为准** |
 | `nativeDll` | string | `""` | 原生 DLL 文件名，写入 module.json，VM 同目录查找 |
@@ -489,7 +489,8 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 
 | 配置面 | jsonc 键 | 覆盖源 |
 |--------|----------|--------|
-| 导出格式（含双产物） | `export.format` | CLI `--format json\|binary\|binary+json`（`binary+json` = slb 主产物 + json 调试副本，仅磁盘导出生效；2026-10-18 起 `--export-json`/`--guide` 旗标与 jsonc `export.binary.exportJson`/`export.guide` 已删） |
+| 导出格式（含双产物） | `export.format` | CLI `--format json\|binary\|binary+json`（`binary+json` = slb 主产物 + json 调试副本，磁盘导出（output/temp）双落；2026-10-18 起 `--export-json`/`--guide` 旗标与 jsonc `export.binary.exportJson`/`export.guide` 已删） |
+| 导出去向（三态） | — | CLI `--export-mode <output\|temp\|memory>`（2026-10-20）：output=导出到 jsonc `export.outputDir` 派生目录（缺省）/ temp=Frontend 运行目录下 `_temp\<模块名>\`（结构同正式导出，用完可整体删）/ memory=不落盘、SLB 恒不压缩留内存直传 C VM（原 `--in-memory` 并入此态）；`in-memory` 为 memory 别名；显式指定即隐含 `-e ir` |
 | 优化级别 | （无 jsonc 键） | CLI `-O<n>` → module.json `optimizeLevel`（jsonc 里只有布尔 `compile.optimize`→buildMode） |
 | 宏 | `global.macro` | 环境变量 `SL_MACRO_*` < CLI `--macro name=value`（可重复）< `Project._before_()` 钩子 |
 | 输出目录 | `export.outputDir` + 模块名 | 由 jsonc 派生存入进程内状态（`ProjectOutputEnvironment.Current*`，Front 不再写环境变量）；`SIMPLELANG_EXPORT_OUTDIR` / `SIMPLELANG_LOGS_DIR` / `SIMPLELANG_DEBUGCODE_ROOT` 仅作外部只读覆盖。`SIMPLELANG_VM_RESULT_DIR` 为过期条目（当前代码无实现） |
@@ -500,7 +501,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 ```powershell
 dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p <.sp 路径> -e ir
 # CLI 动词：compile | export | clean | version | help（缩写 c/b/e/v/h；run/new 已删——运行归 C VM，脚手架归宿主 `slang new`）
-# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token  --format  --lang <zh|en>（2026-10-19 起，en=英文日志消息）
+# 常用选项：-p|--project  -o|--output  -e ir  -t|--test  --release  --debug  --verbose  --no-banner  --token  --export-mode <output|temp|memory>  --format  --lang <zh|en>（2026-10-19 起，en=英文日志消息；2026-10-20 起 --export-mode 导出三态）
 ```
 
 ### `slang new project <Name> [-p <dir>]`（宿主命令，2026-10-18 自 Front CLI 迁入）

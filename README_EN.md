@@ -152,15 +152,15 @@ The workspace-wide development entry point is [SlangAllInOne.sln](SlangAllInOne.
 
 | Command | Description |
 |------|------|
-| `compile <project>` | Front in-process compile; disk export by default, package stays in memory with `--in-memory` |
-| `run <project>` | **Compile and run**: in-memory compile → C VM in-memory entry, module never hits disk |
+| `compile <project>` | Front in-process compile; disk export by default; `--export-mode <output\|temp\|memory>` export tri-state (output = configured dir / temp = `_temp\<module>\` / memory = SLB stays in memory, uncompressed) |
+| `run <project>` | **Compile and run**: defaults to `--export-mode memory` (uncompressed SLB in-memory transfer) → C VM in-memory entry, module never hits disk |
 | `run-disk <module.slb\|module.json>` | Run an exported module package (both formats, magic auto-detected) |
 | `info <module.slb\|module.json>` | Show module metadata |
 | `version` | Front version + C VM DLL path / config |
 | `pack-modules` | Compile the stdlib trio and pack them flat into `lib\` (invoked automatically on publish) |
 | `pack-docs` | Pack user docs into `md\` (invoked automatically on publish) |
 
-Common options: `-p, --project <path>` | `-O0..-O3` (optimize level) | `--format json|binary` (SLB binary export) | `--in-memory` | `--debug` (C VM instruction trace) | `--force-run` (skip platform check) | `--cvm Debug|Release` (pick the C VM build tree) | `-- <args…>` (everything after goes into `Project._inputArgs`, read from source via `global._inputArgs`).
+Common options: `-p, --project <path>` | `-O0..-O3` (optimize level) | `--format json|binary|binary+json` (binary = SLB; binary+json = slb main artifact + json debug copy) | `--export-mode <output|temp|memory>` (export tri-state, 2026-10-20) | `--debug` (C VM instruction trace) | `--force-run` (skip platform check) | `--cvm Debug|Release` (pick the C VM build tree) | `-- <args…>` (everything after goes into `Project._inputArgs`, read from source via `global._inputArgs`).
 
 Exit codes: `0` success; `1` Front compile failure or bad arguments; `4` C VM DLL not found (run step 1 first); any other non-zero is passed through from the C VM.
 
@@ -169,7 +169,7 @@ Exit codes: `0` success; `1` Front compile failure or bad arguments; `4` C VM DL
 ```
 SlangAllInOne/
 ├── SlangAllInOne.sln / .csproj / Program.cs   # Unified host `slang` (workspace dev entry)
-├── FrontEnd/   # In-process invocation of the Front CommandExecutor (compile -e ir --in-memory)
+├── FrontEnd/   # In-process invocation of the Front CommandExecutor (compile -e ir, --export-mode tri-state)
 ├── Backend/    # C VM P/Invoke (in-memory entry + DLL discovery)
 ├── Pack/       # pack-modules / pack-docs commands (self-bootstrapped on publish)
 ├── Project/    # Stdlib compile driver (CompileStdlib: core/math/std presets), test hosts (CSimpleVM*Test, Test, Test2), native libs (cvm_math_lib…)

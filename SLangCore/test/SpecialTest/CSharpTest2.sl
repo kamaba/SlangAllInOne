@@ -26,7 +26,7 @@ import Core;
 # ============================================================================
 
 # ---------------- 结构体跨界镜像用例的类型定义（h6） ----------------
-# SL data/class 经 Front 导出期布局收集（AtSignLabelBuildManager）下发插件，
+# SL data/class 经 Front 导出期布局收集（PluginManager，AtSignLabel 构建段）下发插件，
 # 生成镜像 C# class（SLAtSign 命名空间），块内按 C# 对象直接点访问。
 # data 成员为推导形态（显式类型仅匿名 data 支持）：0 -> Int32、0.0d ->
 # Float64、"" -> String、false -> Boolean、AtSignInner() -> 嵌套 data。

@@ -18,13 +18,19 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 │   ├── include/          对外头文件（ABI 头 / vendored 三方头，随包分发）
 │   ├── lib/<os>-<arch>/  ★ 平台产物（插件 dll + 同目录依赖树；CVM 从这里原位加载）
 │   ├── probe/            探针工程（可选，验证外部运行时；插件化落地后可删）
-│   ├── <name>.vcxproj    MSVC 工程（挂 simple_language\SimpleLanguage.sln「plugins」文件夹，仅 x64）
-│   └── build-<name>.ps1  ★ 一键构建（cvm C 源 + frontend .NET 工程 + 部署到测试模块包）
-├── frontend/             Front 层 .NET 工程——编成 dll 供 Front AtSignLabel 反射转调
-│   ├── <Name>Frontend.csproj  netstandard2.0，OutputPath="."（产物落本目录）
-│   ├── SLLabelParser.cs       Parse 契约：`ParseLabel(requestJson)` 块体解析
-│   ├── SLLabelBuilder.cs      Build 契约：`BuildLabels(requestJson)` 合并编译 + 部署
-│   └── MiniJson.cs            单 JSON 序列化（零依赖，不引第三方库）
+│   ├── <name>.vcxproj    MSVC 工程（挂 SlangAllInOne.sln「plugins」文件夹，仅 x64）
+│   └── build-<name>.ps1  ★ 一键构建（cvm C 源 + frontend 原生 C 源 + slang refModule + 部署到测试模块包）
+├── frontend/             🔥 Front 层原生 C 工程（2026-10-21 起标准形态）——编成 dll
+│   │                     供 Front 经 NativeLibrary 直调（Native AOT 发布可用）
+│   ├── src/
+│   │   ├── sl_frontend_abi.h   ★ 三导出 ABI（sl_frontend_parse/build/free；dllexport 由
+│   │   │                        SL_FRONTEND_BUILD 宏触发——MSVC /LD 不自动导出符号）
+│   │   ├── sl_label_parse.c    Parse 契约：`sl_frontend_parse(requestJson, &out)` 块体解析
+│   │   ├── sl_label_build.c    Build 契约：`sl_frontend_build(requestJson, &out)` 合并编译 + 部署
+│   │   ├── sl_cjson.c/.h       yyjson 读请求 + sbuf 手工转义响应（共用件，两插件同源）
+│   │   └── sl_win.c/.h         Win32 支撑（临时目录/写盘/工具链探测/进程捕获，按需裁剪）
+│   ├── vendor/yyjson/          vendored yyjson（MIT，镜像自 csimple_lang/third_party）
+│   └── <name>_frontend.vcxproj MSVC 工程（仅 x64，产物落 lib/windows-x64/）
 └── slang/                ref module——绑定在插件上的 SL 引用模块
     ├── <Module>.jsonc    ★ 系统方法声明（systemCalls[].cvmFunction = "plugin:<capability>"）
     ├── <Module>.sl       SL 侧声明源码（不写桩方法体）
@@ -35,7 +41,7 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 | 目录 | 工具链 | 消费方 | 职责 |
 |------|--------|--------|------|
 | `cvm/` | MSVC cl / clang → dll | CVM 运行期 | 六件套 ABI + capability 实现（systemCall / labelExec） |
-| `frontend/` | dotnet（csc）→ dll | Front 编译期 | `@<tag>(){}` 块体解析与目标产物构建（Parse/Build 单 JSON 契约） |
+| `frontend/` | MSVC cl → dll | Front 编译期 | `@<tag>(){}` 块体解析与目标产物构建（Parse/Build 单 JSON 契约，三导出 ABI） |
 | `slang/` | Front 导出（`e -p`）→ module.json | 引用方工程 | SL 侧类型与方法声明，调用方经 refModule 自动引入 |
 
 ## 2. plugin.jsonc 关键字段
@@ -43,16 +49,21 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 ```jsonc
 {
   "plugin":   { "id": "<plugin_id>", "name": "...", "version": "0.1.0", "vendor": "...", "description": "..." },
-  "abi":      { "cvm": 1, "frontend": 1 },
+  "abi":      { "cvm": 1, "frontend": 2 },        // frontend 2 = 原生 C 承载（2026-10-21 起标准）
   "entry": {
     "lib":    { "windows-x64": "<name>.dll" },   // 相对 cvm/lib/<os>-<arch>/ 的文件名
     "prefix": "sl_<name>_"                       // ⚠ 必须含尾下划线（CVM resolve_symbol 直接 prefix+suffix 拼接）
   },
-  // —— signLabel（@<tag>(){} 内联块）反射入口，三键都指向 frontend/ 产物程序集 ——
-  "frontendLibs":  [ "<Name>Frontend.dll" ],      // 程序集位于 frontend/（Front: pluginRoot/frontend/<frontendLibs[0]>）
-  "parserType":    "<Name>Frontend.SLLabelParser",     // Parse 契约：ParseLabel(requestJson)
-  "builderType":   "<Name>Frontend.SLLabelBuilder",    // Build 契约宿主类型
-  "builderMethod": "BuildLabels",                      // Build 契约：BuildLabels(requestJson)
+  // —— signLabel（@<tag>(){} 内联块）原生承载：三导出 ABI = frontend/src/sl_frontend_abi.h ——
+  "frontendNative": {
+    "lib":     "<name>_frontend.dll",   // 相对 frontend\（Front 也探测 frontend\lib\windows-x64\）
+    "parseFn": "sl_frontend_parse",     // 缺省名；int parse(const char* req, const char** out)
+    "buildFn": "sl_frontend_build",     // 导出缺失 = 插件自管产物，不算失败
+    "freeFn":  "sl_frontend_free"       // 结果缓冲释放（同指针回传）
+  },
+  // —— 兼容形态（abi.frontend=1，仅经典托管发布可用；现存两插件均已不再使用）——
+  // "frontendLibs":  [ "<Name>Frontend.dll" ],  "parserType": "<Name>Frontend.SLLabelParser",
+  // "builderType":   "<Name>Frontend.SLLabelBuilder",  "builderMethod": "BuildLabels"
   "capabilities": [
     { "type": "systemCall", "name": "<cap>" },    // cvmFunction = "plugin:<cap>" 的路由名
     { "type": "signLabel",  "name": "signLabel" } // 名固定；每插件至多一个 labelExec 入口
@@ -69,7 +80,8 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 | 字段 | 谁读 | 说明 |
 |------|------|------|
 | `entry.lib` + `entry.prefix` | CVM 装配期 | dll 文件名 + 六件套符号前缀；六件套 = `{prefix}{abi_version,get_info,enter,get_capability,exit,unload}` |
-| `frontendLibs` / `parserType` / `builderType` / `builderMethod` | Front 编译期 | `PluginFrontendParser` 按 `.sl` 源文件上溯定位本清单后 `Assembly.LoadFrom` 反射转调 |
+| `frontendNative`（abi.frontend=2） | Front 编译期 | `PluginFrontendParser` 按 `.sl` 源文件上溯定位本清单后 `NativeLibrary.Load + GetExport` 直调三导出（结果 out 指针回传 + freeFn 同指针释放；Native AOT 发布可用） |
+| `frontendLibs` 等（abi.frontend=1，兼容） | Front 编译期 | `Assembly.LoadFrom` 托管反射转调；仅经典托管发布可用，新插件勿用 |
 | `capabilities[]` | 两侧 | systemCall 名即 `cvmFunction` 的 `plugin:<name>`；signLabel 承接 `@<tag>(){}` |
 | `refModule.path` | Front RefModule 阶段 | 自动把 slang/ 模块追加为引用方工程 reference，其 systemCalls 随之注册 |
 | `refModule.channelClassPath` | Front 脱糖 | `@<tag>(){}` 通道包装函数宿主类全名——Front 按 `<channelClassPath>.ChannelIn/Out<Kind>( entry, ... )` 脱糖（`<-` 赋值不写死进 opcode 124）；带通道的块缺失本字段 → LID 20058 |
@@ -84,11 +96,13 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 - 平台代码禁入源文件（同 C VM 的 R3 纪律）；外部运行时经 `LoadLibrary`+`GetProcAddress` 函数指针表动态解析，不 .lib 链接。
 - 产物与同目录依赖（运行时 dll / BCL 等）整体落 `lib/<os>-<arch>/`，**原位加载**，标准安装语义（prefix = dll 目录）。
 
-### frontend/（.NET，netstandard2.0）
+### frontend/（🔥 原生 C，2026-10-21 起标准形态）
 - Front 只转调不解析——**全部块体解析 + 目标语言编译部署逻辑归插件**。块体三分：头区入通道行与尾行出通道由 Front 初判（双出通道 → 20056），中间**代码段是目标语言原文，Front 零处理整段透传**，插件自决整编（段首指令行吸收、代码区 `<-`/`$` 前缀/指令行报错、字符串/注释内 `<-` 放行）：
-  - **Parse 契约** `ParseLabel(requestJson)`：请求 `{label, entryName, paramsText, bodyText, headLineCount, tailLineCount, inChannels, outChannel}` → 响应 `{ok, error, errorLine, source, dll, entry, entryMethod, labelParams}`。
-  - **Build 契约** `BuildLabels(requestJson)`：请求 `{label, outDir, libDir, entries[{entryName, source}]}` → 响应 `{ok, kind, error, dllPath, count}`（kind 五态 success/notFound/buildFailed/deployFailed/contract → Front 分流 LID 22135~22138）。
-- `OutputPath="."`：产物 dll 落 frontend/ 本目录，与 `frontendLibs[0]` 对应。
+  - **Parse 契约** `sl_frontend_parse(requestJson, &out)`：请求 `{label, entryName, paramsText, bodyText, headLineCount, tailLineCount, inChannels, outChannel}` → 响应 `{ok, error, errorLine, source, dll, entry, entryMethod, labelParams}`（0 返回 = 契约完成，业务成败看 ok；非 0 = 插件侧 OOM）。
+  - **Build 契约** `sl_frontend_build(requestJson, &out)`：请求 `{label, outDir, libDir, entries[{entryName, source}]}` → 响应 `{ok, kind, error, dllPath, count}`（kind 五态 success/notFound/buildFailed/deployFailed/contract → Front 分流 LID 22135~22138）。
+  - **Free** `sl_frontend_free(result)`：释放 parse/build 的 out 指针（同一指针原样回传）。
+- ⚠ **dllexport 必须显式**：MSVC `/LD` 不自动导出符号——ABI 头的 `SL_FRONTEND_API`（`SL_FRONTEND_BUILD` 宏触发）+ vcxproj 注入宏，缺一导出表为空、Front GetExport 落空（csharp_mono C 化实测踩坑）。
+- 请求解析用 vendored yyjson、响应生成用 sbuf 手工转义（`sl_cjson.c`，两插件同源共用）；Win32 支撑（临时目录/写盘/工具链探测/进程捕获）参考 `sl_win.c`——**进程输出捕获勿借 cmd.exe 转发**（`/c` 引号剥离规则误拆命令行），STARTF_USESTDHANDLES 正统重定向。
 - 只接**块原文 + 参数 JSON**，不碰 SL 的 AST/符号表（与语义层解耦，升级不碎）。
 
 ### slang/（ref module）
@@ -102,8 +116,8 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
   执行环境三态路由 + 出通道 int/string 判型）。Front 脱糖按
   `refModule.channelClassPath` 生成对这组函数的调用，`<-` 赋值不写死进 opcode 124；
   范本见 `csharp_mono/slang/CSharpMono.sl`。
-- `references` 指向 Core/Std 等编译包（`../../../simple_language/out/export/<模块>`，相对 jsonc 目录）；`export.outputDir` 同理指向工作区 `out/export`。
-- 导出命令：`dotnet run --project source\Front\SimpleLanguageFront.csproj -- e -p <Module>.sp`（⚠ `compile` 默认不导出，须 `e`/`export` 命令或 `compile -e ir`）。
+- `references` 指向 Core/Std 等编译包（`"./lib/<名>.module.slb"` 新形态，工程内未命中系统库自动回落 `<exe>\lib\` 直查，见 `md/project/project-config-jsonc-guide.md` §4.9）；`export.outputDir` 指向 `..\..\..\SlangAllInOne\out\export`（仓库重组后 out 根）。
+- 导出命令：`dotnet run --no-launch-profile --project simple_language\source\SimpleLanguageFront.csproj -- c -p <Module>.sp -e ir --format binary+json`（⚠ `compile` 默认不导出，须 `-e ir`；Front 退出码恒 0，判据 = module 产物 mtime 重写）。
 
 ## 4. 调用方工程接入（测试/业务工程的 .jsonc）
 
@@ -130,7 +144,7 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 
 `lib` 两种形态：
 - **字符串直给**（csharp_mono 用）：相对包路径，CVM 从插件原位加载——适合依赖树深/需同目录 BCL 的插件。
-- **对象形态** `{ "dir": "lib", "select": "auto" }`（echo 用）：`PluginLibExportManager` 四级回退求值平台库并**拷贝**到 `out/export/<模块>/plugins/<id>/`——适合单 dll 轻量插件（⚠ `TopDirectoryOnly` 不递归，多级依赖树会缺文件）。对象形态成功路径上，**同趟 `AtSignLabelBuildManager` 构建部署的 frontend 产物（如 `SLAtSign.dll`）也会被拷入 `plugins/<id>/` 并追加进导出 module.json 的 `plugins[].libs` 做路径关联**——纯关联记录（CVM 装配只消费 `lib` 主库）：运行期插件 dll 从包内加载后，同目录的 frontend 产物即可被其运行时按裸名定位；字符串直给（原位加载）不触发该关联。
+- **对象形态** `{ "dir": "lib", "select": "auto" }`（echo 用）：`PluginManager`（PluginLib 导出段）四级回退求值平台库并**拷贝**到 `out/export/<模块>/plugins/<id>/`——适合单 dll 轻量插件（⚠ `TopDirectoryOnly` 不递归，多级依赖树会缺文件）。对象形态成功路径上，**同趟 `PluginManager`（AtSignLabel 构建段）构建部署的 frontend 产物（如 `SLAtSign.dll`）也会被拷入 `plugins/<id>/` 并追加进导出 module.json 的 `plugins[].libs` 做路径关联**——纯关联记录（CVM 装配只消费 `lib` 主库）：运行期插件 dll 从包内加载后，同目录的 frontend 产物即可被其运行时按裸名定位；字符串直给（原位加载）不触发该关联。
 
 ## 5. 新插件接入 checklist
 
@@ -194,7 +208,7 @@ csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\ou
 | **C 侧管理器/注册表 API** | `csimple_lang/src/vm/plugin/sl_plugin.h` | `SLPluginPackage`（manifest C 结构）、registry `register/find_by_id/find_by_capability`、mgr 四阶段 `load/enter/exit/unload`、`SLPluginState` 状态机 |
 | **CVM 激活链**（`plugin:` 前缀 → capability） | `csimple_lang/src/vm/assembly/sl_runtime_assembly.c:850` | `sl_runtime_assembly_register_plugin_system_call`：`cvmFunction = "plugin:<cap>"` → registry 查 capability → 隐式 enter → `get_capability` 取 exec → 直注册系统函数 |
 | **Front 侧单 JSON 契约**（DTO 字段权威） | `simple_language/source/Front/Compile/Parse/PluginFrontendParser.cs` | `PluginLabelRequest`/`PluginLabelParse`/`PluginLabelBuild` 三个 DTO（小驼峰键逐字对齐）；`FindPluginRootById` id 索引路由 |
-| **Front 侧 lib 解析/拷贝** | `simple_language/source/Front/Export/PluginLibExportManager.cs` | lib 对象形态 `{dir, select}` 四级回退 + 拷入包内 `plugins/<id>/` + `plugins[].libs` 关联 |
+| **Front 侧插件统一处理**（lib 解析/拷贝 + AtSignLabel 构建分发） | `simple_language/source/Front/Export/PluginManager.cs` | lib 对象形态 `{dir, select}` 四级回退 + 拷入包内 `plugins/<id>/` + `plugins[].libs` 关联（同趟 AtSignLabel 构建产物一并拷入） |
 | **设计总纲**（每个字段的为什么） | `csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md` | Part I §5 manifest / §6.4 四阶段 / §7 ABI 契约 / §9 降级 / §10.1 激活；Part II §A20 `@tag{}` 全规 |
 
 **契约总原则**（写任何一侧代码前记住）：
@@ -374,50 +388,46 @@ SL_PLUGIN_EXPORT void myplug_unload(void)
 - **多 capability**：`s_caps[]` 加条目 + `get_capability` 加匹配分支即可。
 - **构建**：抄 `echo/build-echo.ps1`（探测 MSVC x64 → `cl /LD` → 产物落 `cvm/lib/windows-x64/`，`-DeployDir` 一键拷进测试模块包）；或挂 vcxproj 走 sln（csharp_mono 形态）。
 
-### 8.2 frontend Parse/Build 双契约骨架（范本：`csharp_mono/frontend/`）
+### 8.2 frontend Parse/Build 双契约骨架（范本：`csharp_mono/frontend/src/`，原生 C）
 
-frontend 工程两个**静态类、静态方法、单 JSON 进出**（netstandard2.0，零第三方依赖，MiniJson 自带）；插件命名空间自定，`plugin.jsonc` 三键声明入口：
+frontend 工程 = **纯 C99、三导出、单 JSON 进出**（yyjson vendored，零 .NET 依赖；🔥 2026-10-21 起标准形态，Front 经 NativeLibrary 直调，Native AOT 发布可用）：
 
-```csharp
-// 契约铁律（Front 侧 PluginFrontendParser 反射约定）：
-// 1. public static string 方法、单 string 参数、返回 string——永不返回 null、永不抛异常
-//    （任何失败折叠为 JSON 响应里的 ok=false / kind=...，由 Front 分流 LID）；
-// 2. 键名小驼峰，与 PluginLabelRequest / PluginLabelParse / PluginLabelBuild DTO 逐字对齐；
-// 3. 只接块原文与通道表，不碰 SL 的 AST/符号表（T6）。
+```c
+/* 契约铁律（Front 侧 PluginFrontendParser 三导出约定，sl_frontend_abi.h）：
+ * 1. int parse/build(const char* request_json, const char** out_result)——
+ *    返回 0 = 契约完成（业务成败看响应 JSON 的 ok/kind）；非 0 = 插件侧
+ *    OOM 等基础设施失败（Front 按加载/调用失败分流）；永不抛异常；
+ * 2. 结果缓冲 malloc 后经 out 指针移交，Front 读毕以同一指针调 free 释放；
+ * 3. 键名小驼峰，与 PluginLabelRequest / PluginLabelParse / PluginLabelBuild
+ *    DTO 逐字对齐；只接块原文与通道表，不碰 SL 的 AST/符号表（T6）；
+ * 4. dllexport 由 SL_FRONTEND_BUILD 宏触发（vcxproj 注入）——MSVC /LD 不自动导出。 */
 
-namespace MyPlugFrontend
+int sl_frontend_parse(const char* request_json, const char** out_result)
 {
-    public static class SLLabelParser          // plugin.jsonc parserType 指向本类
-    {
-        public static string ParseLabel( string requestJson )   // parserMethod 缺省即本名
-        {
-            // 请求：{label, entryName, paramsText, bodyText, headLineCount,
-            //        tailLineCount, inChannels[{target,slVar,slType}], outChannel}
-            //   代码段 = bodyText 按 '\n' 切分后的 [headLineCount, 行数-tailLineCount)，
-            //   是目标语言原文——Front 已初判通道并随请求下发，本层不得重复解析 <-；
-            // 响应：{ok, error, errorLine, source, dll, entry, entryMethod, labelParams}
-            //   source 非空才进构建器；errorLine 用 bodyText 1-based 行号（0=与行无关）。
-            ...
-        }
-    }
-
-    public static class SLLabelBuilder        // plugin.jsonc builderType 指向本类
-    {
-        public static string BuildLabels( string requestJson )  // builderMethod
-        {
-            // 请求：{label, outDir, libDir, entries[{entryName,source}]}（Front 导出期
-            //        分组下发全部条目；libDir = 插件 lib 部署目录，由 Front 解析好）
-            // 响应：{ok, kind, error, dllPath, count}
-            //   kind 五态：success / notFound（外部工具链缺失，Info 级跳过）/
-            //             buildFailed / deployFailed / contract（契约破裂）
-            //   → Front 分流 LID 22135~22138，错误只报一次不中断导出。
-            ...
-        }
-    }
+    /* 请求：{label, entryName, paramsText, bodyText, headLineCount,
+     *        tailLineCount, inChannels[{target,slVar,slType}], outChannel}
+     *   代码段 = bodyText 按 '\n' 切分后的 [headLineCount, 行数-tailLineCount)，
+     *   是目标语言原文——Front 已初判通道并随请求下发，本层不得重复解析 <-；
+     * 响应：{ok, error, errorLine, source, dll, entry, entryMethod, labelParams}
+     *   source 非空才进构建器；errorLine 用 bodyText 1-based 行号（0=与行无关） */
+    ...
 }
+
+int sl_frontend_build(const char* request_json, const char** out_result)
+{
+    /* 请求：{label, outDir, libDir, entries[{entryName,source}]}（Front 导出期
+     *        分组下发全部条目；libDir = 插件 lib 部署目录，由 Front 解析好）
+     * 响应：{ok, kind, error, dllPath, count}
+     *   kind 五态：success / notFound（外部工具链缺失，Info 级跳过）/
+     *             buildFailed / deployFailed / contract（契约破裂）
+     *   → Front 分流 LID 22135~22138，错误只报一次不中断导出 */
+    ...
+}
+
+void sl_frontend_free(const char* result) { free((void*)result); }
 ```
 
-完整可抄实现：`SLLabelParser.cs`（块体三段扫描 + `using/import` 指令行吸收 + 词法感知 `<-` 三态判定 + 目标源码生成）与 `SLLabelBuilder.cs`（csc 探测 → 临时目录写 .cs（UTF-8 BOM）→ 合并编译 → 部署 libDir + kind 五态回传）。`MapCSType`（slType → 目标类型映射白名单）与 `IsIdent` 是契约防御的样板。
+完整可抄实现（两插件同源、可直接复制裁剪）：`sl_label_parse.c`（块体三段扫描 + `using/import` 指令行吸收 + 词法感知 `<-` 三态判定 + 目标源码生成）与 `sl_label_build.c`（工具链探测 → 临时目录写源文件 → 合并编译 → 部署 libDir + kind 五态回传）；`MapCSType`/`MapJavaType`（slType → 目标类型映射白名单）与 `IsIdent` 是契约防御的样板；`sl_cjson.c`（yyjson + sbuf）与 `sl_win.c`（Win32 支撑）按需原样复用。
 
 ### 8.3 slang 四件套样例（最小可编译）
 
@@ -436,7 +446,7 @@ slang/
     "returnType": "Float64", "params": [ "Float64" ],
     "cvmFunction": "plugin:myplug" }        // ← 路由键：plugin:<capability name>
 ],
-"references": [ { "path": "../../../simple_language/out/export/Core" } ]
+"references": [ { "path": "./lib/Core.module.slb" } ]
 ```
 
 `cvmFunction = "plugin:myplug"` 是整条链路的缝合点：CVM 装配期见此前缀 → registry 查 `systemCall/myplug` capability → 隐式 load+enter → `get_capability` 取 `myplug_exec` → 直注册为该系统函数（§8.0 激活链真源）。
@@ -451,8 +461,8 @@ slang/
 ③ plugin.jsonc §2 骨架填 id/prefix（含尾下划线！）/capabilities/platform
 ④ cvm 代码    §8.1 骨架改前缀 → exec 业务 → build-<name>.ps1 产 dll 到
               cvm/lib/<os>-<arch>/
-⑤ （signLabel 才需要）frontend 工程：§8.2 双契约 + plugin.jsonc 四键
-              （frontendLibs/parserType/builderType/builderMethod）
+⑤ （signLabel 才需要）frontend 工程：§8.2 三导出 + plugin.jsonc frontendNative 段
+              （lib/parseFn/buildFn/freeFn）
 ⑥ slang       §8.3 四件套 → `e -p slang\<Module>.sp` 导出 ref module
 ⑦ 接入        调用方工程 jsonc：plugins 段（§4，lib 两形态择一）+ AtSign 哨兵两条
 ⑧ 验证        compile -e ir → run module.json → passed=N failed=0

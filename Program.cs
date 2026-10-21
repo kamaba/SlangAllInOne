@@ -1,4 +1,5 @@
 using System.Text;
+using SimpleLanguage.ExportLanguage;
 using SlangAllInOne.Backend;
 using SlangAllInOne.FrontEnd;
 using SlangAllInOne.Lsp;
@@ -9,9 +10,11 @@ namespace SlangAllInOne;
 
 /// <summary>
 /// SlangAllInOne: unified FrontEnd (SimpleLanguage compiler) + Backend (C VM)
-/// host CLI. The headline feature is `run`: compile a project in-process, keep
-/// the exported SLIR package JSON in memory, and hand it straight to the C VM
-/// memory entry -- no module.json write/read round trip.
+/// host CLI. The headline feature is `run`: compile a project in-process and
+/// hand the package to the C VM -- where it goes is picked by the three-state
+/// front-to-back handoff parameter (--export-mode): export to the configured
+/// directory, export to a temporary folder (<cwd>\_temp\), or keep the
+/// uncompressed SLB binary in memory (default) with no disk write.
 /// </summary>
 internal static class Program
 {
@@ -21,7 +24,10 @@ internal static class Program
         public string ProjectPath = "";
         public string ModuleJsonPath = "";
         public bool Test = false;
-        public bool InMemory = false;
+        /// <summary>导出三态（--export-mode output|temp|memory）；ExportModeSet 区分
+        /// "未指定"（compile 缺省 output / run 缺省 memory）与显式指定。</summary>
+        public EExportMode ExportMode = EExportMode.OutputDir;
+        public bool ExportModeSet = false;
         public bool NoBanner = false;
         public bool ForceRun = false;
         public bool DebugVm = false;
@@ -77,7 +83,7 @@ internal static class Program
         return opts.Command switch
         {
             "compile" => RunCompile(opts),
-            "run" => RunInMemory(opts),
+            "run" => RunProject(opts),
             "run-disk" => RunDisk(opts),
             "info" => RunInfo(opts),
             "version" => RunVersion(opts),
@@ -89,35 +95,46 @@ internal static class Program
 
     // ==== commands ====
 
-    // compile: Front in-process compile (disk export unless --in-memory)
+    // compile: Front in-process compile. Export three states via --export-mode
+    // (default output = disk export to the configured directory).
     static int RunCompile(Options opts)
     {
-        var result = FrontendService.Compile(opts.ProjectPath, opts.InMemory, opts.OptimizeLevel, opts.Format);
+        var mode = opts.ExportModeSet ? opts.ExportMode : EExportMode.OutputDir;
+        var result = FrontendService.Compile(opts.ProjectPath, mode, opts.OptimizeLevel, opts.Format);
         if (!result.Success)
             return 1;
-        if (opts.InMemory)
+        if (mode == EExportMode.Memory)
         {
-            if (result.PackageBytes != null)
-                Console.WriteLine($"Package SLB built in memory ({result.PackageBytes.Length} bytes), baseDir: {result.ExportDir}");
-            else
-                Console.WriteLine($"Package JSON built in memory ({result.PackageJson!.Length} chars), baseDir: {result.ExportDir}");
+            Console.WriteLine($"Package SLB built in memory ({result.PackageBytes!.Length} bytes, uncompressed), baseDir: {result.ExportDir}");
+            if (result.PackageJson != null)
+                Console.WriteLine($"Package JSON built in memory ({result.PackageJson.Length} chars; json-family format)");
+        }
+        else
+        {
+            Console.WriteLine($"Exported SLB: {result.ModuleSlbPath}");
+            if (result.ModuleJsonPath != null)
+                Console.WriteLine($"Exported JSON debug copy: {result.ModuleJsonPath}");
         }
         Console.WriteLine("Compile completed.");
         return 0;
     }
 
-    // run: Front in-memory compile -> C VM memory entry (no module.json IO)
-    static int RunInMemory(Options opts)
+    // run: Front compile + C VM. Three-state handoff (--export-mode):
+    // - memory (default): uncompressed SLB bytes -> C VM memory entry (no disk IO)
+    // - output / temp: disk export -> C VM runs the exported module from disk
+    //   (slb path preferred; --debug-server and friends apply, same as run-disk)
+    static int RunProject(Options opts)
     {
         string? repoRoot = GetRepoRoot();
+        var mode = opts.ExportModeSet ? opts.ExportMode : EExportMode.Memory;
 
-        // Step 1: compile with the Front, keeping the package (json text or SLB
-        // bytes, per --format) in memory
-        var result = FrontendService.Compile(opts.ProjectPath, inMemory: true, opts.OptimizeLevel, opts.Format);
+        // Step 1: compile with the Front (disk export for output/temp,
+        // in-memory SLB bytes for memory)
+        var result = FrontendService.Compile(opts.ProjectPath, mode, opts.OptimizeLevel, opts.Format);
         if (!result.Success)
             return 1;
 
-        Console.WriteLine($"=== C VM run (in-memory) ===");
+        Console.WriteLine($"=== C VM run ({(mode == EExportMode.Memory ? "in-memory" : mode == EExportMode.TempDir ? "temp-dir" : "output-dir")}) ===");
         Console.WriteLine($"BaseDir: {result.ExportDir}");
 
         // Step 2: locate the C VM DLL
@@ -137,28 +154,57 @@ internal static class Program
         if (Directory.Exists(projectDir))
             Environment.CurrentDirectory = projectDir;
 
-        // Step 4: hand the package straight to the VM (SLB bytes or json text)
-        int flags = 0;
-        if (opts.NoBanner) flags |= CvmInterop.FlagNoBanner;
-        if (opts.DebugVm) flags |= CvmInterop.FlagDebug;
-        if (opts.ForceRun) flags |= CvmInterop.FlagForceRun;
-        if (opts.StrictPlugins) flags |= CvmInterop.FlagStrictPlugins;
-        if (opts.Test) flags |= CvmInterop.FlagTest;
-
+        // Step 4: hand the package to the VM
         int exitCode;
-        if (result.PackageBytes != null)
+        if (mode == EExportMode.Memory)
         {
-            Console.WriteLine($"SLB package: {result.PackageBytes.Length} bytes (binary in-memory chain)");
+            // 状态三：SLB 字节（不压缩）直传内存入口
+            if (result.PackageBytes == null)
+            {
+                Console.WriteLine("In-memory package bytes missing (Export phase skipped).");
+                return 1;
+            }
+            int flags = 0;
+            if (opts.NoBanner) flags |= CvmInterop.FlagNoBanner;
+            if (opts.DebugVm) flags |= CvmInterop.FlagDebug;
+            if (opts.ForceRun) flags |= CvmInterop.FlagForceRun;
+            if (opts.StrictPlugins) flags |= CvmInterop.FlagStrictPlugins;
+            if (opts.Test) flags |= CvmInterop.FlagTest;
+
+            Console.WriteLine($"SLB package: {result.PackageBytes.Length} bytes (binary in-memory chain, uncompressed)");
             exitCode = cvm.RunInMemoryBinary(result.PackageBytes, result.ExportDir, flags, opts.ProgramArgs);
         }
         else
         {
-            exitCode = cvm.RunInMemory(result.PackageJson!, result.ExportDir, flags, opts.ProgramArgs);
+            // 状态一/二：磁盘导出 -> C VM 从落盘产物运行（slb 优先直读；
+            // format=binary 无 json 落盘时同样成立），走经典 CLI 路径
+            var modulePath = result.ModuleSlbPath ?? result.ModuleJsonPath;
+            if (modulePath == null || !File.Exists(modulePath))
+            {
+                Console.WriteLine($"Exported module package not found: {modulePath}");
+                return 1;
+            }
+
+            var cliArgs = new List<string> { "run", modulePath };
+            if (opts.Test) cliArgs.Add("-test");
+            if (opts.NoBanner) cliArgs.Add("--no-banner");
+            if (opts.ForceRun) cliArgs.Add("--force-run");
+            if (opts.DebugVm) cliArgs.Add("--debug");
+            if (opts.StrictPlugins) cliArgs.Add("--strict-plugins");
+            if (opts.DebugServer > 0) cliArgs.Add($"--debug-server={opts.DebugServer}");
+            if (opts.ProgramArgs.Count > 0)
+            {
+                cliArgs.Add("--");
+                cliArgs.AddRange(opts.ProgramArgs);
+            }
+
+            Console.WriteLine("csimple_lang " + string.Join(' ', cliArgs));
+            exitCode = cvm.RunCli(cliArgs);
         }
         if (exitCode != 0)
             Console.WriteLine($"C VM run failed, exit code: {exitCode}");
         else
-            Console.WriteLine("Compile (in-memory) + C VM run completed.");
+            Console.WriteLine("Compile + C VM run completed.");
         return exitCode;
     }
 
@@ -278,9 +324,15 @@ internal static class Program
             {
                 opts.Test = true;
             }
-            else if (a == "--in-memory")
+            else if (a == "--export-mode" && i + 1 < args.Length)
             {
-                opts.InMemory = true;
+                // 导出三态（前后端联合接口）：output|temp|memory
+                //（compile 缺省 output、run 缺省 memory；显式指定后两命令同值）
+                var m = ParseExportMode(args[++i]);
+                if (m == null)
+                    return null;
+                opts.ExportMode = m.Value;
+                opts.ExportModeSet = true;
             }
             else if (a == "--no-banner")
             {
@@ -408,6 +460,28 @@ internal static class Program
         return null;
     }
 
+    /// <summary>--export-mode 取值解析：output|temp|memory（大小写不敏感）；
+    /// 非法值返回 null（调用方报错退出）。</summary>
+    static EExportMode? ParseExportMode(string value)
+    {
+        var key = (value ?? string.Empty).Trim().ToLowerInvariant();
+        switch (key)
+        {
+            case "output":
+            case "outputdir":
+                return EExportMode.OutputDir;
+            case "temp":
+            case "tempdir":
+                return EExportMode.TempDir;
+            case "memory":
+            case "in-memory":
+                return EExportMode.Memory;
+            default:
+                Console.WriteLine($"Unknown export mode: {value} (expected output|temp|memory)");
+                return null;
+        }
+    }
+
     static int PrintHelp()
     {
         Console.WriteLine(@"
@@ -415,10 +489,13 @@ Usage: slang <command> [options]
 
 Commands:
   compile <project>         Compile a project with the Front (in-process).
-                             Disk export by default; --in-memory keeps the
-                             package JSON in RAM.
-  run <project>             Compile in memory + run on the C VM directly
-                             (Front IR -> memory hand-off -> VM, no module.json).
+                             Export target per --export-mode (default output =
+                             the configured export directory).
+  run <project>             Compile + run on the C VM. Handoff is picked by
+                             --export-mode: memory (default, no disk write,
+                             uncompressed SLB straight to the VM), output
+                             (export then run from disk) or temp (export to
+                             <cwd>\_temp\<module>\ then run from there).
   run-disk <module.json>    Run an exported module.json via the C VM (classic).
   info <module.json>        Show module metadata via the C VM.
   version                   Show Front/Backend versions.
@@ -452,17 +529,25 @@ Options:
                              today: the entry switch is not implemented yet,
                              both disk and memory paths run the _main_ entry)
   -O0..-O3                  Front optimize level
-  --in-memory               compile: keep the package JSON in memory
+  --export-mode <output|temp|memory>
+                             Export target (three states, front-to-back
+                             handoff): output = the configured export
+                             directory (compile default); temp = <cwd>\_temp\
+                             <module>\ temporary folder; memory = no disk
+                             write, the uncompressed SLB binary stays in RAM
+                             and goes straight to the C VM (run default)
   --format <json|binary|binary+json>
-                             Export format: binary = SLB; binary+json = SLB
-                             main + .module.json debug copy (R15)
+                             Export format: binary = SLB only; json /
+                             binary+json = SLB (always written) + .module.json
+                             debug copy (R15)
   --no-banner               Suppress banners
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
   --strict-plugins          Treat plugin disable as a C VM error
-  --debug-server=<port>     run-disk: start the SLDP debug server on
-                             127.0.0.1:<port> (NDJSON over TCP; the VSCode
-                             extension's DAP adapter connects to it)
+  --debug-server=<port>     run-disk / run --export-mode output|temp: start
+                             the SLDP debug server on 127.0.0.1:<port>
+                             (NDJSON over TCP; the VSCode extension's DAP
+                             adapter connects to it)
   --cvm <Debug|Release>     C VM build tree to use (default Debug)
   -- [args...]              Everything after -- goes to Project._inputArgs
 
@@ -470,9 +555,10 @@ Examples:
   slang new project MyApp
   slang run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest
   slang run SlangAllInOne\SLangCore\test\ExpendTest\ProjectTest -t
+  slang run MyProject --export-mode temp
   slang run MyProject -- arg1 arg2
   slang compile MyProject
-  slang compile MyProject --in-memory
+  slang compile MyProject --export-mode memory
   slang compile MyProject --format binary+json
   slang pack-modules --config Release
   slang run-disk SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json

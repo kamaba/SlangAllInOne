@@ -14,7 +14,7 @@ Project
         Sqlite3Test.fun()
         CsvTest.fun();
         ModuleGlobalTest.fun()
-        
+
         # IsolateTest 置于末尾:其 IO 组存在遗留缺陷(闭包捕获 string 到 worker 为空,
         # worker 报错不可发送导致 VM 提前退出),放最后不影响其余测试执行
         #ComponentTest.fun()
@@ -36,6 +36,13 @@ Project
         MqttTest.fun()
         # SLangServer P1 验收（T1-T8，端口 19401-19408；前置 SLangServer 模块编译）
         ServerP1Test.fun()
+        # SLangServer P1.5 上传验收（T1-T7，端口 19411-19413；前置 SLangServer 模块编译）
+        ServerP15Test.fun()
+        # SLangServer P2 验收（管道/流式/静态/通配/wsEvents，端口 19421-19424）
+        ServerP2Test.fun()
+        # SLangServer P3 验收（OpenAPI 文档/auth 三挂法/Jwt/importOpenApi/
+        # maxConnections，端口 19431-19435）
+        ServerP3Test.fun()
     }
     _before_()
     {

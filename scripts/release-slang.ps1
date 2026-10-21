@@ -281,6 +281,11 @@ Write-Step 'VSCode extension (.vsix) - optional third asset, SOFT-FAIL'
 # both archives pick vsix\ up automatically) and attach as a third GitHub
 # Release asset later. Any failure here only WARNS - the dual-platform main
 # line never aborts on the optional asset.
+# 2026-10-20 user directive: the vsix EMBEDS the release runtimes
+# (runtime/win32-x64|linux-x64, mirrored from package/<plat>-release with the
+# vsix\ staging dir excluded) - installing the extension ships the slang app
+# itself, no separate download. Per-platform soft-degrade: a missing package
+# only WARNS; none at all = plain vsix as before.
 try {
     if (-not (Test-Path (Join-Path $VscodePluginDir 'package.json'))) { throw 'slang_vscode_plugin\package.json not found' }
     # NOTE: do NOT use Get-Content | ConvertFrom-Json here - under a -File
@@ -302,17 +307,37 @@ try {
     $needBuild = $true
     if ($SkipBuild -and (Test-Path $builtVsix)) {
         $needBuild = $false
-        Write-Host '  -SkipBuild: reusing the existing .vsix' -ForegroundColor Yellow
+        Write-Host '  -SkipBuild: reusing the existing .vsix (runtime embedding only happens on build)' -ForegroundColor Yellow
     }
+    $bundledPlats = @()
     if ($needBuild) {
         if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'node not found in PATH' }
         Push-Location $VscodePluginDir
+        $runtimeRoot = Join-Path $VscodePluginDir 'runtime'
         try {
             if (-not (Test-Path 'node_modules')) {
                 & npm install --no-audit --no-fund
                 if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
             }
             if (Test-Path $builtVsix) { Remove-Item $builtVsix -Force -Confirm:$false }
+
+            # Embed release runtimes into the vsix (runtime/<plat>-x64/,
+            # 09 §3): installing the extension = slang app ready to run.
+            # robocopy /XD vsix excludes the staging dir inside the packages.
+            if (Test-Path $runtimeRoot) { Remove-Item $runtimeRoot -Recurse -Force -Confirm:$false }
+            foreach ($rt in @(@($PkgWinDir,   'win32-x64', 'slang.exe'),
+                              @($PkgLinuxDir, 'linux-x64', 'slang'))) {
+                $srcDir = $rt[0]; $platDir = $rt[1]; $exeName = $rt[2]
+                if (Test-Path (Join-Path $srcDir $exeName)) {
+                    $dstDir = Join-Path $runtimeRoot $platDir
+                    & robocopy $srcDir $dstDir /E /XD vsix /NFL /NDL /NJH /NJS /NP | Out-Null
+                    if ($LASTEXITCODE -ge 8) { throw "robocopy failed for $platDir (exit $LASTEXITCODE)" }
+                    $bundledPlats += $platDir
+                } else {
+                    Write-Host "  runtime: $srcDir not found - vsix ships without $platDir (soft-degrade)" -ForegroundColor Yellow
+                }
+            }
+
             # vscode:prepublish (package.json) makes this self-contained:
             # tsc + esbuild run inside vsce before bundling
             & npx vsce package --no-dependencies
@@ -322,7 +347,11 @@ try {
                 Move-Item $vsceName $VsixName -Force
             }
             if (-not (Test-Path $builtVsix)) { throw "expected .vsix not produced: $builtVsix" }
-        } finally { Pop-Location }
+        } finally {
+            # runtime/ is packaging-time only (plugin .gitignore) - never leave the tree dirty
+            if (Test-Path $runtimeRoot) { Remove-Item $runtimeRoot -Recurse -Force -Confirm:$false }
+            Pop-Location
+        }
     }
     $VsixPath  = $builtVsix
     $sizeVsix  = [math]::Round((Get-Item $VsixPath).Length / 1KB, 1)
@@ -330,7 +359,8 @@ try {
         New-Item -ItemType Directory -Path (Join-Path $pkg 'vsix') -Force | Out-Null
         Copy-Item $VsixPath (Join-Path $pkg 'vsix') -Force
     }
-    Write-Ok "vsix built: $VsixName ($sizeVsix KB) -> vsix\ in both packages"
+    $rtNote = if ($bundledPlats.Count -gt 0) { ", runtime embedded: $($bundledPlats -join ' + ')" } else { '' }
+    Write-Ok "vsix built: $VsixName ($sizeVsix KB$rtNote) -> vsix\ in both packages"
 } catch {
     $VsixPath = $null
     Write-Host "  WARNING: VSCode extension not shipped ($_)" -ForegroundColor Yellow

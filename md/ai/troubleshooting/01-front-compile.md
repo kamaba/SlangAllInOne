@@ -343,3 +343,18 @@
 2. 上述重载风格与 Python 的“通过约定函数名绑定语义”思路类似，但以本项目命名约定为准。
 
 > 新增语法规则请直接追加在本节，不再维护独立 `语法规则.md`。
+
+### [2026-10-21] SLangServer P3 新写 Docs/Jwt/Plugins/Router 四文件 File 层 NRE 五连：for 分号 / $ 插值 / 长字面量 "+" 链截断 / out·params 关键字 / ret 跨行链裸标识符
+- 现象：P3 新代码（Docs.sl/Jwt.sl/Plugins.sl 扩展/Router.sl 扩展）编译全部报「File 解析异常: Object reference not set to an instance of an object」——无行号、无 LID、Node 层全过，File 层（StructParse）NRE；五个独立根因逐一叠加，每修一个下一个才显形。
+- 首个异常阶段：File（StructParseToSyntax 树构建）。
+- 根因与判定特征（按显形顺序）：
+  1. **`for` 三段分隔符写成 C 风格分号**：`for Int32 i = 0; i < n; i = i + 1`（SL 语法是**逗号**）——静默 NRE 无任何报错，报错点在文件级；正则 `for Int32 \w+ = 0;` 扫源即定位（本轮 20 处：Docs 13/Jwt 4/Plugins 1/Router 2）；
+  2. **`$` 字符串插值前缀**：字面量任何位置出现 `$`（`"$ref"` / `"$"+` 拆分拼接均炸——`$` 后贪婪吞 token）→ FileExpressFormatError「在$" + 的表达式，不合法」——这是五坑中**唯一带精确定位**的报错；规避 = ByteBuffer 构造 "$" 单字符（`Docs._dollar()`）或 JS 侧 `String.fromCharCode(36)`；
+  3. **长字符串字面量 "+" 链求值截断**：`ret "段1" + "段2" + ...`（跨行续链）运行期**仅首段存活**（实测 pageJs 21 字符 = 首段；变量链 5 段/局部累加 20 段正常——字面量链特有，编译期零报错）；规避 = `StringBuilder.append` 逐段追加；
+  4. **`out` / `params` 关键字撞名**：`out`（String.toFormat params 先例已占用）、`params`（变参关键字）作局部变量名 → `string out = ...` 报 NodeStructParseN「'=' 后缺少赋值表达式」——**报错信息与真实原因（关键字撞名）相距甚远**；改名即过；
+  5. **`ret 方法调用()` 跨行续 "+" 链中段裸标识符**：链中段出现局部变量名（`+ d +`）被 File 层误判类名（MetaCoreNotFoundMetaTypeByFMClassDefine「类名[d]没有找到」）；规避 = 方法调用结果先拆局部变量、拼接用纯变量或纯字面量短链。
+- 排障路径：NRE 无报错信息 → 独立单文件探针工程（P3Probe.sp/.jsonc/.sl，references 指向 SLangServer slb）二分复现——逐方法/逐段拷贝进出，File 层通过与否即分割点；**每刀只改一个变量**，五根因 2 小时内全部闭环。
+- 修复点（全部 SL 侧规避，未动 Front）：Docs/Jwt/Plugins/Router/ServerP3Test 五文件——① 20 处 for 分号→逗号；② `"$ref"` → `Docs._dollar()` 拼接 + JS `String.fromCharCode(36)`；③ `_htmlPage/_pageCss/_pageJs` 重写 StringBuilder.append；④ `out`→`res/bufOut`、`params`→`paramsNode`；⑤ mkJwt/`_pageJs` 拆局部变量。
+- 如何快速验证：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp -e ir --format binary+json --no-banner` export success；`package\win32-debug\csimple_lang.exe run --no-banner .\ProjectTest2\ProjectTest.module.json` ServerP3Test 33 项全 OK + P1/P1.5/P2 回归全绿。
+- 预防建议：① 新写 .sl 的 for 循环先对照既有文件（全库无一处分号写法）；② 含 "$" 的 JSON/JS 文本一律运行期构造，勿写字面量；③ 超过 ~3 段的字符串拼接一律 StringBuilder（长字面量 "+" 链是静默数据截断，比编译错误危险）；④ `out`/`params`/`data`/`base`/`get`/`set` 进关键字黑名单心算——见到「'=' 后缺少赋值表达式」先查变量名撞关键字再查表达式；⑤ File 层 NRE 无报错时立即上单文件探针工程二分——比读 StructParseToSyntax 源码快一个量级；⑥ 「类名[X]没有找到」若 X 是小写短名，先怀疑链中段裸局部变量被误判，而非真缺定义。
+- 详见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §16 复盘 5。

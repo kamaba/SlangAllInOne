@@ -5,7 +5,11 @@
 //
 //  范围（slang_vscode_plugin\07_language_server_lsp.md）：
 //   L1（2026-10-19）诊断推送 + 全局符号补全；
-//   L2（2026-10-19）成员感知补全（IDENT. → 类成员）+ 悬停 + 定义跳转 + 文档大纲。
+//   L2（2026-10-19）成员感知补全 + 悬停 + 定义跳转 + 文档大纲；
+//      （2026-10-21 L2 增强：类型感知成员补全——接收者解析：局部变量/参数声明、
+//        var 推断、方法返回类型、链式推进、限定名聚合、this、构造调用、数组内建
+//        length；public 过滤：private/跨模块 protected 字段与 private 类不外显）；
+//   L3（2026-10-19）格式化 + 重命名。
 //
 //  数据模型（module.json / 内存包 json 实测）：
 //   - classList：{id, name, fullName, sourcePath, metaClassKind, baseClassId,
@@ -50,9 +54,13 @@ internal sealed class LspServer
     {
         public required string Name;
         public string Type = "";
+        public int Flags;                                    // SLFieldPackage.flags：1=private 2=public 4=extern 8=protected 16=const 32=static
         public string SourcePath = "";
         public int BeginLine = 0;
         public int BeginChar = 0;
+        public bool IsPrivate => (Flags & 1) != 0;
+        public bool IsProtected => (Flags & 8) != 0;
+        public bool IsStatic => (Flags & 32) != 0;
     }
 
     private sealed class ClassInfo
@@ -61,10 +69,12 @@ internal sealed class LspServer
         public required string FullName;
         public string SourcePath = "";
         public int Kind = 7;                                 // CompletionItemKind（Class）
+        public int Permission;                               // SLClassPackage.permission：0=Null 1=Export 2=Public 3=Protected 4=Private
         public List<MethodInfo> StaticMethods = new();
         public List<MethodInfo> InstanceMethods = new();
         public List<FieldInfo> Fields = new();
         public bool IsProject;                               // 工程自身（定义跳转基准=工程目录）
+        public bool IsPrivateClass => Permission == 4 && !IsProject;
     }
 
     private sealed class PackageSymbols
@@ -98,6 +108,7 @@ internal sealed class LspServer
     private readonly Dictionary<string, PackageSymbols> _projectPackages = new(); // spPath → 工程符号
     private readonly Dictionary<string, PackageSymbols> _refPackages = new();     // module.json 路径 → 引用符号
     private readonly Dictionary<string, string> _refJsonRoot = new();             // module.json 路径 → 源根（定义跳转解析基准）
+    private readonly Dictionary<string, Dictionary<string, List<string>>> _refSourceIndex = new(); // 源根 → .sl 基名 → 路径列表（模块名 ≠ 源目录名兜底索引）
     private readonly Dictionary<string, ProjectInfo> _symbolProjects = new();
     private readonly Dictionary<string, HashSet<string>> _publishedFiles = new();
     private int _diagVersion = 0;
@@ -893,6 +904,7 @@ internal sealed class LspServer
                     FullName = c.TryGetProperty("fullName", out var f) && f.ValueKind == JsonValueKind.String ? f.GetString() ?? name : name,
                     SourcePath = c.TryGetProperty("sourcePath", out var sp) && sp.ValueKind == JsonValueKind.String ? sp.GetString() ?? "" : "",
                     Kind = MapClassKind(c),
+                    Permission = c.TryGetProperty("permission", out var pm) && pm.ValueKind == JsonValueKind.Number ? pm.GetInt32() : 0,
                     IsProject = isProject,
                 };
                 if (c.TryGetProperty("staticMethodList", out var sm) && sm.ValueKind == JsonValueKind.Array)
@@ -918,6 +930,7 @@ internal sealed class LspServer
                             Name = ff.TryGetProperty("name", out var fn) && fn.ValueKind == JsonValueKind.String ? fn.GetString() ?? "" : "",
                             Type = ff.TryGetProperty("typeDef", out var ftd) && ftd.ValueKind == JsonValueKind.Object && ftd.TryGetProperty("className", out var fcn)
                                 && fcn.ValueKind == JsonValueKind.String ? fcn.GetString() ?? "" : "",
+                            Flags = ff.TryGetProperty("flags", out var fg) && fg.ValueKind == JsonValueKind.Number ? fg.GetInt32() : 0,
                         };
                         // 字段 express[0].debugInfo 常带定义位置（实测 Console.colorBlack beginLine=188）
                         if (ff.TryGetProperty("express", out var ex) && ex.ValueKind == JsonValueKind.Array && ex.GetArrayLength() > 0
@@ -1012,21 +1025,32 @@ internal sealed class LspServer
         }
         var table = BuildMergedTable(project);
 
-        // 成员感知：光标前是 `IDENT.`（同一行、允许空白）→ 类成员补全
+        // 成员感知：光标前是 `<接收者>.`（含 `接收者.部分词`）→ 接收者类型成员补全。
+        // 接收者 = 类名（静态）/ this / 局部变量与参数声明 / var 推断 / 方法调用返回类型 /
+        // 限定名聚合（SLang.Server.onGet 链）——解析失败不回落全局（作用域正确性优先）。
         string text = GetDocText(uri);
         if (parms.TryGetProperty("position", out var pos))
         {
             int offset = PositionToOffset(text, pos);
-            string prefix = text[..Math.Min(offset, text.Length)];
-            var memberMatch = Regex.Match(prefix, @"([A-Za-z_][A-Za-z0-9_]*)\s*\.\s*$");
-            if (memberMatch.Success)
+            var chain = ExtractMemberChain(text, offset);
+            if (chain != null)
             {
-                string qualifier = memberMatch.Groups[1].Value;
-                if (table.ByName.TryGetValue(qualifier, out var cls))
+                var receiver = ResolveReceiverType(text, offset, chain, table);
+                if (receiver != null)
                 {
-                    AddClassMembers(cls, Add);
+                    if (receiver.Builtin != null)
+                    {
+                        foreach (var (label, kind, detail) in receiver.Builtin)
+                        {
+                            Add(label, kind, detail);
+                        }
+                    }
+                    else if (receiver.Cls != null)
+                    {
+                        AddClassMembers(receiver.Cls, Add, receiver.IsStatic);
+                    }
                 }
-                return new { isIncomplete = false, items }; // 未知限定名：不回落全局
+                return new { isIncomplete = false, items }; // 接收者不可解析：不回落全局
             }
         }
 
@@ -1080,20 +1104,563 @@ internal sealed class LspServer
         }
     }
 
-    private static void AddClassMembers(ClassInfo cls, Action<string, int, string> add)
+    /* 类成员补全项。staticContext：true=类名静态访问（只静态方法+静态字段）、
+     * false=实例访问（实例方法+字段）、null=全局补全（两列全收，兼容旧语义）。
+     * 访问级别（public 才提示）：private 字段一律不提示；protected 字段跨模块引用包
+     * 不可见（工程自身类保留）；方法 SLIR 不导出访问级别（SL 默认 public）全收。 */
+    private static void AddClassMembers(ClassInfo cls, Action<string, int, string> add, bool? staticContext = null)
     {
-        foreach (var m in cls.StaticMethods)
+        if (cls.IsPrivateClass)
         {
-            add(m.Name, 2, m.Signature + " — " + cls.FullName);
+            return; // 引用包 private 类：成员不外显
         }
-        foreach (var m in cls.InstanceMethods)
+        if (staticContext != true)
         {
-            add(m.Name, 2, m.Signature + " — " + cls.FullName);
+            foreach (var m in cls.InstanceMethods)
+            {
+                add(m.Name, 2, m.Signature + " — " + cls.FullName);
+            }
+        }
+        if (staticContext != false)
+        {
+            foreach (var m in cls.StaticMethods)
+            {
+                add(m.Name, 2, m.Signature + " — " + cls.FullName);
+            }
         }
         foreach (var f in cls.Fields)
         {
+            if (f.IsPrivate)
+            {
+                continue;
+            }
+            if (f.IsProtected && !cls.IsProject)
+            {
+                continue; // 跨模块 protected 不可访问
+            }
+            if (staticContext == true && !f.IsStatic)
+            {
+                continue; // 类名静态访问：不提示实例字段
+            }
             add(f.Name, 5, (f.Type.Length > 0 ? f.Type + " " : "") + f.Name + " — " + cls.FullName);
         }
+    }
+
+    // =====================================================================
+    // 接收者类型解析（成员补全核心，2026-10-21）：
+    //   `cfg.`            → cfg 声明类型（局部变量/参数/闭包参数）的实例成员
+    //   `Box.`            → 类名静态成员（L2 原语义）
+    //   `Box(args).`      → 构造调用 → 实例成员
+    //   `make().`         → 方法返回类型成员（裸名/链上）
+    //   `a.b.c.`          → 链式逐段推进（字段类型/方法返回类型）
+    //   `SLang.Server.`   → 限定名聚合（命名空间.类）
+    //   `this.`           → 光标所在类实例成员
+    // =====================================================================
+    private sealed class ReceiverType
+    {
+        public ClassInfo? Cls;                                                   // 解析到的类（Builtin 非空时为 null）
+        public bool IsStatic;                                                    // true=类名静态访问
+        public List<(string Label, int Kind, string Detail)>? Builtin;           // 基元/数组内建成员
+    }
+
+    private sealed class ChainToken
+    {
+        public required string Ident;
+        public string? Args;                                                     // 非 null = 带实参的调用段
+        public bool HasCall => Args != null;
+    }
+
+    /* 光标处符号解析结果（hover/definition 共用）：成员（Owner 保住 FieldInfo
+     * 源位置）或类名链命中（Class 非空）。 */
+    private sealed class SymbolAt
+    {
+        public ClassInfo? Class;      // 类名链命中（SLang.Server / 裸类名）
+        public ClassInfo? Owner;      // 成员所属类
+        public MethodInfo? Method;   // 方法命中（与 Field 互斥）
+        public FieldInfo? Field;      // 字段命中（保住 FieldInfo：源位置不丢）
+    }
+
+    /* 数组内建成员（SLIR 无类条目，`arr.length` 文法内建） */
+    private static readonly List<(string, int, string)> ArrayBuiltinMembers = new()
+    {
+        ("length", 5, "内建 数组长度"),
+    };
+
+    /* 提取光标所在行的成员访问链（`.` 左侧接收者，含可选未完成尾词）。
+     * 形态：IDENT(.IDENT(实参)?)* —— 实参段限本行配对括号（跳字符串）。
+     * 非成员场景（`.` 左非链 / 本行无 `.`）返回 null。
+     * token 流中 '.' 之外的标点为链边界（`=` `;` `(` 等），从尾部回溯取连续链段，
+     * `ret Box().` / `Int32 n = ServerP3Test.rawReq(..).` 均正确截取接收者。 */
+    private static List<ChainToken>? ExtractMemberChain(string text, int offset)
+    {
+        int cursor = Math.Min(offset, text.Length);
+        int lineStart = cursor > 0 ? text.LastIndexOf('\n', cursor - 1) + 1 : 0;
+        // 1) 未完成尾词 + 空白 → 必须 '.'
+        int p = cursor;
+        while (p > lineStart && (char.IsLetterOrDigit(text[p - 1]) || text[p - 1] == '_'))
+        {
+            p--;
+        }
+        int q = p;
+        while (q > lineStart && char.IsWhiteSpace(text[q - 1]))
+        {
+            q--;
+        }
+        if (q <= lineStart || text[q - 1] != '.')
+        {
+            return null;
+        }
+        int end = q - 1;   // '.' 位置
+        // 2) 行内 token 化（lineStart..end）：IDENT / '.' / (实参) / 其他=边界
+        var toks = new List<object>();   // ChainToken | '.' | "BREAK"
+        int i = lineStart;
+        while (i < end)
+        {
+            char c = text[i];
+            if (char.IsWhiteSpace(c))
+            {
+                i++;
+            }
+            else if (char.IsLetter(c) || c == '_')
+            {
+                int s = i;
+                while (i < end && (char.IsLetterOrDigit(text[i]) || text[i] == '_'))
+                {
+                    i++;
+                }
+                toks.Add(new ChainToken { Ident = text[s..i] });
+            }
+            else if (c == '.')
+            {
+                toks.Add('.');
+                i++;
+            }
+            else if (c == '(')
+            {
+                // 实参段：配对到 ')'（跳字符串、嵌套计数）；未闭合（跨行）→ 链失败
+                int j = i + 1;
+                int depth = 1;
+                while (j < end && depth > 0)
+                {
+                    char d = text[j];
+                    if (d == '"' || d == '\'')
+                    {
+                        j = SlangScanner.SkipString(text, j, d);
+                        continue;
+                    }
+                    if (d == '(')
+                    {
+                        depth++;
+                    }
+                    else if (d == ')')
+                    {
+                        depth--;
+                    }
+                    j++;
+                }
+                if (depth != 0)
+                {
+                    return null; // 实参跨行：本行链不完整
+                }
+                if (toks.Count > 0 && toks[^1] is ChainToken t)
+                {
+                    t.Args = text[(i + 1)..(j - 1)];
+                    i = j;
+                }
+                else
+                {
+                    return null; // '(' 无前置 IDENT：非链形态
+                }
+            }
+            else
+            {
+                toks.Add("BREAK");
+                i++;
+            }
+        }
+        // 3) 尾部回溯连续链段：IDENT(.IDENT)*（实参已挂在 IDENT 上）
+        int k = toks.Count - 1;
+        if (k < 0 || toks[k] is not ChainToken)
+        {
+            return null; // 尾部非 IDENT（如 `x..`）
+        }
+        while (k - 2 >= 0 && toks[k - 1] is '.' && toks[k - 2] is ChainToken)
+        {
+            k -= 2;
+        }
+        var chain = new List<ChainToken>();
+        for (int m = k; m < toks.Count; m++)
+        {
+            if (toks[m] is ChainToken t)
+            {
+                chain.Add(t);
+            }
+        }
+        return chain.Count > 0 ? chain : null;
+    }
+
+    /* 接收者链 → 类型。优先级：限定名聚合类（SLang.Server → 静态起点）→ this →
+     * 声明类型（局部变量/参数，含 var 推断）→ 裸方法调用返回类型。 */
+    private ReceiverType? ResolveReceiverType(string text, int offset, List<ChainToken> chain, MergedTable table)
+    {
+        // 1) 限定名聚合：头部连续段拼全名查类表，最长优先（SLang.Server.onGet → SLang.Server）
+        for (int len = chain.Count; len >= 1; len--)
+        {
+            var cls = ResolveClassByName(string.Join(".", chain.Take(len).Select(t => t.Ident)), table);
+            if (cls == null)
+            {
+                continue;
+            }
+            if (len == chain.Count)
+            {
+                // 整链即类型名：`Box(args).` 构造 → 实例；`SLang.Server.` 类型引用 → 静态
+                return chain[^1].HasCall
+                    ? new ReceiverType { Cls = cls, IsStatic = false }
+                    : new ReceiverType { Cls = cls, IsStatic = true };
+            }
+            // 命中段是链前缀：`SLang.Server.onGet(..)` → 静态起点；
+            // `Box(args).field.`（构造调用命中）→ 实例起点
+            return WalkChain(cls, isStatic: !chain[len - 1].HasCall, chain, from: len, table);
+        }
+        // 2) this → 光标所在类
+        if (chain[0].Ident == "this")
+        {
+            var self = FindEnclosingClass(text, offset, table);
+            return self != null ? WalkChain(self, isStatic: false, chain, from: 1, table) : null;
+        }
+        // 3) 声明类型（局部变量/方法参数/闭包参数；var 走初始化推断）
+        string? declType = FindDeclarationType(text, offset, chain[0].Ident);
+        if (declType != null)
+        {
+            if (declType.EndsWith("[]"))
+            {
+                return chain.Count == 1 ? new ReceiverType { Builtin = ArrayBuiltinMembers } : null;
+            }
+            var cls = ResolveClassByName(declType, table);
+            return cls == null ? null : WalkChain(cls, isStatic: false, chain, from: 1, table);
+        }
+        // 4) 裸方法调用（global.imports 提升的裸名，如 `println()`）：全表搜方法名取返回类型
+        if (chain[0].HasCall)
+        {
+            foreach (var c in table.Classes)
+            {
+                foreach (var m in c.StaticMethods.Concat(c.InstanceMethods))
+                {
+                    if (string.Equals(m.Name, chain[0].Ident, StringComparison.Ordinal) && m.ReturnType.Length > 0
+                        && ResolveClassByName(m.ReturnType, table) is { } rc)
+                    {
+                        return WalkChain(rc, isStatic: false, chain, from: 1, table);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /* 从 from 段起逐段推进类型：方法段 → 返回类型；字段段 → 字段类型。
+     * 基元/void/未知类型名（SLIR 无类条目）链断返回 null。 */
+    private ReceiverType? WalkChain(ClassInfo start, bool isStatic, List<ChainToken> chain, int from, MergedTable table)
+    {
+        var cur = start;
+        bool stat = isStatic;
+        for (int k = from; k < chain.Count; k++)
+        {
+            var seg = chain[k];
+            MethodInfo? m = (stat
+                ? cur.StaticMethods.FirstOrDefault(x => x.Name == seg.Ident) ?? cur.InstanceMethods.FirstOrDefault(x => x.Name == seg.Ident)
+                : cur.InstanceMethods.FirstOrDefault(x => x.Name == seg.Ident) ?? cur.StaticMethods.FirstOrDefault(x => x.Name == seg.Ident));
+            FieldInfo? fld = m == null ? cur.Fields.FirstOrDefault(x => x.Name == seg.Ident) : null;
+            string? next = m != null ? (m.ReturnType.Length > 0 ? m.ReturnType : null) : fld?.Type;
+            if (next == null)
+            {
+                return null;
+            }
+            if (next.EndsWith("[]"))
+            {
+                return k == chain.Count - 1 ? new ReceiverType { Builtin = ArrayBuiltinMembers } : null;
+            }
+            var nextCls = ResolveClassByName(next, table);
+            if (nextCls == null)
+            {
+                return null;
+            }
+            cur = nextCls;
+            stat = false;
+        }
+        return new ReceiverType { Cls = cur, IsStatic = stat };
+    }
+
+    /* 类型名 → 类符号：全名 → 短名 → 尾段（SLang.ServerConfig → ServerConfig）
+     * → 剥泛型实参（List<string> → List，含限定名泛型 Std.Map<K,V> → Std.Map）。 */
+    private static ClassInfo? ResolveClassByName(string name, MergedTable table)
+    {
+        if (name.Length == 0)
+        {
+            return null;
+        }
+        if (table.ByFullName.TryGetValue(name, out var byFull))
+        {
+            return byFull;
+        }
+        if (table.ByName.TryGetValue(name, out var byShort))
+        {
+            return byShort;
+        }
+        int dot = name.LastIndexOf('.');
+        if (dot >= 0 && table.ByName.TryGetValue(name[(dot + 1)..], out var byTail))
+        {
+            return byTail;
+        }
+        int lt = name.IndexOf('<');
+        if (lt > 0)
+        {
+            string baseName = name[..lt];
+            if (table.ByFullName.TryGetValue(baseName, out var b1))
+            {
+                return b1;
+            }
+            if (table.ByName.TryGetValue(baseName, out var b2))
+            {
+                return b2;
+            }
+            dot = baseName.LastIndexOf('.');
+            if (dot >= 0 && table.ByName.TryGetValue(baseName[(dot + 1)..], out var b3))
+            {
+                return b3;
+            }
+        }
+        return null;
+    }
+
+    /* ident 的声明类型（光标前最近一次）：`Type ident` 形态（局部变量/方法参数/闭包
+     * 参数/for 变量），词后须为 = ; , ) 行尾 # 之一；var 声明走初始化表达式推断。
+     * 词位置经 SlangScanner.FindWords（跳字符串/注释/@块）。 */
+    private static string? FindDeclarationType(string text, int offset, string ident)
+    {
+        string head = text[..Math.Min(offset, text.Length)];
+        var words = SlangScanner.FindWords(head, ident);
+        for (int i = words.Count - 1; i >= 0; i--)
+        {
+            int end = words[i].End;
+            // 词后：= ; , ) 行尾 #（'(' 是方法定义/调用、'.' 是成员访问 → 排除）
+            int p = end;
+            while (p < head.Length && (head[p] == ' ' || head[p] == '\t' || head[p] == '\r'))
+            {
+                p++;
+            }
+            if (p < head.Length && head[p] is not ('=' or ';' or ',' or ')' or '#' or '\n'))
+            {
+                continue;
+            }
+            // 词前（空白分隔）：类型 token
+            int q = words[i].Start;
+            while (q > 0 && (head[q - 1] == ' ' || head[q - 1] == '\t'))
+            {
+                q--;
+            }
+            if (q == 0)
+            {
+                continue;
+            }
+            var typeTok = ReadTypeBackward(head, q);
+            if (typeTok == null)
+            {
+                continue;
+            }
+            (string type, int start) = typeTok.Value;
+            if (type == "var")
+            {
+                return InferVarInitType(head, end);
+            }
+            if (NonTypeWords.Contains(type))
+            {
+                continue; // 语句关键字误配（ret x / function h / new T 等）
+            }
+            if (!IsValidDeclPrefix(head, start))
+            {
+                continue;
+            }
+            return type;
+        }
+        return null;
+    }
+
+    /* 从 end（类型词尾，紧贴声明名左侧）向左读类型 token：
+     *   限定名（A.B.C）+ 可选泛型后缀 <…> + 可选数组后缀 []（均在名字左侧）。
+     *   泛型段内出现非类型字符（比较运算符误入防护）→ null。
+     * 返回 (类型串, 起始偏移)。 */
+    private static (string Type, int Start)? ReadTypeBackward(string text, int end)
+    {
+        int p = end;
+        // 数组后缀：`Type[] name`（可多层 `[][]`）
+        while (p > 0 && text[p - 1] == ']')
+        {
+            int b = p - 1;
+            int depth = 0;
+            while (b >= 0)
+            {
+                if (text[b] == ']')
+                {
+                    depth++;
+                }
+                else if (text[b] == '[')
+                {
+                    depth--;
+                    if (depth == 0)
+                    {
+                        break;
+                    }
+                }
+                b--;
+            }
+            if (b < 0)
+            {
+                return null;
+            }
+            p = b;   // 指向 '['，继续向左（可能又是 ']' 或泛型 '>'）
+        }
+        // 泛型后缀：`Type<T1,T2> name`（嵌套 List<List<int>> 计数配对）
+        if (p > 0 && text[p - 1] == '>')
+        {
+            int b = p - 1;
+            int depth = 0;
+            while (b >= 0)
+            {
+                char c = text[b];
+                if (c == '>')
+                {
+                    depth++;
+                }
+                else if (c == '<')
+                {
+                    depth--;
+                    if (depth == 0)
+                    {
+                        break;
+                    }
+                }
+                else if (!(char.IsLetterOrDigit(c) || c == '_' || c == '.' || c == ',' || char.IsWhiteSpace(c)))
+                {
+                    return null; // 段内非法字符：比较运算式误入
+                }
+                b--;
+            }
+            if (b < 0)
+            {
+                return null;
+            }
+            p = b;   // 指向 '<'
+        }
+        // 限定名：A.B.C（向左读到非词字符）
+        int e = p;
+        while (p > 0 && (char.IsLetterOrDigit(text[p - 1]) || text[p - 1] == '_' || text[p - 1] == '.'))
+        {
+            p--;
+        }
+        if (p == e)
+        {
+            return null;
+        }
+        string raw = text[p..e];
+        if (raw.StartsWith('.') || raw.EndsWith('.') || raw.Contains(".."))
+        {
+            return null; // '.' 悬空（成员访问误入）
+        }
+        return (raw + text[e..end], p);
+    }
+
+    /* 类型 token 起点前的合法前缀：文本首/行首/边界符( ; { } = , (，或修饰符链
+     * （public/private/static/const/mut/final/…）继续向前递归。 */
+    private static bool IsValidDeclPrefix(string text, int typeStart)
+    {
+        int p = typeStart;
+        while (true)
+        {
+            while (p > 0 && (text[p - 1] == ' ' || text[p - 1] == '\t'))
+            {
+                p--;
+            }
+            if (p == 0)
+            {
+                return true;
+            }
+            char c = text[p - 1];
+            if (c is ';' or '{' or '}' or '=' or ',' or '(' or '\n' or '\r')
+            {
+                return true;
+            }
+            int e = p;
+            while (p > 0 && (char.IsLetterOrDigit(text[p - 1]) || text[p - 1] == '_'))
+            {
+                p--;
+            }
+            if (p == e || !ModifierWords.Contains(text[p..e]))
+            {
+                return false;
+            }
+            // 修饰词（public static …）→ 继续向前
+        }
+    }
+
+    private static readonly HashSet<string> ModifierWords = new(StringComparer.Ordinal)
+    {
+        "public", "private", "protected", "static", "const", "mut", "final",
+        "inline", "override", "abstract", "extern", "partial", "params", "get", "set",
+    };
+
+    /* 不能作为声明类型名的关键字（语句/声明词；修饰符由前缀链消化，var 单独分支） */
+    private static readonly HashSet<string> NonTypeWords = new(StringComparer.Ordinal)
+    {
+        "function", "new", "ret", "in", "out", "for", "if", "elif", "else", "while",
+        "dowhile", "switch", "case", "default", "break", "next", "continue", "goto",
+        "throw", "throws", "try", "catch", "finally", "checked", "unchecked", "await",
+        "spawn", "yield", "import", "as", "namespace", "class", "interface", "enum",
+        "data", "extends", "bind", "label", "this", "base", "typealias", "dynamic",
+        "var", "void",
+    };
+
+    /* `var x = <init>` 初始化类型推断（保守）：构造调用 `Type(…)` → Type；
+     * 其余（字面量/复杂表达式）返回 null（宁缺毋错）。 */
+    private static string? InferVarInitType(string head, int afterIdent)
+    {
+        int p = afterIdent;
+        while (p < head.Length && char.IsWhiteSpace(head[p]))
+        {
+            p++;
+        }
+        if (p >= head.Length || head[p] != '=')
+        {
+            return null;
+        }
+        p++;
+        while (p < head.Length && (head[p] == ' ' || head[p] == '\t'))
+        {
+            p++;
+        }
+        if (p >= head.Length || !(char.IsLetter(head[p]) || head[p] == '_'))
+        {
+            return null;
+        }
+        int e = p;
+        while (e < head.Length && (char.IsLetterOrDigit(head[e]) || head[e] == '_' || head[e] == '.'))
+        {
+            e++;
+        }
+        int q = e;
+        while (q < head.Length && head[q] == ' ')
+        {
+            q++;
+        }
+        return q < head.Length && head[q] == '(' && e > p ? head[p..e] : null;
+    }
+
+    /* 光标向上最近的类/接口/data 声明（this 接收者解析） */
+    private static ClassInfo? FindEnclosingClass(string text, int offset, MergedTable table)
+    {
+        string head = text[..Math.Min(offset, text.Length)];
+        var m = Regex.Match(head, @"(?:^|\n)[ \t]*(?:(?:public|protected|private|abstract|final|static|partial|inline|extern)\s+)*(class|interface|data|enum)\s+([A-Za-z_][A-Za-z0-9_]*)",
+            RegexOptions.RightToLeft);
+        return m.Success ? ResolveClassByName(m.Groups[2].Value, table) : null;
     }
 
     // =====================================================================
@@ -1112,6 +1679,28 @@ internal sealed class LspServer
             return null;
         }
         var table = BuildMergedTable(project);
+        // 0) 类型感知解析（与 definition 共用 SymbolAt）：成员签名卡 / 字段卡 / 类卡片
+        var sym = ResolveSymbolAt(text, offset, table);
+        if (sym?.Method != null && sym.Owner != null)
+        {
+            return new
+            {
+                contents = new { kind = "markdown", value = $"```slang\n{sym.Method.Signature}\n```\n\n`{sym.Owner.FullName}`" },
+            };
+        }
+        if (sym?.Field != null && sym.Owner != null)
+        {
+            return new
+            {
+                contents = new { kind = "markdown", value = $"```slang\n{sym.Field.Type} {sym.Field.Name}\n```\n\n`{sym.Owner.FullName}`" },
+            };
+        }
+        if (sym?.Class != null)
+        {
+            var c0 = sym.Class;
+            var card0 = $"```slang\nclass {c0.FullName}\n```\n\n{c0.StaticMethods.Count + c0.InstanceMethods.Count} 个方法 · {c0.Fields.Count} 个字段" + (c0.SourcePath.Length > 0 ? $"\n\n定义于 `{c0.SourcePath}`" : "");
+            return new { contents = new { kind = "markdown", value = card0 } };
+        }
         // 1) 限定名成员（`Console.println`）；未命中不提前返回——`global.println`
         //    的 global 是全局空间别名而非类，须回落到裸名搜索
         if (qualifier.Length > 0 && table.ByName.TryGetValue(qualifier, out var qcls))
@@ -1184,6 +1773,101 @@ internal sealed class LspServer
         return null;
     }
 
+    /* 成员名 → SymbolAt（导航不过滤 private：定义即所写处）；方法优先于字段 */
+    private static SymbolAt? FindMemberSymbol(ClassInfo cls, string name)
+    {
+        foreach (var m in cls.StaticMethods)
+        {
+            if (string.Equals(m.Name, name, StringComparison.Ordinal))
+            {
+                return new SymbolAt { Owner = cls, Method = m };
+            }
+        }
+        foreach (var m in cls.InstanceMethods)
+        {
+            if (string.Equals(m.Name, name, StringComparison.Ordinal))
+            {
+                return new SymbolAt { Owner = cls, Method = m };
+            }
+        }
+        foreach (var f in cls.Fields)
+        {
+            if (string.Equals(f.Name, name, StringComparison.Ordinal))
+            {
+                return new SymbolAt { Owner = cls, Field = f };
+            }
+        }
+        return null;
+    }
+
+    /* 光标处符号 → 类型感知解析（hover/definition 共用）：
+     * ① 词前有 '.' → ExtractMemberChain(text, wordEnd)（链 = 词左侧接收者，不含光标词）
+     *    a) 限定名类聚合含词段（SLang.Server，词 = 尾段类名）
+     *    b) ResolveReceiverType → FindMemberSymbol（cfg.port / b.inner.w / Box.make().area）
+     *    c) 旧兜底：qualifier 类短名（WordAt 的单段限定）
+     *    d) 词本身是类名
+     * ② 无 '.' → 裸类名 ResolveClassByName
+     * global.println 等全局空间别名 → null（调用方回落旧裸名搜索） */
+    private SymbolAt? ResolveSymbolAt(string text, int offset, MergedTable table)
+    {
+        var (word, qualifier) = WordAt(text, offset);
+        if (word.Length == 0)
+        {
+            return null;
+        }
+        int wordEnd = Math.Min(offset, text.Length);
+        while (wordEnd < text.Length && (char.IsLetterOrDigit(text[wordEnd]) || text[wordEnd] == '_'))
+        {
+            wordEnd++;
+        }
+        var chain = ExtractMemberChain(text, wordEnd);
+        if (chain != null)
+        {
+            // a) 链前缀 + 光标词 = 限定类名（SLang.Server）
+            for (int len = chain.Count; len >= 1; len--)
+            {
+                var cls = ResolveClassByName(string.Join(".", chain.Take(len).Select(t => t.Ident)) + "." + word, table);
+                if (cls != null)
+                {
+                    return new SymbolAt { Class = cls };
+                }
+            }
+            // b) 接收者类型 → 成员
+            var receiver = ResolveReceiverType(text, offset, chain, table);
+            if (receiver?.Cls != null)
+            {
+                var sym = FindMemberSymbol(receiver.Cls, word);
+                if (sym != null)
+                {
+                    return sym;
+                }
+            }
+            // c) 旧兜底：qualifier 类短名（如局部变量遮蔽时仍按类名解析）
+            if (qualifier.Length > 0 && table.ByName.TryGetValue(qualifier, out var qcls))
+            {
+                var m = FindMemberSymbol(qcls, word);
+                if (m != null)
+                {
+                    return m;
+                }
+            }
+            // d) 词本身是类名
+            var self = ResolveClassByName(word, table);
+            if (self != null)
+            {
+                return new SymbolAt { Class = self };
+            }
+            return null;
+        }
+        // ② 裸名：类优先
+        var bare = ResolveClassByName(word, table);
+        if (bare != null)
+        {
+            return new SymbolAt { Class = bare };
+        }
+        return null;
+    }
+
     // =====================================================================
     // 定义跳转：类/方法 → sourcePath（+ debugInfo 行列）
     // =====================================================================
@@ -1201,13 +1885,35 @@ internal sealed class LspServer
         }
         var table = BuildMergedTable(project);
 
-        // 与 hover 同构的三段回退：限定名成员 → 类 → 裸方法名首个命中
+        // 0) 类型感知解析（复用成员补全链设施）：cfg.port / SLang.Server.start /
+        //    b.inner.w / Box.make().area / 限定类名——直达成员级源位置
         string? file = null;
         int line = 0;
         int chr = 0;
         bool resolved = false;
+        var sym = ResolveSymbolAt(text, offset, table);
+        if (sym?.Class != null)
+        {
+            file = ResolveSourcePath(project, sym.Class, sym.Class.SourcePath);
+            resolved = true;
+        }
+        else if (sym?.Method != null && sym.Owner != null)
+        {
+            file = ResolveSourcePath(project, sym.Owner, sym.Method.SourcePath.Length > 0 ? sym.Method.SourcePath : sym.Owner.SourcePath);
+            line = sym.Method.SourcePath.Length > 0 ? sym.Method.BeginLine : 0;
+            chr = sym.Method.SourcePath.Length > 0 ? sym.Method.BeginChar : 0;
+            resolved = true;
+        }
+        else if (sym?.Field != null && sym.Owner != null)
+        {
+            file = ResolveSourcePath(project, sym.Owner, sym.Field.SourcePath.Length > 0 ? sym.Field.SourcePath : sym.Owner.SourcePath);
+            line = sym.Field.SourcePath.Length > 0 ? sym.Field.BeginLine : 0;
+            chr = sym.Field.SourcePath.Length > 0 ? sym.Field.BeginChar : 0;
+            resolved = true;
+        }
 
-        if (qualifier.Length > 0 && table.ByName.TryGetValue(qualifier, out var qcls))
+        // 兜底：与 hover 同构的旧三段回退（限定名成员 → 类 → 裸方法名首个命中）
+        if (!resolved && qualifier.Length > 0 && table.ByName.TryGetValue(qualifier, out var qcls))
         {
             var m = FindMember(qcls, word);
             if (m != null)
@@ -1257,7 +1963,9 @@ internal sealed class LspServer
     }
 
     /* sourcePath 解析：工程类 → 工程目录；引用类 → jsonc 定位到的 module.json 的
-     * repo 源根推断（SLangCore\Lib\<模块>\<sourcePath>，开发布局命中；纯包形态落空返回 null） */
+     * repo 源根推断（SLangCore\Lib\<模块>\<sourcePath>，开发布局命中；纯包形态落空返回 null）。
+     * 模块名 ≠ 源目录名时（SLangServer 模块 → SLang\Server 目录）候选1 落空，
+     * 回落源根 .sl 基名索引（后缀命中优先、最浅路径优先，否则首个命中） */
     private string? ResolveSourcePath(ProjectInfo project, ClassInfo cls, string sourcePath)
     {
         if (sourcePath.Length == 0)
@@ -1275,9 +1983,79 @@ internal sealed class LspServer
             {
                 candidates.Add(Path.Combine(kv.Value, _refPackages.TryGetValue(kv.Key, out var pkg) ? pkg.ModuleName : "", sourcePath));
             }
+            foreach (var kv in _refJsonRoot)
+            {
+                var alt = LookupRefSource(kv.Value, sourcePath);
+                if (alt != null)
+                {
+                    candidates.Add(alt);
+                }
+            }
             candidates.Add(Path.Combine(project.Dir, sourcePath));
         }
         return candidates.FirstOrDefault(File.Exists);
+    }
+
+    /* 源根 .sl 基名索引查找：整路径后缀命中优先（含子目录形态，多命中取最浅
+     * 路径），否则首个命中。sourcePath 为裸文件名（`Server.sl`）或含目录形态均可。 */
+    private string? LookupRefSource(string root, string sourcePath)
+    {
+        var idx = GetRefSourceIndex(root);
+        if (idx == null)
+        {
+            return null;
+        }
+        string baseName = Path.GetFileName(sourcePath);
+        if (!idx.TryGetValue(baseName, out var hits) || hits.Count == 0)
+        {
+            return null;
+        }
+        string suffix = "/" + sourcePath.Replace('\\', '/').TrimEnd('/');
+        string? best = null;
+        int bestDepth = int.MaxValue;
+        foreach (var h in hits)
+        {
+            if (!("/" + h.Replace('\\', '/')).EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            int depth = h.Split(Path.DirectorySeparatorChar).Length;
+            if (depth < bestDepth)
+            {
+                best = h;
+                bestDepth = depth;
+            }
+        }
+        return best ?? hits[0];
+    }
+
+    /* 源根 → .sl 文件基名索引（懒建 + 缓存；IO 异常返回 null 不缓存，下次重试） */
+    private Dictionary<string, List<string>>? GetRefSourceIndex(string root)
+    {
+        if (_refSourceIndex.TryGetValue(root, out var cached))
+        {
+            return cached;
+        }
+        try
+        {
+            var idx = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var f in Directory.EnumerateFiles(root, "*.sl", SearchOption.AllDirectories))
+            {
+                string bn = Path.GetFileName(f);
+                if (!idx.TryGetValue(bn, out var list))
+                {
+                    list = new List<string>();
+                    idx[bn] = list;
+                }
+                list.Add(f);
+            }
+            _refSourceIndex[root] = idx;
+            return idx;
+        }
+        catch (Exception)
+        {
+            return null; // 目录不存在/不可读：不缓存，下次重试
+        }
     }
 
     // =====================================================================
@@ -1877,8 +2655,9 @@ internal sealed class LspServer
             return i;
         }
 
-        /* 普通字符串（SL："…" / '…'，反斜杠转义）到闭合引号后一位 */
-        private static int SkipString(string s, int i, char quote)
+        /* 普通字符串（SL："…" / '…'，反斜杠转义）到闭合引号后一位
+         * （internal：外围类 ExtractMemberChain 实参段跳字符串复用） */
+        internal static int SkipString(string s, int i, char quote)
         {
             i++; // 开引号
             while (i < s.Length)

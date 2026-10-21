@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using SimpleLanguage.Logging;
 using SimpleLanguage.Project;
 
@@ -232,14 +233,19 @@ internal static class Program
             return 4;
         }
 
-        // 模块产物先拷入包内 <pkg>\<Module>\ 再跑（两重目的）：
+        // 模块产物先拷入包内 <pkg>\<Module>\ 再跑（三重目的）：
         //  1) moduleReferences 的 "../Core/Core.module" 相对解析在包内落空，
         //     C VM 走官方库直查 <exe_dir>\lib\（sl_exe_dir_join_name 取
         //     slang.exe 所在目录），标准库即取自包内 lib\ 目录；
         //  2) 子目录深度与 out\export\<Module> 一致（lang 根下第 4 层），
         //     SpecialTest 等插件 lib "../../../../simple_language_plugins/..."
-        //     这类按 module.json 所在目录回仓库的相对路径保持可达。
-        string? runModule = CopyModuleIntoPackage(packagePath, pkgDir);
+        //     这类按 module.json 所在目录回仓库的相对路径保持可达；
+        //  3) 非系统库引用（如 ExpendTest -> SLangServer）连带拷入包内
+        //     <pkg>\<RefModule>\（2026-10-20 修复）：此前引用模块不跟随，
+        //     C VM 对落空引用静默 skip（仅 VM.txt Warning），跨模块调用全部
+        //     落到空壳方法 → ServerConfig 字段全空 / start no-op / 测试挂死
+        //     退出码仍 0（复盘见 md/ai/troubleshooting/06-build-engineering.md）。
+        string? runModule = CopyModuleIntoPackage(packagePath, pkgDir, repoRoot);
         if (runModule == null)
         {
             Console.WriteLine($"Failed to stage module package into: {pkgDir}");
@@ -306,7 +312,7 @@ internal static class Program
     /// 产物文件名以 jsonc project.name 为准（≠ export.moduleName 时目录名与文件名不同，
     /// 如 NullFast：目录 NullFastTest\ 文件 ProjectTest.module.slb），故按实际文件名定位，
     /// 不能按目录名推导。</summary>
-    static string? CopyModuleIntoPackage(string moduleJsonPath, string pkgDir)
+    static string? CopyModuleIntoPackage(string moduleJsonPath, string pkgDir, string repoRoot)
     {
         try
         {
@@ -326,6 +332,9 @@ internal static class Program
             if (Directory.Exists(pluginsSrc))
                 CopyDirectoryRecursive(pluginsSrc, Path.Combine(destDir, "plugins"));
 
+            // 非系统库引用模块联动拷贝（2026-10-20；见 RunCVM 注释第 3 点）
+            StageReferencedModules(moduleJsonPath, pkgDir, repoRoot);
+
             string jsonName = Path.GetFileName(moduleJsonPath);
             string slbName = Path.GetFileNameWithoutExtension(jsonName) + ".slb";
             string slb = Path.Combine(destDir, slbName);
@@ -338,6 +347,67 @@ internal static class Program
         {
             Console.WriteLine(ex);
             return null;
+        }
+    }
+
+    /// <summary>官方库集合：包内 &lt;exe&gt;\lib\ 直查（sl_exe_dir_join_name），无需跟随拷贝。</summary>
+    static readonly HashSet<string> SystemModuleNames = new(StringComparer.OrdinalIgnoreCase)
+    { "Core", "Std", "Math" };
+
+    /// <summary>
+    /// 解析主模块 moduleReferences，把非系统库引用（如 ExpendTest -> SLangServer）
+    /// 的导出产物（*.module.slb + json 副本）一并拷入 <paramref name="pkgDir"/>\&lt;name&gt;\。
+    /// 搜索两处标准导出树（repoRoot = SlangAllInOne\）：out\export\&lt;name&gt;\（标准库/
+    /// SLangServer 同款 outputDir 落位）与 SLangCore\out\export\&lt;name&gt;\（用例集
+    /// outputDir "..\..\out\export" 落位）。未找到仅打印提示不阻断（保持旧行为可诊断）。
+    /// </summary>
+    static void StageReferencedModules(string moduleJsonPath, string pkgDir, string repoRoot)
+    {
+        try
+        {
+            using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(moduleJsonPath));
+            if (!doc.RootElement.TryGetProperty("moduleReferences", out JsonElement refsEl))
+                return;
+            foreach (JsonElement r in refsEl.EnumerateArray())
+            {
+                if (!r.TryGetProperty("name", out JsonElement nameEl))
+                    continue;
+                string name = nameEl.GetString() ?? "";
+                if (name.Length == 0 || SystemModuleNames.Contains(name))
+                    continue;
+                // repoRoot = SlangAllInOne\（GetRepoRoot 以 SlangAllInOne.csproj 定位）：
+                // 两处标准导出树——out\export\（标准库/SLangServer 同款 outputDir
+                // 落位）与 SLangCore\out\export\（用例集 "..\..\out\export" 落位）
+                string[] exportRoots =
+                {
+                    Path.Combine(repoRoot, "out", "export", name),
+                    Path.Combine(repoRoot, "SLangCore", "out", "export", name),
+                };
+                string? srcDir = exportRoots.FirstOrDefault(Directory.Exists);
+                if (srcDir == null)
+                {
+                    Console.WriteLine($"[stage] referenced module '{name}' export dir not found, skipped");
+                    continue;
+                }
+                string refDest = Path.Combine(pkgDir, name);
+                Directory.CreateDirectory(refDest);
+                bool any = false;
+                foreach (string f in Directory.GetFiles(srcDir, "*.module.*"))
+                {
+                    File.Copy(f, Path.Combine(refDest, Path.GetFileName(f)), overwrite: true);
+                    any = true;
+                }
+                string refPlugins = Path.Combine(srcDir, "plugins");
+                if (Directory.Exists(refPlugins))
+                    CopyDirectoryRecursive(refPlugins, Path.Combine(refDest, "plugins"));
+                if (any)
+                    Console.WriteLine($"[stage] referenced module '{name}' staged into package");
+            }
+        }
+        catch (Exception ex)
+        {
+            // 引用联动拷贝失败不阻断主流程（C VM 装载期自会按回退链解析）
+            Console.WriteLine("[stage] reference staging failed: " + ex.Message);
         }
     }
 

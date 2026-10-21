@@ -4,8 +4,8 @@ import Core;
 namespace SLang
 {
     # ============================================================================
-    # SLang/Server/HttpServerCore.sl — HTTP/1.1 连接引擎（P0 → P1）
-    # 设计契约：SERVER_DESIGN.md §6.1 / §6.2 / §6.8
+    # SLang/Server/HttpServerCore.sl — HTTP/1.1 连接引擎（P0 → P1 → P1.5）
+    # 设计契约：SERVER_DESIGN.md §6.1 / §6.2 / §6.8 / §6.4-6.5（上传）
     #
     # 范围（P1）：
     #   - _HttpParser：请求行 / 头（行数与总字节双上限）/ body（Content-Length
@@ -20,7 +20,26 @@ namespace SLang
     #   - WS Upgrade 分流：Upgrade: websocket 命中 WS 路由 → 三参 accept
     #     （预读残留直传）→ WsSession 会话；未命中 / 握手失败 → 400。
     #
-    # 随后阶段：P2 中间件管道 + 流式响应（stream/sse/sendFile）。
+    # 范围（P1.5 上传）：
+    #   - body 上限分流：multipart 请求按 maxUploadBytes 判 413（CL 与
+    #     chunked 两路），其余请求维持 maxBodyBytes（§6.4 第 5 步）；
+    #   - multipart 即时解析：handler 派发前经 Request._ensureMultipart
+    #     （构造期语义 §6.5）——单文件超 maxFileBytes → 413、boundary
+    #     缺失/格式坏 → 400，均优雅断连（协议层，§6.11）；
+    #   - 请求级资源回收 _releaseRequest：body + multipart 文件内容缓冲
+    #     （UploadedFile._data）请求收尾统一回收（§6.5）。
+    #
+    # 范围（P2 管道与流式）：
+    #   - 中间件管道：连接协程内联执行（onion 嵌套；中间件可 await，§6.9），
+    #     尾环 = handler 协程派发 或 404/405 应答（未匹配请求同样过管道
+    #     ——staticFiles / CORS 预检依赖此语义）；_PluginHost 承载中间件与
+    #     插件（生命周期 / WS 钩子广播），reset 联动清空；
+    #   - 流式响应三态写出：chunked（stream/sse——头已直发，引擎兜底
+    #     close）/ sendFile 直写完成（Content-Length 精确）/ 普通缓冲；
+    #     handler 超时豁免：流式开启后 handlerTimeoutMs 不再掐（转无限
+    #     等待，写侧由连接级 writeTimeoutMs 守护，§6.1 / §6.6）。
+    #
+    # 随后阶段：P3 文档（OpenAPI/docs）+ 认证（auth 插件/Jwt）。
     #
     # 复用（不改动，G8 边界内）：Net.TcpServer / Net.TcpStream / Net.HttpHeaders /
     #   Net.WebSocketStream / Coroutine / ByteBuffer。语言纪律：get/set/next/
@@ -58,6 +77,9 @@ namespace SLang
         # 监听参数构造期提取为单层静态字段（this._cfg.host 双层链求值坑规避）
         static string _listenHost = ""
         static Int32 _listenPort = 0
+        # 文档路由开关（P3，§4.8 app.docs(false) 消费；start 挂载 /docs +
+        # /openapi.json；reset 恢复默认开）
+        public static bool _docsEnabled = true
 
         # 便捷覆盖监听端口（Server.start(port)/run(port) 用；start 前生效）
         public static void setListenPort( Int32 port )
@@ -81,10 +103,27 @@ namespace SLang
             }
         }
 
-        # 清空路由表（stop 后重新配置用；连接表由 stop 清理）
+        # 清空路由表与中间件/插件（stop 后重新配置用；连接表由 stop 清理）
         public static void reset()
         {
             Router.clear()
+            _PluginHost.clear()
+            _docsEnabled = true
+        }
+
+        # ── 中间件/插件（P2；SLang.Server.use 转发）──
+
+        # 注册中间件（三参 Function(req,res,nx)；注册序即执行序）
+        public static void use( Function middleware )
+        {
+            _PluginHost.addMiddleware( middleware )
+        }
+
+        # 注册插件（onInstall 立即执行；生命周期/WS 钩子由引擎广播）
+        public static void use( ServerPlugin plugin )
+        {
+            plugin.onInstall()
+            _PluginHost.addPlugin( plugin )
         }
 
         # ── 路由注册（P1 起经 Router；推荐用 SLang.Server 门面——返回 RouteInfo 可写文档元数据）──
@@ -141,6 +180,12 @@ namespace SLang
             {
                 throw ServerError.DuplicateRoute
             }
+            # 文档路由挂载（P3，§4.8/§6.10：start 时自动挂 /docs +
+            # /openapi.json；用户已注册同路径则让位——用户优先）
+            if _docsEnabled
+            {
+                Docs._mount()
+            }
             string host = _listenHost
             Int32 lport = _listenPort
             # 跨模块 string 字段默认值初始化不可靠（实测消费侧读出空串/
@@ -164,6 +209,9 @@ namespace SLang
                 HttpServerCore._acceptLoop( a as Net.TcpServer )
             }
             _acceptTask = Coroutine.spawnClosure1( f, srv )
+            # 插件生命周期钩子（start 后、accept 循环已在跑——单协程调度
+            # 下无竞态；§6.9）
+            _PluginHost.notifyStart()
         }
 
         # 停止：关监听 + 关全部在途连接（各连接协程随读失败/EOF 退出）
@@ -190,6 +238,8 @@ namespace SLang
                 catch { }
             }
             _conns.clear()
+            # 插件生命周期钩子（stop 收尾；§6.9）
+            _PluginHost.notifyStop()
         }
 
         # 挂起直至停止（等待 accept 循环协程收尾）
@@ -214,13 +264,24 @@ namespace SLang
                 label accOne
                 {
                     Net.TcpStream client = srv.accept()
-                    # 连接处理闭包零捕获（NetConcurrentTest.ef 先例）：
-                    # client 经实参传值，状态全走静态字段
-                    function f = function( object a )
+                    # 并发连接上限（P3，§4.9）：超出 503 + 优雅断连
+                    #（协议层应答，§6.11；不进管道不占连接协程）
+                    ServerConfig mcCfg = _cfg
+                    if mcCfg != null && mcCfg.maxConnections > 0 && _conns.length >= mcCfg.maxConnections
                     {
-                        HttpServerCore._runConn( a as Net.TcpStream )
+                        HttpServerCore._writeSimple( client, 503, HttpServerCore._errorBody( 503 ) )
+                        HttpServerCore._gracefulClose( client )
                     }
-                    Coroutine.spawnClosure1( f, client )
+                    else
+                    {
+                        # 连接处理闭包零捕获（NetConcurrentTest.ef 先例）：
+                        # client 经实参传值，状态全走静态字段
+                        function f = function( object a )
+                        {
+                            HttpServerCore._runConn( a as Net.TcpStream )
+                        }
+                        Coroutine.spawnClosure1( f, client )
+                    }
                 }
                 catch
                 {
@@ -269,6 +330,12 @@ namespace SLang
         {
             ServerConfig cfg = _cfg
             client.setReadTimeout( cfg.keepAliveTimeoutMs )
+            if cfg.writeTimeoutMs > 0
+            {
+                # 流式写挂起超时（§6.6 背压与超时）：慢客户端 send 挂起超时
+                # 抛 NetError.Timeout → 写侧异常上抛 → 引擎断连路径
+                client.setWriteTimeout( cfg.writeTimeoutMs )
+            }
             ByteBuffer buf = ByteBuffer()
             while true
             {
@@ -331,112 +398,110 @@ namespace SLang
 
                 # ---- 3) 路由匹配（HEAD 视同 GET；§6.2）----
                 bool isHead = Net.Uri.eqFold( r._method, "HEAD" )
-                string lookupMethod = r._method
-                if isHead
-                {
-                    lookupMethod = "GET"
-                }
                 bool keepAlive = HttpServerCore._wantKeepAlive( r )
                 RouteInfo route = Router.match( r._method, r._path )
+                # 未命中判定（404 / 405）不再提前应答——统一经中间件管道
+                # 尾环处理（P2：staticFiles / CORS 预检依赖未匹配请求同样
+                # 过管道，§6.9）
+                Int32 noRoute = 0
                 if route == null
                 {
-                    # 404 / 405 判定：路径有无注册（findBest 忽略动词）
                     RouteInfo pathHit = Router.findBest( r._path )
                     if pathHit == null
                     {
-                        # 404：正常响应（按 keep-alive 语义继续连接）
-                        Response r404 = Response()
-                        r404.status( 404 ).rawJson( HttpServerCore._errorBody( 404 ) )
-                        HttpServerCore._writeResponse( client, r404, keepAlive, isHead )
-                        if r._body != null
-                        {
-                            r._body.release()
-                        }
-                        continue
+                        noRoute = 404
                     }
-                    # 路径命中但动词不符：405 + Allow（正常响应，连接可继续）
-                    string allow = Router.allowMethods( r._path )
-                    Response r405 = Response()
-                    r405.status( 405 ).header( "Allow", allow ).rawJson( HttpServerCore._errorBody( 405 ) )
-                    HttpServerCore._writeResponse( client, r405, keepAlive, isHead )
-                    if r._body != null
+                    else
                     {
-                        r._body.release()
+                        noRoute = 405
                     }
-                    continue
                 }
 
-                # ---- 4) 构造上下文 + handler 协程派发（SERVER_DESIGN.md §6.1）----
+                # ---- 4) 构造上下文（SERVER_DESIGN.md §6.1）----
                 Map<string,string> pathParams = Router.extractParams( route, r._path )
                 Request req = Request( r._method, r._path, r._rawQuery, r._headers, r._body, client.remoteAddress, client.remotePort, pathParams )
                 r._headers = null
                 r._body = null
                 Response res = Response()
+                # 流式直写通道绑定（stream/sse/sendFile；§6.6）
+                res._bind( client, keepAlive, r._http10 )
 
-                # Function 字段先拷局部再传参（HttpHeaders 头注记纪律）
-                function h = route.handler
-                Task task = Coroutine.spawnClosure2( h, req, res )
-
-                bool timedOut = false
-                if cfg.handlerTimeoutMs > 0
+                # ---- 4a) multipart 即时解析（P1.5，§6.5 构造期语义）----
+                # 单文件超 maxFileBytes → 413；boundary 缺失/格式坏 → 400；
+                # 均协议层应答 + 优雅断连（§6.11，防 RST 同 413/431 路径）
+                if req.bodyFormat == EBodyFormat.Multipart
                 {
-                    timedOut = !Coroutine.waitTimeout( task, cfg.handlerTimeoutMs )
-                }
-                if timedOut
-                {
-                    # 超时：协作式取消 + 优雅断连（杜绝未死协程的后续读写竞态；
-                    # 直接 close 会 RST 致客户端读不到 504 —— _gracefulClose）
-                    task.cancel()
-                    if res.isResponded
+                    Int32 upErr = req._ensureMultipart()
+                    if upErr != 0
                     {
-                        # 已缓冲完成的响应照常写出（非流式单缓冲无半截风险）
-                        HttpServerCore._writeResponse( client, res, false, isHead )
+                        HttpServerCore._writeSimple( client, upErr, HttpServerCore._errorBody( upErr ) )
+                        HttpServerCore._releaseRequest( req )
+                        if res._body != null
+                        {
+                            res._body.release()
+                        }
+                        HttpServerCore._gracefulClose( client )
+                        break
                     }
-                    else
-                    {
-                        HttpServerCore._writeSimple( client, 504, HttpServerCore._errorBody( 504 ) )
-                    }
-                    if req._body != null
-                    {
-                        req._body.release()
-                    }
-                    if res._body != null
-                    {
-                        res._body.release()
-                    }
-                    HttpServerCore._gracefulClose( client )
-                    break
                 }
 
-                bool handlerError = false
-                label awaitBlock
+                # ---- 5) 管道执行（P2，§6.9：连接协程内联——中间件可 await，
+                # onion 后置环在 handler 协程完成后自然回程；无中间件直通尾环）----
+                bool pipeError = false
+                bool connKilled = false
+                label pipeBlock
                 {
-                    Coroutine.awaitTask( task )
+                    connKilled = HttpServerCore._runPipeline( client, cfg, route, noRoute, req, res, isHead )
                 }
                 catch
                 {
-                    handlerError = true
+                    pipeError = true
                 }
 
-                # ---- 4) 响应写出 ----
+                # ---- 6) 响应写出（流式三态 + 缓冲，§6.6）----
                 bool closeConn = false
-                if handlerError
+                if pipeError
                 {
-                    if res.isResponded
+                    if res.isStreaming
                     {
-                        # 响应已缓冲完成：照常写出（首个响应胜出）
+                        # 头已直发无法改 500：兜底终止块 + 断连
+                        res._streamWriter._ensureClosed()
+                        closeConn = true
+                    }
+                    elif res._direct
+                    {
+                        # sendFile 直写半截：断连
+                        closeConn = true
+                    }
+                    elif res.isResponded
+                    {
+                        # 响应已缓冲完成：照常写出（首个响应胜出，P1 复盘 ⑧）
                         HttpServerCore._writeResponse( client, res, keepAlive, isHead )
                     }
                     else
                     {
-                        # handler 异常未响应：500 + 断连（连接状态不可信）
+                        # 管道/中间件/handler 异常未响应：500 + 断连
                         HttpServerCore._writeSimple( client, 500, HttpServerCore._errorBody( 500 ) )
                         closeConn = true
                     }
                 }
+                elif res.isStreaming
+                {
+                    # chunked 流式：兜底 close（handler 正常退出未调 close()；
+                    # 幂等）——HTTP/1.0 close-delimited 发完即断
+                    res._streamWriter._ensureClosed()
+                    if res._http10
+                    {
+                        closeConn = true
+                    }
+                }
+                elif res._direct
+                {
+                    # sendFile 全量直写完成（Content-Length 精确）→ keep-alive 继续
+                }
                 elif !res.isResponded
                 {
-                    # handler 正常返回但未写任何响应（契约违约）：500 + 断连
+                    # 管道正常返回但未写任何响应（契约违约）：500 + 断连
                     HttpServerCore._writeSimple( client, 500, HttpServerCore._errorBody( 500 ) )
                     closeConn = true
                 }
@@ -445,10 +510,14 @@ namespace SLang
                     HttpServerCore._writeResponse( client, res, keepAlive, isHead )
                 }
 
-                if req._body != null
+                if connKilled
                 {
-                    req._body.release()
+                    # 尾环超时路径已自行收尾（504 应答 + 资源回收 + 断连）
+                    break
                 }
+
+                # 请求级资源回收（body + multipart 文件内容缓冲，§6.5）
+                HttpServerCore._releaseRequest( req )
                 if res._body != null
                 {
                     res._body.release()
@@ -469,6 +538,84 @@ namespace SLang
                 buf.release()
             }
             catch { }
+        }
+
+        # ── 管道与尾环（P2，§6.9 / §6.1）──
+
+        # 管道入口：无中间件直通尾环；有则 _Pipeline 逐环（Next.go 链）。
+        # 返回 true = 尾环已自行断连收尾（handler 超时路径，调用方 break）
+        static bool _runPipeline( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead ) throws
+        {
+            if _PluginHost.middlewareCount() == 0
+            {
+                ret HttpServerCore._tail( client, cfg, route, noRoute, req, res, isHead )
+            }
+            _Pipeline pipe = _Pipeline( client, cfg, route, noRoute, req, res, isHead )
+            ret pipe._run()
+        }
+
+        # 尾环：handler 协程派发（§6.1）或 404/405 应答（经中间件后的终点；
+        # res 终端写出由调用方统一处理）。
+        # 返回 true = 超时路径已断连收尾（调用方 break）
+        static bool _tail( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead ) throws
+        {
+            if route == null
+            {
+                if noRoute == 405
+                {
+                    # 路径命中但动词不符：405 + Allow（Allow 头列出可用动词）
+                    res.status( 405 ).header( "Allow", Router.allowMethods( req.path ) ).rawJson( HttpServerCore._errorBody( 405 ) )
+                }
+                else
+                {
+                    res.status( 404 ).rawJson( HttpServerCore._errorBody( 404 ) )
+                }
+                ret false
+            }
+
+            # handler 协程派发（SERVER_DESIGN.md §6.1）
+            # Function 字段先拷局部再传参（HttpHeaders 头注记纪律）
+            function h = route.handler
+            Task task = Coroutine.spawnClosure2( h, req, res )
+
+            bool timedOut = false
+            if cfg.handlerTimeoutMs > 0
+            {
+                timedOut = !Coroutine.waitTimeout( task, cfg.handlerTimeoutMs )
+            }
+            if timedOut
+            {
+                if res.isStreaming
+                {
+                    # 流式豁免（§6.1）：SSE/大文件长推送不受 handlerTimeoutMs
+                    # 误杀——转无限等待；写侧由连接级 writeTimeoutMs 守护
+                    # （慢客户端 send 超时 → handler 协程异常上抛 → 引擎断连）
+                    Coroutine.awaitTask( task )
+                    ret false
+                }
+                # 超时：协作式取消 + 优雅断连（杜绝未死协程的后续读写竞态；
+                # 直接 close 会 RST 致客户端读不到 504 —— _gracefulClose）
+                task.cancel()
+                if res.isResponded
+                {
+                    # 已缓冲完成的响应照常写出（非流式单缓冲无半截风险）
+                    HttpServerCore._writeResponse( client, res, false, isHead )
+                }
+                else
+                {
+                    HttpServerCore._writeSimple( client, 504, HttpServerCore._errorBody( 504 ) )
+                }
+                HttpServerCore._releaseRequest( req )
+                if res._body != null
+                {
+                    res._body.release()
+                }
+                HttpServerCore._gracefulClose( client )
+                ret true
+            }
+
+            Coroutine.awaitTask( task )
+            ret false
         }
 
         # 优雅断连：停发（closeWrite = shutdown Write，NetCloseTest F1 先例）
@@ -504,6 +651,36 @@ namespace SLang
             }
             drain.release()
             client.setReadTimeout( 0 )
+        }
+
+        # 单文件上传上限（P1.5；Request 惰性 multipart 解析用；
+        # 未配置时按 ServerConfig 默认 50MB）
+        static Int32 _uploadFileLimit()
+        {
+            if _cfg == null
+            {
+                ret 52428800
+            }
+            ret _cfg.maxFileBytes
+        }
+
+        # 请求级资源回收：body 缓冲 + multipart 文件内容缓冲
+        # （UploadedFile._data，§6.5 请求结束统一回收；幂等）
+        static void _releaseRequest( Request req )
+        {
+            if req._body != null
+            {
+                req._body.release()
+            }
+            if req._mpFiles != null
+            {
+                Int32 n = req._mpFiles.length
+                for Int32 i = 0, i < n, i = i + 1
+                {
+                    UploadedFile f = req._mpFiles[i]
+                    f._release()
+                }
+            }
         }
 
         # ── WebSocket Upgrade 分流（§6.1 / §6.8）──
@@ -562,6 +739,8 @@ namespace SLang
             Map<string,string> pathParams = Router.extractParams( wsRoute, r._path )
             WsSession s = WsSession( ws, wsRoute.pattern, pathParams, r._rawQuery )
             _WsSessions.register( wsRoute.pattern, s )
+            # 插件 WS 会话钩子（对所有插件广播，§6.9）
+            _PluginHost.notifyWsOpen( s )
             # Function 字段先拷局部（HttpHeaders 头注记纪律）
             function h = wsRoute.handler
             label sessBlock
@@ -574,6 +753,8 @@ namespace SLang
                 # 会话异常：静默收尾（不影响其他会话，§6.11）
             }
             _WsSessions.unregister( wsRoute.pattern, s )
+            # 插件 WS 会话钩子（注销后广播，§6.8 收尾序）
+            _PluginHost.notifyWsClose( s )
             ws.close()
         }
 
@@ -691,6 +872,10 @@ namespace SLang
             elif code == 504
             {
                 msg = "handler timeout"
+            }
+            elif code == 503
+            {
+                msg = "service unavailable"
             }
             ret "{\"code\":" + code.toString() + ",\"message\":\"" + msg + "\",\"data\":null}"
         }
@@ -912,6 +1097,17 @@ namespace SLang
             }
 
             # ---- body 三态（chunked / Content-Length / 无）----
+            # body 上限分流（P1.5，§6.4 第 5 步）：multipart 请求用
+            # maxUploadBytes（multipart 请求总量上限），其余 maxBodyBytes
+            Int32 bodyLimit = cfg.maxBodyBytes
+            string ctHead = headers.getHeader( "Content-Type" )
+            if ctHead != null
+            {
+                if BodyParser.isMultipart( ctHead )
+                {
+                    bodyLimit = cfg.maxUploadBytes
+                }
+            }
             string te = headers.getHeader( "Transfer-Encoding" )
             bool chunked = false
             if te != null
@@ -921,7 +1117,7 @@ namespace SLang
             if chunked
             {
                 ByteBuffer body = ByteBuffer()
-                Int32 ec = HttpServerCore._readChunked( s, buf, body, cfg.maxBodyBytes )
+                Int32 ec = HttpServerCore._readChunked( s, buf, body, bodyLimit )
                 if ec != 0
                 {
                     body.release()
@@ -941,7 +1137,7 @@ namespace SLang
                         result._errorCode = 400
                         ret result
                     }
-                    if cl > cfg.maxBodyBytes
+                    if cl > bodyLimit
                     {
                         result._errorCode = 413
                         ret result

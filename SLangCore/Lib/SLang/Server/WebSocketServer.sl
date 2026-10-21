@@ -441,6 +441,8 @@ namespace SLang
                 ws = Net.WebSocketStream.accept( client, null )
                 s = WsSession( ws, key, null, "" )
                 _WsSessions.register( key, s )
+                # 插件 WS 会话钩子（对所有插件广播，§6.9）
+                _PluginHost.notifyWsOpen( s )
                 # Function 字段先拷局部再传参/调用（HttpHeaders 头注记纪律）
                 function hMsg = _onMessage
                 bool looping = true
@@ -463,6 +465,8 @@ namespace SLang
                     }
                 }
                 _WsSessions.unregister( key, s )
+                # 插件 WS 会话钩子（注销后广播，§6.8 收尾序）
+                _PluginHost.notifyWsClose( s )
                 function hClose = _onClose
                 if hClose != null
                 {
@@ -508,6 +512,142 @@ namespace SLang
                 client.close()
             }
             catch { }
+        }
+    }
+
+    # ============================================================================
+    # WsEventBuilder — WS 事件式糖（P2，§4.6：app.wsEvents(path).onOpen(...)
+    #   .onMessage(...).onClose(...)；内部仍是一协程，适合不想写循环的场景）
+    # SLang.Server.wsEvents(path) 构造：构造期注册 WS 路由，会话回调经
+    # 静态注册表按 pattern 反查分发（闭包零捕获纪律，P0 复盘）。
+    # 回调签名：onOpen/onClose = function( WsSession s )；
+    #   onMessage = function( WsSession s, Net.WsMessage m )——消息归回调
+    #   所有，消费完调 m.release()（§4.7 示例同款约定）。
+    # ============================================================================
+    class _WsEventRoutes
+    {
+        # pattern → WsEventBuilder（静态注册表）
+        static Map<string, object> _byPattern = null
+
+        static void register( string pattern, WsEventBuilder b )
+        {
+            if _WsEventRoutes._byPattern == null
+            {
+                _WsEventRoutes._byPattern = new()
+            }
+            _WsEventRoutes._byPattern[pattern] = b
+        }
+
+        static WsEventBuilder find( string pattern )
+        {
+            if _WsEventRoutes._byPattern == null
+            {
+                ret null
+            }
+            if pattern == null
+            {
+                pattern = ""
+            }
+            object cur = _WsEventRoutes._byPattern[pattern]
+            if cur == null
+            {
+                ret null
+            }
+            ret cur as WsEventBuilder
+        }
+    }
+
+    public class WsEventBuilder
+    {
+        string _pattern = ""
+        Function _onOpen = null
+        Function _onMessage = null
+        Function _onClose = null
+
+        # 构造即注册 WS 路由（SLang.Server.wsEvents 调用；用户勿直接 new）
+        _init_( string path )
+        {
+            this._pattern = path
+            _WsEventRoutes.register( path, this )
+            # 会话回调零捕获：经 s.routePattern() 静态反查 builder 分发；
+            # 闭包字面量先赋局部变量再传参（内联实参形态语言不支持）
+            function h = function( SLang.WsSession s )
+            {
+                WsEventBuilder._serve( s )
+            }
+            Router.addWs( path, h )
+        }
+
+        # ── 链式事件注册 ──
+
+        public WsEventBuilder onOpen( Function fn )
+        {
+            this._onOpen = fn
+            ret this
+        }
+
+        public WsEventBuilder onMessage( Function fn )
+        {
+            this._onMessage = fn
+            ret this
+        }
+
+        public WsEventBuilder onClose( Function fn )
+        {
+            this._onClose = fn
+            ret this
+        }
+
+        # 会话服务（注册的 WS 路由回调；单协程——open → 消息循环 → close）
+        static void _serve( WsSession s )
+        {
+            WsEventBuilder b = _WsEventRoutes.find( s.routePattern )
+            if b == null
+            {
+                ret
+            }
+            # Function 字段先拷局部（HttpHeaders 头注记纪律）
+            function hop = b._onOpen
+            if hop != null
+            {
+                label openCb
+                {
+                    hop( s )
+                }
+                catch { }
+            }
+            function hm = b._onMessage
+            bool looping = true
+            while looping
+            {
+                Net.WsMessage m = s.receive()
+                if m == null
+                {
+                    looping = false
+                }
+                elif hm != null
+                {
+                    # 回调异常吞掉（会话不因单条消息失败而中断）
+                    label msgCb
+                    {
+                        hm( s, m )
+                    }
+                    catch { }
+                }
+                else
+                {
+                    m.release()
+                }
+            }
+            function hc = b._onClose
+            if hc != null
+            {
+                label closeCb
+                {
+                    hc( s )
+                }
+                catch { }
+            }
         }
     }
 }

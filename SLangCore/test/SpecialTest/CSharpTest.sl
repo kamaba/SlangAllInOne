@@ -150,7 +150,7 @@ class CSharpTest
 
     # ---------------- @csharp_mono(){} 内联块（通道脱糖 → csc 融合 SLAtSign.dll） ----------------
     # 块体三分（头/尾通道归 Front 初判，代码段整编归插件 frontend 解析器
-    # SLCSharpMonoFrontend）：Int32 x <- $x 入通道（slType 类型标记开头，$
+    # sl_csharp_mono_frontend）：Int32 x <- $x 入通道（slType 类型标记开头，$
     # 引外层 SL 变量，var 已禁用）；
     # 代码段（首个非 <- 行起到末行前）为目标语言原文，Front 零处理，
     # 插件自决整编（含段首 using/import 指令行吸收）；
@@ -158,7 +158,7 @@ class CSharpTest
     # Front 只圈地（括号/块配平+原文截取）并按插件解析结果脱糖为哨兵系统调用
 #   c = AtSignLabelCall( entryIndex, a, b )（CVM 经模块 atSignLabel[] 绑定
 # 走插件 labelExec；出通道 Int32 回写语义由 AtSignLabelCall 哨兵承载）
-# 导出期 AtSignLabelBuildManager 用 .NET csc 把块体（含 Main 包装）编译为
+# 导出期 PluginManager（AtSignLabel 构建段）用 .NET csc 把块体（含 Main 包装）编译为
 # SLAtSign.dll 部署到 csharp_mono 插件 lib 目录；运行期复用上面 SLang.Plugin.CSharpMono.CSharpCallInt 的 mono 链路。
     static testAtSignMono()
     {
@@ -283,7 +283,8 @@ class CSharpTest
     }
 
     # ---------------- 代码段字面量 '<-' 放行（字符串/注释内的 <- 不算通道） ----------------
-    # 代码段扫描（SLCSharpMonoFrontend.MiddleScanner，C# 词法感知）：
+    # 代码段扫描（sl_label_parse.c 三态词法感知，2026-10-21 C 化后与原
+    # SLCSharpMonoFrontend.MiddleScanner 行为逐字对齐），C# 词法感知）：
     # 字符串/字符字面量/行注释/块注释内的 <- 属合法 C# 原文直接放行（代码段
     # 整编归插件，Front 零处理不复核）——只有代码区 <- 才报 20055。
     # "a <- b" 长度 6 + 注释行 u=7 → 出通道 13。

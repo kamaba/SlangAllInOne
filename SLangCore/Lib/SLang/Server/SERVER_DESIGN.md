@@ -1,6 +1,6 @@
 # SLang Server — HTTP / WebSocket 服务框架设计
 
-> 状态：**v2 · P0 已落地（2026-10-17）** · v1 2026-10-14 · v2 2026-10-14（评审修订） · P0 2026-10-17（引擎+探针全绿，见 §8 P0 行与文末「P0 落地实录」）
+> 状态：**v2 · P1.5 已落地（2026-10-20）** · v1 2026-10-14 · v2 2026-10-14（评审修订） · P0 2026-10-17（引擎+探针全绿） · P1 2026-10-17（路由与封装全绿） · P1.5 2026-10-20（文件上传全绿，见 §8 P1.5 行与文末「P1.5 落地实录」）
 > 落位：`source/Front/Lib/SLang/Server/`（模块名 `SLangServer`，命名空间 `SLang`）
 > 参照系：Python FastAPI（路由注册/自动文档）、Java Spring Boot（控制器/插件生态）、Node Express（Request/Response 双参签名）
 > 关联：`md/lib/Std/net/Http.md`（Route 未接线说明）、`csimple_lang/md/design/ATTRIBUTE_DESIGN.md` §6.6（Route 另立项）、`csimple_lang/md/design/NETSTREAM_DESIGN.md`（Tcp 挂起协议）
@@ -1409,9 +1409,9 @@ User u = await persistUser( b ) as User;     # 而非：Task t = spawn persistUs
 |------|------|------|------|
 | **P0** 引擎 | `HttpServerCore` + `_HttpParser` + 响应编码 + keep-alive；`WebSocketStream.acceptBuffered` 重载（Std 增量）；**前置探针：CallClosure 多参直调（双参/三参闭包变量调用）+ handler 协程派发语义（§6.1：`awaitTask` 对已 cancel/已死 Task 的返回路径、`waitTimeout` 返回方向）** | 无路由的裸 HTTP 服务 + `test/Other/NetTest/` 旁路探针 | ✅ **2026-10-17 全绿**：ServerProbeTest A1–B6（多参闭包/带值返回/死 Task awaitTask 不挂起/waitTimeout 双向/cancel）+ ServerCoreTest S1a–S4b（回环 200·404·405+Allow·413·431·504·keep-alive·HEAD·WS 预读残留帧 echo:hello），NetTest 全套 FAIL=0；落地偏差见文末「P0 落地实录」（静态单例化 / 三坑复盘 / HttpServerCore 含 P0 精确路由） |
 | **P1** 路由与封装 | `Router/RouteInfo/RouteGroup` + `Request/Response/Next` 全表 + `ApiResult` + **BodyParser（json/form/bin）** + `app.run/start/stop` + WS 路由升级 + `WsSession` + `WebSocketServer` 独立形态 | §4.1–§4.4 与 §4.6 全部示例可运行 | ✅ **2026-10-17 全绿**：`test/ExpendTest/Server/ServerP1Test.sl` T1–T8 共 42 项（动词家族+405+keep-alive / 路径参数+RouteGroup / 查询参数 / json·form·bin body / Response 链式 / WS 两形态 / WebSocketServer 独立端口 / DuplicateRoute fail-fast）全 OK；ExpendTest 293/293、NetTest 104/104 回归全绿；落地偏差见文末「P1 落地实录」 |
-| **P1.5** 上传 | multipart 解析器 + `UploadedFile`（saveAs/saveInto/安全剥离）+ `maxUploadBytes/maxFileBytes` | §4.4 文件上传全部示例可运行 | multipart 混合（文件+普通字段）/多文件同字段/路径穿越攻击用例（`../../evil.txt` → 剥离为 `evil.txt`）/超限 413 |
-| **P2** 管道插件与流式 | 中间件管道（Next.go）+ `ServerPlugin` + `logger/cors/staticFiles` + **流式三件套（`StreamWriter` chunked / `SseWriter` SSE / `sendFile` 流式下载）** + `wsEvents` 糖 + 通配路由 | §4.5 与 §4.7 全部示例可运行 | 中间件短路/后置/传值用例；静态目录含 MIME 判定；curl 分块接收 chunked 往返 / SSE 浏览器 EventSource / 大文件流式下载内存峰值用例 |
-| **P3** 文档+认证 | `OpenApiBuilder` + `/docs` + `/openapi.json` + `importOpenApi` + `bodyLimit/requestId/auth` 插件 + `SLang.Jwt.decode` + `maxConnections` | §4.8 全部能力 + §4.11 auth 三挂法 / `.skip` 白名单 / WS token 两落点 | **openapi.json 经 Apifox 实际导入验证**（接口/分组/schema/example 齐全；含 form/multipart 文档；**securitySchemes + operation 级 security → 导入后 Auth 自动配好**）；嵌套 DTO schema 正确；auth 回调 `ret 身份/ret null` 带值返回通路实测（P0 闭包带值返回探针结论兑现）；Bearer 缺失/非法 → 401 + `WWW-Authenticate` 头 |
+| **P1.5** 上传 | multipart 解析器 + `UploadedFile`（saveAs/saveInto/安全剥离）+ `maxUploadBytes/maxFileBytes` | §4.4 文件上传全部示例可运行 | ✅ **2026-10-20 全绿**：`test/ExpendTest/Server/ServerP15Test.sl` T1–T7 共 10 项（混合字段+form 族并入 / 二进制内容 hex 往返 / 多文件同字段 / 路径穿越剥离+空名 `upload_<序号>` / saveAs+saveInto 重名自动改名 `dup(1).txt` / 单文件超限 413 / multipart 总量超限 413 / boundary 缺失 400）全 OK；P1 42 项回归全绿；落地偏差见文末「P1.5 落地实录」（附：宿主引用模块联动拷贝修复） |
+| **P2** 管道插件与流式 | 中间件管道（Next.go）+ `ServerPlugin` + `logger/cors/staticFiles` + **流式三件套（`StreamWriter` chunked / `SseWriter` SSE / `sendFile` 流式下载）** + `wsEvents` 糖 + 通配路由 | §4.5 与 §4.7 全部示例可运行 | ✅ **2026-10-20 全绿**：`test/ExpendTest/Server/ServerP2Test.sl` T1–T4 共 24 项（管道短路 401 / onion 序 + userData 传值 / 404 过管道 / onInstall·onStart·onStop 钩子三联 / CORS 预检 204 / 静态 MIME / 穿越 403 / chunked 编码·终止块·keep-alive / SSE 线格式 / 流式超时豁免 / sendFile 160KB 往返 / file() 附件头 / {path*} 通配三态 / wsEvents 开·收·关）全 OK；P1 42 项 + P1.5 10 项回归全绿（ExpendTest 全量零 FAIL）；落地偏差见文末「P2 落地实录」（附：C VM CastClass Step 6 闭包放行修复） |
+| **P3** 文档+认证 | `OpenApiBuilder` + `/docs` + `/openapi.json` + `importOpenApi` + `bodyLimit/requestId/auth` 插件 + `SLang.Jwt.decode` + `maxConnections` | §4.8 全部能力 + §4.11 auth 三挂法 / `.skip` 白名单 / WS token 两落点 | ✅ **2026-10-21 全绿**：`test/ExpendTest/Server/ServerP3Test.sl` T1–T6 共 33 项（openapi 3.0.3 骨架/paths/param in:path/requestBody $ref/嵌套 schema/securitySchemes 双定义+operation security/form 字段；/docs 自包含页 + 用户让位 + docs(false) 关闭；Bearer 401+WWW-Authenticate·坏 token·claims 透传·skip 放行；API Key 三态；通用回调双头三态；Jwt.decode 五组（claims/exp 三态/坏格式 null）；importOpenApi 计数·501·共存·覆盖让位·元数据继承；maxConnections 503）全 OK；P1 45 + P1.5 10 + P2 24 回归全绿（ExpendTest 零 FAIL）；落地偏差见文末「P3 落地实录」（附：Front 三坑规避实录——`$` 插值吞 token/长字面量 "+" 链截断/`out`·`params` 关键字） |
 | **P4** attribute | §7 接线：C VM 原生收集 **`@OnGet/@OnPost/@OnPut/@OnDelete/@OnPatch/@OnHead/@OnOptions/@OnAny` 动词家族 + `@Route`/`@OnRoute`**（新名→verb 原生映射）+ `ServerBridge.call(routeIdx, req, res)` 转发闭包系统方法 + R7 四处同步 + R6 登记 | §4.10 语法可用 | `@OnPost( "admin/user" )` 控制器用例（含 `await`/`delay` 异步 handler、超时 504 路径）；`Route.sl` 迁入改写为 `RouteAttrs.sl`；相关 md 同步 |
 | **P4.5** 直接 await 糖 | Front 语法糖（§7.5）：`await` 后跟返回非 Task 的调用自动包 spawn 脱糖（判别下沉 IR/Meta 层，§7.3 调研先行）+ `md/syntax/coroutine.md` §4 同步（R13） | §4.1 / §4.2 写法 1·3·6·7 / §4.6 / §4.7 / §4.10 createUser 全部直接 await 形态生效 | `await persistUser( b ) as User` 直等用例通过；`httpGetAsync` 族**透传不回归**；显式 spawn 并发聚合**不回归**（含 §4.2 写法 4 `waitAll` 多表并发 / 写法 5 `waitAny` 竞速）；Task 变量基础形态**不回归** |
 | **P5** 打磨 | 前缀树路由 / **请求侧流式（`r.streamBody` + `HttpBodyReader` 边收边落盘上传）** / Range 断点续传 / 主动心跳 / `rateLimit` 插件 / `SLang.Jwt.sign/verify`（HS256 签验 + `ServerConfig.jwtSecret`，**前置依赖 = 标准库 crypto 哈希原语落地**，G8 边界内，§4.11）/ TLS 服务端评估 | 性能与运维项 | 基准（BenchMark 用例集）+ 压测 |
@@ -1540,3 +1540,62 @@ html → text/html · js → application/javascript · css → text/css · json 
 8. **响应写出契约补充**：handler 已暂存响应后抛异常 → 引擎照常写出暂存响应（非 500）；未响应才 500（§6.11 语义细化）。
 
 **下一步（P1.5 上传）**：multipart 解析器 + `UploadedFile`（saveAs/saveInto/安全剥离）+ `maxUploadBytes/maxFileBytes`；验收 = §8 P1.5 行。
+
+---
+
+## §14 P1.5 落地实录（2026-10-20，代码实况与设计的差异记录）
+
+**产物**：新增 `Upload.sl`（UploadedFile 上传句柄）；扩展 `BodyParser.sl`（multipart/form-data RFC 7578 全量解析：boundary 提取 / part 头 / 普通字段并入 form 表 / 文件 part / filename 安全剥离 / `_MultipartBody` 内部结果类）、`Request.sl`（file/files/fileCount 文件族 + `_ensureMultipart` 惰性解析 + form 族并入 multipart 字段）、`HttpServerCore.sl`（body 上限分流 maxUploadBytes / multipart 派发前即时解析 400·413 / `_releaseRequest` 请求级资源回收）、`Server.sl`（ServerConfig 增 maxUploadBytes=100MB / maxFileBytes=50MB）；`Server.jsonc` 登记 Upload.sl + UploadedFile struct；验收用例 `test/ExpendTest/Server/ServerP15Test.sl`（T1–T7，端口 19411–19413，原始 TCP 手搓 multipart 构造——HttpClient body 为纯 string 不支持二进制，multipart 必须原始客户端）。
+
+**验收**：ServerP15Test T1–T7 共 10 项全 OK；ServerP1Test T1–T8 共 42 项回归全绿（ExpendTest 全量零 FAIL）。
+
+**与设计的偏差 / 实况要点**：
+1. **multipart 即时解析时点 = handler 派发前**（引擎连接协程内 `req._ensureMultipart()`，§6.5「构造期」语义的等价落点——Request 构造发生在路由匹配后，引擎在 spawnClosure2 之前即时触发，保证单文件超限 413 / boundary 缺失 400 走协议层优雅断连，handler 永不见坏包）；`Request._ensureMultipart` 保持惰性幂等（重复调用返回缓存，非 multipart 格式恒 0）。
+2. **form 族并入**：multipart 普通字段直接挂进 `_ensureForm` 的缓存表（值不解码，§6.4 直传语义），form/formInt/formBool/hasForm/formKeys 对 urlencoded 与 multipart 统一生效。
+3. **`upload_<序号>` 序号 = 文件表下标**（`_safeFilename(raw, seq)` 的 seq 取 `result._files.length`）——多 part 请求中第 N 个空名文件生成 `upload_<N-1>`，非全局从 0 计。
+4. **saveInto 目录拼接统一 `/`**（Windows 侧同样接受，不引 Path.combine 免跨模块点分调用）；重名改名 `stem(N)ext` 含点扩展保原大小写。
+5. **SL 语言坑两枚**：① `data` / `base` 是关键字不能作参数/变量名（UploadedFile 构造参数 `data→content`、saveInto 局部 `base→dirBase`）；② `bool.toString()` 输出 **"True/False"**（C# 风格大写开头），测试断言小写 "true" 会假失败。
+6. **Front 已知限制（记录备修）**：闭包方法体内 `List<SLang.UploadedFile>`（typealias 或点分类型均触发）在模板实例化链 NRE（`MetaClass.AddMetaTemplateClassByMetaClassAndMetaTypeList`，与 P1 复盘 6 同族）；**链式访问 `req.files("x").length` 正常**——测试侧以链式 + 字段区分规避，Front 修复后可补强逐元素用例（`ps[0].filename`）。
+7. **宿主修复（附带产出，`CSimpleVMTest/Program.cs`）**：`CopyModuleIntoPackage` 增 `StageReferencedModules`——解析主模块 `moduleReferences`，非系统库引用（ExpendTest→SLangServer）的导出产物（两处标准导出树 `SlangAllInOne\out\export\<名>\` / `SlangAllInOne\SLangCore\out\export\<名>\`）连带拷入包 `<pkg>\<名>\`；Core/Std/Math 走包内 `<exe>\lib\` 直查不拷。**背景**：此前引用模块不跟随，C VM 对落空引用**静默 skip**（仅 VM.txt Warning、退出码 0），跨模块调用全部落到空壳方法——`ServerConfig` 字段全空 / `Server.start` no-op / 测试挂死后 VM 判定无在途 IO "成功"收尾，极具迷惑性（本次 P1.5 验收首跑即踩，最小复现 + 同一 slb 换目录运行二分定位 ~2 小时）；复盘见 `md/ai/troubleshooting/06-build-engineering.md` [2026-10-20]。
+
+**下一步（P2 管道插件与流式）**：中间件管道（`SLang.Next` + nx.go()）+ `ServerPlugin` 基类 + logger/cors/staticFiles 内置插件 + 流式三件套（`StreamWriter` chunked / `SseWriter` SSE / `sendFile`）+ `wsEvents` 糖 + 通配路由 `{path*}`；验收 = §8 P2 行。
+
+---
+
+## §15 P2 落地实录（2026-10-20，代码实况与设计的差异记录）
+
+**产物**：新增 `Plugin.sl`（`Next` 放行令牌 / `_Pipeline` 管道执行器 / `ServerPlugin` 插件基类（onInstall·onStart·onStop·onWsOpen·onWsClose 钩子）/ `_PluginHost` 静态宿主（`List<Function>` 中间件表 + `List<object>` 插件表 + 钩子广播））、`Plugins.sl`（`logger()/cors()/staticFiles(root)` 内置插件）、`StreamIo.sl`（`StreamWriter` chunked write·writeBytes·flush·close / `SseWriter` send·sendEvent·comment·close）；扩展 `Response.sl`（`stream()/sse()/sendFile()/file()` + `_direct` 直写通道 + `_streamWriter` 绑定）、`HttpServerCore.sl`（管道执行接入（§6.9）+ 流式三态写出分支 + 管道异常/契约违约 500 兜底）、`Router.sl`（`{path*}` 通配尾段——仅识别最后一段，匹配剩余全部段）、`Server.sl` 门面（`use(Function)`/`use(ServerPlugin)`/`wsEvents(path)`）；`Server.jsonc` 登记 Plugin/Plugins/StreamIo 三文件；验收用例 `test/ExpendTest/Server/ServerP2Test.sl`（T1–T4 共 24 项，端口 19421–19424，原始 TCP 手搓收发）。
+
+**验收**：✅ 2026-10-20 全绿——ServerP2Test T1 管道 5 项（短路 401 / onion 序 + userData 传值 / 404 过管道 / onInstall 立即性 + onStart / onStop）、T2 内置插件 6 项（CORS 预检 204 / 静态 txt·html MIME / miss→404 带 CORS 头 / 穿越 403 / 路由+静态共存）、T3 流式 5 项（chunked 编码+终止块 / 引擎 close 回退 / keep-alive 续用 / SSE 线格式 / 流式连接超时豁免）、T4 5 项（sendFile 160KB 往返 / 缺失 404 / file() 附件头 / 通配多段·单段·空段 / wsEvents 开·收·关）全 OK；P1 42 项 + P1.5 10 项回归全绿（ExpendTest 全量零 FAIL、测试输出零调试残留）。
+
+**与设计的偏差 / 实况要点**：
+1. **onInstall() 无参**（设计 §4.7 `onInstall(app)` 传实例）——P1 起门面为静态形态（§12 复盘 ①），插件经 `SLang.Server.*` 静态调用注册；Plugin.sl 类头注记已载。
+2. **onion 执行形态 = 连接协程内联同步嵌套**：`Next.go()` 直调 `_runFrom(idx+1)`，后置环在 handler 协程 `awaitTask` 返回后自然回程；中间件自身可 await（§4.7 契约兑现）。SL 无方法引用 → 框架持环索引逐环构造 `Next`（§6.9 设计原样落地）；`nx.go()` 幂等（重复调用 no-op 防双派发）。
+3. **未匹配请求同样过管道**（404/405 = 尾环应答模式）——staticFiles/CORS 预检语义依赖此；管道正常返回但零响应 = 契约违约 500 + 断连；管道异常四分支：流式头已发→兜底终止块+断连 / sendFile 半截→断连 / 已缓冲完成→照常写出（首个响应胜出）/ 未响应→500。
+4. 🔥 **C VM 修复（本次核心附带产出，`csimple_lang/src/vm/runtime/vm_runtime.c` OpCode_CastClass Step 6）**：管道首验 T1/T2 全 500，根因链——`_middlewares` 底层 `Array<Function>` 元素槽 etype=Class(20) → `List<T>._getItem_` 方法体 `ret SystemArrayGetValueThis(...) as T` 被 Front 内联发射 CastClass（目标 = 模板参数节点，运行期绑定 Core.Function）→ VM 侧 Step 6 的 etype 闸只认 `EVMType_Object`（**全库 30+ 处 Object||Class 并列检查的唯一例外**），Class etype 闭包引用被吃掉 push null → `mw==null` → no-response 500。**修复双改动**：① 闸放宽 `Object||Class`（Class etype 值必经类型化引用槽装载、持真实对象指针，非 scalar union 别名——闸本意只拦 raw scalar）；② 闭包对象特判：闭包载体是无绑定 RuntimeType 的裸 payload VMObject（`vm_object_get_runtime_type` 返回 NULL，extends 检查不可用），故 source_rt==NULL 时以 closure magic（'CLSR'/native FFI 两族）识别 + 目标类名双形态（`"Function"`/`"Core.Function"`——RuntimeClass 名带命名空间、与 payload 侧 def 类型名形态不同）放行。P1/P1.5 的 `List<RouteInfo>` 等真类实例全绿 = extends 路径本就正常，差异全在闭包无 rt；取证过程（IR 反查定位发射点 + 三层插桩对账）复盘见 `md/ai/troubleshooting/03-vm-runtime.md` [2026-10-20] 条。
+5. **staticFiles 仅 GET 直出**（HEAD 放行——sendFile 直写路径未做 HEAD 摘除，已知限制，后续随 P5 打磨补）；MIME 按扩展名映射、未知名 `application/octet-stream`。
+6. **流式连接豁免 `handlerTimeoutMs`**（T3e 专项验证）：chunked/SSE 连接不参与超时收割——否则长推送必被 400ms 级超时杀死；普通 handler 超时行为不变（P0 504 路径）。
+
+**下一步（P3 文档+认证）**：`OpenApiBuilder` + `/docs` + `/openapi.json` + `importOpenApi`（未注册路径文档路由 501 → onGet 覆盖工作流）+ `bodyLimit/requestId/auth` 插件 + `SLang.Jwt.decode` + `maxConnections`；验收 = §8 P3 行（Apifox 实际导入 + securitySchemes 自动配 Auth）。
+
+---
+
+## §16 P3 落地实录（2026-10-21，代码实况与设计的差异记录）
+
+**产物**：新增 `Docs.sl`（openapi.json 生成（探针法 schema：样例实例 → fromData → JSON 树 → 逐节点映射 string/integer/number/boolean/array/object/nullable；手工组 TreeNode 树 + BaseJson.fromTree 序列化）/ `/docs` 自包含 HTML 页面（零外链零 CDN，同源 fetch openapi.json 渲染 + GET try-it-out）/ `importOpenApi`（文档路由 isDocOnly·501 + 覆盖让位 + 元数据合并））、`Jwt.sl`（`JwtClaims`（claim/put/subject/expiresAt/expired）+ `Jwt.decode`（三段定位·base64url 反归一·payload 解析·Map 载体）；零新依赖）；扩展 `Router.sl`（`RouteInfo` 结构化文档元数据（docParams/docForms/docBodyText/docResponses/security/isDocOnly/isBuiltin + 链式 `param/requestBody/formField/uploadField/response/responseAs/security`）+ `RouteParam`/`RouteResp` 记录类 + `findExact` 精确查找 + `add` 文档路由让位继承）、`Plugins.sl`（`_BodyLimitPlugin`（contentLength 超限 413）/ `_RequestIdPlugin`（Guid → X-Request-Id）/ `_AuthPlugin`（三挂法单类：通用回调收 req·Bearer→Jwt.decode→req.auth=JwtClaims·API Key 自定义头；`.skip()` 白名单·`.ws(true)` token 接管（onWsOpen 查询参数校验失败关会话）；401 附 `WWW-Authenticate: Bearer`（RFC 6750，仅 Bearer 模式））+ 工厂 `bodyLimit/requestId/auth/authBearer/authApiKey`）、`Plugin.sl`（`ServerPlugin` 基类增 `skip/ws` 链式占位（子类 override，返回类型统一 ServerPlugin——跨模块链式调用按基类签名决议））、`HttpServerCore.sl`（start 挂载 /docs + /openapi.json（`_docsEnabled` 开关，reset 恢复默认开）+ maxConnections 超限 503 协议层应答 + `_errorBody` 503）、`Server.sl`（ServerConfig.maxConnections=1024 + 门面 `docs(bool)`/`importOpenApi(path)`）；`Server.jsonc` 登记 Docs/Jwt + struct 增 RouteParam/RouteResp/Jwt/JwtClaims；验收用例 `test/ExpendTest/Server/ServerP3Test.sl`（T1–T6 共 33 项，端口 19431–19435）。
+
+**验收**：✅ 2026-10-21 全绿——T1 openapi 生成 7 项（3.0.3 骨架+servers / paths+summary+tags / path 参数 in/required/type / requestBody $ref+schema 复用+example / 嵌套 DTO properties / securitySchemes 双定义+operation security / form 字段 urlencoded）、T2 docs 3 项（自包含页 / 用户让位 / docs(false) 关闭）、T3 auth 10 项（Bearer 四态：缺失 401+头·坏 token·好 token claims 透传·skip 放行 / API Key 三态 / 通用回调三态）、T4 Jwt 5 项（claims 读取 / exp 未来 false·过去 true·缺失恒 false / 坏格式三连 null）、T5 importOpenApi 5 项（计数 / 501 / 共存 / 覆盖让位 / 元数据继承）、T6 1 项（maxConnections 首连接 200·次连接 503）全 OK；P1 45 + P1.5 10 + P2 24 回归全绿（ExpendTest 零 FAIL）。
+
+**与设计的偏差 / 实况要点**：
+1. **链式 .skip()/.ws() 上移基类**：静态工厂返回 `ServerPlugin`（跨模块子类上行赋型纪律，§12 复盘 ①）导致 `.skip()` 在基类上不可见（MetaCore 链解析失败）——`ServerPlugin` 基类加 no-op 占位、`_AuthPlugin` override（返回类型必须一致），非 auth 插件调用为 no-op。
+2. **探针法 schema 键 = `Type.toString()`**：设计的 `SystemObjectGetType(sample).className` 实为 `Type.metaClass.className`（两跳，Meta 层不通过）——改用 `ty.toString()`（内含 className + 模板参数展开，DTO 无模板 = 纯类名）。
+3. **`BaseJson.fromTree` 收 Tree 不收 TreeNode**：根节点需 `Tree.setRoot(node)` 包一层。
+4. **importOpenApi 只回填轻量元数据**：summary/tags/desc/param/security（样例实例无法从 JSON 反推，requestBody/responses 不回填——v1 偏差已注记类头）；ANY 路由在 openapi.json 展开 7 动词同 op；WS 路由不进 openapi.json。
+5. 🔥 **Front 三坑规避实录（本轮排障主战场，SL 侧全数绕开、未改 Front）**：
+   - **`$` 是字符串插值前缀**（md/syntax/keywords.md §3.5）：字符串字面量**任何位置**出现 `$`（含 `"$"+` 拆分拼接）都会吞掉后续 token——`"$ref"` 键值对改 `Docs._dollar()`（ByteBuffer 构造 "$" 单字符）拼接，JS 侧 `sch.$ref` 改 `String.fromCharCode(36)+'ref'` 运行期生成；
+   - **长字符串字面量 "+" 链求值截断**：`ret "段1" + "段2" + ...` 跨行链实测**仅首段字面量存活**（pageJs 21 字符 = 首段；变量链 5 段/局部累加 20 段均正常——字面量链特有）；`_htmlPage/_pageCss/_pageJs` 全部重写为 `StringBuilder.append` 逐段追加（一次通过）；
+   - **关键字撞名**：`out`（变量定义名禁用；`string out = ...` 报 NodeStructParseN `'=' 后缺少赋值表达式`——报错信息与真实原因相距甚远）、`params`（变参关键字，作局部变量名同样炸）——改名 `res/paramsNode/bufOut`；
+   - 另两处编译期纪律：`ret 方法调用()` 跨行续 `+` 链中段裸标识符会被误判类名（拆局部变量）；`for` 三段分隔符是**逗号**不是分号（`for i = 0; i < n; i++` 静默 NRE，无报错线索）。
+6. **maxConnections 503 = 协议层应答**：accept 循环内 `_writeSimple(503) + _gracefulClose`，不进管道不占连接协程（§6.11 精神）；keep-alive 占住名额的连接在 stop/超时释放后恢复。
+
+**下一步（P4 attribute 控制器）**：C VM 原生收集 `@On*` 动词家族（§7.1 主方案：装配期 attributeList 扫描 + `SystemServerGetPreloadRoutes` 系统方法 + `ServerBridge.call` 转发闭包）+ R7 四处同步 + R6 三处登记；验收 = §8 P4 行。

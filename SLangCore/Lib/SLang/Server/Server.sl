@@ -4,13 +4,13 @@ import Core;
 namespace SLang
 {
     # ============================================================================
-    # SLang/Server/Server.sl — 配置与错误码（P0 子集）
+    # SLang/Server/Server.sl — 配置与错误码（P0 子集 → P1.5 增补）
     # 设计契约：SERVER_DESIGN.md §4.9（生命周期与配置）/ 附录 D（错误码表）
     #
     # 门面类 SLang.Server（App：onGet 家族 / group / use / run）随 P1 落地，
     # 当前直接使用 SLang.HttpServerCore。
     # 配置字段直改（无 builder 链）；后续阶段字段随能力增补：
-    #   P1：maxUploadBytes / maxFileBytes（multipart）
+    #   P1.5：maxUploadBytes / maxFileBytes（multipart，已落地）
     #   P2：writeTimeoutMs（流式写挂起超时）
     #   P3：maxConnections / showBanner
     # ============================================================================
@@ -31,6 +31,14 @@ namespace SLang
         public Int32 maxHeaderBytes = 16384
         # 普通请求 body 上限字节，超出 413
         public Int32 maxBodyBytes = 10485760
+        # multipart 请求总量上限字节，超出 413（P1.5，§4.9）
+        public Int32 maxUploadBytes = 104857600
+        # 单文件上限字节，超出 413（P1.5，§4.9）
+        public Int32 maxFileBytes = 52428800
+        # 流式写挂起超时毫秒（防慢客户端拖死；<= 0 无限等待；P2，§4.9）
+        public Int32 writeTimeoutMs = 30000
+        # 并发连接上限（超出 503 + 断连；<= 0 不限；P3，§4.9）
+        public Int32 maxConnections = 1024
 
         # 字段默认值经无参构造显式落位（HttpClient._init_ 先例：跨模块消费侧
         # 类字段默认值初始化不可靠，实测 host 读出空串致 listen 绑错地址）
@@ -42,6 +50,10 @@ namespace SLang
             this.handlerTimeoutMs = 30000
             this.maxHeaderBytes = 16384
             this.maxBodyBytes = 10485760
+            this.maxUploadBytes = 104857600
+            this.maxFileBytes = 52428800
+            this.writeTimeoutMs = 30000
+            this.maxConnections = 1024
         }
     }
 
@@ -221,6 +233,32 @@ namespace SLang
             ret RouteGroup( prefix )
         }
 
+        # ── 中间件 / 插件（P2，§4.7）──
+
+        # 注册中间件（三参 Function：function( SLang.Request req,
+        # SLang.Response res, SLang.Next nx )；注册序即执行序；
+        # nx.go() 放行 / 不调 = 短路）
+        public static void use( Function middleware )
+        {
+            HttpServerCore.use( middleware )
+        }
+
+        # 注册插件（ServerPlugin 子类；onInstall 立即执行，
+        # onStart/onStop/onWsOpen/onWsClose 由引擎广播）
+        public static void use( ServerPlugin plugin )
+        {
+            HttpServerCore.use( plugin )
+        }
+
+        # ── WS 事件式糖（P2，§4.6）──
+
+        # 事件式 WS 路由：wsEvents( path ).onOpen(fn).onMessage(fn).onClose(fn)
+        #（内部仍是一协程；onMessage 回调内消费完消息调 m.release()）
+        public static WsEventBuilder wsEvents( string path )
+        {
+            ret WsEventBuilder( path )
+        }
+
         # ── 会话查询 / 组播（§4.6）──
 
         # 该 WS 路由的在线会话快照
@@ -233,6 +271,23 @@ namespace SLang
         public static Int32 broadcast( string path, string text )
         {
             ret _WsSessions.broadcast( path, text )
+        }
+
+        # ── API 文档（P3，§4.8）──
+
+        # 文档路由开关（false = start 不挂 /docs 与 /openapi.json；
+        # 生产建议关；reset() 恢复默认开）
+        public static void docs( bool enable )
+        {
+            HttpServerCore._docsEnabled = enable
+        }
+
+        # 反向导入 OpenAPI json（Apifox 导出 → 路由骨架）：
+        # 返回新建文档路由数（未注册路径以 501 文档路由登记、/docs 可见；
+        # 已注册路径仅合并文档元数据；后续 onGet(...) 同名覆盖生效，§4.8）
+        public static Int32 importOpenApi( string jsonPath ) throws
+        {
+            ret Docs.importOpenApi( jsonPath )
         }
     }
 }

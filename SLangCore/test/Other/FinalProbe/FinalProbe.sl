@@ -16,6 +16,7 @@ final class SealedBase
     }
 }
 
+#!
 class SealedChild extends SealedBase
 {
     int doubleV()
@@ -23,6 +24,7 @@ class SealedChild extends SealedBase
         ret this.getV() * 2
     }
 }
+    !#
 
 # ---- 场景 2：final 方法被 override（应报 12274 存量 MetaCoreFinalFunctionCannotOverride）----
 class MethodBase
@@ -35,10 +37,12 @@ class MethodBase
 
 class MethodChild extends MethodBase
 {
+    #!
     override int locked()
     {
         ret 200
     }
+    !#
 }
 
 class FinalProbe

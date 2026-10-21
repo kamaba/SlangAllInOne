@@ -83,7 +83,7 @@ test/BaseTest/
 
 - **覆盖清单**：六大用例集 + TensoraTest、`test\Other\*` 全部探针与功能用例（Json/Yaml/Xml/Websocket/Net/HttpWeb/Inline*×3/ARC·GC 探针×6/Const*·Final*·Hook 系/MiniSmoke/WasmDemo/GlobalSlot/ExportPerm/Crawler/Ref·Return·ReDebug·MemberInit 等）、NaNBench/EqBench、负例工程（名称带「负例」标注，F5 即走查预期 LID 拦截或平台拒跑）、示例 GameTank（默认 `args: ["auto"]` 自动化）。
 - **通用入口**：「调试 SLang: 当前工程」随活动编辑器自动定位（活动文件是 `.module.json` 用它，否则取当前 `.sp` 工程）；各配置可加 `"stopOnEntry": true` / `"args": ["…"]`（程序参数，透传 `Project._inputArgs`）。
-- **前提**：安装 slang_vscode_plugin（提供 `slang` DAP 类型）；`settings.json` 的 `slang.executable.path` 指向的宿主已构建（现为 `SlangAllInOne\bin\Debug\net8.0\slang.exe`，`dotnet build SlangAllInOne` 更新）。
+- **前提**：安装 slang_vscode_plugin（提供 `slang` DAP 类型）；`settings.json` 的 `slang.executable.path` 指向的宿主已构建（现为 `SlangAllInOne\package\win32-release\slang.exe`，产品层 = AOT Front + Release 加固 cvm，改 Front/VM 代码后 `dotnet publish SlangAllInOne -c Release` 刷新；`--debug`/调试会话为 SL 语言级调试且自动禁 JIT，Debug/Release 两层语义见根 AGENTS.md §5）。
 - （宿主 C# 侧调试仍走 VS：打开 `SlangAllInOne.sln` 选 `CSimpleVMTest` 的 launchSettings profile。）
 
 ### 命令行（dotnet）
@@ -107,7 +107,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 ### Debug 与 Release 的行为差异（`CSimpleVMTest` 宿主）
 
-2026-10-18 晚起执行端统一改为 **发布包 slang 应用**（用户指令，取代旧的 P/Invoke / csimple_lang.exe 直调）：宿主把编译产物拷入包内 `<package>\<Module>\`，再调用包内 `slang.exe run-disk` 执行；`moduleReferences` 相对解析在包内落空 → C VM 走官方库直查 `<slang.exe 目录>\lib\`，**标准库即取自包内 lib\ 目录**。子目录深度与 `out\export\<Module>` 一致，SpecialTest 等插件 lib 按相对路径回仓库原位加载。
+2026-10-18 晚起执行端统一改为 **发布包 slang 应用**（用户指令，取代旧的 P/Invoke / csimple_lang.exe 直调）：宿主把编译产物拷入包内 `<package>\<Module>\`，再调用包内 `slang.exe run-disk` 执行；`moduleReferences` 相对解析在包内落空 → C VM 走官方库直查 `<slang.exe 目录>\lib\`，**标准库即取自包内 lib\ 目录**。子目录深度与 `out\export\<Module>` 一致，SpecialTest 等插件 lib 按相对路径回仓库原位加载。**非系统库引用模块联动拷贝**（2026-10-20 起）：宿主解析主模块 `moduleReferences`，把非 Core/Std/Math 的引用（如 ExpendTest→SLangServer）导出产物一并拷入 `<package>\<引用名>\`——此前引用不跟随会被 C VM 静默 skip（仅 VM.txt Warning、退出码 0），跨模块调用全落空壳致测试假绿/挂死（复盘见 `md/ai/troubleshooting/06-build-engineering.md` [2026-10-20]）。
 
 | 配置 | 运行方式（包） | Front 导出参数 | 适合场景 |
 |------|---------------|----------------|----------|

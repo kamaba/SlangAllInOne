@@ -138,3 +138,16 @@
 - 如何快速验证：`node SlangAllInOne\SLangCore\test\Other\DebugSmoke\smoke.js`（26 项断言：行首变量态/step 三型/协程 threadId/断点复发路径）。
 - 预防建议：① 在"取指后、执行前"型注入点写探测逻辑，先写清 `execute_index` 的语义基准（本轮待执行 = `execute_index-1`），与主循环取指协议对表；② IR 指令 di 的归属基准 = **用户语句**，任何"缺省取方法 token"的便利路径都会抹平行号（断点/单步/stack 三处同时受害）；③ 状态锚点的失效条件要先枚举"跨边界往返"场景（进被调方再弹回）再定，单一维度的变化判定（行 OR 方法）必错，正确形态是限定同主体内的变化。
 - 详见 `csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md` §8.2（三缺陷对照表 + 26 项冒烟覆盖）。
+
+### [2026-10-20] SLangServer P2 中间件 List<Function> 取值恒 null：CastClass Step 6 etype 闸吃掉 Class 闭包引用 + 闭包对象无 RuntimeType + 目标类名双形态
+- 现象：中间件管道 T1/T2 全 500（`mw==null`、mwCount=3 但 mw 调用落到 no-response 兜底）；同批 List<RouteInfo> 等真类实例全绿、List<object> 全绿、无 use() 的 T3/T4 全绿——三组差异长期无机制解释，极易误导修错方向（首验曾误判 Front 发射问题）。
+- 首个异常阶段：VM（CastClass 指令语义；装配层/数组层/比较层均无辜——本轮逐一排除）。
+- 根因（三段叠加，缺一不倒）：
+  1. **发射点藏在内联体里**：`List<T>._getItem_` 方法体 `ret SystemArrayGetValueThis(...) as T`——`as T` 被内联发射 CastClass（目标=模板参数节点，运行期绑定 Core.Function），`_runFrom` 自身 IR 无显式 CastClass，只看调用方 IR 会扑空；
+  2. **Step 6 etype 闸是全库唯一例外**：`vm_runtime.c` CastClass Step 6 只认 `EVMType_Object`，而 `Array<Function>` 元素槽经 `vm_array_try_load_value` 装载的闭包引用 etype=Class(20)（全库 30+ 处类型判定均为 Object||Class 并列，唯独此闸单认 Object）→ push null；闸本意拦 raw scalar union 别名（f32 位模式误当指针），但 Class etype 值必经类型化引用槽装载、持真实对象指针，不构成 scalar 别名风险；
+  3. **闭包对象无绑定 RuntimeType + 目标类名带命名空间**：仅放宽闸不够——闭包载体是裸 payload VMObject（`vm_object_get_runtime_type` 返回 NULL），extends 检查必败；且 target_rt->class_ptr->name 是 `Core.Function`（命名空间限定），payload 侧 def 类型名则是纯名 `Function`，单一 strcmp 必漏一侧。
+- 排障路径（R12 三层插桩对账）：① IR.txt 反查证伪"Front 对 List<Function> 赋值发 CastClass"初判（_runFrom 无显式 CastClass）→ 读 List.sl 源码定位真发射点 `as T`；② SL 层 [DBGPIPE] 实锤 mwNull=True/mwCount=3；③ C 侧数组层 [DBGD] 证明 store/load 往返指针一致（排除存丢）、装配层 [DBGA] 证明 Function RuntimeClass 物化正常（id=-1717664200 name=Function）；④ [DBGE] 关键一击：`cast-closure tgt_et=20 tgt_name=Core.Function` + `step6 cast_ok=0 src_rt=NULL val_et=19`——目标名形态实锤 + 闭包无 rt 实锤同屏；⑤ [DBGF] NULL-closure 到达 CallClosure 收链。
+- 修复点（`csimple_lang/src/vm/runtime/vm_runtime.c` OpCode_CastClass Step 6，双改动）：① etype 闸放宽 `!= Object && != Class`；② `source_rt==NULL` 时闭包特判——`vm_closure_object_try_get_data`（SL/method-ref 共享 'CLSR' magic）OR `vm_native_closure_object_try_get_data` 识别 + 目标名双形态 `"Function"`/`"Core.Function"` 放行（对齐 vm_closure_get_object_array_type 的 Core.Object/Object 双查写法）。
+- 如何快速验证：`SlangAllInOne\package\win32-debug\csimple_lang.exe run --no-banner .\ProjectTest2\ProjectTest.module.json`——ServerP2Test T1-T4 共 24 项全 OK，P1 42 项 + P1.5 10 项回归全绿。
+- 预防建议：① 任何「引用类型值」的运行期判定一律 Object||Class 并列起步——两 etype 在引用语义上同族、差异只在元数据完备度，单认其一的闸迟早踩 Class 槽装载路径；② 闭包/方法引用是"无 RuntimeType 的合法引用值"这一事实要在 CastClass/instanceof/相等比较等所有类型检查点达成共识（本条为继 dispatch:83、value_compare:69 之后第三处补齐）；③ 类名匹配永远双形态（纯名 + 命名空间限定名）——payload 侧 def 类型名与 RuntimeClass name 两个世界命名不统一是既有现状；④ 排障时"同批相似代码有的绿有的红"，先把绿路径的差异点当机制线索（List<object> 绿 = Step 2 Object 短路、真类绿 = extends 路径、无 use() 绿 = 空管道）而非噪声，差异表就是根因坐标系。
+- 详见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §15 复盘 4。

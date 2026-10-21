@@ -20,6 +20,7 @@
 //****************************************************************************
 using System.Text;
 using System.Text.Json;
+using SimpleLanguage.ExportLanguage;
 using SimpleLanguage.Logging;
 using SlangAllInOne.FrontEnd;
 
@@ -57,7 +58,9 @@ internal static class LspCompileCommand
         var stdout = Console.OpenStandardOutput();
         Console.SetOut(Console.Error);
 
-        var result = FrontendService.Compile(spPath, inMemory: true, -1, "json");
+        // 导出三态之三（memory）：诊断编译零磁盘产物；SLB 字节不压缩留内存
+        //（本命令不消费），format=json 使内存 JSON 文本一并产出（符号源）。
+        var result = FrontendService.Compile(spPath, EExportMode.Memory, -1, "json");
         var diags = Log.SnapshotLogs()
             .Where(ld => (ld.logType == LogType.Error || ld.logType == LogType.Warning) && !ld.pass)
             .Select(ld => new

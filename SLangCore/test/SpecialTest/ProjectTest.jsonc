@@ -66,7 +66,7 @@
     }
   },
   // 插件声明（PLUGIN_SYSTEM_DESIGN.md §0.1/§4.2）：key=插件 id；lib 对象由
-  // PluginLibExportManager 四级回退（lib/windows-x64/ → lib/windows/ → …）
+  // PluginManager（PluginLib 导出段）四级回退（lib/windows-x64/ → lib/windows/ → …）
   // 求值平台库并拷到 out/export/ProjectTest/plugins/echo/，module.json 记
   // 相对包路径（lib/libs）；CVM 侧登记不加载（惰性激活）。
   "plugins": {
@@ -89,7 +89,7 @@
     // csharp_mono（P1-e，MONO_INTEGRATION_DESIGN.md §4.3 / PLUGIN_SYSTEM_DESIGN.md §10.1）：
     // lib 用字符串直给（相对包路径，CVM 侧基准 = module.json 所在目录拼
     // sl_plugin_resolver_join_lib_path），从 simple_language_plugins 原位加载——不走
-    // PluginLibExportManager 拷贝（其 TopDirectoryOnly 不递归 lib/mono/4.5/
+    // PluginManager（PluginLib 导出段）拷贝（其 TopDirectoryOnly 不递归 lib/mono/4.5/
     // BCL 目录树，对象形态会缺 BCL）；原位同目录天然齐备 mono-2.0-sgen.dll + BCL。
     // prefix 必须显式 = 实际符号前缀 "sl_csharp_mono_"（plugin.jsonc entry.prefix），
     // 缺省 id+"_" 会解析不到六件套符号。测试程序集 SLCSharpTestLib.dll 部署在
@@ -123,7 +123,7 @@
       ]
     },
     // java_hotspot（HOTSPOT_JNI_INTEGRATION_DESIGN.md）：lib 用字符串直给原位
-    // 相对路径（同 csharp_mono 口径，不走 PluginLibExportManager 拷贝）——
+    // 相对路径（同 csharp_mono 口径，不走 PluginManager PluginLib 导出段拷贝）——
     // 插件 dll 同目录树天然齐备 ..\..\runtime\jvm.dll 与 SLAtSign.jar（C 侧
     // SLJH_JVM_RELATIVE/SLJH_JAR_RELATIVE 相对插件 dll 定位）。prefix 必须显式
     // = "sl_java_hotspot_"（plugin.jsonc entry.prefix）。块体 .java 源码由

@@ -20,9 +20,8 @@
     "isSupportDoublePlus": false,
     "requireSameNumericTypes": false
   },
-  // P0+P1 已实现文件；SERVER_DESIGN.md §5.1 余量（Upload/StreamIo/Plugin/
-  // Plugins/OpenApi/Auth）随 P1.5..P3 各阶段落地时增补（compileFiles 为显式
-  // 清单，勿提前登记空文件）。
+  // P0+P1+P1.5+P2+P3 已实现文件；SERVER_DESIGN.md §5.1 余量随后续阶段增补
+  //（compileFiles 为显式清单，勿提前登记空文件）。
   "compileFiles": {
     "files": [
       { "path": "Server.sl",         "group": "server", "tag": "core", "ignore": false, "priority": 0 },
@@ -31,8 +30,14 @@
       { "path": "Request.sl",        "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Response.sl",       "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "BodyParser.sl",     "group": "server", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Upload.sl",         "group": "server", "tag": "io",   "ignore": false, "priority": 0 },
+      { "path": "StreamIo.sl",       "group": "server", "tag": "io",   "ignore": false, "priority": 0 },
+      { "path": "Plugin.sl",         "group": "server", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Plugins.sl",        "group": "server", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Jwt.sl",            "group": "server", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Docs.sl",           "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "ApiResult.sl",      "group": "server", "tag": "core", "ignore": false, "priority": 0 },
-      { "path": "WebSocketServer.sl", "group": "server", "tag": "net", "ignore": false, "priority": 0 }
+      { "path": "WebSocketServer.sl", "group": "server", "tag": "net",  "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -61,12 +66,23 @@
       { "class": "HttpServerCore" },
       { "class": "Router" },
       { "class": "RouteInfo" },
+      { "class": "RouteParam" },
+      { "class": "RouteResp" },
       { "class": "RouteGroup" },
       { "class": "Request" },
       { "class": "Response" },
       { "class": "ApiResult" },
       { "class": "BodyParser" },
       { "enum": "EBodyFormat" },
+      { "class": "UploadedFile" },
+      { "class": "StreamWriter" },
+      { "class": "SseWriter" },
+      { "class": "Next" },
+      { "class": "ServerPlugin" },
+      { "class": "Plugins" },
+      { "class": "Jwt" },
+      { "class": "JwtClaims" },
+      { "class": "WsEventBuilder" },
       { "class": "WsSession" },
       { "class": "WebSocketServer" }
   ]}],

@@ -4,16 +4,18 @@ import Core;
 namespace SLang
 {
     # ============================================================================
-    # SLang/Server/Request.sl — 请求上下文（读侧 API，P1 全表）
+    # SLang/Server/Request.sl — 请求上下文（读侧 API，P1 全表 → P1.5 增补）
     # 设计契约：SERVER_DESIGN.md §6.3 / §4.4
     #
     # P1 全表：方法/路径/原始查询/请求头/body 三视图（text/json/bytes/<T>）/
-    #   bodyFormat 分流/form 族（urlencoded；multipart 字段随 P1.5）/
-    #   路径参数族（路由 {param} 提取）/查询参数族（percent + '+'→空格解码）/
-    #   对端地址/传值槽（userData）/身份槽（auth，P3 auth 插件写入）。
+    #   bodyFormat 分流/form 族（urlencoded）/路径参数族（路由 {param} 提取）/
+    #   查询参数族（percent + '+'→空格解码）/对端地址/传值槽（userData）/
+    #   身份槽（auth，P3 auth 插件写入）。
     # 实例由引擎构造（构造入参即全部字段，无公开无参构造语义）；
     # bodyBytes() 返回 slice 视图（不推进源索引），勿跨请求持有。
-    # P1.5 增补：文件（file/files/fileCount，multipart）。
+    # P1.5 增补：文件族（file/files/fileCount）+ multipart 普通字段并入
+    #   form 族（引擎构造期经 _ensureMultipart 即时解析，§6.5；单文件超限
+    #   → 413、boundary 缺失 → 400 由引擎协议层应答）。
     # ============================================================================
     public class Request
     {
@@ -29,9 +31,15 @@ namespace SLang
         Map<string,string> _pathParams = null
         # 查询参数惰性解析缓存
         Map<string,string> _queryParsed = null
-        # form 字段惰性解析缓存（urlencoded）
+        # form 字段惰性解析缓存（urlencoded；multipart 经 _mpFields 并入）
         Map<string,string> _formParsed = null
         bool _formDone = false
+        # multipart 解析结果（惰性一次；引擎派发前即时触发，§6.5）
+        Map<string,string> _mpFields = null
+        List<UploadedFile> _mpFiles = null
+        bool _mpDone = false
+        # 0 = OK / 400 = boundary 缺失或格式坏 / 413 = 单文件超限
+        Int32 _mpCode = 0
 
         # ── 传值槽（中间件 → 处理器；引擎不触碰）──
         # 自由传值槽（任意语义）
@@ -51,6 +59,10 @@ namespace SLang
             this._ip = ip
             this._port = port
             this._pathParams = pathParams
+            this._mpFields = new()
+            this._mpFiles = new()
+            this._mpDone = false
+            this._mpCode = 0
         }
 
         # ── 请求行 ──
@@ -192,10 +204,11 @@ namespace SLang
             ret BodyParser.detect( this.contentType(), bodyLen )
         }
 
-        # ── form 表单（application/x-www-form-urlencoded；§4.4）──
-        # multipart 普通字段随 P1.5；当前 Multipart 格式下 form 族返回空。
+        # ── form 表单（urlencoded + multipart 普通字段；§4.4）──
+        # multipart 字段值不解码（直传语义，§6.4）；格式坏/超限时 form 族
+        # 返回空（协议层已由引擎以 400/413 应答，正常流程到不了 handler）。
 
-        # form 字段值（已解码：percent + '+'→空格）；不存在返回 null
+        # form 字段值（urlencoded 已解码；multipart 直传）；不存在返回 null
         public string form( string name )
         {
             if this._ensureForm() == false
@@ -263,7 +276,7 @@ namespace SLang
             ret outList
         }
 
-        # 惰性解析 form（仅 urlencoded；成功置缓存并 ret true）
+        # 惰性解析 form（urlencoded 直解；multipart 普通字段并入，§4.4）
         bool _ensureForm()
         {
             if this._formDone
@@ -271,12 +284,106 @@ namespace SLang
                 ret this._formParsed != null
             }
             this._formDone = true
-            if this.bodyFormat != EBodyFormat.Form
+            EBodyFormat fmt = this.bodyFormat
+            if fmt == EBodyFormat.Form
             {
-                ret false
+                this._formParsed = BodyParser.parseForm( this.bodyText() )
+                ret true
             }
-            this._formParsed = BodyParser.parseForm( this.bodyText() )
-            ret true
+            if fmt == EBodyFormat.Multipart
+            {
+                # multipart 普通字段同 form API（§4.4 分流表）
+                this._ensureMultipart()
+                if this._mpCode == 0 && this._mpFields != null
+                {
+                    this._formParsed = this._mpFields
+                    ret true
+                }
+            }
+            ret false
+        }
+
+        # ── 文件上传（multipart/form-data；§4.4 / §6.5）──
+
+        # 该字段首个文件；无返回 null
+        public UploadedFile file( string field )
+        {
+            if this._ensureMultipart() != 0
+            {
+                ret null
+            }
+            Int32 n = this._mpFiles.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                UploadedFile f = this._mpFiles[i]
+                if f._field == field
+                {
+                    ret f
+                }
+            }
+            ret null
+        }
+
+        # 该字段全部文件（多文件同字段）；无返回空表
+        public List<UploadedFile> files( string field )
+        {
+            List<UploadedFile> outList = new()
+            if this._ensureMultipart() != 0
+            {
+                ret outList
+            }
+            Int32 n = this._mpFiles.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                UploadedFile f = this._mpFiles[i]
+                if f._field == field
+                {
+                    outList.add( f )
+                }
+            }
+            ret outList
+        }
+
+        # 本请求文件总数
+        public get Int32 fileCount()
+        {
+            if this._ensureMultipart() != 0
+            {
+                ret 0
+            }
+            ret this._mpFiles.length
+        }
+
+        # multipart 惰性解析（引擎在 handler 派发前即时触发——构造期语义
+        # §6.5；重复调用返回缓存）。返回 0 = OK / 400 = boundary 缺失或
+        # 格式坏 / 413 = 单文件超 maxFileBytes（引擎按协议层应答 + 断连）
+        Int32 _ensureMultipart()
+        {
+            if this._mpDone
+            {
+                ret this._mpCode
+            }
+            this._mpDone = true
+            this._mpCode = 0
+            EBodyFormat fmt = this.bodyFormat
+            if fmt != EBodyFormat.Multipart
+            {
+                ret 0
+            }
+            Int32 limit = HttpServerCore._uploadFileLimit()
+            string ct = this.contentType()
+            ByteBuffer bodyBuf = this._body
+            _MultipartBody mp = BodyParser.parseMultipart( ct, bodyBuf, limit )
+            this._mpCode = mp._errorCode
+            if mp._fields != null
+            {
+                this._mpFields = mp._fields
+            }
+            if mp._files != null
+            {
+                this._mpFiles = mp._files
+            }
+            ret this._mpCode
         }
 
         # ── 路径参数（路由 {param} 提取；§4.2）──

@@ -10,7 +10,7 @@
 |------|------|------|
 | `lib\` | **系统自带文件**：官方标准库（Core / Math / Std 的 `*.module.slb` + `math_lib.dll` + Debug 包 json 调试副本） | ✅ 2026-10-18 起由原 `module\` 更名（内容不变，平铺单目录） |
 | `modules\` | **用户包目录**：未来 `spm.exe`（SLang Package Manager，类比 npm / NuGet）安装/管理第三方包的落位 | 🧪 预留：Front 与 C VM 的官方库直查已按 `lib\` → `modules\` 顺序查找，目录未建自然落空；spm.exe 落地时无需再动装载器 |
-| `plugins\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 包根的插件 frontend 程序集（SLCSharpMonoFrontend / SLJavaHotspotFrontend）已移入；插件管理器安装整插件目录到 `plugins\<id>\` 后即可被 `@tag{}` 路由 |
+| `plugins\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 插件管理器安装整插件目录到 `plugins\<id>\` 后即可被 `@tag{}` 路由（Front `FindPluginsParent` 已支持回退探测；两个运行时插件 frontend 自 2026-10-21 起 C 化为原生 dll、不经 publish 产出/归位，随插件整目录分发） |
 
 包根其余目录不变：`bin\`（C VM 运行时）、`md\`（用户文档）。~~`test\RefProbe\`（开箱示例）~~ 已于 2026-10-18 按用户指令移除（v0.0.5 起发布包不再带 `test\`，示例保留在仓库测试树 `SLangCore\test\Other\RefProbe`）。
 
@@ -22,10 +22,12 @@
    - Front 编译期：`ProjectReferenceModuleLoader.TryResolveRuntimeModuleDirPath`（Strategy 4）按 `<exe>\lib\` → `<exe>\modules\` 顺序直查 `<名>.module.slb|json`（slb 优先）；
    - C VM 运行期：`sl_load_references` ④（`csimple_lang/src/vm/load/slir_json_module_loader.c`）同序直查 `<exe_dir>/lib/` → `<exe_dir>/modules/`。
    两端一致，发布包内用户工程继续零相对路径配置。
-3. **插件程序集归位**：csproj `RelocatePluginFrontends` target 把包根的
-   `SLCSharpMonoFrontend.*` / `SLJavaHotspotFrontend.*`（Front 工程
-   ProjectReference 的发布伴生物）移入 `<包>\plugins\`（Native AOT Release
-   发布不产出这些托管 dll，target 静默跳过）。
+3. **插件程序集归位**：csproj `RelocatePluginFrontends` target 原把包根的
+   插件 frontend 程序集（Front 工程 ProjectReference 的发布伴生物）移入
+   `<包>\plugins\`——🔥 2026-10-21 起两个运行时插件 frontend 均已 C 化
+   （csharp_mono + java_hotspot 原托管 csproj 已删除，原生 dll 随插件
+   整目录分发），target 清单已清空、保留空壳兼容管线（Native AOT
+   Release 发布本就不产出这些托管 dll）。
 4. **插件路由支持包内安装**：`PluginFrontendParser.FindPluginsParent` 在
    源码树上溯（`simple_language_plugins`，开发布局）落空后，回退探测
    `<exe>\plugins\`——插件管理器把整插件目录（`plugin.jsonc` + `cvm\` +

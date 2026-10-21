@@ -102,12 +102,14 @@ function Invoke-BuildWinPackage([string]$Config) {
 
     # Layout check (csproj pack targets built bin\ + lib\ + md\ [+ plugins\]).
     # 2026-10-18 user directive: licenses\ no longer ships in any package;
-    # lib\ = system built-in stdlib (renamed from module\), plugins\ holds the
-    # relocated plugin frontend assemblies in Debug packages.
+    # lib\ = system built-in stdlib (renamed from module\). plugins\ keeps
+    # holding relocated plugin frontend artifacts in Debug packages when any
+    # remain — both runtime plugin frontends went native C on 2026-10-21
+    # (nothing is published/relocated anymore, the must-list reflects that).
     $isDebug = ($Config -eq 'Debug')
     $must = @('slang.exe', 'bin\csimple_lang_dll.dll', 'bin\sqlite3.dll',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
-    if ($isDebug) { $must += @('slang.pdb', 'lib\Core.module.json', 'bin\csimple_lang_dll.pdb', 'plugins\SLCSharpMonoFrontend.dll') }
+    if ($isDebug) { $must += @('slang.pdb', 'lib\Core.module.json', 'bin\csimple_lang_dll.pdb') }
     foreach ($m in $must) {
         if (-not (Test-Path (Join-Path $dir $m))) {
             Write-Host ('  package incomplete, missing: ' + $m) -ForegroundColor Red
@@ -195,7 +197,7 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     # Layout check (licenses\ no longer ships - 2026-10-18 user directive).
     $must = @('slang', 'bin\libcsimple_lang_dll.so', 'bin\libsqlite3.so.0',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
-    if ($Config -eq 'Debug') { $must += @('slang.dll', 'lib\Core.module.json', 'plugins\SLCSharpMonoFrontend.dll') }
+    if ($Config -eq 'Debug') { $must += @('slang.dll', 'lib\Core.module.json') }
     foreach ($m in $must) {
         if (-not (Test-Path (Join-Path $dir $m))) {
             Write-Host ('  package incomplete, missing: ' + $m) -ForegroundColor Red

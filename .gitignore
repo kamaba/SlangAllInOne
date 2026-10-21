@@ -16,10 +16,6 @@
 /package/debug/slang.exe
 /package/debug/slang.pdb
 /package/debug/slang.runtimeconfig.json
-/package/debug/SLCSharpMonoFrontend.dll
-/package/debug/SLCSharpMonoFrontend.pdb
-/package/debug/SLJavaHotspotFrontend.dll
-/package/debug/SLJavaHotspotFrontend.pdb
 /tools/llvm/llc.exe
 /tools/llvm/mlir_float16_utils.dll
 /tools/llvm/mlir-opt.exe

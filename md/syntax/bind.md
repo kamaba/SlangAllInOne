@@ -342,9 +342,11 @@ bc.BP.height = 202
 
 1. **Pass 1**：收集全工程所有 `data` 定义到字典。
 2. **Pass 2**：遍历每个文件的类，对有 `bind` 的类或接口进行展开：
-   - 解析 bind 引用的 data 名称，收集字段和类型信息。
-   - 收集祖先链上的 bind（去重）。
+   - 解析 bind 引用的 data 名称，收集字段与类型信息（字段类型由 data 默认值的 `EType` 推导，仅支持基本类型）。
+   - 收集祖先链上的 bind（去重，最大深度 32 层）。
    - 检查接口约束：若接口 bind 了某 data，类自身也必须 bind 该 data。
    - 构建字段冲突表，同名字段告警并跳过。
-   - 生成合成源码（成员变量、get/set、数据访问器、_init_ 重载）。
-   - 将合成源码重新解析后注入到目标类中。
+   - **逻辑直建**成员并直接注册进目标类的 FileMeta 结构（2026-10-20 重构，取代旧的"拼合成源码 → Lexer/TokenParse/StructParse 重解析 → 转移成员"路径）：
+     - 成员变量 / get/set 字段访问器 / 数据访问器 / `_init_` 重载 / 接口抽象访问器，均由 `BindExpandManager` 手工构造最小 `Token`/`Node` 片段（dotted 名字链、`new()` 节点、`this.x` 链）再交给现有 `FileMeta` 工厂（`FileMetaMemberVariable` / `FileMetaMemberFunction` / `FileMetatUtil.CreateFileMetaExpress` 等）装配，与 `LocalManager.CreateSyncToMemberSyntax` 同一先例。
+     - 合成成员的 Token 统一锚定在 bind 类声明处，错误定位指向真实源码位置。
+     - 接口抽象 get/set 为无函数体形态（`FileMetaMemberFunction` 空 brace = `blockSyntax` 为 null）。

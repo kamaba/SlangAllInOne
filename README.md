@@ -152,8 +152,8 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 
 | 命令 | 说明 |
 |------|------|
-| `compile <工程>` | Front 进程内编译，默认磁盘导出；`--in-memory` 时包留在内存 |
-| `run <工程>` | **编译即运行**：内存编译 → C VM 内存入口，模块不落盘 |
+| `compile <工程>` | Front 进程内编译，缺省磁盘导出；`--export-mode <output\|temp\|memory>` 导出三态（output=指定目录 / temp=`_temp\<模块名>\` 临时目录 / memory=SLB 不压缩留内存） |
+| `run <工程>` | **编译即运行**：缺省 `--export-mode memory`（SLB 不压缩内存直传）→ C VM 内存入口，模块不落盘 |
 | `run-disk <module.slb\|module.json>` | 运行已导出的模块包（两种格式，magic 自动探测） |
 | `info <module.slb\|module.json>` | 查看模块元数据 |
 | `version` | Front 版本 + C VM DLL 路径 / 配置 |
@@ -163,7 +163,7 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 | `pack-modules` | 编译标准库三件套并平铺打进 `lib\`（发布包自动调起） |
 | `pack-docs` | 打包用户文档进 `md\`（发布包自动调起） |
 
-常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary|binary+json`（binary=SLB；binary+json=slb 主产物+json 调试副本，R15）｜`--in-memory`｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
+常用选项：`-p, --project <路径>`｜`-O0..-O3`（优化级别）｜`--format json|binary|binary+json`（binary=SLB；binary+json=slb 主产物+json 调试副本，R15）｜`--export-mode <output|temp|memory>`（导出三态，2026-10-20）｜`--debug`（C VM 指令追踪）｜`--force-run`（跳过平台校验）｜`--cvm Debug|Release`（选 C VM 构建树）｜`-- <args…>`（之后参数进 `Project._inputArgs`，源码经 `global._inputArgs` 读取）。
 
 退出码：`0` 成功；`1` Front 编译失败或参数错误；`4` 找不到 C VM DLL（先跑步骤 1）；其他非 0 为 C VM 运行失败原样透传。
 
@@ -172,7 +172,7 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 ```
 SlangAllInOne/
 ├── SlangAllInOne.sln / .csproj / Program.cs   # 统合宿主 slang（全仓开发入口）
-├── FrontEnd/   # 进程内调 Front CommandExecutor（compile -e ir --in-memory）
+├── FrontEnd/   # 进程内调 Front CommandExecutor（compile -e ir，--export-mode 三态）
 ├── Backend/    # C VM P/Invoke（内存直传入口 + DLL 定位）
 ├── Pack/       # pack-modules / pack-docs 打包命令（publish 自举）
 ├── Lsp/        # slang lsp（LSP 服务器）+ lsp-compile（诊断编译子命令，LSP 每轮 spawn）

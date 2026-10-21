@@ -137,8 +137,9 @@
        置根后经 Delegate.CreateDelegate 装箱访问器恢复（同上 2026-10-17 结论）。 -->
   <ItemGroup Condition="'$(PublishAot)' == 'true'">
     <TrimmerRootAssembly Include="SimpleLanguageFront" />
-    <TrimmerRootAssembly Include="SLCSharpMonoFrontend" />
-    <TrimmerRootAssembly Include="SLJavaHotspotFrontend" />
+    <!-- 两个插件 frontend 均已 C 化（2026-10-21 csharp_mono +
+         java_hotspot：原生 sl_*_frontend.dll，Front 经 NativeLibrary 调用，
+         不再是托管程序集/裁剪对象）；条目清空保留 target 结构。 -->
     <TrimmerRootAssembly Include="slang" />
   </ItemGroup>
 
@@ -223,17 +224,19 @@
   </Target>
 
   <!-- 2026-10-18 目录方案（用户指令，设计记录 md/project/package-layout.md）：
-       包根的插件 frontend 程序集（SLCSharpMonoFrontend / SLJavaHotspotFrontend
-       + pdb——Front 工程 ProjectReference 的发布伴生物）移入 <package>\plugins\。
-       plugins\ = 插件内容目录（区别于普通包：插件带 plugin.jsonc/cvm/frontend/
+       包根的插件 frontend 程序集移入 <package>\plugins\。plugins\ = 插件
+       内容目录（区别于普通包：插件带 plugin.jsonc/cvm/frontend/
        slang 多层结构与 @tag{} 能力点，故独立于未来的 modules\ 包目录）；
        Front 侧 PluginFrontendParser.FindPluginsParent 已增加 <exe>\plugins\
        探测，插件管理器把整插件目录装进 plugins\<id>\ 后即可被 @tag 路由。
+       🔥 2026-10-21 起两个运行时插件 frontend 均已 C 化（原生
+       sl_csharp_mono_frontend.dll / sl_java_hotspot_frontend.dll，ABI
+       sl_frontend_*，Front 经 NativeLibrary 调用）——不再由 dotnet
+       publish 产出/归位，随插件整目录分发（plugins\<id>\frontend\lib\
+       windows-x64\）。本 target 已无发布伴生物可移，保留空壳兼容管线。
        Native AOT（Release）发布不产出这些托管 dll，列表为空即静默跳过。 -->
   <Target Name="RelocatePluginFrontends" AfterTargets="Publish">
     <ItemGroup>
-      <PluginFrontendFiles Include="$(PublishDir)SLCSharpMonoFrontend.*" />
-      <PluginFrontendFiles Include="$(PublishDir)SLJavaHotspotFrontend.*" />
     </ItemGroup>
     <Move SourceFiles="@(PluginFrontendFiles)" DestinationFolder="$(PublishDir)plugins\" Condition="'@(PluginFrontendFiles)' != ''" />
   </Target>
@@ -284,11 +287,9 @@
            package (plugin frontend pdbs, referenced project pdbs). The C VM
            sidecar pdb under bin\ is handled by PackCvmRuntime's Exists()
            condition and is not packed for Release builds.
-       Plugin frontend dlls (SLCSharpMonoFrontend/SLJavaHotspotFrontend):
-       2026-10-18 起 RelocatePluginFrontends target 把它们移入 <package>\
-       plugins\（插件内容目录）；Native AOT（Release 默认形态）发布本身不
-       产出这些托管 dll，仅在经典托管 Release 发布（-p:PublishAot=false）
-       时经该 target 归位。 -->
+       Plugin frontend dlls：两个运行时插件 frontend 已 C 化（2026-10-21
+       csharp_mono + java_hotspot 原生 dll 不经 publish 产出），
+       RelocatePluginFrontends target 已清空清单保留空壳。 -->
   <Target Name="TrimReleasePackage" AfterTargets="PackDocs" Condition="'$(Configuration)' == 'Release'">
     <!-- 相对 PublishDir 加固（2026-10-17）：dotnet publish -o 传入的已是绝对路径；
          但经 msbuild -p:PublishDir=<相对> 直跑本 target 时，SDK 按工程目录规范化

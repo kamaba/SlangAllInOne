@@ -63,36 +63,11 @@ internal sealed class CvmBackend
         return null;
     }
 
-    /// <summary>Runs a module whose SLIR package JSON lives in memory.
-    /// This is the compile-to-run fast path: the Front-built package text goes
-    /// straight into the VM loader without writing/reading a module.json.
-    /// baseDir is the directory the package would have been written to;
-    /// moduleReferences and plugin libs resolve against it.</summary>
-    public int RunInMemory(string packageJson, string? baseDir, int flags, IReadOnlyList<string> programArgs)
-    {
-        if (string.IsNullOrEmpty(packageJson))
-            throw new ArgumentException("package JSON text is empty", nameof(packageJson));
-
-        PrepareNativeLoad();
-
-        var jsonPtr = CvmInterop.AllocUtf8(packageJson);
-        var baseDirPtr = CvmInterop.AllocUtf8(baseDir);
-        var argsPtr = CvmInterop.AllocUtf8Array(programArgs, out var elements);
-        try
-        {
-            return CvmInterop.cli_run_module_in_memory(
-                jsonPtr, baseDirPtr, flags, argsPtr, programArgs.Count);
-        }
-        finally
-        {
-            CvmInterop.FreeAll(argsPtr, elements, jsonPtr, baseDirPtr);
-        }
-    }
-
-    /// <summary>Binary variant of the compile-to-run fast path (SLB_DESIGN.md P2):
-    /// the Front-built SLB byte package goes straight into the VM memory entry
+    /// <summary>Binary compile-to-run fast path (SLB_DESIGN.md P2): the Front-built
+    /// SLB byte package goes straight into the VM memory entry
     /// (cli_run_module_in_memory_binary) without writing/reading a .module.slb.
-    /// The bytes may also be a NUL-terminated JSON text (magic-dispatched).</summary>
+    /// The Front memory export never compresses (headerFlags bit clear), so the
+    /// C VM reads the bytes directly with no inflate step.</summary>
     public int RunInMemoryBinary(byte[] packageBytes, string? baseDir, int flags, IReadOnlyList<string> programArgs)
     {
         if (packageBytes == null || packageBytes.Length == 0)

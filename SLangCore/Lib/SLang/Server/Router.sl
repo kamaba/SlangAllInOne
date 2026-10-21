@@ -32,6 +32,24 @@ namespace SLang
         public string tags = ""
         public string desc = ""
 
+        # ── 文档元数据（P3，结构化；经链式方法登记，§4.8）──
+        # path/query 参数表（kind="param"）
+        public List<RouteParam> docParams = null
+        # form 字段表（kind="form"）+ multipart 文件字段表（kind="file"）
+        public List<RouteParam> docForms = null
+        # requestBody JSON 样例（BaseJson.fromData 序列化文本；空串 = 无）
+        public string docBodyText = ""
+        # requestBody 样例类名（components.schemas 键；空串 = 内联不登记）
+        public string docBodyClass = ""
+        # 响应样例表（状态码 → 样例文本 + 类名 + mediaType）
+        public List<RouteResp> docResponses = null
+        # 认证要求（"bearerAuth" / "apiKeyAuth"；空串 = 无；§4.11）
+        public string security = ""
+        # 文档路由（importOpenApi 登记；命中 501；被真实注册覆盖时自动让位）
+        public bool isDocOnly = false
+        # 内置路由（/docs、/openapi.json；冲突检测豁免 + 不进 openapi.json）
+        public bool isBuiltin = false
+
         # ── 匹配预编译（模块内部）──
         List<string> _segs = null
         List<string> _paramNames = null
@@ -41,6 +59,141 @@ namespace SLang
         List<Int32> _paramSegIdx = null
         Int32 _staticCount = 0
         bool _hasParams = false
+        # 通配段（P2，§4.2：{path*} 尾段匹配剩余全部段；仅识别最后一段）
+        string _wildcardName = ""
+        Int32 _wildcardIdx = -1
+
+        # ── 文档元数据链式登记（§4.8：返回自身可链式）──
+
+        # path/query 参数：type = "integer"/"string"/"boolean"...
+        public RouteInfo param( string name, string type, string desc, bool required )
+        {
+            if this.docParams == null
+            {
+                this.docParams = new()
+            }
+            RouteParam p = RouteParam()
+            p.name = name
+            p.type = type
+            p.desc = desc
+            p.required = required
+            this.docParams.add( p )
+            ret this
+        }
+
+        # JSON body 样例（样例实例 → 探针法 schema；§6.10）
+        public RouteInfo requestBody( object sample )
+        {
+            BaseJson j = BaseJson.fromData( sample )
+            this.docBodyText = j.toJson()
+            this.docBodyClass = Docs._typeNameOf( sample )
+            ret this
+        }
+
+        # form 字段（urlencoded requestBody schema；§4.8）
+        public RouteInfo formField( string name, string desc )
+        {
+            if this.docForms == null
+            {
+                this.docForms = new()
+            }
+            RouteParam p = RouteParam()
+            p.name = name
+            p.kind = "form"
+            p.desc = desc
+            this.docForms.add( p )
+            ret this
+        }
+
+        # multipart 文件字段（requestBody multipart/form-data；§4.8）
+        public RouteInfo uploadField( string name, string desc, string mime )
+        {
+            if this.docForms == null
+            {
+                this.docForms = new()
+            }
+            RouteParam p = RouteParam()
+            p.name = name
+            p.kind = "file"
+            p.desc = desc
+            p.mime = mime
+            this.docForms.add( p )
+            ret this
+        }
+
+        # 响应样例（状态码 + 样例实例；mediaType 缺省 application/json，
+        # text/event-stream 等流式响应显式传）
+        public RouteInfo response( Int32 status, object sample )
+        {
+            ret this.responseAs( status, sample, "application/json" )
+        }
+
+        public RouteInfo responseAs( Int32 status, object sample, string mediaType )
+        {
+            if this.docResponses == null
+            {
+                this.docResponses = new()
+            }
+            RouteResp rr = RouteResp()
+            rr.status = status
+            rr.mediaType = mediaType
+            if sample != null
+            {
+                BaseJson j = BaseJson.fromData( sample )
+                rr.sampleText = j.toJson()
+                rr.sampleClass = Docs._typeNameOf( sample )
+            }
+            this.docResponses.add( rr )
+            ret this
+        }
+
+        # 认证要求（"bearerAuth" / "apiKeyAuth"；§4.11 / §6.10）
+        public RouteInfo security( string scheme )
+        {
+            this.security = scheme
+            ret this
+        }
+    }
+
+    # 文档参数/字段记录（P3；RouteInfo 结构化元数据）
+    public class RouteParam
+    {
+        public string name = ""
+        # "integer" / "string" / "boolean" ...（param 专用）
+        public string type = ""
+        public string desc = ""
+        public bool required = false
+        # "param"（path/query）/ "form"（urlencoded 字段）/ "file"（multipart 文件）
+        public string kind = "param"
+        # file 专用：接受类型（如 "image/*"）
+        public string mime = ""
+
+        _init_()
+        {
+            this.name = ""
+            this.type = ""
+            this.desc = ""
+            this.required = false
+            this.kind = "param"
+            this.mime = ""
+        }
+    }
+
+    # 文档响应记录（P3；状态码 + 样例文本 + 类名 + mediaType）
+    public class RouteResp
+    {
+        public Int32 status = 200
+        public string sampleText = ""
+        public string sampleClass = ""
+        public string mediaType = "application/json"
+
+        _init_()
+        {
+            this.status = 200
+            this.sampleText = ""
+            this.sampleClass = ""
+            this.mediaType = "application/json"
+        }
     }
 
     public class Router
@@ -78,12 +231,66 @@ namespace SLang
 
         # HTTP 路由注册（method 大小写不敏感；"ANY" 全动词）；返回 RouteInfo
         #（文档元数据可链式后写：r = Router.add(...); r.summary = "..."）
+        # P3：同 (method, pattern) 已存在**文档路由**（importOpenApi 501 登记）
+        # 时自动让位——新真实路由继承其文档元数据后顶替（§4.8 覆盖工作流）
         public static RouteInfo add( string method, string pattern, Function handler )
         {
             Router._ensure()
+            RouteInfo shadow = Router.findExact( method, pattern )
+            if shadow != null && shadow.isDocOnly
+            {
+                Router._remove( shadow )
+            }
             RouteInfo r = Router._build( method, pattern, handler )
+            if shadow != null && shadow.isDocOnly
+            {
+                r.summary = shadow.summary
+                r.tags = shadow.tags
+                r.desc = shadow.desc
+                r.docParams = shadow.docParams
+                r.docForms = shadow.docForms
+                r.security = shadow.security
+            }
             _routes.add( r )
             ret r
+        }
+
+        # 精确 (method, pattern) 查找（docs 挂载冲突检测 / importOpenApi
+        # 合并判定用；不参与匹配优先级；method 相互或任一为 "ANY" 即命中）
+        public static RouteInfo findExact( string method, string pattern )
+        {
+            Int32 n = _routes.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                RouteInfo r = _routes[i]
+                if Net.Uri.eqFold( r.pattern, pattern )
+                {
+                    if Net.Uri.eqFold( r.method, method )
+                    {
+                        ret r
+                    }
+
+                    if Net.Uri.eqFold( r.method, "ANY" ) || Net.Uri.eqFold( method, "ANY" )
+                    {
+                        ret r
+                    }
+                }
+            }
+            ret null
+        }
+
+        # 移除一条路由（内部；importOpenApi 覆盖让位用）
+        static void _remove( RouteInfo r )
+        {
+            Int32 n = _routes.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                if _routes[i] == r
+                {
+                    _routes.removeRange( i, 1 )
+                    ret
+                }
+            }
         }
 
         # WS 升级路由注册（pattern 同一套 {param} 语法）
@@ -95,7 +302,7 @@ namespace SLang
             ret r
         }
 
-        # 注册项预编译：段拆分 + 参数名提取 + 静态段计数
+        # 注册项预编译：段拆分 + 参数名提取 + 静态段计数 + 通配段识别
         static RouteInfo _build( string method, string pattern, Function handler )
         {
             RouteInfo r = RouteInfo()
@@ -107,13 +314,22 @@ namespace SLang
             r._paramSegIdx = new()
             r._staticCount = 0
             r._hasParams = false
+            r._wildcardName = ""
+            r._wildcardIdx = -1
             Router._splitSegments( pattern, r._segs )
             Int32 n = r._segs.length
             for Int32 i = 0, i < n, i = i + 1
             {
                 string seg = r._segs[i]
                 Int32 sl = SystemStringLength( seg )
-                if sl > 2 && SystemStringCharCodeAt( seg, 0 ) == 123 && SystemStringCharCodeAt( seg, sl - 1 ) == 125
+                # 通配段 {name*}：仅最后一段识别（匹配剩余全部段，P2 §4.2）
+                if i == n - 1 && sl > 3 && SystemStringCharCodeAt( seg, 0 ) == 123 && SystemStringCharCodeAt( seg, sl - 1 ) == 125 && SystemStringCharCodeAt( seg, sl - 2 ) == 42
+                {
+                    r._wildcardName = SystemStringRange( seg, 1, sl - 2 )
+                    r._wildcardIdx = i
+                    r._hasParams = true
+                }
+                elif sl > 2 && SystemStringCharCodeAt( seg, 0 ) == 123 && SystemStringCharCodeAt( seg, sl - 1 ) == 125
                 {
                     # {name} 参数段
                     r._paramNames.add( SystemStringRange( seg, 1, sl - 1 ) )
@@ -222,7 +438,8 @@ namespace SLang
             ret null
         }
 
-        # 提取路径参数（route 命中 path 后调用；无参数路由返回空 Map）
+        # 提取路径参数（route 命中 path 后调用；无参数路由返回空 Map；
+        # 通配段 {name*} → 剩余段以 '/' 连接，可为空串）
         public static Map<string,string> extractParams( RouteInfo route, string path )
         {
             Map<string,string> m = new()
@@ -247,6 +464,20 @@ namespace SLang
                 {
                     m[name] = sv
                 }
+            }
+            if route._wildcardIdx >= 0
+            {
+                # 通配段：剩余段 '/' 连接（0 段 = 空串）
+                string joined = ""
+                for Int32 i = route._wildcardIdx, i < sn, i = i + 1
+                {
+                    if SystemStringLength( joined ) > 0
+                    {
+                        joined = joined + "/"
+                    }
+                    joined = joined + segs[i]
+                }
+                m[route._wildcardName] = joined
             }
             ret m
         }
@@ -308,7 +539,8 @@ namespace SLang
             }
         }
 
-        # 段数一致 + 逐段匹配（{param} 匹配任意非空单段；字面段精确相等）
+        # 段数一致 + 逐段匹配（{param} 匹配任意非空单段；字面段精确相等；
+        # {name*} 通配尾段：pn >= rn-1 即命中——通配段吸收剩余全部段，可为空）
         static bool _matchPattern( RouteInfo route, string path )
         {
             if route == null
@@ -319,6 +551,26 @@ namespace SLang
             Router._splitSegments( path, segs )
             Int32 rn = route._segs.length
             Int32 pn = segs.length
+            if route._wildcardIdx >= 0
+            {
+                # 通配路由：前 rn-1 段逐一匹配，剩余全归通配段（≥0 段）
+                if pn < rn - 1
+                {
+                    ret false
+                }
+                for Int32 i = 0, i < rn - 1, i = i + 1
+                {
+                    # 静态调用实参先提取局部变量（复合表达式传参匹配
+                    # NotFound——HttpHeaders 头注记纪律）
+                    string want = route._segs[i]
+                    string got = segs[i]
+                    if Router._segMatch( want, got ) == false
+                    {
+                        ret false
+                    }
+                }
+                ret true
+            }
             if rn != pn
             {
                 ret false
@@ -327,24 +579,23 @@ namespace SLang
             {
                 string want = route._segs[i]
                 string got = segs[i]
-                Int32 wl = SystemStringLength( want )
-                if wl > 2 && SystemStringCharCodeAt( want, 0 ) == 123 && SystemStringCharCodeAt( want, wl - 1 ) == 125
+                if Router._segMatch( want, got ) == false
                 {
-                    # 参数段：非空即命中
-                    if SystemStringLength( got ) == 0
-                    {
-                        ret false
-                    }
-                }
-                else
-                {
-                    if want != got
-                    {
-                        ret false
-                    }
+                    ret false
                 }
             }
             ret true
+        }
+
+        # 单段匹配：{param} 非空即命中；字面段精确相等
+        static bool _segMatch( string want, string got )
+        {
+            Int32 wl = SystemStringLength( want )
+            if wl > 2 && SystemStringCharCodeAt( want, 0 ) == 123 && SystemStringCharCodeAt( want, wl - 1 ) == 125
+            {
+                ret SystemStringLength( got ) > 0
+            }
+            ret want == got
         }
     }
 

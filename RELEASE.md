@@ -77,8 +77,13 @@ slang_release_<v>/            # 顶层文件夹（zip/tar.gz 解压即得）
 > `release-slang.ps1` 在双包构建后追加「VSCode extension (.vsix)」步骤——工作区 `slang_vscode_plugin\`
 > 执行 `npx vsce package`（`vscode:prepublish` 自动 tsc+esbuild），产物改名为 `slang_vscode_<v>.vsix`
 > 放入**两个包根的 `vsix\`**（zip/tar.gz 内均含），并作为第三资产挂 GitHub Release。
+> 🔥 **runtime 内嵌（0.0.11 起，2026-10-20 用户指令）**：打包前把双平台 release 包拷入
+> 插件目录 `runtime\<plat>-x64\`（robocopy `/XD vsix` 剔除包内 vsix 暂存目录），vsix 连同
+> runtime 一起打包（v0.0.11 实测 231 entries / ~17.6 MB）——**安装插件即得可运行 slang，免单独下载**；
+> 单平台包缺失只黄字告警（另一平台仍内嵌）；`finally` 清理源树 `runtime\`（不入库）。
+> 插件运行时探测序：设置项 → 工作区发布包 → 扩展自带 runtime → PATH（`slang.executable.path`）。
 > **软降级**：node 缺失 / 插件构建失败只黄字告警，绝不阻断双平台主线；版本不一致（插件 version ≠
-> 发版 version）告警后照发。`-SkipBuild` 时若已有现成 .vsix 则直接复用。
+> 发版 version）告警后照发。`-SkipBuild` 时若已有现成 .vsix 则直接复用（不重新内嵌 runtime）。
 
 > 🔥 **2026-10-18 用户指令：包目录方案**——`module\` 更名 `lib\`（系统自带文件）；
 > `modules\`（用户包）与 `plugins\`（插件）为未来 `spm.exe` 包管理器 / 插件管理器

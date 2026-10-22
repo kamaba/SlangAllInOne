@@ -115,8 +115,11 @@ internal sealed class LspServer
     // ==== 编译期调用点关联（callSites，2026-10-21）====
     // spPath → 全部方法调用点条目；definition/hover 光标区间命中即精确跳转。
     // 数据源 = lsp-compile 导出的 IR 指令流绑定（MetaCallNode 解析结果的 IR 沉淀）。
+    // 2026-10-22：MetaCore 代码关联索引（index.refs）的字段/枚举成员/类型名引用
+    // 也并入本表（Kind 区分）；LookupCallSite 对 Kind 无感（行+词名命中即跳）。
     private sealed class CallSiteEntry
     {
+        public string Kind = "method"; // "method"|"field"|"enumMember"|"type"（index.refs 来源）
         public string File = "";       // 归一化全路径（查询 key）
         public int Line;               // 1-based
         public int BeginChar;          // 0-based
@@ -130,6 +133,32 @@ internal sealed class LspServer
         public int TargetChar;         // 0-based
     }
     private readonly Dictionary<string, List<CallSiteEntry>> _projectCallSites = new();
+
+    // ==== 代码关联索引（MetaCore index，2026-10-22）：定义锚点 + 灰区 ====
+    // symbols → 定义表（类型 + 成员名字 token 位置；本工程目标优先于
+    // MergedTable 的 instruction 锚点，definition 跳转更准）。
+    private sealed class DefEntry
+    {
+        public string Kind = "";       // class|interface|enum|data|method|field|enumMember
+        public string Name = "";
+        public string FullName = "";   // 成员 = "类全名.成员名"；类型 = 类全名
+        public string File = "";       // 相对工程目录
+        public int Line;               // 1-based
+        public int Char;               // 0-based
+    }
+    private readonly Dictionary<string, Dictionary<string, DefEntry>> _projectDefs = new(); // spPath → "full"|"full.member" → def
+
+    // 灰显区（编译期确定性裁剪）：@Exclude 成员/类 + jsonc ignored 文件。
+    // 动态判不出来的不导出（导出器侧保证），故不在此列。
+    private sealed class InactiveRange
+    {
+        public int Line;      // 0-based
+        public int Char;      // 0-based
+        public int EndLine;   // 0-based
+        public int EndChar;   // 0-based（开区间尾）
+    }
+    private readonly Dictionary<string, Dictionary<string, List<InactiveRange>>> _projectInactive = new(); // spPath → 全路径 → 灰区
+    private readonly Dictionary<string, HashSet<string>> _projectIgnoredFiles = new(); // spPath → 全路径集（整文件灰显）
     private int _diagVersion = 0;
     private readonly SemaphoreSlim _diagLock = new(1, 1);
     private bool _shutdown = false;
@@ -367,6 +396,12 @@ internal sealed class LspServer
         }
         Console.Error.WriteLine($"[lsp] didOpen/save → 工程 {project.SpPath}，触发编译装载"); // [lsp-trace]
         _docs[uri] = project;
+        // 灰区即时呈现：索引已在（最近一次成功编译）时 didOpen/didSave 先按旧表推送，
+        // 编译完成后 LoadCodeIndex 会再推新表（ranges 全量替换）
+        if (_projectInactive.ContainsKey(project.SpPath) || _projectIgnoredFiles.ContainsKey(project.SpPath))
+        {
+            SendInactiveRegions(project, uri);
+        }
         ScheduleDiagnostics(project);
     }
 
@@ -579,13 +614,46 @@ internal sealed class LspServer
             Console.Error.WriteLine($"[lsp] callSites 装载 {entries.Count} 条（{Path.GetFileName(project.SpPath)}）"); // [lsp-trace]
         }
 
+        // 成功编译 → 装载代码关联索引（MetaCore index，2026-10-22）：
+        // refs 并入调用点表（Kind 区分，definition/hover 共用查询）；
+        // symbols → 定义锚点表；excluded/ignoredFiles → 灰显区，随后按打开文档推送。
+        // 编译失败不带 index 字段——旧表保留（灰显/跳转以最近一次成功编译为准）
+        if (success && root.TryGetProperty("index", out var idxEl) && idxEl.ValueKind == JsonValueKind.Object)
+        {
+            LoadCodeIndex(project, idxEl);
+        }
+
         // 逐文件发布（移至装载之后：客户端以「收到诊断」为就绪信号，publish 前须保证
-        // 符号表/调用点已就位，否则 definition/hover 有一拍空窗）；上轮有本轮无 → 空数组清除
+        // 符号表/调用点已就位，否则 definition/hover 有一拍空窗）；上轮有本轮无 → 空数组清除。
+        // 打开中的文档按客户端原样 URI 回显发布（Trae/VS Code 发 %3A 编码形态，PathToUri
+        // 派生形态在盘符大小写/编码细节上可能有偏差 → 诊断映射不到已开文档）；
+        // 未打开文件回落 PathToUri（仅 Problems 面板可见，不依赖文档键匹配）。
+        var openUriByPath = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var docUri in _docs.Keys)
+        {
+            try
+            {
+                openUriByPath[Path.GetFullPath(UriToPath(docUri))] = docUri;
+            }
+            catch
+            {
+                /* 坏路径跳过 */
+            }
+        }
         var previous = _publishedFiles.TryGetValue(project.SpPath, out var prev) ? prev : new HashSet<string>();
         var current = new HashSet<string>();
         foreach (var kv in byFile)
         {
-            string uri = PathToUri(kv.Key);
+            string key;
+            try
+            {
+                key = Path.GetFullPath(kv.Key);
+            }
+            catch
+            {
+                key = kv.Key;
+            }
+            string uri = openUriByPath.TryGetValue(key, out var docUri) ? docUri : PathToUri(kv.Key);
             Notify("textDocument/publishDiagnostics", new { uri, diagnostics = kv.Value });
             current.Add(uri);
         }
@@ -604,6 +672,224 @@ internal sealed class LspServer
             errCount = dgc.EnumerateArray().Count(x => x.TryGetProperty("severity", out var sv) && sv.GetInt32() == 1);
         }
         Console.Error.WriteLine($"[lsp] 诊断 {Path.GetFileName(project.SpPath)}: {(success ? "编译通过" : "失败")}，{errCount} 条 Error 级诊断");
+    }
+
+    /* 代码关联索引装载（MetaCore index）：
+     *   refs        → 并入 _projectCallSites（CallSiteEntry.Kind 标记来源；
+     *                LookupCallSite/ResolveCallSiteTarget 共用既有链路）
+     *   symbols     → _projectDefs（类型/成员定义锚点，本工程目标解析优先）
+     *   excluded    → _projectInactive（按全路径分组，0-based 区间）
+     *   ignoredFiles→ _projectIgnoredFiles（整文件灰显）
+     * 装载完成后对当前打开的工程文档推送 slang/publishInactiveRegions。 */
+    private void LoadCodeIndex(ProjectInfo project, JsonElement idx)
+    {
+        // symbols → 定义表
+        var defs = new Dictionary<string, DefEntry>(StringComparer.OrdinalIgnoreCase);
+        if (idx.TryGetProperty("symbols", out var syms) && syms.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var s in syms.EnumerateArray())
+            {
+                string fn = s.TryGetProperty("fn", out var fnE) && fnE.ValueKind == JsonValueKind.String ? fnE.GetString() ?? "" : "";
+                if (fn.Length == 0)
+                {
+                    continue;
+                }
+                var clsDef = ReadDef(s, fn, s.TryGetProperty("k", out var kE) && kE.ValueKind == JsonValueKind.String ? kE.GetString() ?? "class" : "class");
+                if (clsDef != null)
+                {
+                    defs[fn] = clsDef;
+                }
+                if (s.TryGetProperty("m", out var members) && members.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (var m in members.EnumerateArray())
+                    {
+                        var mDef = ReadDef(m, fn + "." + (m.TryGetProperty("n", out var nE) && nE.ValueKind == JsonValueKind.String ? nE.GetString() ?? "" : ""),
+                            m.TryGetProperty("k", out var mkE) && mkE.ValueKind == JsonValueKind.String ? mkE.GetString() ?? "" : "");
+                        if (mDef != null)
+                        {
+                            defs[mDef.FullName] = mDef;
+                        }
+                    }
+                }
+            }
+        }
+        _projectDefs[project.SpPath] = defs;
+
+        // excluded → 灰区（按全路径分组；行 1-based → 0-based）
+        var inactive = new Dictionary<string, List<InactiveRange>>(StringComparer.OrdinalIgnoreCase);
+        if (idx.TryGetProperty("excluded", out var exs) && exs.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var x in exs.EnumerateArray())
+            {
+                string f = x.TryGetProperty("f", out var fE) && fE.ValueKind == JsonValueKind.String ? fE.GetString() ?? "" : "";
+                int l = x.TryGetProperty("l", out var lE) && lE.ValueKind == JsonValueKind.Number ? lE.GetInt32() : 0;
+                if (f.Length == 0 || l <= 0)
+                {
+                    continue;
+                }
+                string full;
+                try
+                {
+                    full = Path.GetFullPath(Path.Combine(project.Dir, f));
+                }
+                catch
+                {
+                    continue;
+                }
+                var r = new InactiveRange
+                {
+                    Line = l - 1,
+                    Char = x.TryGetProperty("c", out var cE) && cE.ValueKind == JsonValueKind.Number ? cE.GetInt32() : 0,
+                    EndLine = Math.Max(l - 1, (x.TryGetProperty("el", out var elE) && elE.ValueKind == JsonValueKind.Number ? elE.GetInt32() : l) - 1),
+                    EndChar = x.TryGetProperty("ec", out var ecE) && ecE.ValueKind == JsonValueKind.Number ? ecE.GetInt32() : 0,
+                };
+                if (!inactive.TryGetValue(full, out var list))
+                {
+                    inactive[full] = list = new List<InactiveRange>();
+                }
+                list.Add(r);
+            }
+        }
+        _projectInactive[project.SpPath] = inactive;
+
+        // ignoredFiles → 整文件灰显集
+        var ignored = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (idx.TryGetProperty("ignoredFiles", out var igf) && igf.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var p in igf.EnumerateArray())
+            {
+                if (p.ValueKind != JsonValueKind.String)
+                {
+                    continue;
+                }
+                string rel = p.GetString() ?? "";
+                try
+                {
+                    ignored.Add(Path.GetFullPath(Path.Combine(project.Dir, rel)));
+                }
+                catch
+                {
+                    /* 路径异常忽略 */
+                }
+            }
+        }
+        _projectIgnoredFiles[project.SpPath] = ignored;
+
+        // refs → 并入调用点表（注意 callSites 块已先装载：追加而非覆盖）
+        int refCount = 0;
+        if (idx.TryGetProperty("refs", out var refs) && refs.ValueKind == JsonValueKind.Array)
+        {
+            if (!_projectCallSites.TryGetValue(project.SpPath, out var list))
+            {
+                _projectCallSites[project.SpPath] = list = new List<CallSiteEntry>();
+            }
+            foreach (var r in refs.EnumerateArray())
+            {
+                string f = r.TryGetProperty("f", out var fE) && fE.ValueKind == JsonValueKind.String ? fE.GetString() ?? "" : "";
+                int l = r.TryGetProperty("l", out var lE) && lE.ValueKind == JsonValueKind.Number ? lE.GetInt32() : 0;
+                if (f.Length == 0 || l <= 0)
+                {
+                    continue;
+                }
+                string full;
+                try
+                {
+                    full = Path.GetFullPath(Path.Combine(project.Dir, f));
+                }
+                catch
+                {
+                    continue;
+                }
+                list.Add(new CallSiteEntry
+                {
+                    Kind = r.TryGetProperty("k", out var kE) && kE.ValueKind == JsonValueKind.String ? kE.GetString() ?? "method" : "method",
+                    File = full,
+                    Line = l,
+                    BeginChar = r.TryGetProperty("c", out var cE) && cE.ValueKind == JsonValueKind.Number ? cE.GetInt32() : 0,
+                    EndChar = r.TryGetProperty("ec", out var ecE) && ecE.ValueKind == JsonValueKind.Number ? ecE.GetInt32() : 0,
+                    Name = r.TryGetProperty("n", out var nE) && nE.ValueKind == JsonValueKind.String ? nE.GetString() ?? "" : "",
+                    TargetName = r.TryGetProperty("tn", out var tnE) && tnE.ValueKind == JsonValueKind.String ? tnE.GetString() ?? "" : "",
+                    TargetClass = r.TryGetProperty("tc", out var tcE) && tcE.ValueKind == JsonValueKind.String ? tcE.GetString() ?? "" : "",
+                    TargetMethod = r.TryGetProperty("tm", out var tmE) && tmE.ValueKind == JsonValueKind.String ? tmE.GetString() ?? "" : "",
+                    TargetFile = r.TryGetProperty("tf", out var tfE) && tfE.ValueKind == JsonValueKind.String ? tfE.GetString() ?? "" : "",
+                    TargetLine = r.TryGetProperty("tl", out var tlE) && tlE.ValueKind == JsonValueKind.Number ? tlE.GetInt32() : 0,
+                    TargetChar = r.TryGetProperty("tc2", out var tc2E) && tc2E.ValueKind == JsonValueKind.Number ? tc2E.GetInt32() : 0,
+                });
+                refCount++;
+            }
+        }
+        Console.Error.WriteLine($"[lsp] index 装载（{Path.GetFileName(project.SpPath)}）：defs {defs.Count}，灰区 {inactive.Count} 文件，ignored {ignored.Count}，refs {refCount}"); // [lsp-trace]
+
+        PublishInactiveRegions(project);
+    }
+
+    /* symbols 数组项 → DefEntry（f/l/c 基准与 excluded 一致：l 1-based / c 0-based） */
+    private static DefEntry? ReadDef(JsonElement el, string fullName, string kind)
+    {
+        if (fullName.Length == 0)
+        {
+            return null;
+        }
+        return new DefEntry
+        {
+            Kind = kind,
+            Name = el.TryGetProperty("n", out var nE) && nE.ValueKind == JsonValueKind.String ? nE.GetString() ?? "" : "",
+            FullName = fullName,
+            File = el.TryGetProperty("f", out var fE) && fE.ValueKind == JsonValueKind.String ? fE.GetString() ?? "" : "",
+            Line = el.TryGetProperty("l", out var lE) && lE.ValueKind == JsonValueKind.Number ? lE.GetInt32() : 0,
+            Char = el.TryGetProperty("c", out var cE) && cE.ValueKind == JsonValueKind.Number ? cE.GetInt32() : 0,
+        };
+    }
+
+    /* 灰区推送：对当前打开且属于该工程的文档逐个发 slang/publishInactiveRegions。
+     * ranges 为空数组 = 清除该文档灰显（上一轮裁剪本轮不再裁剪时）。 */
+    private void PublishInactiveRegions(ProjectInfo project)
+    {
+        foreach (var kv in _docs)
+        {
+            if (kv.Value.SpPath != project.SpPath)
+            {
+                continue;
+            }
+            SendInactiveRegions(project, kv.Key);
+        }
+    }
+
+    /* 单文档灰区计算与推送：excluded 区间 + ignored 整文档（取 _docText 定位末行）。 */
+    private void SendInactiveRegions(ProjectInfo project, string uri)
+    {
+        string full;
+        try
+        {
+            full = Path.GetFullPath(UriToPath(uri));
+        }
+        catch
+        {
+            return;
+        }
+        var ranges = new List<object>();
+        if (_projectInactive.TryGetValue(project.SpPath, out var byFile) && byFile.TryGetValue(full, out var list))
+        {
+            foreach (var r in list)
+            {
+                ranges.Add(new
+                {
+                    start = new { line = r.Line, character = r.Char },
+                    end = new { line = r.EndLine, character = r.EndChar },
+                });
+            }
+        }
+        if (_projectIgnoredFiles.TryGetValue(project.SpPath, out var ignored) && ignored.Contains(full))
+        {
+            string text = GetDocText(uri);
+            (int lastLine, int lastChar) = OffsetToPosition(text, text.Length);
+            ranges.Add(new
+            {
+                start = new { line = 0, character = 0 },
+                end = new { line = lastLine, character = lastChar },
+            });
+        }
+        Notify("slang/publishInactiveRegions", new { uri, ranges });
     }
 
     /* spawn 自身执行 lsp-compile：<exe> lsp-compile <sp> --cwd <dir>。
@@ -2030,8 +2316,10 @@ internal sealed class LspServer
         return null;
     }
 
-    /* 调用点目标解析：tf（本地编译定义文件）直用；ref module/模板实例（tf 空）按
-     * 目标全名（类前缀 + 方法名）回查 MergedTable → ResolveSourcePath */
+    /* 调用点目标解析：tf（本地编译定义文件）直用 → 本工程定义锚点表（index.symbols，
+     * 名字 token 位置，比 instruction 锚点准）→ MergedTable 回查。
+     * kind=type（index.refs 类型名引用）：目标为类型本身，走定义表/类表而非成员表。
+     * ref module 目标 tf 为空（源码属编译产物/加密侧不处理）→ 仅剩 tc/tm 查表键。 */
     private (string? File, int Line, int Char)? ResolveCallSiteTarget(ProjectInfo project, CallSiteEntry e)
     {
         if (e.TargetFile.Length > 0)
@@ -2049,8 +2337,43 @@ internal sealed class LspServer
                 /* 路径异常回落查表 */
             }
         }
-        if (e.TargetClass.Length == 0 || e.TargetMethod.Length == 0)
+        if (e.TargetClass.Length == 0)
         {
+            return null;
+        }
+        // 本工程定义锚点优先（index.symbols；成员键 "类全名.成员名"，类型键 "类全名"）
+        if (_projectDefs.TryGetValue(project.SpPath, out var defs))
+        {
+            string key = e.TargetMethod.Length > 0 ? e.TargetClass + "." + e.TargetMethod : e.TargetClass;
+            if (defs.TryGetValue(key, out var def) && def.File.Length > 0)
+            {
+                try
+                {
+                    string cand = Path.GetFullPath(Path.Combine(project.Dir, def.File));
+                    if (File.Exists(cand))
+                    {
+                        return (cand, def.Line, def.Char);
+                    }
+                }
+                catch
+                {
+                    /* 路径异常回落查表 */
+                }
+            }
+        }
+        if (e.TargetMethod.Length == 0)
+        {
+            // 类型名引用：目标即类型（class/interface/enum/data 声明处）
+            if (e.Kind == "type")
+            {
+                var tableT = BuildMergedTable(project);
+                var tcls = ResolveClassByName(e.TargetClass, tableT);
+                string? fileT = tcls != null ? ResolveSourcePath(project, tcls, tcls.SourcePath) : null;
+                if (fileT != null)
+                {
+                    return (fileT, 0, 0);
+                }
+            }
             return null;
         }
         var table = BuildMergedTable(project);
@@ -3185,14 +3508,55 @@ internal sealed class LspServer
     {
         if (Uri.TryCreate(uri, UriKind.Absolute, out var u) && u.IsFile)
         {
-            return u.LocalPath;
+            string p = u.LocalPath;
+            /* 盘符冒号被编码的客户端形态（VS Code/Trae 实测 file:///d%3A/…）：
+             * .NET LocalPath 产出 "/d:/…" 坏路径（前导斜杠）——Directory/File
+             * 全线 Exists 失败 → ResolveProject 永远未命中（2026-10-22 真机
+             * didOpen 未命中工程实锤）。去前导分隔符即得可用盘符路径；
+             * 未编码形态（file:///d:/…）LocalPath 本就正常，条件不触发。 */
+            if (p.Length > 2 && (p[0] == '/' || p[0] == '\\') && p[2] == ':')
+            {
+                p = p[1..];
+            }
+            return p;
         }
-        return Uri.UnescapeDataString(uri["file://".Length..]);
+        string raw = Uri.UnescapeDataString(uri["file://".Length..]);
+        if (raw.Length > 2 && (raw[0] == '/' || raw[0] == '\\') && raw[2] == ':')
+        {
+            raw = raw[1..];
+        }
+        return raw;
     }
 
     private static string PathToUri(string path)
     {
-        return new Uri(path).AbsoluteUri;
+        /* 对齐 VS Code 客户端 URI 字符串形态（vscode-uri）：'/' 分隔、':' 编码为
+         * %3A、盘符大小写保留——publishDiagnostics/rename changes 需与客户端
+         * 文档 URI 精确匹配（file:///d:/… 与 file:///d%3A/… 在客户端是两个
+         * 不同文档键，Trae 实测发 %3A 形态）。UNC 走 authority 形态。 */
+        string p = path.Replace('\\', '/');
+        bool unc = p.StartsWith("//");
+        var sb = new StringBuilder(unc ? "file:" : "file://");
+        if (!unc && p.Length >= 2 && p[1] == ':')
+        {
+            p = "/" + p; // 盘符路径补前导 '/'（file:/// + d:/…）
+        }
+        foreach (var ch in p)
+        {
+            switch (ch)
+            {
+                case ':': sb.Append("%3A"); break;
+                case '%': sb.Append("%25"); break;
+                case '#': sb.Append("%23"); break;
+                case '?': sb.Append("%3F"); break;
+                case ' ': sb.Append("%20"); break;
+                case '"': sb.Append("%22"); break;
+                case '<': sb.Append("%3C"); break;
+                case '>': sb.Append("%3E"); break;
+                default: sb.Append(ch); break;
+            }
+        }
+        return sb.ToString();
     }
 
     /* jsonc 宽松化：去块注释/行注释（与插件 diagnostics 侧同款策略；

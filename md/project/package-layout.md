@@ -73,35 +73,51 @@
   自然落空，行为不变（sqlite3.dll 开发树 post-build 仍拷贝在 exe 同目录，
   作为 delay-load 回落位，见 §六）。
 
-## 六、关联件布局规则（2026-10-22 用户指令）
+## 六、关联件布局规则（2026-10-22 用户指令；同日平台细分定稿）
 
-> 🔥 **规则**：关联的 `.slb` 模块包与关联的 `.dll`（原生依赖）统一放 `lib\`；
-> 插件放 `plugins\`；exe 目录只留 exe 本体（发布应用 = `Module.exe` +
-> `lib\` + `plugins\`）。发布产物 exe 旁不再有散落的 sqlite3.dll。
+> 🔥 **规则**：关联的 `.slb` 模块包与关联的原生库统一放 `lib\`；插件放 `plugins\`；
+> exe 目录只留 exe 本体（发布应用 = `Module.exe` + `lib\` + `plugins\`）。
+> 发布产物 exe 旁不再有散落的 sqlite3.dll。🔥 **平台细分（同日定稿）**：原生库
+> 在 lib\ 下按平台分目录 `lib\{windows|linux|macos|android|ios}\`（承载
+> .dll/.so/.dylib/.lib/.a 等）——一个发布目录可承载多平台运行体，运行体按
+> 当前平台自取连接库（slb 平铺，平台无关）。`slang publish` 产物 additionally
+> 分 `publish\{debug|release}\` 两配置子目录并存（发布规则，权威 =
+> publish-guide.md §4）。
 
-1. **sqlite3.dll 迁移**：自发布包 `bin\`、`slang publish` 发布根目录迁入 `lib\`
-   （与标准库 slb / math_lib.dll 同目录）。sqlite3.dll 是 C VM exe / dll 唯一硬
-   动态依赖——链接侧改 **delay-load**（根 CMakeLists `/DELAYLOAD:sqlite3.dll` +
-   `delayimp`；`vm_lib` vcxproj `<DelayLoadDLLs>`，两构建链同步），进程启动不再
-   强解析；运行期 `sl_preload_associated_dlls()`（`csimple_lang/src/lib/ffi/
-   sl_ffi_lib_manager.c`）在任何 sqlite 调用前显式 `LoadLibrary`
-   `<exe>\lib\`（→ `<exe>\..\lib\`，后者覆盖发布包 `bin\` 内 VM exe）副本，
-   delay thunk 按已加载模块名绑定；未命中回落 OS 标准搜索——**开发树
-   `build\<C>\bin` 的 exe 同目录副本保持 post-build 拷贝，零影响**。接线点 =
-   `cli_init_platform`（cli_main + 两个内存宿主 API 汇聚）+ app 载荷模式独立前置。
+1. **sqlite3.dll 迁移**：自发布包 `bin\`、`slang publish` 发布根目录迁入 `lib\<平台>\`
+   （slb 仍平铺）。sqlite3.dll 是 C VM exe / dll 唯一硬动态依赖——链接侧改
+   **delay-load**（根 CMakeLists `/DELAYLOAD:sqlite3.dll` + `delayimp`；`vm_lib`
+   vcxproj `<DelayLoadDLLs>`，两构建链同步），进程启动不再强解析；运行期
+   `sl_preload_associated_dlls()`（`csimple_lang/src/lib/ffi/sl_ffi_lib_manager.c`）
+   在任何 sqlite 调用前显式 `LoadLibrary` `<exe>\lib\<平台>\`（→ 平铺 `lib\` →
+   `<exe>\..\lib\` 同序）副本，delay thunk 按已加载模块名绑定；未命中回落 OS
+   标准搜索——**开发树 `build\<C>\bin` 的 exe 同目录副本保持 post-build 拷贝，
+   零影响**。接线点 = `cli_init_platform`（cli_main + 两个内存宿主 API 汇聚）+
+   app 载荷模式独立前置。平台名 = `sl_platform_dir_name()`（编译期判定
+   windows/linux/macos/android/ios，`__ANDROID__` 先于 `__linux__`）。
 2. **Linux 等价**：`libsqlite3.so.0` 随包落包根 `lib\`（build-packages.ps1 d' 步，
    在 lib\ robocopy 之后防 `/MIR` 清除；robocopy 顺带带来的 Windows 专属
    `sqlite3.dll`/`math_lib.dll` 同步剔除——linux 包 lib\ 只留 .so）；解析 =
    `csimple_lang_dll.so` 自身 rpath `$ORIGIN/../lib` + CvmBackend 绝对路径预载
    （`bin\..\lib\` → `bin\` 回退）双兜底（此前 `bin\` 副本因 DT_NEEDED 不搜应用
    目录实为死重，本次修复为真实生效）。
-3. **FFI / math_lib.dll 无需改动**：原生库解析本就按「模块包自身目录 +
-   相对路径 / basename 回退」——模块从 `lib\` 装载时 pkg_dir 即 `lib\`，天然命中。
-4. **落点清单**：csproj `PackCvmRuntime`（bin\ 清单去 sqlite3.dll、新增 lib\ 拷贝）、
-   `Publish/PublishCommand.cs`（sqlite3.dll → `lib\`）、`Backend/CvmBackend.cs`
-   （Linux 预载路径）、`scripts/build-packages.ps1`（双平台布局校验）、
-   C VM 链接与预装载（上述）。
-5. **验证实录**（2026-10-22）：裸 exe（无 sqlite3 同目录）可启动（delay-load 实证）；
-   `slang publish` ExpendTest（ProjectTest2）→ 发布根无散落 sqlite3.dll、`lib\` 五件
-   齐；发布应用 `exit 0`（套件 `_main_` 直调 `Sqlite3Test.fun()`，sqlite 确经
-   `lib\` 预装载工作）。
+3. **FFI / math_lib.dll 平台回退**：原生库解析按「模块包自身目录 + 相对路径 /
+   basename 回退」——模块从 `lib\` 装载时 pkg_dir 即 `lib\`，天然命中；🔥 平台
+   细分后 FFI 候选链同步扩展（2026-10-22）：`sl_ffi_lib_load` 候选 3-6 按
+   basename 依次查 `<exe>\lib\<平台>\` → `<exe>\lib\` → `<exe>\..\lib\<平台>\`
+   → `<exe>\..\lib\`；`vm_sys_ffi_static_lib_register`（dllImports "static" 预载）
+   同序三重回退（pkg_dir 下 `<平台>/basename` 优先于平铺 basename）。
+4. **引用模块 stage（发布应用专属，2026-10-22）**：`slang publish` 把主模块
+   moduleReferences 非系统库引用（如 SLangServer）平铺拷入发布目录
+   `<名>.module.{slb,json}`——发布目录深度与开发导出树不同，内嵌相对路径必然
+   错位（装载期静默跳过，曾致 ServerP1Test 全线失效的实录），C VM 引用回退链
+   basename 直查恰好命中平铺形态。
+5. **落点清单**：csproj `PackCvmRuntime`（bin\ 清单去 sqlite3.dll、新增 lib\ 拷贝）、
+   `Publish/PublishCommand.cs`（配置子目录 + lib\<平台>\ + 引用 stage）、
+   `Backend/CvmBackend.cs`（Linux 预载路径）、`scripts/build-packages.ps1`
+   （双平台布局校验）、C VM 链接与预装载（上述）。
+6. **验证实录**（2026-10-22）：裸 exe（无 sqlite 同目录）可启动（delay-load 实证）；
+   `slang publish` ExpendTest 双配置（debug+release 并存）→ 发布根无散落
+   sqlite3.dll、`lib\windows\{sqlite3,math_lib}.dll` + slb 平铺齐、SLangServer
+   平铺 stage；发布应用 `exit 0` 且 **ServerP1/P15/P2/P3 全部 all done**
+   （引用 stage 修复后完整跑通；此前止步 ServerP1Test T1）。

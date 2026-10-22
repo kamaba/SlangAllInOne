@@ -8,13 +8,13 @@
  *   2. node SlangAllInOne\SLangCore\test\Other\DebugSmoke\smoke.js
  * Exit code 0 = all checks passed. (DEBUG_PROTOCOL_DESIGN.md §8.2/§8.4)
  *
- * Source layout (DebugSmoke.sl, v1.1 walk-through edition):
- *   63..85: fixtures (a/b/c/pi/flag/msg/pt/arr/pts/box/m/deep)
+ * Source layout (DebugSmoke.sl, v1.1 walk-through edition + data fixtures):
+ *   63..88: fixtures (a/b/c/pi/flag/msg/pt/arr/pts/box/m + data dv/dw/dvs)
  *   48: deepC r = add(...)          <- bp #1: stack deepC<-deepB<-deepA<-run (5 frames)
- *   86: int sum = pts[0].x + arr[1] <- bp #2: all locals live (sum null, line-head)
+ *   90: int sum = pts[0].x + arr[1] <- bp #2: all locals live (sum null, line-head)
  *   54: coroBody lv = v * 2         <- bp #3: coroutine threadId=3 (AutoInline host)
- *   89: counter = ...               <- bp #4: r=42 counter=10 (store pending)
- *   90: println                     <- bp #5: counter=241 (after store; epoch check)
+ *   93: counter = ...               <- bp #4: r=42 counter=10 (store pending)
+ *   94: println                     <- bp #5: counter=241 (after store; epoch check)
  * Values: c=triple(7)=21; deep=deepA(5)->deepB(6)->deepC(7)->add(7,100)=107;
  *         sum=41+20=61; r=await coroBody(21)=42; counter=10+21+42+61+107=241
  */
@@ -26,8 +26,7 @@ const { spawn } = require('child_process');
 
 const EXE = 'D:\\project\\lang\\csimple_lang\\build\\Debug\\bin\\csimple_lang.exe';
 const BASE = 'D:\\project\\lang\\SlangAllInOne\\SLangCore\\test\\Other\\DebugSmoke';
-const MODULE = path.join(BASE, '..', '..', 'out', 'export', 'DebugSmoke',
-  'DebugSmoke.module.json');
+const MODULE = path.join(BASE, 'export', 'DebugSmoke', 'DebugSmoke.module.json');
 const SRC = path.join(BASE, 'DebugSmoke.sl');
 const PORT = 18110;
 
@@ -154,13 +153,13 @@ async function main() {
   assert(r.ok && r.data.protocol === 1, 'initialize failed: ' + JSON.stringify(r));
   ok('initialize ok (protocol ' + r.data.protocol + ')');
 
-  /* --- breakpoints: 48 (deepC), 86 (sum), 54 (coroBody), 89, 90 --- */
-  r = await cli.send('set-breakpoints', { path: SRC, lines: [48, 86, 54, 89, 90] });
+  /* --- breakpoints: 48 (deepC), 90 (sum), 54 (coroBody), 93, 94 --- */
+  r = await cli.send('set-breakpoints', { path: SRC, lines: [48, 90, 54, 93, 94] });
   assert(r.ok, 'set-breakpoints failed: ' + JSON.stringify(r));
   const bps = r.data.breakpoints;
   assert(bps.length === 5 && bps.every((b) => b.verified),
     'bps not all verified: ' + JSON.stringify(bps));
-  ok('5 breakpoints verified (48/86/54/89/90)');
+  ok('5 breakpoints verified (48/90/54/93/94)');
 
   /* --- stop #1: deepC:48 (deep call chain) --- */
   let p = cli.expectEvent('stopped');
@@ -233,14 +232,14 @@ async function main() {
     'threads should be [main]: ' + JSON.stringify(r.data));
   ok('threads = [main]');
 
-  /* --- stop #2: run:86 (all fixtures live; sum null line-head) --- */
+  /* --- stop #2: run:90 (all fixtures live; sum null line-head) --- */
   p = cli.expectEvent('stopped');
   r = await cli.send('resume');
   assert(r.ok, 'resume failed');
   st = await p;
-  assert(st.data.reason === 'breakpoint' && st.data.line === 86 && st.data.threadId === 1,
-    'run:86 stop: ' + JSON.stringify(st.data));
-  ok('stop2 at run:86 (fixtures live)');
+  assert(st.data.reason === 'breakpoint' && st.data.line === 90 && st.data.threadId === 1,
+    'run:90 stop: ' + JSON.stringify(st.data));
+  ok('stop2 at run:90 (fixtures live)');
 
   /* --- variables: scalar full set + statics --- */
   r = await cli.send('variables', { depth: 0, filter: 'locals' });
@@ -258,7 +257,7 @@ async function main() {
   assert(vflag && vflag.value === '1', 'local flag: ' + JSON.stringify(vflag));
   assert(vmsg && (vmsg.text || '').indexOf('"hi"') >= 0, 'local msg: ' + JSON.stringify(vmsg));
   assert(vdeep && vdeep.value === '107', 'local deep=107: ' + JSON.stringify(vdeep));
-  assert(vsum && vsum.value === 'null', 'local sum should be null (line 86 not run): ' + JSON.stringify(vsum));
+  assert(vsum && vsum.value === 'null', 'local sum should be null (line 90 not run): ' + JSON.stringify(vsum));
   ok('locals scalars: a=3 b=4 pi=f64:3.14 flag=1 msg="hi" deep=107 sum=null');
   r = await cli.send('variables', { depth: 0, filter: 'statics' });
   const vc = r.data.vars.find((v) => v.name === 'counter');
@@ -300,6 +299,9 @@ async function main() {
   const lpts = V.find((v) => v.name === 'pts');
   const lbox = V.find((v) => v.name === 'box');
   const lm = V.find((v) => v.name === 'm');
+  const ldv = V.find((v) => v.name === 'dv');
+  const ldw = V.find((v) => v.name === 'dw');
+  const ldvs = V.find((v) => v.name === 'dvs');
   assert(lpt && (lpt.ref || 0) > 0 && (lpt.childCount || 0) === 2,
     'pt should be expandable ref with 2 fields: ' + JSON.stringify(lpt));
   assert(lpt.text.indexOf('Point') >= 0 && lpt.text.indexOf('41') >= 0,
@@ -357,6 +359,40 @@ async function main() {
   assert(mkey && mval && kv, 'map entry key/value: ' + JSON.stringify(r.data.vars));
   ok('children(m) -> _entries -> [entry] -> key/value (container graph)');
 
+  /* --- children tree: data fixtures（data 实例二级/嵌套展开，2026-10-22） --- */
+  assert(ldv && (ldv.ref || 0) > 0 && (ldv.childCount || 0) === 3,
+    'dv (data Vec3) expandable with 3 fields: ' + JSON.stringify(ldv));
+  assert(ldw && (ldw.ref || 0) > 0 && (ldw.childCount || 0) === 2,
+    'dw (data Wrap) expandable with 2 fields: ' + JSON.stringify(ldw));
+  assert(ldvs && (ldvs.ref || 0) > 0 && ldvs.childCount === 2,
+    'dvs (Array<Vec3>) expandable len=2: ' + JSON.stringify(ldvs));
+  ok('data locals: dv/dw/dvs expandable (data 走 children 通道)');
+  r = await cli.send('children', { ref: ldv.ref });
+  const dvx = r.data.vars.find((v) => v.name === 'x');
+  const dvy = r.data.vars.find((v) => v.name === 'y');
+  const dvz = r.data.vars.find((v) => v.name === 'z');
+  assert(dvx && dvx.value === '7' && dvy && dvy.value === '8' && dvz && dvz.value === '9',
+    'children(dv) fields: ' + JSON.stringify(r.data.vars));
+  ok('children(dv) -> x=7 y=8 z=9 (data 字段条目)');
+  r = await cli.send('children', { ref: ldw.ref });
+  const dwin = r.data.vars.find((v) => v.name === 'inner');
+  const dwn = r.data.vars.find((v) => v.name === 'name');
+  assert(dwin && (dwin.ref || 0) > 0, 'dw.inner expandable (data->data 嵌套): ' + JSON.stringify(dwin));
+  assert(dwn && (dwn.text || dwn.value || '').indexOf('ww') >= 0,
+    'dw.name="ww": ' + JSON.stringify(dwn));
+  r = await cli.send('children', { ref: dwin.ref });
+  const inz = r.data.vars.find((v) => v.name === 'z');
+  assert(inz && inz.value === '7', 'dw.inner.z=7 (嵌套 data 第二级): ' + JSON.stringify(r.data.vars));
+  ok('children(dw) -> inner(ref) -> z=7 (data 嵌套 data 二级展开)');
+  r = await cli.send('children', { ref: ldvs.ref });
+  const dvs0 = r.data.vars[0];
+  assert(dvs0 && dvs0.name === '[0]' && (dvs0.ref || 0) > 0,
+    'dvs[0] expandable data: ' + JSON.stringify(dvs0));
+  r = await cli.send('children', { ref: dvs0.ref });
+  const d0x = r.data.vars.find((v) => v.name === 'x');
+  assert(d0x && d0x.value === '7', 'dvs[0].x=7: ' + JSON.stringify(r.data.vars));
+  ok('children(dvs)[0] -> Vec3 -> x=7 (数组内 data 展开)');
+
   /* --- evaluate chains --- */
   r = await cli.send('evaluate', { depth: 0, expr: 'pt.x' });
   assert(r.ok && r.data.value === '41', 'pt.x: ' + JSON.stringify(r));
@@ -382,6 +418,15 @@ async function main() {
   r = await cli.send('evaluate', { depth: 0, expr: 'pt.x + arr[1]' });
   assert(r.ok && r.data.value === '61', 'pt.x+arr[1]: ' + JSON.stringify(r));
   ok('evaluate pt.x + arr[1] -> 61 (mixed chain)');
+  r = await cli.send('evaluate', { depth: 0, expr: 'dv.x' });
+  assert(r.ok && r.data.value === '7', 'dv.x: ' + JSON.stringify(r));
+  ok('evaluate dv.x -> 7 (data 链)');
+  r = await cli.send('evaluate', { depth: 0, expr: 'dw.inner.z' });
+  assert(r.ok && r.data.value === '7', 'dw.inner.z: ' + JSON.stringify(r));
+  ok('evaluate dw.inner.z -> 7 (嵌套 data 链)');
+  r = await cli.send('evaluate', { depth: 0, expr: 'dvs[0].y' });
+  assert(r.ok && r.data.value === '8', 'dvs[0].y: ' + JSON.stringify(r));
+  ok('evaluate dvs[0].y -> 8 (数组内 data 链)');
   r = await cli.send('evaluate', { depth: 0, expr: 'arr[5]' });
   assert(r.ok === false && /out of range/.test(r.error || ''), 'arr[5] should fail');
   ok('evaluate arr[5] -> out of range error');
@@ -422,14 +467,14 @@ async function main() {
   assert(r.data.frames.length === 1, 'coro stack frames: ' + r.data.frames.length);
   ok('coro stack = 1 frame (own chain)');
 
-  /* --- stop #4: run:89 (r=42, counter still 10) --- */
+  /* --- stop #4: run:93 (r=42, counter still 10) --- */
   p = cli.expectEvent('stopped');
   r = await cli.send('resume');
   assert(r.ok, 'resume failed');
   st = await p;
-  assert(st.data.reason === 'breakpoint' && st.data.line === 89 && st.data.threadId === 1,
-    'run:89 stop: ' + JSON.stringify(st.data));
-  ok('stop4 at run:89 back on main');
+  assert(st.data.reason === 'breakpoint' && st.data.line === 93 && st.data.threadId === 1,
+    'run:93 stop: ' + JSON.stringify(st.data));
+  ok('stop4 at run:93 back on main');
 
   r = await cli.send('threads');
   const dead = r.data.threads.find((t) => t.id === 3);
@@ -444,13 +489,13 @@ async function main() {
   assert(k10 && k10.value === '10', 'counter=10 (store pending)');
   ok('after await: r=42, counter=10');
 
-  /* --- stop #5: run:90 (counter=241 after store) + epoch invalidation --- */
+  /* --- stop #5: run:94 (counter=241 after store) + epoch invalidation --- */
   const staleRef = lpt.ref;
   p = cli.expectEvent('stopped');
   r = await cli.send('resume');
   assert(r.ok, 'resume failed');
   st = await p;
-  assert(st.data.line === 90, 'epoch stop line: ' + st.data.line + ' (want 90)');
+  assert(st.data.line === 94, 'epoch stop line: ' + st.data.line + ' (want 94)');
   r = await cli.send('children', { ref: staleRef });
   assert(r.ok && Array.isArray(r.data.vars) && r.data.vars.length === 0,
     'stale ref should yield empty vars: ' + JSON.stringify(r.data));
@@ -458,7 +503,7 @@ async function main() {
   r = await cli.send('variables', { depth: 0, filter: 'statics' });
   const k241 = r.data.vars.find((v) => v.name === 'counter');
   assert(k241 && k241.value === '241', 'counter=241 after store: ' + JSON.stringify(k241));
-  ok('counter=241 at run:90');
+  ok('counter=241 at run:94');
 
   /* --- final resume -> terminated exitCode 0 --- */
   p = cli.expectEvent('terminated');

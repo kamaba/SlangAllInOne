@@ -82,6 +82,10 @@ class DebugSmoke
         Map<int, int> m = Map<int, int>()
         m.add( 1, 100 )
         m.add( 2, 200 )
+        Vec3 dv = Vec3(){ x = 7, y = 8, z = 9 }
+        Wrap dw = Wrap(){ name = "ww", inner = Vec3(){ x = 5, y = 6, z = 7 } }
+        Array<Vec3> dvs = Array<Vec3>(2)
+        dvs[0] = dv
         int deep = d.deepA( 5 )
         int sum = pts[0].x + arr[1]
         Task h = spawn coroBody( c )
@@ -89,4 +93,17 @@ class DebugSmoke
         counter = counter + c + r + sum + deep
         Console.println( "result=" + SystemConvertString( counter ) )
     }
+}
+
+data Vec3
+{
+    x = 1
+    y = 2
+    z = 3
+}
+
+data Wrap
+{
+    inner = Vec3(){ x = 5, y = 6, z = 7 }
+    name = "w"
 }

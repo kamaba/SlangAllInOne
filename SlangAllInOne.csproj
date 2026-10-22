@@ -44,7 +44,7 @@
          VSCode package.json version 共用同一 主.发布.小版本 号；任一端改动，
          四处锚点同步 +1。中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），
          末位 = 随时递增的小版本。 -->
-    <Version>0.0.21</Version>
+    <Version>0.0.23</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>

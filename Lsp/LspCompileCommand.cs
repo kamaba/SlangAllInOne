@@ -86,6 +86,10 @@ internal static class LspCompileCommand
             diagnostics = diags,
             // 方法调用点 → 目标方法精确关联（IR 指令流导出，definition 精确跳转数据源）
             callSites = result.Success ? LspCallSiteExporter.Export() : new List<object>(),
+            // 代码关联索引（MetaCore 层，2026-10-22）：files/ignoredFiles/excluded
+            // （@Exclude 灰区）/symbols（定义锚点）/refs（成员/类型引用关联）。
+            // 编译失败不导出（灰区/引用以最近一次成功编译为准，由 LSP 侧保留旧表）
+            index = result.Success ? LspMetaIndexExporter.Export() : null,
         };
         // 匿名 payload 经 JsonDom（纯反射→JsonNode）序列化：STJ 反射路径在
         // Native AOT 下对匿名类型走 SmallObjectWithParameterizedConverter（运行时

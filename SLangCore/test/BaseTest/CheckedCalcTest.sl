@@ -554,6 +554,170 @@ CheckedCalcTest
         global.println("log = " + log)
     }
 
+    # ── 29. 混合类型 UInt8 + Int16 溢出（checked，结果域=左操作数 UInt8） ──
+    static mixUInt8Int16OverflowTest()
+    {
+        global.println("========== 29. UInt8 + Int16 checked overflow ==========")
+        string log = "before"
+        checked label mixU8I16ChkBlock
+        {
+            Byte a = 200
+            Int16 b = 100
+            Byte result = a + b
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        global.println("log = " + log)
+    }
+
+    # ── 30. 混合类型 UInt8 + Int16 回绕（无 checked，300 -> 44） ──
+    static mixUInt8Int16WrapTest()
+    {
+        global.println("========== 30. UInt8 + Int16 unchecked wrap ==========")
+        Byte a = 200
+        Int16 b = 100
+        Byte result = a + b
+        global.println("wrapped-result=" + result.toString())
+    }
+
+    # ── 31. SByte 加法溢出（checked）与回绕（无 checked，127+1 -> -128） ──
+    static mixInt8OverflowAndWrapTest()
+    {
+        global.println("========== 31. SByte checked + unchecked ==========")
+        string log = "before"
+        checked label i8MixChkBlock
+        {
+            SByte max = 127
+            SByte result = max + 1
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        SByte max2 = 127
+        SByte wrapped = max2 + 1
+        global.println("log = " + log + ", wrapped=" + wrapped.toString())
+    }
+
+    # ── 32. Int16 + UInt16 混合符号溢出（checked）与回绕 ──
+    static mixInt16UInt16OverflowTest()
+    {
+        global.println("========== 32. Int16 + UInt16 checked overflow ==========")
+        string log = "before"
+        checked label i16u16MixChkBlock
+        {
+            Int16 a = 32767
+            UInt16 b = 2
+            Int16 result = a + b
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        Int16 a2 = 32767
+        UInt16 b2 = 2
+        Int16 wrapped = a2 + b2
+        global.println("log = " + log + ", wrapped=" + wrapped.toString())
+    }
+
+    # ── 33. UInt32 + Int32 混合宽度溢出（checked）与回绕 ──
+    static mixUInt32Int32OverflowTest()
+    {
+        global.println("========== 33. UInt32 + Int32 checked overflow ==========")
+        string log = "before"
+        checked label u32i32MixChkBlock
+        {
+            UInt32 a = 4000000000
+            Int32 b = 2000000000
+            UInt32 result = a + b
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        UInt32 a2 = 4000000000
+        Int32 b2 = 2000000000
+        UInt32 wrapped = a2 + b2
+        global.println("log = " + log + ", wrapped=" + wrapped.toString())
+    }
+
+    # ── 34. UInt64 加法 64 位回绕溢出（checked）与回绕（max+1 -> 0） ──
+    static mixUInt64OverflowTest()
+    {
+        global.println("========== 34. UInt64 checked overflow ==========")
+        string log = "before"
+        checked label u64MixChkBlock
+        {
+            UInt64 max = 18446744073709551615
+            UInt64 result = max + 1
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        UInt64 max2 = 18446744073709551615
+        UInt64 wrapped = max2 + 1
+        global.println("log = " + log + ", wrapped=" + wrapped.toString())
+    }
+
+    # ── 35. SByte + Byte 混合符号不溢出（-1 + 2 = 1，不应误报） ──
+    static mixSignedUnsignedNoOverflowTest()
+    {
+        global.println("========== 35. SByte + Byte no overflow ==========")
+        string log = "before"
+        checked label sgnu8MixChkBlock
+        {
+            SByte a = -1
+            Byte b = 2
+            SByte result = a + b
+            log = "result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        global.println("log = " + log)
+    }
+
+    # ── 36. 混合类型赋宽目标（Int32 r = Byte + Int16，观察提升域） ──
+    static mixPromotionToWideTest()
+    {
+        global.println("========== 36. Byte + Int16 promote to Int32 ==========")
+        Byte a = 200
+        Int16 b = 100
+        Int32 result = a + b
+        global.println("promoted-result=" + result.toString())
+    }
+
+    # ── 37. UInt16 + Int16 混合（无符号左操作数域，65535+1） ──
+    static mixUInt16Int16OverflowTest()
+    {
+        global.println("========== 37. UInt16 + Int16 checked overflow ==========")
+        string log = "before"
+        checked label u16i16MixChkBlock
+        {
+            UInt16 a = 65535
+            Int16 b = 1
+            UInt16 result = a + b
+            log = "no-overflow-result=" + result.toString()
+        }
+        catch
+        {
+            log = "overflow-caught"
+        }
+        UInt16 a2 = 65535
+        Int16 b2 = 1
+        UInt16 wrapped = a2 + b2
+        global.println("log = " + log + ", wrapped=" + wrapped.toString())
+    }
+
     # ── main entry ──
     static fun()
     {
@@ -604,6 +768,17 @@ CheckedCalcTest
         checkedLabelWithFinallyTest()
         checkedLabelMixedTest()
         checkedLabelNestedUncheckedTest()
+
+        # 混合类型提升（uint8+int16 等，无 checked 回绕 / 有 checked 报溢出）
+        mixUInt8Int16OverflowTest()
+        mixUInt8Int16WrapTest()
+        mixInt8OverflowAndWrapTest()
+        mixInt16UInt16OverflowTest()
+        mixUInt32Int32OverflowTest()
+        mixUInt64OverflowTest()
+        mixSignedUnsignedNoOverflowTest()
+        mixPromotionToWideTest()
+        mixUInt16Int16OverflowTest()
 
         global.println("========== all checked calc tests done ==========")
     }

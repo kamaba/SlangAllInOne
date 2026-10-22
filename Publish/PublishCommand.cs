@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using SimpleLanguage.ExportLanguage;
 using SimpleLanguage.Project;
 using SlangAllInOne.Backend;
@@ -167,7 +168,18 @@ internal static class PublishCommand
             }
         }
 
-        /* Step 6: 插件产物（Front 导出已按 plugins\<id>\ 布局落到模块
+        /* Step 6: 引用模块 stage（2026-10-22 发布规则）：主模块的
+         * moduleReferences 里非系统库引用（如 ExpendTest -> SLangServer）
+         * 原样相对路径在发布目录必然错位——装载期静默跳过会让引用方
+         * 全线失效（ServerP1Test 实录）。按 CSimpleVMTest 同款把导出
+         * 产物 stage 进发布目录，C VM 装载器回退链 <pkg>\<name>.module.json
+         * basename 直查即命中（slb 优先重定向）。 */
+        if (result.ModuleJsonPath != null && File.Exists(result.ModuleJsonPath))
+        {
+            StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot);
+        }
+
+        /* Step 7: 插件产物（Front 导出已按 plugins\<id>\ 布局落到模块
          * export 目录；整目录拷贝，应用 exe 相对自身目录解析）。 */
         if (!string.IsNullOrEmpty(result.ExportDir))
         {
@@ -320,6 +332,64 @@ internal static class PublishCommand
         if (OperatingSystem.IsMacOS()) return "macos";
         if (OperatingSystem.IsLinux()) return "linux";
         return "windows"; /* 兜底：exe 模式当前仅 Windows */
+    }
+
+    /// <summary>官方库集合：发布产物 lib\ 平铺直查（官方库直查链），无需 stage。</summary>
+    static readonly HashSet<string> SystemModuleNames = new(StringComparer.OrdinalIgnoreCase)
+    { "Core", "Std", "Math" };
+
+    /// <summary>解析主模块 moduleReferences，把非系统库引用（如 ExpendTest ->
+    /// SLangServer）的导出产物 stage 成 &lt;publish&gt;\&lt;名&gt;.module.{slb,json}
+    /// **平铺**——发布目录深度与开发导出树不同，内嵌相对路径必然错位（装载期
+    /// 静默跳过 → 引用方全线失效）；C VM 引用回退链（sl_load_references ②
+    /// basename 直查）恰好按 &lt;主包目录&gt;\&lt;名&gt;.module.json 平铺命中
+    /// （SLB 优先重定向自动改指同名 .slb）。两处标准导出树搜索（out\export\
+    /// 与 SLangCore\out\export\）同 CSimpleVMTest。未找到仅提示不阻断。</summary>
+    static void StageReferencedModules(string moduleJsonPath, string publishDir, string? repoRoot)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(File.ReadAllText(moduleJsonPath));
+            if (!doc.RootElement.TryGetProperty("moduleReferences", out var refsEl))
+                return;
+            foreach (var r in refsEl.EnumerateArray())
+            {
+                if (!r.TryGetProperty("name", out var nameEl))
+                    continue;
+                string name = nameEl.GetString() ?? "";
+                if (name.Length == 0 || SystemModuleNames.Contains(name) || repoRoot == null)
+                    continue;
+                string[] exportRoots =
+                {
+                    Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name),
+                    Path.Combine(repoRoot, "SlangAllInOne", "SLangCore", "out", "export", name),
+                };
+                string? srcDir = exportRoots.FirstOrDefault(Directory.Exists);
+                if (srcDir == null)
+                {
+                    Console.WriteLine($"[WARN] reference: module '{name}' export dir not found, skipped (the app needs it if it is referenced)");
+                    continue;
+                }
+                /* 平铺 stage：主包目录直下 <名>.module.slb / .module.json——
+                 * 对齐 C VM 引用回退链的 basename 直查形态。 */
+                bool any = false;
+                foreach (string f in Directory.GetFiles(srcDir, "*.module.*"))
+                {
+                    File.Copy(f, Path.Combine(publishDir, Path.GetFileName(f)), overwrite: true);
+                    any = true;
+                }
+                string refPlugins = Path.Combine(srcDir, "plugins");
+                if (Directory.Exists(refPlugins))
+                    CopyDirectory(refPlugins, Path.Combine(publishDir, "plugins"));
+                if (any)
+                    Console.WriteLine($"[OK]  reference: {name}.module.* (staged flat into publish)");
+            }
+        }
+        catch (Exception ex)
+        {
+            /* stage 失败不阻断主流程（C VM 装载期按回退链解析，可诊断） */
+            Console.WriteLine("[WARN] reference staging failed: " + ex.Message);
+        }
     }
 
     /// <summary>单模块 slb 产物来源链（包布局优先 → dev out\export）。</summary>

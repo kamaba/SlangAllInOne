@@ -16,8 +16,8 @@ SlangAllInOne\out\host\slang.exe publish SlangAllInOne\SLangCore\test\Other\Null
 # （开发仓内：dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- publish <工程>）
 
 # 运行产物
-.\NullFastTest\publish\NullFastTest.exe                      # ① 应用 exe：双击/命令行直接执行
-SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\NullFastTest.module.slb   # ② slb：slang run 启动
+.\NullFastTest\publish\release\NullFastTest.exe              # ① 应用 exe：双击/命令行直接执行（release 缺省；--cvm Debug → publish\debug\）
+SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest.module.slb   # ② slb：slang run 启动
 ```
 
 ## 2. jsonc `publish` 段（配置面）
@@ -42,7 +42,7 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\NullFastTest.module.
 | 字段 | 类型 / 取值 | 缺省 | 说明 |
 |------|------------|------|------|
 | `mode` | `exe` / `slb` / `both` | `both` | 产物形态。`exe` = 仅应用 exe；`slb` = 仅模块包；`both` = 两者 |
-| `outputDir` | 相对/绝对路径 | `"publish"` | 发布输出目录（相对 jsonc 所在目录）。**每次发布清空重建** |
+| `outputDir` | 相对/绝对路径 | `"publish"` | 发布根目录（相对 jsonc 所在目录）。**实际产物落 `<outputDir>\{debug|release}\` 配置子目录**（2026-10-22 发布规则，两型并存；仅本配置子目录清空重建） |
 | `config` | `Debug` / `Release` | `Release` | exe 载荷模板取 `csimple_lang\build\{config}\bin\csimple_lang.exe`（JIT/加固属性随该树；发布包内则取 `<slang>\bin\`，不中回落另一配置树） |
 | `includeLibs` | bool | `true` | 是否把官方标准库拷进发布目录 `lib\`。应用引用 Core/Std/Math 时必须为 true |
 | `libs` | string[] | `[]`=全量 | `includeLibs=true` 时生效；如 `["Core","Std"]` 只带这两件（Math 附带 `math_lib.dll`）。缺库仅 `[WARN]` 不中断（工程可能不引用它） |
@@ -67,23 +67,33 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 ## 4. 发布目录布局
 
 ```
-<publishDir>\
-├── MyApp.exe            # mode=exe/both：应用 exe（载荷附着式，见 §5）
-├── MyApp.module.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
-├── lib\                 # 关联件统一目录（布局规则 2026-10-22：关联 slb + 关联 dll 都进 lib\）
-│   ├── Core.module.slb  # includeLibs=true：官方标准库（应用引用按 <exe>\lib 直查解析）
-│   ├── Std.module.slb
-│   ├── Math.module.slb
-│   ├── math_lib.dll     # 带 Math 时
-│   └── sqlite3.dll      # exe 模式恒附带：C VM 唯一动态依赖（delay-load，启动按
-│                        #   <exe>\lib 预装载——sl_preload_associated_dlls）
-└── plugins\             # 工程声明了插件时：Front 导出的 plugins\<id>\ 整目录拷贝
+<publishRoot>\
+├── debug\                   # 配置子目录（--cvm Debug）：布局同 release，模板取 Debug 树
+└── release\                 # 配置子目录（--cvm Release 缺省）：每次发布清空重建（仅本子目录）
+    ├── MyApp.exe            # mode=exe/both：应用 exe（载荷附着式，见 §5）
+    ├── MyApp.module.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
+    ├── <Ref>.module.slb     # 引用 stage：moduleReferences 非系统库引用平铺拷入
+    │                        #（C VM 引用回退链 basename 直查命中；如 SLangServer）
+    ├── lib\                 # 关联件统一目录（布局规则 2026-10-22 平台细分）
+    │   ├── Core.module.slb  # includeLibs=true：标准库 slb 平铺（平台无关）
+    │   ├── Std.module.slb
+    │   ├── Math.module.slb
+    │   └── windows\         # 平台子目录：本平台原生库（windows/linux/macos/android/ios
+    │       ├── sqlite3.dll  #   承载 .dll/.so/.dylib/.lib/.a 等——一个发布目录可承载
+    │       └── math_lib.dll #   多平台运行体，运行时按当前平台查找（C VM
+    │                        #   sl_platform_dir_name；平铺 lib\ 为兼容位）
+    └── plugins\             # 工程声明了插件时：Front 导出的 plugins\<id>\ 整目录拷贝
 ```
 
-> 🔥 **布局规则（2026-10-22 用户定稿）**：关联的 `.slb` 模块包与关联的 `.dll`
->（sqlite3.dll / math_lib.dll 等原生依赖）统一放 `lib\`；插件放 `plugins\`；
-> exe 目录只留 exe 本体与 slb 产物——**exe 旁不再有散落 sqlite3.dll**。
-> 决策记录与机制 = [package-layout.md](package-layout.md) §六。
+> 🔥 **发布规则（2026-10-22 用户定稿）**：① 发布分 **debug/release 两型**，落
+> `<outputDir>\{debug|release}\` 并存（同工程可同时保有 Debug 调试版 / Release
+> 发布版，仅本配置子目录清空重建）；② **lib\ 平台细分**——原生库按平台落
+> `lib\{windows|linux|macos|android|ios}\`（slb 仍平铺，平台无关），一个发布
+> 目录可承载不同平台运行体，运行时按 `sl_platform_dir_name()` 查当前平台
+> 子目录（平铺 lib\ 为兼容位）；③ **引用模块自动 stage**——moduleReferences
+> 非系统库引用平铺拷入发布目录（内嵌相对路径在发布布局必然错位，装载期
+> 静默跳过曾致 ServerP1Test 全线失效）。决策记录与机制 =
+> [package-layout.md](package-layout.md) §六。
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
 
@@ -115,8 +125,8 @@ slang publish <工程>
   ├─ ① Front 编译（--format binary+json，R15；slb 主产物 + json 调试副本留工程 export 目录）
   ├─ ② 定位 C VM exe 模板：<slang>\bin\csimple_lang.exe（发布包布局，PackCvmRuntime 随包携带）
   │      → 回落 csimple_lang\build\{publish.config}\bin\ → 另一配置树
-  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库 + sqlite3.dll + math_lib.dll）+ plugins\
-  └─ ④ 发布目录清空重建（防陈旧产物混入）
+  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\
+  └─ ④ 本配置子目录（debug\|release\）清空重建（publish 根与另一配置保留）
 ```
 
 前提：C VM 对应配置树已构建（`build-vm-win.ps1 -Config Release`）。**注意**：exe 模板与

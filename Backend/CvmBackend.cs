@@ -35,8 +35,9 @@ internal sealed class CvmBackend
     public static CvmBackend? Locate(string? repoRoot, string config = "Debug")
     {
         // Packaged layout first: the publish/pack step copies the C VM runtime
-        // (csimple_lang_dll.dll + sqlite3.dll on Windows; libcsimple_lang_dll.so
-        // + libsqlite3.so.0 on Linux) next to the app under bin\.
+        // next to the app under bin\ (VM 本体 only — sqlite3.dll /
+        // libsqlite3.so.0 按 2026-10-22 布局规则随关联件落包根 lib\，
+        // 由 VM delay-load 预装载 / rpath + CvmBackend 预载解析)。
         var packBinDir = Path.Combine(AppContext.BaseDirectory, "bin");
         if (File.Exists(Path.Combine(packBinDir, DllFileName)))
             return new CvmBackend(packBinDir, "package");
@@ -128,15 +129,18 @@ internal sealed class CvmBackend
     private static IntPtr s_SoHandle;
 
     /// <summary>Makes the "csimple_lang_dll.dll" DllImport resolve against BinDir.
-    /// Windows: SetDllDirectory adds bin\ to the loader search path (also covers
-    /// its sqlite3.dll dep). Unix: the dynamic loader never searches the app
-    /// dir, so dlopen the packaged libcsimple_lang_dll.so by absolute path and
+    /// Windows: SetDllDirectory adds bin\ to the loader search path (VM dll
+    /// itself; its sqlite3.dll dep is delay-loaded and bound by the VM-side
+    /// preload &lt;exe&gt;\lib\sqlite3.dll — sl_preload_associated_dlls, 2026-10-22
+    /// 布局规则). Unix: the dynamic loader never searches the app dir, so
+    /// dlopen the packaged libcsimple_lang_dll.so by absolute path and
     /// install a DllImport resolver returning that handle; the dlopen MUST be
     /// RTLD_GLOBAL so the C VM's dlsym(dlopen(NULL))-based system-method
     /// registry can find its own vm_sys_* exports (RTLD_LOCAL -> every
     /// CallSystemMethod fails with error_code=-13, see CvmInterop). The
-    /// bundled libsqlite3.so.0 (a NEEDED dep) is pre-loaded the same way so
-    /// the package runs with zero LD_LIBRARY_PATH setup (2026-10-17, Linux 包)。</summary>
+    /// bundled libsqlite3.so.0 (a NEEDED dep) lives in package lib\ and is
+    /// pre-loaded by absolute path here (rpath $ORIGIN/../lib 兜底) so the
+    /// package runs with zero LD_LIBRARY_PATH setup.</summary>
     private void PrepareNativeLoad()
     {
         if (OperatingSystem.IsWindows())
@@ -160,9 +164,12 @@ internal sealed class CvmBackend
             });
         }
 
-        // Pre-load the bundled sqlite (NEEDED dep of the C VM .so) if present:
-        // ld.so then resolves that dependency against the already-loaded object.
-        var sqlite = Path.Combine(BinDir, "libsqlite3.so.0");
+        // Pre-load the bundled sqlite (NEEDED dep of the C VM .so) by absolute
+        // path: ld.so then resolves that dependency against the already-loaded
+        // object. 布局规则（2026-10-22）：随包落包根 lib\；bin\ 旧副本兼容回退。
+        var sqlite = Path.GetFullPath(Path.Combine(BinDir, "..", "lib", "libsqlite3.so.0"));
+        if (!File.Exists(sqlite))
+            sqlite = Path.Combine(BinDir, "libsqlite3.so.0");
         if (File.Exists(sqlite))
             NativeLibrary.Load(sqlite);
     }

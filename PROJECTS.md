@@ -1,7 +1,7 @@
 # PROJECTS.md — 全仓工程清单与路径记忆（2026-10-17 仓库重组后）
 
 > 🔥 本文件是**重组后工程布局的权威记忆**（AI 排障/改工程先读这里）：
-> 目录职责、16 个 sln 工程、新旧路径映射、关键机制锚点、构建命令。
+> 目录职责、16 个 sln 工程、新旧路径映射、关键机制锚点、构建命令、四端版本统一策略。
 > 上游入口：[AGENTS.md](../AGENTS.md) §1；开发入口：[SlangAllInOne.sln](SlangAllInOne.sln)。
 
 ## 1. 顶层目录职责
@@ -93,5 +93,33 @@ powershell -File scripts\release-slang.ps1 -Version <x.y.z>   # 发布策略：A
 | C# 工程构建回归 | ✅ 宿主 + CompileStdlib + CSimpleVMTest（八合一）+ 插件 frontend×2 + tools×3 全过（2026-10-18 两轮合一后） |
 | 八合一宿主路由 | ✅ `-- BenchMark`（套件预设）与 `-- NullFast`（命名用例）均 Front 编译→P/Invoke C VM→exit 0（2026-10-18 实测） |
 | 文档路径残留 | ✅ AGENTS.md/README 旧路径零残留 |
+
+## 7. 🔥 四端版本统一策略（2026-10-22 用户定稿）
+
+> **策略**：Front（前端编译器）+ Backend（C VM）+ AllInOne（统合宿主）+ VSCode（插件）**四端共用同一版本号**。四端**任一端**有改动（代码/功能/构建行为），即视为整仓版本演进——**四处版本锚点同步 +1，禁止只改一处**（对应 AGENTS.md §2 R17）。
+
+### 版本号格式：`主.发布.小版本`（X.Y.Z）
+
+| 位 | 含义 | 变更时机 |
+|----|------|----------|
+| X（主版本） | 大版本 / 架构代际 | 重大破坏性演进时（人工决定） |
+| **Y（发布版本）** | **真实发布版本** | **仅正式发布时提升**（与 `release-slang.ps1 -Version` / GitHub Release tag 同源），提升后 Z 归零 |
+| **Z（小版本）** | **随时递增的开发小版本** | **四端任一端有任何改动即 +1**（日常开发常态位） |
+
+### 四处版本锚点（改版本 = 四处一起改；🔥 2026-10-22 首次对齐基线 0.0.18 已完成）
+
+| 端 | 锚点 | 现值 |
+|----|------|------|
+| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.18` |
+| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.18` |
+| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.18` |
+| VSCode | `slang_vscode_plugin\package.json` → `"version"` | `0.0.18` |
+
+### 操作规则
+
+1. **日常改动**（任一端代码/配置/行为变化）：Z + 1，四处锚点（含 C VM 版本目录名）同步修改——**一次提交内完成，不留半统一状态**。
+2. **正式发布**（`release-slang.ps1 -Version <X.Y.0>`）：Y + 1、Z 归 0，四处锚点同步修改；Release tag 与 GitHub 双平台资产用同一版本号。
+3. **验证**：`slang version`（宿主：自身 `<Version>` + Front 版本）/ `csimple_lang.exe version`（Backend）/ VSCode 插件关于页，三处显示必须一致。
+4. **首次对齐实录**（2026-10-22）：基线 `0.0.18`（取 VSCode 现值）——Front `1.0.0`→`0.0.18`、C VM `0.0.01`→`0.0.18`（含版本目录 `version_0.0.18`）、AllInOne csproj 补 `<Version>0.0.18</Version>` 并让 `slang version` 输出自身版本、VSCode 无需改动；三端实测输出全部 `0.0.18`。
 
 ⚠ 已知缺失：`SLangCore\test\Other\` 未随迁的旧用例子目录（NullFastTest、JsonTest、Platform*、InlineLambda*、CoroGCProbe、OOMProbe、SBAProbe、TLSFProbe 等）——`CSimpleVMTest` 具名用例运行会找不到，需要时从 git 历史恢复。

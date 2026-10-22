@@ -291,7 +291,11 @@ internal static class Program
     {
         string? repoRoot = GetRepoRoot();
         var cvm = CvmBackend.Locate(repoRoot, opts.CvmConfig);
-        Console.WriteLine("SlangAllInOne (FrontEnd + C VM in one host)");
+        /* 版本号四端统一（AGENTS.md R17 / PROJECTS.md §7）：宿主版本取本程序集
+           <Version>（与 Front/C VM/VSCode 四锚点同一号）；ToString(3) = 主.发布.小版本。 */
+        var hostVersion = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
+        string hostVersionText = hostVersion != null ? hostVersion.ToString(3) : "?";
+        Console.WriteLine("SlangAllInOne (FrontEnd + C VM in one host) v" + hostVersionText);
         Console.WriteLine("  Frontend: SimpleLanguage Front Compiler v" + SimpleLanguage.Project.CommandExecutor.VersionString);
         if (cvm != null)
         {

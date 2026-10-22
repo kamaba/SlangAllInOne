@@ -39,6 +39,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <!-- 版本号四端统一锚点（AGENTS.md R17 / PROJECTS.md §7）：与 Front
+         CommandExecutor.VersionString、C VM cli_version.h SLVM_VERSION_*、
+         VSCode package.json version 共用同一 主.发布.小版本 号；任一端改动，
+         四处锚点同步 +1。中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），
+         末位 = 随时递增的小版本。 -->
+    <Version>0.0.19</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>
@@ -185,7 +191,6 @@
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)scripts\build-vm-win.ps1&quot; -Config $(CvmBuildConfig) $(CvmHardenFlag)" />
     <ItemGroup>
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
-      <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
       <!-- 独立 exe 随包携带（publish-guide.md）：`slang publish` exe 模式的
            载荷附着模板（csimple_lang.exe 副本 + SLB 尾部载荷）；
            PublishCommand.LocateCvmExe 按 <app dir>\bin\ 优先取用。 -->
@@ -196,6 +201,11 @@
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.pdb" Condition="Exists('$(CvmBinDir)\csimple_lang_dll.pdb')" />
     </ItemGroup>
     <Copy SourceFiles="@(CvmRuntimeFiles)" DestinationFolder="$(PublishDir)bin\" SkipUnchangedFiles="true" />
+    <!-- 布局规则（2026-10-22，md/project/package-layout.md）：关联 .slb / 关联
+         .dll 统一放包根 lib\——sqlite3.dll（C VM delay-load 唯一硬依赖）自
+         bin\ 迁入，运行期 VM 按 <exe>\lib\ 预装载（sl_preload_associated_dlls）；
+         bin\ 只留 VM 运行时本体。pack-modules 随后写入 lib\ 的标准库 slb 与之同目录。 -->
+    <Copy SourceFiles="$(CvmBinDir)\sqlite3.dll" DestinationFolder="$(PublishDir)lib\" SkipUnchangedFiles="true" Condition="Exists('$(CvmBinDir)\sqlite3.dll')" />
   </Target>
 
   <!-- Official release packaging: compile the standard library modules

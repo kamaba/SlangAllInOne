@@ -76,6 +76,7 @@
   },
   "publish": {
     "mode": "both",
-    "outputDir": "publish"
+    "outputDir": "publish",
+    "config": "Release"
   }
 }

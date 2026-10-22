@@ -14,8 +14,9 @@ namespace SlangAllInOne.Publish;
 ///  - slb：&lt;Module&gt;.module.slb 模块包，`slang run &lt;path&gt;.slb` 启动；
 ///  - exe：&lt;Module&gt;.exe 应用（载荷附着式）= csimple_lang.exe 副本 +
 ///    尾部附着的 SLB 载荷（"SLVMAPP1" trailer，C VM main() 自检执行，
-///    cli_app_payload.h）。exe 模式附带 sqlite3.dll + lib\（官方标准库，
-///    引用按 &lt;exe&gt;\lib 官方直查解析）。
+///    cli_app_payload.h）。exe 模式附带 lib\（布局规则 2026-10-22：关联
+///    slb + 关联 dll 统一 lib\——官方标准库、sqlite3.dll、math_lib.dll；
+///    引用按 &lt;exe&gt;\lib 官方直查解析，sqlite3.dll 经 delay-load 预装载）。
 ///
 /// 流程：Front 编译（--format binary+json，R15：slb 主产物 + json 调试
 /// 副本，json 不进发布产物）→ 按 mode 组装发布目录（清空重建）。
@@ -127,13 +128,17 @@ internal static class PublishCommand
                     AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
                     Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
 
-                    /* C VM exe 唯一动态依赖：sqlite3.dll（其余静态链）。 */
+                    /* C VM exe 唯一动态依赖（delay-load）：按布局规则落 lib\
+                     * （与标准库 slb / math_lib.dll 同目录）——运行期 exe 经
+                     * sl_preload_associated_dlls 按 <exe>\lib\ 预装载绑定。 */
                     string? binDir = Path.GetDirectoryName(cvmExe);
                     string sqlite = Path.Combine(binDir ?? "", "sqlite3.dll");
                     if (File.Exists(sqlite))
                     {
-                        File.Copy(sqlite, Path.Combine(publishDir, "sqlite3.dll"), overwrite: true);
-                        Console.WriteLine("[OK]  dep:  sqlite3.dll");
+                        string destLib = Path.Combine(publishDir, "lib");
+                        Directory.CreateDirectory(destLib);
+                        File.Copy(sqlite, Path.Combine(destLib, "sqlite3.dll"), overwrite: true);
+                        Console.WriteLine("[OK]  lib:  sqlite3.dll");
                     }
                     else
                     {

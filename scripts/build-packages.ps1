@@ -107,7 +107,9 @@ function Invoke-BuildWinPackage([string]$Config) {
     # remain — both runtime plugin frontends went native C on 2026-10-21
     # (nothing is published/relocated anymore, the must-list reflects that).
     $isDebug = ($Config -eq 'Debug')
-    $must = @('slang.exe', 'bin\csimple_lang_dll.dll', 'bin\sqlite3.dll',
+    # 布局规则（2026-10-22）：关联 .slb / 关联 .dll 统一放包根 lib\
+    # （sqlite3.dll 自 bin\ 迁入，VM delay-load 预装载解析）；bin\ 只留 VM 运行时本体。
+    $must = @('slang.exe', 'bin\csimple_lang_dll.dll', 'lib\sqlite3.dll',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
     if ($isDebug) { $must += @('slang.pdb', 'lib\Core.module.json', 'bin\csimple_lang_dll.pdb') }
     foreach ($m in $must) {
@@ -176,11 +178,12 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  dotnet publish (WSL) failed (see log above)' -ForegroundColor Red; return $false }
     Write-Ok ('slang (' + $dirName + ') published')
 
-    # c) assemble bin\: the C VM .so + bundled system sqlite (CvmBackend
-    #    pre-loads it so no LD_LIBRARY_PATH is needed).
-    $cmd = 'mkdir -p ' + $wslPkg + '/bin && cp ' + (ConvertTo-WslPath $VMDir) + '/build/' + $Config + 'Linux/libcsimple_lang_dll.so ' + $wslPkg + '/bin/ && cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $wslPkg + '/bin/'
-    if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  linux bin assembly failed (libsqlite3.so.0 not found?)' -ForegroundColor Red; return $false }
-    Write-Ok 'bin assembled (libcsimple_lang_dll.so + libsqlite3.so.0)'
+    # c) assemble bin\: the C VM .so only — the bundled system sqlite moved
+    #    to lib\ (layout rule 2026-10-22) and is copied after the lib\ robocopy
+    #    in step d' (/MIR would wipe it).
+    $cmd = 'mkdir -p ' + $wslPkg + '/bin && cp ' + (ConvertTo-WslPath $VMDir) + '/build/' + $Config + 'Linux/libcsimple_lang_dll.so ' + $wslPkg + '/bin/'
+    if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  linux bin assembly failed' -ForegroundColor Red; return $false }
+    Write-Ok 'bin assembled (libcsimple_lang_dll.so)'
 
     # d) lib\ + md\ are platform-independent - copy from the same-config
     #    Windows package (built earlier in the plan), drop the Windows-only
@@ -194,8 +197,15 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     if (Test-Path $mathLib) { Remove-Item $mathLib -Force -Confirm:$false }
     Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll excluded)'
 
+    # d') bundled system sqlite -> lib\ (布局规则 2026-10-22)：关联 .so 随包
+    #     落 lib\；解析 = CvmBackend 绝对路径预载（BinDir\..\lib\）+
+    #     C VM .so 自身 rpath $ORIGIN/../lib 双兜底。
+    $cmd = 'cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $wslPkg + '/lib/'
+    if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  libsqlite3.so.0 copy failed (apt install libsqlite3-dev?)' -ForegroundColor Red; return $false }
+    Write-Ok 'lib\libsqlite3.so.0 placed'
+
     # Layout check (licenses\ no longer ships - 2026-10-18 user directive).
-    $must = @('slang', 'bin\libcsimple_lang_dll.so', 'bin\libsqlite3.so.0',
+    $must = @('slang', 'bin\libcsimple_lang_dll.so', 'lib\libsqlite3.so.0',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
     if ($Config -eq 'Debug') { $must += @('slang.dll', 'lib\Core.module.json') }
     foreach ($m in $must) {

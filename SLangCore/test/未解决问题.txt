@@ -31,8 +31,10 @@ ffmpeg的dll 引入
 
 
 在aot的中，处理llvm内置的一些结构，在生成这个数据后，要有一个id的概念，也就是定义这个对象的hashCode 虽然是在llvm里边生成的，也要有这个概念，因为这个在 llvm的.struct转成VMObject一类的时候，要先检查vm里边有没有这个，如果没有，再去创建VMObject 而且这个不受内存gc管理，因为这个还属于llvm  所以Object.sl 你看下是不是要增加一个int _hashCode这样的概念呀，是不是这样更合理  你确定下，原来好像我看着是用的指针进行hash运算的，这种方式确定可以吗？
-
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
+
+MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
+
 
 优化：
 优化cvm里边的加法的过程
@@ -46,15 +48,9 @@ sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 
-
-MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
-
 自动.后边的内容，要在vscode里边，在输入一个，并且识别后，提示，这个要求对单个页的内某个元素的解析后，然后自动后悔这个类或者返回类型的后边可以 使用的，public的，都进行提示。
 
 vm_runtime_object_try_pop_top_write这个的优化
-
 在计算数值的过程，如果有check区域，如果溢出要报 溢出的错误Error 如果没有check 则按循环滚动算   
-
 计算过程，要再验证下 计算升级的过程，多写几个这样的安全，比如 uint8+int16 这类的  多写一些
-
 sqlite.dll怎么在和exe同目录呀，应该放到.lib里边吧  以后关联的.slb 还有关联的.dll 都放到lib里边，如果是plugin 放到专门的plugin目录里边

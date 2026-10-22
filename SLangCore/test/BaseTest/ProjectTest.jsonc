@@ -189,5 +189,9 @@
       "network.online": true,
       "device.gpu": false
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

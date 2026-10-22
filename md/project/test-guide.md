@@ -5,7 +5,7 @@
 仓库测试分两层：
 
 - **测试用例集**：[`test/`](../../test/) 下的 SimpleLanguage 源码，每个子目录一个主题（`ProjectTest.sp` + `ProjectTest.jsonc` + 若干 `.sl`）。
-- **测试宿主工程**：[`project/`](../../project/) 下的 **唯一** C# 控制台工程 `CSimpleVMTest`（2026-10-18 八合一：原 `CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest` 与 `Test`/`Test2` 均已并入），负责「调用 C# 前端编译测试集 → 导出模块包 → **拷入发布包经包内 slang 应用 run-disk 执行**（2026-10-18 晚起：Debug → `package\win32-debug`、Release → `package\win32-release`，标准库取自包内 `lib\`）」；用例集经命令行参数或 VS launchSettings.json profile 分流。
+- **测试宿主工程**：[`project/`](../../project/) 下的 **唯一** C# 控制台工程 `CSimpleVMTest`（2026-10-18 八合一：原 `CSimpleVMCore/Std/Math/Special/BenchMark/RenderTest` 与 `Test`/`Test2` 均已并入），负责「调用 C# 前端编译测试集 → 导出模块包 → **拷入发布包经包内 slang 应用 `run` 执行（2026-10-22 起 run = 只运行编译结果；run-disk 别名同效）**（2026-10-18 晚起：Debug → `package\win32-debug`、Release → `package\win32-release`，标准库取自包内 `lib\`）」；用例集经命令行参数或 VS launchSettings.json profile 分流。
 
 ---
 
@@ -107,7 +107,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 ### Debug 与 Release 的行为差异（`CSimpleVMTest` 宿主）
 
-2026-10-18 晚起执行端统一改为 **发布包 slang 应用**（用户指令，取代旧的 P/Invoke / csimple_lang.exe 直调）：宿主把编译产物拷入包内 `<package>\<Module>\`，再调用包内 `slang.exe run-disk` 执行；`moduleReferences` 相对解析在包内落空 → C VM 走官方库直查 `<slang.exe 目录>\lib\`，**标准库即取自包内 lib\ 目录**。子目录深度与 `out\export\<Module>` 一致，SpecialTest 等插件 lib 按相对路径回仓库原位加载。**非系统库引用模块联动拷贝**（2026-10-20 起）：宿主解析主模块 `moduleReferences`，把非 Core/Std/Math 的引用（如 ExpendTest→SLangServer）导出产物一并拷入 `<package>\<引用名>\`——此前引用不跟随会被 C VM 静默 skip（仅 VM.txt Warning、退出码 0），跨模块调用全落空壳致测试假绿/挂死（复盘见 `md/ai/troubleshooting/06-build-engineering.md` [2026-10-20]）。
+2026-10-18 晚起执行端统一改为 **发布包 slang 应用**（用户指令，取代旧的 P/Invoke / csimple_lang.exe 直调）：宿主把编译产物拷入包内 `<package>\<Module>\`，再调用包内 `slang.exe run` 执行（2026-10-22 起 run = 只运行编译结果；run-disk 别名同效）；`moduleReferences` 相对解析在包内落空 → C VM 走官方库直查 `<slang.exe 目录>\lib\`，**标准库即取自包内 lib\ 目录**。子目录深度与 `out\export\<Module>` 一致，SpecialTest 等插件 lib 按相对路径回仓库原位加载。**非系统库引用模块联动拷贝**（2026-10-20 起）：宿主解析主模块 `moduleReferences`，把非 Core/Std/Math 的引用（如 ExpendTest→SLangServer）导出产物一并拷入 `<package>\<引用名>\`——此前引用不跟随会被 C VM 静默 skip（仅 VM.txt Warning、退出码 0），跨模块调用全落空壳致测试假绿/挂死（复盘见 `md/ai/troubleshooting/06-build-engineering.md` [2026-10-20]）。
 
 | 配置 | 运行方式（包） | Front 导出参数 | 适合场景 |
 |------|---------------|----------------|----------|
@@ -128,6 +128,27 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 | `-debug` | Release 进程模式下启动 C VM 前暂停（挂调试器用） |
 | `-O0..-O3` | 转发 Front 编译优化级别（缺省 = 编译器默认级别） |
 | `-- <token…>` | 之后所有 token 透传给 C VM 作 `Project._inputArgs` 程序参数 |
+
+### 测试工程发布（`slang publish`，2026-10-22 批量配置）
+
+全部测试工程 jsonc 顶层已统一配置 `publish` 段（52 个；`scripts\add-publish-section.ps1` 批量写入、幂等可重跑）：
+
+```jsonc
+"publish": {
+    "mode": "both",        // 两种产物：应用 exe（SLVMAPP1 载荷附着）+ 模块 slb
+    "outputDir": "publish" // 发布目录 = 工程目录下 publish\（每次发布清空重建）
+}
+```
+
+- **负例工程不配**（编译必失败、发布无意义，共 10 个）：PlatformAotNegTest / PlatformNegTest / PlatformOverrideNegTest / PlatformVariantNegTest / HookMacroOutsideNegTest / HookBeforeUndefNegTest / HookBeforeSubscriptNegTest / HookBeforeExprNegTest / AtSignNegativeTest / InlineLambdaForbiddenTest（脚本按 jsonc 文件名**或父目录名**双匹配排除——后者 jsonc 名为 ProjectTest.jsonc，仅目录名可识别）。
+- **发布命令**（宿主 = `SlangAllInOne\out\host\slang.exe`，见 [publish-guide.md](publish-guide.md) §8；exe 模板 = `csimple_lang\build\Release\bin\csimple_lang.exe`，树须新鲜）：
+
+```powershell
+SlangAllInOne\out\host\slang.exe publish SlangAllInOne\SLangCore\test\Other\MiniSmoke\MiniSmoke --no-banner
+# 产物：<工程>\publish\<Module>.exe（双击直跑）+ <Module>.module.slb（slang run 启动）+ sqlite3.dll + lib\
+```
+
+- **2026-10-22 实测**：MiniSmoke、NullFastTest、BaseTest、ExpendTest（产物名回退 ProjectTest2）、MathTest 五个代表工程发布全绿；exe 直跑（MiniSmoke/NullFast/MathTest 全 PASS）与 slb `slang run`（MiniSmoke/ExpendTest 全绿）双向验证通过。publish\ 为构建产物，不入库、可随时删除重发。
 
 ---
 

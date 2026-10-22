@@ -38,7 +38,7 @@
   ],
   "export": {
     "moduleName": "DebugSmoke",
-    "outputDir": "..\\..\\out\\export",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,
@@ -52,5 +52,9 @@
       "meta": false,
       "ir": false
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

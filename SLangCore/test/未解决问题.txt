@@ -57,4 +57,4 @@ vm_runtime_object_try_pop_top_write这个的优化
 
 计算过程，要再验证下 计算升级的过程，多写几个这样的安全，比如 uint8+int16 这类的  多写一些
 
-要使用slang 编译后，可以生成两种文件，一种是直接执行的.exe文件 ，一种是可以 使用slang run *.slb 的方式启动的
+sqlite.dll怎么在和exe同目录呀，应该放到.lib里边吧  以后关联的.slb 还有关联的.dll 都放到lib里边，如果是plugin 放到专门的plugin目录里边

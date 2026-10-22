@@ -96,5 +96,9 @@
       "meta": true,
       "ir": true
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

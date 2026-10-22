@@ -16,7 +16,7 @@
        同日晚（用户指令）：执行端改为发布包 slang 应用，不再直调 csimple_lang ——
        Debug   -> package\win32-debug\slang.exe（框架依赖 + bin\ 调试 C VM + lib\ 官方库）
        Release -> package\win32-release\slang.exe（Native AOT + bin\ 加固 C VM）。
-       宿主先把编译产物拷入 <package>\<Module>\ 再 run-disk，标准库经官方库直查
+       宿主先把编译产物拷入 <package>\<Module>\ 再 slang run（运行编译结果），标准库经官方库直查
        取自包内 lib\（详见 Program.cs 头注）。包需先构建：
        powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1。
        （旧 csimple_lang_lib.vcxproj 引用随 P-Invoke/直调路径一并移除。） -->

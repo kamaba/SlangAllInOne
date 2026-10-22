@@ -10,7 +10,7 @@
                本仓库统合宿主 slang 串起全链路：编译 → 内存直传 → 运行
 ```
 
-本仓库的统合宿主 **`slang`** 在单个 .NET 8 进程内完成「Front 进程内编译 → SLIR 包内存直传 → C VM P/Invoke 执行」：`slang run <工程>` 即**编译即运行**，中间产物不落盘。
+本仓库的统合宿主 **`slang`** 在单个 .NET 8 进程内完成「Front 进程内编译 → SLIR 包内存直传 → C VM P/Invoke 执行」：裸工程路径 `slang <工程>` 即**编译即运行**，中间产物不落盘。
 
 ## 相关开源仓库
 
@@ -69,8 +69,8 @@ slang_release_<v>/
 ### 2. 开箱即跑
 
 ```powershell
-# Windows（Linux 同构：./slang run test/RefProbe/RefProbe）
-slang.exe run test\RefProbe\RefProbe
+# Windows（Linux 同构：./slang test/RefProbe/RefProbe）
+slang.exe test\RefProbe\RefProbe
 ```
 
 用户工程的 `references` 直接写官方库名（`Core` / `Std` / `Math`）即可——Front 编译期与 C VM 运行期都会在 `<slang 目录>\lib\` 下按名直查（slb 优先；未来 spm 安装的包在 `modules\` 下同链查找），零相对路径配置。
@@ -139,8 +139,8 @@ cd <root>
 # 1. 构建 C VM 运行时（→ csimple_lang_dll.dll，脚本自动定位工作区）
 powershell -File SlangAllInOne\scripts\build-vm-win.ps1 -Config Debug
 
-# 2. 编译即运行：Front 进程内编译 → SLIR 内存直传 → C VM 执行
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
+# 2. 编译即运行：Front 进程内编译 → SLIR 内存直传 → C VM 执行（裸工程路径，无需子命令）
+dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
 
 # 3. 一键全流程：VM 双平台构建 → 标准库 → 6 用例集编译 + 运行
 powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
@@ -153,8 +153,10 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 | 命令 | 说明 |
 |------|------|
 | `compile <工程>` | Front 进程内编译，缺省磁盘导出；`--export-mode <output\|temp\|memory>` 导出三态（output=指定目录 / temp=`_temp\<模块名>\` 临时目录 / memory=SLB 不压缩留内存） |
-| `run <工程>` | **编译即运行**：缺省 `--export-mode memory`（SLB 不压缩内存直传）→ C VM 内存入口，模块不落盘 |
-| `run-disk <module.slb\|module.json>` | 运行已导出的模块包（两种格式，magic 自动探测） |
+| `<工程路径>` | **编译即运行一体化**（裸工程路径，无子命令，2026-10-22 起取代原 `run <工程>`）：缺省 `--export-mode memory`（SLB 不压缩内存直传）→ C VM 内存入口，模块不落盘；`--export-mode output\|temp` 则先导出磁盘再从磁盘运行 |
+| `<module.slb\|module.json>` | 裸模块包文件直接运行（等价 `run <module>`，两种格式 magic 自动探测） |
+| `run <module.slb\|module.json>` | **只运行已编译的模块产物**（不编译，经 C VM cli_main；传工程路径会报错并提示改用 `slang <工程>`） |
+| `run-disk <module>` | `run` 的兼容别名（等价 `run`） |
 | `info <module.slb\|module.json>` | 查看模块元数据 |
 | `version` | Front 版本 + C VM DLL 路径 / 配置 |
 | `new <project\|class> …` | 创建工程或类文件（**宿主原生脚手架**，2026-10-18 自 Front CLI 迁入）：`slang new project MyApp` 在 `<dir>\MyApp\` 生成 .sp/.jsonc/.sl/.md 成套（UTF-8 BOM，guide 含 AI 描述保留区；重生成保留 AI-DESCRIPTION 标记区）；`slang new class MyClass` 建 .sl 并登记进 jsonc `compileFiles.files[]`（已注册跳过；`-p <dir>` 缺省当前目录） |

@@ -57,5 +57,9 @@
     "require": {
       "cpu": { "all": ["sse4.2"] }
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

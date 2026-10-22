@@ -186,6 +186,10 @@
     <ItemGroup>
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.dll" />
       <CvmRuntimeFiles Include="$(CvmBinDir)\sqlite3.dll" />
+      <!-- 独立 exe 随包携带（publish-guide.md）：`slang publish` exe 模式的
+           载荷附着模板（csimple_lang.exe 副本 + SLB 尾部载荷）；
+           PublishCommand.LocateCvmExe 按 <app dir>\bin\ 优先取用。 -->
+      <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang.exe" />
       <!-- Debug-symbol sidecar so the packaged C VM can be debugged
            (attach to slang.exe and break in csimple_lang sources;
            the PDB source paths match this repo checkout). -->

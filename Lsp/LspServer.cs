@@ -111,6 +111,25 @@ internal sealed class LspServer
     private readonly Dictionary<string, Dictionary<string, List<string>>> _refSourceIndex = new(); // 源根 → .sl 基名 → 路径列表（模块名 ≠ 源目录名兜底索引）
     private readonly Dictionary<string, ProjectInfo> _symbolProjects = new();
     private readonly Dictionary<string, HashSet<string>> _publishedFiles = new();
+
+    // ==== 编译期调用点关联（callSites，2026-10-21）====
+    // spPath → 全部方法调用点条目；definition/hover 光标区间命中即精确跳转。
+    // 数据源 = lsp-compile 导出的 IR 指令流绑定（MetaCallNode 解析结果的 IR 沉淀）。
+    private sealed class CallSiteEntry
+    {
+        public string File = "";       // 归一化全路径（查询 key）
+        public int Line;               // 1-based
+        public int BeginChar;          // 0-based
+        public int EndChar;            // 0-based（token 终点，容忍式命中）
+        public string Name = "";
+        public string TargetName = ""; // 目标方法 IR id（本地=functionAllName；ref module=IR 体系 id，仅参考）
+        public string TargetClass = ""; // 目标类 irName（规整查表键）
+        public string TargetMethod = ""; // 目标方法短名（规整查表键）
+        public string TargetFile = ""; // 目标定义文件（相对工程目录；ref module 空）
+        public int TargetLine;         // 1-based
+        public int TargetChar;         // 0-based
+    }
+    private readonly Dictionary<string, List<CallSiteEntry>> _projectCallSites = new();
     private int _diagVersion = 0;
     private readonly SemaphoreSlim _diagLock = new(1, 1);
     private bool _shutdown = false;
@@ -213,8 +232,24 @@ internal sealed class LspServer
         }
     }
 
+    /* [lsp-trace] 取 params.textDocument.uri（无则空串）——插桩辅助。
+     * 注意 params 可为 JSON null（shutdown 等），TryGetProperty 前必须验 ValueKind */
+    private static string DocUriOf(JsonElement root)
+    {
+        if (root.TryGetProperty("params", out var p) && p.ValueKind == JsonValueKind.Object
+            && p.TryGetProperty("textDocument", out var td) && td.ValueKind == JsonValueKind.Object
+            && td.TryGetProperty("uri", out var u) && u.ValueKind == JsonValueKind.String)
+        {
+            return u.GetString() ?? "";
+        }
+        return "";
+    }
+
     private bool HandleRequest(string method, JsonElement id, JsonElement root)
     {
+        /* [lsp-trace] 2026-10-21 插桩：Trae→宿主请求断点取证（definition 真机不可跳排障），
+         * 结论落盘后移除或降级为 --lsp-verbose 门控 */
+        Console.Error.WriteLine($"[lsp] req {method}: {DocUriOf(root)}");
         switch (method)
         {
             case "initialize":
@@ -278,12 +313,15 @@ internal sealed class LspServer
                 return false;
             case "textDocument/didOpen":
             case "textDocument/didSave":
+                Console.Error.WriteLine($"[lsp] {method}: {DocUriOf(root)}");
                 OnOpenOrSave(root);
                 return true;
             case "textDocument/didChange":
+                Console.Error.WriteLine($"[lsp] didChange: {DocUriOf(root)}");
                 OnChange(root);   // 仅更新内存文本（保存态诊断语义不变）
                 return true;
             case "textDocument/didClose":
+                Console.Error.WriteLine($"[lsp] didClose: {DocUriOf(root)}");
                 OnClose(root);
                 return true;
             default:
@@ -324,8 +362,10 @@ internal sealed class LspServer
         var project = ResolveProject(uri);
         if (project == null)
         {
+            Console.Error.WriteLine($"[lsp] didOpen/save 未命中工程: {uri}"); // [lsp-trace]
             return; // 不在 SLang 工程内：无诊断/补全语义
         }
+        Console.Error.WriteLine($"[lsp] didOpen/save → 工程 {project.SpPath}，触发编译装载"); // [lsp-trace]
         _docs[uri] = project;
         ScheduleDiagnostics(project);
     }
@@ -479,25 +519,9 @@ internal sealed class LspServer
             }
         }
 
-        // 逐文件发布；上轮有、本轮无的文件发布空数组（清除）
-        var previous = _publishedFiles.TryGetValue(project.SpPath, out var prev) ? prev : new HashSet<string>();
-        var current = new HashSet<string>();
-        foreach (var kv in byFile)
-        {
-            string uri = PathToUri(kv.Key);
-            Notify("textDocument/publishDiagnostics", new { uri, diagnostics = kv.Value });
-            current.Add(uri);
-        }
-        foreach (var uri in previous)
-        {
-            if (!current.Contains(uri))
-            {
-                Notify("textDocument/publishDiagnostics", new { uri, diagnostics = Array.Empty<object>() });
-            }
-        }
-        _publishedFiles[project.SpPath] = current;
-
-        // 成功编译 → 更新工程符号表（补全/悬停/跳转数据源）
+        // 成功编译 → 更新工程符号表（补全/悬停/跳转数据源）——必须在 publish 之前：
+        // 客户端常以「收到诊断」为编译就绪信号立刻发 definition/hover/completion，
+        // 先 publish 后装载会开出一拍符号表为空的竞态窗口（2026-10-21 冒烟 flaky 实锤）
         if (success && root.TryGetProperty("packageJson", out var pj) && pj.ValueKind == JsonValueKind.String)
         {
             string? pkgJson = pj.GetString();
@@ -515,6 +539,65 @@ internal sealed class LspServer
                 }
             }
         }
+
+        // 成功编译 → 更新调用点关联表（definition/hover 精确跳转数据源）
+        if (success && root.TryGetProperty("callSites", out var csArr) && csArr.ValueKind == JsonValueKind.Array)
+        {
+            var entries = new List<CallSiteEntry>();
+            foreach (var c in csArr.EnumerateArray())
+            {
+                string f = c.TryGetProperty("f", out var fe) && fe.ValueKind == JsonValueKind.String ? fe.GetString() ?? "" : "";
+                if (f.Length == 0)
+                {
+                    continue;
+                }
+                string full;
+                try
+                {
+                    full = Path.GetFullPath(Path.Combine(project.Dir, f)); // f 为绝对路径时 Combine 返回自身
+                }
+                catch
+                {
+                    continue;
+                }
+                entries.Add(new CallSiteEntry
+                {
+                    File = full,
+                    Line = c.TryGetProperty("l", out var le) && le.ValueKind == JsonValueKind.Number ? le.GetInt32() : 0,
+                    BeginChar = c.TryGetProperty("bc", out var bce) && bce.ValueKind == JsonValueKind.Number ? bce.GetInt32() : 0,
+                    EndChar = c.TryGetProperty("ec", out var ece) && ece.ValueKind == JsonValueKind.Number ? ece.GetInt32() : 0,
+                    Name = c.TryGetProperty("n", out var ne) && ne.ValueKind == JsonValueKind.String ? ne.GetString() ?? "" : "",
+                    TargetName = c.TryGetProperty("tn", out var tne) && tne.ValueKind == JsonValueKind.String ? tne.GetString() ?? "" : "",
+                    TargetClass = c.TryGetProperty("tc", out var tce) && tce.ValueKind == JsonValueKind.String ? tce.GetString() ?? "" : "",
+                    TargetMethod = c.TryGetProperty("tm", out var tme) && tme.ValueKind == JsonValueKind.String ? tme.GetString() ?? "" : "",
+                    TargetFile = c.TryGetProperty("tf", out var tfe) && tfe.ValueKind == JsonValueKind.String ? tfe.GetString() ?? "" : "",
+                    TargetLine = c.TryGetProperty("tl", out var tle) && tle.ValueKind == JsonValueKind.Number ? tle.GetInt32() : 0,
+                    TargetChar = c.TryGetProperty("tc2", out var tc2e) && tc2e.ValueKind == JsonValueKind.Number ? tc2e.GetInt32() : 0,
+                });
+            }
+            _projectCallSites[project.SpPath] = entries;
+            Console.Error.WriteLine($"[lsp] callSites 装载 {entries.Count} 条（{Path.GetFileName(project.SpPath)}）"); // [lsp-trace]
+        }
+
+        // 逐文件发布（移至装载之后：客户端以「收到诊断」为就绪信号，publish 前须保证
+        // 符号表/调用点已就位，否则 definition/hover 有一拍空窗）；上轮有本轮无 → 空数组清除
+        var previous = _publishedFiles.TryGetValue(project.SpPath, out var prev) ? prev : new HashSet<string>();
+        var current = new HashSet<string>();
+        foreach (var kv in byFile)
+        {
+            string uri = PathToUri(kv.Key);
+            Notify("textDocument/publishDiagnostics", new { uri, diagnostics = kv.Value });
+            current.Add(uri);
+        }
+        foreach (var uri in previous)
+        {
+            if (!current.Contains(uri))
+            {
+                Notify("textDocument/publishDiagnostics", new { uri, diagnostics = Array.Empty<object>() });
+            }
+        }
+        _publishedFiles[project.SpPath] = current;
+
         int errCount = 0;
         if (root.TryGetProperty("diagnostics", out var dgc) && dgc.ValueKind == JsonValueKind.Array)
         {
@@ -1679,6 +1762,39 @@ internal sealed class LspServer
             return null;
         }
         var table = BuildMergedTable(project);
+
+        // -1) 编译期调用点关联（callSites，最高优先）：光标落在调用 token 区间 →
+        //     目标方法签名卡（覆盖裸方法调用等文本启发式解析不了的形态）
+        if (root.TryGetProperty("params", out var hovParms)
+            && hovParms.ValueKind == JsonValueKind.Object
+            && hovParms.TryGetProperty("position", out var hovPos)
+            && hovPos.ValueKind == JsonValueKind.Object
+            && hovPos.TryGetProperty("line", out var hl) && hl.ValueKind == JsonValueKind.Number
+            && hovPos.TryGetProperty("character", out var hc) && hc.ValueKind == JsonValueKind.Number)
+        {
+            var hit = LookupCallSite(project, uri, hl.GetInt32(), hc.GetInt32(), word);
+            if (hit != null)
+            {
+                string sig = hit.TargetName;
+                string ownerName = "";
+                if (hit.TargetClass.Length > 0 && hit.TargetMethod.Length > 0)
+                {
+                    var hcls = ResolveClassByName(hit.TargetClass, table); // 尾段/全名/短名多形态回退
+                    if (hcls != null)
+                    {
+                        ownerName = hcls.FullName;
+                        var mm = FindMember(hcls, hit.TargetMethod);
+                        if (mm != null)
+                        {
+                            sig = mm.Signature;
+                        }
+                    }
+                }
+                string ownerTail = ownerName.Length > 0 ? $"\n\n`{ownerName}`" : "";
+                return new { contents = new { kind = "markdown", value = $"```slang\n{sig}\n```{ownerTail}" } };
+            }
+        }
+
         // 0) 类型感知解析（与 definition 共用 SymbolAt）：成员签名卡 / 字段卡 / 类卡片
         var sym = ResolveSymbolAt(text, offset, table);
         if (sym?.Method != null && sym.Owner != null)
@@ -1871,6 +1987,91 @@ internal sealed class LspServer
     // =====================================================================
     // 定义跳转：类/方法 → sourcePath（+ debugInfo 行列）
     // =====================================================================
+    /* 编译期调用点关联查询：行匹配 + 光标词 == 调用符号名（主通道，token 列
+     * 语义混杂——词首/词尾/调用尾皆有——词名匹配免疫歧义）+ 区间容忍（辅） */
+    private CallSiteEntry? LookupCallSite(ProjectInfo project, string uri, int line0, int chr, string word)
+    {
+        if (!_projectCallSites.TryGetValue(project.SpPath, out var list) || list.Count == 0)
+        {
+            return null;
+        }
+        string full;
+        try
+        {
+            full = Path.GetFullPath(UriToPath(uri));
+        }
+        catch
+        {
+            return null;
+        }
+        int line1 = line0 + 1;
+        foreach (var e in list)
+        {
+            if (e.Line != line1)
+            {
+                continue;
+            }
+            if (!string.Equals(e.File, full, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+            if (word.Length > 0 && string.Equals(word, e.Name, StringComparison.Ordinal))
+            {
+                return e;
+            }
+            // token.sourceEndChar 实测常为 0（未填），用符号名长度兜底区间终点
+            int begin = Math.Min(e.BeginChar, Math.Max(0, e.BeginChar - e.Name.Length));
+            int end = Math.Max(Math.Max(e.EndChar, e.BeginChar), e.BeginChar + e.Name.Length);
+            if (chr >= begin && chr <= end)
+            {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    /* 调用点目标解析：tf（本地编译定义文件）直用；ref module/模板实例（tf 空）按
+     * 目标全名（类前缀 + 方法名）回查 MergedTable → ResolveSourcePath */
+    private (string? File, int Line, int Char)? ResolveCallSiteTarget(ProjectInfo project, CallSiteEntry e)
+    {
+        if (e.TargetFile.Length > 0)
+        {
+            try
+            {
+                string cand = Path.GetFullPath(Path.Combine(project.Dir, e.TargetFile));
+                if (File.Exists(cand))
+                {
+                    return (cand, e.TargetLine, e.TargetChar);
+                }
+            }
+            catch
+            {
+                /* 路径异常回落查表 */
+            }
+        }
+        if (e.TargetClass.Length == 0 || e.TargetMethod.Length == 0)
+        {
+            return null;
+        }
+        var table = BuildMergedTable(project);
+        var tc = ResolveClassByName(e.TargetClass, table); // 尾段/全名/短名多形态回退
+        if (tc == null)
+        {
+            return null;
+        }
+        var mm = FindMember(tc, e.TargetMethod);
+        if (mm == null)
+        {
+            return null;
+        }
+        string? file = ResolveSourcePath(project, tc, mm.SourcePath.Length > 0 ? mm.SourcePath : tc.SourcePath);
+        if (file == null)
+        {
+            return null;
+        }
+        return (file, mm.SourcePath.Length > 0 ? mm.BeginLine : 0, mm.SourcePath.Length > 0 ? mm.BeginChar : 0);
+    }
+
     private object? HandleDefinition(JsonElement root)
     {
         var (uri, project, text, offset) = GetContext(root);
@@ -1883,6 +2084,58 @@ internal sealed class LspServer
         {
             return null;
         }
+
+        // -1) 编译期调用点关联（callSites，最高优先）：光标落在调用 token 区间 →
+        //     精确直达目标定义（数据源 = MetaCallNode 解析结果的 IR 沉淀，
+        //     覆盖裸方法调用等文本启发式解析不了的形态）
+        if (root.TryGetProperty("params", out var defParms)
+            && defParms.ValueKind == JsonValueKind.Object
+            && defParms.TryGetProperty("position", out var defPos)
+            && defPos.ValueKind == JsonValueKind.Object
+            && defPos.TryGetProperty("line", out var dl) && dl.ValueKind == JsonValueKind.Number
+            && defPos.TryGetProperty("character", out var dc) && dc.ValueKind == JsonValueKind.Number)
+        {
+            var hit = LookupCallSite(project, uri, dl.GetInt32(), dc.GetInt32(), word);
+            if (hit != null)
+            {
+                var tgt = ResolveCallSiteTarget(project, hit);
+                if (tgt != null && tgt.Value.File != null && File.Exists(tgt.Value.File))
+                {
+                    int tline = Math.Max(0, tgt.Value.Line - 1);
+                    int tchr = Math.Max(0, tgt.Value.Char);
+                    // 目标 char 语义混杂（token 列词首/词尾皆有），按目标行文本
+                    // IndexOf(方法短名) 定位词首，失败回落 token char
+                    string mshort = hit.TargetMethod.Length > 0 ? hit.TargetMethod : hit.TargetName;
+                    try
+                    {
+                        var tl = File.ReadAllLines(tgt.Value.File);
+                        int li = Math.Min(tline, tl.Length - 1);
+                        int c = tl[li].IndexOf(mshort, StringComparison.Ordinal);
+                        if (c >= 0)
+                        {
+                            tchr = c;
+                        }
+                    }
+                    catch
+                    {
+                        /* 读失败用 token char */
+                    }
+                    return new[]
+                    {
+                        new
+                        {
+                            uri = PathToUri(tgt.Value.File),
+                            range = new
+                            {
+                                start = new { line = tline, character = tchr },
+                                end = new { line = tline, character = tchr },
+                            },
+                        },
+                    };
+                }
+            }
+        }
+
         var table = BuildMergedTable(project);
 
         // 0) 类型感知解析（复用成员补全链设施）：cfg.port / SLang.Server.start /

@@ -23,7 +23,7 @@
 | host | **SlangAllInOne** | `SlangAllInOne.csproj` | csproj/Exe | 统合宿主 `slang`：Front 进程内编译 + C VM P/Invoke；publish 自举 pack-modules/pack-docs |
 | front | **SimpleLanguageFront** | `..\simple_language\source\SimpleLanguageFront.csproj` | csproj/Exe | Front 编译器（opcode 真源 `IROpEnum.cs`） |
 | compile | **SimpleLanguageCompileStdlib** | `Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj` | csproj/Exe | 标准库编译驱动（2026-10-18 三合一：core/math/std 预设 + all 子进程三连编 + launchSettings 分流；仅引用 Front）；编译产物 → `SlangAllInOne\out\export\` |
-| test | **CSimpleVMTest** | `Project\CSimpleVMTest\CSimpleVMTest.csproj` | csproj/Exe | **唯一联合测试宿主**（2026-10-18 八合一：CSimpleVM{Core,Std,Math,Special,BenchMark,Render}Test + Test/Test2 并入）；套件预设 BaseTest/ExpendTest(缺省)/MathTest/SpecialTest/BenchMark/RenderTest + 命名用例表 + launchSettings profile 分流；**2026-10-18 晚起执行端 = 发布包 slang 应用**（Debug→`package\win32-debug`、Release→`package\win32-release`，产物拷入包内 run-disk、标准库取自包 lib\；csxproj 已移除 vcxproj 引用） |
+| test | **CSimpleVMTest** | `Project\CSimpleVMTest\CSimpleVMTest.csproj` | csproj/Exe | **唯一联合测试宿主**（2026-10-18 八合一：CSimpleVM{Core,Std,Math,Special,BenchMark,Render}Test + Test/Test2 并入）；套件预设 BaseTest/ExpendTest(缺省)/MathTest/SpecialTest/BenchMark/RenderTest + 命名用例表 + launchSettings profile 分流；**2026-10-18 晚起执行端 = 发布包 slang 应用**（Debug→`package\win32-debug`、Release→`package\win32-release`，产物拷入包内经 `slang run` 执行（只运行编译结果；run-disk 别名同效）、标准库取自包 lib\；csxproj 已移除 vcxproj 引用） |
 | native-cvm | **csimple_lang_lib / csimple_lang_exe** | `..\csimple_lang\project\vs\vm_lib\…`、`..\csimple_lang\project\vs\vm_exe\…` | vcxproj | C VM DLL（宿主 P/Invoke 载的就是它）与独立 CLI exe |
 | native-libs | **cvm_math_lib / cvm_sl_mysql_lib / CLangdll** | `Project\*\*.vcxproj` | vcxproj | Math FFI（Math.jsonc `vmDlls` 构建它 → `math_lib.dll`）、Mysql FFI、CLangdll |
 | plugins | **sl_csharp_mono_frontend / sl_java_hotspot_frontend / cvm_csharp_mono / cvm_java_hotspot**（vcxproj） | `..\simple_language_plugins\…` | vcxproj | 插件 Front 层与 CVM 层：两个运行时插件 frontend 均已 C 化（2026-10-21，原生三导出 ABI `sl_frontend_*`，Front 经 NativeLibrary 直调，AOT 可用；原 SLCSharpMonoFrontend/SLJavaHotspotFrontend csproj 已删除） |
@@ -71,8 +71,8 @@ dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compil
 dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj -- core   # 单编 Core（math/std 同理）
 dotnet run --project SlangAllInOne\Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj          # Core→Std→Math 全编（Math 含 vmDll 构建 math_lib.dll）
 
-# 编译即运行（Front → SLIR 内存直传 → C VM）
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
+# 编译即运行（Front → SLIR 内存直传 → C VM；裸工程路径，无需子命令）
+dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
 
 # 联合测试宿主（八合一；Front 编译用例集 → C VM 执行）
 dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj                 # 无参默认 ExpendTest

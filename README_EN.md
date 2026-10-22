@@ -10,7 +10,7 @@ English | **[中文](README.md)**
                 unified host `slang` (this repo) chains it all: compile → in-memory handoff → run
 ```
 
-The unified host **`slang`** in this repository performs "Front in-process compile → SLIR in-memory handoff → C VM P/Invoke execution" inside a single .NET 8 process: `slang run <project>` compiles and runs in one command, with no intermediate files written to disk.
+The unified host **`slang`** in this repository performs "Front in-process compile → SLIR in-memory handoff → C VM P/Invoke execution" inside a single .NET 8 process: the bare project path `slang <project>` compiles and runs in one command, with no intermediate files written to disk.
 
 ## Related Open-Source Repositories
 
@@ -69,8 +69,8 @@ slang_release_<v>/
 ### 2. Run It Right Away
 
 ```powershell
-# Windows (Linux is symmetric: ./slang run test/RefProbe/RefProbe)
-slang.exe run test\RefProbe\RefProbe
+# Windows (Linux is symmetric: ./slang test/RefProbe/RefProbe)
+slang.exe test\RefProbe\RefProbe
 ```
 
 User projects can reference official libraries by bare name (`Core` / `Std` / `Math`) — both the Front at compile time and the C VM at run time look them up in `<slang dir>\lib\` (slb first; packages installed by the future spm are found the same way under `modules\`). No fragile relative paths.
@@ -139,8 +139,8 @@ cd <root>
 # 1. Build the C VM runtime (→ csimple_lang_dll.dll; the script locates the workspace automatically)
 powershell -File SlangAllInOne\scripts\build-vm-win.ps1 -Config Debug
 
-# 2. Compile-and-run: Front in-process compile → SLIR in-memory handoff → C VM execution
-dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
+# 2. Compile-and-run: Front in-process compile → SLIR in-memory handoff → C VM execution (bare project path, no subcommand)
+dotnet run --project SlangAllInOne\SlangAllInOne.csproj -- SlangAllInOne\SLangCore\test\BaseTest\ProjectTest --no-banner
 
 # 3. One-command full pipeline: dual-platform VM build → stdlib → 6 test suites compiled and run
 powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
@@ -153,8 +153,10 @@ The workspace-wide development entry point is [SlangAllInOne.sln](SlangAllInOne.
 | Command | Description |
 |------|------|
 | `compile <project>` | Front in-process compile; disk export by default; `--export-mode <output\|temp\|memory>` export tri-state (output = configured dir / temp = `_temp\<module>\` / memory = SLB stays in memory, uncompressed) |
-| `run <project>` | **Compile and run**: defaults to `--export-mode memory` (uncompressed SLB in-memory transfer) → C VM in-memory entry, module never hits disk |
-| `run-disk <module.slb\|module.json>` | Run an exported module package (both formats, magic auto-detected) |
+| `<project path>` | **Compile-and-run in one step** (bare project path, no subcommand; replaces the former `run <project>` as of 2026-10-22): defaults to `--export-mode memory` (uncompressed SLB in-memory transfer) → C VM in-memory entry, module never hits disk; with `--export-mode output\|temp` it exports to disk first, then runs from disk |
+| `<module.slb\|module.json>` | Run a bare module package file directly (equivalent to `run <module>`, both formats, magic auto-detected) |
+| `run <module.slb\|module.json>` | **Run an already-compiled module artifact only** (no compile, via C VM cli_main; passing a project path errors with a hint to use `slang <project>`) |
+| `run-disk <module>` | Compatibility alias of `run` (equivalent to `run`) |
 | `info <module.slb\|module.json>` | Show module metadata |
 | `version` | Front version + C VM DLL path / config |
 | `pack-modules` | Compile the stdlib trio and pack them flat into `lib\` (invoked automatically on publish) |

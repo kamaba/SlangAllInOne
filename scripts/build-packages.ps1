@@ -127,12 +127,12 @@ function Invoke-BuildWinPackage([string]$Config) {
     $smokeDir = Join-Path $env:TEMP ('slang-pkg-smoke-' + [guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $smokeDir -Force | Out-Null
     Push-Location $smokeDir
-    & (Join-Path $dir 'slang.exe') run-disk (Join-Path $dir 'lib\Std.module.slb')
+    & (Join-Path $dir 'slang.exe') run (Join-Path $dir 'lib\Std.module.slb')
     $exit = $LASTEXITCODE
     Pop-Location
     Remove-Item $smokeDir -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue
     if ($exit -ne 0) { Write-Host ('  smoke Std.module.slb exit ' + $exit) -ForegroundColor Red; return $false }
-    Write-Ok 'smoke: slang.exe run-disk Std.module.slb exit 0'
+    Write-Ok 'smoke: slang.exe run Std.module.slb exit 0'
     return $true
 }
 
@@ -212,9 +212,9 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     # .NET 8 runtime, but the WSL distro only ships dotnet-sdk-10 (10.0.12) -
     # rolling forward onto 10.x is the officially supported way to run net8.0
     # apps there. Release packages are Native AOT and ignore the variable.
-    $cmd = 'rm -rf /tmp/slang-pkg-smoke && mkdir -p /tmp/slang-pkg-smoke && cd /tmp/slang-pkg-smoke && DOTNET_ROLL_FORWARD=Major ' + $wslPkg + '/slang run-disk ' + $wslPkg + '/lib/Std.module.slb --no-banner'
+    $cmd = 'rm -rf /tmp/slang-pkg-smoke && mkdir -p /tmp/slang-pkg-smoke && cd /tmp/slang-pkg-smoke && DOTNET_ROLL_FORWARD=Major ' + $wslPkg + '/slang run ' + $wslPkg + '/lib/Std.module.slb --no-banner'
     if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  smoke Std.module.slb failed (see log above)' -ForegroundColor Red; return $false }
-    Write-Ok 'smoke: slang run-disk Std.module.slb exit 0'
+    Write-Ok 'smoke: slang run Std.module.slb exit 0'
     return $true
 }
 

@@ -419,7 +419,7 @@ $slangExe = Join-Path $PkgWinDir 'slang.exe'
 $smokeFail = $false
 Push-Location $smokeDir
 foreach ($m in @('Std', 'Math')) {
-    & $slangExe run-disk (Join-Path $PkgWinDir "lib\$m.module.slb")
+    & $slangExe run (Join-Path $PkgWinDir "lib\$m.module.slb")
     if ($LASTEXITCODE -ne 0) {
         $smokeFail = $true
         Write-Host "  win $m.module.slb exit $LASTEXITCODE" -ForegroundColor Red
@@ -432,16 +432,16 @@ Remove-Item $smokeDir -Recurse -Force -Confirm:$false -ErrorAction SilentlyConti
 if ($smokeFail) { Fail 'Windows smoke test failed - release aborted' }
 
 # --- Linux (WSL): module load + Front compile-and-run (packaged user flow) ---
-$cmd = 'rm -rf /tmp/slang-release-smoke && mkdir -p /tmp/slang-release-smoke && cd /tmp/slang-release-smoke && ' + $WslPkgLinux + '/slang run-disk ' + $WslPkgLinux + '/lib/Std.module.slb --no-banner'
+$cmd = 'rm -rf /tmp/slang-release-smoke && mkdir -p /tmp/slang-release-smoke && cd /tmp/slang-release-smoke && ' + $WslPkgLinux + '/slang run ' + $WslPkgLinux + '/lib/Std.module.slb --no-banner'
 if ((Invoke-WslBash $cmd) -ne 0) { Fail 'Linux Std.module.slb smoke failed (see log above)' }
 Write-Ok 'linux Std.module.slb exit 0'
 # Front compile-to-run end to end: in-process Front compile -> C VM run, the
-# exact flow a Linux user exercises with `slang run <project>`.
+# exact flow a Linux user exercises with the bare project path `slang <project>`.
 # SL_FORCE_RUN=1: test jsonc platform checks are hardcoded win64 (known repo
 # policy, AGENTS.md "Known expected differences") - Linux runs skip the check.
 # 2026-10-18: MiniSmoke moved with the test tree reorg (2026-10-17) from
 # simple_language\test\ to SlangAllInOne\SLangCore\test\ (same fix as RefProbe).
-$cmd = 'cd ' + $WslRepo + ' && SL_FORCE_RUN=1 ' + $WslPkgLinux + '/slang run SlangAllInOne/SLangCore/test/Other/MiniSmoke/MiniSmoke --no-banner'
+$cmd = 'cd ' + $WslRepo + ' && SL_FORCE_RUN=1 ' + $WslPkgLinux + '/slang SlangAllInOne/SLangCore/test/Other/MiniSmoke/MiniSmoke --no-banner'
 if ((Invoke-WslBash $cmd) -ne 0) { Fail 'Linux MiniSmoke compile-and-run failed (see log above)' }
 Write-Ok 'linux MiniSmoke compile-and-run exit 0'
 
@@ -566,8 +566,8 @@ Contents (both packages share one layout: slang CLI + bin\ C VM runtime + lib\ s
 $vsixLine
 
 Quick start (unzip/untar anywhere)
-  slang run-disk lib\Std.module.slb
-  slang run <project>       # compile-and-run; project jsonc references point to lib\
+  slang run lib\Std.module.slb
+  slang <project>            # compile-and-run; project jsonc references point to lib\
 
 Requirements
 - win-x64 : Windows x64

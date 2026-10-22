@@ -6,14 +6,15 @@
     // the C VM from csimple_lang\build\Debug\bin (with its .pdb).
     // Absolute paths on purpose: dotnet run does not honor the profile
     // workingDirectory, so relative project paths break under some shells.
-    "run MiniSmoke (C# + C VM mixed)": {
+    // 🔥 2026-10-22 CLI 语义：裸工程路径 = 编译+运行一体化（原 `slang run <工程>`）。
+    "MiniSmoke (C# + C VM mixed)": {
       "commandName": "Project",
-      "commandLineArgs": "run D:\\project\\lang\\simple_language\\test\\Other\\MiniSmoke\\MiniSmoke",
+      "commandLineArgs": "D:\\project\\lang\\SlangAllInOne\\SLangCore\\test\\Other\\MiniSmoke\\MiniSmoke",
       "nativeDebugging": true
     },
-    "run-disk ProjectTest (C# + C VM mixed)": {
+    "run ProjectTest module (C# + C VM mixed)": {
       "commandName": "Project",
-      "commandLineArgs": "run-disk D:\\project\\lang\\simple_language\\out\\export\\ProjectTest\\ProjectTest.module.json",
+      "commandLineArgs": "run D:\\project\\lang\\SlangAllInOne\\out\\export\\ProjectTest\\ProjectTest.module.json",
       "nativeDebugging": true
     },
     "package": {

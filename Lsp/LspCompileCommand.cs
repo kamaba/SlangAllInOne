@@ -84,6 +84,8 @@ internal static class LspCompileCommand
             exportDir = result.ExportDir,
             packageJson = result.PackageJson,
             diagnostics = diags,
+            // 方法调用点 → 目标方法精确关联（IR 指令流导出，definition 精确跳转数据源）
+            callSites = result.Success ? LspCallSiteExporter.Export() : new List<object>(),
         };
         // 匿名 payload 经 JsonDom（纯反射→JsonNode）序列化：STJ 反射路径在
         // Native AOT 下对匿名类型走 SmallObjectWithParameterizedConverter（运行时

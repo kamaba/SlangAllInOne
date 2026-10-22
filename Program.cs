@@ -5,16 +5,20 @@ using SlangAllInOne.FrontEnd;
 using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
 using SlangAllInOne.Pack;
+using SlangAllInOne.Publish;
 
 namespace SlangAllInOne;
 
 /// <summary>
 /// SlangAllInOne: unified FrontEnd (SimpleLanguage compiler) + Backend (C VM)
-/// host CLI. The headline feature is `run`: compile a project in-process and
-/// hand the package to the C VM -- where it goes is picked by the three-state
+/// host CLI. The headline entry is the bare project path `slang <project>`:
+/// compile a project in-process and run it on the C VM (frontend + backend
+/// runtime in one). Where the package goes is picked by the three-state
 /// front-to-back handoff parameter (--export-mode): export to the configured
 /// directory, export to a temporary folder (<cwd>\_temp\), or keep the
 /// uncompressed SLB binary in memory (default) with no disk write.
+/// `slang run <module>` executes an already compiled module package
+/// (.module.slb / .module.json) without compiling (run-disk = alias).
 /// </summary>
 internal static class Program
 {
@@ -34,6 +38,9 @@ internal static class Program
         public bool StrictPlugins = false;
         public bool Help = false;
         public string CvmConfig = "Debug";
+        /// <summary>--cvm 显式指定标记（publish 用：未指定时走 jsonc publish.config，
+        /// 不被缺省 "Debug" 覆盖）。</summary>
+        public bool CvmConfigSet = false;
         public int OptimizeLevel = -1;
         /// <summary>Export format: "" = compiler default; "json" | "binary" (SLB) |
         /// "binary+json" (SLB main + .module.json debug copy, R15).</summary>
@@ -42,12 +49,27 @@ internal static class Program
         public string DestPath = "";
         /// <summary>pack-modules: package config — Debug = slb + json, Release = slb only.</summary>
         public string PackConfig = "Debug";
-        /// <summary>run-disk: SLDP debug server port (0 = off). Passed through to the
-        /// C VM as `--debug-server=&lt;port&gt;` (DEBUG_PROTOCOL_DESIGN.md D-P3; consumed by
-        /// the VSCode extension's DAP adapter).</summary>
+        /// <summary>run &lt;module&gt; (a.k.a. run-disk): SLDP debug server port (0 = off).
+        /// Passed through to the C VM as `--debug-server=&lt;port&gt;`
+        /// (DEBUG_PROTOCOL_DESIGN.md D-P3; consumed by the VSCode extension's
+        /// DAP adapter).</summary>
         public int DebugServer = 0;
+        /// <summary>publish: 产物模式覆盖（--mode exe|slb|both；"" = jsonc publish.mode）。</summary>
+        public string PublishMode = "";
+        /// <summary>publish: --no-libs（不携带 lib\ 标准库；jsonc includeLibs 覆盖）。</summary>
+        public bool NoLibs = false;
         public List<string> ProgramArgs = new();
     }
+
+    /// <summary>宿主动词表（new / lsp / lsp-compile 在 Main 前置拦截，不列此）。
+    /// 🔥 2026-10-22 CLI 语义定稿：裸工程路径 = 编译+运行一体化（内部词
+    /// projectrun）；`run` = 只运行编译结果（*.slb / *.module.json）；
+    /// run-disk 保留为 run 的兼容别名。</summary>
+    static readonly HashSet<string> KnownCommands = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "compile", "run", "run-disk", "info", "publish",
+        "pack-modules", "pack-docs", "version", "help",
+    };
 
     static int Main(string[] args)
     {
@@ -83,10 +105,21 @@ internal static class Program
         return opts.Command switch
         {
             "compile" => RunCompile(opts),
-            "run" => RunProject(opts),
+            // 裸工程路径（slang <project>）：Front 编译 + C VM 运行一体化
+            "projectrun" => RunProject(opts),
+            // run 在解析期已归一为 run-disk（只运行编译结果；run-disk 为兼容别名）
             "run-disk" => RunDisk(opts),
             "info" => RunInfo(opts),
             "version" => RunVersion(opts),
+            "publish" => PublishCommand.Run(new PublishCommand.Options
+            {
+                ProjectPath = opts.ProjectPath,
+                Mode = opts.PublishMode,
+                DestPath = opts.DestPath,
+                CvmConfig = opts.CvmConfigSet ? opts.CvmConfig : "",
+                IncludeLibs = opts.NoLibs ? false : null,
+                OptimizeLevel = opts.OptimizeLevel,
+            }),
             "pack-modules" => PackModulesCommand.Run(opts.DestPath, opts.PackConfig),
             "pack-docs" => PackDocsCommand.Run(opts.DestPath),
             _ => PrintHelp(),
@@ -119,7 +152,8 @@ internal static class Program
         return 0;
     }
 
-    // run: Front compile + C VM. Three-state handoff (--export-mode):
+    // projectrun (bare project path, `slang <project>`): Front compile + C VM run.
+    // Three-state handoff (--export-mode):
     // - memory (default): uncompressed SLB bytes -> C VM memory entry (no disk IO)
     // - output / temp: disk export -> C VM runs the exported module from disk
     //   (slb path preferred; --debug-server and friends apply, same as run-disk)
@@ -208,7 +242,8 @@ internal static class Program
         return exitCode;
     }
 
-    // run-disk: classic path, run an already exported module.json via cli_main
+    // run <module> (run-disk = compatibility alias): execute an already
+    // compiled module package (.slb / .module.json) via cli_main, no compile
     static int RunDisk(Options opts)
     {
         string? repoRoot = GetRepoRoot();
@@ -276,7 +311,8 @@ internal static class Program
         var opts = new Options();
         int i = 0;
 
-        // command
+        // command -- or bare path (🔥 2026-10-22 CLI 语义定稿：`slang <project>`
+        // = 编译+运行一体化；`slang run <module>` = 只运行编译结果)
         if (args.Length == 0 || args[0].StartsWith('-'))
         {
             if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help" || args[0] == "/?"))
@@ -292,7 +328,23 @@ internal static class Program
         }
         else
         {
-            opts.Command = args[0].ToLowerInvariant();
+            var first = args[0].ToLowerInvariant();
+            if (KnownCommands.Contains(first))
+            {
+                opts.Command = first;
+            }
+            else if (IsModulePackageFile(args[0]))
+            {
+                // 裸模块包文件：直接运行（等价 `slang run <module>`）
+                opts.Command = "run-disk";
+                opts.ModuleJsonPath = args[0];
+            }
+            else
+            {
+                // 裸工程路径：编译 + 运行（Front + Backend 一体化）
+                opts.Command = "projectrun";
+                opts.ProjectPath = args[0];
+            }
             i = 1;
         }
 
@@ -314,7 +366,8 @@ internal static class Program
             }
             else if (opts.Command.Length > 0 && opts.ModuleJsonPath.Length == 0 && !a.StartsWith('-'))
             {
-                // first bare positional: project path (compile/run) or module.json path (run-disk/info)
+                // first bare positional: project path (compile/projectrun/run) or
+                // module path (run-disk/info)
                 if (opts.Command == "run-disk" || opts.Command == "info")
                     opts.ModuleJsonPath = a;
                 else
@@ -352,7 +405,7 @@ internal static class Program
             }
             else if (a.StartsWith("--debug-server=", StringComparison.Ordinal))
             {
-                // SLDP debug server port (run-disk only; equal-sign form, mirrors the C VM CLI)
+                // SLDP debug server port (run <module> only; equal-sign form, mirrors the C VM CLI)
                 var ps = a.Substring("--debug-server=".Length);
                 if (!int.TryParse(ps, out var port) || port < 1 || port > 65535)
                 {
@@ -364,6 +417,7 @@ internal static class Program
             else if (a == "--cvm" && i + 1 < args.Length)
             {
                 opts.CvmConfig = args[++i];
+                opts.CvmConfigSet = true;
             }
             else if (a == "--format" && i + 1 < args.Length)
             {
@@ -383,6 +437,16 @@ internal static class Program
             else if (a == "--dest" && i + 1 < args.Length)
             {
                 opts.DestPath = args[++i];
+            }
+            else if (a == "--mode" && i + 1 < args.Length)
+            {
+                // publish: 产物模式覆盖（exe|slb|both；值校验在 PublishCommand）
+                opts.PublishMode = args[++i];
+            }
+            else if (a == "--no-libs")
+            {
+                // publish: 不携带 lib\ 标准库（覆盖 jsonc includeLibs）
+                opts.NoLibs = true;
             }
             else if (a == "--config" && i + 1 < args.Length)
             {
@@ -419,7 +483,7 @@ internal static class Program
             }
         }
 
-        if (opts.Command == "compile" || opts.Command == "run")
+        if (opts.Command == "compile" || opts.Command == "projectrun" || opts.Command == "publish")
         {
             if (string.IsNullOrWhiteSpace(opts.ProjectPath))
             {
@@ -431,7 +495,7 @@ internal static class Program
         {
             if (string.IsNullOrWhiteSpace(opts.ModuleJsonPath))
             {
-                Console.WriteLine("Missing module.json path. Use: slang {0} <module.json>", opts.Command);
+                Console.WriteLine("Missing module path. Use: slang {0} <module.slb|module.json>", opts.Command);
                 return null;
             }
             if (!File.Exists(opts.ModuleJsonPath))
@@ -441,7 +505,45 @@ internal static class Program
             }
         }
 
+        /* 🔥 2026-10-22 语义定稿（CLI 三分）：`slang run` 只运行编译结果——
+         * 参数必须是磁盘上存在的模块包文件（*.slb / *.module.json，C VM
+         * 磁盘装载按后缀认双通道），内部归一为 run-disk 处理；工程路径不再
+         * 接受（编译+运行请用裸路径 `slang <project>`，只编译用
+         * `slang compile <project>`）。 */
+        if (opts.Command == "run")
+        {
+            if (string.IsNullOrWhiteSpace(opts.ProjectPath))
+            {
+                Console.WriteLine("Missing module path. Use: slang run <module.slb|module.json>");
+                return null;
+            }
+            if (!IsModulePackageFile(opts.ProjectPath))
+            {
+                Console.WriteLine($"run expects a compiled module (*.slb / *.module.json), got: {opts.ProjectPath}");
+                Console.WriteLine("Compile-and-run a project instead: slang <project>   (compile only: slang compile <project>)");
+                return null;
+            }
+            opts.ModuleJsonPath = opts.ProjectPath;
+            opts.Command = "run-disk";
+        }
+
         return opts;
+    }
+
+    /// <summary>模块包文件判定：后缀 .slb / .json 且磁盘存在（目录与不存在的
+    /// 路径不算——裸路径仍按工程处理，走编译+运行一体化）。</summary>
+    static bool IsModulePackageFile(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return false;
+        }
+        if (!path.EndsWith(".slb", StringComparison.OrdinalIgnoreCase)
+            && !path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+        return File.Exists(path);
     }
 
     internal static string? GetRepoRoot()
@@ -486,28 +588,40 @@ internal static class Program
     {
         Console.WriteLine(@"
 Usage: slang <command> [options]
+       slang <project> [options]      Compile + run in one (bare project path)
 
 Commands:
+  <project>                Compile a project with the Front (in-process) and
+                            run it on the C VM in one go - the frontend +
+                            backend (runtime) all-in-one entry. Default handoff
+                            is in-memory (uncompressed SLB straight to the VM,
+                            no disk write); --export-mode output|temp exports
+                            to disk first and runs from there.
   compile <project>         Compile a project with the Front (in-process).
-                             Export target per --export-mode (default output =
-                             the configured export directory).
-  run <project>             Compile + run on the C VM. Handoff is picked by
-                             --export-mode: memory (default, no disk write,
-                             uncompressed SLB straight to the VM), output
-                             (export then run from disk) or temp (export to
-                             <cwd>\_temp\<module>\ then run from there).
-  run-disk <module.json>    Run an exported module.json via the C VM (classic).
-  info <module.json>        Show module metadata via the C VM.
+                            Export target per --export-mode (default output =
+                            the configured export directory).
+  run <module>              Run a COMPILED module (.module.slb / .module.json)
+                            on the C VM - no compile step.
+  run-disk <module>         Alias of `run` (kept for compatibility).
+  info <module>             Show module metadata via the C VM.
+  publish <project>         Publish a project (dotnet-publish style):
+                            mode picked by jsonc publish section /
+                            --mode - both (default) emits a runnable app
+                            exe (payload-attached csimple_lang.exe +
+                            sqlite3.dll + lib\) and <Module>.module.slb
+                            (start: slang run <file>.slb); exe / slb
+                            emit just one. Layout: jsonc publish.outputDir
+                            (default publish\) or --dest.
   version                   Show Front/Backend versions.
   new <project|class> ...   原生脚手架（2026-10-18 自 Front CLI 迁入，
-                             Front 只保留 compile/export）:
-                              slang new project MyApp   (Name.sp/.jsonc/.sl/.md
-                               成套落盘，UTF-8 BOM，含 guide)
-                              slang new project -p <dir> MyApp
-                              slang new class MyClass   (.sl + jsonc 登记)
+                            Front 只保留 compile/export）:
+                             slang new project MyApp   (Name.sp/.jsonc/.sl/.md
+                              成套落盘，UTF-8 BOM，含 guide)
+                             slang new project -p <dir> MyApp
+                             slang new class MyClass   (.sl + jsonc 登记)
   lsp [--stdio]              Start the embedded LSP 3.17 server over stdio
-                             (diagnostics push + symbol completion; consumed
-                             by the Slang VSCode extension, engine=lsp).
+                            (diagnostics push + symbol completion; consumed
+                            by the Slang VSCode extension, engine=lsp).
   pack-modules              Compile the stdlib (Core -> Std -> Math, slb +
    [--dest <dir>]             json debug copy) and pack it into <dest>\out\
    [--config Debug|Release]   export\ mirroring the repo layout so package
@@ -529,13 +643,18 @@ Options:
                              today: the entry switch is not implemented yet,
                              both disk and memory paths run the _main_ entry)
   -O0..-O3                  Front optimize level
+  --mode <exe|slb|both>     publish: artifact mode override (jsonc publish.mode)
+  --dest <dir>              publish: output directory override (jsonc
+                             publish.outputDir); pack-modules: package root
+  --no-libs                 publish: skip the bundled lib\ standard library
   --export-mode <output|temp|memory>
                              Export target (three states, front-to-back
                              handoff): output = the configured export
                              directory (compile default); temp = <cwd>\_temp\
                              <module>\ temporary folder; memory = no disk
                              write, the uncompressed SLB binary stays in RAM
-                             and goes straight to the C VM (run default)
+                             and goes straight to the C VM (bare project /
+                             compile-and-run default)
   --format <json|binary|binary+json>
                              Export format: binary = SLB only; json /
                              binary+json = SLB (always written) + .module.json
@@ -544,24 +663,27 @@ Options:
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
   --strict-plugins          Treat plugin disable as a C VM error
-  --debug-server=<port>     run-disk / run --export-mode output|temp: start
-                             the SLDP debug server on 127.0.0.1:<port>
-                             (NDJSON over TCP; the VSCode extension's DAP
-                             adapter connects to it)
+  --debug-server=<port>     run <module> / bare project with --export-mode
+                             output|temp: start the SLDP debug server on
+                             127.0.0.1:<port> (NDJSON over TCP; the VSCode
+                             extension's DAP adapter connects to it)
   --cvm <Debug|Release>     C VM build tree to use (default Debug)
   -- [args...]              Everything after -- goes to Project._inputArgs
 
 Examples:
   slang new project MyApp
-  slang run SlangAllInOne\SLangCore\test\BaseTest\ProjectTest
-  slang run SlangAllInOne\SLangCore\test\ExpendTest\ProjectTest -t
-  slang run MyProject --export-mode temp
-  slang run MyProject -- arg1 arg2
+  slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest       # compile + run
+  slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest -t
+  slang MyProject --export-mode temp
+  slang MyProject -- arg1 arg2
+  slang run publish\MyApp.module.slb                            # run compiled
+  slang run SlangAllInOne\out\export\ProjectTest\ProjectTest.module.slb
   slang compile MyProject
   slang compile MyProject --export-mode memory
   slang compile MyProject --format binary+json
+  slang publish MyProject
+  slang publish MyProject --mode exe --cvm Release
   slang pack-modules --config Release
-  slang run-disk SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json
   slang info SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json");
         return 0;
     }

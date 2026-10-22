@@ -59,5 +59,9 @@
       "meta": false,
       "ir": true
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

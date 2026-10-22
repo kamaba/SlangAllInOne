@@ -49,3 +49,9 @@
 /SLangCore/test/Other/AliasProbe/build/logs/VM.txt
 /SLangCore/test/Other/CoreAutoProbe/build/logs/VM.txt
 /SLangCore/**/export/
+/SLangCore/test/BaseTest/publish
+/SLangCore/test/BaseTest/build
+/SLangCore/test/BenchMark/build
+/SLangCore/test/BenchMark/export
+/SLangCore/test/BenchMark/publish
+/SLangCore/test/ExpendTest/build

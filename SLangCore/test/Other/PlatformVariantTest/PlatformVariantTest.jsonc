@@ -58,5 +58,9 @@
       { "target": "win-native", "require": { "os": "window", "environment": [ { "name": "docker", "optional": true } ] } },
       { "target": "any-interp" }
     ]
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

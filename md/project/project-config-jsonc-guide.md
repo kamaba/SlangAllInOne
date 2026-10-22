@@ -469,6 +469,22 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 
 范例：`test/SpecialTest/PlatformAotPosTest/`（require.cpu + aot.features 一致性）、`test/Other/PlatformVariantTest/`（variants 有序选择）、`test/Other/PlatformOverrideNegTest/` 等负例集。
 
+### 4.16 `publish` —— 工程发布（slang publish，2026-10-21）
+
+宿主 `slang publish` 命令的配置面（类比 csproj 发布属性）；Front 只解析承载
+（`ProjectConfig.PublishSection`），值校验与执行在宿主 `PublishCommand`。
+**不声明 = 全缺省**（mode=both、输出 `<工程目录>\publish\`、config=Release、带全量标准库）。
+产物：`<Module>.exe`（SLVMAPP1 载荷附着应用，双击直跑）与 `<Module>.module.slb`
+（`slang run <file>.slb` 启动）。字段表与布局详见权威文档 **`publish-guide.md`**。
+
+| 键 | 类型 | 缺省 | 说明 |
+|----|------|------|------|
+| `mode` | `exe`/`slb`/`both` | `both` | 产物形态 |
+| `outputDir` | string | `"publish"` | 发布目录（相对 jsonc 所在目录），每次发布清空重建 |
+| `config` | `Debug`/`Release` | `Release` | exe 载荷模板的 C VM 构建树 |
+| `includeLibs` | bool | `true` | 是否携带 `lib\` 官方标准库 |
+| `libs` | string[] | 空=全量 | 精简携带清单（Core/Std/Math）；含 Math 自动附带 `math_lib.dll` |
+
 ## 5. 已解析但当前无下游消费的键（配置不生效排查表）
 
 以下键会被加载进配置对象，但全仓无任何消费点——**配了也不会改变行为**：

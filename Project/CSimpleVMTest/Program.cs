@@ -16,8 +16,8 @@ namespace CSimpleVMTest;
 ///              标准库取包内 lib\，slb + json 调试副本齐备）；
 ///   Release -> package\win32-release\slang.exe（Native AOT 一体化 + bin\ 加固
 ///              C VM（JIT 默认开），标准库取包内 lib\ 仅 slb）。
-/// 模块产物先拷入包内 &lt;package&gt;\&lt;Module&gt;\ 再 run-disk：moduleReferences
-/// 的相对解析在包内落空 → 走官方库直查 &lt;exe&gt;\lib\（sl_exe_dir = slang.exe
+/// 模块产物先拷入包内 &lt;package&gt;\&lt;Module&gt;\ 再 slang run（运行编译结果）：
+/// moduleReferences 的相对解析在包内落空 → 走官方库直查 &lt;exe&gt;\lib\（sl_exe_dir = slang.exe
 /// 所在目录），标准库即来自包内 lib\；子目录深度与 out\export\&lt;Module&gt;
 /// 一致，插件 lib 按 module.json 所在目录回仓库的相对路径保持可达。
 ///
@@ -125,7 +125,7 @@ internal static class Program
             dotnetFrontArgs.Add(optLevelArg);
         dotnetFrontArgs.Add("--no-banner");
         // R15：供运行的模块一律二进制导出（slb 主产物 + json 调试副本），
-        // 包内 run-disk 优先装载 slb
+        // 包内 run 优先装载 slb
         dotnetFrontArgs.Add("--format");
         dotnetFrontArgs.Add("binary+json");
 
@@ -252,7 +252,8 @@ internal static class Program
             return 4;
         }
 
-        var slangArgs = new List<string> { "run-disk", Quote(runModule) };
+        // 🔥 2026-10-22 CLI 语义：run = 只运行编译结果（产物已拷入包内，无编译步）
+        var slangArgs = new List<string> { "run", Quote(runModule) };
         if (runTestEntry)
         {
             slangArgs.Add("-t");

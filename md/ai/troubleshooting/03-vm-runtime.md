@@ -151,3 +151,13 @@
 - 如何快速验证：`SlangAllInOne\package\win32-debug\csimple_lang.exe run --no-banner .\ProjectTest2\ProjectTest.module.json`——ServerP2Test T1-T4 共 24 项全 OK，P1 42 项 + P1.5 10 项回归全绿。
 - 预防建议：① 任何「引用类型值」的运行期判定一律 Object||Class 并列起步——两 etype 在引用语义上同族、差异只在元数据完备度，单认其一的闸迟早踩 Class 槽装载路径；② 闭包/方法引用是"无 RuntimeType 的合法引用值"这一事实要在 CastClass/instanceof/相等比较等所有类型检查点达成共识（本条为继 dispatch:83、value_compare:69 之后第三处补齐）；③ 类名匹配永远双形态（纯名 + 命名空间限定名）——payload 侧 def 类型名与 RuntimeClass name 两个世界命名不统一是既有现状；④ 排障时"同批相似代码有的绿有的红"，先把绿路径的差异点当机制线索（List<object> 绿 = Step 2 Object 短路、真类绿 = extends 路径、无 use() 绿 = 空管道）而非噪声，差异表就是根因坐标系。
 - 详见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §15 复盘 4。
+
+### [2026-10-21] 发布包（Release cvm）F5 变量树对象摘要回落 `obj:%p`：`#if SL_DEBUG` 编译期宏把 runtime_type_name 整体编译掉，调试器数据源单件依赖编译期宏
+- 现象：插件 0.0.14→0.0.15 修复 descriptor 报错（同版本覆盖装未 bump + 未重载窗口 + 陈旧 AOT 包，复盘见 `slang_vscode_plugin/md/PROGRESS.md` 条目二十九）后复证，dap-smoke 30 项中「pt 摘要」FAIL——Debug 树直跑 exe 摘要正常（`Pt{x,y}` 形），fresh Release AOT 包恒 `obj:000001...`；变量树/求值/断点其余全绿。
+- 首个异常阶段：VM（调试器格式化层 `sld_format_value`；插件/DAP 翻译层无辜——同一 DAP 报文两种包结果不同，二分锁定 cvm 侧）。
+- 根因：`vm_runtime_type.c` L141 的 `#if SL_DEBUG` 把 `rt->runtime_type_name` 的分配整体编译掉（SL_DEBUG 是编译期宏：CMake Debug=1/Release=0）→ Release cvm 中该字段恒 NULL → `sld_format_value` 对象摘要三条件（type_name 非空 + 成员数>0 + depth<2）在第一关即失，回落 `obj:%p`。**调试器属运行期 SL 级功能（包内 `--debug` / `--debug-server` 会话），其数据源却依赖编译期宏单件——两层 debug 语义（包里 `--debug` 调 SL 代码 vs cvm Debug 构建调 C 代码）正交性被打破的反向案例。**
+- 排障路径：①「换直跑 exe」二分（Debug 树 vs Release 包同报文对比）排除插件/DAP 层；② Grep `#if SL_DEBUG` 定位唯一分配点；③ 读 `vm_array.c` L169 确认 Array `_type` 写 runtime_type_name 有 NULL guard（Release 安全跳过，既有 debug-only 设计、明确不动）；④ 验证回落源 `RuntimeClass.name`（`runtime_class.h` L28 `const char*`）为装载层 SLIR 字符串常驻、Release 必在，且 Debug 下 runtime_type_name 本就是 `sc->name` 的复制——同源同值零语义漂移。
+- 修复点（`csimple_lang/src/vm/debugger/sl_debugger_protocol.c` `sld_format_value` 对象摘要分支）：`runtime_type_name` 优先、NULL 时回落 `rt->class_ptr->name`（if 链替代原三元，R4 块首声明风格保持）。
+- 如何快速验证：Release 树重编后 `%TEMP%` smoke 副本全绿；Debug 树原版 smoke.js 无回归（`result=241`）；`dotnet publish -c Release` 重打 AOT 包后 dap-smoke **30/30**（负例 BadLink 为预期断言项）。
+- 预防建议：① **调试器/诊断路径的运行期数据源禁用编译期宏单件依赖**——Release 构建同样要跑 SL 级调试（发布包 F5），凡 `#if SL_DEBUG`/`#if DEBUG` 包住的字段被运行期功能引用即为隐患，必须有常驻回落源；② 「Debug 好、Release 坏」且与优化级别无关的症状，先 Grep 编译期宏差异点再谈别的；③ 摘要/元信息类输出字段优先选装载层常驻数据（SLIR 字符串、RuntimeClass.name），而非运行期按需分配的 debug-only 副本。
+- 详见 `csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md` §6.5 备注、`slang_vscode_plugin/md/PROGRESS.md` 条目二十九。

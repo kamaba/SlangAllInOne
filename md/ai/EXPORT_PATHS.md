@@ -47,7 +47,7 @@ Front `compile` 的导出阶段往哪里送产物，由 `--export-mode` 三态�
 - `--export-mode` 显式指定即隐含 `-e ir`（`exportIR=true`）；`Front.txt` 仍打导出成功日志（维持脚本成功判据）。
 - `Logs/`、`DebugCode/` 调试产物**不受三态影响**，照旧落 jsonc 派生目录。
 
-典型宿主：根目录 `SlangAllInOne/`——`slang run` 缺省 memory（编译即运行：SLB 经 P/Invoke 直传 C VM，见 `csimple_lang/md/cli.md` 宿主 API 与 `csimple_lang/md/design/SLB_DESIGN.md` §8.2 导出三态）；`slang compile` 缺省 output。
+典型宿主：根目录 `SlangAllInOne/`——裸工程路径 `slang <工程>`（原 `slang run`）缺省 memory（编译即运行：SLB 经 P/Invoke 直传 C VM，见 `csimple_lang/md/cli.md` 宿主 API 与 `csimple_lang/md/design/SLB_DESIGN.md` §8.2 导出三态）；`slang compile` 缺省 output。
 
 ## `module.package.json` 根结构（当前约定）
 

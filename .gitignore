@@ -55,3 +55,17 @@
 /SLangCore/test/BenchMark/export
 /SLangCore/test/BenchMark/publish
 /SLangCore/test/ExpendTest/build
+/SLangCore/test/SpecialTest/build
+/SLangCore/test/Other/MyTest/build
+/SLangCore/test/ExpendTest/p2_hooks.txt
+/SLangCore/test/ExpendTest/publish
+/SLangCore/test/MathTest/publish
+/SLangCore/test/Other/DebugSmoke/publish
+/SLangCore/test/Other/DebugSmoke/build
+/SLangCore/test/Other/DebugSmoke/export
+/SLangCore/test/Other/MiniSmoke/....outexport
+/SLangCore/test/Other/MiniSmoke/build
+/SLangCore/test/Other/MiniSmoke/export
+/SLangCore/test/Other/MiniSmoke/publish
+/SLangCore/test/Other/NullFastTest/build
+/SLangCore/test/Other/NullFastTest/publish

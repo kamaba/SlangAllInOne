@@ -39,7 +39,7 @@
   ],
   "export": {
     "moduleName": "TankGame",
-    "outputDir": "..\\..\\..\\out\\export",
+    "outputDir": "..\\..\\..\\..\\out\\export",
     "includeMetadata": true,
     "debugText": {
       "outputDir": "",

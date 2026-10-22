@@ -252,3 +252,18 @@
 - 如何快速验证：`node slang_vscode_plugin\scripts\ext-load-smoke.mjs` exit 0；重载 Trae CN 窗口后 F5 断点/变量树/单步全通。
 - 预防建议：① "extension might have failed to activate" 字面即真——激活类报错第一取证点 = 宿主 exthost.log，先读日志再谈安装态/缓存假说；② **bundle 类依赖的 UMD 入口是打包雷区**（工厂参数化 require 无法静态解析，残留即运行期炸）：platform=node 下 main 字段优先命中 UMD，引入新 runtime 依赖必须过装载冒烟 + 排查 `__require`/`require2` 残留；③ 冒烟覆盖要对齐真实故障面——dap-smoke 只管 adapterMain 独立进程，extension.js 装载/激活链此前零覆盖，坏包连发两版未察。
 - 详见 `slang_vscode_plugin/md/PROGRESS.md`「三十」。
+
+### [2026-10-22] compile-tests 六套件全判 FAILED（exit=0, module rewritten=False）：2026-10-17 重组迁移漏项——测试 jsonc `export.outputDir` 未随 references 补一层 `..\`
+- 现象：全量重编译后 `compile-tests.ps1` 六套件全部 `compile FAILED (exit=0, module rewritten=False)`——Front 明明打出 `export module success`，脚本新鲜度判据（TestMap 模块路径 mtime）却不认。
+- 首个异常阶段：脚本判据与产物落点的**路径错位**——不是编译失败，是产物落在了另一个根。
+- 根因：2026-10-17 重组把测试树自 `simple_language\test\` 迁入 `SlangAllInOne\SLangCore\test\`（整体加深一层），`references` 路径逐个补了 `..\`，但 **`export.outputDir` 漏迁移**：`test\<X>` 仍 2 级、`test\Other\<X>` 仍 3 级 → 全部落 `SlangAllInOne\SLangCore\out\export\`（比正主 `SlangAllInOne\out\export\` 短一层）；`compile-tests.ps1`/`run-tests-win.ps1` 的 TestMap 与库 jsonc 均按正主根编址 → 判据恒 False。实证：正主根当时只有库模块（Core/Std/Math/…），无任何测试模块。
+- 修复点（文件/模块）：60 个 jsonc（`SLangCore\test\**` 59 + `samples\Game\TankGame\TankGame.jsonc`）`export.outputDir` 统一 +1 级 `..\`（test\<X> → 3 级、Other\<X> → 4 级、SpecialTest\PlatformAotPosTest 嵌套 → 4 级），批改逐文件保 BOM 形态（R16）。CSimpleVMTest 宿主用 result.ModuleSlbPath 消费产物、根无关，无需改。
+- 如何快速复现：改前跑 `compile-tests.ps1` 即全 FAILED，且 `SlangAllInOne\out\export\` 无测试模块目录、`SLangCore\out\export\` 反而堆积。
+- 如何快速验证：批改后 `compile-tests.ps1` exit 0 六套件全 OK，正主根出现 ProjectTest/ProjectTest2/MathTest/SpecialTest/BenchMark/NullFastTest 目录。
+- 预防建议：① 目录迁移清单必须覆盖 jsonc **全部路径键**（references、export.outputDir、debugText、publish 等各是一处独立锚点，迁一个漏一个）；② 新鲜度判据（mtime）路径与产物落点由脚本与 jsonc 两端各自声明，验收时跑一次 compile-tests 即可暴露错位（本次正是全量重编译流程把它顶出来的）；③ 旧根遗留产物（SLangCore\out\export）不清理会继续掩护错位——排障时先看「产物到底落哪」再对判据。
+
+### [2026-10-22] build-packages.ps1 语法解析三连崩：PS5.1 `-File` 下无 BOM UTF-8 中文注释被按 GBK 读、尾字节吞换行
+- 现象：脚本首跑即 `Missing closing '}' in statement block` 三连 ParserError（92/112/138 行），报错行全是正常代码。
+- 根因：本会话给 build-packages.ps1 加的**中文注释**（无 BOM UTF-8）被 `powershell -NoProfile -File`（PS5.1）按系统 ANSI/GBK 解码——GBK 双字节的**尾字节恰好落在 0x5C（`\`）或吞掉行尾**时，注释边界/换行被破坏，语法解析崩。与 release-slang.ps1 内注释记载的 JSON 解析变体（BOM-less UTF-8 package.json 在 -File 下乱码吞 `\`）同根：**PS5.1 -File 宿主对无 BOM 文件按 ACP 读**。
+- 修复点：脚本区注释改回英文（`SlangAllInOne\scripts\` 全部脚本维持纯 ASCII 注释约定；release-slang.ps1 的 NOTE 即此坑的历史记录）。
+- 预防建议：① **`scripts\*.ps1` 注释一律英文/ASCII**（用 `-File` 消费或被他人 dot-source 的脚本尤其如此）；中文说明放调用侧文档（AGENTS.md/md）；② 改脚本后先 `powershell -NoProfile -Command "[scriptblock]::Create((Get-Content -Raw <file>))"` 或直接干跑一次做语法门；③ 若确需中文注释，文件写 UTF-8 **带 BOM**（`-File` 下 PS5.1 认 BOM）——但仓库脚本现状为无 BOM，混用形态更危险，不如统一 ASCII。

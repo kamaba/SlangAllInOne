@@ -41,7 +41,7 @@
   ],
   "export": {
     "moduleName": "ExportPermTest",
-    "outputDir": "..\\..\\..\\out\\export",
+    "outputDir": "..\\..\\..\\..\\out\\export",
     "publicExport": "none",
     "versionMain": 0,
     "versionSub": 0,

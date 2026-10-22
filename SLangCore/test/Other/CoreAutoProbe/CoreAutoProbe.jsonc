@@ -42,7 +42,7 @@
   ],
   "export": {
     "moduleName": "CoreAutoProbe",
-    "outputDir": "..\\..\\..\\out\\export",
+    "outputDir": "..\\..\\..\\..\\out\\export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

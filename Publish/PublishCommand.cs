@@ -14,9 +14,15 @@ namespace SlangAllInOne.Publish;
 ///  - slb：&lt;Module&gt;.module.slb 模块包，`slang run &lt;path&gt;.slb` 启动；
 ///  - exe：&lt;Module&gt;.exe 应用（载荷附着式）= csimple_lang.exe 副本 +
 ///    尾部附着的 SLB 载荷（"SLVMAPP1" trailer，C VM main() 自检执行，
-///    cli_app_payload.h）。exe 模式附带 lib\（布局规则 2026-10-22：关联
-///    slb + 关联 dll 统一 lib\——官方标准库、sqlite3.dll、math_lib.dll；
-///    引用按 &lt;exe&gt;\lib 官方直查解析，sqlite3.dll 经 delay-load 预装载）。
+///    cli_app_payload.h）。
+///
+/// 发布目录（布局规则 2026-10-22 定稿）：&lt;outputDir&gt;\&lt;debug|release&gt;\
+/// 两型并存（配置子目录每次发布清空重建，publish 根保留其它配置）；子目录内：
+/// exe + slb + lib\ + plugins\——lib\ 平铺平台无关的 *.module.slb，原生库按
+/// 平台细分落 lib\&lt;windows|linux|macos|android|ios&gt;\（.dll/.so/.dylib/.a），
+/// 一个发布目录可承载多平台运行体，运行时按当前平台查找连接库
+/// （C VM sl_platform_dir_name / sl_preload_associated_dlls / FFI 候选链，
+/// 平铺 lib\ 为兼容位）。
 ///
 /// 流程：Front 编译（--format binary+json，R15：slb 主产物 + json 调试
 /// 副本，json 不进发布产物）→ 按 mode 组装发布目录（清空重建）。
@@ -82,6 +88,11 @@ internal static class PublishCommand
             ? Path.GetFullPath(Path.IsPathRooted(pub.OutputDir) ? pub.OutputDir : Path.Combine(projectDir, pub.OutputDir))
             : Path.GetFullPath(opts.DestPath);
 
+        /* 配置子目录（2026-10-22 发布规则）：publish 根下分 debug\ / release\
+         * 两型并存——同一工程可同时保有 Debug（可调试）/ Release（发布）两套
+         * 产物；仅本配置子目录清空重建，publish 根与另一配置不动。 */
+        publishDir = Path.Combine(publishDir, cvmConfig.ToLowerInvariant());
+
         string moduleName = ResolveModuleName();
 
         if (Directory.Exists(publishDir))
@@ -90,7 +101,7 @@ internal static class PublishCommand
         }
         Directory.CreateDirectory(publishDir);
 
-        Console.WriteLine($"=== slang publish (mode: {mode}) ===");
+        Console.WriteLine($"=== slang publish (mode: {mode}, config: {cvmConfig.ToLowerInvariant()}) ===");
         Console.WriteLine($"Project:  {opts.ProjectPath}");
         Console.WriteLine($"Module:   {moduleName}");
         Console.WriteLine($"Output:   {publishDir}");
@@ -128,17 +139,18 @@ internal static class PublishCommand
                     AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
                     Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
 
-                    /* C VM exe 唯一动态依赖（delay-load）：按布局规则落 lib\
-                     * （与标准库 slb / math_lib.dll 同目录）——运行期 exe 经
-                     * sl_preload_associated_dlls 按 <exe>\lib\ 预装载绑定。 */
+                    /* C VM exe 唯一动态依赖（delay-load）：按布局规则落
+                     * lib\<平台>\（2026-10-22 平台细分）——运行期 exe 经
+                     * sl_preload_associated_dlls 按 <exe>\lib\<平台>\ 预装载
+                     * 绑定（平铺 lib\ 为兼容位）。 */
                     string? binDir = Path.GetDirectoryName(cvmExe);
                     string sqlite = Path.Combine(binDir ?? "", "sqlite3.dll");
                     if (File.Exists(sqlite))
                     {
-                        string destLib = Path.Combine(publishDir, "lib");
-                        Directory.CreateDirectory(destLib);
-                        File.Copy(sqlite, Path.Combine(destLib, "sqlite3.dll"), overwrite: true);
-                        Console.WriteLine("[OK]  lib:  sqlite3.dll");
+                        string destPlat = Path.Combine(publishDir, "lib", HostPlatformDir());
+                        Directory.CreateDirectory(destPlat);
+                        File.Copy(sqlite, Path.Combine(destPlat, "sqlite3.dll"), overwrite: true);
+                        Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\sqlite3.dll");
                     }
                     else
                     {
@@ -247,10 +259,11 @@ internal static class PublishCommand
         output.Write(AppPayloadMagic, 0, AppPayloadMagic.Length);
     }
 
-    /// <summary>拷官方标准库到 &lt;publish&gt;\lib\。模块产物来源链：
+    /// <summary>拷官方标准库到 &lt;publish&gt;\lib\（slb 平铺）+ 原生库到
+    /// lib\&lt;平台&gt;\（2026-10-22 平台细分）。模块产物来源链：
     /// ① 包布局 &lt;app dir&gt;\lib\&lt;n&gt;.module.slb（官方库直查目录）
     /// ② dev 树 SlangAllInOne\out\export\&lt;n&gt;\&lt;n&gt;.module.slb。
-    /// libs 空 = Core/Std/Math 全量；含 Math 附带 math_lib.dll。
+    /// libs 空 = Core/Std/Math 全量；含 Math 附带 math_lib.dll（平台位）。
     /// 返回失败计数（缺产物告警不中断——工程可能不引用该库）。</summary>
     static int CopyLibs(string? repoRoot, string publishDir, List<string> libs)
     {
@@ -280,8 +293,10 @@ internal static class PublishCommand
                 string? mathDll = FindMathNativeDll(repoRoot);
                 if (mathDll != null)
                 {
-                    File.Copy(mathDll, Path.Combine(destLib, "math_lib.dll"), overwrite: true);
-                    Console.WriteLine("[OK]  lib:  math_lib.dll");
+                    string destPlat = Path.Combine(destLib, HostPlatformDir());
+                    Directory.CreateDirectory(destPlat);
+                    File.Copy(mathDll, Path.Combine(destPlat, "math_lib.dll"), overwrite: true);
+                    Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\math_lib.dll");
                 }
                 else
                 {
@@ -290,6 +305,21 @@ internal static class PublishCommand
             }
         }
         return 0;
+    }
+
+    /// <summary>宿主平台目录名（布局规则 2026-10-22 平台细分）：原生库按平台
+    /// 分目录落 lib\&lt;平台&gt;\，与 C VM sl_platform_dir_name 同名约定
+    /// （windows / linux / macos / android / ios）。发布命令在哪个平台宿主
+    /// 上运行就落哪个平台位（跨平台产物可后续手动补位，查找链按运行平台
+    /// 取对应子目录）。</summary>
+    static string HostPlatformDir()
+    {
+        if (OperatingSystem.IsWindows()) return "windows";
+        if (OperatingSystem.IsAndroid()) return "android";
+        if (OperatingSystem.IsIOS() || OperatingSystem.IsMacCatalyst()) return "ios";
+        if (OperatingSystem.IsMacOS()) return "macos";
+        if (OperatingSystem.IsLinux()) return "linux";
+        return "windows"; /* 兜底：exe 模式当前仅 Windows */
     }
 
     /// <summary>单模块 slb 产物来源链（包布局优先 → dev out\export）。</summary>

@@ -49,7 +49,7 @@
 | `simple_language\out\export\` | `SlangAllInOne\out\export\`（**全仓唯一产物根**；库/测试 jsonc `export.outputDir` 均指此） |
 | `Front\Lib\Math\cvm_math_lib\`（C 源） | `SLangCore\Lib\Math\cvm_math_lib\` |
 | `Front\Lib\SLMysql\cvm_sl_mysql_lib\` | `SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\` |
-| 测试 jsonc 引用 `"../../out/export/…"` | `"../../../out/export/…"`（多上溯一层） |
+| 测试 jsonc 引用 `"../../out/export/…"` | `"../../../out/export/…"`（多上溯一层）；🔥 `export.outputDir` 2026-10-22 补迁移（60 处 jsonc +1 级 `..\`，此前漏改致产物落 `SLangCore\out\export` 短一层、compile-tests 判据恒 FAILED，复盘见 `md\ai\troubleshooting\06-build-engineering.md` 2026-10-22 条） |
 
 ## 4. 关键机制锚点（改路径/加工程必读）
 
@@ -60,6 +60,7 @@
 5. **引用装载 slb 优先**：`SLModulePackageWriter.ReadPackageForReference`（.slb → SLBReader，json → Read；统一归一后剥指令）。
 6. **SLB 反序列化**：`SLBReader`（`simple_language\source\Export\SLIR\Binary\`）+ round-trip 测试 `tools\SLBRoundTrip`。
 7. **新增 .c 文件三处登记**（R6）、**新增系统方法四处同步**（R7）不变，见 AGENTS.md §2。
+8. **关联件布局规则（2026-10-22 用户定稿）**：关联 `.slb` / 关联 `.dll`（sqlite3.dll、math_lib.dll、libsqlite3.so.0）一律放 `lib\`，插件放 `plugins\`，exe 目录只留 exe 本体——sqlite3.dll 改 **delay-load**（CMake `/DELAYLOAD` + `vm_lib` vcxproj `<DelayLoadDLLs>` 两链同步）+ 运行期 `sl_preload_associated_dlls` 预装载（`sl_ffi_lib_manager.c`，`cli_init_platform` + app 载荷双接线）；Linux 侧 rpath `$ORIGIN/../lib` + CvmBackend 预载。落点：csproj `PackCvmRuntime` / `PublishCommand` / `build-packages.ps1`；权威 = `md\project\package-layout.md` §六。
 
 ## 5. 构建命令速查
 
@@ -81,6 +82,7 @@ dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj --
 # C VM（CMake 主路径）/ 双平台 AOT 发布（win-x64 + WSL linux-x64）
 powershell -File scripts\build-vm-win.ps1 -Config Release
 powershell -File scripts\release-slang.ps1 -Version <x.y.z>   # 发布策略：AOT-only 双平台同发，见 RELEASE.md
+powershell -File scripts\release-local.ps1                    # 🔥 本地发版链一条龙：四包 → vsix → 装入本机 Trae CN（R17 锚点校验前置；改完 Frontend/CVM 后的日常闭环）
 ```
 
 ## 6. 验证记录
@@ -106,20 +108,20 @@ powershell -File scripts\release-slang.ps1 -Version <x.y.z>   # 发布策略：A
 | **Y（发布版本）** | **真实发布版本** | **仅正式发布时提升**（与 `release-slang.ps1 -Version` / GitHub Release tag 同源），提升后 Z 归零 |
 | **Z（小版本）** | **随时递增的开发小版本** | **四端任一端有任何改动即 +1**（日常开发常态位） |
 
-### 四处版本锚点（改版本 = 四处一起改；🔥 2026-10-22 首次对齐基线 0.0.18 已完成）
+### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.20`——2026-10-22 布局规则落地 `0.0.19`，同日 jsonc 迁移修复再 +1）
 
 | 端 | 锚点 | 现值 |
 |----|------|------|
-| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.18` |
-| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.18` |
-| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.18` |
-| VSCode | `slang_vscode_plugin\package.json` → `"version"` | `0.0.18` |
+| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.20` |
+| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.20` |
+| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.20` |
+| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.20` |
 
 ### 操作规则
 
-1. **日常改动**（任一端代码/配置/行为变化）：Z + 1，四处锚点（含 C VM 版本目录名）同步修改——**一次提交内完成，不留半统一状态**。
+1. **日常改动**（仓库任一处代码/配置/行为变化）：Z + 1，**全部版本锚点**（四端 + C VM 版本目录名 + VSCode package-lock）同步修改——**一次提交内完成，不留半统一状态**。
 2. **正式发布**（`release-slang.ps1 -Version <X.Y.0>`）：Y + 1、Z 归 0，四处锚点同步修改；Release tag 与 GitHub 双平台资产用同一版本号。
 3. **验证**：`slang version`（宿主：自身 `<Version>` + Front 版本）/ `csimple_lang.exe version`（Backend）/ VSCode 插件关于页，三处显示必须一致。
-4. **首次对齐实录**（2026-10-22）：基线 `0.0.18`（取 VSCode 现值）——Front `1.0.0`→`0.0.18`、C VM `0.0.01`→`0.0.18`（含版本目录 `version_0.0.18`）、AllInOne csproj 补 `<Version>0.0.18</Version>` 并让 `slang version` 输出自身版本、VSCode 无需改动；三端实测输出全部 `0.0.18`。
+4. **首次对齐实录**（2026-10-22）：基线 `0.0.18`（取 VSCode 现值）——Front `1.0.0`→`0.0.18`、C VM `0.0.01`→`0.0.18`（含版本目录 `version_0.0.18`）、AllInOne csproj 补 `<Version>0.0.18</Version>` 并让 `slang version` 输出自身版本、VSCode 无需改动；三端实测输出全部 `0.0.18`。同日两次日常 +1：① 关联件布局规则落地（`md\project\package-layout.md` §六）→ `0.0.19`；② 60 处测试 jsonc `export.outputDir` 迁移补漏（见 §3 映射表）→ `0.0.20`。三次均四锚点 + C VM 版本目录同步，三端实测输出一致。
 
 ⚠ 已知缺失：`SLangCore\test\Other\` 未随迁的旧用例子目录（NullFastTest、JsonTest、Platform*、InlineLambda*、CoroGCProbe、OOMProbe、SBAProbe、TLSFProbe 等）——`CSimpleVMTest` 具名用例运行会找不到，需要时从 git 历史恢复。

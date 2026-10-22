@@ -70,14 +70,20 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 <publishDir>\
 ├── MyApp.exe            # mode=exe/both：应用 exe（载荷附着式，见 §5）
 ├── MyApp.module.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
-├── sqlite3.dll          # exe 模式附带：C VM 唯一动态依赖（其余静态链）
-├── lib\                 # includeLibs=true：官方标准库（应用引用按 <exe>\lib 直查解析）
-│   ├── Core.module.slb
+├── lib\                 # 关联件统一目录（布局规则 2026-10-22：关联 slb + 关联 dll 都进 lib\）
+│   ├── Core.module.slb  # includeLibs=true：官方标准库（应用引用按 <exe>\lib 直查解析）
 │   ├── Std.module.slb
 │   ├── Math.module.slb
-│   └── math_lib.dll     # 带 Math 时
+│   ├── math_lib.dll     # 带 Math 时
+│   └── sqlite3.dll      # exe 模式恒附带：C VM 唯一动态依赖（delay-load，启动按
+│                        #   <exe>\lib 预装载——sl_preload_associated_dlls）
 └── plugins\             # 工程声明了插件时：Front 导出的 plugins\<id>\ 整目录拷贝
 ```
+
+> 🔥 **布局规则（2026-10-22 用户定稿）**：关联的 `.slb` 模块包与关联的 `.dll`
+>（sqlite3.dll / math_lib.dll 等原生依赖）统一放 `lib\`；插件放 `plugins\`；
+> exe 目录只留 exe 本体与 slb 产物——**exe 旁不再有散落 sqlite3.dll**。
+> 决策记录与机制 = [package-layout.md](package-layout.md) §六。
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
 
@@ -109,7 +115,7 @@ slang publish <工程>
   ├─ ① Front 编译（--format binary+json，R15；slb 主产物 + json 调试副本留工程 export 目录）
   ├─ ② 定位 C VM exe 模板：<slang>\bin\csimple_lang.exe（发布包布局，PackCvmRuntime 随包携带）
   │      → 回落 csimple_lang\build\{publish.config}\bin\ → 另一配置树
-  ├─ ③ slb 拷贝 / exe 载荷附着 + sqlite3.dll + lib\ + plugins\
+  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库 + sqlite3.dll + math_lib.dll）+ plugins\
   └─ ④ 发布目录清空重建（防陈旧产物混入）
 ```
 

@@ -166,11 +166,22 @@ internal sealed class CvmBackend
 
         // Pre-load the bundled sqlite (NEEDED dep of the C VM .so) by absolute
         // path: ld.so then resolves that dependency against the already-loaded
-        // object. 布局规则（2026-10-22）：随包落包根 lib\；bin\ 旧副本兼容回退。
-        var sqlite = Path.GetFullPath(Path.Combine(BinDir, "..", "lib", "libsqlite3.so.0"));
-        if (!File.Exists(sqlite))
-            sqlite = Path.Combine(BinDir, "libsqlite3.so.0");
-        if (File.Exists(sqlite))
-            NativeLibrary.Load(sqlite);
+        // object. 布局规则（2026-10-22 平台细分）：随包落 lib\linux\（发布
+        // 产物原生库按平台分目录，与 C VM sl_platform_dir_name 同名约定）；
+        // 平铺 lib\ 与 bin\ 旧副本为兼容回退。
+        var sqliteCandidates = new[]
+        {
+            Path.GetFullPath(Path.Combine(BinDir, "..", "lib", "linux", "libsqlite3.so.0")),
+            Path.GetFullPath(Path.Combine(BinDir, "..", "lib", "libsqlite3.so.0")),
+            Path.Combine(BinDir, "libsqlite3.so.0"),
+        };
+        foreach (var sqlite in sqliteCandidates)
+        {
+            if (File.Exists(sqlite))
+            {
+                NativeLibrary.Load(sqlite);
+                break;
+            }
+        }
     }
 }

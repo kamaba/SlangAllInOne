@@ -108,14 +108,14 @@ powershell -File scripts\release-local.ps1                    # 🔥 本地发�
 | **Y（发布版本）** | **真实发布版本** | **仅正式发布时提升**（与 `release-slang.ps1 -Version` / GitHub Release tag 同源），提升后 Z 归零 |
 | **Z（小版本）** | **随时递增的开发小版本** | **四端任一端有任何改动即 +1**（日常开发常态位） |
 
-### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.21`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21`）
+### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.27`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21` → `0.0.22`/`0.0.23`（两轮日常改动）→ 2026-10-23 LSP 定义跳转/裸类修复时发现 VSCode 独走 `0.0.24`、其余三端 `0.0.23` 错位 → 全员统一 `0.0.24` → 同日成员补全 var 推断修复（LSP 接收者链解析 + Front `NormalizeVariableName` this 参数名）→ `0.0.25` → 同日 LSP 索引数据源切换 IR 生成数据（`LspIRIndexExporter`，AGENTS R19）→ `0.0.26` → 同日 LSP 系统类型别名提示（`TypeAliases` 归一，int/float/string hover/补全/成员链）→ `0.0.27`）
 
 | 端 | 锚点 | 现值 |
 |----|------|------|
-| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.21` |
-| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.21` |
-| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.21` |
-| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.21` |
+| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.27` |
+| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.27` |
+| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.27` |
+| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.27` |
 
 ### 操作规则
 

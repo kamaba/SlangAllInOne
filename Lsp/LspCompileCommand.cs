@@ -84,12 +84,13 @@ internal static class LspCompileCommand
             exportDir = result.ExportDir,
             packageJson = result.PackageJson,
             diagnostics = diags,
-            // 方法调用点 → 目标方法精确关联（IR 指令流导出，definition 精确跳转数据源）
-            callSites = result.Success ? LspCallSiteExporter.Export() : new List<object>(),
-            // 代码关联索引（MetaCore 层，2026-10-22）：files/ignoredFiles/excluded
-            // （@Exclude 灰区）/symbols（定义锚点）/refs（成员/类型引用关联）。
+            // 代码关联索引（IR 生成数据，2026-10-23 用户定稿：数据源由 MetaCore
+            // 语义树整体切换为 IR 指令流——变量.方法/成员等链式访问只有 IR
+            // 解析绑定完整可靠）：files/ignoredFiles/excluded（@Exclude 灰区）/
+            // symbols（定义锚点）/refs（方法/字段/枚举成员/类型引用关联）。
+            // 原 callSites 通道（同为 IR 指令流）已并入 refs（kind=method）。
             // 编译失败不导出（灰区/引用以最近一次成功编译为准，由 LSP 侧保留旧表）
-            index = result.Success ? LspMetaIndexExporter.Export() : null,
+            index = result.Success ? LspIRIndexExporter.Export() : null,
         };
         // 匿名 payload 经 JsonDom（纯反射→JsonNode）序列化：STJ 反射路径在
         // Native AOT 下对匿名类型走 SmallObjectWithParameterizedConverter（运行时

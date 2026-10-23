@@ -181,6 +181,30 @@ internal sealed class LspServer
         "get", "set",
     };
 
+    /* 系统类型小写别名（2026-10-23 用户需求"Int32/int 等系统类型也要提示"）：
+     * 与 Front 词法层关键字-类型表同源（LexerParseToToken.cs——byte/sbyte/short/
+     * ushort/int/uint/long/ulong/half/float/double/bool/string/object 均为
+     * ETokenType.Type 词元，extend=对应 EType）。它们也是类（Core.Int32 等
+     * 系统类，ref module 供给）——裸名 hover/定义、接收者声明类型（`int a = 3`
+     * 后 `a.` 的成员补全）、链式推进统一经 ResolveClassByName 别名归一命中。 */
+    private static readonly Dictionary<string, string> TypeAliases = new(StringComparer.Ordinal)
+    {
+        ["object"] = "Object",
+        ["byte"] = "UInt8",
+        ["sbyte"] = "Int8",
+        ["short"] = "Int16",
+        ["ushort"] = "UInt16",
+        ["int"] = "Int32",
+        ["uint"] = "UInt32",
+        ["long"] = "Int64",
+        ["ulong"] = "UInt64",
+        ["half"] = "Float16",
+        ["float"] = "Float32",
+        ["double"] = "Float64",
+        ["bool"] = "Boolean",
+        ["string"] = "String",
+    };
+
     private LspServer(Stream stdin, Stream stdout)
     {
         _stdin = stdin;
@@ -575,47 +599,9 @@ internal sealed class LspServer
             }
         }
 
-        // 成功编译 → 更新调用点关联表（definition/hover 精确跳转数据源）
-        if (success && root.TryGetProperty("callSites", out var csArr) && csArr.ValueKind == JsonValueKind.Array)
-        {
-            var entries = new List<CallSiteEntry>();
-            foreach (var c in csArr.EnumerateArray())
-            {
-                string f = c.TryGetProperty("f", out var fe) && fe.ValueKind == JsonValueKind.String ? fe.GetString() ?? "" : "";
-                if (f.Length == 0)
-                {
-                    continue;
-                }
-                string full;
-                try
-                {
-                    full = Path.GetFullPath(Path.Combine(project.Dir, f)); // f 为绝对路径时 Combine 返回自身
-                }
-                catch
-                {
-                    continue;
-                }
-                entries.Add(new CallSiteEntry
-                {
-                    File = full,
-                    Line = c.TryGetProperty("l", out var le) && le.ValueKind == JsonValueKind.Number ? le.GetInt32() : 0,
-                    BeginChar = c.TryGetProperty("bc", out var bce) && bce.ValueKind == JsonValueKind.Number ? bce.GetInt32() : 0,
-                    EndChar = c.TryGetProperty("ec", out var ece) && ece.ValueKind == JsonValueKind.Number ? ece.GetInt32() : 0,
-                    Name = c.TryGetProperty("n", out var ne) && ne.ValueKind == JsonValueKind.String ? ne.GetString() ?? "" : "",
-                    TargetName = c.TryGetProperty("tn", out var tne) && tne.ValueKind == JsonValueKind.String ? tne.GetString() ?? "" : "",
-                    TargetClass = c.TryGetProperty("tc", out var tce) && tce.ValueKind == JsonValueKind.String ? tce.GetString() ?? "" : "",
-                    TargetMethod = c.TryGetProperty("tm", out var tme) && tme.ValueKind == JsonValueKind.String ? tme.GetString() ?? "" : "",
-                    TargetFile = c.TryGetProperty("tf", out var tfe) && tfe.ValueKind == JsonValueKind.String ? tfe.GetString() ?? "" : "",
-                    TargetLine = c.TryGetProperty("tl", out var tle) && tle.ValueKind == JsonValueKind.Number ? tle.GetInt32() : 0,
-                    TargetChar = c.TryGetProperty("tc2", out var tc2e) && tc2e.ValueKind == JsonValueKind.Number ? tc2e.GetInt32() : 0,
-                });
-            }
-            _projectCallSites[project.SpPath] = entries;
-            Console.Error.WriteLine($"[lsp] callSites 装载 {entries.Count} 条（{Path.GetFileName(project.SpPath)}）"); // [lsp-trace]
-        }
-
-        // 成功编译 → 装载代码关联索引（MetaCore index，2026-10-22）：
-        // refs 并入调用点表（Kind 区分，definition/hover 共用查询）；
+        // 成功编译 → 装载代码关联索引（IR 生成数据，2026-10-23 数据源定稿）：
+        // refs（方法/字段/枚举成员/类型引用，全部出自 IR 指令流；原 callSites
+        // 通道已并入，kind=method）→ 调用点表（definition/hover 共用查询）；
         // symbols → 定义锚点表；excluded/ignoredFiles → 灰显区，随后按打开文档推送。
         // 编译失败不带 index 字段——旧表保留（灰显/跳转以最近一次成功编译为准）
         if (success && root.TryGetProperty("index", out var idxEl) && idxEl.ValueKind == JsonValueKind.Object)
@@ -775,14 +761,13 @@ internal sealed class LspServer
         }
         _projectIgnoredFiles[project.SpPath] = ignored;
 
-        // refs → 并入调用点表（注意 callSites 块已先装载：追加而非覆盖）
+        // refs → 调用点表（2026-10-23 起 refs 为唯一引用通道：原 callSites 已并入
+        // kind=method，整体替换防跨轮残留）
         int refCount = 0;
         if (idx.TryGetProperty("refs", out var refs) && refs.ValueKind == JsonValueKind.Array)
         {
-            if (!_projectCallSites.TryGetValue(project.SpPath, out var list))
-            {
-                _projectCallSites[project.SpPath] = list = new List<CallSiteEntry>();
-            }
+            var list = new List<CallSiteEntry>();
+            _projectCallSites[project.SpPath] = list;
             foreach (var r in refs.EnumerateArray())
             {
                 string f = r.TryGetProperty("f", out var fE) && fE.ValueKind == JsonValueKind.String ? fE.GetString() ?? "" : "";
@@ -1428,9 +1413,21 @@ internal sealed class LspServer
         {
             Add(kw, 14, "关键字");
         }
+        // 系统类型小写别名（int → Core.Int32；与类条目并列呈现，输入别名即见目标）
+        foreach (var kv in TypeAliases)
+        {
+            Add(kv.Key, 7, "系统类型别名 → Core." + kv.Value);
+        }
         foreach (var cls in table.Classes)
         {
             Add(cls.Name, cls.Kind, cls.FullName);
+            // 泛型类双标签：Array<T>/Map<K,V> 之外补裸基名（Array/Map），
+            // 输入裸词精确命中（VSCode 模糊匹配只对前缀友好）
+            int ltCls = cls.Name.IndexOf('<');
+            if (ltCls > 0)
+            {
+                Add(cls.Name[..ltCls], cls.Kind, cls.FullName);
+            }
             AddClassMembers(cls, Add);
         }
         foreach (var pkg in _refPackages.Values.Concat(_projectPackages.Values))
@@ -1706,7 +1703,35 @@ internal sealed class LspServer
                 return chain.Count == 1 ? new ReceiverType { Builtin = ArrayBuiltinMembers } : null;
             }
             var cls = ResolveClassByName(declType, table);
-            return cls == null ? null : WalkChain(cls, isStatic: false, chain, from: 1, table);
+            if (cls != null)
+            {
+                return WalkChain(cls, isStatic: false, chain, from: 1, table);
+            }
+            // var 推断的初始化表达式非类型名（2026-10-23 修复）：`var v = Animal.make("x")`
+            // 的 declType = "Animal.make"（InferVarInitType 原样返回调用前缀）——查类必然落空。
+            // 按 '.' 拆段当链解析（InferVarInitType 仅调用形态返回 → 尾段 HasCall），
+            // 复用本方法限定名聚合/链式推进/裸调用语义取返回类型，再推进外层 chain
+            var initChain = new List<ChainToken>();
+            bool ok = declType.Length > 0;
+            foreach (var seg in declType.Split('.'))
+            {
+                if (seg.Length == 0 || !(char.IsLetter(seg[0]) || seg[0] == '_'))
+                {
+                    ok = false;
+                    break;
+                }
+                initChain.Add(new ChainToken { Ident = seg });
+            }
+            if (ok && initChain.Count > 0)
+            {
+                initChain[^1] = new ChainToken { Ident = initChain[^1].Ident, Args = "" }; // 尾段是调用
+                var init = ResolveReceiverType(text, offset, initChain, table);
+                if (init?.Cls != null)
+                {
+                    return WalkChain(init.Cls, init.IsStatic, chain, from: 1, table);
+                }
+            }
+            return null;
         }
         // 4) 裸方法调用（global.imports 提升的裸名，如 `println()`）：全表搜方法名取返回类型
         if (chain[0].HasCall)
@@ -1760,7 +1785,9 @@ internal sealed class LspServer
     }
 
     /* 类型名 → 类符号：全名 → 短名 → 尾段（SLang.ServerConfig → ServerConfig）
-     * → 剥泛型实参（List<string> → List，含限定名泛型 Std.Map<K,V> → Std.Map）。 */
+     * → 剥泛型实参（List<string> → List，含限定名泛型 Std.Map<K,V> → Std.Map）
+     * → 小写别名归一（int → Core.Int32，见 TypeAliases 注释——别名词元是词法
+     *   关键字不可能是用户类名，最后兜底不影响正常解析序）。 */
     private static ClassInfo? ResolveClassByName(string name, MergedTable table)
     {
         if (name.Length == 0)
@@ -1797,6 +1824,12 @@ internal sealed class LspServer
             {
                 return b3;
             }
+        }
+        // 小写别名兜底：int/float/string 等（词法关键字别名，不可能是用户类名）
+        if (TypeAliases.TryGetValue(name, out var canonical)
+            && table.ByName.TryGetValue(canonical, out var byAlias))
+        {
+            return byAlias;
         }
         return null;
     }
@@ -2369,9 +2402,11 @@ internal sealed class LspServer
                 var tableT = BuildMergedTable(project);
                 var tcls = ResolveClassByName(e.TargetClass, tableT);
                 string? fileT = tcls != null ? ResolveSourcePath(project, tcls, tcls.SourcePath) : null;
-                if (fileT != null)
+                if (fileT != null && tcls != null)
                 {
-                    return (fileT, 0, 0);
+                    // 类型声明锚点：旧实现恒返回 (0,0)（文件头）
+                    var anchor = FindTypeAnchor(project, tcls, fileT);
+                    return (fileT, anchor?.Line ?? 0, anchor?.Char ?? 0);
                 }
             }
             return null;
@@ -2393,6 +2428,160 @@ internal sealed class LspServer
             return null;
         }
         return (file, mm.SourcePath.Length > 0 ? mm.BeginLine : 0, mm.SourcePath.Length > 0 ? mm.BeginChar : 0);
+    }
+
+    /* 类型声明锚点（2026-10-23 类名定义跳转修复——旧实现无行号恒落文件头）：
+     * index.symbols 定义锚点优先（l 1-based；c 实测为名字 token 末位，经行文本
+     * 校正到词首）；无索引（引用模块类型/首编成功前）回落源文件文本扫描首个
+     * (class|interface|enum|data|typealias)\s+类名 声明行。
+     * 返回 (1-based 行, 0-based 名字词首列)；两路皆落空返回 null（调用方回退 0）。 */
+    private (int Line, int Char)? FindTypeAnchor(ProjectInfo project, ClassInfo cls, string file)
+    {
+        if (_projectDefs.TryGetValue(project.SpPath, out var defs)
+            && defs.TryGetValue(cls.FullName, out var def) && def.File.Length > 0 && def.Line > 0)
+        {
+            try
+            {
+                if (string.Equals(Path.GetFullPath(Path.Combine(project.Dir, def.File)), file, StringComparison.OrdinalIgnoreCase))
+                {
+                    return (def.Line, NameStartChar(file, def.Line, def.Char, cls.Name));
+                }
+            }
+            catch
+            {
+                /* 路径异常走文本扫描 */
+            }
+        }
+        return ScanTypeDeclAnchor(file, cls.Name);
+    }
+
+    /* 声明行名字词首：锚 char 语义混杂（token 末位/词首皆有），按声明行文本
+     * IndexOf(名字) 定位词首；读失败/未命中按「末位 - 名长 + 1」推算，再兜底原值 */
+    private static int NameStartChar(string file, int line1, int chr, string name)
+    {
+        if (name.Length > 0)
+        {
+            try
+            {
+                var lines = File.ReadAllLines(file);
+                int li = Math.Min(Math.Max(0, line1 - 1), lines.Length - 1);
+                int c = lines[li].IndexOf(name, StringComparison.Ordinal);
+                if (c >= 0)
+                {
+                    return c;
+                }
+            }
+            catch
+            {
+                /* 读失败走末位推算 */
+            }
+            if (chr >= name.Length - 1)
+            {
+                return chr - name.Length + 1;
+            }
+        }
+        return Math.Max(0, chr);
+    }
+
+    /* 源文件文本扫描类型声明（2026-10-23 对齐 Frontend 规则）：
+     * Front 权威 = StructParseFrame.ParseRootNodeToFileMeta / ParseNamespaceOrTopClass——
+     * ① class/data/enum/interface/typealias 等关键字 + 名字（容忍 public 等前导修饰，
+     *   如 `public class String extends Object`）；② 无关键字裸类（如 .sp 的 `Project{}`）
+     *   也是类——[修饰符…]* Name 后随行尾/{/: 继承 即命中。
+     * 名字含命名空间段时取尾段比对。文件不可读/未命中返回 null。 */
+    private static readonly string[] TypeDeclKeywords = { "class", "interface", "enum", "data", "typealias" };
+    private static readonly char[] WhitespaceSeparators = { ' ', '\t' };
+    private static readonly string[] TypeDeclModifiers =
+    {
+        "public", "private", "protected", "projected", "partial", "final", "const",
+        "static", "abstract", "inline", "mut", "override", "extern", "bind",
+    };
+
+    private static (int Line, int Char)? ScanTypeDeclAnchor(string file, string name)
+    {
+        int dot = name.LastIndexOf('.');
+        string shortName = dot >= 0 ? name.Substring(dot + 1) : name;
+        if (shortName.Length == 0)
+        {
+            return null;
+        }
+        string[] lines;
+        try
+        {
+            lines = File.ReadAllLines(file);
+        }
+        catch
+        {
+            return null;
+        }
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string line = lines[i];
+            int first = 0;
+            while (first < line.Length && char.IsWhiteSpace(line[first]))
+            {
+                first++;
+            }
+            if (first >= line.Length || line[first] == '#')
+            {
+                continue; // 空行/注释行
+            }
+            // 形态①：关键字 + 空白 + 类名（行内任意词位，容忍前导修饰符）
+            foreach (var kw in TypeDeclKeywords)
+            {
+                for (int idx = 0; (idx = line.IndexOf(kw, idx, StringComparison.Ordinal)) >= 0; idx += kw.Length)
+                {
+                    int kwEnd = idx + kw.Length;
+                    // 关键字须词首起（前是行首/空白），后随空白再接类名
+                    if (idx > 0 && !char.IsWhiteSpace(line[idx - 1]))
+                    {
+                        continue;
+                    }
+                    if (kwEnd >= line.Length || !char.IsWhiteSpace(line[kwEnd]))
+                    {
+                        continue;
+                    }
+                    int nameIdx = kwEnd;
+                    while (nameIdx < line.Length && char.IsWhiteSpace(line[nameIdx]))
+                    {
+                        nameIdx++;
+                    }
+                    if (nameIdx + shortName.Length > line.Length
+                        || !string.Equals(line.Substring(nameIdx, shortName.Length), shortName, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+                    char after = nameIdx + shortName.Length < line.Length ? line[nameIdx + shortName.Length] : '\0';
+                    if (char.IsLetterOrDigit(after) || after == '_')
+                    {
+                        continue; // 词边界：防前缀同名（AnimalX ≠ Animal）
+                    }
+                    return (i + 1, nameIdx);
+                }
+            }
+            // 形态②：无关键字裸类（Frontend：顶级 Name{} 也是类）——
+            // 剔除行内 # 注释后按空白分词，剥前导修饰符，剩 [Name] 或 [Name, "{"|":", …]
+            int hash = line.IndexOf('#');
+            string code = hash >= 0 ? line.Substring(0, hash) : line;
+            var segs = code.Split(WhitespaceSeparators, StringSplitOptions.RemoveEmptyEntries);
+            int s = 0;
+            while (s < segs.Length && Array.IndexOf(TypeDeclModifiers, segs[s]) >= 0)
+            {
+                s++;
+            }
+            if (s < segs.Length
+                && (string.Equals(segs[s], shortName, StringComparison.Ordinal)
+                    || string.Equals(segs[s].TrimEnd('{'), shortName, StringComparison.Ordinal))
+                && (s + 1 >= segs.Length || segs[s + 1] == "{" || segs[s + 1] == ":"))
+            {
+                int c = line.IndexOf(shortName, first, StringComparison.Ordinal);
+                if (c >= 0)
+                {
+                    return (i + 1, c);
+                }
+            }
+        }
+        return null;
     }
 
     private object? HandleDefinition(JsonElement root)
@@ -2471,6 +2660,13 @@ internal sealed class LspServer
         if (sym?.Class != null)
         {
             file = ResolveSourcePath(project, sym.Class, sym.Class.SourcePath);
+            if (file != null)
+            {
+                // 类型声明锚点（index.symbols → 文本扫描兜底）：旧实现不置行列，恒跳文件头
+                var anchor = FindTypeAnchor(project, sym.Class, file);
+                line = anchor?.Line ?? 0;
+                chr = anchor?.Char ?? 0;
+            }
             resolved = true;
         }
         else if (sym?.Method != null && sym.Owner != null)
@@ -2488,7 +2684,7 @@ internal sealed class LspServer
             resolved = true;
         }
 
-        // 兜底：与 hover 同构的旧三段回退（限定名成员 → 类 → 裸方法名首个命中）
+        // 兜底：与 hover 同构的旧回退（限定名成员 → 本工程定义锚点成员 → 类 → 裸方法名首个命中）
         if (!resolved && qualifier.Length > 0 && table.ByName.TryGetValue(qualifier, out var qcls))
         {
             var m = FindMember(qcls, word);
@@ -2500,9 +2696,52 @@ internal sealed class LspServer
                 resolved = true;
             }
         }
+        // 本工程定义锚点表成员短名回查（2026-10-23）：工程入口类（.sp 的 Project{}，
+        // 无 class 关键字裸类）成员可能不进 SLIR 类表——全类扫描会首个命中引用模块
+        // 同名方法（如 _main_ 跳 Core.sp）；index.symbols（MetaCore 关联索引）才有锚点，
+        // 按既有设计"定义锚点优先于 MergedTable 回查"
+        if (!resolved && word.Length > 0 && _projectDefs.TryGetValue(project.SpPath, out var pdefs))
+        {
+            foreach (var kv in pdefs)
+            {
+                int lastDot = kv.Key.LastIndexOf('.');
+                if (lastDot < 0 || lastDot + 1 >= kv.Key.Length
+                    || !string.Equals(kv.Key.Substring(lastDot + 1), word, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+                if (kv.Value.File.Length == 0 || kv.Value.Line <= 0)
+                {
+                    continue;
+                }
+                try
+                {
+                    string cand = Path.GetFullPath(Path.Combine(project.Dir, kv.Value.File));
+                    if (File.Exists(cand))
+                    {
+                        file = cand;
+                        line = kv.Value.Line;
+                        chr = NameStartChar(cand, kv.Value.Line, kv.Value.Char, word);
+                        resolved = true;
+                        break;
+                    }
+                }
+                catch
+                {
+                    /* 路径异常继续找 */
+                }
+            }
+        }
         if (!resolved && table.ByName.TryGetValue(word, out var cls))
         {
             file = ResolveSourcePath(project, cls, cls.SourcePath);
+            if (file != null)
+            {
+                // 同上：类名命中也取声明锚点，避免恒跳文件头
+                var anchor = FindTypeAnchor(project, cls, file);
+                line = anchor?.Line ?? 0;
+                chr = anchor?.Char ?? 0;
+            }
             resolved = true;
         }
         if (!resolved)

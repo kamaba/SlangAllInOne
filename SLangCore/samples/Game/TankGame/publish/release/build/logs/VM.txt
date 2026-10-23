@@ -1,0 +1,4 @@
+[11:18:01] [Info] [Project] [LID=10002] Warning: could not load module reference '../Core/Core.module.json' (resolved: D:\project\lang\SlangAllInOne\SLangCore\samples\Game\TankGame\publish\release/../Core/Core.module.json), skipping
+[11:18:01] [Error] [Project] [LID=10004] Error: explicit reference module not found: '../Core/Core.module.json' (resolved: D:\project\lang\SlangAllInOne\SLangCore\samples\Game\TankGame\publish\release/../Core/Core.module.json; also looked in <exe>/lib and <exe>/modules)
+[11:18:01] [Info] [Project] [LID=10010] Read packages in execution order from memory bytes failed (base_dir=D:\project\lang\SlangAllInOne\SLangCore\samples\Game\TankGame\publish\release)
+[11:18:01] [Info] [Runtime] [LID=10010] Load SLIR packages from memory bytes failed (base_dir=D:\project\lang\SlangAllInOne\SLangCore\samples\Game\TankGame\publish\release)

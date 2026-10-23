@@ -1,5 +1,11 @@
 import Std
 
+Testa
+{
+    a = 20
+    b = 30
+}
+
 HelloWorld
 {
     static fun()

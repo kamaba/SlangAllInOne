@@ -129,6 +129,11 @@
       "commandLineArgs": "NetTest",
       "nativeDebugging": true
     },
+    "ServerTest": {
+      "commandName": "Project",
+      "commandLineArgs": "ServerTest",
+      "nativeDebugging": true
+    },
     "HttpWebTest": {
       "commandName": "Project",
       "commandLineArgs": "HttpWebTest",

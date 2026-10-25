@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerP15Test.sl -- SLangServer P1.5 上传验收（ExpendTest 宿主）
+# ServerP15Test.sl -- SLangServer P1.5 上传验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P1.5 验收（§4.4 文件上传全部示例可运行）
 #
 #   T1  multipart 混合（文件 + 普通字段）：bodyFormat 判定 / form 族并入

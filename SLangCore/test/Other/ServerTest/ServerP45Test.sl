@@ -2,7 +2,7 @@ import Std;
 import Core;
 
 # ============================================================================
-# ServerP45Test.sl -- P4.5 直接 await 糖验收（ExpendTest 宿主，纯协程用例）
+# ServerP45Test.sl -- P4.5 直接 await 糖验收（ServerTest 宿主，纯协程用例）
 # 设计契约：SERVER_DESIGN.md §8 P4.5 / §7.5 糖规则
 #
 #   T1 直等形态（糖核心）：await 后跟「返回非 Task 的调用」一步直等——

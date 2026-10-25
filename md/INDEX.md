@@ -168,7 +168,7 @@
 
 | 文档 | 说明 |
 |------|------|
-| [lib/Server.md](./lib/Server.md) | `SLang.Server` HTTP/WS 服务框架用法：路由（on\* 动词家族/`{param}` 路径参数/RouteGroup/DuplicateRoute fail-fast）、Request（path/query/body json·form·bin）、Response 链式 + jsonOk/jsonFail、WebSocket 两形态（进程内升级 / `WebSocketServer` 独立端口）、生命周期与配置；设计与实现实录 `source/Front/Lib/SLang/Server/SERVER_DESIGN.md`，验收 `test/ExpendTest/Server/` |
+| [lib/Server.md](./lib/Server.md) | `SLang.Server` HTTP/WS 服务框架用法：路由（on\* 动词家族/`{param}` 路径参数/RouteGroup/DuplicateRoute fail-fast）、Request（path/query/body json·form·bin）、Response 链式 + jsonOk/jsonFail、WebSocket 两形态（进程内升级 / `WebSocketServer` 独立端口）、生命周期与配置；设计与实现实录 `source/Front/Lib/SLang/Server/SERVER_DESIGN.md`，验收 `test/Other/ServerTest/` |
 
 ---
 

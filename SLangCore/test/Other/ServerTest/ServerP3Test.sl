@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerP3Test.sl -- SLangServer P3 验收（ExpendTest 宿主）
+# ServerP3Test.sl -- SLangServer P3 验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P3 验收（§4.8 OpenAPI 文档 / §4.11 auth）
 #
 #   T1  openapi.json 生成：路由元数据（summary/tags/param/requestBody/

@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerP4Test.sl -- SLangServer P4 验收（ExpendTest 宿主）
+# ServerP4Test.sl -- SLangServer P4 验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P4 验收 / §4.10 控制器语法 / §7 P4 方案
 #
 #   T1  attribute 路由端到端：usePreloadRoutes() 条数 == 控制器方法数（6）

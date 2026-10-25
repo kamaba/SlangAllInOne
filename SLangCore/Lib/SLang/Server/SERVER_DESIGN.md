@@ -1422,7 +1422,7 @@ User u = await persistUser( b ) as User;     # 而非：Task t = spawn persistUs
 | 事项 | 落点 |
 |------|------|
 | 模块登记 | `Server.jsonc` + `Server.sp`（本目录）；导出 `out/export/SLangServer/` |
-| 用例集 | P1 起进 `simple_language/test/ExpendTest/Server/`（宿主 `CSimpleVMStdTest`，`-test` 入口约定见 `md/project/test-guide.md`；量大后独立 `ServerTest` 用例集+宿主，按 test-guide 三步） |
+| 用例集 | **2026-10-25 起独立 `test/Other/ServerTest/` 用例集**（宿主 `CSimpleVMTest` 选择器 `ServerTest`，`-test` 入口约定见 `md/project/test-guide.md`）：P0 探针/引擎（ServerProbeTest/ServerCoreTest）自 NetTest 迁入，P1~P4.5 六件自 `test/ExpendTest/Server/` 迁入（该目录随之移除，ExpendTest/NetTest 不再引 SLangServer） |
 | 文档（用户侧） | `md/lib/` 新增 `Server.md`（用法文档，本文档 §4 收敛而成）+ `md/INDEX.md` §4 挂链（R13） |
 | 文档（Std 侧） | `md/lib/Std/net/Websocket.md` 补 `acceptBuffered` 重载；`md/lib/Std/net/Net.md` L34"不含 HTTP 服务端"措辞更新为指向 SLangServer |
 | AGENTS.md | §1 表格 `simple_language/` 行与 §3 路由表补 `SLang/Server` 条目 |

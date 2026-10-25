@@ -71,6 +71,7 @@ internal static class Program
         ("TLSFProbe",                  Path.Combine("SLangCore", "test", "Other", "TLSFProbe", "TLSFProbe")),
         ("AtSignLabel",                Path.Combine("SLangCore", "test", "Other", "AtSignLabel", "AtSignNegativeTest")),
         ("NetTest",                    Path.Combine("SLangCore", "test", "Other", "NetTest", "ProjectTest")),
+        ("ServerTest",                  Path.Combine("SLangCore", "test", "Other", "ServerTest", "ServerTest")),
         ("HttpWebTest",                Path.Combine("SLangCore", "test", "Other", "HttpWebTest", "HttpWebTest")),
         ("MyTest",                     Path.Combine("SLangCore", "test", "Other", "MyTest", "MyTest")),
         ("CoreAutoProbe",              Path.Combine("SLangCore", "test", "Other", "CoreAutoProbe", "CoreAutoProbe")),

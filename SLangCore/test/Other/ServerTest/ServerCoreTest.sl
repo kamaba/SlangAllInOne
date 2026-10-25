@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerCoreTest.sl -- SLangServer P0 引擎旁路验收（NetTest 宿主）
+# ServerCoreTest.sl -- SLangServer P0 引擎旁路验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P0 验收
 #
 #   S1  基础往返：HttpClient 同进程回环（GET text / POST body echo / 404 /

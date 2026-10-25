@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerP2Test.sl -- SLangServer P2 验收（ExpendTest 宿主）
+# ServerP2Test.sl -- SLangServer P2 验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P2 验收（§4.5 与 §4.7 示例全可运行）
 #
 #   T1  中间件管道：短路（401 不进 handler）/ onion 后置环顺序 /

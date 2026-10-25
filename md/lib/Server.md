@@ -1,6 +1,6 @@
 # SLang Server（`SLang.HttpServerCore` + `SLang.Server`）
 
-HTTP/WS 服务框架。设计文档与实现实录见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md`；验收用例 `test/ExpendTest/Server/ServerP1Test.sl`（P1）/ `ServerP15Test.sl`（P1.5 上传）/ `ServerP2Test.sl`（P2 中间件与流式）/ `ServerP3Test.sl`（P3 文档+认证）/ `ServerP4Test.sl`（P4 attribute 控制器）。
+HTTP/WS 服务框架。设计文档与实现实录见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md`；验收用例集 `test/Other/ServerTest/`（独立工程，宿主选择器 `ServerTest`）：`ServerProbeTest.sl`（P0 探针）/ `ServerCoreTest.sl`（P0 引擎）/ `ServerP1Test.sl`（P1）/ `ServerP15Test.sl`（P1.5 上传）/ `ServerP2Test.sl`（P2 中间件与流式）/ `ServerP3Test.sl`（P3 文档+认证）/ `ServerP4Test.sl`（P4 attribute 控制器）/ `ServerP45Test.sl`（P4.5 直接 await 糖）。
 
 ## 快速开始
 

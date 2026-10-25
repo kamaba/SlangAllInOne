@@ -106,7 +106,10 @@
   ],
   "export": {
     "moduleName": "SLangServer",
-    "outputDir": "export",
+    // 2026-10-25 修正：导出根单一真源 = SlangAllInOne\out\export\（PROJECTS.md §4.2；
+    // 此前遗留 "export" 致产物落本目录 export\，测试 jsonc references 与宿主
+    // StageReferencedModules（out\export\<名>\）双双落空；对齐 Mysql/Tensora 同层四段上跳）。
+    "outputDir": "..\\..\\..\\..\\out\\export",
     "versionMain": 0,
     "versionSub": 1,
     "versionPatch": 0,

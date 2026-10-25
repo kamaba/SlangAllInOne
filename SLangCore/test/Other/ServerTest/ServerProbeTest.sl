@@ -2,7 +2,7 @@ import Std;
 import Core;
 
 # ============================================================================
-# ServerProbeTest.sl -- SLangServer P0 前置探针（NetTest 旁路）
+# ServerProbeTest.sl -- SLangServer P0 前置探针（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P0（风险 #1 / #15 / #19 前置排雷）
 #
 #   A 组  CallClosure(106) 多参直调（风险 #1）：

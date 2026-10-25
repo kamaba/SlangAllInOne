@@ -48,13 +48,7 @@
       { "path": "AttributeNicknameTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AttributeRuntimeTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AttributeTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "MqttTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP1Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP15Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP2Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP3Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP4Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "Server/ServerP45Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+      { "path": "MqttTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -80,8 +74,7 @@
   },
   "references": [
     { "path": "./lib/Core.module.slb" },
-    { "path": "./lib/Std.module.slb" },
-    { "path": "./lib/SLangServer.module.slb" }
+    { "path": "./lib/Std.module.slb" }
   ],
   "struct": [
   ],

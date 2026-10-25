@@ -3,7 +3,7 @@ import Core;
 import SLangServer;
 
 # ============================================================================
-# ServerP1Test.sl -- SLangServer P1 验收（ExpendTest 宿主）
+# ServerP1Test.sl -- SLangServer P1 验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P1 验收（§4.1-§4.4 / §4.6 示例全可运行）
 #
 #   T1  SLang.Server 门面：动词家族注册（onGet/onPost/onPut/onDelete/onPatch/

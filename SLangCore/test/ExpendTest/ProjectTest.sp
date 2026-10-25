@@ -34,20 +34,8 @@ Project
         AttributeExcludeTest.fun()
         AttributeRuntimeTest.fun()
         MqttTest.fun()
-        # SLangServer P1 验收（T1-T8，端口 19401-19408；前置 SLangServer 模块编译）
-        ServerP1Test.fun()
-        # SLangServer P1.5 上传验收（T1-T7，端口 19411-19413；前置 SLangServer 模块编译）
-        ServerP15Test.fun()
-        # SLangServer P2 验收（管道/流式/静态/通配/wsEvents，端口 19421-19424）
-        ServerP2Test.fun()
-        # SLangServer P3 验收（OpenAPI 文档/auth 三挂法/Jwt/importOpenApi/
-        # maxConnections，端口 19431-19435）
-        ServerP3Test.fun()
-        # SLangServer P4 验收（attribute 路由/@OnRoute 前缀/LATE 每请求一实例/
-        # 超时 504/DuplicateRoute，端口 19441-19443）
-        ServerP4Test.fun()
-        # P4.5 直接 await 糖验收（纯协程用例：直等形态 + 三条回归红线 + 边界）
-        ServerP45Test.fun()
+        # SLangServer P1~P4.5 验收已迁出（2026-10-25）：Server/* 六件 →
+        # test/Other/ServerTest/ 独立用例集（宿主选择器 ServerTest）
     }
     _before_()
     {

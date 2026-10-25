@@ -33,36 +33,48 @@
 
 ### 7.2 插件包（`plugin\<id>\`，仓库侧 = `plugin\<id>\` 目录本体）
 
-**两件套 = `plugin.jsonc` + `lib\`**。三个工程（`frontend\`、`cvm\`=runtime、
-`slang\`）的产物**统一导出到插件根下的 `lib\`**：
+**两件套 = `plugin.jsonc` + `package\`（dev 侧）**。三个工程（`frontend\`、
+`cvm\`=runtime、`slang\`）的产物**统一导出到插件根下的 `package\`**（2026-10-25
+二次定稿：lib\ → package\，用户指令——产物生成到 package\，不进 lib\）；发布
+打包（csproj PackPlugins）剥掉 `package\` 层平铺装进 `<包根>\plugin\<id>\`：
 
 ```
-plugin\csharp_mono\
-├── plugin.jsonc                权威清单
-├── lib\                        ← 三工程导出汇聚（= 未来压缩成一个文件的插件包）
-│   ├── CSharpMono.module.slb     第三个工程：slang\ 的 .sl 打包产物（平铺 lib\ 根）
-│   └── windows\                  平台分类库：windows | linux | macos | iOS | android
+plugin\csharp_mono\                       （dev 树，仓库侧）
+├── plugin.jsonc                          权威清单
+├── package\                              ← 三工程导出汇聚（= 未来压缩成一个文件的插件包）
+│   ├── CSharpMono.module.slb             第三个工程：slang\ 的 .sl 打包产物（平铺 package\ 根）
+│   └── windows\                          平台分类库：windows | linux | macos | iOS | android
 │       ├── cvm_csharp_mono.dll           runtime(cvm) 工程 dll
 │       ├── sl_csharp_mono_frontend.dll   frontend 工程原生 dll
 │       └── mono-2.0-sgen.dll、lib\mono\4.5\…  运行体附属子树原样随包
-├── frontend\  cvm\  slang\     源码区（产物已全部上移 lib\；.obj 落各自 obj\）
+├── frontend\  cvm\  slang\               源码区（产物已全部上移 package\；.obj 落各自 obj\）
+
+<包根>\plugin\csharp_mono\                （发布包内——剥掉 package\ 层的平铺形态）
+├── plugin.jsonc
+├── CSharpMono.module.slb
+└── windows\ …（平台子目录直接挂 plugin\<id>\ 下，无 lib\ / package\ 两层目录名）
 ```
 
 - 平台目录名 = `windows|linux|macos|ios|android`，与主包 `lib\<平台>\`、
   C VM `sl_platform_dir_name` **同名约定**；旧 `lib\<os>-<arch>`（如
   `windows-x64`）降为装载回退兼容变体。
-- **分发形态演进**：当前发布打包把插件包整件装进 `<包根>\plugin\<id>\`；
-  未来插件包压缩成一个文件，直接放到 `slang\plugin\` 下的一个目录里。
-- 构建入口：`plugin\<id>\cvm\build-<id>.ps1`（一键产出三工程全部产物进 `lib\`）；
-  vcxproj（VS 链）OutDir 同指 `..\lib\windows\`。
+- **Front 双形态探测**（2026-10-25 二次定稿）：dev 树优先探测
+  `<插件根>\package\<平台>\`，发布包平铺位 `<插件根>\<平台>\` 回退
+  （PluginFrontendParser.EnsureNativeLoaded / PluginManager.ResolvePluginLibDir、
+  ResolveOne 全链同口径）。
+- **分发形态演进**：当前发布打包把插件 package\ 剥层平铺装进
+  `<包根>\plugin\<id>\`；未来插件包压缩成一个文件，直接放到
+  `slang\plugin\` 下的一个目录里。
+- 构建入口：`plugin\<id>\cvm\build-<id>.ps1`（一键产出三工程全部产物进
+  `package\`）；vcxproj（VS 链）OutDir 同指 `..\package\windows\`。
 
 ### 7.3 调用关系（全链路一致性）
 
 | 环节 | 路径行为 |
 |------|----------|
 | Front 编译期 references 纯名（Core/Std/Math） | 官方库直查 `<exe>\lib\<名>.module.slb`（slb 优先；modules\ 兜底） |
-| Front `@tag{}` 路由 | `FindPluginsParent` 上溯 `plugin` → `<exe>\plugin\` 探测；frontendNative dll 取 `<插件根>\lib\<平台>\<lib>` |
-| Front PluginLib 导出段 | 平台目录回退（`<os>` 新标准位优先）→ **递归拷贝** `outDir\plugin\<id>\lib\<平台>\`；module.json 记 `plugin/<id>/lib/<平台>/<file>` |
+| Front `@tag{}` 路由 | `FindPluginsParent` 上溯 `plugin` → `<exe>\plugin\` 探测；frontendNative dll 取 `<插件根>\package\<平台>\<lib>`（发布包平铺 `<插件根>\<平台>\` 回退） |
+| Front PluginLib 导出段 | 平台目录回退（`<os>` 新标准位优先）→ **递归拷贝** `outDir\plugin\<id>\<平台>\`；module.json 记 `plugin/<id>/<平台>/<file>` |
 | C VM 引用装载 | `<exe>\lib\` → `<exe>\modules\` 直查（slb 优先） |
 | C VM 关联 dll 预载 | `<exe>\lib\<平台>\` → 平铺 `lib\` → `<exe>\..\lib\<平台>\` → `<exe>\..\lib\`（sqlite delay-load 绑定） |
 | C VM FFI/插件库 | 候选链含 `<exe>\lib\<平台>\<basename>`；插件 dll 按 module.json 包相对路径（Front 已按 7.2 求值）拼接加载 |
@@ -72,8 +84,8 @@ plugin\csharp_mono\
 
 | 层 | 落点 |
 |----|------|
-| 插件仓库侧 | 4×vcxproj OutDir `..\lib\windows\`；3×build-*.ps1 全产物导出 `lib\`（obj 隔离 obj\、副产物清理、无部署步）；plugin.jsonc `entry.lib` 键改平台名；目录迁移（cvm\lib、frontend\lib 上移合并） |
-| Front 层 | [PluginFrontendParser.cs](../../../simple_language/source/Core/PluginFrontendParser.cs) 探测 `lib\<平台>\`；[PluginManager.cs](../../../simple_language/source/Export/PluginManager.cs) libDir 三级 + 平台目录回退 + 递归拷贝 + module.json 新路径形态 |
+| 插件仓库侧 | 4×vcxproj OutDir `..\package\windows\`；3×build-*.ps1 全产物导出 `package\`（obj 隔离 obj\、副产物清理、无部署步）；plugin.jsonc `entry.lib` 键改平台名；🔥 2026-10-25 二次定稿：`lib\` → `package\`（用户指令——产物生成到 package\，不进 lib\） |
+| Front 层 | [PluginFrontendParser.cs](../../../simple_language/source/Core/PluginFrontendParser.cs) 探测 `package\<平台>\`（回退发布包平铺 `<平台>\`）；[PluginManager.cs](../../../simple_language/source/Export/PluginManager.cs) libDir 三级 + 平台目录回退 + 递归拷贝 + module.json 新路径形态 |
 | 发布打包 | csproj **PackMlirTools**（bin\ 工具链）、**PackPlugins**（plugin\ 安装 + 副产物 Exclude）；PackCvmRuntime sqlite3→`lib\windows\`；PackModulesCommand/CompileStdlib math_lib→`lib\windows\`；RelocatePluginFrontends 空壳删除 |
 | 脚本 | build-packages.ps1 / release-slang.ps1 布局校验与 linux 包组装（sqlite → `lib\linux\`、剔除 lib\windows\）按 7.1 |
 | 清理 | MLIR 工具散拷副本（dev 树 exe 旁 + 旧包根）清除，EnsureLocalTools 改进 `bin\` |

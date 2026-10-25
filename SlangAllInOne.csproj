@@ -228,19 +228,21 @@
   </Target>
 
   <!-- 插件包安装（2026-10-25 用户定稿布局标准）：把每个插件的包内容
-       （plugin.jsonc + lib\ = 三工程导出物：.slb 平铺 lib\ 根 + 原生库
-       lib\<平台>\）装进 <package>\plugin\<id>\。插件包即未来的分发单位
-       （压缩成一个文件放进 slang\plugin\ 下）；Front 侧
-       PluginFrontendParser.FindPluginsParent 的 <exe>\plugin\ 探测 + C VM
-       sl_ffi_lib_load 候选链 <exe>\<包相对路径> 两侧都已就绪。
+       （plugin.jsonc + package\ = 三工程导出物：.slb 平铺 package\ 根 +
+       原生库 package\<平台>\）装进 <package>\plugin\<id>\——发布包内
+       平铺 <id>\<平台>\ + <Module>.module.slb，不带 lib\/package\ 两层
+       目录名（dev 侧产物在 <plugin>\package\，发布时剥掉这层壳）。
+       插件包即未来的分发单位（压缩成一个文件放进 slang\plugin\ 下）；
+       Front 侧 PluginFrontendParser.FindPluginsParent 的 <exe>\plugin\ 探测
+       + C VM sl_ffi_lib_load 候选链 <exe>\<包相对路径> 两侧都已就绪。
        两个运行时插件 frontend 已 C 化（2026-10-21 原生 dll，不经 publish
        产出），随插件整目录分发——本 target 取代旧的
-       RelocatePluginFrontends（空壳已删）。lib\ 未构建（无产物）时本条
+       RelocatePluginFrontends（空壳已删）。package\ 未构建（无产物）时本条
        静默跳过；构建插件 = plugin\<id>\cvm\build-*.ps1。 -->
   <Target Name="PackPlugins" AfterTargets="PackStdModules" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <PropertyGroup>
       <!-- 插件包卫生：链接器副产物（pdb/exp/lib/obj/ilk）不随包分发——
-           插件 lib\ 是构建产物位，运行体只需要 dll/jar/classes/config 等
+           插件 package\ 是构建产物位，运行体只需要 dll/jar/classes/config 等
            （bin\ TrimReleasePackage 同款哲学）。 -->
       <PluginLibJunkExclude>$(MSBuildThisFileDirectory)..\plugin\**\*.pdb;$(MSBuildThisFileDirectory)..\plugin\**\*.exp;$(MSBuildThisFileDirectory)..\plugin\**\*.lib;$(MSBuildThisFileDirectory)..\plugin\**\*.obj;$(MSBuildThisFileDirectory)..\plugin\**\*.ilk</PluginLibJunkExclude>
     </PropertyGroup>
@@ -248,12 +250,12 @@
       <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\csharp_mono\plugin.jsonc')"><PluginId>csharp_mono</PluginId></SlangPluginManifests>
       <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\java_hotspot\plugin.jsonc')"><PluginId>java_hotspot</PluginId></SlangPluginManifests>
       <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\echo\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\echo\plugin.jsonc')"><PluginId>echo</PluginId></SlangPluginManifests>
-      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>csharp_mono</PluginId></SlangPluginLibs>
-      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>java_hotspot</PluginId></SlangPluginLibs>
-      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\echo\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>echo</PluginId></SlangPluginLibs>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>csharp_mono</PluginId></SlangPluginLibs>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>java_hotspot</PluginId></SlangPluginLibs>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\echo\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>echo</PluginId></SlangPluginLibs>
     </ItemGroup>
     <Copy SourceFiles="@(SlangPluginManifests)" DestinationFiles="@(SlangPluginManifests->'$(PublishDir)plugin\%(PluginId)\plugin.jsonc')" SkipUnchangedFiles="true" Condition="'@(SlangPluginManifests)' != ''" />
-    <Copy SourceFiles="@(SlangPluginLibs)" DestinationFiles="@(SlangPluginLibs->'$(PublishDir)plugin\%(PluginId)\lib\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'@(SlangPluginLibs)' != ''" />
+    <Copy SourceFiles="@(SlangPluginLibs)" DestinationFiles="@(SlangPluginLibs->'$(PublishDir)plugin\%(PluginId)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'@(SlangPluginLibs)' != ''" />
   </Target>
 
   <!-- Official release packaging: compile the standard library modules

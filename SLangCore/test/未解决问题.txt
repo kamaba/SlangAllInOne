@@ -53,3 +53,5 @@ SLangTorch 的制作
 
 await spawn 这个的复用工式， 原来 的语法是 await Task 现在直接就是await spwan function() 这样的使用
 
+我现在.sp 的工程要变成非必需的，也就是如果有同名.jsonc里的，判断为有.sp 如果没有 也无所谓，会自动认为是一个非main入口 的工程 
+

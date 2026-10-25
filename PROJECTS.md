@@ -11,7 +11,7 @@
 | `simple_language\` | **纯 FrontEnd 编译器**（C#/.NET 8） | `source\` 平铺（CLI/Core/Export/FileMeta/IR/Log/Parse/Process/Project/Util + Common/Define/IROpEnum/Token/FrontJsonContext.cs）；csproj = `source\SimpleLanguageFront.csproj`。**不含**库/测试/文档/产物 |
 | `csimple_lang\` | **C99 虚拟机**（exe + P/Invoke dll） | vcxproj：`project\vs\vm_lib\csimple_lang_lib.vcxproj`（→dll）、`project\vs\vm_exe\csimple_lang_exe\csimple_lang_exe.vcxproj`（→exe）；CMake 主构建见 AGENTS.md §5 |
 | `SlangAllInOne\` | **总包 + 全仓入口 sln** | 宿主（slang）+ `Project\`（编译/测试/native 工程）+ `SLangCore\Lib`（标准库源码）+ `SLangCore\test`（用例集）+ `SLangCore\samples` + `md\`（全部文档）+ `tools\`；**产物导出根 = `SlangAllInOne\out\export\`** |
-| `simple_language_plugins\` | 插件根 | csharp_mono、java_hotspot（各含 `cvm\`（vcxproj）+ `frontend\`（csproj）+ `slang\`） |
+| `plugin\` | 插件根 | csharp_mono、java_hotspot、echo（各含 `cvm\`（vcxproj）+ `frontend\`（vcxproj）+ `slang\` + 🔥 `lib\`（2026-10-25 插件包布局：三工程产物统一导出——`lib\windows\` 原生库 + `.slb` 平铺 lib\ 根）） |
 | `slang_vscode_plugin\` | VS Code 插件 | 独立，未接入构建 |
 | `gosimple_lang\` | Go 实验前端 | 独立，无构建依赖 |
 | `scripts\` | 一键脚本（build-all / build-vm-win|linux / release-slang…） | 见 AGENTS.md §5 |
@@ -26,7 +26,7 @@
 | test | **CSimpleVMTest** | `Project\CSimpleVMTest\CSimpleVMTest.csproj` | csproj/Exe | **唯一联合测试宿主**（2026-10-18 八合一：CSimpleVM{Core,Std,Math,Special,BenchMark,Render}Test + Test/Test2 并入）；套件预设 BaseTest/ExpendTest(缺省)/MathTest/SpecialTest/BenchMark/RenderTest + 命名用例表 + launchSettings profile 分流；**2026-10-18 晚起执行端 = 发布包 slang 应用**（Debug→`package\win32-debug`、Release→`package\win32-release`，产物拷入包内经 `slang run` 执行（只运行编译结果；run-disk 别名同效）、标准库取自包 lib\；csxproj 已移除 vcxproj 引用） |
 | native-cvm | **csimple_lang_lib / csimple_lang_exe** | `..\csimple_lang\project\vs\vm_lib\…`、`..\csimple_lang\project\vs\vm_exe\…` | vcxproj | C VM DLL（宿主 P/Invoke 载的就是它）与独立 CLI exe |
 | native-libs | **cvm_math_lib / cvm_sl_mysql_lib / CLangdll** | `Project\*\*.vcxproj` | vcxproj | Math FFI（Math.jsonc `vmDlls` 构建它 → `math_lib.dll`）、Mysql FFI、CLangdll |
-| plugins | **sl_csharp_mono_frontend / sl_java_hotspot_frontend / cvm_csharp_mono / cvm_java_hotspot**（vcxproj） | `..\simple_language_plugins\…` | vcxproj | 插件 Front 层与 CVM 层：两个运行时插件 frontend 均已 C 化（2026-10-21，原生三导出 ABI `sl_frontend_*`，Front 经 NativeLibrary 直调，AOT 可用；原 SLCSharpMonoFrontend/SLJavaHotspotFrontend csproj 已删除） |
+| plugins | **sl_csharp_mono_frontend / sl_java_hotspot_frontend / cvm_csharp_mono / cvm_java_hotspot**（vcxproj） | `..\plugin\…` | vcxproj | 插件 Front 层与 CVM 层：两个运行时插件 frontend 均已 C 化（2026-10-21，原生三导出 ABI `sl_frontend_*`，Front 经 NativeLibrary 直调，AOT 可用；原 SLCSharpMonoFrontend/SLJavaHotspotFrontend csproj 已删除） |
 | tools | **ExtractLogs / LidIndexer / SLBRoundTrip** | `tools\*\*.csproj` | csproj | 日志工具 / LID 索引 / SLB 往返测试（引用 Front，验证 slb/json 双向一致） |
 
 ⛔ **已删除的测试宿主（2026-10-18 八合一并入 `CSimpleVMTest`）**：`Project\CSimpleVMCoreTest`、`CSimpleVMStdTest`、`CSimpleVMMathTest`、`CSimpleVMSpecialTest`、`CSimpleVMBenchMarkTest`、`CSimpleVMRenderTest`、`Test`、`Test2`——旧入口等价映射：CoreTest/Test→`-- BaseTest`，StdTest/Test2/CSimpleVMTest→无参（ExpendTest），MathTest→`-- MathTest`，SpecialTest→`-- SpecialTest`，BenchMarkTest→`-- BenchMark`，RenderTest→`-- RenderTest`。⛔ **`Project\StdNativeImpl`、`Project\MathNativeImpl` 已于 2026-10-18 删除**——旧 C# VM `ISLExternalFunctionModule` 外部函数机制示例，机制随 C# VM 废弃（C VM 等价物 = C DLL + jsonc `systemCalls.cvmFunction`，`CLangdll`/`cvm_math_lib` 已覆盖；删除留档见 `md/ai/troubleshooting/06-build-engineering.md` 2026-10-18 条）。
@@ -60,7 +60,7 @@
 5. **引用装载 slb 优先**：`SLModulePackageWriter.ReadPackageForReference`（.slb → SLBReader，json → Read；统一归一后剥指令）。
 6. **SLB 反序列化**：`SLBReader`（`simple_language\source\Export\SLIR\Binary\`）+ round-trip 测试 `tools\SLBRoundTrip`。
 7. **新增 .c 文件三处登记**（R6）、**新增系统方法四处同步**（R7）不变，见 AGENTS.md §2。
-8. **关联件布局规则（2026-10-22 用户定稿）**：关联 `.slb` / 关联 `.dll`（sqlite3.dll、math_lib.dll、libsqlite3.so.0）一律放 `lib\`，插件放 `plugins\`，exe 目录只留 exe 本体——sqlite3.dll 改 **delay-load**（CMake `/DELAYLOAD` + `vm_lib` vcxproj `<DelayLoadDLLs>` 两链同步）+ 运行期 `sl_preload_associated_dlls` 预装载（`sl_ffi_lib_manager.c`，`cli_init_platform` + app 载荷双接线）；Linux 侧 rpath `$ORIGIN/../lib` + CvmBackend 预载。落点：csproj `PackCvmRuntime` / `PublishCommand` / `build-packages.ps1`；权威 = `md\project\package-layout.md` §六。
+8. **关联件布局规则（2026-10-22 用户定稿；🔥 2026-10-25 全量定稿升格为 §七 布局标准，权威 = `md\project\package-layout.md` §七）**：包根四件套 = `slang(.exe)` 入口 + `bin\`（C VM 本体 + **MLIR/LLVM 工具链**，csproj `PackMlirTools`）+ `lib\`（module slb 平铺 + **关联 dll 平台子目录 `lib\{windows|linux}\`**：sqlite3.dll/math_lib.dll）+ `plugin\<id>\`（插件包安装，csproj `PackPlugins`：`plugin.jsonc + lib\` 整件）。sqlite3.dll 改 **delay-load**（CMake `/DELAYLOAD` + `vm_lib` vcxproj `<DelayLoadDLLs>` 两链同步）+ 运行期 `sl_preload_associated_dlls` 预装载（`sl_ffi_lib_manager.c`，`cli_init_platform` + app 载荷双接线；探测序 `<exe>\lib\<平台>\` → 平铺 → `..\lib\<平台>\` → `..\lib\`）；Linux 侧 rpath `$ORIGIN/../lib` + CvmBackend 预载。**插件包布局（同日定稿）**：三工程（frontend/runtime(cvm)/slang）产物统一导出 `<插件根>\lib\`——原生库 `lib\{windows|linux|macos|iOS|android}\`、`.sl` 打包 `.slb` 平铺 lib\ 根；Front `PluginFrontendParser`/`PluginManager` 按 `<插件根>\lib\<平台>` 探测与递归拷贝（module.json 记 `plugin/<id>/lib/<平台>/<file>`）；vcxproj OutDir=`..\lib\windows\`，构建脚本 `cvm\build-<id>.ps1` 一键三产物；MLIRToolchain 探测 `<exe>\bin\` 优先（auto-deploy 副本也进 `bin\`，exe 根散拷已清理）。
 
 ## 5. 构建命令速查
 
@@ -108,14 +108,14 @@ powershell -File scripts\release-local.ps1                    # 🔥 本地发�
 | **Y（发布版本）** | **真实发布版本** | **仅正式发布时提升**（与 `release-slang.ps1 -Version` / GitHub Release tag 同源），提升后 Z 归零 |
 | **Z（小版本）** | **随时递增的开发小版本** | **四端任一端有任何改动即 +1**（日常开发常态位） |
 
-### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.27`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21` → `0.0.22`/`0.0.23`（两轮日常改动）→ 2026-10-23 LSP 定义跳转/裸类修复时发现 VSCode 独走 `0.0.24`、其余三端 `0.0.23` 错位 → 全员统一 `0.0.24` → 同日成员补全 var 推断修复（LSP 接收者链解析 + Front `NormalizeVariableName` this 参数名）→ `0.0.25` → 同日 LSP 索引数据源切换 IR 生成数据（`LspIRIndexExporter`，AGENTS R19）→ `0.0.26` → 同日 LSP 系统类型别名提示（`TypeAliases` 归一，int/float/string hover/补全/成员链）→ `0.0.27`）
+### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.34`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21` → `0.0.22`/`0.0.23`（两轮日常改动）→ 2026-10-23 LSP 定义跳转/裸类修复时发现 VSCode 独走 `0.0.24`、其余三端 `0.0.23` 错位 → 全员统一 `0.0.24` → 同日成员补全 var 推断修复（LSP 接收者链解析 + Front `NormalizeVariableName` this 参数名）→ `0.0.25` → 同日 LSP 索引数据源切换 IR 生成数据（`LspIRIndexExporter`，AGENTS R19）→ `0.0.26` → 同日 LSP 系统类型别名提示（`TypeAliases` 归一，int/float/string hover/补全/成员链）→ `0.0.27` → 10-22/23 调试器「添加到监视」系列（右键/悬停 + data 变量树 `0.0.28` → 条件显隐 `0.0.29` 半成品重打包 `0.0.30` → Trae 命令改名双回落修复 `0.0.31` → 2026-10-25 布局标准全量定稿（包根四件套 + 插件包两件套，package-layout.md §七）`0.0.34`））
 
 | 端 | 锚点 | 现值 |
 |----|------|------|
-| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.27` |
-| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.27` |
-| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.27` |
-| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.27` |
+| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.34` |
+| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.34` |
+| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.34` |
+| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.34` |
 
 ### 操作规则
 

@@ -168,7 +168,7 @@ public class CoroutineBlockReason extends Object
 | 关键字 | 语法身份 | 展开为 |
 |---|---|---|
 | `spawn E` | 一元前缀**表达式** | 函数值变量：`Coroutine.spawnClosureN( f, 实参... )` 直传；静态方法名/实例链：`Coroutine.spawnClosure0( 合成包装闭包 )` |
-| `await e` | 一元前缀**表达式** | `Coroutine.awaitTask( e )` |
+| `await e` | 一元前缀**表达式** | 操作数为**调用形态**：`Coroutine.__awaitCall( e )` 标记 → MetaCore 按返回类型换绑（见 §4.2 直接 await 糖）；其余形态：`Coroutine.awaitTask( e )` |
 | `yield` | **语句**（无参） | `Coroutine.yieldNow()` |
 
 ```ebnf
@@ -218,6 +218,28 @@ ret await t
 int x  = 1 + ( await t as int )
 await h                              # 语句形态：忽略返回值
 ```
+
+**直接 await 糖**（P4.5，SERVER_DESIGN.md §7.5）：`await` 后跟**调用形态**时一步直等协程函数结果，无需先 spawn 再取 Task：
+
+```sl
+# 直接 await：目标返回非 Task 时自动 spawn 协程 + 等待取回（无需任何额外声明）
+User u = await persistUser( b ) as User       # 等价：Task t = spawn persistUser( b ); User u = await t as User
+int r  = await box.fetchInst( 5 ) as int       # 实例方法同理（receiver 进方法引用闭包，this 正常绑定）
+await logAudit( id )                           # void 返回目标（只等完成，不取值）
+
+# 返回 Task 的调用（如 httpGetAsync 族）自动透传，不会被误包 spawn
+string body = await httpGetAsync( url ) as string
+```
+
+规则（`await` 操作数三分支）：
+
+| `await` 操作数 | 行为 |
+|---|---|
+| 调用且**返回 Task** | 透传：`awaitTask( <调用> )`（与旧语义一致，`httpGetAsync` 族不回归） |
+| 调用且**返回非 Task** | 自动 spawn：内层调用降级为**方法引用** + `spawnClosureN` + `awaitTask`（实参在 **await 点立即求值**） |
+| Task 变量 / 其它表达式 / 函数值变量调用 | 维持 `awaitTask( e )` 现状（保守路径） |
+
+⚠️ **边界**：目标为 get/set 访问器、构造函数、模板方法或调用实参超过 3 个时编译期报 Error 21480（VM 方法引用 spawn v1 仅固定 0..3 参），请改用显式两步 `Task t = spawn 方法( 实参 ); 结果 = await t as 类型;`。直接 await 要求协程上下文（同 `awaitTask`），root 主入口本身是 root 协程可直接使用。
 
 ### 4.3 `yield`
 

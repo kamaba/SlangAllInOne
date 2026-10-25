@@ -12,7 +12,7 @@ import Core;
 #          csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md（§10.1/§11）
 # 栈协议：CSharpCallXxx(asm, ns, class, method, ret_kind, 实参...)；
 #         asm 裸文件名经插件 dll 同目录兜底解析（P1-e 修复）。
-# 测试程序集：SLPlugin/csharp_mono/probe/SLCSharpTestLib.cs（net4x）。
+# 测试程序集：plugin/csharp_mono/probe/SLCSharpTestLib.cs（net4x）。
 # 降级负向（P1-f-2/P1-f-3）：插件侧失败经 V8 host->throw_error 上抛 VM 异常
 # （vm_sys_throw 置码 + try 栈展开，求值栈恢复到 BeginTry 快照，实参不残留），
 # SL 侧 label{}try{}catch{} 捕获。码值：NOT_FOUND=-93（asm/类/方法解析失败

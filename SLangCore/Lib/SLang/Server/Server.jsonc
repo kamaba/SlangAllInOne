@@ -20,12 +20,13 @@
     "isSupportDoublePlus": false,
     "requireSameNumericTypes": false
   },
-  // P0+P1+P1.5+P2+P3 已实现文件；SERVER_DESIGN.md §5.1 余量随后续阶段增补
+  // P0+P1+P1.5+P2+P3+P4 已实现文件；SERVER_DESIGN.md §5.1 余量随后续阶段增补
   //（compileFiles 为显式清单，勿提前登记空文件）。
   "compileFiles": {
     "files": [
       { "path": "Server.sl",         "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "HttpServerCore.sl", "group": "server", "tag": "net",  "ignore": false, "priority": 0 },
+      { "path": "RouteAttrs.sl",     "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Router.sl",         "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Request.sl",        "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Response.sl",       "group": "server", "tag": "core", "ignore": false, "priority": 0 },
@@ -63,6 +64,16 @@
       { "class": "ServerConfig" },
       { "enum": "ServerError" },
       { "class": "Server" },
+      { "class": "OnGet" },
+      { "class": "OnPost" },
+      { "class": "OnPut" },
+      { "class": "OnDelete" },
+      { "class": "OnPatch" },
+      { "class": "OnHead" },
+      { "class": "OnOptions" },
+      { "class": "OnAny" },
+      { "class": "Route" },
+      { "class": "OnRoute" },
       { "class": "HttpServerCore" },
       { "class": "Router" },
       { "class": "RouteInfo" },
@@ -86,10 +97,16 @@
       { "class": "WsSession" },
       { "class": "WebSocketServer" }
   ]}],
-  "systemCalls": [],
+  // P4：预装载路由接线三系统方法（csimple_lang/src/vm/system_method_call/
+  // server_system_method.c；C VM 路由表经此暴露给 SL 层 usePreloadRoutes）
+  "systemCalls": [
+    { "name": "SystemServerRouteCount",   "returnType": "Int32",  "params": [],        "isVariadic": false, "cvmFunction": "vm_sys_server_route_count" },
+    { "name": "SystemServerRouteLine",    "returnType": "string", "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_server_route_line" },
+    { "name": "SystemServerRouteHandler", "returnType": "object", "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_server_route_handler" }
+  ],
   "export": {
     "moduleName": "SLangServer",
-    "outputDir": "..\\..\\..\\..\\out\\export",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 1,
     "versionPatch": 0,
@@ -103,5 +120,9 @@
       "meta": true,
       "ir": true
     }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
   }
 }

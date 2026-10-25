@@ -2,7 +2,7 @@
   "project":
   {
     "name": "BenchMark",
-    "desc": "BenchMark project - internal performance test cases (HelloWorld / Fibonacci / Loop / Levenshtein / DataTypes / StringBench)",
+    "desc": "BenchMark project - internal performance test cases (HelloWorld / Fibonacci / Loop / Levenshtein / DataTypes / StringBench / RegExpBench / NQueens / Sieve / QuickSort / MatrixMul / BinaryTree / Mandelbrot)",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 1,
@@ -28,7 +28,13 @@
       { "path": "Levenshtein.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "DataTypes.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "StringBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
-      { "path": "RegExpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
+      { "path": "RegExpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "NQueens.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "Sieve.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "QuickSort.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "MatrixMul.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "BinaryTree.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "Mandelbrot.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {

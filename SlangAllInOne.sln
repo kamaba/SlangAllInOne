@@ -21,13 +21,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_sl_mysql_lib", "Project
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLangdll", "Project\CLangdll\CLangdll.vcxproj", "{D5C62645-D6BC-42B4-BC6D-76F41F92F5AC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_csharp_mono_frontend", "..\simple_language_plugins\csharp_mono\frontend\sl_csharp_mono_frontend.vcxproj", "{B4E2D9C1-5A6F-4C3E-9D8A-1F2E3A4B5C6D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_csharp_mono_frontend", "..\plugin\csharp_mono\frontend\sl_csharp_mono_frontend.vcxproj", "{B4E2D9C1-5A6F-4C3E-9D8A-1F2E3A4B5C6D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_java_hotspot_frontend", "..\simple_language_plugins\java_hotspot\frontend\sl_java_hotspot_frontend.vcxproj", "{A5C3E8D2-7B1F-4E52-8C9B-3D6F5A7C8E0F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_java_hotspot_frontend", "..\plugin\java_hotspot\frontend\sl_java_hotspot_frontend.vcxproj", "{A5C3E8D2-7B1F-4E52-8C9B-3D6F5A7C8E0F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_csharp_mono", "..\simple_language_plugins\csharp_mono\cvm\cvm_csharp_mono.vcxproj", "{6D5B4C2E-8F1A-4A9D-B3C7-2E8F5A1D9B04}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_csharp_mono", "..\plugin\csharp_mono\cvm\cvm_csharp_mono.vcxproj", "{6D5B4C2E-8F1A-4A9D-B3C7-2E8F5A1D9B04}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_java_hotspot", "..\simple_language_plugins\java_hotspot\cvm\cvm_java_hotspot.vcxproj", "{7E4C3A5F-9B2D-4C8E-A4D6-3F9B6C2E1A05}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_java_hotspot", "..\plugin\java_hotspot\cvm\cvm_java_hotspot.vcxproj", "{7E4C3A5F-9B2D-4C8E-A4D6-3F9B6C2E1A05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LidIndexer", "tools\LidIndexer\LidIndexer.csproj", "{6E2D4B18-8A3F-4C7D-9B5E-2F81A63D04C9}"
 EndProject

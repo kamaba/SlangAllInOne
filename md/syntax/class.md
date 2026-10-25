@@ -247,6 +247,40 @@ class C22 extends Application.CI2 {
 }
 ```
 
+### 1.9 this 关键字（2026-10-23 场景实证）
+
+`this` 指当前实例，Front 全链路（Token → Node → File → MetaCore → IR）已整合；标准库为最大消费方。
+this 是**隐式第 0 个实参**（`MetaMemberFunction.Init` 创建 `<类全名>.<方法名>.this`，`EVariableFrom.Argument`），IR 侧 `ParseArgumentsOnly` 以 index 0 注册。
+
+**已支持场景**（专项用例 `test/BaseTest/ThisBaseTest.sl`，2026-10-23 接入 BaseTest 套件）：
+
+| 场景 | 示例 |
+|------|------|
+| 成员读/写 | `this.x` / `this.x = v`（含 get/set 访问器内） |
+| 方法调用 | `this.method()`（虚方法/覆写/final 均运行时绑定） |
+| 属性式 getter | `this.geta`（无括号） |
+| 构造函数 `_init_` 内 | 与 `base._init_(...)` 混用 |
+| 继承链 this/base | `base.x` 的实例指针直接取 `thisMetaVariable`（base 与 this 共享实例） |
+| `this?.x` 安全访问 | 链路字段 `isQuestionMarkDot` 透传（this 恒非空，语义等价 `this.x`） |
+| `ret this` 链式 | `this.add(1).add(2)`（receiver 连续叠加，标准库 `Redis.sl` 同款） |
+| this 作方法实参 | `Cls.staticFn(this, other)`（隐式第 0 实参显式化传递） |
+| 闭包内 this 读写 | 捕获自宿主实例方法（`capturedThis`），同一宿主多个闭包**共享同一 this 槽位** |
+| 协程 | `spawn this.方法`（脱糖为无参包装闭包，实参延迟求值） |
+| 隐式 this | `local{}` init 上下文裸名字等价 `this.xxx`（链首自动补入 this 访问节点） |
+
+**禁止/受限场景**：
+
+- 静态函数使用 this → Error 21071/21072
+- 静态方法中定义的闭包使用 this → Error 21070
+- `this()` 调用形态 → Error 21069（构造器委托不支持，仅支持 `base._init_(...)`）
+- 字段初始化器 / 参数默认值中的 this → **Info 级 21066/21067**（检测提示不拦截，Core 标准库自身存在此类用法）
+- this 只能位于链首（`x.this.y`）→ Info 级 21068
+- `Isolate` 入口禁止 this 非静态成员函数（Node 层拦截）
+- this 作变量名/参数名 → 报错（`this._value = b` 前缀豁免链除外）
+
+**已知限制**：嵌套闭包的内层闭包不能引用外层捕获变量与 this（`MetaClosureBlockStatements.CaptureFromHost` 显式拦截"闭包嵌套定义暂不支持"）；内层闭包只能使用自身参数。多态下对父类布局字段的 this 写入为设计约束（见 ThisBaseTest.sl 注释）。
+
+
 ---
 
 ## 二、典型语法与用法示例

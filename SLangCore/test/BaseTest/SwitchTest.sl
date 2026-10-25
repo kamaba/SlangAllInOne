@@ -35,6 +35,8 @@ SwitchTest
     {
         global.println("========== SwitchTest (start) ==========")
 
+        SwitchColor ws = SwitchColor.Blue
+
         constIntTest()
         multiValueOrTest()
         multiValueCommaTest()

@@ -30,11 +30,13 @@ Project
         CallLinkTestNS.CallLinkTest.fun()
         Class1TestSmoke.fun()
         Class2TestSmoke.fun()
+        NamespaceTest2.fun()
         ClassAs_IsNS.ClassAs_Is.fun()
         CommitTest.fun()
         ConStrCC.ConstructionTest.fun()
         ExpressTest.fun()
         ExtendsClass.fun()
+        ThisBaseTest.fun()
         AssignStatement.fun()
         NCTest.fun()
         ForTest.fun()
@@ -50,6 +52,7 @@ Project
         MVTest2.fun()    
         
         CoroutineTest.fun();
+        PromotionProbe.run()
         StringBuilderTest.fun()
         
         EnumTest.fun()

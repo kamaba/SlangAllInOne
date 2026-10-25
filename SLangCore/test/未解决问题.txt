@@ -1,11 +1,7 @@
 TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
 
-
-1. this的使用，还没有整合
-2. 循环引用 问题
 VSCode里边，如果识别到是变量，在右键的时候，要弹出一个按钮，叫 添加到监视 的功能，点击后，直接移动到监视栏 看看是否和我内部的监视代码可以整合
-计算过程，要再验证下 计算升级的过程，多写几个这样的验证，比如 uint8+int16 这类的  多写一些 并且跑通
-自动.后边的内容，要在vscode里边，在输入一个，并且识别后，提示，这个要求对单个页的内某个元素的解析后，然后自动后悔这个类或者返回类型的后边可以 使用的，public的，都进行提示。
+
 
 
 1. 接入 javascript_quickjs 
@@ -48,3 +44,12 @@ MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 l
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 
+
+
+我再说明下 关于项目的结构   slang 是我的frontEnd/cvm_runtime的入口   然后lib下边放我的 lib 放一些引入的module  还有这个module关联的 .dll一类的文件 像Math.module 关联的是math_lib.dll Core.Module 关联的是 sqlite3.dll 
+
+然后在slang同目录 bin 是我的一些打包的产物，比如 llc.exe mlir.opt.exe mlir-translate.exe csimple_lang 这种的  都放到bin也下 和slang 同级别的还有一个是plugin的目录，这里边存放 的是plugin的插件 比如csharp_mono java_hotspot  结构是这样的 plugin/csharp_mono/windows|linux|macos|iOS|android 这样的结构    你现在的结构又搞乱了   把这个标准 强制执行下吧，要从FrontEnd到cvm里边 都按这个标准 去执行FrontEnd层  plugin工程导出的时候 D:\project\lang\plugin\csharp_mono这里边的三个工程 都导出到  frontend/runtime 这两 这个目录的package\lib下边  的windows/linux/macos 这样的分类库里边去    然后第三个集成的.sl 打完包 就是一个.slb 的文件   然后这个package 未来，是个压缩文件 ，直接会放到slang/plugin下边的一个目录 ，然后 这样的调 用关系 ，然后使用  把这块一定要 多花点时间 理清下
+
+
+await spawn 这个的复用工式， 原来 的语法是 await Task 现在直接就是await spwan function() 这样的使用
+

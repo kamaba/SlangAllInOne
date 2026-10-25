@@ -1,8 +1,8 @@
 # SimpleLanguage 插件标准模板（cvm / frontend / slang 三目录）
 
-> 蓝本：`simple_language_plugins/csharp_mono`（首个按本模板落地的完整实例，2026-09-26 全链路验收）；
-> 第二实例：`simple_language_plugins/java_hotspot`（HotSpot JVM via JNI，2026-09-29 代码侧 P3 收官——「接第二种运行时」的同构验证：JNI 233 槽表自带声明不依赖 JDK 头、javac 探测 + 无 JDK 降级、build 脚本含 slang refModule 编译步；设计 = `csimple_lang/md/design/HOTSPOT_JNI_INTEGRATION_DESIGN.md`）；
-> 最小范本：`simple_language_plugins/echo`（六件套单文件 C99，§8.1 骨架的提取源）。
+> 蓝本：`plugin/csharp_mono`（首个按本模板落地的完整实例，2026-09-26 全链路验收）；
+> 第二实例：`plugin/java_hotspot`（HotSpot JVM via JNI，2026-09-29 代码侧 P3 收官——「接第二种运行时」的同构验证：JNI 233 槽表自带声明不依赖 JDK 头、javac 探测 + 无 JDK 降级、build 脚本含 slang refModule 编译步；设计 = `csimple_lang/md/design/HOTSPOT_JNI_INTEGRATION_DESIGN.md`）；
+> 最小范本：`plugin/echo`（六件套单文件 C99，§8.1 骨架的提取源）。
 > 设计总纲：`csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md`（Part I 插件系统 / Part II `@tag{}` AtSignLabel 详规）。
 > 适用：给 SL 接入**一种语言 / 一个运行时 / 一台设备 / 一类工具**——新增插件目录即可，编译器与 VM 零改动。
 > 新写插件直接跳 **§8**（接口真源索引 + 六件套 C 骨架 + frontend 双契约骨架 + slang 样例 + 从零生成流程），再回 §2 查字段、§5 对 checklist、§7 避坑。
@@ -10,13 +10,13 @@
 ## 1. 三目录布局（目录名固定，Front / CVM 两侧按此解析）
 
 ```
-simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（路由按清单 id，非目录名）
+plugin/<plugin_id>/                         ← 推荐目录名 = plugin.id（路由按清单 id，非目录名）
 ├── plugin.jsonc          ★ 权威清单（Front 编译期 + CVM 装配期都读它）
 ├── README.md             插件说明（可选 README.en.md）
 ├── cvm/                  C99 侧全部——编成 dll 给 CVM 运行期加载
 │   ├── src/<name>/       源码（六件套 ABI 入口 + 插件逻辑；平台代码禁入，走 OS 抽象层）
 │   ├── include/          对外头文件（ABI 头 / vendored 三方头，随包分发）
-│   ├── lib/<os>-<arch>/  ★ 平台产物（插件 dll + 同目录依赖树；CVM 从这里原位加载）
+│   ├── <平台>/          ★ 平台产物（frontend+runtime 两 dll + 同目录依赖树；v1.12 起提升至插件根 lib\）
 │   ├── probe/            探针工程（可选，验证外部运行时；插件化落地后可删）
 │   ├── <name>.vcxproj    MSVC 工程（挂 SlangAllInOne.sln「plugins」文件夹，仅 x64）
 │   └── build-<name>.ps1  ★ 一键构建（cvm C 源 + frontend 原生 C 源 + slang refModule + 部署到测试模块包）
@@ -30,7 +30,7 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 │   │   ├── sl_cjson.c/.h       yyjson 读请求 + sbuf 手工转义响应（共用件，两插件同源）
 │   │   └── sl_win.c/.h         Win32 支撑（临时目录/写盘/工具链探测/进程捕获，按需裁剪）
 │   ├── vendor/yyjson/          vendored yyjson（MIT，镜像自 csimple_lang/third_party）
-│   └── <name>_frontend.vcxproj MSVC 工程（仅 x64，产物落 lib/windows-x64/）
+│   └── <name>_frontend.vcxproj MSVC 工程（仅 x64，产物落 lib/windows/）
 └── slang/                ref module——绑定在插件上的 SL 引用模块
     ├── <Module>.jsonc    ★ 系统方法声明（systemCalls[].cvmFunction = "plugin:<capability>"）
     ├── <Module>.sl       SL 侧声明源码（不写桩方法体）
@@ -51,12 +51,12 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
   "plugin":   { "id": "<plugin_id>", "name": "...", "version": "0.1.0", "vendor": "...", "description": "..." },
   "abi":      { "cvm": 1, "frontend": 2 },        // frontend 2 = 原生 C 承载（2026-10-21 起标准）
   "entry": {
-    "lib":    { "windows-x64": "<name>.dll" },   // 相对 cvm/lib/<os>-<arch>/ 的文件名
+    "lib":    { "windows": "<name>.dll" },        // 键 = 平台目录名（windows|linux|macos|iOS|android），相对 lib/<平台>/
     "prefix": "sl_<name>_"                       // ⚠ 必须含尾下划线（CVM resolve_symbol 直接 prefix+suffix 拼接）
   },
   // —— signLabel（@<tag>(){} 内联块）原生承载：三导出 ABI = frontend/src/sl_frontend_abi.h ——
   "frontendNative": {
-    "lib":     "<name>_frontend.dll",   // 相对 frontend\（Front 也探测 frontend\lib\windows-x64\）
+    "lib":     "<name>_frontend.dll",   // 相对 frontend\（Front 也探测 lib\windows\）
     "parseFn": "sl_frontend_parse",     // 缺省名；int parse(const char* req, const char** out)
     "buildFn": "sl_frontend_build",     // 导出缺失 = 插件自管产物，不算失败
     "freeFn":  "sl_frontend_free"       // 结果缓冲释放（同指针回传）
@@ -94,7 +94,7 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 - **systemCall capability**：实现一个 exec 入口（栈协议：VM 栈 ↔ 插件编组，参考 `cvm_csharp_mono.c` 的 `csharp_exec`）。
 - **labelExec capability**：`@<tag>(){}` 运行期接收端（ABI 见 `csimple_lang/src/vm/plugin/sl_plugin_abi.h`，`SLLabelValue[]` 编组）。
 - 平台代码禁入源文件（同 C VM 的 R3 纪律）；外部运行时经 `LoadLibrary`+`GetProcAddress` 函数指针表动态解析，不 .lib 链接。
-- 产物与同目录依赖（运行时 dll / BCL 等）整体落 `lib/<os>-<arch>/`，**原位加载**，标准安装语义（prefix = dll 目录）。
+- 产物与同目录依赖（运行时 dll / BCL 等）整体落插件包 `lib\<平台>\`（2026-10-25 标准），**原位加载**，标准安装语义（prefix = dll 目录）。
 
 ### frontend/（🔥 原生 C，2026-10-21 起标准形态）
 - Front 只转调不解析——**全部块体解析 + 目标语言编译部署逻辑归插件**。块体三分：头区入通道行与尾行出通道由 Front 初判（双出通道 → 20056），中间**代码段是目标语言原文，Front 零处理整段透传**，插件自决整编（段首指令行吸收、代码区 `<-`/`$` 前缀/指令行报错、字符串/注释内 `<-` 放行）：
@@ -125,10 +125,10 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 "plugins": {
   "<plugin_id>": {
     "name": "...", "version": "0.1.0",
-    "path": "simple_language_plugins/<plugin_id>",      // 相对工作区根（上溯定位）
+    "path": "plugin/<plugin_id>",                       // 相对工作区根（上溯定位）
     "enabled": true, "abi": 1,
     "prefix": "sl_<name>_",                              // ⚠ 必须显式 = plugin.jsonc entry.prefix（缺省 id+"_" 解析不到六件套）
-    "lib": "../../../../simple_language_plugins/<plugin_id>/cvm/lib/windows-x64/<name>.dll",  // 字符串直给
+    "lib": "../../../../plugin/<plugin_id>/lib/windows/<name>.dll",  // 字符串直给
     "platform": { "os": "windows", "arch": "x86_64" },
     "onUnavailable": "warn",
     "capabilities": [ { "type": "systemCall", "name": "<cap>" } ]
@@ -144,20 +144,20 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 
 `lib` 两种形态：
 - **字符串直给**（csharp_mono 用）：相对包路径，CVM 从插件原位加载——适合依赖树深/需同目录 BCL 的插件。
-- **对象形态** `{ "dir": "lib", "select": "auto" }`（echo 用）：`PluginManager`（PluginLib 导出段）四级回退求值平台库并**拷贝**到 `out/export/<模块>/plugins/<id>/`——适合单 dll 轻量插件（⚠ `TopDirectoryOnly` 不递归，多级依赖树会缺文件）。对象形态成功路径上，**同趟 `PluginManager`（AtSignLabel 构建段）构建部署的 frontend 产物（如 `SLAtSign.dll`）也会被拷入 `plugins/<id>/` 并追加进导出 module.json 的 `plugins[].libs` 做路径关联**——纯关联记录（CVM 装配只消费 `lib` 主库）：运行期插件 dll 从包内加载后，同目录的 frontend 产物即可被其运行时按裸名定位；字符串直给（原位加载）不触发该关联。
+- **对象形态** `{ "dir": "lib", "select": "auto" }`（echo 用）：`PluginManager`（PluginLib 导出段）四级回退求值平台库并**拷贝**到 `out/export/<模块>/plugin/<id>/`——适合单 dll 轻量插件（⚠ `TopDirectoryOnly` 不递归，多级依赖树会缺文件）。对象形态成功路径上，**同趟 `PluginManager`（AtSignLabel 构建段）构建部署的 frontend 产物（如 `SLAtSign.dll`）也会被拷入 `plugin/<id>/` 并追加进导出 module.json 的 `plugins[].libs` 做路径关联**——纯关联记录（CVM 装配只消费 `lib` 主库）：运行期插件 dll 从包内加载后，同目录的 frontend 产物即可被其运行时按裸名定位；字符串直给（原位加载）不触发该关联。
 
 ## 5. 新插件接入 checklist
 
 | # | 步骤 | 要点 |
 |---|------|------|
-| 1 | 复制本模板目录为 `simple_language_plugins/<目录名>/` | 目录名推荐 = plugin.id；`plugin.jsonc` 必须声明 `"id"`（`@<tag>` 按它路由）；清空 cvm/src、frontend、slang 换成自己的实现 |
+| 1 | 复制本模板目录为 `plugin/<目录名>/` | 目录名推荐 = plugin.id；`plugin.jsonc` 必须声明 `"id"`（`@<tag>` 按它路由）；清空 cvm/src、frontend、slang 换成自己的实现 |
 | 2 | 写 `plugin.jsonc` | §2 骨架；prefix 含尾下划线；capabilities 与 cvm 实现对齐 |
 | 3 | 实现 `cvm/src/` 六件套 + capability | 符号导出名 = `{prefix}{六件套名}`；exec/labelExec 栈协议 |
-| 4 | 构建 cvm dll → `cvm/lib/<os>-<arch>/` | MSVC 走 vcxproj（挂 sln「plugins」文件夹）或 `build-<name>.ps1`；clang 亦可 |
+| 4 | 构建 cvm dll → 插件包 `lib/<平台>/`（vcxproj OutDir=..\lib\windows\） | MSVC 走 vcxproj（挂 sln「plugins」文件夹）或 `build-<name>.ps1`；clang 亦可 |
 | 5 | 实现 `frontend/` 双契约 | netstandard2.0 + OutputPath="."；Parse/Build 均**单 JSON 进出**（小驼峰键） |
 | 6 | 构建 frontend dll | `dotnet build frontend\<Name>Frontend.csproj -c Release`（或 build 脚本内代跑） |
 | 7 | 写 `slang/` 四件套并导出 | `e -p slang\<Module>.sp` → `out/export/<Module>/<Module>.module.json` |
-| 8 | 调用方工程 jsonc 挂 plugins 段 + AtSign 哨兵 | §4；`path` 相对工作区根；lib 指向 `cvm/lib/<os>-<arch>/` |
+| 8 | 调用方工程 jsonc 挂 plugins 段 + AtSign 哨兵 | §4；`path` 相对工作区根；lib 指向插件包 `lib/<平台>/<dll>`（字符串直给相对路径） |
 | 9 | 写测试用例 + 验证 | 编译 `compile -p <工程>.sp -e ir` → 运行 `csimple_lang.exe run` → `passed=N failed=0` |
 | 10 | 文档同步 | 插件 README；语法篇 `simple_language/md/syntax/<tag>.md`（如暴露 @ 标签）；`PLUGIN_SYSTEM_DESIGN.md` §2.2 现状表 |
 
@@ -165,10 +165,10 @@ simple_language_plugins/<plugin_id>/        ← 推荐目录名 = plugin.id（�
 
 ```powershell
 # ① cvm dll + frontend dll + 部署到测试模块包（一键）
-powershell -ExecutionPolicy Bypass -File simple_language_plugins\csharp_mono\cvm\build-csharp-mono.ps1
+powershell -ExecutionPolicy Bypass -File plugin\csharp_mono\cvm\build-csharp-mono.ps1
 
 # ② slang ref module 导出（cwd = simple_language）
-dotnet run --project source\Front\SimpleLanguageFront.csproj -- e -p d:\project\lang\simple_language_plugins\csharp_mono\slang\CSharpMono.sp
+dotnet run --project source\Front\SimpleLanguageFront.csproj -- e -p d:\project\lang\plugin\csharp_mono\slang\CSharpMono.sp
 
 # ③ 调用方工程编译（cwd = simple_language；-e ir 才导出 module.json）
 dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\SpecialTest\ProjectTest.sp -e ir
@@ -190,7 +190,7 @@ csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\ou
 | T5 | `compile` 命令默认**不导出** module.json——须 `e` 命令或 `-e ir`；成功判据 = module.json 时间戳被重写（dotnet 退出码恒 0 不可靠） | 以为编译成功实际跑的是旧包 |
 | T6 | frontend 工程禁依赖 SL 程序集、禁缓存 SL 对象进 static；只接块原文 + 参数 JSON | 与 Front 版本强耦合、卸载泄漏 |
 | T7 | 新系统方法/能力点变更时四处同步：slang jsonc `systemCalls[]` ↔ cvm 实现 ↔ `plugin.jsonc` capabilities ↔ 调用方测试 | 声明与实现漂移（运行期 -87/-13） |
-| T8 | 产物只落 `cvm/lib/<os>-<arch>/`（原位加载语义，依赖树同目录齐备）；勿让 PluginLibExportManager 对象形态拷贝深依赖树 | BCL/子依赖缺失（TopDirectoryOnly 不递归） |
+| T8 | 产物只落插件包 `lib/<平台>/`（原位加载语义，依赖树同目录齐备）；v1.12 起 PluginLib 递归拷贝可带走深依赖树 | BCL/子依赖缺失（TopDirectoryOnly 不递归） |
 | T9 | 带通道的 `@<tag>(){}` 插件：slang/ 必须提供四个通道包装函数（`ChannelInInt/ChannelInString/ChannelOutInt/ChannelOutString`，名字固定）且 `plugin.jsonc` 声明 `refModule.channelClassPath` | 脱糖调用解析不到（LID 20058 / 未定义函数）——`<-` 赋值是 SL 函数调系统方法，不是 opcode 内置 |
 | T10 | **refModule 依赖 compiled module.json**：调用方加载插件 refModule 优先取 `out/export/<M>/<M>.module.json`；只有 source `.jsonc` 时虽日志显示 `loaded (source): structCount=N` 但**类链不建立**，Meta 层连锁报 `解析链 节点[<Module>] 没有找到`（每个 @块一行）。故 **build 脚本应内含 slang refModule 编译步**（java_hotspot build 脚本 2.6 步：`compile -p <绝对路径>.sp -e ir` + module.json 重写时间戳判据）——csharp_mono 的 build 脚本无此步，靠历史产物存在 | 换机/清 out 缓存后调用方工程编译连环报错，且 Front 退出码 0 掩盖失败 |
 
@@ -208,7 +208,7 @@ csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\ou
 | **C 侧管理器/注册表 API** | `csimple_lang/src/vm/plugin/sl_plugin.h` | `SLPluginPackage`（manifest C 结构）、registry `register/find_by_id/find_by_capability`、mgr 四阶段 `load/enter/exit/unload`、`SLPluginState` 状态机 |
 | **CVM 激活链**（`plugin:` 前缀 → capability） | `csimple_lang/src/vm/assembly/sl_runtime_assembly.c:850` | `sl_runtime_assembly_register_plugin_system_call`：`cvmFunction = "plugin:<cap>"` → registry 查 capability → 隐式 enter → `get_capability` 取 exec → 直注册系统函数 |
 | **Front 侧单 JSON 契约**（DTO 字段权威） | `simple_language/source/Front/Compile/Parse/PluginFrontendParser.cs` | `PluginLabelRequest`/`PluginLabelParse`/`PluginLabelBuild` 三个 DTO（小驼峰键逐字对齐）；`FindPluginRootById` id 索引路由 |
-| **Front 侧插件统一处理**（lib 解析/拷贝 + AtSignLabel 构建分发） | `simple_language/source/Front/Export/PluginManager.cs` | lib 对象形态 `{dir, select}` 四级回退 + 拷入包内 `plugins/<id>/` + `plugins[].libs` 关联（同趟 AtSignLabel 构建产物一并拷入） |
+| **Front 侧插件统一处理**（lib 解析/拷贝 + AtSignLabel 构建分发） | `simple_language/source/Front/Export/PluginManager.cs` | lib 对象形态 `{dir, select}` 四级回退 + 拷入包内 `plugin/<id>/` + `plugins[].libs` 关联（同趟 AtSignLabel 构建产物一并拷入） |
 | **设计总纲**（每个字段的为什么） | `csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md` | Part I §5 manifest / §6.4 四阶段 / §7 ABI 契约 / §9 降级 / §10.1 激活；Part II §A20 `@tag{}` 全规 |
 
 **契约总原则**（写任何一侧代码前记住）：
@@ -386,7 +386,7 @@ SL_PLUGIN_EXPORT void myplug_unload(void)
 要点：
 - **`get_capability` 的 `entry`**：systemCall 给 `(void*)exec`；`signLabel` 给 `SLLabelExecFn`（`int32 (*)(SLLabelExecCtx* ctx)`，进出值走 `ctx->in_values/out_values` 的 `SLLabelValue`，见 `sl_plugin_abi.h`；完整接收端范本 = `cvm_csharp_mono.c` 的 `labelExec` 分支）。
 - **多 capability**：`s_caps[]` 加条目 + `get_capability` 加匹配分支即可。
-- **构建**：抄 `echo/build-echo.ps1`（探测 MSVC x64 → `cl /LD` → 产物落 `cvm/lib/windows-x64/`，`-DeployDir` 一键拷进测试模块包）；或挂 vcxproj 走 sln（csharp_mono 形态）。
+- **构建**：抄 `echo/build-echo.ps1`（探测 MSVC x64 → `cl /LD` → 产物落 `lib/windows/`，`-DeployDir` 一键拷进测试模块包）；或挂 vcxproj 走 sln（csharp_mono 形态）。
 
 ### 8.2 frontend Parse/Build 双契约骨架（范本：`csharp_mono/frontend/src/`，原生 C）
 
@@ -457,10 +457,10 @@ slang/
 ① 定能力点    我要给 SL 加什么？systemCall（SL 侧可调函数）/ signLabel（@tag 块）
               / device / backend / tool —— 只做 systemCall 则 frontend/、slang/
               可极简（echo 甚至全免：声明由调用方 jsonc systemCalls[] 自带）
-② 建目录      simple_language_plugins/<id>/，按 §1 三目录起骨架
+② 建目录      plugin/<id>/，按 §1 三目录起骨架
 ③ plugin.jsonc §2 骨架填 id/prefix（含尾下划线！）/capabilities/platform
 ④ cvm 代码    §8.1 骨架改前缀 → exec 业务 → build-<name>.ps1 产 dll 到
-              cvm/lib/<os>-<arch>/
+              lib/<平台>/
 ⑤ （signLabel 才需要）frontend 工程：§8.2 三导出 + plugin.jsonc frontendNative 段
               （lib/parseFn/buildFn/freeFn）
 ⑥ slang       §8.3 四件套 → `e -p slang\<Module>.sp` 导出 ref module

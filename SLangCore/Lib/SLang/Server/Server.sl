@@ -217,6 +217,64 @@ namespace SLang
             ret Router.add( method, path, handler )
         }
 
+        # ── 预装载路由接线（P4，§4.10 / §7）──
+
+        # 拉取装配期路由表并入 Router（@OnGet 家族 / Route / OnRoute
+        # 控制器语法，C VM Preload 收集 + LATE 实例闭包派发，§4.10
+        # 每请求一实例）。configure 之后、start 之前调用；返回并入条数。
+        # 重复调用按普通 Router.add 语义（同 method+pattern 重复注册由
+        # start() fail-fast 拦截，ServerError.DuplicateRoute）。
+        public static Int32 usePreloadRoutes()
+        {
+            Int32 total = SystemServerRouteCount()
+            Int32 added = 0
+            for Int32 i = 0, i < total, i = i + 1
+            {
+                string line = SystemServerRouteLine( i )
+                if line == null
+                {
+                    continue
+                }
+                # 手写按 '|' 切分 "verb|path|class|method"（无 String.split；
+                # class/method 段仅日志参考，不入 Router）
+                Int32 p1 = SLang.Server._pipePos( line, 0 )
+                if p1 < 0
+                {
+                    continue
+                }
+                Int32 p2 = SLang.Server._pipePos( line, p1 + 1 )
+                if p2 < 0
+                {
+                    continue
+                }
+                string verb = SystemStringRange( line, 0, p1 )
+                string path = SystemStringRange( line, p1 + 1, p2 )
+                Function h = SystemServerRouteHandler( i )
+                if h == null
+                {
+                    continue
+                }
+                Router.add( verb, path, h )
+                added = added + 1
+            }
+            ret added
+        }
+
+        # line 中 from 起的 '|' 首现下标；未命中 ret -1
+        #（usePreloadRoutes 切分辅助，'|' ASCII 124）
+        static Int32 _pipePos( string s, Int32 from )
+        {
+            Int32 n = SystemStringLength( s )
+            for Int32 i = from, i < n, i = i + 1
+            {
+                if SystemStringCharCodeAt( s, i ) == 124
+                {
+                    ret i
+                }
+            }
+            ret -1
+        }
+
         # ── WebSocket 路由（HTTP 同端口 Upgrade 分流；§4.6 形态 A）──
 
         # handler 签名约定：function( SLang.WsSession s )；会话协程内

@@ -12,7 +12,6 @@ class Box
     Array<int> nums = Array<int>(4)
     int tag = 7
 }
-
 class DebugSmoke
 {
     static int counter = 10
@@ -60,6 +59,7 @@ class DebugSmoke
         # 调试走查用例: 断点/单步/变量/监视/调用堆栈 (DEBUG_PROTOCOL_DESIGN §8.4)
         # Watch 面板建议表达式: a + b / pt.x + arr[1] / pts[0].y / box.tag
         #   / arr[1] * 2 / pi * 2 / msg / a < b / counter / m
+        #   / dv.x / dw.inner.z / dvs[0].y
         DebugSmoke d = DebugSmoke()
         int a = 3
         int b = 4

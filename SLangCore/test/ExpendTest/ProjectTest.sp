@@ -43,6 +43,11 @@ Project
         # SLangServer P3 验收（OpenAPI 文档/auth 三挂法/Jwt/importOpenApi/
         # maxConnections，端口 19431-19435）
         ServerP3Test.fun()
+        # SLangServer P4 验收（attribute 路由/@OnRoute 前缀/LATE 每请求一实例/
+        # 超时 504/DuplicateRoute，端口 19441-19443）
+        ServerP4Test.fun()
+        # P4.5 直接 await 糖验收（纯协程用例：直等形态 + 三条回归红线 + 边界）
+        ServerP45Test.fun()
     }
     _before_()
     {

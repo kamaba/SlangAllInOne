@@ -29,6 +29,15 @@
     "isAllGroup": true,
     "isAllTag": true
   },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ]
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
+  ],
   "struct": [
   ],
   "export": {

@@ -328,6 +328,274 @@ def regexp_bench():
 
 
 # ============================================================================
+# NQueens（N 皇后递归回溯）
+# ============================================================================
+
+def nqueens_place(queens, row, n):
+    if row == n:
+        return 1
+    count = 0
+    for col in range(n):
+        ok = 1
+        for i in range(row):
+            if queens[i] == col or queens[i] - i == col - row or queens[i] + i == col + row:
+                ok = 0
+                break
+        if ok == 1:
+            queens[row] = col
+            count += nqueens_place(queens, row + 1, n)
+    return count
+
+
+def nqueens_solve(n):
+    queens = [0] * n
+    return nqueens_place(queens, 0, n)
+
+
+def nqueens_bench():
+    print("========== NQueens (start) ==========")
+
+    # 1. n=11 单轮（解数 2680）
+    t0 = time.perf_counter()
+    solutions = nqueens_solve(11)
+    dt = now_ms(t0)
+    print(f"nqueens(11) solutions = {solutions}  [{dt:.0f} ms]")
+
+    # 2. n=9 x10 轮
+    t0 = time.perf_counter()
+    total = 0
+    for r in range(10):
+        total += nqueens_solve(9)
+    dt = now_ms(t0)
+    print(f"nqueens(9) x10 = {total}  [{dt:.0f} ms]")
+
+    print("========== NQueens (end) ==========")
+
+
+# ============================================================================
+# Sieve（埃拉托斯特尼素数筛）
+# ============================================================================
+
+def sieve_count_primes(n):
+    is_composite = [0] * (n + 1)
+    count = 0
+    for i in range(2, n + 1):
+        if is_composite[i] == 0:
+            count += 1
+            if i <= n // i:
+                j = i * i
+                while j <= n:
+                    is_composite[j] = 1
+                    j += i
+    return count
+
+
+def sieve_bench():
+    print("========== Sieve (start) ==========")
+
+    # 1. 1e6 单轮
+    t0 = time.perf_counter()
+    primes = sieve_count_primes(1000000)
+    dt = now_ms(t0)
+    print(f"sieve 1e6 primes = {primes}  [{dt:.0f} ms]")
+
+    # 2. 5e5 x5 轮
+    t0 = time.perf_counter()
+    total = 0
+    for r in range(5):
+        total += sieve_count_primes(500000)
+    dt = now_ms(t0)
+    print(f"sieve 5e5 x5 = {total}  [{dt:.0f} ms]")
+
+    print("========== Sieve (end) ==========")
+
+
+# ============================================================================
+# QuickSort（Hoare 分区快排 + Park-Miller LCG 数据）
+# ============================================================================
+
+def quicksort(a, lo, hi):
+    if lo >= hi:
+        return
+    i = lo
+    j = hi
+    p = a[(lo + hi) // 2]
+    while i <= j:
+        while a[i] < p:
+            i += 1
+        while a[j] > p:
+            j -= 1
+        if i <= j:
+            a[i], a[j] = a[j], a[i]
+            i += 1
+            j -= 1
+    quicksort(a, lo, j)
+    quicksort(a, i, hi)
+
+
+def quicksort_bench():
+    print("========== QuickSort (start) ==========")
+
+    n = 30000
+    rounds = 5
+    arr = [0] * n
+
+    total_ms = 0.0
+    checksum = 0
+    for r in range(rounds):
+        seed = 42 + r
+        for i in range(n):
+            seed = (seed * 16807) % 2147483647
+            arr[i] = seed
+        t0 = time.perf_counter()
+        quicksort(arr, 0, n - 1)
+        total_ms += now_ms(t0)
+        for i in range(n):
+            checksum += arr[i]
+            if i > 0 and arr[i - 1] > arr[i]:
+                print(f"SORTED CHECK FAILED at {i}")
+    print(f"quicksort 3e4 x5  [{total_ms:.0f} ms]  checksum = {checksum}")
+
+    print("========== QuickSort (end) ==========")
+
+
+# ============================================================================
+# MatrixMul（朴素三重循环矩阵乘法，扁平数组行主序）
+# ============================================================================
+
+def matmul(a, b, c, n):
+    for i in range(n):
+        for j in range(n):
+            s = 0
+            for k in range(n):
+                s += a[i * n + k] * b[k * n + j]
+            c[i * n + j] = s
+
+
+def matmul_bench():
+    print("========== MatrixMul (start) ==========")
+
+    n = 100
+    rounds = 3
+    a = [0] * (n * n)
+    b = [0] * (n * n)
+    c = [0] * (n * n)
+
+    for i in range(n):
+        for j in range(n):
+            a[i * n + j] = (i + j) % 100
+            b[i * n + j] = (i * 7 + j * 3) % 100
+
+    t0 = time.perf_counter()
+    for r in range(rounds):
+        matmul(a, b, c, n)
+    dt = now_ms(t0)
+
+    checksum = 0
+    for i in range(n * n):
+        checksum += c[i]
+    print(f"matmul 100x100 x3  [{dt:.0f} ms]  checksum = {checksum}")
+
+    print("========== MatrixMul (end) ==========")
+
+
+# ============================================================================
+# BinaryTree（二叉树构建 + 求和，对象分配/GC 压力）
+# ============================================================================
+
+class BenchNode:
+    __slots__ = ("value", "left", "right")
+
+    def __init__(self, v):
+        self.value = v
+        self.left = None
+        self.right = None
+
+
+def tree_build(depth, value):
+    if depth <= 0:
+        return None
+    node = BenchNode(value)
+    node.left = tree_build(depth - 1, value * 2)
+    node.right = tree_build(depth - 1, value * 2 + 1)
+    return node
+
+
+def tree_checksum(node):
+    if node is None:
+        return 0
+    return node.value + tree_checksum(node.left) + tree_checksum(node.right)
+
+
+def binarytree_bench():
+    print("========== BinaryTree (start) ==========")
+
+    # 1. depth 12 x10 轮
+    t0 = time.perf_counter()
+    total = 0
+    for r in range(10):
+        root = tree_build(12, r + 1)
+        total += tree_checksum(root)
+    dt = now_ms(t0)
+    print(f"tree depth12 x10 checksum = {total}  [{dt:.0f} ms]")
+
+    # 2. depth 16 x2 轮
+    t0 = time.perf_counter()
+    total2 = 0
+    for r in range(2):
+        root = tree_build(16, r + 1)
+        total2 += tree_checksum(root)
+    dt = now_ms(t0)
+    print(f"tree depth16 x2 checksum = {total2}  [{dt:.0f} ms]")
+
+    print("========== BinaryTree (end) ==========")
+
+
+# ============================================================================
+# Mandelbrot（曼德博集合浮点迭代）
+# ============================================================================
+
+_iter_sum = 0
+_inside_count = 0
+
+
+def mandelbrot_render(w, h, max_iter):
+    global _iter_sum, _inside_count
+    for py in range(h):
+        y0 = py * 4.0 / h - 2.0
+        for px in range(w):
+            x0 = px * 4.0 / w - 2.0
+            x = 0.0
+            y = 0.0
+            it = 0
+            while it < max_iter and x * x + y * y <= 4.0:
+                xtemp = x * x - y * y + x0
+                y = 2.0 * x * y + y0
+                x = xtemp
+                it += 1
+            _iter_sum += it
+            if it == max_iter:
+                _inside_count += 1
+
+
+def mandelbrot_bench():
+    print("========== Mandelbrot (start) ==========")
+
+    w = 240
+    h = 180
+    max_iter = 150
+    rounds = 3
+
+    t0 = time.perf_counter()
+    for r in range(rounds):
+        mandelbrot_render(w, h, max_iter)
+    dt = now_ms(t0)
+    print(f"mandelbrot 240x180 x3  [{dt:.0f} ms]  iterSum = {_iter_sum}  inside = {_inside_count}")
+
+    print("========== Mandelbrot (end) ==========")
+
+
+# ============================================================================
 # Float32 精度仿真诊断（不计入总时长）
 #
 # SL 侧 Num/Mixed 两个浮点基准的实测值（2995719503872 / 1.6670932992e11）
@@ -363,6 +631,13 @@ def main():
     datatypes_bench()
     string_bench()
     regexp_bench()
+
+    nqueens_bench()
+    sieve_bench()
+    quicksort_bench()
+    matmul_bench()
+    binarytree_bench()
+    mandelbrot_bench()
 
     dt = now_ms(t_all)
     print(f"===== BenchMark _main_ end [{dt:.0f}ms] =====")

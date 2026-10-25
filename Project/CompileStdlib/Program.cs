@@ -168,7 +168,8 @@ internal static class Program
     /// PackStdModules 落位一致）：
     ///   *.module.slb → 四目录恒同步；*.module.json → 仅 *-debug 两目录
     /// （调试副本）；math_lib.dll（Math 的 FFI 原生库，Windows 产物）→ 仅
-    /// win32-* 两目录。包目录不存在时创建 lib\（publish 尚未跑过也能先见产物）。
+    /// win32-* 两目录的 lib\windows\ 平台位（布局标准 2026-10-25）。包目录
+    /// 不存在时创建 lib\（publish 尚未跑过也能先见产物）。
     /// 文件锁等失败仅告警（下次 publish/pack-modules 会重打，不必阻断）。</summary>
     static void SyncToPackageLibs(string moduleDir, string name)
     {
@@ -188,12 +189,18 @@ internal static class Program
                 if (pkg.EndsWith("-debug") && File.Exists(jsonSrc))
                     File.Copy(jsonSrc, Path.Combine(libDir, name + ".module.json"), overwrite: true);
 
-                /* math_lib.dll 是 Windows PE：linux 包不携带（既有发布约定）。 */
+                /* math_lib.dll 是 Windows PE：落 win32 包 lib\windows\ 平台位
+                 * （布局标准 2026-10-25，与 publish 的 pack-modules 同落位）；
+                 * linux 包不携带（既有发布约定）。 */
                 if (name == "Math" && pkg.StartsWith("win32-"))
                 {
                     string mathSrc = Path.Combine(moduleDir, "math_lib.dll");
                     if (File.Exists(mathSrc))
-                        File.Copy(mathSrc, Path.Combine(libDir, "math_lib.dll"), overwrite: true);
+                    {
+                        string platDir = Path.Combine(libDir, "windows");
+                        Directory.CreateDirectory(platDir);
+                        File.Copy(mathSrc, Path.Combine(platDir, "math_lib.dll"), overwrite: true);
+                    }
                 }
                 Console.WriteLine($"[SYNC] {name} -> package\\{pkg}\\lib\\");
             }

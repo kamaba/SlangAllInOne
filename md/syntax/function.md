@@ -191,7 +191,7 @@ class MethodRefTest {
 
 **与匿名闭包的边界**：方法引用值是特殊的闭包对象（复用 `CLSR` 结构、以标志位区分，无捕获上下文数组），两者同以 `Function` 为基类、可互换使用。差异：方法引用**零捕获成本**（仅 methodId + receiver），且实例引用天然携带 `this`；匿名闭包适合内联逻辑、方法引用适合复用具名方法。
 
-**VM 侧注**：方法引用闭包不携带 ctx 上下文数组，凡按「闭包上下文协议」工作的接口（协程 spawn、Debug.watch 订阅等）不支持直接传入方法引用，需包装为 `function(...){ ... }`（C VM 侧运行期拒绝并给出提示）。
+**VM 侧注**：方法引用闭包不携带 ctx 上下文数组，凡按「闭包上下文协议」工作的接口（Debug.watch 订阅等）不支持直接传入方法引用，需包装为 `function(...){ ... }`（C VM 侧运行期拒绝并给出提示）。**协程 spawn 例外**：`Coroutine.spawnClosure0..3` 与直接 await 糖（coroutine.md §4.2）支持方法引用——`spawnClosure` 系列走专用方法引用通道（receiver 随闭包携带、实例引用虚重分派；P4 attribute 路由的每请求一实例同机制）；仅变长 `spawnClosure( closure, Array<object> )` 形态 v1 拒绝方法引用。
 
 完整 7 案例（静态/实例/this/覆写重分派/三来源同参/forEach 回调/引用作返回值）见 `test/BaseTest/MethodRefTest.sl`；`=>` 内联表达式的另一形态见 [inline_lambda.md](./inline_lambda.md)。
 

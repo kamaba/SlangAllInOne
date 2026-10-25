@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- ===== 发布形态与默认输出目录（2026-10-18 用户指令，三次定稿）=====
        Debug   : Front（.NET Debug 程序集 + pdb）+ C VM Debug dll（+pdb 侧车）——
@@ -44,7 +44,7 @@
          VSCode package.json version 共用同一 主.发布.小版本 号；任一端改动，
          四处锚点同步 +1。中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），
          末位 = 随时递增的小版本。 -->
-    <Version>0.0.27</Version>
+    <Version>0.0.34</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>
@@ -201,11 +201,59 @@
       <CvmRuntimeFiles Include="$(CvmBinDir)\csimple_lang_dll.pdb" Condition="Exists('$(CvmBinDir)\csimple_lang_dll.pdb')" />
     </ItemGroup>
     <Copy SourceFiles="@(CvmRuntimeFiles)" DestinationFolder="$(PublishDir)bin\" SkipUnchangedFiles="true" />
-    <!-- 布局规则（2026-10-22，md/project/package-layout.md）：关联 .slb / 关联
-         .dll 统一放包根 lib\——sqlite3.dll（C VM delay-load 唯一硬依赖）自
-         bin\ 迁入，运行期 VM 按 <exe>\lib\ 预装载（sl_preload_associated_dlls）；
-         bin\ 只留 VM 运行时本体。pack-modules 随后写入 lib\ 的标准库 slb 与之同目录。 -->
-    <Copy SourceFiles="$(CvmBinDir)\sqlite3.dll" DestinationFolder="$(PublishDir)lib\" SkipUnchangedFiles="true" Condition="Exists('$(CvmBinDir)\sqlite3.dll')" />
+    <!-- 布局规则（2026-10-25 用户定稿，md/project/package-layout.md）：包根四件套
+         = slang(exe) + bin\(工具链/VM 本体) + lib\(module slb 平铺 + lib\<平台>\
+         关联原生库) + plugin\(<id>\ 插件包)。sqlite3.dll（C VM delay-load 唯一硬
+         依赖）落 lib\windows\ 平台位——运行期 VM 按 <exe>\lib\<平台>\ 预装载
+         （sl_preload_associated_dlls，平铺 lib\ 为兼容回退位）；bin\ 只留
+         exe/VM 本体与工具链（PackMlirTools）。pack-modules 随后写入 lib\ 的
+         标准库 slb 与之同根（math_lib.dll 亦落 lib\windows\）。 -->
+    <Copy SourceFiles="$(CvmBinDir)\sqlite3.dll" DestinationFolder="$(PublishDir)lib\windows\" SkipUnchangedFiles="true" Condition="Exists('$(CvmBinDir)\sqlite3.dll')" />
+  </Target>
+
+  <!-- MLIR/LLVM AOT 工具链随包（2026-10-25 用户定稿布局标准）：bin\ 承载
+       llc.exe / mlir-opt.exe / mlir-translate.exe / mlir_float16_utils.dll
+       （源 = simple_language\tools\llvm，静态链接自包含；mlir-transform-opt
+       当前未被 AOT 管线使用，不随包）。Front 侧 MLIRToolchain 探测
+       <exe>\bin\ 优先，发布包内 AOT 构建零源码树依赖；开发树探测回落
+       仓库 tools\llvm，不再向 exe 目录散拷（历史散落副本已清理）。 -->
+  <Target Name="PackMlirTools" AfterTargets="PackCvmRuntime" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+    <ItemGroup>
+      <MlirToolFiles Include="$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\llc.exe" Condition="Exists('$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\llc.exe')" />
+      <MlirToolFiles Include="$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir-opt.exe" Condition="Exists('$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir-opt.exe')" />
+      <MlirToolFiles Include="$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir-translate.exe" Condition="Exists('$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir-translate.exe')" />
+      <MlirToolFiles Include="$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir_float16_utils.dll" Condition="Exists('$(MSBuildThisFileDirectory)..\simple_language\tools\llvm\mlir_float16_utils.dll')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MlirToolFiles)" DestinationFolder="$(PublishDir)bin\" SkipUnchangedFiles="true" Condition="'@(MlirToolFiles)' != ''" />
+  </Target>
+
+  <!-- 插件包安装（2026-10-25 用户定稿布局标准）：把每个插件的包内容
+       （plugin.jsonc + lib\ = 三工程导出物：.slb 平铺 lib\ 根 + 原生库
+       lib\<平台>\）装进 <package>\plugin\<id>\。插件包即未来的分发单位
+       （压缩成一个文件放进 slang\plugin\ 下）；Front 侧
+       PluginFrontendParser.FindPluginsParent 的 <exe>\plugin\ 探测 + C VM
+       sl_ffi_lib_load 候选链 <exe>\<包相对路径> 两侧都已就绪。
+       两个运行时插件 frontend 已 C 化（2026-10-21 原生 dll，不经 publish
+       产出），随插件整目录分发——本 target 取代旧的
+       RelocatePluginFrontends（空壳已删）。lib\ 未构建（无产物）时本条
+       静默跳过；构建插件 = plugin\<id>\cvm\build-*.ps1。 -->
+  <Target Name="PackPlugins" AfterTargets="PackStdModules" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+    <PropertyGroup>
+      <!-- 插件包卫生：链接器副产物（pdb/exp/lib/obj/ilk）不随包分发——
+           插件 lib\ 是构建产物位，运行体只需要 dll/jar/classes/config 等
+           （bin\ TrimReleasePackage 同款哲学）。 -->
+      <PluginLibJunkExclude>$(MSBuildThisFileDirectory)..\plugin\**\*.pdb;$(MSBuildThisFileDirectory)..\plugin\**\*.exp;$(MSBuildThisFileDirectory)..\plugin\**\*.lib;$(MSBuildThisFileDirectory)..\plugin\**\*.obj;$(MSBuildThisFileDirectory)..\plugin\**\*.ilk</PluginLibJunkExclude>
+    </PropertyGroup>
+    <ItemGroup>
+      <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\csharp_mono\plugin.jsonc')"><PluginId>csharp_mono</PluginId></SlangPluginManifests>
+      <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\java_hotspot\plugin.jsonc')"><PluginId>java_hotspot</PluginId></SlangPluginManifests>
+      <SlangPluginManifests Include="$(MSBuildThisFileDirectory)..\plugin\echo\plugin.jsonc" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\echo\plugin.jsonc')"><PluginId>echo</PluginId></SlangPluginManifests>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>csharp_mono</PluginId></SlangPluginLibs>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>java_hotspot</PluginId></SlangPluginLibs>
+      <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\echo\lib\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>echo</PluginId></SlangPluginLibs>
+    </ItemGroup>
+    <Copy SourceFiles="@(SlangPluginManifests)" DestinationFiles="@(SlangPluginManifests->'$(PublishDir)plugin\%(PluginId)\plugin.jsonc')" SkipUnchangedFiles="true" Condition="'@(SlangPluginManifests)' != ''" />
+    <Copy SourceFiles="@(SlangPluginLibs)" DestinationFiles="@(SlangPluginLibs->'$(PublishDir)plugin\%(PluginId)\lib\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'@(SlangPluginLibs)' != ''" />
   </Target>
 
   <!-- Official release packaging: compile the standard library modules
@@ -235,24 +283,6 @@
        same self-bootstrap model as pack-modules. -->
   <Target Name="PackDocs" AfterTargets="PackStdModules" Condition="'$(SkipCvmPack)' != 'true' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
     <Exec Command="&quot;$(PublishDir)$(AssemblyName).exe&quot; pack-docs" />
-  </Target>
-
-  <!-- 2026-10-18 目录方案（用户指令，设计记录 md/project/package-layout.md）：
-       包根的插件 frontend 程序集移入 <package>\plugins\。plugins\ = 插件
-       内容目录（区别于普通包：插件带 plugin.jsonc/cvm/frontend/
-       slang 多层结构与 @tag{} 能力点，故独立于未来的 modules\ 包目录）；
-       Front 侧 PluginFrontendParser.FindPluginsParent 已增加 <exe>\plugins\
-       探测，插件管理器把整插件目录装进 plugins\<id>\ 后即可被 @tag 路由。
-       🔥 2026-10-21 起两个运行时插件 frontend 均已 C 化（原生
-       sl_csharp_mono_frontend.dll / sl_java_hotspot_frontend.dll，ABI
-       sl_frontend_*，Front 经 NativeLibrary 调用）——不再由 dotnet
-       publish 产出/归位，随插件整目录分发（plugins\<id>\frontend\lib\
-       windows-x64\）。本 target 已无发布伴生物可移，保留空壳兼容管线。
-       Native AOT（Release）发布不产出这些托管 dll，列表为空即静默跳过。 -->
-  <Target Name="RelocatePluginFrontends" AfterTargets="Publish">
-    <ItemGroup>
-    </ItemGroup>
-    <Move SourceFiles="@(PluginFrontendFiles)" DestinationFolder="$(PublishDir)plugins\" Condition="'@(PluginFrontendFiles)' != ''" />
   </Target>
 
   <!-- 2026-10-18 用户指令：licenses\ 不再随包导出（原 PackThirdPartyLicenses
@@ -329,9 +359,9 @@
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.exp" />
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.ilk" />
       <ReleaseJunk Include="$(PublishDirAbsolute)bin\*.lib" />
-      <!-- RelocatePluginFrontends 把插件 pdb 也移进 plugins\（经典托管
-           Release 发布时存在）——运行包同样不带走。 -->
-      <ReleaseJunk Include="$(PublishDirAbsolute)plugins\*.pdb" />
+      <!-- 插件包纵深防御：PackPlugins 的 Exclude 已滤 pdb/exp/lib/obj/ilk，
+           此处兜底再清 plugin\ 下残留 pdb（经典托管发布时期的历史形态）。 -->
+      <ReleaseJunk Include="$(PublishDirAbsolute)plugin\**\*.pdb" />
     </ItemGroup>
     <Delete Files="@(ReleaseJunk)" />
   </Target>

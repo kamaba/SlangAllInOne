@@ -179,15 +179,15 @@ internal static class PublishCommand
             StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot);
         }
 
-        /* Step 7: 插件产物（Front 导出已按 plugins\<id>\ 布局落到模块
+        /* Step 7: 插件产物（Front 导出已按 plugin\<id>\ 布局落到模块
          * export 目录；整目录拷贝，应用 exe 相对自身目录解析）。 */
         if (!string.IsNullOrEmpty(result.ExportDir))
         {
-            string pluginsSrc = Path.Combine(result.ExportDir, "plugins");
+            string pluginsSrc = Path.Combine(result.ExportDir, "plugin");
             if (Directory.Exists(pluginsSrc) && Directory.EnumerateFileSystemEntries(pluginsSrc).Any())
             {
-                CopyDirectory(pluginsSrc, Path.Combine(publishDir, "plugins"));
-                Console.WriteLine("[OK]  plugins:  copied from module export (plugins\\)");
+                CopyDirectory(pluginsSrc, Path.Combine(publishDir, "plugin"));
+                Console.WriteLine("[OK]  plugin:   copied from module export (plugin\\)");
             }
         }
 
@@ -378,9 +378,9 @@ internal static class PublishCommand
                     File.Copy(f, Path.Combine(publishDir, Path.GetFileName(f)), overwrite: true);
                     any = true;
                 }
-                string refPlugins = Path.Combine(srcDir, "plugins");
+                string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))
-                    CopyDirectory(refPlugins, Path.Combine(publishDir, "plugins"));
+                    CopyDirectory(refPlugins, Path.Combine(publishDir, "plugin"));
                 if (any)
                     Console.WriteLine($"[OK]  reference: {name}.module.* (staged flat into publish)");
             }
@@ -411,10 +411,16 @@ internal static class PublishCommand
         return null;
     }
 
-    /// <summary>Math 原生库来源链（包布局 → dev out\export\Math\）。</summary>
+    /// <summary>Math 原生库来源链（包布局 lib\windows\ 平台位（布局标准
+    /// 2026-10-25）优先 → 平铺 lib\ 兼容位 → dev out\export\Math\）。</summary>
     static string? FindMathNativeDll(string? repoRoot)
     {
-        string packaged = Path.Combine(AppContext.BaseDirectory, "lib", "math_lib.dll");
+        string packaged = Path.Combine(AppContext.BaseDirectory, "lib", HostPlatformDir(), "math_lib.dll");
+        if (File.Exists(packaged))
+        {
+            return packaged;
+        }
+        packaged = Path.Combine(AppContext.BaseDirectory, "lib", "math_lib.dll");
         if (File.Exists(packaged))
         {
             return packaged;

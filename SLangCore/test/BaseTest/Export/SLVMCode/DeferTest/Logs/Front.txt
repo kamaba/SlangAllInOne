@@ -1,6 +1,0 @@
-﻿[09:56:06 942] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:DeferTest.sp]
-[09:56:06 971] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[DeferTest.sp]编译File层完成]
-[09:56:06 971] [Info] [Process]  [ProcessCompileMetaStart]  Info:[编译Meta层开始]
-[09:56:06 978] [Info] [ParseMeta]  [ShowExtendMessage]  Extend:[Info Project类成员函数默认按 static 处理: Lex: Main Path:DeferTest.sp Line: 17 Pos: 14  ]
-[09:56:07 000] [Info] [ParseMeta]  [ShowExtendMessage]  Extend:[没有找发现默认构造函数]
-[09:56:07 011] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] Position:[DeferTest.sp_19_0]  Info:[解析链 节点[DeferTest] 没有找到] Extend:[Name:DeferTest not found!]

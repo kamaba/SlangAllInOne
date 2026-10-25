@@ -66,14 +66,15 @@
     }
   },
   // 插件声明（PLUGIN_SYSTEM_DESIGN.md §0.1/§4.2）：key=插件 id；lib 对象由
-  // PluginManager（PluginLib 导出段）四级回退（lib/windows-x64/ → lib/windows/ → …）
-  // 求值平台库并拷到 out/export/ProjectTest/plugins/echo/，module.json 记
+  // PluginManager（PluginLib 导出段）平台目录回退（lib/windows/（2026-10-25
+  // 标准）→ lib/windows-x64/ → …）求值平台库并递归拷到
+  // out/export/ProjectTest/plugin/echo/lib/windows/，module.json 记
   // 相对包路径（lib/libs）；CVM 侧登记不加载（惰性激活）。
   "plugins": {
     "echo": {
       "name": "echo_test_plugin",
       "version": "0.1.0",
-      "path": "simple_language_plugins/echo",
+      "path": "plugin/echo",
       "enabled": true,
       "abi": 1,
       "lib": { "dir": "lib", "select": "auto" },
@@ -88,20 +89,22 @@
     },
     // csharp_mono（P1-e，MONO_INTEGRATION_DESIGN.md §4.3 / PLUGIN_SYSTEM_DESIGN.md §10.1）：
     // lib 用字符串直给（相对包路径，CVM 侧基准 = module.json 所在目录拼
-    // sl_plugin_resolver_join_lib_path），从 simple_language_plugins 原位加载——不走
-    // PluginManager（PluginLib 导出段）拷贝（其 TopDirectoryOnly 不递归 lib/mono/4.5/
-    // BCL 目录树，对象形态会缺 BCL）；原位同目录天然齐备 mono-2.0-sgen.dll + BCL。
+    // sl_plugin_resolver_join_lib_path），从 plugin 原位加载——不走
+    // PluginManager（PluginLib 导出段）拷贝（避免每趟导出复制 mono BCL
+    // 深层子树）；原位同目录天然齐备 mono-2.0-sgen.dll + BCL。2026-10-25
+    // 插件包布局标准：三工程产物统一导出 plugin\csharp_mono\lib\（原生库
+    // lib\windows\，.slb 平铺 lib\ 根）。
     // prefix 必须显式 = 实际符号前缀 "sl_csharp_mono_"（plugin.jsonc entry.prefix），
     // 缺省 id+"_" 会解析不到六件套符号。测试程序集 SLCSharpTestLib.dll 部署在
     // 插件 dll 同目录，asm 元参用裸文件名经 assemblies_path 兜底命中。
     "csharp_mono": {
       "name": "csharp_runtime_use_mono_engine",
       "version": "0.1.0",
-      "path": "simple_language_plugins/csharp_mono",
+      "path": "plugin/csharp_mono",
       "enabled": true,
       "abi": 1,
       "prefix": "sl_csharp_mono_",
-      "lib": "../../../../simple_language_plugins/csharp_mono/cvm/lib/windows-x64/cvm_csharp_mono.dll",
+      "lib": "../../../../plugin/csharp_mono/lib/windows/cvm_csharp_mono.dll",
       // 额外引用（references）：块内 C# 引用的预编译 managed 程序集——
       // 导出期 Front 拷入插件 libDir（编译期 csc /r: 引用 + 运行期 mono
       // assemblies_path 从插件 dll 同目录裸名解析）+ 随 Build 请求下发路径。
@@ -125,7 +128,8 @@
     // java_hotspot（HOTSPOT_JNI_INTEGRATION_DESIGN.md）：lib 用字符串直给原位
     // 相对路径（同 csharp_mono 口径，不走 PluginManager PluginLib 导出段拷贝）——
     // 插件 dll 同目录树天然齐备 ..\..\runtime\jvm.dll 与 SLAtSign.jar（C 侧
-    // SLJH_JVM_RELATIVE/SLJH_JAR_RELATIVE 相对插件 dll 定位）。prefix 必须显式
+    // SLJH_JVM_RELATIVE/SLJH_JAR_RELATIVE 相对插件 dll 定位；2026-10-25 起同在
+    // plugin\java_hotspot\lib\windows\）。prefix 必须显式
     // = "sl_java_hotspot_"（plugin.jsonc entry.prefix）。块体 .java 源码由
     // SLLabelBuilder 经 javac --release 17 编译部署到 <libDir>\classes\，
     // 运行期 bridge 以 SLAtSign 组前缀 + 裸类名 loadClass。本机无 JDK 时
@@ -133,11 +137,11 @@
     "java_hotspot": {
       "name": "java_runtime_use_hotspot_engine",
       "version": "0.1.0",
-      "path": "simple_language_plugins/java_hotspot",
+      "path": "plugin/java_hotspot",
       "enabled": true,
       "abi": 1,
       "prefix": "sl_java_hotspot_",
-      "lib": "../../../../simple_language_plugins/java_hotspot/cvm/lib/windows-x64/cvm_java_hotspot.dll",
+      "lib": "../../../../plugin/java_hotspot/lib/windows/cvm_java_hotspot.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [
@@ -183,7 +187,7 @@
   ],
   "export": {
     "moduleName": "SpecialTest",
-    "outputDir": "..\\..\\..\\out\\export",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

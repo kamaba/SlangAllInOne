@@ -107,11 +107,14 @@ function Invoke-BuildWinPackage([string]$Config) {
     # remain — both runtime plugin frontends went native C on 2026-10-21
     # (nothing is published/relocated anymore, the must-list reflects that).
     $isDebug = ($Config -eq 'Debug')
-    # Layout rule (2026-10-22): associated .slb / .dll all live in package lib\
-    # (sqlite3.dll moved out of bin\; the VM delay-loads + preloads it from lib\).
-    # bin\ keeps only the C VM runtime itself.
-    $must = @('slang.exe', 'bin\csimple_lang_dll.dll', 'lib\sqlite3.dll',
-              'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
+    # Layout standard (2026-10-25): package root = slang + bin\ (VM runtime +
+    # MLIR/LLVM toolchain via PackMlirTools) + lib\ (module slb flat +
+    # lib\windows\ associated natives: sqlite3.dll + math_lib.dll) +
+    # plugin\ (<id>\ plugin packages via PackPlugins: plugin.jsonc + lib\).
+    $must = @('slang.exe', 'bin\csimple_lang_dll.dll', 'bin\llc.exe', 'bin\mlir-opt.exe',
+              'lib\windows\sqlite3.dll', 'lib\windows\math_lib.dll',
+              'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb',
+              'plugin\csharp_mono\plugin.jsonc')
     if ($isDebug) { $must += @('slang.pdb', 'lib\Core.module.json', 'bin\csimple_lang_dll.pdb') }
     foreach ($m in $must) {
         if (-not (Test-Path (Join-Path $dir $m))) {
@@ -187,30 +190,28 @@ function Invoke-BuildLinuxPackage([string]$Config) {
     Write-Ok 'bin assembled (libcsimple_lang_dll.so)'
 
     # d) lib\ + md\ are platform-independent - copy from the same-config
-    #    Windows package (built earlier in the plan), drop the Windows-only
-    #    math_lib.dll (documented Linux limitation, see RELEASE.md).
+    #    Windows package (built earlier in the plan), then drop the Windows-only
+    #    PE platform dir lib\windows\ (sqlite3.dll + math_lib.dll ride along
+    #    the robocopy; documented Linux limitation, see RELEASE.md).
     $winDir = Join-Path $PkgRoot ('win32-' + $Config.ToLowerInvariant())
     robocopy (Join-Path $winDir 'lib') (Join-Path $dir 'lib') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
     if ($LASTEXITCODE -ge 8) { Write-Host '  robocopy lib\ (win -> linux package) failed' -ForegroundColor Red; return $false }
     robocopy (Join-Path $winDir 'md') (Join-Path $dir 'md') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
     if ($LASTEXITCODE -ge 8) { Write-Host '  robocopy md\ (win -> linux package) failed' -ForegroundColor Red; return $false }
-    $mathLib = Join-Path $dir 'lib\math_lib.dll'
-    if (Test-Path $mathLib) { Remove-Item $mathLib -Force -Confirm:$false }
-    # Windows-only sqlite3.dll rides along the lib\ robocopy (layout rule
-    # 2026-10-22: the linux package carries libsqlite3.so.0 in lib\ instead).
-    $winSqlite = Join-Path $dir 'lib\sqlite3.dll'
-    if (Test-Path $winSqlite) { Remove-Item $winSqlite -Force -Confirm:$false }
-    Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll + sqlite3.dll excluded)'
+    $winNatives = Join-Path $dir 'lib\windows'
+    if (Test-Path $winNatives) { Remove-Item $winNatives -Recurse -Force -Confirm:$false }
+    Write-Ok 'lib\ + md\ copied from the Windows package (lib\windows\ PE natives excluded)'
 
-    # d') bundled system sqlite -> lib\ (layout rule 2026-10-22): the associated
-    #     .so ships in lib\; resolved by the CvmBackend absolute-path preload
-    #     (BinDir\..\lib\) + the C VM .so's own rpath $ORIGIN/../lib.
-    $cmd = 'cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $wslPkg + '/lib/'
+    # d') bundled system sqlite -> lib\linux\ (layout standard 2026-10-25:
+    #     associated natives live under lib\<platform>\): resolved by the
+    #     CvmBackend absolute-path preload (BinDir\..\lib\linux\) + the
+    #     C VM .so's own rpath $ORIGIN/../lib (flat lib\ stays the fallback).
+    $cmd = 'mkdir -p ' + $wslPkg + '/lib/linux && cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $wslPkg + '/lib/linux/'
     if ((Invoke-WslBash $cmd) -ne 0) { Write-Host '  libsqlite3.so.0 copy failed (apt install libsqlite3-dev?)' -ForegroundColor Red; return $false }
-    Write-Ok 'lib\libsqlite3.so.0 placed'
+    Write-Ok 'lib\linux\libsqlite3.so.0 placed'
 
     # Layout check (licenses\ no longer ships - 2026-10-18 user directive).
-    $must = @('slang', 'bin\libcsimple_lang_dll.so', 'lib\libsqlite3.so.0',
+    $must = @('slang', 'bin\libcsimple_lang_dll.so', 'lib\linux\libsqlite3.so.0',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb')
     if ($Config -eq 'Debug') { $must += @('slang.dll', 'lib\Core.module.json') }
     foreach ($m in $must) {

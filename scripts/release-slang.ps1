@@ -248,12 +248,13 @@ if ($SkipBuild) {
     if ((Invoke-WslBash $cmd) -ne 0) { Fail 'linux-x64 AOT publish failed (see log above)' }
     Write-Ok 'slang (linux-x64 AOT) published'
 
-    # c) assemble bin\: the C VM .so + bundled system sqlite
-    #    (CMake links system sqlite3 on Linux -> ship libsqlite3.so.0 with the
-    #     package; CvmBackend pre-loads it so no LD_LIBRARY_PATH is needed)
-    $cmd = 'mkdir -p ' + $WslPkgLinux + '/bin && cp ' + $WslRepo + '/csimple_lang/build/ReleaseLinux/libcsimple_lang_dll.so ' + $WslPkgLinux + '/bin/ && cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $WslPkgLinux + '/bin/'
-    if ((Invoke-WslBash $cmd) -ne 0) { Fail 'linux bin assembly failed (libsqlite3.so.0 not found?)' }
-    Write-Ok 'bin assembled (libcsimple_lang_dll.so + libsqlite3.so.0)'
+    # c) assemble bin\: the C VM .so only (layout standard 2026-10-25:
+    #    the bundled system sqlite ships under lib\linux\ after the lib\
+    #    robocopy in step d; CMake links system sqlite3 on Linux ->
+    #    CvmBackend pre-loads it so no LD_LIBRARY_PATH is needed)
+    $cmd = 'mkdir -p ' + $WslPkgLinux + '/bin && cp ' + $WslRepo + '/csimple_lang/build/ReleaseLinux/libcsimple_lang_dll.so ' + $WslPkgLinux + '/bin/'
+    if ((Invoke-WslBash $cmd) -ne 0) { Fail 'linux bin assembly failed' }
+    Write-Ok 'bin assembled (libcsimple_lang_dll.so)'
 
     # d) lib\ + md\ are platform-independent content - copy from the
     #    Windows package (built above; the win pack-modules compiled them).
@@ -265,10 +266,16 @@ if ($SkipBuild) {
     robocopy (Join-Path $PkgWinDir 'md') (Join-Path $PkgLinuxDir 'md') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
     if ($LASTEXITCODE -ge 8) { Fail 'robocopy md\ (win -> linux package) failed' }
     # math_lib.dll is a Windows PE - Math FFI is a documented Linux limitation,
-    # do not ship a dead binary in the linux package.
-    $mathLib = Join-Path $PkgLinuxDir 'lib\math_lib.dll'
-    if (Test-Path $mathLib) { Remove-Item $mathLib -Force -Confirm:$false }
-    Write-Ok 'lib\ + md\ copied from the Windows package (math_lib.dll excluded)'
+    # do not ship a dead binary in the linux package. Drop the whole Windows
+    # natives platform dir lib\windows\ (sqlite3.dll + math_lib.dll ride along
+    # the lib\ robocopy), then place the system sqlite under lib\linux\
+    # (layout standard 2026-10-25; CvmBackend preloads BinDir\..\lib\linux\,
+    # rpath $ORIGIN/../lib keeps the flat lib\ fallback).
+    $winNatives = Join-Path $PkgLinuxDir 'lib\windows'
+    if (Test-Path $winNatives) { Remove-Item $winNatives -Recurse -Force -Confirm:$false }
+    $cmd = 'mkdir -p ' + $WslPkgLinux + '/lib/linux && cp /usr/lib/x86_64-linux-gnu/libsqlite3.so.0 ' + $WslPkgLinux + '/lib/linux/'
+    if ((Invoke-WslBash $cmd) -ne 0) { Fail 'lib\linux\libsqlite3.so.0 placement failed (apt install libsqlite3-dev?)' }
+    Write-Ok 'lib\ + md\ copied from the Windows package (lib\windows\ PE natives dropped; lib\linux\libsqlite3.so.0 placed)'
 }
 Write-Ok 'linux package built'
 
@@ -373,13 +380,13 @@ Write-Step 'Layout checks'
 # (csproj PackThirdPartyLicenses removed); the license texts' source of
 # truth stays in the repo at csimple_lang\third_party\LICENSES\.
 foreach ($must in @(
-    'slang.exe', 'bin\csimple_lang_dll.dll', 'bin\sqlite3.dll',
-    'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb', 'lib\math_lib.dll'
+    'slang.exe', 'bin\csimple_lang_dll.dll', 'bin\llc.exe', 'lib\windows\sqlite3.dll',
+    'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb', 'lib\windows\math_lib.dll'
 )) {
     if (-not (Test-Path (Join-Path $PkgWinDir $must))) { Fail "windows package incomplete, missing: $must (build without -SkipBuild)" }
 }
 foreach ($must in @(
-    'slang', 'bin\libcsimple_lang_dll.so', 'bin\libsqlite3.so.0',
+    'slang', 'bin\libcsimple_lang_dll.so', 'lib\linux\libsqlite3.so.0',
     'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb'
 )) {
     if (-not (Test-Path (Join-Path $PkgLinuxDir $must))) { Fail "linux package incomplete, missing: $must (build without -SkipBuild)" }

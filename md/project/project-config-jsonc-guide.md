@@ -117,7 +117,7 @@
     "echo": {
       "name": "echo_test_plugin",       // 全名（诊断展示）
       "version": "0.1.0",              // ⚠ 已解析未消费（P1 起以 plugin.jsonc 为权威）
-      "path": "simple_language_plugins/echo",  // ⚠ 已解析未消费（P0 仅存储）
+      "path": "plugin/echo",                // ⚠ 已解析未消费（P0 仅存储）
       "enabled": true,                  // 缺省 true；false=整插件不参与
       "abi": 1,                         // C VM ABI 版本，缺省 1
       "prefix": "sl_csharp_mono_",      // 系统方法路由前缀，缺省 id+"_"，必须含尾下划线

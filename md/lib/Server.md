@@ -1,6 +1,6 @@
 # SLang Server（`SLang.HttpServerCore` + `SLang.Server`）
 
-HTTP/WS 服务框架。设计文档与实现实录见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md`；验收用例 `test/ExpendTest/Server/ServerP1Test.sl`（P1）/ `ServerP15Test.sl`（P1.5 上传）/ `ServerP2Test.sl`（P2 中间件与流式）。
+HTTP/WS 服务框架。设计文档与实现实录见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md`；验收用例 `test/ExpendTest/Server/ServerP1Test.sl`（P1）/ `ServerP15Test.sl`（P1.5 上传）/ `ServerP2Test.sl`（P2 中间件与流式）/ `ServerP3Test.sl`（P3 文档+认证）/ `ServerP4Test.sl`（P4 attribute 控制器）。
 
 ## 快速开始
 
@@ -43,6 +43,49 @@ SLang.Server.onGet( "/user/{id}", function( SLang.Request req, SLang.Response re
     res.text( "id=" + id.toString() )
 } )
 ```
+
+## attribute 控制器（P4）
+
+C# 风格的声明式路由：attribute 标注 + `usePreloadRoutes()` 一行接线。
+
+```csharp
+import SLangServer;
+
+class P4AdminController          # 类级 @OnRoute = 前缀（方法路由拼在其后）
+{
+    @OnRoute( "/p4admin" )
+    @OnGet( "/user" )           # GET /p4admin/user
+    function plainGet( SLang.Request req, SLang.Response res )
+    {
+        res.text( "plain" )
+    }
+
+    @OnPost( "/user" )          # POST /p4admin/user
+    function saveUser( SLang.Request req, SLang.Response res )
+    {
+        res.status( 201 ).jsonOk( req.bodyText() )
+    }
+
+    @Route( "/user", "DELETE" ) # @Route(path, verb)：显式动词（缺省 ANY）
+    function delUser( SLang.Request req, SLang.Response res ) { ... }
+}
+
+SLang.Server.usePreloadRoutes() # 拉取装配期路由表 → 进 Router
+SLang.Server.run( 8080 )
+```
+
+| attribute | 位置 | 说明 |
+|-----------|------|------|
+| `@OnGet/@OnPost/@OnPut/@OnDelete/@OnPatch/@OnHead/@OnOptions/@OnAny( path )` | 方法 | 动词家族，名即动词；`@OnAny` = 任意动词 |
+| `@Route( path [, verb] )` | 方法 | 显式动词通用形式（verb 缺省/空 = ANY，ASCII 大写化） |
+| `@OnRoute( prefix )` | 类 | 控制器前缀：本类方法路由全部拼接在其后（v1 只查声明类自身，不沿基类链） |
+
+要点：
+
+- **每请求一实例**：命中时 C VM new 控制器实例后直接调用目标方法（handler 语义与动态注册完全一致，`await`/`Coroutine.delay` 照常可用，超时 504 同 §6.1 守护）；
+- **与动态注册共存**：preload 路由先注册，动态 `onGet(...)` 后注册照常工作；同路径重复注册仍受 `checkDuplicate` fail-fast 约束；
+- **多次拉取幂等**：`usePreloadRoutes()` 重复调用返回 0 条新增（装配期表只拉一次），`Server.routeCount()` 两次读取不变；
+- handler 签名与动态注册一致（`function( SLang.Request, SLang.Response )`）；属性类定义于 `Lib/SLang/Server/RouteAttrs.sl`。
 
 ## Request（请求读取）
 

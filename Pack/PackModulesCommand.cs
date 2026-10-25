@@ -21,13 +21,14 @@ namespace SlangAllInOne.Pack;
 /// &lt;dir&gt;\Core.module.json
 /// （json 或 slb 任一存在即尝试，SLB 优先重定向自动改指同名 .slb）；FFI
 /// dllImports（"../../out/export/Math/math_lib.dll"）第三重回退按文件名在
-/// pkg_dir 内直查（lib\math_lib.dll）。
+/// pkg_dir\<平台>\ 与 pkg_dir 内直查（lib\windows\math_lib.dll，2026-10-25
+/// 布局标准）。
 ///
 /// 包内容（config 决定）：
 ///   Debug   = &lt;M&gt;.module.slb + &lt;M&gt;.module.json（json 调试副本：C VM
 ///             --debug/--force-json 排障 + Front 编译用户工程时的引用装载）
-///   Release = 仅必须的 &lt;M&gt;.module.slb + math_lib.dll（运行包；Math 的
-///             FFI 原生库，vmDllImports 预载与静态绑定都需要）
+///   Release = 仅必须的 .slb（+ math_lib.dll → lib\windows\ 平台位；运行包；
+///             Math 的 FFI 原生库，vmDllImports 预载与静态绑定都需要）
 /// </summary>
 internal static class PackModulesCommand
 {
@@ -94,14 +95,15 @@ internal static class PackModulesCommand
                 return 1;
             }
 
-            // 打包：slb 必带；Debug 附加 json 调试副本；Math 附加 math_lib.dll。
+            // 打包：slb 必带；Debug 附加 json 调试副本（平铺 lib\）；
+            // Math 附加关联原生库 math_lib.dll → lib\windows\ 平台位
+            //（布局标准 2026-10-25：module 关联 dll 与 sqlite3.dll 同形，
+            // C VM FFI 候选链 <exe>\lib\<平台>\ 与 pkg_dir\<平台>\ 回退命中）。
             var sources = new List<string> { slbPath };
             if (includeJson)
                 sources.Add(Path.Combine(exportRoot, name, $"{name}.module.json"));
-            if (name == "Math")
-                sources.Add(Path.Combine(exportRoot, name, "math_lib.dll"));
 
-            // 平铺单目录：所有模块产物直排 <dest>\lib\（2026-10-18 更名），
+            // 平铺单目录：模块产物直排 <dest>\lib\（2026-10-18 更名），
             // 无按模块子目录。lib\ = 系统自带标准库（官方库直查目录）。
             string destModuleDir = Path.Combine(destRoot, "lib");
             Directory.CreateDirectory(destModuleDir);
@@ -114,7 +116,20 @@ internal static class PackModulesCommand
                 }
                 File.Copy(src, Path.Combine(destModuleDir, Path.GetFileName(src)), overwrite: true);
             }
-            Console.WriteLine($"[OK]   {name} -> lib\\: {string.Join(", ", sources.Select(Path.GetFileName))}");
+            if (name == "Math")
+            {
+                string mathDll = Path.Combine(exportRoot, name, "math_lib.dll");
+                if (!File.Exists(mathDll))
+                {
+                    Console.WriteLine($"[FAIL] {name}: expected artifact missing: {mathDll}");
+                    return 1;
+                }
+                string destPlat = Path.Combine(destModuleDir, "windows");
+                Directory.CreateDirectory(destPlat);
+                File.Copy(mathDll, Path.Combine(destPlat, "math_lib.dll"), overwrite: true);
+            }
+            Console.WriteLine($"[OK]   {name} -> lib\\: {string.Join(", ", sources.Select(Path.GetFileName))}"
+                + (name == "Math" ? " (+ lib\\windows\\math_lib.dll)" : ""));
         }
 
         Console.WriteLine($"Standard library packed into {Path.Combine(destRoot, "lib")}");

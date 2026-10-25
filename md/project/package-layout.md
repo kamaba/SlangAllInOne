@@ -1,8 +1,84 @@
-# 发布包目录布局：lib / modules / plugins
+# 发布包目录布局：lib / modules / plugin
 
-> 🔥 **本文档是发布包目录方案的决策记录**（2026-10-18 用户指令确立）。
+> 🔥 **本文档是发布包目录方案的决策记录**（2026-10-18 用户指令确立；
+> 🔥 **2026-10-25 布局标准全量定稿，见 §七——§一~§六与 §七 冲突处以 §七 为准**）。
 > 配套改动（官方库直查、打包链、脚本）均以本文档为准；发布渠道策略另见
 > [RELEASE.md](../../RELEASE.md)。
+
+## 七、🔥 布局标准全量定稿（2026-10-25 用户指令；强制执行版）
+
+> **标准 = 包根四件套 + 插件包两件套**。自 Front 编译装载 → C VM 运行 → 发布打包 →
+> 分发脚本，全链路一律按本节执行（装载链回退只做过渡兼容，不再作为目标态）。
+
+### 7.1 主包（`package\{win32|linux}-{debug|release}\` / 未来 slang 分发包）
+
+```
+<包根>\
+├── slang(.exe)                 入口 = frontEnd 编译 + cvm_runtime 执行
+├── bin\                        打包的工具链产物与 VM 本体：
+│   ├── csimple_lang.exe / csimple_lang_dll.dll（C VM）
+│   ├── llc.exe / mlir-opt.exe / mlir-translate.exe / mlir_float16_utils.dll
+│   │   （MLIR/LLVM AOT 工具链，csproj PackMlirTools 自 simple_language\tools\llvm）
+│   └── （Debug 另有 *.pdb 侧车）
+├── lib\                        引入的 module 与 module 关联的原生库：
+│   ├── *.module.slb            官方标准库等模块包（平铺）
+│   └── windows\                module 关联 dll 按平台分目录（2026-10-22 平台细分）
+│       ├── sqlite3.dll         （Core 关联：C VM 唯一硬动态依赖，delay-load +
+│       │                        sl_preload_associated_dlls 预装载）
+│       └── math_lib.dll        （Math 关联：FFI 原生库）
+│       （linux 包 = lib\linux\libsqlite3.so.0；slb 平铺、平台无关）
+├── plugin\<id>\                插件包安装位（csproj PackPlugins；见 7.2）
+└── md\                         用户文档
+```
+
+### 7.2 插件包（`plugin\<id>\`，仓库侧 = `plugin\<id>\` 目录本体）
+
+**两件套 = `plugin.jsonc` + `lib\`**。三个工程（`frontend\`、`cvm\`=runtime、
+`slang\`）的产物**统一导出到插件根下的 `lib\`**：
+
+```
+plugin\csharp_mono\
+├── plugin.jsonc                权威清单
+├── lib\                        ← 三工程导出汇聚（= 未来压缩成一个文件的插件包）
+│   ├── CSharpMono.module.slb     第三个工程：slang\ 的 .sl 打包产物（平铺 lib\ 根）
+│   └── windows\                  平台分类库：windows | linux | macos | iOS | android
+│       ├── cvm_csharp_mono.dll           runtime(cvm) 工程 dll
+│       ├── sl_csharp_mono_frontend.dll   frontend 工程原生 dll
+│       └── mono-2.0-sgen.dll、lib\mono\4.5\…  运行体附属子树原样随包
+├── frontend\  cvm\  slang\     源码区（产物已全部上移 lib\；.obj 落各自 obj\）
+```
+
+- 平台目录名 = `windows|linux|macos|ios|android`，与主包 `lib\<平台>\`、
+  C VM `sl_platform_dir_name` **同名约定**；旧 `lib\<os>-<arch>`（如
+  `windows-x64`）降为装载回退兼容变体。
+- **分发形态演进**：当前发布打包把插件包整件装进 `<包根>\plugin\<id>\`；
+  未来插件包压缩成一个文件，直接放到 `slang\plugin\` 下的一个目录里。
+- 构建入口：`plugin\<id>\cvm\build-<id>.ps1`（一键产出三工程全部产物进 `lib\`）；
+  vcxproj（VS 链）OutDir 同指 `..\lib\windows\`。
+
+### 7.3 调用关系（全链路一致性）
+
+| 环节 | 路径行为 |
+|------|----------|
+| Front 编译期 references 纯名（Core/Std/Math） | 官方库直查 `<exe>\lib\<名>.module.slb`（slb 优先；modules\ 兜底） |
+| Front `@tag{}` 路由 | `FindPluginsParent` 上溯 `plugin` → `<exe>\plugin\` 探测；frontendNative dll 取 `<插件根>\lib\<平台>\<lib>` |
+| Front PluginLib 导出段 | 平台目录回退（`<os>` 新标准位优先）→ **递归拷贝** `outDir\plugin\<id>\lib\<平台>\`；module.json 记 `plugin/<id>/lib/<平台>/<file>` |
+| C VM 引用装载 | `<exe>\lib\` → `<exe>\modules\` 直查（slb 优先） |
+| C VM 关联 dll 预载 | `<exe>\lib\<平台>\` → 平铺 `lib\` → `<exe>\..\lib\<平台>\` → `<exe>\..\lib\`（sqlite delay-load 绑定） |
+| C VM FFI/插件库 | 候选链含 `<exe>\lib\<平台>\<basename>`；插件 dll 按 module.json 包相对路径（Front 已按 7.2 求值）拼接加载 |
+| AOT 工具链 | MLIRToolchain 探测 `<exe>\bin\` 优先（发布包 PackMlirTools 就位；开发树回落 `simple_language\tools\llvm`，auto-deploy 也进 `<exe>\bin\`） |
+
+### 7.4 落点清单（本次强制执行改动，2026-10-25）
+
+| 层 | 落点 |
+|----|------|
+| 插件仓库侧 | 4×vcxproj OutDir `..\lib\windows\`；3×build-*.ps1 全产物导出 `lib\`（obj 隔离 obj\、副产物清理、无部署步）；plugin.jsonc `entry.lib` 键改平台名；目录迁移（cvm\lib、frontend\lib 上移合并） |
+| Front 层 | [PluginFrontendParser.cs](../../../simple_language/source/Core/PluginFrontendParser.cs) 探测 `lib\<平台>\`；[PluginManager.cs](../../../simple_language/source/Export/PluginManager.cs) libDir 三级 + 平台目录回退 + 递归拷贝 + module.json 新路径形态 |
+| 发布打包 | csproj **PackMlirTools**（bin\ 工具链）、**PackPlugins**（plugin\ 安装 + 副产物 Exclude）；PackCvmRuntime sqlite3→`lib\windows\`；PackModulesCommand/CompileStdlib math_lib→`lib\windows\`；RelocatePluginFrontends 空壳删除 |
+| 脚本 | build-packages.ps1 / release-slang.ps1 布局校验与 linux 包组装（sqlite → `lib\linux\`、剔除 lib\windows\）按 7.1 |
+| 清理 | MLIR 工具散拷副本（dev 树 exe 旁 + 旧包根）清除，EnsureLocalTools 改进 `bin\` |
+
+
 
 ## 一、三目录设计
 
@@ -10,7 +86,7 @@
 |------|------|------|
 | `lib\` | **系统自带文件**：官方标准库（Core / Math / Std 的 `*.module.slb` + `math_lib.dll` + Debug 包 json 调试副本）+ `sqlite3.dll`（C VM 唯一硬动态依赖，2026-10-22 布局规则自 bin\ 迁入：delay-load + 运行期预装载解析） | ✅ 2026-10-18 起由原 `module\` 更名（内容不变，平铺单目录）；🔥 2026-10-22 起关联 dll 统一入此目录（§六） |
 | `modules\` | **用户包目录**：未来 `spm.exe`（SLang Package Manager，类比 npm / NuGet）安装/管理第三方包的落位 | 🧪 预留：Front 与 C VM 的官方库直查已按 `lib\` → `modules\` 顺序查找，目录未建自然落空；spm.exe 落地时无需再动装载器 |
-| `plugins\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 插件管理器安装整插件目录到 `plugins\<id>\` 后即可被 `@tag{}` 路由（Front `FindPluginsParent` 已支持回退探测；两个运行时插件 frontend 自 2026-10-21 起 C 化为原生 dll、不经 publish 产出/归位，随插件整目录分发） |
+| `plugin\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 插件管理器安装整插件目录到 `plugin\<id>\` 后即可被 `@tag{}` 路由（Front `FindPluginsParent` 已支持回退探测；两个运行时插件 frontend 自 2026-10-21 起 C 化为原生 dll、不经 publish 产出/归位，随插件整目录分发） |
 
 包根其余目录不变：`bin\`（C VM 运行时**本体**：`csimple_lang_dll.dll` / `csimple_lang.exe` / pdb 侧车——sqlite3.dll 已按 §六迁 `lib\`）、`md\`（用户文档）。~~`test\RefProbe\`（开箱示例）~~ 已于 2026-10-18 按用户指令移除（v0.0.5 起发布包不再带 `test\`，示例保留在仓库测试树 `SLangCore\test\Other\RefProbe`）。
 
@@ -29,13 +105,13 @@
    整目录分发），target 清单已清空、保留空壳兼容管线（Native AOT
    Release 发布本就不产出这些托管 dll）。
 4. **插件路由支持包内安装**：`PluginFrontendParser.FindPluginsParent` 在
-   源码树上溯（`simple_language_plugins`，开发布局）落空后，回退探测
-   `<exe>\plugins\`——插件管理器把整插件目录（`plugin.jsonc` + `cvm\` +
-   `frontend\` + `slang\`）装进 `plugins\<id>\` 后，`@tag{}` 无需源码树即可路由。
+   源码树上溯（`plugin`，开发布局）落空后，回退探测
+   `<exe>\plugin\`——插件管理器把整插件目录（`plugin.jsonc` + `cvm\` +
+   `frontend\` + `slang\`）装进 `plugin\<id>\` 后，`@tag{}` 无需源码树即可路由。
 5. **FFI / vmDllImports 不受影响**：原生库解析本就按「模块包自身目录（现
    `lib\`）+ 相对路径 / basename 回退」，目录随包整体更名，链路不变。
 
-## 三、为什么 plugins 独立于 modules（插件 ≠ 普通包）
+## 三、为什么 plugin 独立于 modules（插件 ≠ 普通包）
 
 普通包（module）只是编译产物 `*.module.slb|json`，装载即用；插件是**多层
 结构 + 生命周期**的复合体（权威：`csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md`）：
@@ -49,7 +125,7 @@
   `plugins[]`，装载懒激活（`load`·`enter`·`exit`·`unload` 四阶段）；
 - **双宿主**：Front 层（编译期转调）与 C VM 层（运行期 native 库 + ABI）各一份。
 
-因此插件不进 `modules\` 包目录，独立放 `plugins\<id>\`，由（未来的）插件
+因此插件不进 `modules\` 包目录，独立放 `plugin\<id>\`，由（未来的）插件
 管理器单独管理安装/启停。
 
 ## 四、spm.exe 愿景（未实现，备忘）
@@ -75,8 +151,8 @@
 
 ## 六、关联件布局规则（2026-10-22 用户指令；同日平台细分定稿）
 
-> 🔥 **规则**：关联的 `.slb` 模块包与关联的原生库统一放 `lib\`；插件放 `plugins\`；
-> exe 目录只留 exe 本体（发布应用 = `Module.exe` + `lib\` + `plugins\`）。
+> 🔥 **规则**：关联的 `.slb` 模块包与关联的原生库统一放 `lib\`；插件放 `plugin\`；
+> exe 目录只留 exe 本体（发布应用 = `Module.exe` + `lib\` + `plugin\`）。
 > 发布产物 exe 旁不再有散落的 sqlite3.dll。🔥 **平台细分（同日定稿）**：原生库
 > 在 lib\ 下按平台分目录 `lib\{windows|linux|macos|android|ios}\`（承载
 > .dll/.so/.dylib/.lib/.a 等）——一个发布目录可承载多平台运行体，运行体按

@@ -576,6 +576,14 @@ namespace SLang
             # handler 协程派发（SERVER_DESIGN.md §6.1）
             # Function 字段先拷局部再传参（HttpHeaders 头注记纪律）
             function h = route.handler
+            if h == null
+            {
+                # 防御（P4）：预装载路由条目 handler 实例化失败
+                #（SystemServerRouteHandler miss -> null 经 usePreloadRoutes
+                # 已过滤，此处兜底动态注册的 null handler）→ 500
+                res.status( 500 ).rawJson( HttpServerCore._errorBody( 500 ) )
+                ret false
+            }
             Task task = Coroutine.spawnClosure2( h, req, res )
 
             bool timedOut = false

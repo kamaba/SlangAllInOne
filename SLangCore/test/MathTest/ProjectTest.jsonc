@@ -49,8 +49,8 @@
   "struct": [
   ],
   "export": {
-    "moduleName": "MathTest",
-    "outputDir": "..\\..\\..\\out\\export",
+    "moduleName": "ProjectTest",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

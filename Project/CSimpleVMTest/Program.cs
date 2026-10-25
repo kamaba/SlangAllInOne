@@ -215,7 +215,7 @@ internal static class Program
         runOutput = null;
         // 发布包布局（2026-10-18 package\{win32|linux}-{debug|release}）：
         //   Debug   -> package\win32-debug  ：框架依赖 slang.exe + bin\ 调试 C VM
-        //              （pdb 侧车）+ lib\ slb+json 官方库 + plugins\ 前端插件程序集；
+        //              （pdb 侧车）+ lib\ slb+json 官方库 + plugin\ 前端插件程序集；
         //   Release -> package\win32-release：Native AOT slang.exe + bin\ 加固 C VM
         //              （JIT 默认开）+ lib\ 仅 slb 官方库。
         // 包不存在时提示先跑 build-packages.ps1（不回退 dev 树——本宿主的意义即验证发布包）。
@@ -238,8 +238,8 @@ internal static class Program
         //     C VM 走官方库直查 <exe_dir>\lib\（sl_exe_dir_join_name 取
         //     slang.exe 所在目录），标准库即取自包内 lib\ 目录；
         //  2) 子目录深度与 out\export\<Module> 一致（lang 根下第 4 层），
-        //     SpecialTest 等插件 lib "../../../../simple_language_plugins/..."
-        //     这类按 module.json 所在目录回仓库的相对路径保持可达；
+        //     SpecialTest 等插件 lib "../../../../plugin/..." 这类按
+        //     module.json 所在目录回仓库的相对路径保持可达；
         //  3) 非系统库引用（如 ExpendTest -> SLangServer）连带拷入包内
         //     <pkg>\<RefModule>\（2026-10-20 修复）：此前引用模块不跟随，
         //     C VM 对落空引用静默 skip（仅 VM.txt Warning），跨模块调用全部
@@ -308,7 +308,7 @@ internal static class Program
     }
 
     /// <summary>把 out\export\&lt;Dir&gt;\ 的运行产物（*.module.json / *.module.slb +
-    /// plugins\ 载荷，不含 Logs\DebugCode 调试快照）拷入发布包 &lt;pkgDir&gt;\&lt;Dir&gt;\，
+    /// plugin\ 载荷，不含 Logs\DebugCode 调试快照）拷入发布包 &lt;pkgDir&gt;\&lt;Dir&gt;\，
     /// 返回包内模块文件路径（优先与传入 json 同名的 .slb 主产物，无则 .json）；失败返回 null。
     /// 产物文件名以 jsonc project.name 为准（≠ export.moduleName 时目录名与文件名不同，
     /// 如 NullFast：目录 NullFastTest\ 文件 ProjectTest.module.slb），故按实际文件名定位，
@@ -328,10 +328,10 @@ internal static class Program
             foreach (string f in Directory.GetFiles(moduleDir, "*.module.*"))
                 File.Copy(f, Path.Combine(destDir, Path.GetFileName(f)), overwrite: true);
 
-            // 插件载荷子树（如 echo 插件 lib 由 Front 拷入 out\export\<Module>\plugins\）
-            string pluginsSrc = Path.Combine(moduleDir, "plugins");
+            // 插件载荷子树（如 echo 插件 lib 由 Front 拷入 out\export\<Module>\plugin\）
+            string pluginsSrc = Path.Combine(moduleDir, "plugin");
             if (Directory.Exists(pluginsSrc))
-                CopyDirectoryRecursive(pluginsSrc, Path.Combine(destDir, "plugins"));
+                CopyDirectoryRecursive(pluginsSrc, Path.Combine(destDir, "plugin"));
 
             // 非系统库引用模块联动拷贝（2026-10-20；见 RunCVM 注释第 3 点）
             StageReferencedModules(moduleJsonPath, pkgDir, repoRoot);
@@ -398,9 +398,9 @@ internal static class Program
                     File.Copy(f, Path.Combine(refDest, Path.GetFileName(f)), overwrite: true);
                     any = true;
                 }
-                string refPlugins = Path.Combine(srcDir, "plugins");
+                string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))
-                    CopyDirectoryRecursive(refPlugins, Path.Combine(refDest, "plugins"));
+                    CopyDirectoryRecursive(refPlugins, Path.Combine(refDest, "plugin"));
                 if (any)
                     Console.WriteLine($"[stage] referenced module '{name}' staged into package");
             }

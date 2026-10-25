@@ -1,9 +1,9 @@
 # SLang Server — HTTP / WebSocket 服务框架设计
 
-> 状态：**v2 · P1.5 已落地（2026-10-20）** · v1 2026-10-14 · v2 2026-10-14（评审修订） · P0 2026-10-17（引擎+探针全绿） · P1 2026-10-17（路由与封装全绿） · P1.5 2026-10-20（文件上传全绿，见 §8 P1.5 行与文末「P1.5 落地实录」）
-> 落位：`source/Front/Lib/SLang/Server/`（模块名 `SLangServer`，命名空间 `SLang`）
+> 状态：**v2 · P4.5 已落地（2026-10-25）** · v1 2026-10-14 · v2 2026-10-14（评审修订） · P0 2026-10-17（引擎+探针全绿） · P1 2026-10-17（路由与封装全绿） · P1.5 2026-10-20（文件上传全绿） · P2 2026-10-20（管道与流式全绿） · P3 2026-10-21（文档+认证全绿） · P4 2026-10-24（attribute 控制器全绿） · P4.5 2026-10-25（直接 await 糖全绿，见 §8 P4.5 行与文末「§18 P4.5 落地实录」）
+> 落位：`source/Front/Lib/SLang/Server/`（模块名 `SLangServer`，命名空间 `SLang`）；SLangCore 布局：`SLangCore/Lib/SLang/Server/`
 > 参照系：Python FastAPI（路由注册/自动文档）、Java Spring Boot（控制器/插件生态）、Node Express（Request/Response 双参签名）
-> 关联：`md/lib/Std/net/Http.md`（Route 未接线说明）、`csimple_lang/md/design/ATTRIBUTE_DESIGN.md` §6.6（Route 另立项）、`csimple_lang/md/design/NETSTREAM_DESIGN.md`（Tcp 挂起协议）
+> 关联：`md/lib/Std/net/Http.md` §7（Route/@On* 已接线 SLangServer）、`csimple_lang/md/design/ATTRIBUTE_DESIGN.md` §6.6（Route 另立项）、`csimple_lang/md/design/NETSTREAM_DESIGN.md`（Tcp 挂起协议）
 >
 > **v2 修订记录**（评审意见落位）：
 > ① 路由注册改 `onGet` 家族——`get` / `set` 是 SL 关键字不能作方法名（`HttpClient.sl` 头注记先例）；
@@ -333,8 +333,7 @@ app.onPost( "/api/report", function( SLang.Request req, SLang.Response res )
 app.onGet( "/api/orders", function( SLang.Request req, SLang.Response res )
 {
     List<string> orders = await queryOrders( req.queryInt( "page", 1 ) ) as List<string>;
-    # 直接 await 一步到位：返回非 Task 的调用由 §7.5 糖自动包 spawn 再 awaitTask（P4.5）；
-    # 糖落地前等价两步：Task t = spawn queryOrders( req.queryInt( "page", 1 ) ); List<string> orders = await t as List<string>;
+    # 直接 await 一步到位：返回非 Task 的调用由 §7.5 糖自动包 spawn 再 awaitTask（P4.5 已落地）
     Coroutine.delay( 100 );          # delay / yieldNow 让出调度：均合法
     res.jsonOk( orders.length );
 } );
@@ -369,8 +368,8 @@ app.onGet( "/api/mirror", function( SLang.Request req, SLang.Response res )
 # 6) 串行依赖链：前一个 await 的结果决定下一个的入参——只能顺序等（耗时相加），写法 4 的并发不适用
 app.onGet( "/api/user/{id}/orders", function( SLang.Request req, SLang.Response res )
 {
-    User u = await queryUser( req.pathInt( "id", 0 ) ) as User;    # 直接 await（§7.5 糖，P4.5；
-    if u == null                                                   #   糖落地前两步 fallback 同写法 3）
+    User u = await queryUser( req.pathInt( "id", 0 ) ) as User;    # 直接 await（§7.5 糖，P4.5 已落地）
+    if u == null
     {
         res.jsonFail( 404, "user not found" );
         ret
@@ -627,9 +626,8 @@ app.websocket( "/ws/job", function( SLang.WsSession s )
             break
         }
         string out = await runJob( m.text() ) as string;
-        # 直接 await 一步到位：返回非 Task 的调用由 §7.5 糖自动包 spawn（P4.5）；
+        # 直接 await 一步到位：返回非 Task 的调用由 §7.5 糖自动包 spawn（P4.5 已落地）；
         # 挂起等结果期间其他会话不受影响；
-        # 糖落地前等价两步：Task job = spawn runJob( m.text() ); string out = await job as string;
         s.sendText( out );
         m.release();
     }
@@ -824,10 +822,9 @@ public class UserController
     public void createUser( SLang.Request req, SLang.Response res )
     {
         CreateUserReq b = req.body<CreateUserReq>();
-        User u = await persistUser( b ) as User;  # 直接 await 一步到位（§7.5 糖，P4.5）——派发时本方法已在
+        User u = await persistUser( b ) as User;  # 直接 await 一步到位（§7.5 糖，P4.5 已落地）——派发时本方法已在
                                                   # handler 协程上运行（§6.1），落库等慢操作封装为协程函数即可，
                                                   # 方法体内无需再 spawn 拿 Task；
-                                                  # 糖落地前等价两步：Task t = spawn persistUser( b ); User u = await t as User;
         res.status( 201 ).jsonOk( u );
     }
 
@@ -1412,8 +1409,8 @@ User u = await persistUser( b ) as User;     # 而非：Task t = spawn persistUs
 | **P1.5** 上传 | multipart 解析器 + `UploadedFile`（saveAs/saveInto/安全剥离）+ `maxUploadBytes/maxFileBytes` | §4.4 文件上传全部示例可运行 | ✅ **2026-10-20 全绿**：`test/ExpendTest/Server/ServerP15Test.sl` T1–T7 共 10 项（混合字段+form 族并入 / 二进制内容 hex 往返 / 多文件同字段 / 路径穿越剥离+空名 `upload_<序号>` / saveAs+saveInto 重名自动改名 `dup(1).txt` / 单文件超限 413 / multipart 总量超限 413 / boundary 缺失 400）全 OK；P1 42 项回归全绿；落地偏差见文末「P1.5 落地实录」（附：宿主引用模块联动拷贝修复） |
 | **P2** 管道插件与流式 | 中间件管道（Next.go）+ `ServerPlugin` + `logger/cors/staticFiles` + **流式三件套（`StreamWriter` chunked / `SseWriter` SSE / `sendFile` 流式下载）** + `wsEvents` 糖 + 通配路由 | §4.5 与 §4.7 全部示例可运行 | ✅ **2026-10-20 全绿**：`test/ExpendTest/Server/ServerP2Test.sl` T1–T4 共 24 项（管道短路 401 / onion 序 + userData 传值 / 404 过管道 / onInstall·onStart·onStop 钩子三联 / CORS 预检 204 / 静态 MIME / 穿越 403 / chunked 编码·终止块·keep-alive / SSE 线格式 / 流式超时豁免 / sendFile 160KB 往返 / file() 附件头 / {path*} 通配三态 / wsEvents 开·收·关）全 OK；P1 42 项 + P1.5 10 项回归全绿（ExpendTest 全量零 FAIL）；落地偏差见文末「P2 落地实录」（附：C VM CastClass Step 6 闭包放行修复） |
 | **P3** 文档+认证 | `OpenApiBuilder` + `/docs` + `/openapi.json` + `importOpenApi` + `bodyLimit/requestId/auth` 插件 + `SLang.Jwt.decode` + `maxConnections` | §4.8 全部能力 + §4.11 auth 三挂法 / `.skip` 白名单 / WS token 两落点 | ✅ **2026-10-21 全绿**：`test/ExpendTest/Server/ServerP3Test.sl` T1–T6 共 33 项（openapi 3.0.3 骨架/paths/param in:path/requestBody $ref/嵌套 schema/securitySchemes 双定义+operation security/form 字段；/docs 自包含页 + 用户让位 + docs(false) 关闭；Bearer 401+WWW-Authenticate·坏 token·claims 透传·skip 放行；API Key 三态；通用回调双头三态；Jwt.decode 五组（claims/exp 三态/坏格式 null）；importOpenApi 计数·501·共存·覆盖让位·元数据继承；maxConnections 503）全 OK；P1 45 + P1.5 10 + P2 24 回归全绿（ExpendTest 零 FAIL）；落地偏差见文末「P3 落地实录」（附：Front 三坑规避实录——`$` 插值吞 token/长字面量 "+" 链截断/`out`·`params` 关键字） |
-| **P4** attribute | §7 接线：C VM 原生收集 **`@OnGet/@OnPost/@OnPut/@OnDelete/@OnPatch/@OnHead/@OnOptions/@OnAny` 动词家族 + `@Route`/`@OnRoute`**（新名→verb 原生映射）+ `ServerBridge.call(routeIdx, req, res)` 转发闭包系统方法 + R7 四处同步 + R6 登记 | §4.10 语法可用 | `@OnPost( "admin/user" )` 控制器用例（含 `await`/`delay` 异步 handler、超时 504 路径）；`Route.sl` 迁入改写为 `RouteAttrs.sl`；相关 md 同步 |
-| **P4.5** 直接 await 糖 | Front 语法糖（§7.5）：`await` 后跟返回非 Task 的调用自动包 spawn 脱糖（判别下沉 IR/Meta 层，§7.3 调研先行）+ `md/syntax/coroutine.md` §4 同步（R13） | §4.1 / §4.2 写法 1·3·6·7 / §4.6 / §4.7 / §4.10 createUser 全部直接 await 形态生效 | `await persistUser( b ) as User` 直等用例通过；`httpGetAsync` 族**透传不回归**；显式 spawn 并发聚合**不回归**（含 §4.2 写法 4 `waitAll` 多表并发 / 写法 5 `waitAny` 竞速）；Task 变量基础形态**不回归** |
+| **P4** attribute | §7 接线：C VM 原生收集 **`@OnGet/@OnPost/@OnPut/@OnDelete/@OnPatch/@OnHead/@OnOptions/@OnAny` 动词家族 + `@Route`/`@OnRoute`**（新名→verb 原生映射）+ `ServerBridge.call(routeIdx, req, res)` 转发闭包系统方法 + R7 四处同步 + R6 登记 | §4.10 语法可用 | ✅ **2026-10-24 全绿**：`test/ExpendTest/Server/ServerP4Test.sl` T1–T3 共 13 项（preload count==6 / OnRoute prefix join / 每请求一实例 / @Route 双参 DELETE / plain OnGet / OnAny 双动词 / 动态注册共存 / 404 / 405+Allow / await+delay 异步 handler / 超时 504 / 二次拉取幂等 / duplicate fail-fast）全 OK；ExpendTest 全量回归零 FAIL；`Route.sl` 迁入改写为 `RouteAttrs.sl`（原文件删除）；相关 md 同步（Server.md 新增 P4 节 / Http.md §7 更新）；落地偏差见文末「§17 P4 落地实录」（附：C VM declaringTypeFullName 短名回退修复） |
+| **P4.5** 直接 await 糖 | Front 语法糖（§7.5）：`await` 后跟返回非 Task 的调用自动包 spawn 脱糖（判别下沉 IR/Meta 层，§7.3 调研先行）+ `md/syntax/coroutine.md` §4 同步（R13） | §4.1 / §4.2 写法 1·3·6·7 / §4.6 / §4.7 / §4.10 createUser 全部直接 await 形态生效 | ✅ **2026-10-25 全绿**：`test/ExpendTest/Server/ServerP45Test.sl` T1–T3 共 13 项（静态 0/1/3 参直等 / 实例方法直等（receiver→方法引用 this 绑定）/ 目标体内 delay 真挂起 / void 目标 / **Task 调用透传不回归**（同 httpGetAsync 类型学通道）/ **显式 spawn waitAll2 聚合不回归** / **Task 变量基础形态不回归** / 函数值调用保守路径 / 三形态混用）全 OK；ExpendTest 全量零 FAIL；BaseTest 26 FAIL = 2026-10-23 既有基线逐条一致（零新增）；Math/NullFast/Special/BenchMark exit 0；实现形态 = 换绑标记（非 IR 判别下沉，见 §18 实录）；coroutine.md §4.2 + function.md VM 侧注同步 |
 | **P5** 打磨 | 前缀树路由 / **请求侧流式（`r.streamBody` + `HttpBodyReader` 边收边落盘上传）** / Range 断点续传 / 主动心跳 / `rateLimit` 插件 / `SLang.Jwt.sign/verify`（HS256 签验 + `ServerConfig.jwtSecret`，**前置依赖 = 标准库 crypto 哈希原语落地**，G8 边界内，§4.11）/ TLS 服务端评估 | 性能与运维项 | 基准（BenchMark 用例集）+ 压测 |
 
 每阶段完成即触发 §9 文档同步清单（R14：代码改了文档必须跟上）。
@@ -1598,4 +1595,41 @@ html → text/html · js → application/javascript · css → text/css · json 
    - 另两处编译期纪律：`ret 方法调用()` 跨行续 `+` 链中段裸标识符会被误判类名（拆局部变量）；`for` 三段分隔符是**逗号**不是分号（`for i = 0; i < n; i++` 静默 NRE，无报错线索）。
 6. **maxConnections 503 = 协议层应答**：accept 循环内 `_writeSimple(503) + _gracefulClose`，不进管道不占连接协程（§6.11 精神）；keep-alive 占住名额的连接在 stop/超时释放后恢复。
 
-**下一步（P4 attribute 控制器）**：C VM 原生收集 `@On*` 动词家族（§7.1 主方案：装配期 attributeList 扫描 + `SystemServerGetPreloadRoutes` 系统方法 + `ServerBridge.call` 转发闭包）+ R7 四处同步 + R6 三处登记；验收 = §8 P4 行。
+**下一步（P4.5 直接 await 糖）**：§7.5——`await` 后跟返回非 Task 的调用自动包 spawn 脱糖（判别下沉 IR/Meta 层，§7.3 调研项先行）；验收 = §8 P4.5 行（透传/聚合/Task 变量三条回归红线）。
+
+---
+
+## §17 P4 落地实录（2026-10-24，代码实况与设计的差异记录）
+
+**产物**：C VM 新增 `vm/runtime/attribute/vm_route_attribute.c`（路由表：`s_route_append` 方法条目（verb 大写/path/method_id）+ `s_prefix_append` 类前缀表（class_id→prefix）+ `_enter_` join（method_id→RuntimeClass→前缀拼接→"verb|path|class|method" 行）+ 查询四接口（count/line/class_id/method_id，join 前一律空响应）+ 10 个 attribute handler（On 动词家族 8 共享 collect（名→verb 映射表）/ `@Route` 双参显式 verb（缺省 ANY·大写化，enter/exit 挂此条目）/ `@OnRoute` 类级 collect_class（六字段结构第五 NULL 教训：collect_class 必须显式写满））；`vm_runtime_attribute.c` 扩展 collect 方法级+类级双扫描（stage==Preload 且 handler 名匹配分发）+ `vm_runtime_attribute_reset` 集成路由表重置；`server_system_method.c` 三系统方法（`ServerGetPreloadRouteCount` / `ServerGetPreloadRouteLine` / `ServerBridgeCall`——new 控制器实例 + VM 级直调目标方法）；SL 层 `RouteAttrs.sl`（10 属性类收编自 Std/Net/Route.sl，原文件删除）+ `Server.sl` `usePreloadRoutes()`（拉表→RouteInfo→Router，重复调用幂等返回 0）+ `Server.jsonc` systemCalls/struct 三处登记；R6 CMakeLists+vcxproj 登记零错误零警告；验收用例 `test/ExpendTest/Server/ServerP4Test.sl`（T1–T3 共 13 项，端口 19441）。
+
+**验收**：✅ 2026-10-24 全绿——T1 路由 9 项（preload count==6 / OnRoute prefix join / 每请求一实例（两次请求实例不同）/ @Route("DELETE") / plain OnGet / OnAny 两动词命中 / 动态注册共存 / 404 / 405+Allow）、T2 异步 2 项（await+delay 200 / 慢 handler 超时 504）、T3 幂等 2 项（二次拉取仍 6 条 / duplicate fail-fast）全 OK；ExpendTest 全量（P1 45 + P1.5 10 + P2 24 + P3 33 + P4 13 + 其余全套）回归零 FAIL、exit 0。
+
+**与设计的偏差 / 实况要点**：
+
+1. **🔥 根因定位链（R12 插桩纪律实录，11 FAIL → 0）**：首轮回归 11/13 FAIL。逐层排除：① Front 契约链实锤完好——导出 json 中类级 `@OnRoute`（stage=2 targets=1）与方法级 `@OnPost`（stage=2 targets=16、methodId 非零）全数正确，slb/json 同秒生成排除旧包，UVarInt 负数位模式编码往返无损（C# `(long)(uint)value` ↔ C `(int32)(uint32)(uint64)v` 对称）；② C VM 三处插桩（collect 统计/append 丢弃原因/enter 无条件）重建重跑——collect 完美（6 方法+1 类前缀全 matched=6/1，handlers=12）、append 零丢弃（routes=6 prefixes=1）、**enter joined=0**：断点锁定 `find_runtime_class_by_method_id` 恒 NULL。
+2. **🔥 根因：`declaringTypeFullName` 短名 vs 类 `fullName` 全名**——Front 导出方法字段的 `declaringTypeFullName` 为**短名**（`"P4AdminController"`，甚至 Core.Object.refEquals 也是 `"Project"`——该字段整体不可靠），而类 `fullName` 带命名空间前缀（`"ProjectTest.P4AdminController"`）；`sl_runtime_assembly_find_class_by_full_name` 全等比较 → **owner_class 恒 NULL** → `method_entries[].runtime_class=NULL` → P4 join 全灭。现有调用链未炸的原因：方法调用走扁平 `method_id_hash`、类方法绑定走 `bind_class_methods`（类内嵌 `non_static_method_list[].id` 全名 id），均不依赖该字段——只有 P4 路由 join 首次消费它。
+3. **修复：本模块短名回退**（`sl_runtime_assembly.c` 方法注册循环）：全名匹配失败且 declaringTypeFullName 非空时，**限定本模块 class_list** 按 `cls->name` 短名回退（Front 同模块类名唯一约束；不跨模块避免歧义）。仅救 NULL：已匹配成功的路径（如 Core 宿主类 "Project"）零影响。副作用边界核实：`runtime_class_add_method` 与 `bind_class_methods` 同表且 bind 先 clear 再 rebind（enter_all 之后跑），owner_class 唯一持久效果即 `method_entries[].runtime_class`——P4 join / array·ffi·coroutine 系统方法 host_rc 同获更正确数据。json 中另有的 `declaringClassId` 字段（数值正确，=-998246793 与类 id 一致）C 模型未解析，彻底根治需 Front 编码+C 解码双端扩字段并全量重编 slb，留作后续演进项。
+4. **诊断插桩已收敛**：P4DBG 三处临时日志全部移除，保留 join 成功统计日志（joined_count>0 门控）。
+5. **跑法备忘**：回归命令 `csimple_lang.exe run --no-banner <module.json>`（cwd=ExpendTest，Sqlite3Test 资源相对路径要求）；VM 日志在 `csimple_lang\build\logs\VM.txt`（cwd 相对）。
+
+**下一步（P5 打磨）**：前缀树路由 / 请求侧流式（`r.streamBody` + `HttpBodyReader` 边收边落盘上传） / Range 断点续传 / 主动心跳 / `rateLimit` 插件 / `SLang.Jwt.sign/verify`（HS256，前置依赖 = 标准库 crypto 哈希原语）/ TLS 服务端评估；验收 = §8 P5 行（基准 + 压测）。
+
+---
+
+## §18 P4.5 落地实录（2026-10-25，代码实况与设计的差异记录）
+
+**产物**：SL 层 `Lib/Core/Coroutine.sl` 增标记方法族（`__awaitCall( object )` 换绑标记 + `__awaitSpawn0..3( Function, object... )` 非直等执行体：`awaitTask( spawnClosureN( f, 实参 ) )`）；Front 三处——`Parse/StructParseToSyntax.cs` await 分支（操作数为调用形态且非函数值变量（判据与 spawn 分流一同源 `IsLocalScopeDefineName`）时发射 `Coroutine.__awaitCall( <调用原样> )`，其余形态维持 `awaitTask`）、`Core/MetaCallNode.cs`（internal `SetAwaitSugarBinding` 换绑 setter）、`Core/MetaCallLink.cs`（`TrySwapAwaitSugarMarker` 换绑核心 + `FindCoroutineMethodByArity`/`GetFirstParamMetaClass` 辅助，挂在 `AddVisitNodeList` 的 MemberFunctionName 分支顶部）；`Log/LID.cs` + `ErrorDefinitions.csv` 增 21480（糖不支持目标/超 3 参）；验收用例 `test/ExpendTest/Server/ServerP45Test.sl`（T1–T3 共 13 项）。
+
+**验收**：✅ 2026-10-25 全绿——T1 直等 6 项（静态 0/1/3 参（`__awaitSpawn0..3` 全档）/ 实例方法（receiver→方法引用，this 绑定验证 mul=10×5）/ 目标体内 `delay(120)` 真挂起后取回 / void 目标副作用）、T2 三红线 3 项（返回 Task 的调用**透传不回归**（`makeSlowTask( 7 )` 与 `httpGetAsync` 同「调用形态 + Task 返回」类型学通道）/ 显式 spawn `waitAll2` 聚合不回归 / Task 变量基础形态不回归）、T3 边界 2 项（函数值变量调用保守路径（`function mkt = ServerP45Test.makeSlowTask` 方法引用 + 中间 Task 变量）/ 直等+透传+变量三形态混用）全 OK；ExpendTest 全量零 FAIL；BaseTest OK=679 FAIL=26 与 2026-10-23 既有基线（Monitor P5/P6 9 项 + CoroutineTest 5 项 + TupleTest 10 项 + P6 debug 2 项）**逐条完全一致零新增**；MathTest/NullFastTest/SpecialTest/BenchMark exit 0。
+
+**与设计的偏差 / 实况要点**：
+
+1. **实现形态 = 换绑标记，非设计倾向的 IR/Meta 判别下沉**：调研发现「方法引用」特性（2026-10-18）+ C VM `spawnClosure` 的方法引用专用通道（`vm_sys_coroutine_spawn_method_ref`，P4 落地时同源扩展）已提供全部建材——**零闭包合成**方案成立：parse 层发射单实参标记调用 → MetaCore 在 visit 构建前（类型已知点）换绑目标函数指针 + 重建实参集合。比设计的「提升无参包装闭包 + spawnClosure0」更优：实参在 **await 点立即求值**（原设计的包装闭包路径延迟到协程首跑），且无闭包合成成本。IR 层零改动。
+2. **Task 判定基准 = `awaitTask` 首参类型**（`FindCoroutineMethodByArity` 权威查找 + `ReferenceEquals` 同 ref 壳实例比较 + 名字兜底），免按名查找的跨模块壳类失配。
+3. **换绑幂等性**：只改 Meta 层绑定（`m_MetaFunction`/`m_MetaInputParamCollection`），词法/语法树不动——重解析时 `CreateCallNode` 从原始术语自然重建（标记重现，再次换绑）；换绑后不再是标记名，重复触发自然短路。
+4. **spawn 分支的内层改造**：实参调用链 visit 列表**末位 MethodCall 原位换 MethodReference**（receiver visit 节点不动——实例引用 receiver 留栈供 `NewMethodRef` 弹出，静态引用前置 MetaClass 访问节点无栈值，与自然方法引用形态完全一致）；方法引用表达式以新壳 `MetaCallLinkExpressNode( innerLink )` 作为新实参集合首参（返回类型缓存从零重算 = 引用值类型 `FunctionSignatureMetaClass`）；原实参表达式（上游已解析）原样提升——IR 发射即在 await 点求值。
+5. **边界与降级**：目标为 get/set/构造/模板方法或实参 > 3 → **编译期 Error 21480**（VM 方法引用 spawn v1 仅固定 0..3 参，变长形态拒绝）；实参非调用链 / 系统调用 / 类型未知 / 函数值变量调用 → **留标记兜底**（`__awaitCall` 函数体 = `awaitTask( v as Task )`，运行期语义与旧脱糖一致：同步求值 + 直等，null → awaitTask 报错路径不变）。函数值变量调用的静态签名类型（FunctionSignature）与 Task 形参不兼容是**类型系统既有局限**（`awaitTask` 严格 Task 匹配），非本糖回归——用例 T3a 已注记并用中间 Task 变量承载。
+6. **C VM / IR / 导出格式零改动**：本阶段纯 Front（Parse + MetaCore）+ Core 库（Coroutine.sl，需重编 Core.module.slb 并刷新消费工程 lib）。ExpendTest lib 刷新 + 全量重编后 C VM 直接跑通。
+7. **跑法备忘**：`compile-tests.ps1 -Tests a,b,c` 的 `-File` 传参只绑首个（PS5.1 数组参数限制）——多套件用 `-Command` 形式；MathTest/SpecialTest 的 TestMap Module 路径与实际导出目录（`test\<套件>\export\...`）失配致 fresh 检查误报 FAILED，产物实际已刷新（脚本层既有问题，非编译失败）。
+8. **文档同步**：`md/syntax/coroutine.md` §4 关键字表 + §4.2 直接 await 糖节（三分支规则表 + 边界警示）重写；`md/syntax/function.md` VM 侧注更新（协程 spawn 例外——方法引用经专用通道支持，此前「不支持」表述已过时）；本文件 §8 P4.5 行打勾 + 本实录。

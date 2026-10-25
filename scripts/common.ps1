@@ -51,7 +51,7 @@ $TestMap = [ordered]@{
     'BaseTest'     = @{ Sp = 'test\BaseTest\ProjectTest.sp';           Module = 'ProjectTest\ProjectTest.module.json';
                         NoteWin = '9 FAILs are pre-existing Monitor P5/P6 issues';
                         NoteLinux = '9 FAILs are pre-existing Monitor P5/P6 issues' }
-    'ExpendTest'   = @{ Sp = 'test\ExpendTest\ProjectTest.sp';         Module = 'ProjectTest2\ProjectTest.module.json';
+    'ExpendTest'   = @{ Sp = 'test\ExpendTest\ProjectTest.sp';         Module = 'ProjectTest2\ProjectTest2.module.json';
                         NoteWin = 'Sqlite3Test FAILs if cwd != test\ExpendTest (Resources/ relative path)';
                         NoteLinux = 'Sqlite3Test FAILs if cwd != test\ExpendTest (Resources/ relative path)' }
     'MathTest'     = @{ Sp = 'test\MathTest\ProjectTest.sp';           Module = 'MathTest\ProjectTest.module.json';
@@ -60,15 +60,15 @@ $TestMap = [ordered]@{
                         ExitOkLinux = 1;
                         NoteLinux = 'exit 1 expected: win64-only plugins are skipped by platform check' }
     'BenchMark'    = @{ Sp = 'test\BenchMark\BenchMark.sp';            Module = 'BenchMark\BenchMark.module.json' }
-    'NullFastTest' = @{ Sp = 'test\Other\NullFastTest\ProjectTest.sp'; Module = 'NullFastTest\ProjectTest.module.json' }
+    'NullFastTest' = @{ Sp = 'test\Other\NullFastTest\ProjectTest.sp'; Module = 'NullFastTest\NullFastTest.module.json' }
     # Broken suites - kept for reference, always skipped by every script.
     'TensoraTest'  = @{ Sp = 'test\TensoraTest\ProjectTest.sp';        Module = ''; Broken = 'Tensora library fails to compile' }
     'RenderTest'   = @{ Sp = 'test\RenderTest\ProjectTest.sp';         Module = ''; Broken = 'incomplete suite; would overwrite ExpendTest output (same moduleName ProjectTest2)' }
     'MysqlTest'    = @{ Sp = 'test\Other\MysqlTest\ProjectTest.sp';    Module = ''; Broken = 'needs a remote mysql db and has no C VM adapter' }
     # Optional suites - pass explicitly via -Tests.
-    'InlineLambdaTest' = @{ Sp = 'test\Other\InlineLambdaTest\ProjectTest.sp'; Module = 'InlineLambdaTest\ProjectTest.module.json' }
-    'InlineMethodTest' = @{ Sp = 'test\Other\InlineMethodTest\ProjectTest.sp'; Module = 'InlineMethodTest\ProjectTest.module.json' }
-    'AutoInlineTest'   = @{ Sp = 'test\Other\AutoInlineTest\ProjectTest.sp';   Module = 'AutoInlineTest\ProjectTest.module.json' }
+    'InlineLambdaTest' = @{ Sp = 'test\Other\InlineLambdaTest\ProjectTest.sp'; Module = 'InlineLambdaTest\InlineLambdaTest.module.json' }
+    'InlineMethodTest' = @{ Sp = 'test\Other\InlineMethodTest\ProjectTest.sp'; Module = 'InlineMethodTest\InlineMethodTest.module.json' }
+    'AutoInlineTest'   = @{ Sp = 'test\Other\AutoInlineTest\ProjectTest.sp';   Module = 'AutoInlineTest\AutoInlineTest.module.json' }
 }
 
 $DefaultTests = @('BaseTest','ExpendTest','MathTest','SpecialTest','BenchMark','NullFastTest')

@@ -236,6 +236,43 @@ public class Coroutine extends Object
         ret SystemCoroutineAwait( cor.handle )
     }
 
+    #! ---------- P4.5 直接 await 糖标记（内部，Front 脱糖 + MetaCore 换绑） ---------- !#
+
+    #!
+     * 直接 await 糖的换绑标记（SERVER_DESIGN.md §7.5）：
+     *   await &lt;调用&gt; 在 parse 层脱糖为 Coroutine.__awaitCall( &lt;调用原样&gt; )
+     *   （单实参；闭包变量调用与其它形态仍走 awaitTask）。
+     * MetaCore 解析期按实参返回类型换绑：
+     *   返回 Task    -&gt; Coroutine.awaitTask( &lt;调用&gt; )              透传（与旧语义逐指令一致）
+     *   返回非 Task  -&gt; Coroutine.__awaitSpawnN( &lt;方法引用&gt;, 实参... )  spawn 协程 + awaitTask
+     * 运行期不应到达本组方法（换绑未触发的兜底 = 同步求值 + 直等，与旧语义一致）。
+    !#
+    public static object __awaitCall( object v )
+    {
+        ret Coroutine.awaitTask( v as Task )
+    }
+
+    #! __awaitSpawn0..3：非 Task 返回调用的直等执行体（方法引用 + spawn + awaitTask）。 !#
+    public static object __awaitSpawn0( Function f )
+    {
+        ret Coroutine.awaitTask( Coroutine.spawnClosure0( f ) )
+    }
+
+    public static object __awaitSpawn1( Function f, object a0 )
+    {
+        ret Coroutine.awaitTask( Coroutine.spawnClosure1( f, a0 ) )
+    }
+
+    public static object __awaitSpawn2( Function f, object a0, object a1 )
+    {
+        ret Coroutine.awaitTask( Coroutine.spawnClosure2( f, a0, a1 ) )
+    }
+
+    public static object __awaitSpawn3( Function f, object a0, object a1, object a2 )
+    {
+        ret Coroutine.awaitTask( Coroutine.spawnClosure3( f, a0, a1, a2 ) )
+    }
+
     #!
      * 等待两个协程全部结束（无返回值；结果在返回后用 await 逐个取回）。
      * 任何一个协程以异常结束：立即取消其余协程并向调用者抛出该异常。

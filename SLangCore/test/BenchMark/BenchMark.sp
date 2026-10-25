@@ -15,6 +15,13 @@ Project
         DataTypes.fun()
         StringBench.fun()
         RegExpBench.fun()
+
+        NQueens.fun()
+        Sieve.fun()
+        QuickSort.fun()
+        MatrixMul.fun()
+        BinaryTreeBench.fun()
+        Mandelbrot.fun()
         
 
         nowMs = Environment.sys.nowMillis() - nowMs

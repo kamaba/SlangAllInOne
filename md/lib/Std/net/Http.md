@@ -1,6 +1,6 @@
 # HTTP — Net.HttpClient 客户端
 
-> 位置：`source/Front/Lib/Std/Net/HttpClient.sl`、`Uri.sl`、`Route.sl`（namespace `Net`，Route 除外）
+> 位置：`source/Front/Lib/Std/Net/HttpClient.sl`、`Uri.sl`（namespace `Net`；路由属性 @Route/@On* 已迁 SLangServer，见 §7）
 > 关系：建立在 [stream.md](stream.md) 的 `NetStream` / `TlsStream` 之上（HTTPS 走 TLS）
 > 总览：[net.md](net.md) §10；测试：`test/Other/NetTest/HttpTest.sl`（回环）、`test/Other/HttpWebTest/HttpWebTest.sl`（公网）
 
@@ -145,15 +145,17 @@ Net.HttpResponse r1 = await t1 as Net.HttpResponse    # 协程内 await 取回
 
 ---
 
-## 7. Route（全局类，不在 namespace Net）
+## 7. Route / On* 路由属性（已迁入 SLangServer，P4）
 
 ```sl
-@Route( "/action/getfin" )     # 标注在类或方法上，类似 FastAPI 路由装饰器
+@Route( "/action/getfin", "DELETE" )   # 标注在方法上：path + 可选 verb（缺省 ANY）
+@OnRoute( "/p4admin" )                 # 标注在类上：控制器前缀（方法路由拼在其后）
+@OnGet( "/user" )                      # 动词家族：OnGet/OnPost/OnPut/OnDelete/
+                                      # OnPatch/OnHead/OnOptions/OnAny（方法级）
 ```
 
-- 定义于 `source/Front/Lib/Std/Net/Route.sl`，`public class Route extends Attribute`。
-- 属性阶段 `Preload`、目标 `All`：**装配期注册路由表**。
-- ⚠ 当前仅完成注册，**未接线**——服务端路由分发随 Net 库另立设计，暂无运行时效果。
+- 2026-10-24 起定义于 SLangServer 库 `Lib/SLang/Server/RouteAttrs.sl`（原 `Std/Net/Route.sl` 占位已删除，避免双定义）；`public class ... extends Attribute`，属性阶段 `Preload`。
+- **已接线（P4）**：`SLang.Server.usePreloadRoutes()` 拉取 C VM 装配期收集的路由表 → 进 Router（每请求 new 控制器实例后调用目标方法）。用法见 `md/lib/Server.md`「attribute 控制器」节，设计见 `SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §4.10 / §7。
 
 ---
 

@@ -1,0 +1,73 @@
+{
+  "project":
+  {
+    "name": "CycleProbe",
+    "desc": "circular reference detection probe (import cycles)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "CycleA.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleB.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleC.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleD.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleE.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleF.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleClassABC.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CycleClassSelf.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+    ],
+    "replace": {}
+  },
+  "references": [
+  ],
+  "struct": [
+      { "namespace": "CycleNS", "children": [] },
+      { "namespace": "Ring", "children": [] },
+      { "namespace": "Solo", "children": [] },
+      { "namespace": "Helper", "children": [] }
+  ],
+  "export": {
+    "moduleName": "CycleProbe",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
+  }
+}

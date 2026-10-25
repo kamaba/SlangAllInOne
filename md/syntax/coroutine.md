@@ -169,11 +169,13 @@ public class CoroutineBlockReason extends Object
 |---|---|---|
 | `spawn E` | 一元前缀**表达式** | 函数值变量：`Coroutine.spawnClosureN( f, 实参... )` 直传；静态方法名/实例链：`Coroutine.spawnClosure0( 合成包装闭包 )` |
 | `await e` | 一元前缀**表达式** | 操作数为**调用形态**：`Coroutine.__awaitCall( e )` 标记 → MetaCore 按返回类型换绑（见 §4.2 直接 await 糖）；其余形态：`Coroutine.awaitTask( e )` |
+| `await spawn E` | 组合前缀**表达式** | 先按 `spawn E` 脱糖为 `spawnClosureN` 合成调用（返回 Task），再以该调用为操作数走 `await` 透传（见 §4.2 `await spawn` 组合） |
 | `yield` | **语句**（无参） | `Coroutine.yieldNow()` |
 
 ```ebnf
 spawn_expr := 'spawn' ( call_expr | function_expr )
 await_expr := 'await' unary_expr
+await_spawn_expr := 'await' 'spawn' ( call_expr | function_expr )
 await_stmt := await_expr ';'
 yield_stmt := 'yield' ';'
 ```
@@ -240,6 +242,29 @@ string body = await httpGetAsync( url ) as string
 | Task 变量 / 其它表达式 / 函数值变量调用 | 维持 `awaitTask( e )` 现状（保守路径） |
 
 ⚠️ **边界**：目标为 get/set 访问器、构造函数、模板方法或调用实参超过 3 个时编译期报 Error 21480（VM 方法引用 spawn v1 仅固定 0..3 参），请改用显式两步 `Task t = spawn 方法( 实参 ); 结果 = await t as 类型;`。直接 await 要求协程上下文（同 `awaitTask`），root 主入口本身是 root 协程可直接使用。
+
+**`await spawn` 组合**（显式 spawn 后立即等待）：`await` 后直接跟 `spawn` + 调用/匿名闭包，语义严格等价于显式两步 `Task t = spawn ...; ret await t`：
+
+```sl
+int r1 = await spawn function() { ret 40 + 2 } as int     # 匿名闭包：提升为具名闭包后 spawn，再等待取回
+int r2 = await spawn coroAdd2( 3, 4 ) as int               # 裸静态方法名（包装闭包，实参延迟到协程首跑求值）
+int r3 = await spawn box.fetchInst( 5 ) as int             # 实例链同理
+await spawn logOnly()                                     # void 目标：只等协程跑完
+int r4 = await spawn adder( 1, 2 ) as int                  # 函数值变量（直传，实参在组合点立即求值）
+```
+
+与 §4.2 直接 await 糖的差异：
+
+| | `await fun( 实参 )`（直接 await 糖） | `await spawn fun( 实参 )`（组合） |
+|---|---|---|
+| 脱糖路径 | 方法引用 + `__awaitSpawnN`（方法名/实例链形态） | 先按 `spawn` 全形态脱糖为 `spawnClosureN`，再 `awaitTask` 透传 |
+| 实参求值时机 | await 点**立即求值**（全部形态） | 同裸 `spawn` 分流：函数值变量**立即求值**；方法名/实例链**延迟到协程首跑** |
+| 匿名闭包目标 | 不支持（只接调用形态） | 支持 `await spawn function(){...}` |
+| 展开等价 | — | `Task t = spawn fun( 实参 ); ret await t` |
+
+实现（`StructParseToSyntax.cs` `TransformCoroutineKeywordNodes` 两遍扫描）：第一遍展开 `spawn`（匿名闭包 → 提升具名闭包 + `spawnClosure0`；调用 → 包装闭包/直传 `spawnClosureN`，产物为返回 Task 的合成调用节点），第二遍 `await` 以该调用为操作数命中 `__awaitCall` 糖，MetaCore 换绑见其返回 Task 走透传分支。单独 `spawn` / `await` 的展开时序不变。
+
+⚠️ **边界**：实参超过 3 个时同裸 `spawn` 与 Error 21480 限制，请改用显式两步写法。
 
 ### 4.3 `yield`
 

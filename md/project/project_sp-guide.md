@@ -4,6 +4,17 @@
 > 
 > 对应配置文件：`Core.jsonc`
 
+## 0. `.sp` 非必需（2026-10-25 起）
+
+同名 `<ProjectName>.jsonc` 存在即认定为合法工程锚点；`.sp` 存在时行为完全不变，缺失时自动按**非 main 入口（库）工程**编译：
+
+- 无 `Project{}` 类——本文档所述 `_main_` / `_test_` 入口、`_before_` / `_after_` 钩子、`global.xxx` 整合面（§2）均不复存在
+- 无 global 块与工程级 typealias（两者均锚定 `.sp`）
+- 导出 `entryMethodId` 为 null（C VM 视作库模块装载，不从本工程启动）
+- jsonc 的 `global.data` / `global.macro` 数据注入、`compileFiles` 清单、`references` 引用等配置面照常生效（不依赖 `.sp`）
+
+工程定位顺序：目录扫描优先 `.sp`，无 `.sp` 时回落同名 `.jsonc`（跳过插件清单 `plugin\<id>\plugin.jsonc`）；CLI `-p <path.sp|path.jsonc>`、裸参数、宿主 `slang new`、LSP、VSCode 插件均支持两种锚点。
+
 ## 1. 入口函数约定
 
 ### `_main_`

@@ -4,11 +4,29 @@ import Core;
 namespace SLang
 {
     # ============================================================================
-    # SLang/Server/Server.sl — 配置与错误码（P0 子集 → P1.5 增补）
-    # 设计契约：SERVER_DESIGN.md §4.9（生命周期与配置）/ 附录 D（错误码表）
+    # SLang/Server/Server.sl — 配置与错误码 + 应用门面（实例形态）
+    # 设计契约：SERVER_DESIGN.md §0 / §4.1-§4.2 / §4.9（生命周期与配置）
+    #           / 附录 D（错误码表）
     #
-    # 门面类 SLang.Server（App：onGet 家族 / group / use / run）随 P1 落地，
-    # 当前直接使用 SLang.HttpServerCore。
+    # 门面类 SLang.Server 为实例形态（设计 §0/§4.1/§4.9 目标形态）：
+    #   var app = SLang.Server();        # 缺省端口 80
+    #   var app = SLang.Server( 8080 );  # 构造带端口
+    #   app.onGet( "/hello", function( SLang.Request req, SLang.Response res )
+    #   {
+    #       res.text( "hello world" );
+    #   } );
+    #   app.run();                       # = start + awaitStop（阻塞直至 stop）
+    #   app.run( 8080 );                 # run(port)/start(port) 便捷覆盖
+    #
+    # 构造期落位默认 ServerConfig（cfg.port = 构造端口），start 前可经
+    # app.config 直改字段；app.configure( cfg ) 为全量覆盖。
+    #
+    # v1 语义说明：引擎（HttpServerCore / Router / 会话表）仍为模块级单例
+    # （SERVER_DESIGN.md §12 复盘 ①——C VM 跨模块类多实例化的实例态隔离
+    # 不可靠），路由 / 中间件 / 插件 / WS 会话跨实例共享，单 VM 单服务器；
+    # 多实例需求待 C VM 实例隔离修复。插件 onInstall / 闭包等无实例引用
+    # 场景经引擎级静态通道（HttpServerCore.use / .onGet / .websocket /
+    # .sessions / .broadcast）注册与查询，语义与实例形态完全一致。
     # 配置字段直改（无 builder 链）；后续阶段字段随能力增补：
     #   P1.5：maxUploadBytes / maxFileBytes（multipart，已落地）
     #   P2：writeTimeoutMs（流式写挂起超时）
@@ -20,7 +38,7 @@ namespace SLang
     {
         # 监听地址
         public string host = "0.0.0.0"
-        # 监听端口（run(port) 为便捷覆盖）
+        # 监听端口（门面构造 seed / start(port) 为便捷覆盖）
         public Int32 port = 8080
         # 空闲连接超时毫秒（超时静默断开）
         public Int32 keepAliveTimeoutMs = 15000
@@ -96,123 +114,177 @@ namespace SLang
     }
 
     # ============================================================================
-    # SLang.Server — 应用门面（P1）
+    # SLang.Server — 应用门面（App 本体，实例形态）
     # 设计契约：SERVER_DESIGN.md §0 / §4.1-§4.2 / §4.6 / §4.9
     #
-    # 形态说明（SERVER_DESIGN.md §12 落地实录 ①）：C VM 对跨模块类多实例化
-    # 的实例态隔离不可靠（[2026-10-17] 复盘），门面为**静态形态**——
-    #   SLang.Server.configure( cfg ) / .onGet( path, fn ) / .run( port )
-    # 与设计的 `var app = SLang.Server(); app.onGet(...)` 实例形态等价，
-    # 单 VM 单服务器语义（§1.2）；多实例需求待 C VM 实例隔离修复。
-    # 用法（§4.1 目标形态的静态等价）：
+    # 用法：
     #   import SLangServer;
-    #   var cfg = SLang.ServerConfig();  cfg.port = 8080;
-    #   SLang.Server.configure( cfg );
-    #   SLang.Server.onGet( "/hello", function( SLang.Request req, SLang.Response res )
+    #   var app = SLang.Server( 8080 );      # 缺省端口 80
+    #   var cfg = app.config;                 # 直改字段（start 前生效）
+    #   cfg.keepAliveTimeoutMs = 20000;
+    #   app.onGet( "/hello", function( SLang.Request req, SLang.Response res )
     #   {
     #       res.text( "hello world" );
     #   } );
-    #   SLang.Server.run( 8080 );      # = start + awaitStop（阻塞直至 stop）
+    #   app.run();                           # = start + awaitStop（阻塞直至 stop）
+    #
+    # 形态说明（SERVER_DESIGN.md §12 复盘 ①）：P0-P4 曾以静态形态落地
+    # （SLang.Server.configure( cfg ) / .onGet( path, fn ) / .run( port )），
+    # 现按设计目标形态转实例；引擎层维持模块级单例（C VM 多实例实例态
+    # 隔离不可靠），跨实例共享路由/中间件/会话——v1 单 VM 单服务器语义。
     # ============================================================================
 
     public class Server
     {
-        # ── 配置 / 生命周期 ──
+        # 监听端口（构造入参；SLang.Server() = 80；start(port)/run(port)
+        # 便捷覆盖后同步本字段）
+        public Int32 port = 80
 
-        # 配置（构造替代；start 前生效；重复调用覆盖配置）
-        public static void configure( ServerConfig cfg )
+        # ── 构造 ──
+
+        # 缺省构造：端口 80（构造期落位默认配置，start 前可 app.config 直改）
+        public void _init_()
         {
+            this.port = 80
+            ServerConfig cfg = ServerConfig()
+            cfg.port = 80
             HttpServerCore.configure( cfg )
         }
 
-        # 启动（便捷覆盖端口；立即返回，accept 循环独立协程）
-        public static void start( Int32 port ) throws
+        # 带端口构造：SLang.Server( 8080 )（构造期落位默认配置）
+        public void _init_( Int32 port )
         {
+            this.port = port
+            ServerConfig cfg = ServerConfig()
+            cfg.port = port
+            HttpServerCore.configure( cfg )
+        }
+
+        # ── 配置 / 生命周期 ──
+
+        # 运行配置（构造期已 seed 默认值；start 前直改字段生效——
+        # SERVER_DESIGN.md §4.9「var cfg = app.config; cfg.port = 8080」形态）
+        public get ServerConfig config()
+        {
+            ServerConfig cfg = HttpServerCore._cfg
+            if cfg == null
+            {
+                # 兜底：绕过门面直连 HttpServerCore.configure 的极端路径
+                cfg = ServerConfig()
+                cfg.port = this.port
+                HttpServerCore.configure( cfg )
+            }
+            ret cfg
+        }
+
+        # 全量配置覆盖（构造期 seed 之外的显式配置；start 前生效；
+        # 重复调用覆盖；this.port 随 cfg.port 同步）
+        public void configure( ServerConfig cfg )
+        {
+            HttpServerCore.configure( cfg )
+            this.port = cfg.port
+        }
+
+        # 启动（立即返回，accept 循环独立协程；端口 = 配置端口——
+        # 构造期 seed 自构造入参，app.config 直改后以直改值为准）
+        public void start() throws
+        {
+            ServerConfig cfg = this.config()
+            HttpServerCore.setListenPort( cfg.port )
+            HttpServerCore.start()
+        }
+
+        # 启动（便捷覆盖端口；立即返回）
+        public void start( Int32 port ) throws
+        {
+            this.port = port
             HttpServerCore.setListenPort( port )
             HttpServerCore.start()
         }
 
-        public static void start() throws
+        # 阻塞当前协程直至 stop（run = start + awaitStop）
+        public void run() throws
         {
-            HttpServerCore.start()
+            this.start()
+            HttpServerCore.awaitStop()
         }
 
-        # 阻塞当前协程直至 stop（run = start + awaitStop）
-        public static void run( Int32 port ) throws
+        # 阻塞当前协程直至 stop（便捷覆盖端口）
+        public void run( Int32 port ) throws
         {
-            SLang.Server.start( port )
+            this.start( port )
             HttpServerCore.awaitStop()
         }
 
         # 停止（关监听 + 关全部在途连接；路由表保留，可重新 start 复用；
         # 需要清空路由用 reset()）
-        public static void stop() throws
+        public void stop() throws
         {
             HttpServerCore.stop()
         }
 
-        # 挂起直至停止（不经 start(port) 便捷形态时用）
-        public static void awaitStop() throws
+        # 挂起直至停止（不经 run 形态时用）
+        public void awaitStop() throws
         {
             HttpServerCore.awaitStop()
         }
 
         # 清空路由表（HTTP + WS；stop 后重新配置用）
-        public static void reset()
+        public void reset()
         {
             HttpServerCore.reset()
         }
 
-        public static get bool isRunning()
+        public get bool isRunning()
         {
             ret HttpServerCore.isRunning
         }
 
         # ── 路由注册（动词家族；get/set 是关键字 → on 前缀）──
 
-        public static RouteInfo onGet( string path, Function handler )
+        public RouteInfo onGet( string path, Function handler )
         {
             ret Router.add( "GET", path, handler )
         }
 
-        public static RouteInfo onPost( string path, Function handler )
+        public RouteInfo onPost( string path, Function handler )
         {
             ret Router.add( "POST", path, handler )
         }
 
-        public static RouteInfo onPut( string path, Function handler )
+        public RouteInfo onPut( string path, Function handler )
         {
             ret Router.add( "PUT", path, handler )
         }
 
-        public static RouteInfo onDelete( string path, Function handler )
+        public RouteInfo onDelete( string path, Function handler )
         {
             ret Router.add( "DELETE", path, handler )
         }
 
-        public static RouteInfo onPatch( string path, Function handler )
+        public RouteInfo onPatch( string path, Function handler )
         {
             ret Router.add( "PATCH", path, handler )
         }
 
-        public static RouteInfo onHead( string path, Function handler )
+        public RouteInfo onHead( string path, Function handler )
         {
             ret Router.add( "HEAD", path, handler )
         }
 
-        public static RouteInfo onOptions( string path, Function handler )
+        public RouteInfo onOptions( string path, Function handler )
         {
             ret Router.add( "OPTIONS", path, handler )
         }
 
         # 全动词（对该 pattern 接受全部 HTTP 动词）
-        public static RouteInfo onAny( string path, Function handler )
+        public RouteInfo onAny( string path, Function handler )
         {
             ret Router.add( "ANY", path, handler )
         }
 
         # 原始形式（动态注册 / 方法变量）
-        public static RouteInfo on( string method, string path, Function handler )
+        public RouteInfo on( string method, string path, Function handler )
         {
             ret Router.add( method, path, handler )
         }
@@ -224,7 +296,7 @@ namespace SLang
         # 每请求一实例）。configure 之后、start 之前调用；返回并入条数。
         # 重复调用按普通 Router.add 语义（同 method+pattern 重复注册由
         # start() fail-fast 拦截，ServerError.DuplicateRoute）。
-        public static Int32 usePreloadRoutes()
+        public Int32 usePreloadRoutes()
         {
             Int32 total = SystemServerRouteCount()
             Int32 added = 0
@@ -279,14 +351,14 @@ namespace SLang
 
         # handler 签名约定：function( SLang.WsSession s )；会话协程内
         # 循环 s.receive()（null = 关闭），消息消费完调 m.release()
-        public static RouteInfo websocket( string path, Function handler )
+        public RouteInfo websocket( string path, Function handler )
         {
             ret Router.addWs( path, handler )
         }
 
         # ── 路由分组（前缀提取，Spring @RequestMapping 形态）──
 
-        public static RouteGroup group( string prefix )
+        public RouteGroup group( string prefix )
         {
             ret RouteGroup( prefix )
         }
@@ -296,14 +368,14 @@ namespace SLang
         # 注册中间件（三参 Function：function( SLang.Request req,
         # SLang.Response res, SLang.Next nx )；注册序即执行序；
         # nx.go() 放行 / 不调 = 短路）
-        public static void use( Function middleware )
+        public void use( Function middleware )
         {
             HttpServerCore.use( middleware )
         }
 
         # 注册插件（ServerPlugin 子类；onInstall 立即执行，
         # onStart/onStop/onWsOpen/onWsClose 由引擎广播）
-        public static void use( ServerPlugin plugin )
+        public void use( ServerPlugin plugin )
         {
             HttpServerCore.use( plugin )
         }
@@ -312,7 +384,7 @@ namespace SLang
 
         # 事件式 WS 路由：wsEvents( path ).onOpen(fn).onMessage(fn).onClose(fn)
         #（内部仍是一协程；onMessage 回调内消费完消息调 m.release()）
-        public static WsEventBuilder wsEvents( string path )
+        public WsEventBuilder wsEvents( string path )
         {
             ret WsEventBuilder( path )
         }
@@ -320,13 +392,13 @@ namespace SLang
         # ── 会话查询 / 组播（§4.6）──
 
         # 该 WS 路由的在线会话快照
-        public static List<WsSession> sessions( string path )
+        public List<WsSession> sessions( string path )
         {
             ret _WsSessions.sessions( path )
         }
 
         # 组播文本（返回送达会话数；已断会话跳过）
-        public static Int32 broadcast( string path, string text )
+        public Int32 broadcast( string path, string text )
         {
             ret _WsSessions.broadcast( path, text )
         }
@@ -335,7 +407,7 @@ namespace SLang
 
         # 文档路由开关（false = start 不挂 /docs 与 /openapi.json；
         # 生产建议关；reset() 恢复默认开）
-        public static void docs( bool enable )
+        public void docs( bool enable )
         {
             HttpServerCore._docsEnabled = enable
         }
@@ -343,7 +415,7 @@ namespace SLang
         # 反向导入 OpenAPI json（Apifox 导出 → 路由骨架）：
         # 返回新建文档路由数（未注册路径以 501 文档路由登记、/docs 可见；
         # 已注册路径仅合并文档元数据；后续 onGet(...) 同名覆盖生效，§4.8）
-        public static Int32 importOpenApi( string jsonPath ) throws
+        public Int32 importOpenApi( string jsonPath ) throws
         {
             ret Docs.importOpenApi( jsonPath )
         }

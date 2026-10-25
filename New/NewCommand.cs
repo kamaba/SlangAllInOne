@@ -122,7 +122,7 @@ internal static class NewCommand
         string? spPath = FindCurrentProjectSp(targetDir);
         if (spPath == null)
         {
-            Console.WriteLine($"[FAIL] 目录中未找到工程入口（.sp）: {Path.GetFullPath(targetDir)}");
+            Console.WriteLine($"[FAIL] 目录中未找到工程入口（.sp / .jsonc）: {Path.GetFullPath(targetDir)}");
             return 1;
         }
 
@@ -316,7 +316,7 @@ internal static class NewCommand
         return text.Substring(start, end - start);
     }
 
-    // ==== 工程入口查找（Front CLI 原实现，原样迁入） ====
+    // ==== 工程入口查找（Front CLI 原实现迁入；2026-10-25 .sp 非必需：无 .sp 回落 *.jsonc） ====
 
     static string? FindCurrentProjectSp(string dir)
     {
@@ -329,6 +329,15 @@ internal static class NewCommand
             .Where(p => !string.Equals(Path.GetFileNameWithoutExtension(p), "Project", StringComparison.OrdinalIgnoreCase)
                         || Directory.GetFiles(dir, "*.sp").Length == 1)
             .ToList();
+        if (files.Count == 0)
+        {
+            // jsonc-only 工程（.sp 非必需）：*.jsonc 兜底；plugin.jsonc 是插件清单需排除
+            files = Directory.GetFiles(dir, "*.jsonc", SearchOption.TopDirectoryOnly)
+                .Where(p => !string.Equals(Path.GetFileNameWithoutExtension(p), "plugin", StringComparison.OrdinalIgnoreCase)
+                            && (!string.Equals(Path.GetFileNameWithoutExtension(p), "Project", StringComparison.OrdinalIgnoreCase)
+                                || Directory.GetFiles(dir, "*.jsonc").Length == 1))
+                .ToList();
+        }
         if (files.Count == 0)
         {
             return null;

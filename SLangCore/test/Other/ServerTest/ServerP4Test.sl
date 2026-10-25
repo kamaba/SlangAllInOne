@@ -246,13 +246,11 @@ ServerP4Test
     static void t1Preload()
     {
         Console.println( "[ServerP4Test] T1 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19441
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19441 )
+        app.reset()
 
         # T1a 装配期路由表条数 == 控制器方法数（2+2+2=6 全量并入）
-        Int32 n = SLang.Server.usePreloadRoutes()
+        Int32 n = app.usePreloadRoutes()
         ServerP4Test.check( "T1a preload count == 6", n == 6 )
 
         # 动态注册共存（闭包注册与 attribute 注册统一生效）
@@ -260,8 +258,8 @@ ServerP4Test
         {
             res.text( "dyn-ok" )
         }
-        SLang.Server.onGet( "/p4dyn", hDyn )
-        SLang.Server.start( 19441 )
+        app.onGet( "/p4dyn", hDyn )
+        app.start( 19441 )
 
         # T1b @OnRoute 类前缀拼接 + body 回显（POST /p4admin/user）
         Net.HttpResponse r1 = Net.HttpClient.httpPost( "http://127.0.0.1:19441/p4admin/user", "data1", "text/plain" )
@@ -296,7 +294,7 @@ ServerP4Test
         Net.HttpResponse r6 = Net.HttpClient.httpGet( "http://127.0.0.1:19441/p4admin/user" )
         ServerP4Test.check( "T1i 405 + Allow", r6.statusCode == 405 && r6.headers.getHeader( "Allow" ) == "POST" )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T2 异步与超时（handlerTimeoutMs=200）──
@@ -304,13 +302,12 @@ ServerP4Test
     static void t2AsyncTimeout()
     {
         Console.println( "[ServerP4Test] T2 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19442
+        SLang.Server app = SLang.Server( 19442 )
+        SLang.ServerConfig cfg = app.config
         cfg.handlerTimeoutMs = 200
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
-        SLang.Server.usePreloadRoutes()
-        SLang.Server.start( 19442 )
+        app.reset()
+        app.usePreloadRoutes()
+        app.start( 19442 )
 
         # T2a 协程内 delay 正常异步应答（150ms < 200ms）
         string ra = ServerP4Test.rawReq( 19442, "GET /p4async HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n" )
@@ -321,7 +318,7 @@ ServerP4Test
         string rs = ServerP4Test.rawReq( 19442, "GET /p4slow HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n" )
         ServerP4Test.check( "T2b timeout 504", sfFind( rs, "504" ) >= 0 && sfFind( rs, "slow-done" ) < 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T3 重复接线 -> start fail-fast（DuplicateRoute）──
@@ -329,27 +326,25 @@ ServerP4Test
     static void t3Duplicate()
     {
         Console.println( "[ServerP4Test] T3 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19443
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19443 )
+        app.reset()
 
         # 两次拉取：C 表装配期快照不变，每次均并入 6 条（Router.add 不查重）
-        SLang.Server.usePreloadRoutes()
-        Int32 n2 = SLang.Server.usePreloadRoutes()
+        app.usePreloadRoutes()
+        Int32 n2 = app.usePreloadRoutes()
         ServerP4Test.check( "T3a second pull still 6", n2 == 6 )
 
         # start() fail-fast：同 verb+pattern 重复注册抛 DuplicateRoute 且不监听
         bool threw = false
         label startDup
         {
-            SLang.Server.start( 19443 )
+            app.start( 19443 )
         }
         catch
         {
             threw = true
         }
-        ServerP4Test.check( "T3b duplicate fail-fast", threw && SLang.Server.isRunning == false )
+        ServerP4Test.check( "T3b duplicate fail-fast", threw && app.isRunning == false )
     }
 
     static fun()

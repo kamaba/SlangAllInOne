@@ -32,14 +32,23 @@ internal static class LspCompileCommand
     {
         if (args.Length == 0 || args[0].StartsWith('-'))
         {
-            Console.Error.WriteLine("用法: slang lsp-compile <project.sp> [--cwd <dir>]");
+            Console.Error.WriteLine("用法: slang lsp-compile <project.sp|project.jsonc> [--cwd <dir>]");
             return 2;
         }
         string spPath = Path.GetFullPath(args[0]);
         if (!File.Exists(spPath))
         {
-            Console.Error.WriteLine("lsp-compile: 工程入口不存在: " + spPath);
-            return 2;
+            // .sp 非必需（2026-10-25）：显式 .sp 缺失时回落同名 .jsonc 锚点
+            string jsoncPath = Path.ChangeExtension(spPath, ".jsonc");
+            if (File.Exists(jsoncPath))
+            {
+                spPath = jsoncPath;
+            }
+            else
+            {
+                Console.Error.WriteLine("lsp-compile: 工程入口不存在: " + spPath);
+                return 2;
+            }
         }
         string? cwd = null;
         for (int i = 1; i < args.Length - 1; i++)

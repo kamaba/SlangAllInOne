@@ -642,7 +642,9 @@ Commands:
   help                      Show this help.
 
 Options:
-  -p, --project <path>      Project path (directory or .sp file)
+  -p, --project <path>      Project path (directory, .sp or .jsonc file;
+                             .sp optional - a jsonc-only project compiles
+                             as a non-main-entry/library module)
   -t, --test                Pass -test to the C VM (placeholder in the C VM
                              today: the entry switch is not implemented yet,
                              both disk and memory paths run the _main_ entry)

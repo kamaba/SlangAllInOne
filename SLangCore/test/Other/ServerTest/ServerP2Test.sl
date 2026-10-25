@@ -39,7 +39,7 @@ class MyP2Plugin extends SLang.ServerPlugin
         {
             res.text( "installed" )
         }
-        SLang.Server.onGet( "/installed-mark", hMark )
+        SLang.HttpServerCore.onGet( "/installed-mark", hMark )
         function mw = function( SLang.Request req, SLang.Response res, SLang.Next nx )
         {
             req.userData = ( req.userData as string ) + "mw3-pre|"
@@ -47,7 +47,7 @@ class MyP2Plugin extends SLang.ServerPlugin
             req.userData = ( req.userData as string ) + "mw3-post|"
             res.header( "X-Trace", req.userData as string )
         }
-        SLang.Server.use( mw )
+        SLang.HttpServerCore.use( mw )
     }
 
     override public void onStart()
@@ -166,10 +166,8 @@ ServerP2Test
     {
         Console.println( "[ServerP2Test] T1 begin (port 19421)" )
         File.delete( "p2_hooks.txt" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19421
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19421 )
+        app.reset()
 
         # 外环中间件：短路 + trace 起始 + 后置环
         function mw1 = function( SLang.Request req, SLang.Response res, SLang.Next nx )
@@ -185,7 +183,7 @@ ServerP2Test
             req.userData = ( req.userData as string ) + "mw1-post|"
             res.header( "X-Trace", req.userData as string )
         }
-        SLang.Server.use( mw1 )
+        app.use( mw1 )
 
         # 中间环：前置 + 后置
         function mw2 = function( SLang.Request req, SLang.Response res, SLang.Next nx )
@@ -195,12 +193,12 @@ ServerP2Test
             req.userData = ( req.userData as string ) + "mw2-post|"
             res.header( "X-Trace", req.userData as string )
         }
-        SLang.Server.use( mw2 )
+        app.use( mw2 )
 
         # 插件（onInstall 立即注册 /installed-mark 标记路由 + mw3 +
         # onStart/onStop 文件钩子；子类实参经局部赋型上行——HttpTest 先例）
         SLang.ServerPlugin myPlugin = MyP2Plugin()
-        SLang.Server.use( myPlugin )
+        app.use( myPlugin )
 
         function hOk = function( SLang.Request req, SLang.Response res )
         {
@@ -208,13 +206,13 @@ ServerP2Test
             # 不进 body——body 在此定格；完整序看 X-Trace 头）
             res.text( "uid=" + ( req.userData as string ) )
         }
-        SLang.Server.onGet( "/ok", hOk )
+        app.onGet( "/ok", hOk )
         function hBlock = function( SLang.Request req, SLang.Response res )
         {
             res.text( "BLOCK-REACHED" )
         }
-        SLang.Server.onGet( "/block", hBlock )
-        SLang.Server.start( 19421 )
+        app.onGet( "/block", hBlock )
+        app.start()
 
         # T1a 短路：401 + X-Trace 仅 mw1-pre（未进 mw2/mw3/handler）
         string r1 = ServerP2Test.rawReq( 19421, "GET /block HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
@@ -241,7 +239,7 @@ ServerP2Test
         ServerP2Test.check( "T1d onInstall immediate + onStart hook",
             sfFind( r4, "installed" ) >= 0 && File.readAllText( "p2_hooks.txt" ) == "start" )
 
-        SLang.Server.stop()
+        app.stop()
         ServerP2Test.check( "T1e onStop hook", File.readAllText( "p2_hooks.txt" ) == "start|stop" )
     }
 
@@ -258,18 +256,16 @@ ServerP2Test
         File.writeAllText( "p2_static/hello.txt", "static-hello" )
         File.writeAllText( "p2_static/page.html", "<h1>hi</h1>" )
 
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19422
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
-        SLang.Server.use( SLang.Plugins.cors() )
-        SLang.Server.use( SLang.Plugins.staticFiles( "p2_static" ) )
+        SLang.Server app = SLang.Server( 19422 )
+        app.reset()
+        app.use( SLang.Plugins.cors() )
+        app.use( SLang.Plugins.staticFiles( "p2_static" ) )
         function hApi = function( SLang.Request req, SLang.Response res )
         {
             res.text( "api-ok" )
         }
-        SLang.Server.onGet( "/api/data", hApi )
-        SLang.Server.start( 19422 )
+        app.onGet( "/api/data", hApi )
+        app.start( 19422 )
 
         # T2a CORS 预检：未注册路径 OPTIONS → 204 + Allow-Origin
         string r1 = ServerP2Test.rawReq( 19422, "OPTIONS /no-such HTTP/1.1\r\nHost: 127.0.0.1\r\nOrigin: http://x.test\r\nConnection: close\r\n\r\n" )
@@ -297,7 +293,7 @@ ServerP2Test
         ServerP2Test.check( "T2e route + static coexist",
             sfFind( r6, "api-ok" ) >= 0 && sfFind( r6, "Access-Control-Allow-Origin: *" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T3 流式三件套 + 超时豁免（handlerTimeoutMs=400）──
@@ -305,11 +301,10 @@ ServerP2Test
     static void t3Stream()
     {
         Console.println( "[ServerP2Test] T3 begin (port 19423, handlerTimeoutMs=400)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19423
+        SLang.Server app = SLang.Server( 19423 )
+        SLang.ServerConfig cfg = app.config
         cfg.handlerTimeoutMs = 400
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        app.reset()
 
         function hChunk = function( SLang.Request req, SLang.Response res )
         {
@@ -321,7 +316,7 @@ ServerP2Test
             w.write( "part2" )
             w.close()
         }
-        SLang.Server.onGet( "/chunk", hChunk )
+        app.onGet( "/chunk", hChunk )
 
         function hNoClose = function( SLang.Request req, SLang.Response res )
         {
@@ -329,7 +324,7 @@ ServerP2Test
             w.write( "nc-data" )
             # 刻意不调 close()——引擎兜底补终止块
         }
-        SLang.Server.onGet( "/noclose", hNoClose )
+        app.onGet( "/noclose", hNoClose )
 
         function hSse = function( SLang.Request req, SLang.Response res )
         {
@@ -339,7 +334,7 @@ ServerP2Test
             sse.send( "done" )
             sse.close()
         }
-        SLang.Server.onGet( "/sse", hSse )
+        app.onGet( "/sse", hSse )
 
         function hSlow = function( SLang.Request req, SLang.Response res )
         {
@@ -352,15 +347,15 @@ ServerP2Test
             Coroutine.delay( 200 )
             w.close()
         }
-        SLang.Server.onGet( "/slowstream", hSlow )
+        app.onGet( "/slowstream", hSlow )
 
         function hPing = function( SLang.Request req, SLang.Response res )
         {
             res.text( "pong" )
         }
-        SLang.Server.onGet( "/ping", hPing )
+        app.onGet( "/ping", hPing )
 
-        SLang.Server.start( 19423 )
+        app.start( 19423 )
 
         # T3a chunked 往返：TE 头 + 块解码 + 终止 + 兜底（noclose 也收完）
         P2RawClient c1 = P2RawClient.connect( 19423 )
@@ -402,7 +397,7 @@ ServerP2Test
             r5._ok && r5._body == "s0s1s2" && sfFind( r5._head, "504" ) < 0 )
         c5.close()
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T4 sendFile / file / 通配路由 / wsEvents ──
@@ -421,37 +416,35 @@ ServerP2Test
         string expected = bb.toString()
         bb.release()
 
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19424
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19424 )
+        app.reset()
 
         function hDl = function( SLang.Request req, SLang.Response res )
         {
             res.sendFile( "p2_big.txt" )
         }
-        SLang.Server.onGet( "/download", hDl )
+        app.onGet( "/download", hDl )
         function hDl404 = function( SLang.Request req, SLang.Response res )
         {
             res.sendFile( "no-such-file.bin" )
         }
-        SLang.Server.onGet( "/dl404", hDl404 )
+        app.onGet( "/dl404", hDl404 )
         function hAttach = function( SLang.Request req, SLang.Response res )
         {
             res.file( "p2_static/hello.txt", "greet.txt" )
         }
-        SLang.Server.onGet( "/attach", hAttach )
+        app.onGet( "/attach", hAttach )
 
         # 通配路由 {path*}
         function hWild = function( SLang.Request req, SLang.Response res )
         {
             res.text( "p=" + req.pathParam( "path" ) )
         }
-        SLang.Server.onGet( "/files/{path*}", hWild )
+        app.onGet( "/files/{path*}", hWild )
 
         # wsEvents 事件糖（onOpen/onMessage/onClose；onClose 空实现——
         # 触发判据经 sessions()==0 轮询）
-        SLang.WsEventBuilder eb = SLang.Server.wsEvents( "/ws/evt" )
+        SLang.WsEventBuilder eb = app.wsEvents( "/ws/evt" )
         function fOpen = function( SLang.WsSession s )
         {
             s.sendText( "opened" )
@@ -468,7 +461,7 @@ ServerP2Test
         }
         eb.onClose( fClose )
 
-        SLang.Server.start( 19424 )
+        app.start( 19424 )
 
         # T4a sendFile 大文件：Content-Length + 内容对照
         P2RawClient c1 = P2RawClient.connect( 19424 )
@@ -506,14 +499,14 @@ ServerP2Test
         w.close()
         function condClosed = function()
         {
-            ret SLang.Server.sessions( "/ws/evt" ).length == 0
+            ret SLang.HttpServerCore.sessions( "/ws/evt" ).length == 0
         }
         bool closedOk = ServerP2Test.waitCond( condClosed, 20 )
         ServerP2Test.check( "T4e wsEvents open/msg/close",
             okHandshake && openMsg == "opened"
             && echoMsg == "echo:hi" && closedOk )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # 单连接单请求（纯文本；简单断言用）

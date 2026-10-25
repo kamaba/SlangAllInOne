@@ -11,7 +11,7 @@ namespace SLang
     # vm_route_attribute.c 收集——方法级条目按动词入路由表，类级 OnRoute 记
     # 前缀；装配完成后 join 出 "verb|path|class|method" 行，经系统方法
     #（SystemServerRouteCount/Line/Handler）暴露给 SL 层，
-    # SLang.Server.usePreloadRoutes() 拉取并入 Router。
+    # app.usePreloadRoutes() 拉取并入 Router。
     # handler 为 LATE 实例闭包（class_id/method_id 藏于闭包上下文）：
     # 每请求实例化全新控制器实例（§4.10 每请求一实例）。
     #
@@ -31,8 +31,8 @@ namespace SLang
     #       @Route( "user/{id}", "DELETE" )    # -> DELETE /admin/user/{id}
     #       public void delUser( Request req, Response res ) throws { ... }
     #   }
-    # 装配后一次性接线：SLang.Server.usePreloadRoutes()（configure 之后、
-    # start 之前）。
+    # 装配后一次性接线：app.usePreloadRoutes()（SLang.Server 实例，configure
+    # 之后、start 之前）。
     # ============================================================================
 
     # @OnGet("/hello") — GET 路由（方法级）

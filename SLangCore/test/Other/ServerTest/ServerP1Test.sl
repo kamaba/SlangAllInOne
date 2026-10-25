@@ -200,47 +200,45 @@ ServerP1Test
     static void t1Verbs()
     {
         Console.println( "[ServerP1Test] T1 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19401
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19401 )
+        app.reset()
 
         function hG = function( SLang.Request req, SLang.Response res )
         {
             res.text( "g-ok" )
         }
-        SLang.Server.onGet( "/get1", hG )
+        app.onGet( "/get1", hG )
         function hP = function( SLang.Request req, SLang.Response res )
         {
             res.text( "p:" + req.bodyText() )
         }
-        SLang.Server.onPost( "/post1", hP )
+        app.onPost( "/post1", hP )
         function hPut = function( SLang.Request req, SLang.Response res )
         {
             res.text( "put-ok" )
         }
-        SLang.Server.onPut( "/put1", hPut )
+        app.onPut( "/put1", hPut )
         function hDel = function( SLang.Request req, SLang.Response res )
         {
             res.text( "del-ok" )
         }
-        SLang.Server.onDelete( "/del1", hDel )
+        app.onDelete( "/del1", hDel )
         function hPatch = function( SLang.Request req, SLang.Response res )
         {
             res.text( "patch-ok" )
         }
-        SLang.Server.onPatch( "/patch1", hPatch )
+        app.onPatch( "/patch1", hPatch )
         function hOpt = function( SLang.Request req, SLang.Response res )
         {
             res.text( "opt-ok" )
         }
-        SLang.Server.onOptions( "/opt1", hOpt )
+        app.onOptions( "/opt1", hOpt )
         function hAny = function( SLang.Request req, SLang.Response res )
         {
             res.text( "any-ok" )
         }
-        SLang.Server.onAny( "/any1", hAny )
-        SLang.Server.start( 19401 )
+        app.onAny( "/any1", hAny )
+        app.start( 19401 )
 
         # T1a/T1b HttpClient 走门面路由
         Net.HttpResponse r1 = Net.HttpClient.httpGet( "http://127.0.0.1:19401/get1" )
@@ -277,7 +275,7 @@ ServerP1Test
         c.close()
         ServerP1Test.check( "T1i keep-alive two requests", sfFind( k1, "g-ok" ) >= 0 && sfFind( k2, "g-ok" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T2 路由匹配 ──
@@ -285,27 +283,25 @@ ServerP1Test
     static void t2Routes()
     {
         Console.println( "[ServerP1Test] T2 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19402
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19402 )
+        app.reset()
 
         function hUser = function( SLang.Request req, SLang.Response res )
         {
             res.text( "id=" + req.pathParam( "id" ) + ",n=" + req.pathInt( "id", -1 ).toString() )
         }
-        SLang.Server.onGet( "/user/{id}", hUser )
+        app.onGet( "/user/{id}", hUser )
         function hProfile = function( SLang.Request req, SLang.Response res )
         {
             res.text( "profile" )
         }
-        SLang.Server.onGet( "/user/profile", hProfile )
+        app.onGet( "/user/profile", hProfile )
         function hBig = function( SLang.Request req, SLang.Response res )
         {
             Int64 bv = req.pathInt64( "v", 0 )
             res.text( "v=" + bv.toString() )
         }
-        SLang.Server.onGet( "/big/{v}", hBig )
+        app.onGet( "/big/{v}", hBig )
         function hList = function( SLang.Request req, SLang.Response res )
         {
             res.text( "users-list" )
@@ -314,10 +310,10 @@ ServerP1Test
         {
             res.text( "users-create" )
         }
-        SLang.RouteGroup g = SLang.Server.group( "/api/v1" )
+        SLang.RouteGroup g = app.group( "/api/v1" )
         g.onGet( "/users", hList )
         g.onPost( "/users", hCreate )
-        SLang.Server.start( 19402 )
+        app.start( 19402 )
 
         Net.HttpResponse r1 = Net.HttpClient.httpGet( "http://127.0.0.1:19402/user/42" )
         ServerP1Test.check( "T2a pathParam + pathInt", r1.statusCode == 200 && r1.body == "id=42,n=42" )
@@ -332,7 +328,7 @@ ServerP1Test
         Net.HttpResponse r6 = Net.HttpClient.httpPost( "http://127.0.0.1:19402/api/v1/users", "", "text/plain" )
         ServerP1Test.check( "T2f group POST", r6.statusCode == 200 && r6.body == "users-create" )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T3 查询参数 ──
@@ -340,10 +336,8 @@ ServerP1Test
     static void t3Query()
     {
         Console.println( "[ServerP1Test] T3 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19403
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19403 )
+        app.reset()
         function h = function( SLang.Request req, SLang.Response res )
         {
             string fpart = "f0"
@@ -358,15 +352,15 @@ ServerP1Test
             }
             res.text( "a=" + req.query( "a" ) + "|b=" + req.query( "b" ) + "|c=" + req.query( "c" ) + "|" + fpart + "|" + zpart + "|ai=" + req.queryInt( "a", 0 ).toString() + "|kn=" + req.queryKeys().length.toString() )
         }
-        SLang.Server.onGet( "/q", h )
-        SLang.Server.start( 19403 )
+        app.onGet( "/q", h )
+        app.start( 19403 )
 
         string r = ServerP1Test.rawReq( 19403, "GET /q?a=1&b=hello%20world&c=x+y&f=on HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n" )
         ServerP1Test.check( "T3a query decode (+/%20/int/bool/keys)",
             sfFind( r, "a=1" ) >= 0 && sfFind( r, "b=hello world" ) >= 0 && sfFind( r, "c=x y" ) >= 0
             && sfFind( r, "|f1|" ) >= 0 && sfFind( r, "|zz0|" ) >= 0 && sfFind( r, "ai=1" ) >= 0 && sfFind( r, "kn=4" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T4 body 三形态 ──
@@ -374,10 +368,8 @@ ServerP1Test
     static void t4Body()
     {
         Console.println( "[ServerP1Test] T4 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19404
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19404 )
+        app.reset()
 
         function hJson = function( SLang.Request req, SLang.Response res )
         {
@@ -413,7 +405,7 @@ ServerP1Test
                 res.text( fmt + "|miss|" + jflag + "|" + uflag )
             }
         }
-        SLang.Server.onPost( "/json1", hJson )
+        app.onPost( "/json1", hJson )
 
         function hForm = function( SLang.Request req, SLang.Response res )
         {
@@ -434,7 +426,7 @@ ServerP1Test
             }
             res.text( fmt + "|" + bpart + "|ai=" + req.formInt( "a", -1 ).toString() + "|" + fl + "|kn=" + req.formKeys().length.toString() )
         }
-        SLang.Server.onPost( "/form1", hForm )
+        app.onPost( "/form1", hForm )
 
         function hBin = function( SLang.Request req, SLang.Response res )
         {
@@ -461,8 +453,8 @@ ServerP1Test
             }
             res.text( fmt + "|len=" + blen.toString() + "|v0=" + v0.toString() + "|v4=" + v4.toString() )
         }
-        SLang.Server.onPost( "/bin1", hBin )
-        SLang.Server.start( 19404 )
+        app.onPost( "/bin1", hBin )
+        app.start( 19404 )
 
         # T4a json：DTO toData + bodyJson 回显
         Net.HttpResponse r1 = Net.HttpClient.httpPost( "http://127.0.0.1:19404/json1", "{\"name\":\"tom\",\"age\":18}", "application/json" )
@@ -499,7 +491,7 @@ ServerP1Test
         ServerP1Test.check( "T4c bin bytes + format",
             sfFind( r3, "bin|len=5" ) >= 0 && sfFind( r3, "v0=0" ) >= 0 && sfFind( r3, "v4=251" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T5 Response 家族 ──
@@ -507,16 +499,14 @@ ServerP1Test
     static void t5Response()
     {
         Console.println( "[ServerP1Test] T5 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19405
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19405 )
+        app.reset()
 
         function hCreated = function( SLang.Request req, SLang.Response res )
         {
             res.status( 201 ).header( "X-Custom", "abc" ).contentType( "application/json; charset=utf-8" ).rawJson( "{\"k\":1}" )
         }
-        SLang.Server.onGet( "/created", hCreated )
+        app.onGet( "/created", hCreated )
         function hOk = function( SLang.Request req, SLang.Response res )
         {
             P1User u = P1User()
@@ -524,34 +514,34 @@ ServerP1Test
             u.age = 18
             res.jsonOk( u )
         }
-        SLang.Server.onGet( "/ok", hOk )
+        app.onGet( "/ok", hOk )
         function hFail = function( SLang.Request req, SLang.Response res )
         {
             res.jsonFail( 1001, "bad" )
         }
-        SLang.Server.onGet( "/fail", hFail )
+        app.onGet( "/fail", hFail )
         function hFail2 = function( SLang.Request req, SLang.Response res )
         {
             res.jsonFail( 1002, "bad2", 422 )
         }
-        SLang.Server.onGet( "/fail2", hFail2 )
+        app.onGet( "/fail2", hFail2 )
         function hHtml = function( SLang.Request req, SLang.Response res )
         {
             res.html( "<p>hi</p>" )
         }
-        SLang.Server.onGet( "/html", hHtml )
+        app.onGet( "/html", hHtml )
         function hRedir = function( SLang.Request req, SLang.Response res )
         {
             res.redirect( "http://example.com/x" )
         }
-        SLang.Server.onGet( "/redir", hRedir )
+        app.onGet( "/redir", hRedir )
         function hTwice = function( SLang.Request req, SLang.Response res )
         {
             res.text( "first" )
             res.text( "second" )
         }
-        SLang.Server.onGet( "/twice", hTwice )
-        SLang.Server.start( 19405 )
+        app.onGet( "/twice", hTwice )
+        app.start( 19405 )
 
         # T5a 链式 status/header/contentType + rawJson
         Net.HttpResponse r1 = Net.HttpClient.httpGet( "http://127.0.0.1:19405/created" )
@@ -588,7 +578,7 @@ ServerP1Test
         Net.HttpResponse r7 = Net.HttpClient.httpGet( "http://127.0.0.1:19405/twice" )
         ServerP1Test.check( "T5g double terminal -> staged 200", r7.statusCode == 200 && r7.body == "first" )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T6 WS 形态 A（HTTP 同端口升级 + 会话注册表）──
@@ -596,10 +586,8 @@ ServerP1Test
     static void t6WsApp()
     {
         Console.println( "[ServerP1Test] T6 begin" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19406
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19406 )
+        app.reset()
         function hWs = function( SLang.WsSession s )
         {
             bool looping = true
@@ -623,7 +611,7 @@ ServerP1Test
                     }
                     elif t == "bcast"
                     {
-                        Int32 sent = SLang.Server.broadcast( "/ws/{room}", "room-msg" )
+                        Int32 sent = SLang.HttpServerCore.broadcast( "/ws/{room}", "room-msg" )
                         s.sendText( "sent:" + sent.toString() )
                     }
                     else
@@ -634,8 +622,8 @@ ServerP1Test
                 }
             }
         }
-        SLang.Server.websocket( "/ws/{room}", hWs )
-        SLang.Server.start( 19406 )
+        app.websocket( "/ws/{room}", hWs )
+        app.start( 19406 )
 
         # T6a 未注册路径升级 → 400（注意 /ws/none 会命中 {room} 通配，
         # 须用 /ws 前缀之外的真实未注册路径）
@@ -650,7 +638,7 @@ ServerP1Test
         # T6c 会话注册（异步 accept 协程注册有时序，轮询）
         function cond2 = function()
         {
-            ret SLang.Server.sessions( "/ws/{room}" ).length == 2
+            ret SLang.HttpServerCore.sessions( "/ws/{room}" ).length == 2
         }
         ServerP1Test.check( "T6c sessions == 2", ServerP1Test.waitCond( cond2, 20 ) )
 
@@ -670,11 +658,11 @@ ServerP1Test
         a.close()
         function cond1 = function()
         {
-            ret SLang.Server.sessions( "/ws/{room}" ).length == 1
+            ret SLang.HttpServerCore.sessions( "/ws/{room}" ).length == 1
         }
         ServerP1Test.check( "T6i unregister on close", ServerP1Test.waitCond( cond1, 20 ) )
         b.close()
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T7 WS 形态 B（独立端口 WebSocketServer）──
@@ -727,7 +715,8 @@ ServerP1Test
     static void t8Duplicate()
     {
         Console.println( "[ServerP1Test] T8 begin" )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19408 )
+        app.reset()
         function h1 = function( SLang.Request req, SLang.Response res )
         {
             res.text( "1" )
@@ -739,31 +728,31 @@ ServerP1Test
         function hw = function( SLang.WsSession s )
         {
         }
-        SLang.Server.onGet( "/dup", h1 )
-        SLang.Server.onGet( "/dup", h2 )
+        app.onGet( "/dup", h1 )
+        app.onGet( "/dup", h2 )
         string dup = SLang.Router.checkDuplicate()
         ServerP1Test.check( "T8a checkDuplicate http", dup == "GET /dup" )
 
-        SLang.Server.reset()
-        SLang.Server.websocket( "/dupws", hw )
-        SLang.Server.websocket( "/dupws", hw )
+        app.reset()
+        app.websocket( "/dupws", hw )
+        app.websocket( "/dupws", hw )
         string dupWs = SLang.Router.checkDuplicate()
         ServerP1Test.check( "T8b checkDuplicate ws", dupWs == "WS /dupws" )
 
         # start() fail-fast：抛错且不监听
-        SLang.Server.reset()
-        SLang.Server.onGet( "/dup", h1 )
-        SLang.Server.onGet( "/dup", h2 )
+        app.reset()
+        app.onGet( "/dup", h1 )
+        app.onGet( "/dup", h2 )
         bool threw = false
         label startDup
         {
-            SLang.Server.start( 19408 )
+            app.start( 19408 )
         }
         catch
         {
             threw = true
         }
-        ServerP1Test.check( "T8c start fail-fast", threw && SLang.Server.isRunning == false )
+        ServerP1Test.check( "T8c start fail-fast", threw && app.isRunning == false )
     }
 
     static fun()

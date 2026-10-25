@@ -224,10 +224,8 @@ ServerP15Test
         File.delete( "p15_up/dup.txt" )
         File.delete( "p15_up/dup(1).txt" )
 
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19411
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19411 )
+        app.reset()
 
         # /up：混合字段 + 文件（T1）
         function hUp = function( SLang.Request req, SLang.Response res )
@@ -256,7 +254,7 @@ ServerP15Test
                 + "|fn=" + f.filename + "|ct=" + f.contentType + "|sz=" + f.size.toString()
                 + "|ext=" + f.ext() + "|hex=" + hex )
         }
-        SLang.Server.onPost( "/up", hUp )
+        app.onPost( "/up", hUp )
 
         # /trav：路径穿越（T3）
         function hTrav = function( SLang.Request req, SLang.Response res )
@@ -282,7 +280,7 @@ ServerP15Test
             Int32 cnt = req.fileCount
             res.text( "n1=" + n1 + "|n2=" + n2 + "|n3=" + n3 + "|cnt=" + cnt.toString() )
         }
-        SLang.Server.onPost( "/trav", hTrav )
+        app.onPost( "/trav", hTrav )
 
         # /multi：多文件同字段（T2；链式 .length——List<SLang.UploadedFile>
         # 类型变量在闭包内模板实例化 NRE，见文件头注记）
@@ -305,7 +303,7 @@ ServerP15Test
             res.text( "pn=" + pn.toString() + "|cnt=" + cnt.toString()
                 + "|first=" + cf + "|cover=" + cc )
         }
-        SLang.Server.onPost( "/multi", hMulti )
+        app.onPost( "/multi", hMulti )
 
         # /save：saveAs / saveInto + 重名自动改名（T4；两字段同名文件——
         # 第二个 saveInto 应自动改名 dup(1).txt）
@@ -331,9 +329,9 @@ ServerP15Test
             }
             res.text( "ok1=" + ok1.toString() + "|ok2=" + ok2.toString() + "|ok3=" + ok3.toString() )
         }
-        SLang.Server.onPost( "/save", hSave )
+        app.onPost( "/save", hSave )
 
-        SLang.Server.start( 19411 )
+        app.start( 19411 )
 
         # ---- T1 混合（文件 + 普通字段 + form 族 + 内容往返）----
         string bnd = "P15BOUNDARY"
@@ -433,7 +431,7 @@ ServerP15Test
         string r7 = ServerP15Test.rawReq( 19411, "POST /up HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: multipart/form-data\r\nContent-Length: 5\r\nConnection: close\r\n\r\nhello" )
         ServerP15Test.check( "T7 missing boundary -> 400", sfFind( r7, "400" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T5 单文件超限（19412，maxFileBytes=16）──
@@ -441,17 +439,16 @@ ServerP15Test
     static void t5FileLimit()
     {
         Console.println( "[ServerP15Test] T5 begin (port 19412)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19412
+        SLang.Server app = SLang.Server( 19412 )
+        SLang.ServerConfig cfg = app.config
         cfg.maxFileBytes = 16
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        app.reset()
         function hUp = function( SLang.Request req, SLang.Response res )
         {
             res.text( "should-not-reach" )
         }
-        SLang.Server.onPost( "/up", hUp )
-        SLang.Server.start( 19412 )
+        app.onPost( "/up", hUp )
+        app.start( 19412 )
 
         string bnd = "P15B12"
         ByteBuffer body = ByteBuffer( 256 )
@@ -469,7 +466,7 @@ ServerP15Test
         ServerP15Test.check( "T5 single file over maxFileBytes -> 413",
             sfFind( r, "413" ) >= 0 && sfFind( r, "should-not-reach" ) < 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T6 multipart 总量超限（19413，maxUploadBytes=96）──
@@ -477,17 +474,16 @@ ServerP15Test
     static void t6TotalLimit()
     {
         Console.println( "[ServerP15Test] T6 begin (port 19413)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19413
+        SLang.Server app = SLang.Server( 19413 )
+        SLang.ServerConfig cfg = app.config
         cfg.maxUploadBytes = 96
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        app.reset()
         function hUp = function( SLang.Request req, SLang.Response res )
         {
             res.text( "should-not-reach" )
         }
-        SLang.Server.onPost( "/up", hUp )
-        SLang.Server.start( 19413 )
+        app.onPost( "/up", hUp )
+        app.start( 19413 )
 
         # 三字段 body ~180 字节 > 96（Content-Length 检查即拦截）
         string bnd = "P15B13"
@@ -502,7 +498,7 @@ ServerP15Test
         ServerP15Test.check( "T6 multipart body over maxUploadBytes -> 413",
             bodyLen > 96 && sfFind( r, "413" ) >= 0 && sfFind( r, "should-not-reach" ) < 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # 尽力清理（残留不影响下次运行：开场会重删）

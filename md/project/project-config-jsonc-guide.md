@@ -6,11 +6,11 @@
 
 ## 1. 配置文件命名与加载
 
-- 工程入口文件：`<ProjectName>.sp`
-- 配置文件：`<ProjectName>.jsonc`
-- 二者必须同名并位于同一目录（目录下有多个 `.sp` 时默认取第一个，建议单目录单工程）。
+- 工程锚点文件：`<ProjectName>.jsonc`（**同名 jsonc 存在即认定为合法工程**）
+- 工程入口文件：`<ProjectName>.sp`——**非必需**（2026-10-25 起）：存在时为 main 入口工程（行为不变）；缺失时自动按**非 main 入口（库）工程**编译——无 `Project{}` 类与 `_main_`，导出 `entryMethodId` 为 null
+- 二者同名并位于同一目录（目录下有多个 `.sp` 时默认取第一个，建议单目录单工程）。工程定位顺序：`.sp` 优先，无 `.sp` 时回落同名 `.jsonc`（目录扫描跳过插件清单 `plugin\<id>\plugin.jsonc`）
 
-加载链：`.sp` 路径 → `ProjectCompile.LoadProject` 同名替换扩展名 → `File.ReadAllText` → `ProjectJsoncLoader.FromJsonc()` → `ProjectManager.SetConfig` → `InitSelfModuleManager(project.name)` → `ProjectOutputEnvironment.ApplyFromConfig`（计算导出目录并写环境变量）。
+加载链：工程锚点路径（`.sp` 或 `.jsonc` 均可，`ProjectCompile.LoadProject` 直接接收；显式 `.jsonc` 径直采用，`.sp` 缺失时按名拼同名 jsonc）→ `File.ReadAllText` → `ProjectJsoncLoader.FromJsonc()` → `ProjectManager.SetConfig` → `InitSelfModuleManager(project.name)` → `ProjectOutputEnvironment.ApplyFromConfig`（计算导出目录并写环境变量）。
 
 ## 2. 解析机制（必读）
 
@@ -546,6 +546,7 @@ dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compil
 
 ## 8. 历史迁移备注
 
+- `.sp` 非必需（2026-10-25）：同名 `<ProjectName>.jsonc` 即认定为合法工程；无 `.sp` 时按非 main 入口（库）工程编译——无 `Project{}` 类、无 `_main_`/`_test_` 入口与 `_before_`/`_after_` 钩子、无 global 块与工程级 typealias，导出 `entryMethodId` 为 null。CLI `-p`、裸参数、目录扫描、宿主 `slang new`、LSP、VSCode 插件均已支持 jsonc 锚点（定位顺序 `.sp` 优先、回落 `.jsonc`，排除 `plugin.jsonc`）。有 `.sp` 时行为完全不变。
 - 配置已从 `*.toml` 全面迁移为 `*.jsonc`；`ProjectTomlLoader` 不再参与流程，加载统一走 `ProjectJsoncLoader`。新工程统一使用 jsonc，不再新增 toml。
 - 根级 `"data"` 块已废弃（2026-10-12）：数据注入面统一为 `根->global->data`，loader 检测到根级 `"data"` 即告警（LID 20041）并忽略其内容；全仓 jsonc 已完成迁移（有内容的根级块移入 `global.data`，空根级块删除，`linux-dist/` 分发快照除外）。
 - `importFiles` 字段在 `Core.jsonc` 保留，但 loader 未消费（如需生效需补 loader 映射）。

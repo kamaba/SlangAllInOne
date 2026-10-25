@@ -46,15 +46,10 @@ SLangTorch 的制作
 在esp32-p4的机器上跑起来 然后做一个sdk 
 
 
-我再说明下 关于项目的结构   slang 是我的frontEnd/cvm_runtime的入口   然后lib下边放我的 lib 放一些引入的module  还有这个module关联的 .dll一类的文件 像Math.module 关联的是math_lib.dll Core.Module 关联的是 sqlite3.dll 
-
-然后在slang同目录 bin 是我的一些打包的产物，比如 llc.exe mlir.opt.exe mlir-translate.exe csimple_lang 这种的  都放到bin也下 和slang 同级别的还有一个是plugin的目录，这里边存放 的是plugin的插件 比如csharp_mono java_hotspot  结构是这样的 plugin/csharp_mono/windows|linux|macos|iOS|android 这样的结构    你现在的结构又搞乱了   把这个标准 强制执行下吧，要从FrontEnd到cvm里边 都按这个标准 去执行FrontEnd层  plugin工程导出的时候 D:\project\lang\plugin\csharp_mono这里边的三个工程 都导出到  frontend/runtime 这两 这个目录的package\lib下边  的windows/linux/macos 这样的分类库里边去    然后第三个集成的.sl 打完包 就是一个.slb 的文件   然后这个package 未来，是个压缩文件 ，直接会放到slang/plugin下边的一个目录 ，然后 这样的调 用关系 ，然后使用  把这块一定要 多花点时间 理清下
-
-
 await spawn 这个的复用工式， 原来 的语法是 await Task 现在直接就是await spwan function() 这样的使用
 
 我现在.sp 的工程要变成非必需的，也就是如果有同名.jsonc里的，判断为有.sp 如果没有 也无所谓，会自动认为是一个非main入口 的工程 
 
 
-你现在还是对attribute 的处理有些问题 就是四种，第一种， 编译中  然后  _enter_  里边放着在编译层调用的逻辑 一般是在FrontEnd层有的接口或者是自己的一些逻辑处理  第二种，编译导出时也就是生成IR时候的一些处理  也是在 _enter_ 里边 放逻辑的，第三种，是runtime加载代码的时候 这种形态 也是_enter_的时候，调 用内部逻辑，或者是定义好的接口去调 用   第四种是 执行  比如在new对象的时候 里边有成员的话检查成员上边的attribute属于然后执行对应的逻辑   如果是method上边的attribute  是在调用这个method的前边检查是否有attribute的属于 还有一种是也是new这个对象的时候检查是否要执行对应的逻辑 ，然后执行_enter_里边的内容  像OnPost 这样的接口  明显是在生成这个 就是检查在
-
+你现在还是对attribute 的处理有些问题 就是四种，第一种， 编译中  然后  _enter_  里边放着在编译层调用的逻辑 一般是在FrontEnd层有的接口或者是自己的一些逻辑处理  第二种，编译导出时也就是生成IR时候的一些处理  也是在 _enter_ 里边 放逻辑的，第三种，是runtime加载代码的时候 这种形态 也是_enter_的时候，调 用内部逻辑，或者是定义好的接口去调 用   第四种是 执行  比如在new对象的时候 里边有成员的话检查成员上边的attribute属于然后执行对应的逻辑   如果是method上边的attribute  是在调用这个method的前边检查是否有attribute的属于 还有一种是也是new这个对象的时候检查是否要执行对应的逻辑 ，然后执行_enter_里边的内容  像OnPost 这样的接口  是在生成这个
+类的时候，先new一个Server后，然后隐式的去调用这个server的实例然后 调用spawn 出来的静态函数体

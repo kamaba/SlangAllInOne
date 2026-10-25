@@ -65,8 +65,9 @@ namespace SLang
         # P0 形态：模块级单例（全静态）——SERVER_DESIGN.md §1.2「单 VM 协程
         # 调度即全部并发」的 v1 服务器语义。实测跨模块类多实例化在 C VM
         # 存在实例态串扰（S2 连接读到 S1 的路由表，闭包零捕获 + 实参传值
-        # 亦无法规避），静态化是最小可靠路径；P1 门面（SLang.Server）落地
-        # 时按单实例语义收口。
+        # 亦无法规避），静态化是最小可靠路径。门面 SLang.Server 已转实例
+        # 形态（构造带端口），全部经本类静态转发——单 VM 单服务器语义，
+        # 多实例待 C VM 实例隔离修复。
         static ServerConfig _cfg = null
         static Net.TcpServer _server = null
         static bool _running = false
@@ -153,6 +154,24 @@ namespace SLang
         public static RouteInfo websocket( string path, Function handler )
         {
             ret Router.addWs( path, handler )
+        }
+
+        # ── WS 会话查询 / 组播（引擎级静态通道；门面 app.sessions /
+        #    app.broadcast 实例方法同源转发）──
+        # 闭包零捕获场景（waitCond 轮询判据 / WS 会话回调内组播等无
+        # 实例引用可用的位置）经本组静态查询与组播，语义与门面实例
+        # 形态完全一致（§4.6）。
+
+        # 该 WS 路由的在线会话快照
+        public static List<WsSession> sessions( string path )
+        {
+            ret _WsSessions.sessions( path )
+        }
+
+        # 组播文本（返回送达会话数；已断会话跳过）
+        public static Int32 broadcast( string path, string text )
+        {
+            ret _WsSessions.broadcast( path, text )
         }
 
         # ── 生命周期 ──

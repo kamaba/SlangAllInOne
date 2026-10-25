@@ -222,16 +222,14 @@ ServerP3Test
     static void t1OpenApi()
     {
         Console.println( "[ServerP3Test] T1 begin (port 19431)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19431
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19431 )
+        app.reset()
 
         function hUser = function( SLang.Request req, SLang.Response res )
         {
             res.jsonOk( req.pathParam( "id" ) )
         }
-        SLang.RouteInfo r1 = SLang.Server.onGet( "/api/user/{id}", hUser )
+        SLang.RouteInfo r1 = app.onGet( "/api/user/{id}", hUser )
         r1.summary = "获取用户"
         r1.tags = "用户,基础"
         r1.param( "id", "integer", "用户ID", true )
@@ -242,7 +240,7 @@ ServerP3Test
         {
             res.jsonOk( "created" )
         }
-        SLang.RouteInfo r2 = SLang.Server.onPost( "/api/user", hCreate )
+        SLang.RouteInfo r2 = app.onPost( "/api/user", hCreate )
         r2.summary = "创建用户"
         r2.requestBody( P3User() )
         r2.response( 200, P3Order() )
@@ -251,12 +249,12 @@ ServerP3Test
         {
             res.jsonOk( "ok" )
         }
-        SLang.RouteInfo r3 = SLang.Server.onPost( "/api/login", hLogin )
+        SLang.RouteInfo r3 = app.onPost( "/api/login", hLogin )
         r3.summary = "登录"
         r3.formField( "username", "用户名" )
         r3.security( "apiKeyAuth" )
 
-        SLang.Server.start( 19431 )
+        app.start( 19431 )
 
         string doc = ServerP3Test.rawReq( 19431, "GET /openapi.json HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T1a openapi 3.0.3 骨架 + servers",
@@ -285,7 +283,7 @@ ServerP3Test
             sfFind( doc, "application/x-www-form-urlencoded" ) >= 0
             && sfFind( doc, "\"username\"" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T2 /docs 页面 + 开关 ──
@@ -293,18 +291,16 @@ ServerP3Test
     static void t2DocsPage()
     {
         Console.println( "[ServerP3Test] T2 begin (port 19432)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19432
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19432 )
+        app.reset()
 
         function hPing = function( SLang.Request req, SLang.Response res )
         {
             res.text( "pong" )
         }
-        SLang.Server.onGet( "/ping", hPing )
+        app.onGet( "/ping", hPing )
 
-        SLang.Server.start( 19432 )
+        app.start( 19432 )
 
         # T2a 自包含 HTML（DOCTYPE + 同源 openapi.json 引用）
         string page = ServerP3Test.rawReq( 19432, "GET /docs HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
@@ -313,34 +309,28 @@ ServerP3Test
             && sfFind( page, "<!DOCTYPE html>" ) >= 0 && sfFind( page, "/openapi.json" ) >= 0 )
 
         # T2b 用户已注册 /docs → 让位（用户优先，§6.10）
-        SLang.Server.stop()
-        SLang.Server.reset()
-        SLang.ServerConfig cfg2 = SLang.ServerConfig()
-        cfg2.port = 19432
-        SLang.Server.configure( cfg2 )
+        app.stop()
+        app.reset()
         function hMine = function( SLang.Request req, SLang.Response res )
         {
             res.text( "mine" )
         }
-        SLang.Server.onGet( "/docs", hMine )
-        SLang.Server.start( 19432 )
+        app.onGet( "/docs", hMine )
+        app.start( 19432 )
         string mine = ServerP3Test.rawReq( 19432, "GET /docs HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T2b 用户注册 /docs 让位", sfFind( mine, "mine" ) >= 0 )
 
         # T2c docs(false) 关闭（start 后 /docs 404；reset 恢复默认开）
-        SLang.Server.stop()
-        SLang.Server.reset()
-        SLang.ServerConfig cfg3 = SLang.ServerConfig()
-        cfg3.port = 19432
-        SLang.Server.configure( cfg3 )
-        SLang.Server.docs( false )
-        SLang.Server.start( 19432 )
+        app.stop()
+        app.reset()
+        app.docs( false )
+        app.start( 19432 )
         string off = ServerP3Test.rawReq( 19432, "GET /docs HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         string offApi = ServerP3Test.rawReq( 19432, "GET /openapi.json HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T2c docs(false) 双路由关闭",
             sfFind( off, "404" ) >= 0 && sfFind( offApi, "404" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T3 auth 三挂法 ──
@@ -348,10 +338,8 @@ ServerP3Test
     static void t3Auth()
     {
         Console.println( "[ServerP3Test] T3 begin (port 19431)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19431
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19431 )
+        app.reset()
 
         # Bearer 预设 + skip 白名单（登录接口放行）
         function hUser = function( SLang.Request req, SLang.Response res )
@@ -366,15 +354,15 @@ ServerP3Test
             }
             res.text( "sub=" + sub + ";role=" + role )
         }
-        SLang.Server.onGet( "/api/user", hUser )
+        app.onGet( "/api/user", hUser )
         function hLogin = function( SLang.Request req, SLang.Response res )
         {
             res.text( "login-ok" )
         }
-        SLang.Server.onPost( "/api/login", hLogin )
-        SLang.Server.use( SLang.Plugins.authBearer().skip( "/api/login" ) )
+        app.onPost( "/api/login", hLogin )
+        app.use( SLang.Plugins.authBearer().skip( "/api/login" ) )
 
-        SLang.Server.start( 19431 )
+        app.start( 19431 )
 
         # T3a 无 Authorization → 401 + WWW-Authenticate
         string a1 = ServerP3Test.rawReq( 19431, "GET /api/user HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
@@ -395,19 +383,17 @@ ServerP3Test
         string a4 = ServerP3Test.rawReq( 19431, "POST /api/login HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\nContent-Length: 0\r\n\r\n" )
         ServerP3Test.check( "T3d skip 白名单放行", sfFind( a4, "login-ok" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
 
         # ── API Key 预设（端口 19433）──
-        SLang.Server.reset()
-        SLang.ServerConfig cfg2 = SLang.ServerConfig()
-        cfg2.port = 19433
-        SLang.Server.configure( cfg2 )
+        app = SLang.Server( 19433 )
+        app.reset()
 
         function hKey = function( SLang.Request req, SLang.Response res )
         {
             res.text( "key-user" )
         }
-        SLang.Server.onGet( "/data", hKey )
+        app.onGet( "/data", hKey )
         function keyCheck = function( string key )
         {
             if key == "secret123"
@@ -416,8 +402,8 @@ ServerP3Test
             }
             ret null
         }
-        SLang.Server.use( SLang.Plugins.authApiKey( "X-API-Key", keyCheck ) )
-        SLang.Server.start( 19433 )
+        app.use( SLang.Plugins.authApiKey( "X-API-Key", keyCheck ) )
+        app.start( 19433 )
 
         string b1 = ServerP3Test.rawReq( 19433, "GET /data HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T3e API Key 缺失 → 401（无 WWW-Authenticate）",
@@ -427,19 +413,17 @@ ServerP3Test
         string b3 = ServerP3Test.rawReq( 19433, "GET /data HTTP/1.1\r\nHost: 127.0.0.1\r\nX-API-Key: wrong\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T3g API Key 错误 → 401", sfFind( b3, "401" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
 
         # ── 通用回调（双头组合，端口 19434 之前先占 19431 复用）──
-        SLang.Server.reset()
-        SLang.ServerConfig cfg3 = SLang.ServerConfig()
-        cfg3.port = 19431
-        SLang.Server.configure( cfg3 )
+        app = SLang.Server( 19431 )
+        app.reset()
 
         function hAny = function( SLang.Request req, SLang.Response res )
         {
             res.text( "any-ok" )
         }
-        SLang.Server.onGet( "/any", hAny )
+        app.onGet( "/any", hAny )
         function genCheck = function( SLang.Request req )
         {
             string t1 = req.header( "X-Token" )
@@ -460,8 +444,8 @@ ServerP3Test
             }
             ret null
         }
-        SLang.Server.use( SLang.Plugins.auth( genCheck ) )
-        SLang.Server.start( 19431 )
+        app.use( SLang.Plugins.auth( genCheck ) )
+        app.start( 19431 )
 
         string c1 = ServerP3Test.rawReq( 19431, "GET /any HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T3h 通用回调缺头 → 401", sfFind( c1, "401" ) >= 0 )
@@ -470,7 +454,7 @@ ServerP3Test
         string c3 = ServerP3Test.rawReq( 19431, "GET /any HTTP/1.1\r\nHost: 127.0.0.1\r\nX-Token: tok\r\nX-Sign: sig\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T3j 通用回调双头 → 200", sfFind( c3, "any-ok" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
     }
 
     # ── T4 Jwt.decode 单元 ──
@@ -513,10 +497,8 @@ ServerP3Test
     static void t5Import() throws
     {
         Console.println( "[ServerP3Test] T5 begin (port 19434)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19434
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        SLang.Server app = SLang.Server( 19434 )
+        app.reset()
 
         # spec 文件（手写 OpenAPI 子集：paths/summary/parameters/security）
         File.writeAllText( "p3_spec.json",
@@ -531,13 +513,13 @@ ServerP3Test
         {
             res.text( "exist" )
         }
-        SLang.RouteInfo re = SLang.Server.onGet( "/api/exist", hExist )
+        SLang.RouteInfo re = app.onGet( "/api/exist", hExist )
         re.summary = "已有接口"
 
-        Int32 added = SLang.Server.importOpenApi( "p3_spec.json" )
+        Int32 added = app.importOpenApi( "p3_spec.json" )
         ServerP3Test.check( "T5a 导入计数（get+post 两文档路由）", added == 2 )
 
-        SLang.Server.start( 19434 )
+        app.start( 19434 )
 
         # T5b 文档路由命中 501（未实现 ApiResult）
         string f1 = ServerP3Test.rawReq( 19434, "GET /api/future HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
@@ -549,13 +531,13 @@ ServerP3Test
         ServerP3Test.check( "T5c 已注册路由照常 200", sfFind( f2, "exist" ) >= 0 )
 
         # T5d 覆盖工作流：真实路由顶替文档路由（元数据继承进 openapi.json）
-        SLang.Server.stop()
+        app.stop()
         function hImpl = function( SLang.Request req, SLang.Response res )
         {
             res.text( "implemented" )
         }
-        SLang.Server.onGet( "/api/future", hImpl )
-        SLang.Server.start( 19434 )
+        app.onGet( "/api/future", hImpl )
+        app.start( 19434 )
         string f3 = ServerP3Test.rawReq( 19434, "GET /api/future HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         ServerP3Test.check( "T5d 覆盖让位 → 200", sfFind( f3, "implemented" ) >= 0 )
 
@@ -565,7 +547,7 @@ ServerP3Test
             && sfFind( doc, "\"in\":\"query\"" ) >= 0
             && sfFind( doc, "\"security\":[{\"bearerAuth\":[]}" ) >= 0 )
 
-        SLang.Server.stop()
+        app.stop()
         File.delete( "p3_spec.json" )
     }
 
@@ -574,19 +556,18 @@ ServerP3Test
     static void t6MaxConn() throws
     {
         Console.println( "[ServerP3Test] T6 begin (port 19435)" )
-        SLang.ServerConfig cfg = SLang.ServerConfig()
-        cfg.port = 19435
+        SLang.Server app = SLang.Server( 19435 )
+        SLang.ServerConfig cfg = app.config
         cfg.maxConnections = 1
         cfg.keepAliveTimeoutMs = 2000
-        SLang.Server.configure( cfg )
-        SLang.Server.reset()
+        app.reset()
 
         function hPing = function( SLang.Request req, SLang.Response res )
         {
             res.text( "pong" )
         }
-        SLang.Server.onGet( "/ping", hPing )
-        SLang.Server.start( 19435 )
+        app.onGet( "/ping", hPing )
+        app.start( 19435 )
 
         # 连接 1：占住唯一名额（keep-alive 挂住不关）
         P3RawClient c1 = P3RawClient.connect( 19435 )
@@ -604,7 +585,7 @@ ServerP3Test
 
         c1.close()
         c2.close()
-        SLang.Server.stop()
+        app.stop()
     }
 
     static fun()

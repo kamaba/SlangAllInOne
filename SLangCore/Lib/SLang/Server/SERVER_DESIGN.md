@@ -1396,6 +1396,8 @@ User u = await persistUser( b ) as User;     # 而非：Task t = spawn persistUs
 
 **实现落点与关键难点**：现有 await / spawn 脱糖都发生在 **parse 层**，而 parse 层**不知道调用返回类型**——「包不包 spawn」的判别必须在类型已知处做。倾向方案：await 节点带「待定」标记进 IR，在 **IR/Meta 层**按被调方法签名补包 spawn；备选保守方案：显式标注（`await spawn fn( 实参 )`）先行、自动判别后置。**验收红线**：① `httpGetAsync` 族（返回 Task 的调用）透传不回归；② 显式 spawn 并发聚合不回归；③ `awaitTask( Task 变量 )` 基础形态不回归。另需文档声明：包装闭包路径实参**延迟到协程首跑求值**（与"await 处立即求值"存在可见差异，§7.3 调研项 ③）。
 
+> **✅ 落地注记（2026-10-25，await spawn 组合）**：上段「备选保守方案：显式标注（`await spawn fn( 实参 )`）」已落地——`await spawn` 组合语法支持 **调用形态与匿名闭包**双目标（`await spawn fn( 实参 )` / `await spawn cn.f( 实参 )` / `await spawn function(){...}`），语义严格等价 `Task t = spawn ...; ret await t`。实现 = `StructParseToSyntax.cs` `TransformCoroutineKeywordNodes` 改**两遍扫描**（pass0 展开 spawn → 产物为返回 Task 的 `spawnClosureN` 合成调用节点；pass1 await 以该调用为操作数命中 §18 换绑标记，MetaCore 见返回 Task 走透传分支），复用 P4.5 换绑机制零新增 IR 改动。与直接 await 糖的关键差异：实参求值时机同裸 spawn 分流（方法名/实例链**延迟到协程首跑**），且支持匿名闭包目标（直接糖只接调用形态）。文法详见 `md/syntax/coroutine.md` §4.2「await spawn 组合」；三目标形态 + 存量回归共 13 项断言实跑全 OK（SpAwaitTest），ServerTest P0–P4.5 全量回归全绿。
+
 **文档同步**（R13/R14）：`md/syntax/coroutine.md` §4 await 文法与脱糖说明、`md/lib/Server.md`（P3 起的用户侧文档）同步本糖；§4 各示例中"P4.5 前两步 fallback"注记在糖落地后移除。
 
 ---
@@ -1509,7 +1511,7 @@ html → text/html · js → application/javascript · css → text/css · json 
 **探针结论（风险 #1/#15/#19 ② 全部排雷通过）**：CallClosure 双参/三参直调、object 传参带值返回、Function 字段拷局部调用全部可用；`waitTimeout` 完成→true / 超时→false 方向正确；`awaitTask` 对已死/已 cancel Task 安全返回不挂起；`spawnClosure2` 双参派发 + await 可用——P1 起按双参签名推进，无需启用 §10 风险 1 的单参降级路径。
 
 **与设计的偏差（均为实现细节，不改变 P1+ 设计）**：
-1. **HttpServerCore 为模块级静态单例**（`configure(cfg)/reset()/start()/stop()/awaitStop()/onGet/onPost/onAny/on`），非 §3 的实例形态——C VM 对跨模块引用类多实例化的实例态隔离不可靠（连续 new 多实例时 S2 连接读到 S1 的路由表，闭包零捕获 + 实参传值亦无法规避；详复盘 [2026-10-17]）；v1 单服务器语义下无功能损失，P1 门面 `SLang.Server` 按单实例收口。
+1. **HttpServerCore 为模块级静态单例**（`configure(cfg)/reset()/start()/stop()/awaitStop()/onGet/onPost/onAny/on`），非 §3 的实例形态——C VM 对跨模块引用类多实例化的实例态隔离不可靠（连续 new 多实例时 S2 连接读到 S1 的路由表，闭包零捕获 + 实参传值亦无法规避；详复盘 [2026-10-17]）；v1 单服务器语义下无功能损失，P1 门面 `SLang.Server` 按单实例收口（2026-10-25 已按设计转实例门面——`new SLang.Server( port )` 缺省 80，引擎单例语义保留，见 §19 实录）。
 2. **HttpServerCore 内置 P0 精确路由**（提前于 P1 Router 落地了 method+path 精确匹配 + ANY + HEAD 视同 GET + 404/405+Allow），因引擎验收需要路由才能测 404/405；P1 Router（`{param}`/分组/优先级）替换该内部表。
 3. **413/431/504/500 走优雅断连** `_gracefulClose`（closeWrite FIN → delay 50ms → 丢弃式收尾读 → close）——直接 close 在入站 body 未读完时触发 RST，HttpClient 收不到响应（设计 §6.11 未提，经验补充）。
 4. **`ServerConfig.host` 空值兜底 `"0.0.0.0"`**（跨模块 string 字段默认值消费侧丢失，Int32 正常）；用户工程写 `SLang.ServerConfig()` 后应显式 `cfg.host/cfg.port`（HttpClient 显式字段先例同款纪律）。
@@ -1633,3 +1635,28 @@ html → text/html · js → application/javascript · css → text/css · json 
 6. **C VM / IR / 导出格式零改动**：本阶段纯 Front（Parse + MetaCore）+ Core 库（Coroutine.sl，需重编 Core.module.slb 并刷新消费工程 lib）。ExpendTest lib 刷新 + 全量重编后 C VM 直接跑通。
 7. **跑法备忘**：`compile-tests.ps1 -Tests a,b,c` 的 `-File` 传参只绑首个（PS5.1 数组参数限制）——多套件用 `-Command` 形式；MathTest/SpecialTest 的 TestMap Module 路径与实际导出目录（`test\<套件>\export\...`）失配致 fresh 检查误报 FAILED，产物实际已刷新（脚本层既有问题，非编译失败）。
 8. **文档同步**：`md/syntax/coroutine.md` §4 关键字表 + §4.2 直接 await 糖节（三分支规则表 + 边界警示）重写；`md/syntax/function.md` VM 侧注更新（协程 spawn 例外——方法引用经专用通道支持，此前「不支持」表述已过时）；本文件 §8 P4.5 行打勾 + 本实录。
+
+---
+
+## §19 实例门面转换实录（2026-10-25，静态门面 → 设计目标实例形态）
+
+**背景**：P0-P4 落地期间门面曾收口为静态形态（§12 复盘 ①），用户点名回归设计目标形态（§0/§4.1/§4.9）——`SLang.Server` 须 new 出来，构造带端口，缺省 80。本次为纯 API 形态重构，功能零增减。
+
+**产物**：`Server.sl` 重写为实例门面（423 行）——双构造 `_init_()`（缺省 80）/ `_init_( Int32 port )`（构造期经 `HttpServerCore.configure` seed 默认配置，start 前可改）；`public get ServerConfig config()`（读引擎 `_cfg` 引用直返，start 前直改字段生效，null 兜底重 seed）；`configure( cfg )`（全量覆盖 + `this.port` 同步）；`start()/start( port )/run()/run( port )/stop()/awaitStop()/reset()/isRunning`；路由族 `onGet/onPost/onPut/onDelete/onPatch/onHead/onOptions/onAny/on`（返回 RouteInfo）+ `group( prefix )`；`use( Function )/use( ServerPlugin )`；`websocket( path )/wsEvents( path )/sessions( path )/broadcast( path, text )`；`docs( bool )/importOpenApi( file )`。`HttpServerCore.sl` 增引擎级静态通道 `sessions( path )`/`broadcast( path, text )`（闭包零捕获纪律下协程内取会话/广播的唯一通道）；`Plugins.sl` 插件 onInstall 自注册改走 `HttpServerCore` 静态；`Plugin.sl`/`RouteAttrs.sl` 类头注记同步。
+
+**验收**：✅ 2026-10-25 全绿——模块重导（`CompileStdlib` 显式工程路径模式 → `out\export\SLangServer\` slb+json 双产物，slb mtime fresh 核验）后 ServerTest 联合宿主全量：P0 探针 + P0 引擎 + P1 + P1.5 + P2 + P3 + P4 + P4.5 八套件全部 OK、零 FAIL、exit 0（用例明细见 §8 对应行）。
+
+**与设计的偏差 / 实况要点**：
+
+1. **实例门面是薄壳，引擎层维持模块级静态单例**：`Server` 实例仅持 `public Int32 port`，全部状态（配置/路由/中间件/WS 会话）仍在 `HttpServerCore` 模块级——C VM 多实例实例态隔离不可靠的结论（§12 复盘 ①）未变，v1 单 VM 单服务器语义，跨实例共享路由/中间件/会话；`this.port` 只作构造记忆与便捷覆盖的落位点。
+2. **`reset()` 只清路由不清配置**（引擎原语义保留）——推论两条：① 同端口重新装配可省略重复 configure（`app.stop(); app.reset()` 后直接重注册路由再 start）；② 同方法内端口切换用重赋值重 seed：`app = SLang.Server( newPort ); app.reset()`（P3 t3Auth 三段端口切换即此形态）。
+3. **测试改写五条转换模式**（P1 45 处 + P1.5 13 处 + P2 19 处 + P3 35 处编辑；P4 本就实例形态零改动）：
+   - 纯配置段：`cfg = ServerConfig(); cfg.port = X; SLang.Server.configure( cfg ); reset` → `SLang.Server app = SLang.Server( X ); app.reset()`；
+   - 带额外字段：`SLang.ServerConfig cfg = app.config; cfg.字段 = V`（getter 返回引擎 `_cfg` 引用，直改即生效）；
+   - 路由/生命周期：`app.onXxx( path, fn ); app.start( PORT ); app.stop()`（**保留 `start( port )` 显式端口便捷形态**，测试用它自证端口语义）；
+   - 闭包内取会话/广播：`SLang.HttpServerCore.sessions( path )` / `SLang.HttpServerCore.broadcast( path, text )`（闭包零捕获，不可引用 `app` 实例）；
+   - 同端口重复 configure 块整体省略（推论 ① 的直接应用，P3 t2DocsPage T2b/T2c 段）。
+4. **`config` getter 双形态调用**：`app.config`（无括号）与 `app.config()`（带括号）均合法，测试统一用无括号形态。
+5. **发布树 `publish\release\SLangServer.module.slb` 未随本次刷新**（12:04 旧产物）——测试消费链走 `out\export\` → 宿主 `StageReferencedModules` 拷入包目录，本次已随测试运行自动刷新 `package\win32-debug\SLangServer\`；独立发布产物待下次 publish/pack 时重打。
+
+**下一步（P5 打磨）**：同 §17（前缀树路由 / 请求侧流式 / Range / 心跳 / rateLimit / Jwt.sign·verify / TLS 评估）。

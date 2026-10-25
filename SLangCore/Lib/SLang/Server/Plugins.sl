@@ -1,4 +1,4 @@
-﻿import Std;
+import Std;
 import Core;
 
 namespace SLang
@@ -8,14 +8,17 @@ namespace SLang
     # 设计契约：SERVER_DESIGN.md §4.7（内置插件路线：logger / cors /
     #   staticFiles；P3 增 bodyLimit/requestId/auth，P5 增 rateLimit）
     #
-    # 用法（一行装一个插件，产物为普通 ServerPlugin 子类）：
-    #   SLang.Server.use( SLang.Plugins.logger() );
-    #   SLang.Server.use( SLang.Plugins.cors() );
-    #   SLang.Server.use( SLang.Plugins.staticFiles( "./www" ) );
+    # 用法（一行装一个插件，产物为普通 ServerPlugin 子类，经 app.use 注册）：
+    #   var app = SLang.Server( 8080 );
+    #   app.use( SLang.Plugins.logger() );
+    #   app.use( SLang.Plugins.cors() );
+    #   app.use( SLang.Plugins.staticFiles( "./www" ) );
     #
     # 实现约束：中间件闭包零捕获（P0 复盘纪律）——staticFiles 的 root 经
     #   静态字段传递（v1 单实例：重复注册后者覆盖前者，P2 实录记录）；
-    #   中间件逻辑收进静态方法、闭包只做转发。
+    #   中间件逻辑收进静态方法、闭包只做转发；onInstall 内注册走引擎级
+    #   静态通道 HttpServerCore.use（插件无门面实例引用——闭包/插件
+    #   零捕获纪律，Server.sl 门面注记同源）。
     # ============================================================================
 
     # ── logger：请求日志（方法/路径/状态/耗时）──
@@ -28,7 +31,7 @@ namespace SLang
             {
                 _LoggerPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
@@ -50,7 +53,7 @@ namespace SLang
             {
                 _CorsPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
@@ -89,7 +92,7 @@ namespace SLang
             {
                 _StaticFilesPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
@@ -170,7 +173,7 @@ namespace SLang
             {
                 _BodyLimitPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
@@ -193,7 +196,7 @@ namespace SLang
             {
                 _RequestIdPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
@@ -255,7 +258,7 @@ namespace SLang
             {
                 _AuthPlugin._serve( req, res, nx )
             }
-            SLang.Server.use( mw )
+            HttpServerCore.use( mw )
         }
 
         # WS 升级校验（§4.11 落点 B：浏览器 WS 无法自定义头 → token 走

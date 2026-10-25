@@ -476,7 +476,15 @@ internal sealed class LspServer
             {
                 return cached;
             }
+            // 工程锚点：*.sp 优先；无 .sp 时回落 *.jsonc（2026-10-25 起 .sp 非必需，
+            // jsonc-only 工程按非 main 入口工程编译；plugin.jsonc 是插件清单需排除）
             var sps = Directory.Exists(dir) ? Directory.GetFiles(dir, "*.sp") : Array.Empty<string>();
+            if (sps.Length == 0 && Directory.Exists(dir))
+            {
+                sps = Directory.GetFiles(dir, "*.jsonc")
+                    .Where(p => !string.Equals(Path.GetFileNameWithoutExtension(p), "plugin", StringComparison.OrdinalIgnoreCase))
+                    .ToArray();
+            }
             if (sps.Length > 0)
             {
                 var info = new ProjectInfo { SpPath = sps[0], Dir = dir };

@@ -214,6 +214,17 @@ namespace SLang
         # 文件大小，非 chunked；MIME 按扩展名）。文件不存在 → 404 终端
         public void sendFile( string path ) throws
         {
+            this.sendFileRange( path, null )
+        }
+
+        # 流式文件下载 + Range 断点续传（P5，§4.5）：
+        #   rangeSpec = 请求 Range 头原值（如 "bytes=100-199" / "bytes=100-" /
+        #   "bytes=-100"）；null / 畸形 / 多 range → 忽略按全量 200（RFC 9110
+        #   允许服务器忽略 Range；v1 只取首个 range，多 range 不做合成分块）；
+        #   start 越界（>= 文件大小）→ 416 + Content-Range: bytes */size。
+        #   有效 → 206 + Content-Range: bytes s-e/size + Content-Length = 区间长。
+        public void sendFileRange( string path, string rangeSpec ) throws
+        {
             if path == null || File.exists( path ) == false
             {
                 this.status( 404 ).text( "not found" )
@@ -222,24 +233,197 @@ namespace SLang
             this._terminal()
             this._direct = true
             Int64 fsize = File.getSize( path )
+            Int64 start = 0
+            Int64 len = fsize
+            bool isRange = false
+            if rangeSpec != null && SystemStringLength( rangeSpec ) > 6
+            {
+                if HttpServerCore._startsWithFold( SystemStringRange( rangeSpec, 0, 6 ), "bytes=" )
+                {
+                    Int32 rc = Response._parseRange( SystemStringRange( rangeSpec, 6, SystemStringLength( rangeSpec ) ), fsize )
+                    if rc == 1
+                    {
+                        # 416：区间不可满足（start >= size）
+                        this._status = 416
+                        this._contentType = "text/plain; charset=utf-8"
+                        this._headers.setHeader( "Content-Range", "bytes */" + fsize.toString() )
+                        this._writeRangeHead( fsize, 0, 0 )
+                        ret
+                    }
+                    if rc == 0
+                    {
+                        # 有效区间
+                        start = Response._rangeStart
+                        len = Response._rangeEnd - start + 1
+                        isRange = true
+                    }
+                    # rc == -1：畸形 → 忽略（全量 200）
+                }
+            }
             this._contentType = _Mime.of( path )
-            this._writeFileHead( fsize )
+            if isRange
+            {
+                this._status = 206
+                this._headers.setHeader( "Content-Range", "bytes " + start.toString() + "-" + ( start + len - 1 ).toString() + "/" + fsize.toString() )
+                this._writeRangeHead( fsize, start, len )
+            }
+            else
+            {
+                this._writeRangeHead( fsize, start, len )
+            }
             # 64KB 分块读发（FileStream.read 满 writable 区；clear 复用）
             FileStream fs = File.openRead( path )
+            if start > 0
+            {
+                fs.seek( start, SeekOrigin.Begin )
+            }
+            Int64 remain = len
             ByteBuffer chunk = ByteBuffer( 65536 )
-            while true
+            while remain > 0
             {
                 Int32 n = fs.read( chunk )
                 if n <= 0
                 {
                     break
                 }
-                ByteBuffer view = chunk.slice()
+                Int32 take = n
+                if remain - n < 0
+                {
+                    take = remain.toInt32()
+                }
+                # clear 后 readerIndex=0：新数据落在 [0, n)，截取 [0, take)
+                ByteBuffer view = chunk.slice( 0, take )
                 this._conn.write( view )
+                view.release()
                 chunk.clear()
+                remain = remain - take
             }
             chunk.release()
             fs.close()
+        }
+
+        # 区间解析结果槽（_parseRange 输出；模块级静态——跨方法带出双值，
+        # _SrvUtil 同款纪律，无并发共享语义：单 VM 协程非抢占 + 调用点立即消费）
+        static Int64 _rangeStart = 0
+        static Int64 _rangeEnd = 0
+
+        # Range 值解析（"bytes=" 之后的部分）：
+        #   返回 0 = 有效（_rangeStart/_rangeEnd 已置）
+        #   返回 1 = 416（区间不可满足：start >= size）
+        #   返回 -1 = 畸形忽略（按全量 200）
+        # v1 只取首个 range（逗号分隔截断）；"a-b" 越界 end 钳到 size-1
+        static Int32 _parseRange( string spec, Int64 fsize )
+        {
+            # 截首段（多 range 丢弃后续）
+            Int32 len = SystemStringLength( spec )
+            Int32 end = len
+            for Int32 i = 0, i < len, i = i + 1
+            {
+                if SystemStringCharCodeAt( spec, i ) == 44
+                {
+                    end = i
+                    break
+                }
+            }
+            string one = SystemStringRange( spec, 0, end )
+            Int32 ol = SystemStringLength( one )
+            if ol == 0
+            {
+                ret -1
+            }
+            # 找 '-'
+            Int32 dash = -1
+            for Int32 i = 0, i < ol, i = i + 1
+            {
+                if SystemStringCharCodeAt( one, i ) == 45
+                {
+                    dash = i
+                    break
+                }
+            }
+            if dash < 0
+            {
+                ret -1
+            }
+            string s1 = SystemStringRange( one, 0, dash )
+            string s2 = SystemStringRange( one, dash + 1, ol )
+            Int32 l1 = SystemStringLength( s1 )
+            Int32 l2 = SystemStringLength( s2 )
+            if l1 == 0 && l2 == 0
+            {
+                ret -1
+            }
+            if l1 > 0
+            {
+                # "a-b" / "a-"
+                Int64 a = HttpServerCore._parseDec64Full( s1 )
+                if a < 0
+                {
+                    ret -1
+                }
+                if a >= fsize
+                {
+                    ret 1
+                }
+                Int64 b = fsize - 1
+                if l2 > 0
+                {
+                    Int64 bv = HttpServerCore._parseDec64Full( s2 )
+                    if bv < 0
+                    {
+                        ret -1
+                    }
+                    if bv < a
+                    {
+                        # start > end：畸形（RFC 9110 an unsatisfied... 按 416 处理）
+                        ret 1
+                    }
+                    if bv < b
+                    {
+                        b = bv
+                    }
+                }
+                Response._rangeStart = a
+                Response._rangeEnd = b
+                ret 0
+            }
+            # "-n" 尾部 n 字节
+            Int64 n = HttpServerCore._parseDec64Full( s2 )
+            if n <= 0
+            {
+                # suffix-length 0 / 非法：忽略
+                ret -1
+            }
+            if n > fsize
+            {
+                n = fsize
+            }
+            Response._rangeStart = fsize - n
+            Response._rangeEnd = fsize - 1
+            ret 0
+        }
+
+        # 文件下载响应头直发（sendFile/sendFileRange 共用；Content-Length =
+        # len（区间或全量），Accept-Ranges 声明支持断点续传；keep-alive 可继续）
+        void _writeRangeHead( Int64 fsize, Int64 start, Int64 len ) throws
+        {
+            string head = "HTTP/1.1 " + this._status.toString() + " " + HttpServerCore._reason( this._status ) + "\r\n"
+            head = head + "Content-Type: " + this._contentType + "\r\n"
+            head = head + "Content-Length: " + len.toString() + "\r\n"
+            head = head + "Accept-Ranges: bytes\r\n"
+            if this._keepAlive && this._http10 == false
+            {
+                head = head + "Connection: keep-alive\r\n"
+            }
+            else
+            {
+                head = head + "Connection: close\r\n"
+            }
+            head = head + this._userHeadersText()
+            head = head + "\r\n"
+            ByteBuffer b = ByteBuffer.fromString( head )
+            this._conn.write( b )
+            b.release()
         }
 
         # 文件下载（sendFile + Content-Disposition 附件头）
@@ -272,27 +456,6 @@ namespace SLang
                 {
                     head = head + "Connection: close\r\n"
                 }
-            }
-            head = head + this._userHeadersText()
-            head = head + "\r\n"
-            ByteBuffer b = ByteBuffer.fromString( head )
-            this._conn.write( b )
-            b.release()
-        }
-
-        # sendFile 响应头直发（Content-Length 精确；keep-alive 可继续）
-        void _writeFileHead( Int64 fsize ) throws
-        {
-            string head = "HTTP/1.1 " + this._status.toString() + " " + HttpServerCore._reason( this._status ) + "\r\n"
-            head = head + "Content-Type: " + this._contentType + "\r\n"
-            head = head + "Content-Length: " + fsize.toString() + "\r\n"
-            if this._keepAlive && this._http10 == false
-            {
-                head = head + "Connection: keep-alive\r\n"
-            }
-            else
-            {
-                head = head + "Connection: close\r\n"
             }
             head = head + this._userHeadersText()
             head = head + "\r\n"

@@ -40,6 +40,21 @@ namespace SLang
         bool _mpDone = false
         # 0 = OK / 400 = boundary 缺失或格式坏 / 413 = 单文件超限
         Int32 _mpCode = 0
+        # ── 请求侧流式（P5，§6.6）──
+        # streamBody=true 路由：引擎在头区空行后停止预读，连接 + 预读
+        # 缓冲经 _bindStream 移交本请求；bodyStream() 据此构造读取器
+        Net.NetStream _streamConn = null
+        ByteBuffer _streamBuf = null
+        Int64 _streamCl = 0
+        bool _streamChunked = false
+        # ── 流式读取器缓存（P7，§6.6）──
+        # bodyStream() 首取定形缓存单实例：后续调用（含引擎 keep-alive
+        # 收尾 drainer）返回同一实例，_remain 与 handler 消费进度接力
+        # （修复 P5 期每次新造实例按完整 CL 起算的多吃错位）；multipart
+        # 解析器（multipartStream）同样缓存，引擎收尾据此以 multipart
+        # 语义排干剩余结构（_win 预读窗口残留由此闭环）
+        HttpBodyReader _streamReader = null
+        MultipartReader _mpReader = null
 
         # ── 传值槽（中间件 → 处理器；引擎不触碰）──
         # 自由传值槽（任意语义）
@@ -63,6 +78,113 @@ namespace SLang
             this._mpFiles = new()
             this._mpDone = false
             this._mpCode = 0
+            this._streamConn = null
+            this._streamBuf = null
+            this._streamCl = 0
+            this._streamChunked = false
+            this._streamReader = null
+            this._mpReader = null
+        }
+
+        # 引擎绑定（streamBody 路由派发前；用户勿调）——连接 + 预读
+        # 缓冲 + body 元信息移交（§6.6）
+        void _bindStream( Net.NetStream conn, ByteBuffer buf, Int64 contentLength, bool chunked )
+        {
+            this._streamConn = conn
+            this._streamBuf = buf
+            this._streamCl = contentLength
+            this._streamChunked = chunked
+        }
+
+        # 是否流式 body 路由（引擎收尾判定 + handler 侧能力探测）
+        public get bool isStreamBody()
+        {
+            ret this._streamConn != null
+        }
+
+        # 流式 body 读取器（streamBody 路由专用；非流式路由返回 null）。
+        # P7：首取定形缓存单实例——同请求多次调用/引擎收尾复用同一实例
+        # （消费进度接力；maxBytes 形态在实例已存在时忽略其上限）。
+        # 上限 = cfg.maxBodyBytes（multipart 场景放宽为 maxUploadBytes）
+        public HttpBodyReader bodyStream()
+        {
+            if this._streamConn == null
+            {
+                ret null
+            }
+            if this._streamReader != null
+            {
+                ret this._streamReader
+            }
+            Int64 limit = 10485760
+            ServerConfig cfg = HttpServerCore._cfg
+            if cfg != null
+            {
+                limit = cfg.maxBodyBytes
+                string ct = this.contentType()
+                if ct != null && BodyParser.isMultipart( ct )
+                {
+                    limit = cfg.maxUploadBytes
+                }
+            }
+            this._streamReader = HttpBodyReader( this._streamConn, this._streamBuf, this._streamCl, this._streamChunked, limit )
+            ret this._streamReader
+        }
+
+        # 流式 body 读取器（显式上限形态；调用方自管限额场景）。
+        # 首取定形：实例已存在（含无参形态先取）则忽略本次上限
+        public HttpBodyReader bodyStream( Int64 maxBytes )
+        {
+            if this._streamConn == null
+            {
+                ret null
+            }
+            if this._streamReader != null
+            {
+                ret this._streamReader
+            }
+            this._streamReader = HttpBodyReader( this._streamConn, this._streamBuf, this._streamCl, this._streamChunked, maxBytes )
+            ret this._streamReader
+        }
+
+        # multipart 流式解析器（P7，§6.6；streamBody 路由专用）。
+        # Content-Type 非 multipart / boundary 缺失 → 返回 null（调用方
+        # 可回退 bodyStream 裸读）。底层经 bodyStream() 缓存实例（multipart
+        # 场景上限已放宽为 maxUploadBytes）；两种消费路径互斥——同一请求
+        # 勿混用 multipartStream 与 bodyStream 裸读（字节归属交错）。
+        # 解析器一次构造缓存（构造失败不缓存，可重试）；引擎 keep-alive
+        # 收尾复用缓存实例以 multipart 语义排干剩余结构
+        public MultipartReader multipartStream()
+        {
+            if this._streamConn == null
+            {
+                ret null
+            }
+            if this._mpReader != null
+            {
+                ret this._mpReader
+            }
+            string ct = this.contentType()
+            if ct == null
+            {
+                ret null
+            }
+            if BodyParser.isMultipart( ct ) == false
+            {
+                ret null
+            }
+            HttpBodyReader r = this.bodyStream()
+            if r == null
+            {
+                ret null
+            }
+            MultipartReader m = MultipartReader.of( r, ct )
+            if m == null
+            {
+                ret null
+            }
+            this._mpReader = m
+            ret m
         }
 
         # ── 请求行 ──

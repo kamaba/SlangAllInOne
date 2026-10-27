@@ -46,10 +46,5 @@ SLangTorch 的制作
 在esp32-p4的机器上跑起来 然后做一个sdk 
 
 
-await spawn 这个的复用工式， 原来 的语法是 await Task 现在直接就是await spwan function() 这样的使用
-
-我现在.sp 的工程要变成非必需的，也就是如果有同名.jsonc里的，判断为有.sp 如果没有 也无所谓，会自动认为是一个非main入口 的工程 
-
-
 你现在还是对attribute 的处理有些问题 就是四种，第一种， 编译中  然后  _enter_  里边放着在编译层调用的逻辑 一般是在FrontEnd层有的接口或者是自己的一些逻辑处理  第二种，编译导出时也就是生成IR时候的一些处理  也是在 _enter_ 里边 放逻辑的，第三种，是runtime加载代码的时候 这种形态 也是_enter_的时候，调 用内部逻辑，或者是定义好的接口去调 用   第四种是 执行  比如在new对象的时候 里边有成员的话检查成员上边的attribute属于然后执行对应的逻辑   如果是method上边的attribute  是在调用这个method的前边检查是否有attribute的属于 还有一种是也是new这个对象的时候检查是否要执行对应的逻辑 ，然后执行_enter_里边的内容  像OnPost 这样的接口  是在生成这个
 类的时候，先new一个Server后，然后隐式的去调用这个server的实例然后 调用spawn 出来的静态函数体

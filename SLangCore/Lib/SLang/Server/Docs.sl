@@ -1,4 +1,4 @@
-﻿import Std;
+import Std;
 import Core;
 
 namespace SLang
@@ -215,7 +215,7 @@ namespace SLang
             Docs._hasSecurity = false
 
             # ---- pass 1：登记 schema（body + responses 样例类）----
-            List<RouteInfo> routes = Router._routes
+            List<RouteInfo> routes = Router.allRoutes()
             Int32 rn = routes.length
             for Int32 i = 0, i < rn, i = i + 1
             {

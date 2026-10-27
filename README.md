@@ -37,7 +37,7 @@ Front 编译产出 SLIR，C VM 执行 SLIR，本仓库把两者粘合为一条�
 | **Core** | 容器（List / Map / Set / Queue / Stack / LinkedList / Tuple / Channel）、JSON / XML / YAML / TOML / CSV、ByteBuffer / Codec / LengthPrefix、Lz4 压缩、Protobuf 编解码、Stream 元素流 |
 | **Math** | 三精度数学（Mathd / Mathf / Mathh，FFI 直调原生库）、向量与矩阵（三精度 9 向量 + 6 矩阵值类型）、动态矩阵、BigNumber / BigDecimal / Factor 大数与数论 |
 | **Std** | IO（File / Directory / Console）、Net（TCP / UDP / TLS / HTTP/1.1 / WebSocket / MQTT，协程化挂起读写）、Sqlite、Redis、Log / Profiling / Trace / Monitor、isolate、Base64 / Sha1、GZip / Zip、DateTime / Process / Timer |
-| **SLang.Server** | HTTP / WebSocket 服务框架（路由 / 请求 / 响应链式 / BodyParser） |
+| **SLang.HttpServer / SLang.WebSocketServer** | HTTP / WebSocket 服务框架（HttpServer：路由 / 请求 / 响应链式 / BodyParser / Jwt；WebSocketServer：升级路由器 / 独立端口双形态） |
 | **SLang.Render** | 渲染类型（Mesh / Material / Texture / Shader / Camera…） |
 | **Tensora** | 张量 / 张量算子 / 自动微分 / 优化器 / Transformer（建设中） |
 | **SLMysql** | MySQL 客户端（⚠ 静态链接 GPL-2.0 的 MySQL Connector/C，**不随官方发布包分发**） |

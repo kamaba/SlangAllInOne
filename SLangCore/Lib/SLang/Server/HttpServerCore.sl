@@ -58,6 +58,10 @@ namespace SLang
         bool _http10 = false
         Net.HttpHeaders _headers = null
         ByteBuffer _body = null
+        # ── 请求侧流式（P5，§6.6）──
+        # stopAtHead 形态：头区空行后停止预读，body 元信息经此带出
+        Int64 _streamCl = 0
+        bool _streamChunked = false
     }
 
     public class HttpServerCore
@@ -65,8 +69,8 @@ namespace SLang
         # P0 形态：模块级单例（全静态）——SERVER_DESIGN.md §1.2「单 VM 协程
         # 调度即全部并发」的 v1 服务器语义。实测跨模块类多实例化在 C VM
         # 存在实例态串扰（S2 连接读到 S1 的路由表，闭包零捕获 + 实参传值
-        # 亦无法规避），静态化是最小可靠路径。门面 SLang.Server 已转实例
-        # 形态（构造带端口），全部经本类静态转发——单 VM 单服务器语义，
+        # 亦无法规避），静态化是最小可靠路径。门面 SLang.HttpServer 已转
+        # 实例形态（构造带端口），全部经本类静态转发——单 VM 单服务器语义，
         # 多实例待 C VM 实例隔离修复。
         static ServerConfig _cfg = null
         static Net.TcpServer _server = null
@@ -81,6 +85,13 @@ namespace SLang
         # 文档路由开关（P3，§4.8 app.docs(false) 消费；start 挂载 /docs +
         # /openapi.json；reset 恢复默认开）
         public static bool _docsEnabled = true
+        # app 级事件钩子（P6，§4.9：门面 set/get 访问器写读；
+        # onStart/onStop = function()；onError = function( Request req,
+        # Response res, Error e )——钩子零捕获（体内只能引用全局静态）；
+        # reset 清空）
+        public static Function _hookOnStart = null
+        public static Function _hookOnStop = null
+        public static Function _hookOnError = null
 
         # 便捷覆盖监听端口（Server.start(port)/run(port) 用；start 前生效）
         public static void setListenPort( Int32 port )
@@ -104,12 +115,16 @@ namespace SLang
             }
         }
 
-        # 清空路由表与中间件/插件（stop 后重新配置用；连接表由 stop 清理）
+        # 清空路由表与中间件/插件（stop 后重新配置用；连接表由 stop 清理）；
+        # app 级事件钩子一并清空（P6，§4.9）
         public static void reset()
         {
             Router.clear()
             _PluginHost.clear()
             _docsEnabled = true
+            _hookOnStart = null
+            _hookOnStop = null
+            _hookOnError = null
         }
 
         # ── 中间件/插件（P2；SLang.Server.use 转发）──
@@ -127,7 +142,7 @@ namespace SLang
             _PluginHost.addPlugin( plugin )
         }
 
-        # ── 路由注册（P1 起经 Router；推荐用 SLang.Server 门面——返回 RouteInfo 可写文档元数据）──
+        # ── 路由注册（P1 起经 Router；推荐用 SLang.HttpServer 门面——返回 RouteInfo 可写文档元数据）──
 
         # 原始形式（动态注册 / 方法变量）
         public static RouteInfo on( string method, string path, Function handler )
@@ -150,7 +165,7 @@ namespace SLang
             ret Router.add( "ANY", path, handler )
         }
 
-        # WS 升级路由（SLang.Server.websocket 同源）
+        # WS 升级路由（SLang.WebSocketServer.websocket 同源）
         public static RouteInfo websocket( string path, Function handler )
         {
             ret Router.addWs( path, handler )
@@ -172,6 +187,25 @@ namespace SLang
         public static Int32 broadcast( string path, string text )
         {
             ret _WsSessions.broadcast( path, text )
+        }
+
+        # 组播二进制（P6，§4.6 binary 重载；返回送达会话数）
+        public static Int32 broadcast( string path, ByteBuffer payload )
+        {
+            ret _WsSessions.broadcastBinary( path, payload )
+        }
+
+        # 定向组播文本（P6，§4.6：只发带 tag 标签的会话——s.tag 打标；
+        # 闭包零捕获场景经本静态通道，语义与门面一致）
+        public static Int32 broadcastTag( string path, string tag, string text )
+        {
+            ret _WsSessions.broadcastTag( path, tag, text )
+        }
+
+        # 定向组播二进制（P6，§4.6）
+        public static Int32 broadcastTag( string path, string tag, ByteBuffer payload )
+        {
+            ret _WsSessions.broadcastTagBinary( path, tag, payload )
         }
 
         # ── 生命周期 ──
@@ -231,6 +265,17 @@ namespace SLang
             # 插件生命周期钩子（start 后、accept 循环已在跑——单协程调度
             # 下无竞态；§6.9）
             _PluginHost.notifyStart()
+            # app 级 onStart 钩子（P6，§4.9；Function 字段先拷局部再调用
+            # ——HttpHeaders 头注记纪律；异常吞——不拖垮启动）
+            function hStart = _hookOnStart
+            if hStart != null
+            {
+                label hs
+                {
+                    hStart()
+                }
+                catch { }
+            }
         }
 
         # 停止：关监听 + 关全部在途连接（各连接协程随读失败/EOF 退出）
@@ -259,6 +304,16 @@ namespace SLang
             _conns.clear()
             # 插件生命周期钩子（stop 收尾；§6.9）
             _PluginHost.notifyStop()
+            # app 级 onStop 钩子（P6，§4.9；异常吞——不拖垮停止收尾）
+            function hStop = _hookOnStop
+            if hStop != null
+            {
+                label hp
+                {
+                    hStop()
+                }
+                catch { }
+            }
         }
 
         # 挂起直至停止（等待 accept 循环协程收尾）
@@ -359,12 +414,16 @@ namespace SLang
             while true
             {
                 # ---- 1) 解析请求（EOF / 空闲超时 / IO 异常 → 静默收连接）----
+                # P5 §6.6：先只解析头（stopAtHead）——路由命中 streamBody
+                # 即移交 handler 流式消费；未命中再原地补读 body（第二遍
+                # _parse 全量形态，语义与 v1 完全一致）。预读缓冲共享，
+                # 头区字节已在 buf 中消费，补读从残留/连接继续，零重复
                 _HttpParseResult r = null
                 bool failed = false
                 label parseBlock
                 {
                     Net.NetStream ns = client
-                    r = HttpServerCore._parse( ns, buf, cfg )
+                    r = HttpServerCore._parse( ns, buf, cfg, true )
                 }
                 catch
                 {
@@ -391,6 +450,45 @@ namespace SLang
                     }
                     HttpServerCore._gracefulClose( client )
                     break
+                }
+
+                # ---- 1a) streamBody 路由判定（P5，§6.6）----
+                # 命中 streamBody=true 的 HTTP 路由：跳过 body 预读，连接 +
+                # 预读残留经 Request._bindStream 移交 handler；未命中（含
+                # 404/405/WS）走第二遍全量解析补 body（见 1b）
+                RouteInfo preRoute = Router.match( r._method, r._path )
+                if preRoute != null && preRoute.streamBody && HttpServerCore._isWsUpgrade( r ) == false
+                {
+                    r._body = null
+                }
+                else
+                {
+                    # ---- 1b) 非 streamBody：补读 body（全量解析第二遍，头区
+                    # 已消费的部分由 _parse 重走——重复解析头但零额外 IO，
+                    # 简化实现路径；buf 索引已在头区后，重解析从残留起）----
+                    label parseFull
+                    {
+                        Net.NetStream ns2 = client
+                        # 重置：重新构造完整解析结果（头区信息被第二遍重建）
+                        r = HttpServerCore._parseHeadless( ns2, buf, cfg, r )
+                    }
+                    catch
+                    {
+                        failed = true
+                    }
+                    if failed || r == null || r._errorCode != 0
+                    {
+                        if r != null && r._errorCode != 0
+                        {
+                            HttpServerCore._writeSimple( client, r._errorCode, HttpServerCore._errorBody( r._errorCode ) )
+                            if r._body != null
+                            {
+                                r._body.release()
+                            }
+                            HttpServerCore._gracefulClose( client )
+                        }
+                        break
+                    }
                 }
 
                 # ---- 2) WS Upgrade 分流（§6.1：升级在路由/中间件管道之前）----
@@ -439,6 +537,12 @@ namespace SLang
                 # ---- 4) 构造上下文（SERVER_DESIGN.md §6.1）----
                 Map<string,string> pathParams = Router.extractParams( route, r._path )
                 Request req = Request( r._method, r._path, r._rawQuery, r._headers, r._body, client.remoteAddress, client.remotePort, pathParams )
+                # 请求侧流式绑定（P5，§6.6）：streamBody 路由把连接 + 预读
+                # 残留移交 handler（bodyStream() 消费；收尾 drain 见 6a）
+                if preRoute != null && preRoute.streamBody && req._body == null
+                {
+                    req._bindStream( client, buf, r._streamCl, r._streamChunked )
+                }
                 r._headers = null
                 r._body = null
                 Response res = Response()
@@ -448,7 +552,11 @@ namespace SLang
                 # ---- 4a) multipart 即时解析（P1.5，§6.5 构造期语义）----
                 # 单文件超 maxFileBytes → 413；boundary 缺失/格式坏 → 400；
                 # 均协议层应答 + 优雅断连（§6.11，防 RST 同 413/431 路径）
-                if req.bodyFormat == EBodyFormat.Multipart
+                # P7：流式路由（streamBody）不做内存预解析——body 不驻留，
+                # form()/file() 族不适用（multipartStream() 为其流式替代），
+                # CT 有效性（boundary 缺失等）交 handler 经 multipartStream()
+                # 返 null 自行裁决；引擎收尾由 6a 以流语义兜底排干
+                if req.isStreamBody == false && req.bodyFormat == EBodyFormat.Multipart
                 {
                     Int32 upErr = req._ensureMultipart()
                     if upErr != 0
@@ -472,9 +580,24 @@ namespace SLang
                 {
                     connKilled = HttpServerCore._runPipeline( client, cfg, route, noRoute, req, res, isHead )
                 }
-                catch
+                catch e
                 {
                     pipeError = true
+                    # app 级 onError 钩子（P6，§4.9）：管道/中间件/handler
+                    # 异常先交钩子（钩子内可写响应自救——isResponded 后按
+                    # 其响应写出）；未注册/未写响应则走下方既有 500 兜底
+                    # 分支不变。
+                    # e 经 catch 兜底块绑定直传（WebSocketClient._runLoop
+                    # 同款形态——Error 不作静态方法形参类型）
+                    function hErr = _hookOnError
+                    if hErr != null
+                    {
+                        label hoc
+                        {
+                            hErr( req, res, e )
+                        }
+                        catch { }
+                    }
                 }
 
                 # ---- 6) 响应写出（流式三态 + 缓冲，§6.6）----
@@ -540,6 +663,66 @@ namespace SLang
                 if res._body != null
                 {
                     res._body.release()
+                }
+
+                # ---- 6a) 流式 body 收尾（P5 §6.6；P7 修正）----
+                # handler 未消费完整（isStreamBody 且读取器未到 EOF）且
+                # 连接拟 keep-alive 续用 → 丢弃式排干剩余 body（防下一条
+                # 请求解析错位）；排干失败/超限 → 断连止损。排干量计入
+                # 上限（复用读取器限额语义，防恶意滞留字节流拖垮连接）。
+                # P7 修正一：读取器经 req.bodyStream() 缓存单实例——引擎
+                # 与 handler 共享消费进度（修复此前每次新造实例按完整 CL
+                # 起算导致的多吃错位）。P7 修正二：handler 已建 multipart
+                # 解析器时先经 _drainTail 以 multipart 语义排干剩余结构
+                # （_win 预读窗口残留由解析器闭环，防底层 drainer 按 CL
+                # 余量排干时跳过 _win 数据错吃下一请求字节）
+                if req.isStreamBody && keepAlive && closeConn == false
+                {
+                    bool drainOk = true
+                    MultipartReader mpDrain = req._mpReader
+                    if mpDrain != null
+                    {
+                        label mpDrainBlock
+                        {
+                            mpDrain._drainTail()
+                        }
+                        catch
+                        {
+                            drainOk = false
+                        }
+                    }
+                    if drainOk
+                    {
+                        HttpBodyReader drainer = req.bodyStream()
+                        label drainBlock
+                        {
+                            ByteBuffer drain = ByteBuffer( 65536 )
+                            while true
+                            {
+                                Int32 n = drainer.read( drain )
+                                if n <= 0
+                                {
+                                    break
+                                }
+                                drain.clear()
+                            }
+                            drain.release()
+                        }
+                        catch
+                        {
+                            drainOk = false
+                        }
+                        if drainOk && drainer.isDone == false
+                        {
+                            drainOk = false
+                        }
+                    }
+                    if drainOk == false
+                    {
+                        # 排干失败（截断/超限/multipart 结构残缺）：断连止损
+                        HttpServerCore._gracefulClose( client )
+                        break
+                    }
                 }
 
                 if closeConn || !keepAlive
@@ -766,6 +949,13 @@ namespace SLang
             Map<string,string> pathParams = Router.extractParams( wsRoute, r._path )
             WsSession s = WsSession( ws, wsRoute.pattern, pathParams, r._rawQuery )
             _WsSessions.register( wsRoute.pattern, s )
+            # 空闲心跳看门狗（P5，§6.8：wsIdleTimeoutMs > 0 时启动；
+            # 空闲超时 close 会话 → handler receive 返回 null 自然收尾）
+            ServerConfig hbCfg = _cfg
+            if hbCfg != null && hbCfg.wsIdleTimeoutMs > 0
+            {
+                s._startHeartbeat( hbCfg.wsIdleTimeoutMs )
+            }
             # 插件 WS 会话钩子（对所有插件广播，§6.9）
             _PluginHost.notifyWsOpen( s )
             # Function 字段先拷局部（HttpHeaders 头注记纪律）
@@ -966,6 +1156,14 @@ namespace SLang
             {
                 ret "Unsupported Media Type"
             }
+            if code == 416
+            {
+                ret "Range Not Satisfiable"
+            }
+            if code == 429
+            {
+                ret "Too Many Requests"
+            }
             if code == 431
             {
                 ret "Request Header Fields Too Large"
@@ -992,8 +1190,11 @@ namespace SLang
         # ── 请求解析（预读缓冲模式；HttpClient 响应解析的对称实现）──
 
         # 解析一条完整请求；对端干净关闭（EOF）返回 null；协议错误经
-        # _errorCode 带出；读超时 / IO 异常原样上抛（连接层收尾）
-        static _HttpParseResult _parse( Net.NetStream s, ByteBuffer buf, ServerConfig cfg ) throws
+        # _errorCode 带出；读超时 / IO 异常原样上抛（连接层收尾）。
+        # stopAtHead = true（P5 §6.6 请求侧流式）：解析到头区空行即停，
+        # 不预读 body——body 元信息（Content-Length / chunked）存入
+        # _streamCl/_streamChunked，连接 + 预读残留由调用方移交 handler
+        static _HttpParseResult _parse( Net.NetStream s, ByteBuffer buf, ServerConfig cfg, bool stopAtHead ) throws
         {
             _HttpParseResult result = _HttpParseResult()
 
@@ -1141,6 +1342,26 @@ namespace SLang
             {
                 chunked = HttpServerCore._containsFold( te, "chunked" )
             }
+            if stopAtHead
+            {
+                # P5 请求侧流式：头区即止——元信息带出，body 由 handler
+                # 经 req.bodyStream() 消费（超大上传不驻留内存，§6.6）
+                result._streamChunked = chunked
+                result._streamCl = 0
+                if chunked == false
+                {
+                    string cls2 = headers.getHeader( "Content-Length" )
+                    if cls2 != null
+                    {
+                        Int64 cl2 = HttpServerCore._parseDec64( cls2 )
+                        if cl2 >= 0
+                        {
+                            result._streamCl = cl2
+                        }
+                    }
+                }
+                ret result
+            }
             if chunked
             {
                 ByteBuffer body = ByteBuffer()
@@ -1187,6 +1408,71 @@ namespace SLang
                 # 无 CL 无 chunked：body 为空（keep-alive 下不可读 EOF）
             }
             ret result
+        }
+
+        # 补读 body（P5，§6.6）：stopAtHead 形态解析过头的请求，命中非
+        # streamBody 路由时经此把 body 按三态读全（头区已消费，直接从
+        # buf 残留/连接续读）。r 的头信息保留，仅填 _body / _errorCode
+        static _HttpParseResult _parseHeadless( Net.NetStream s, ByteBuffer buf, ServerConfig cfg, _HttpParseResult r ) throws
+        {
+            Int32 bodyLimit = cfg.maxBodyBytes
+            string ctHead = r._headers.getHeader( "Content-Type" )
+            if ctHead != null
+            {
+                if BodyParser.isMultipart( ctHead )
+                {
+                    bodyLimit = cfg.maxUploadBytes
+                }
+            }
+            string te = r._headers.getHeader( "Transfer-Encoding" )
+            bool chunked = false
+            if te != null
+            {
+                chunked = HttpServerCore._containsFold( te, "chunked" )
+            }
+            if chunked
+            {
+                ByteBuffer body = ByteBuffer()
+                Int32 ec = HttpServerCore._readChunked( s, buf, body, bodyLimit )
+                if ec != 0
+                {
+                    body.release()
+                    r._errorCode = ec
+                    ret r
+                }
+                r._body = body
+                ret r
+            }
+            string cls = r._headers.getHeader( "Content-Length" )
+            if cls != null
+            {
+                Int64 cl = HttpServerCore._parseDec64( cls )
+                if cl < 0 || cl > 2000000000
+                {
+                    r._errorCode = 400
+                    ret r
+                }
+                if cl > bodyLimit
+                {
+                    r._errorCode = 413
+                    ret r
+                }
+                if cl > 0
+                {
+                    Int32 need = cl.toInt32()
+                    ByteBuffer body = ByteBuffer()
+                    body.ensureWritable( need )
+                    Int32 ec = HttpServerCore._readBytesChecked( s, buf, body, need )
+                    if ec != 0
+                    {
+                        body.release()
+                        r._errorCode = ec
+                        ret r
+                    }
+                    r._body = body
+                }
+            }
+            ret r
         }
 
         # chunked 请求 body 聚合（hex size 行 -> 块 -> CRLF；0 终止 + trailer 空行）

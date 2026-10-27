@@ -29,7 +29,12 @@
       { "path": "ServerP2Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ServerP3Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ServerP4Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "ServerP45Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+      { "path": "ServerP45Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "ServerP5Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "ServerP6Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "ServerP7Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "ServerP9Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "ServerBench.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -39,7 +44,8 @@
   "global": {
     "imports": [
       "Std.Console",
-      "Std.IO.File"
+      "Std.IO.File",
+      "Std.IO.FileStream"
     ],
     "replace": {
       "DEBUG": "true"

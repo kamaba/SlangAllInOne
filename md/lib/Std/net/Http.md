@@ -155,7 +155,7 @@ Net.HttpResponse r1 = await t1 as Net.HttpResponse    # 协程内 await 取回
 ```
 
 - 2026-10-24 起定义于 SLangServer 库 `Lib/SLang/Server/RouteAttrs.sl`（原 `Std/Net/Route.sl` 占位已删除，避免双定义）；`public class ... extends Attribute`，属性阶段 `Preload`。
-- **已接线（P4）**：`SLang.Server.usePreloadRoutes()` 拉取 C VM 装配期收集的路由表 → 进 Router（每请求 new 控制器实例后调用目标方法）。用法见 `md/lib/Server.md`「attribute 控制器」节，设计见 `SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §4.10 / §7。
+- **已接线（P4）**：`SLang.HttpServer` 实例 `usePreloadRoutes()` 拉取 C VM 装配期收集的路由表 → 进 Router（每请求 new 控制器实例后调用目标方法）。用法见 `md/lib/Server.md`「attribute 控制器」节，设计见 `SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §4.10 / §7。
 
 ---
 

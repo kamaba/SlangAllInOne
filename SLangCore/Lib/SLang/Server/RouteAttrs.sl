@@ -1,38 +1,40 @@
-import Std;
+﻿import Std;
 import Core;
 
 namespace SLang
 {
     # ============================================================================
-    # SLang/Server/RouteAttrs.sl — 预装载路由 attribute 家族（P4）
-    # 设计契约：SERVER_DESIGN.md §4.10（控制器语法）/ §7（P4 方案）
+    # SLang/Server/RouteAttrs.sl — 预装载路由 attribute 家族（P4 / P9 §26）
+    # 设计契约：SERVER_DESIGN.md §4.10（控制器语法）/ §7（P4）/ §26（形态 3）
     #
-    # 机制：SLB 中的 attribute 契约在 C VM 装配期（Preload）经
-    # vm_route_attribute.c 收集——方法级条目按动词入路由表，类级 OnRoute 记
-    # 前缀；装配完成后 join 出 "verb|path|class|method" 行，经系统方法
-    #（SystemServerRouteCount/Line/Handler）暴露给 SL 层，
-    # app.usePreloadRoutes() 拉取并入 Router。
-    # handler 为 LATE 实例闭包（class_id/method_id 藏于闭包上下文）：
-    # 每请求实例化全新控制器实例（§4.10 每请求一实例）。
+    # 机制（attribute 四形态之「形态 3 · runtime 装载」）：VM 只提供通用
+    # 通道——类装配完成后（静态字段就绪、入口调度前）扫描全部 Preload
+    # attribute，实例化（args → _init_ 重载按参数个数匹配）并注入宿主名
+    # （_ownerClassName / _ownerMemberName）后调用 _enter_。全部装配逻辑
+    # 写在各 attribute 的 _enter_ 里（隐式默认 Server 注册），VM 不写
+    # per-attribute 的 C 代码。
     #
-    # 类名与 C 侧注册表精确匹配（vm_route_attribute.c s_handlers）：
-    #   方法级：OnGet/OnPost/OnPut/OnDelete/OnPatch/OnHead/OnOptions/OnAny
-    #           （单参 path）；Route（path[, verb]，verb 缺省 = ANY 大写化）
-    #   类级　：OnRoute（prefix，Spring RequestMapping 形态）
-    # 契约：stage = Preload；方法级 targets = Method，类级 targets = Class。
+    # 宿主素材经 Core.Attribute 基类接口获取：
+    #   hostMethodRef()      LATE 实例闭包（每请求 new 宿主实例，§4.10）
+    #   hostMethodRefOf(i)   绑定实例 method-ref（单例全程复用，§26）
+    #   hostClassNew()       构造宿主类新实例
+    #   ownerClassName()     宿主类全名（类级标记登记键）
     #
-    # 用法（§4.10）：
+    # 用法（§4.10 / §26）：
     #   @OnRoute( "/admin" )
     #   class AdminController
     #   {
-    #       @OnPost( "user" )                  # -> POST /admin/user
+    #       @OnPost( "/user" )                  # -> POST /admin/user
     #       public void saveUser( Request req, Response res ) throws { ... }
     #
-    #       @Route( "user/{id}", "DELETE" )    # -> DELETE /admin/user/{id}
+    #       @Route( "/user/{id}", "delete" )    # -> DELETE /admin/user/{id}
     #       public void delUser( Request req, Response res ) throws { ... }
     #   }
-    # 装配后一次性接线：app.usePreloadRoutes()（SLang.Server 实例，configure
-    # 之后、start 之前）。
+    #   @Singleton                            # 类级单例标记：首次装配构造
+    #   @OnRoute( "/counter" )                 # 单实例，该类全部方法共享
+    #   class CounterController { ... }
+    # 接线：app.usePreloadRoutes()（configure 之后、start 之前）把默认
+    # Server 上缓冲的装配期路由并入本 app 的 Router。
     # ============================================================================
 
     # @OnGet("/hello") — GET 路由（方法级）
@@ -50,6 +52,13 @@ namespace SLang
         public get string path()
         {
             ret this._path
+        }
+
+        # 装配期触发：隐式默认 Server 上注册路由
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "GET", this._path, this )
+            ret this
         }
     }
 
@@ -69,6 +78,12 @@ namespace SLang
         {
             ret this._path
         }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "POST", this._path, this )
+            ret this
+        }
     }
 
     # @OnPut("/item") — PUT 路由（方法级）
@@ -86,6 +101,12 @@ namespace SLang
         public get string path()
         {
             ret this._path
+        }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "PUT", this._path, this )
+            ret this
         }
     }
 
@@ -105,6 +126,12 @@ namespace SLang
         {
             ret this._path
         }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "DELETE", this._path, this )
+            ret this
+        }
     }
 
     # @OnPatch("/item/{id}") — PATCH 路由（方法级）
@@ -122,6 +149,12 @@ namespace SLang
         public get string path()
         {
             ret this._path
+        }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "PATCH", this._path, this )
+            ret this
         }
     }
 
@@ -141,6 +174,12 @@ namespace SLang
         {
             ret this._path
         }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "HEAD", this._path, this )
+            ret this
+        }
     }
 
     # @OnOptions("/info") — OPTIONS 路由（方法级；CORS 预检）
@@ -158,6 +197,12 @@ namespace SLang
         public get string path()
         {
             ret this._path
+        }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "OPTIONS", this._path, this )
+            ret this
         }
     }
 
@@ -177,14 +222,28 @@ namespace SLang
         {
             ret this._path
         }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( "ANY", this._path, this )
+            ret this
+        }
     }
 
     # @Route("/x", "POST") — 显式动词通用形式（方法级）。
-    # verb 缺省 / 空串 = "ANY"（全动词），C 侧统一大写化
+    # verb 缺省（单参形态）= "ANY"；registerPreload 内大写规整
     public class Route extends Attribute
     {
         private string _path = ""
         private string _verb = ""
+
+        _init_( string path )
+        {
+            this._path = path
+            this._verb = "ANY"
+            this._attributeStage = EAttributeStage.Preload
+            this._attributeTargets = EAttributeTarget.Method
+        }
 
         _init_( string path, string verb )
         {
@@ -203,12 +262,17 @@ namespace SLang
         {
             ret this._verb
         }
+
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPreload( this._verb, this._path, this )
+            ret this
+        }
     }
 
     # @OnRoute("/api") — 类级路由前缀（Spring RequestMapping 形态）。
-    # 该类内全部方法级路由的 path 拼接 prefix 后入表
-    #（prefix "/admin" + 方法 "user" -> "/adminuser"，故方法 path 应带
-    # 前导 '/'：@OnPost( "/user" ) -> "/admin/user"）
+    # 该类内全部方法级路由的 pattern 拼接 prefix 后入表
+    #（prefix "/admin" + 方法 "/user" -> "/admin/user"）
     public class OnRoute extends Attribute
     {
         private string _prefix = ""
@@ -224,5 +288,19 @@ namespace SLang
         {
             ret this._prefix
         }
+
+        # 类级先于方法级触发：前缀表就绪后方法级 _enter_ 才拼接
+        public override Attribute _enter_()
+        {
+            SLang.HttpServer.shared().registerPrefix( this._prefix, this.ownerClassName() )
+            ret this
+        }
     }
+
+    # 单例控制器标记已收编为通用机制 @InstanceAttr（Std/InstanceAttr.sl，
+    # 2026-10-27 退役本模块私有 @Singleton）：装配期构造单实例写入 Front
+    # 编译期合成的静态字段（缺省名 instance / @InstanceAttr("inst") 自定义），
+    # 源码直接 ClassA.instance 访问；registerPreload 经
+    # SystemAttributeGetInstanceField 取同一实例绑 hostMethodRefOf
+    #（bind-once，跨 handler 状态共享，SERVER_DESIGN.md §26 语义不变）。
 }

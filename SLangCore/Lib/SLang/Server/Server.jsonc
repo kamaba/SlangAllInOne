@@ -33,6 +33,8 @@
       { "path": "BodyParser.sl",     "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Upload.sl",         "group": "server", "tag": "io",   "ignore": false, "priority": 0 },
       { "path": "StreamIo.sl",       "group": "server", "tag": "io",   "ignore": false, "priority": 0 },
+      { "path": "HttpBodyReader.sl", "group": "server", "tag": "io",   "ignore": false, "priority": 0 },
+      { "path": "MultipartReader.sl", "group": "server", "tag": "io",  "ignore": false, "priority": 0 },
       { "path": "Plugin.sl",         "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Plugins.sl",        "group": "server", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Jwt.sl",            "group": "server", "tag": "core", "ignore": false, "priority": 0 },
@@ -63,7 +65,7 @@
   "struct": [ { "namespace": "SLang", "children": [
       { "class": "ServerConfig" },
       { "enum": "ServerError" },
-      { "class": "Server" },
+      { "class": "HttpServer" },
       { "class": "OnGet" },
       { "class": "OnPost" },
       { "class": "OnPut" },
@@ -88,6 +90,10 @@
       { "class": "UploadedFile" },
       { "class": "StreamWriter" },
       { "class": "SseWriter" },
+      { "enum": "StreamBodyError" },
+      { "class": "HttpBodyReader" },
+      { "class": "MultipartReader" },
+      { "class": "MultipartPart" },
       { "class": "Next" },
       { "class": "ServerPlugin" },
       { "class": "Plugins" },
@@ -97,13 +103,11 @@
       { "class": "WsSession" },
       { "class": "WebSocketServer" }
   ]}],
-  // P4：预装载路由接线三系统方法（csimple_lang/src/vm/system_method_call/
-  // server_system_method.c；C VM 路由表经此暴露给 SL 层 usePreloadRoutes）
-  "systemCalls": [
-    { "name": "SystemServerRouteCount",   "returnType": "Int32",  "params": [],        "isVariadic": false, "cvmFunction": "vm_sys_server_route_count" },
-    { "name": "SystemServerRouteLine",    "returnType": "string", "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_server_route_line" },
-    { "name": "SystemServerRouteHandler", "returnType": "object", "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_server_route_handler" }
-  ],
+  // P4 路由接线系统方法已退役（P9 §26 形态 3 重构）：@On* 家族经各自
+  // _enter_（Core.Attribute 宿主接口 + HttpServer.default() 注册中心）
+  // 在装配期注册，usePreloadRoutes() 从默认 Server 缓冲拉取——路由
+  // 信息不再经 C 侧收集表/系统方法通道。
+  "systemCalls": [],
   "export": {
     "moduleName": "SLangServer",
     // 2026-10-25 修正：导出根单一真源 = SlangAllInOne\out\export\（PROJECTS.md §4.2；

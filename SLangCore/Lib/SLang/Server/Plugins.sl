@@ -9,7 +9,7 @@ namespace SLang
     #   staticFiles；P3 增 bodyLimit/requestId/auth，P5 增 rateLimit）
     #
     # 用法（一行装一个插件，产物为普通 ServerPlugin 子类，经 app.use 注册）：
-    #   var app = SLang.Server( 8080 );
+    #   var app = SLang.HttpServer( 8080 );
     #   app.use( SLang.Plugins.logger() );
     #   app.use( SLang.Plugins.cors() );
     #   app.use( SLang.Plugins.staticFiles( "./www" ) );
@@ -130,8 +130,9 @@ namespace SLang
                 nx.go()
                 ret
             }
-            # 命中：流式直出（MIME 按扩展名）+ 短路
-            res.sendFile( full )
+            # 命中：流式直出（MIME 按扩展名）+ Range 断点续传（P5：
+            # req 的 Range 头透传 sendFileRange，206/416 语义见 Response）+ 短路
+            res.sendFileRange( full, req.header( "Range" ) )
         }
 
         # '..' 独立路径段检测（前后为 '/' 或串首尾；"file..txt" 不误杀）
@@ -152,6 +153,153 @@ namespace SLang
                 }
             }
             ret false
+        }
+    }
+
+    # ── swaggerUI（P9 收官，§10 风险 #8）：Swagger UI 静态包托管 ──
+    #    路由：GET /swagger → 自研 index（外链 dist 资产 + /openapi.json）；
+    #          GET /swagger/<file> → dist 目录文件直出。
+    #    让位约定（/docs 同款）：用户已注册 GET /swagger 则本插件不接管，
+    #    由用户路由应答（findExact 先查 + ret 让位）。
+    class _SwaggerUIPlugin extends ServerPlugin
+    {
+        # 闭包零捕获纪律：dist 目录经静态字段传递（v1 单实例，后者覆盖）
+        static string _dist = ""
+
+        _init_( string distDir )
+        {
+            _SwaggerUIPlugin._dist = distDir
+        }
+
+        override public void onInstall()
+        {
+            function mw = function( SLang.Request req, SLang.Response res, SLang.Next nx )
+            {
+                _SwaggerUIPlugin._serve( req, res, nx )
+            }
+            HttpServerCore.use( mw )
+        }
+
+        static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
+        {
+            string m = req.method
+            if m != "GET"
+            {
+                nx.go()
+                ret
+            }
+            string p = req.path
+            if p == "/swagger"
+            {
+                # 用户优先让位（/docs 同款约定）：用户已注册 GET /swagger
+                # 则放行给路由层（中间件在路由前执行，运行期 findExact 先查）
+                if Router.findExact( "GET", "/swagger" ) != null
+                {
+                    nx.go()
+                    ret
+                }
+                _SwaggerUIPlugin._serveIndex( res )
+                ret
+            }
+            if SystemStringLength( p ) < 10 || SystemStringRange( p, 0, 9 ) != "/swagger/"
+            {
+                # 非 /swagger/ 前缀：放行（不归本插件管）
+                nx.go()
+                ret
+            }
+            # /swagger/<file> → dist 目录直出（staticFiles 同款纪律：
+            # '..' 段 403 / 未命中放行 / sendFileRange 流式直出 + MIME + Range）
+            if _StaticFilesPlugin._hasDotDot( p )
+            {
+                res.status( 403 ).rawJson( "{\"code\":403,\"message\":\"forbidden\",\"data\":null}" )
+                ret
+            }
+            string rel = SystemStringRange( p, 9, SystemStringLength( p ) )
+            string dirBase = _SwaggerUIPlugin._dist
+            Int32 bl = SystemStringLength( dirBase )
+            if bl > 0 && SystemStringCharCodeAt( dirBase, bl - 1 ) == 47
+            {
+                dirBase = SystemStringRange( dirBase, 0, bl - 1 )
+            }
+            # rel 无前导斜杠（staticFiles 的 rel=req.path 自带 /，此处剥了
+            # "/swagger/" 前缀），拼接须显式补 "/"
+            string full = dirBase + "/" + rel
+            if File.exists( full ) == false
+            {
+                nx.go()
+                ret
+            }
+            res.sendFileRange( full, req.header( "Range" ) )
+        }
+
+        # GET /swagger：自研 index 直出（让位检查在 _serve 运行期做：
+        # 中间件先于路由执行，findExact 命中用户路由则已放行至此）
+        static void _serveIndex( SLang.Response res )
+        {
+            res.html( _SwaggerUIPlugin._indexPage() )
+        }
+
+        # index.html（外链 dist 资产 + /openapi.json；零自包含）
+        # 约束：长字符串一律 StringBuilder 逐段追加（"+" 链截断）；若 JS 需要
+        # "$" 须经 String.fromCharCode(36) 运行期生成（"$" 是 SL 插值前缀，
+        # 本页恰好不含）
+        static string _indexPage()
+        {
+            string nl = "\n"
+            StringBuilder sb = StringBuilder()
+            sb.append( "<!DOCTYPE html>" )
+            sb.append( nl )
+            sb.append( "<html lang=\"zh\">" )
+            sb.append( nl )
+            sb.append( "<head>" )
+            sb.append( nl )
+            sb.append( "<meta charset=\"utf-8\">" )
+            sb.append( nl )
+            sb.append( "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">" )
+            sb.append( nl )
+            sb.append( "<title>SLang Server API - Swagger UI</title>" )
+            sb.append( nl )
+            sb.append( "<link rel=\"stylesheet\" href=\"/swagger/swagger-ui.css\">" )
+            sb.append( nl )
+            sb.append( "</head>" )
+            sb.append( nl )
+            sb.append( "<body>" )
+            sb.append( nl )
+            sb.append( "<div id=\"swagger-ui\"></div>" )
+            sb.append( nl )
+            sb.append( "<script src=\"/swagger/swagger-ui-bundle.js\"></script>" )
+            sb.append( nl )
+            sb.append( "<script>" )
+            sb.append( nl )
+            sb.append( "window.onload=function(){" )
+            sb.append( nl )
+            # const ui = SwaggerUIBundle({ url:"/openapi.json", dom_id:"#swagger-ui" })
+            sb.append( "var ui=window.SwaggerUIBundle({" )
+            sb.append( nl )
+            sb.append( "url:\"/openapi.json\"," )
+            sb.append( nl )
+            sb.append( "dom_id:\"#swagger-ui\"," )
+            sb.append( nl )
+            sb.append( "deepLinking:true," )
+            sb.append( nl )
+            sb.append( "docExpansion:\"none\"," )
+            sb.append( nl )
+            sb.append( "presets:[window.SwaggerUIBundle.presets.apis]," )
+            sb.append( nl )
+            sb.append( "layout:\"BaseLayout\"" )
+            sb.append( nl )
+            sb.append( "})" )
+            sb.append( nl )
+            sb.append( "}" )
+            sb.append( nl )
+            sb.append( "</script>" )
+            sb.append( nl )
+            sb.append( "</body>" )
+            sb.append( nl )
+            sb.append( "</html>" )
+            string res = sb.toString()
+            sb.release()
+            ret res
         }
     }
 
@@ -203,6 +351,121 @@ namespace SLang
         {
             res.header( "X-Request-Id", Guid.newGuid() )
             nx.go()
+        }
+    }
+
+    # ── rateLimit（P5，§4.7）：按客户端 IP 固定窗口限流 ──
+    #    窗口内请求数超 max → 429 + Retry-After（剩余秒）短路；
+    #    桶表懒清理（每 256 次判定顺带清一遍过期桶，防内存增长）。
+    #    v1 单实例（静态字段态，多 rateLimit 插件后者覆盖——staticFiles 同款纪律）。
+    class _RateBucket
+    {
+        Int64 _start = 0
+        Int32 _count = 0
+
+        _init_()
+        {
+            this._start = 0
+            this._count = 0
+        }
+    }
+
+    class _RateLimitPlugin extends ServerPlugin
+    {
+        static Int32 _max = 0
+        static Int32 _windowMs = 60000
+        # 桶表（值 object 持有 + as 转型——Map<string,_RateBucket> 值为
+        # 模块内部类时 Front 泛型解析失败，_WsSessions 同款规避）
+        static Map<string, object> _buckets = null
+        static Int32 _sweepCounter = 0
+
+        _init_( Int32 maxRequests, Int32 windowMs )
+        {
+            _RateLimitPlugin._max = maxRequests
+            _RateLimitPlugin._windowMs = windowMs
+            _RateLimitPlugin._buckets = new()
+            _RateLimitPlugin._sweepCounter = 0
+        }
+
+        override public void onInstall()
+        {
+            function mw = function( SLang.Request req, SLang.Response res, SLang.Next nx )
+            {
+                _RateLimitPlugin._serve( req, res, nx )
+            }
+            HttpServerCore.use( mw )
+        }
+
+        static void _serve( SLang.Request req, SLang.Response res, SLang.Next nx ) throws
+        {
+            if _RateLimitPlugin._max <= 0
+            {
+                nx.go()
+                ret
+            }
+            Int64 now = OS.Timer.now()
+            string ip = req.ip
+            if _RateLimitPlugin._buckets.containsKey( ip ) == false
+            {
+                _RateBucket nb = _RateBucket()
+                nb._start = now
+                _RateLimitPlugin._buckets.add( ip, nb )
+            }
+            object cur = _RateLimitPlugin._buckets[ip]
+            _RateBucket b = cur as _RateBucket
+            if b == null
+            {
+                # 防御（理论不可达）：无桶直接放行
+                nx.go()
+                ret
+            }
+            Int32 window = _RateLimitPlugin._windowMs
+            if now - b._start >= window
+            {
+                # 窗口翻转：重置计数
+                b._start = now
+                b._count = 0
+            }
+            b._count = b._count + 1
+            if b._count > _RateLimitPlugin._max
+            {
+                # 剩余秒（向上取整）
+                Int64 elapsed = now - b._start
+                Int32 remainSec = 1
+                if window > 0
+                {
+                    remainSec = ( ( window - elapsed ) / 1000 ).toInt32() + 1
+                }
+                res.header( "Retry-After", remainSec.toString() )
+                res.jsonFail( 429, "rate limit exceeded", 429 )
+                ret
+            }
+            nx.go()
+            # 周期性过期桶清理（每 256 次放行判定顺带一遍）
+            _RateLimitPlugin._sweepCounter = _RateLimitPlugin._sweepCounter + 1
+            if _RateLimitPlugin._sweepCounter >= 256
+            {
+                _RateLimitPlugin._sweepCounter = 0
+                _RateLimitPlugin._sweepExpired( now )
+            }
+        }
+
+        # 过期桶清理（窗口已翻转的桶整表移除；Map 无遍历删除——键快照后逐删）
+        static void _sweepExpired( Int64 now )
+        {
+            List<string> keys = _RateLimitPlugin._buckets.keys
+            Int32 window = _RateLimitPlugin._windowMs
+            Int32 n = keys.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                string k = keys[i]
+                object cur = _RateLimitPlugin._buckets[k]
+                _RateBucket b = cur as _RateBucket
+                if b == null || now - b._start >= window
+                {
+                    _RateLimitPlugin._buckets.remove( k )
+                }
+            }
         }
     }
 
@@ -411,6 +674,15 @@ namespace SLang
             ret p
         }
 
+        # Swagger UI 静态包托管（P9 收官）：GET /swagger 自研 index（外链
+        # dist 资产 + /openapi.json）；GET /swagger/<file> 直出 dist 目录；
+        # 用户已注册 GET /swagger 让位（/docs 同款约定）；v1 单实例后者覆盖
+        public static ServerPlugin swaggerUI( string distDir )
+        {
+            ServerPlugin p = _SwaggerUIPlugin( distDir )
+            ret p
+        }
+
         # body 上限收紧（P3；超限 413；v1 单实例后者覆盖）
         public static ServerPlugin bodyLimit( Int64 limitBytes )
         {
@@ -422,6 +694,21 @@ namespace SLang
         public static ServerPlugin requestId()
         {
             ServerPlugin p = _RequestIdPlugin()
+            ret p
+        }
+
+        # 按客户端 IP 固定窗口限流（P5；窗口内超 max → 429 + Retry-After；
+        # windowMs 缺省 60000；v1 单实例后者覆盖）
+        public static ServerPlugin rateLimit( Int32 maxRequests, Int32 windowMs )
+        {
+            ServerPlugin p = _RateLimitPlugin( maxRequests, windowMs )
+            ret p
+        }
+
+        # 按客户端 IP 固定窗口限流（60 秒窗口便捷形态）
+        public static ServerPlugin rateLimit( Int32 maxRequests )
+        {
+            ServerPlugin p = _RateLimitPlugin( maxRequests, 60000 )
             ret p
         }
 

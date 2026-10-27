@@ -6,7 +6,7 @@ import SLangServer;
 # ServerP1Test.sl -- SLangServer P1 验收（ServerTest 宿主）
 # 设计契约：SERVER_DESIGN.md §8 P1 验收（§4.1-§4.4 / §4.6 示例全可运行）
 #
-#   T1  SLang.Server 门面：动词家族注册（onGet/onPost/onPut/onDelete/onPatch/
+#   T1  SLang.HttpServer 门面：动词家族注册（onGet/onPost/onPut/onDelete/onPatch/
 #       onOptions/onAny）+ 原始客户端 PUT/DELETE/PATCH/OPTIONS + onAny 双动词
 #       + 405 + Allow + keep-alive 同连接双请求
 #   T2  路由匹配：{param} 路径参数（pathParam/pathInt/pathInt64）+ 精确段优先
@@ -200,7 +200,7 @@ ServerP1Test
     static void t1Verbs()
     {
         Console.println( "[ServerP1Test] T1 begin" )
-        SLang.Server app = SLang.Server( 19401 )
+        SLang.HttpServer app = SLang.HttpServer( 19401 )
         app.reset()
 
         function hG = function( SLang.Request req, SLang.Response res )
@@ -283,7 +283,7 @@ ServerP1Test
     static void t2Routes()
     {
         Console.println( "[ServerP1Test] T2 begin" )
-        SLang.Server app = SLang.Server( 19402 )
+        SLang.HttpServer app = SLang.HttpServer( 19402 )
         app.reset()
 
         function hUser = function( SLang.Request req, SLang.Response res )
@@ -336,7 +336,7 @@ ServerP1Test
     static void t3Query()
     {
         Console.println( "[ServerP1Test] T3 begin" )
-        SLang.Server app = SLang.Server( 19403 )
+        SLang.HttpServer app = SLang.HttpServer( 19403 )
         app.reset()
         function h = function( SLang.Request req, SLang.Response res )
         {
@@ -368,7 +368,7 @@ ServerP1Test
     static void t4Body()
     {
         Console.println( "[ServerP1Test] T4 begin" )
-        SLang.Server app = SLang.Server( 19404 )
+        SLang.HttpServer app = SLang.HttpServer( 19404 )
         app.reset()
 
         function hJson = function( SLang.Request req, SLang.Response res )
@@ -499,7 +499,7 @@ ServerP1Test
     static void t5Response()
     {
         Console.println( "[ServerP1Test] T5 begin" )
-        SLang.Server app = SLang.Server( 19405 )
+        SLang.HttpServer app = SLang.HttpServer( 19405 )
         app.reset()
 
         function hCreated = function( SLang.Request req, SLang.Response res )
@@ -586,7 +586,7 @@ ServerP1Test
     static void t6WsApp()
     {
         Console.println( "[ServerP1Test] T6 begin" )
-        SLang.Server app = SLang.Server( 19406 )
+        SLang.HttpServer app = SLang.HttpServer( 19406 )
         app.reset()
         function hWs = function( SLang.WsSession s )
         {
@@ -622,7 +622,10 @@ ServerP1Test
                 }
             }
         }
-        app.websocket( "/ws/{room}", hWs )
+        # WS 注册经 WebSocketServer 实例（形态 A：同端口升级；2026-10-26
+        # 自 SLang.Server.websocket 迁移）
+        SLang.WebSocketServer ws = SLang.WebSocketServer()
+        ws.websocket( "/ws/{room}", hWs )
         app.start( 19406 )
 
         # T6a 未注册路径升级 → 400（注意 /ws/none 会命中 {room} 通配，
@@ -665,18 +668,19 @@ ServerP1Test
         app.stop()
     }
 
-    # ── T7 WS 形态 B（独立端口 WebSocketServer）──
+    # ── T7 WS 形态 B（独立端口 WebSocketServer 实例）──
 
     static void t7Standalone()
     {
         Console.println( "[ServerP1Test] T7 begin" )
-        SLang.WebSocketServer.configure( 19407 )
+        # 实例形态（2026-10-26 自静态门面转换）：带端口构造 = 独立监听
+        SLang.WebSocketServer wss = SLang.WebSocketServer( 19407 )
         function hMsg = function( SLang.WsSession s, Net.WsMessage m )
         {
             string t = m.text()
             if t == "who"
             {
-                s.sendText( "n=" + SLang.WebSocketServer.sessions().length.toString() )
+                s.sendText( "n=" + wss.sessions().length.toString() )
             }
             else
             {
@@ -684,13 +688,13 @@ ServerP1Test
             }
             m.release()
         }
-        SLang.WebSocketServer.onMessage( hMsg )
+        wss.onMessage( hMsg )
         function hClose = function( SLang.WsSession s )
         {
             Console.println( "[ServerP1Test] T7 session closed" )
         }
-        SLang.WebSocketServer.onClose( hClose )
-        SLang.WebSocketServer.start( 19407 )
+        wss.onClose( hClose )
+        wss.start()
 
         P1WsClient w = P1WsClient.connect( 19407, "/any" )
         ServerP1Test.check( "T7a standalone upgrade", sfFind( w.head, "101" ) >= 0 )
@@ -698,15 +702,15 @@ ServerP1Test
         ServerP1Test.check( "T7b standalone echo", w.readText() == "ind:hi" )
         w.sendText( "who" )
         ServerP1Test.check( "T7c sessions()==1", w.readText() == "n=1" )
-        Int32 sent = SLang.WebSocketServer.broadcast( "bcast-all" )
+        Int32 sent = wss.broadcast( "bcast-all" )
         ServerP1Test.check( "T7d standalone broadcast", sent == 1 && w.readText() == "bcast-all" )
 
-        SLang.WebSocketServer.stop()
+        wss.stop()
         function cond0 = function()
         {
-            ret SLang.WebSocketServer.sessions().length == 0
+            ret wss.sessions().length == 0
         }
-        ServerP1Test.check( "T7e stop clears sessions", SLang.WebSocketServer.isRunning == false && ServerP1Test.waitCond( cond0, 20 ) )
+        ServerP1Test.check( "T7e stop clears sessions", wss.isRunning == false && ServerP1Test.waitCond( cond0, 20 ) )
         w.close()
     }
 
@@ -715,7 +719,7 @@ ServerP1Test
     static void t8Duplicate()
     {
         Console.println( "[ServerP1Test] T8 begin" )
-        SLang.Server app = SLang.Server( 19408 )
+        SLang.HttpServer app = SLang.HttpServer( 19408 )
         app.reset()
         function h1 = function( SLang.Request req, SLang.Response res )
         {
@@ -734,8 +738,9 @@ ServerP1Test
         ServerP1Test.check( "T8a checkDuplicate http", dup == "GET /dup" )
 
         app.reset()
-        app.websocket( "/dupws", hw )
-        app.websocket( "/dupws", hw )
+        SLang.WebSocketServer wsd = SLang.WebSocketServer()
+        wsd.websocket( "/dupws", hw )
+        wsd.websocket( "/dupws", hw )
         string dupWs = SLang.Router.checkDuplicate()
         ServerP1Test.check( "T8b checkDuplicate ws", dupWs == "WS /dupws" )
 

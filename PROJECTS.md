@@ -108,14 +108,14 @@ powershell -File scripts\release-local.ps1                    # 🔥 本地发�
 | **Y（发布版本）** | **真实发布版本** | **仅正式发布时提升**（与 `release-slang.ps1 -Version` / GitHub Release tag 同源），提升后 Z 归零 |
 | **Z（小版本）** | **随时递增的开发小版本** | **四端任一端有任何改动即 +1**（日常开发常态位） |
 
-### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.36`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21` → `0.0.22`/`0.0.23`（两轮日常改动）→ 2026-10-23 LSP 定义跳转/裸类修复时发现 VSCode 独走 `0.0.24`、其余三端 `0.0.23` 错位 → 全员统一 `0.0.24` → 同日成员补全 var 推断修复（LSP 接收者链解析 + Front `NormalizeVariableName` this 参数名）→ `0.0.25` → 同日 LSP 索引数据源切换 IR 生成数据（`LspIRIndexExporter`，AGENTS R19）→ `0.0.26` → 同日 LSP 系统类型别名提示（`TypeAliases` 归一，int/float/string hover/补全/成员链）→ `0.0.27` → 10-22/23 调试器「添加到监视」系列（右键/悬停 + data 变量树 `0.0.28` → 条件显隐 `0.0.29` 半成品重打包 `0.0.30` → Trae 命令改名双回落修复 `0.0.31` → 2026-10-25 布局标准全量定稿（包根四件套 + 插件包两件套，package-layout.md §七）`0.0.34` → 同日 `.sp` 工程入口非必需（同名 jsonc 即工程锚点、非 main 入口库工程）`0.0.35` → 同日 `await spawn` 组合语法（两遍脱糖，复用 P4.5 换绑机制）`0.0.36`））
+### 四处版本锚点（改版本 = 四处一起改；🔥 现值 `0.0.42`——2026-10-22 布局规则 `0.0.19` → jsonc 迁移 `0.0.20` → 发布规则平台细分 `0.0.21` → `0.0.22`/`0.0.23`（两轮日常改动）→ 2026-10-23 LSP 定义跳转/裸类修复时发现 VSCode 独走 `0.0.24`、其余三端 `0.0.23` 错位 → 全员统一 `0.0.24` → 同日成员补全 var 推断修复（LSP 接收者链解析 + Front `NormalizeVariableName` this 参数名）→ `0.0.25` → 同日 LSP 索引数据源切换 IR 生成数据（`LspIRIndexExporter`，AGENTS R19）→ `0.0.26` → 同日 LSP 系统类型别名提示（`TypeAliases` 归一，int/float/string hover/补全/成员链）→ `0.0.27` → 10-22/23 调试器「添加到监视」系列（右键/悬停 + data 变量树 `0.0.28` → 条件显隐 `0.0.29` 半成品重打包 `0.0.30` → Trae 命令改名双回落修复 `0.0.31` → 2026-10-25 布局标准全量定稿（包根四件套 + 插件包两件套，package-layout.md §七）`0.0.34` → 同日 `.sp` 工程入口非必需（同名 jsonc 即工程锚点、非 main 入口库工程）`0.0.35` → 同日 `await spawn` 组合语法（两遍脱糖，复用 P4.5 换绑机制）`0.0.36` → 2026-10-24~26 SLangServer HTTP/WS 服务框架 P0–P5 全阶段落地（路由/上传/中间件/流式/auth·Jwt/OpenAPI/前缀树·Range·心跳·rateLimit·Jwt 签验/请求侧流式，SERVER_DESIGN.md §12–§20）`0.0.37` → 同日 Server 类拆分（`SLang.Server` → `SLang.HttpServer` + `SLang.WebSocketServer`，SERVER_DESIGN.md §21）`0.0.38` → 2026-10-26 SLangServer P6 引擎 keep-alive 根因修复（SERVER_DESIGN.md §23）与 P7 multipart 流式解析（MultipartReader，SERVER_DESIGN.md §24）陆续 `0.0.39`→`0.0.40`→`0.0.41` → 2026-10-26 SLangServer P8 BenchMark 压测矩阵（ServerBench M1/M2 矩阵与实测数据，SERVER_DESIGN.md §25）`0.0.42`））
 
 | 端 | 锚点 | 现值 |
 |----|------|------|
-| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.36` |
-| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.36` |
-| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.36` |
-| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.36` |
+| Front | `simple_language\source\CLI\CommandExecutor.cs` → `VersionString` | `0.0.42` |
+| Backend（C VM） | `csimple_lang\src\cli\cli_version.h` → `SLVM_VERSION_MAJOR/MINOR/PATCH` + `SLVM_VERSION_STRING`（4 处消费：CLI banner、`version` 命令、SLDP 调试协议握手、`sys_info.runtimeVersion`）；**另含构建链版本目录名**：根 `CMakeLists.txt` `SLVM_VERSION_DIR` + `project\vs\vm_lib\csimple_lang_lib.vcxproj` PostBuildEvent（EXE 构建后拷进 `build\<C>\bin\version_<版本>\`；`project\cmake\` 僵尸点随根同步） | `0.0.42` |
+| AllInOne（宿主） | `SlangAllInOne\SlangAllInOne.csproj` → `<Version>`（`slang version` 首行经 `Assembly.GetEntryAssembly` 输出自身版本，另列 Front 版本行） | `0.0.42` |
+| VSCode | `slang_vscode_plugin\package.json` → `"version"` **+ `package-lock.json` 顶部 `version` 双字段**（npm 锁文件不随 package.json 自动同步，两处一起改或 `npm install` 重生成都行——曾滞留 0.0.11 致版本错位，2026-10-22 补齐） | `0.0.42` |
 
 ### 操作规则
 
@@ -123,5 +123,6 @@ powershell -File scripts\release-local.ps1                    # 🔥 本地发�
 2. **正式发布**（`release-slang.ps1 -Version <X.Y.0>`）：Y + 1、Z 归 0，四处锚点同步修改；Release tag 与 GitHub 双平台资产用同一版本号。
 3. **验证**：`slang version`（宿主：自身 `<Version>` + Front 版本）/ `csimple_lang.exe version`（Backend）/ VSCode 插件关于页，三处显示必须一致。
 4. **首次对齐实录**（2026-10-22）：基线 `0.0.18`（取 VSCode 现值）——Front `1.0.0`→`0.0.18`、C VM `0.0.01`→`0.0.18`（含版本目录 `version_0.0.18`）、AllInOne csproj 补 `<Version>0.0.18</Version>` 并让 `slang version` 输出自身版本、VSCode 无需改动；三端实测输出全部 `0.0.18`。同日两次日常 +1：① 关联件布局规则落地（`md\project\package-layout.md` §六）→ `0.0.19`；② 60 处测试 jsonc `export.outputDir` 迁移补漏（见 §3 映射表）→ `0.0.20`。三次均四锚点 + C VM 版本目录同步，三端实测输出一致。
+5. **C VM 版本 bump 后必须 `--clean-first` 全量重编**（2026-10-26 发现）：中文版 MSVC `/showIncludes` 输出前缀「注意： 包含文件：」未被 Ninja deps 过滤器识别，`.ninja_deps` 不记头依赖——只改 `cli_version.h` 时增量构建永远 "no work to do"，产出新旧混体"缝合怪"二进制（曾 banner 0.0.31 / Version 0.0.34）。纪律：bump 后 `cmake --build csimple_lang\build\Debug --clean-first -j 8`，再把 `build\Debug\bin\` 的 `csimple_lang.exe` / `csimple_lang_dll.dll` / `csimple_lang_dll.pdb` 拷进 `package\win32-debug\bin\`（SERVER_DESIGN.md §20 偏差 ⑤）。`VSLANG=1033` 无效（改不了 cl.exe 输出语言），不改 common.ps1。实录 = SERVER_DESIGN.md §21 偏差 ⑥。
 
 ⚠ 已知缺失：`SLangCore\test\Other\` 未随迁的旧用例子目录（NullFastTest、JsonTest、Platform*、InlineLambda*、CoroGCProbe、OOMProbe、SBAProbe、TLSFProbe 等）——`CSimpleVMTest` 具名用例运行会找不到，需要时从 git 历史恢复。

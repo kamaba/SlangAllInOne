@@ -37,7 +37,7 @@ The Front compiles SLIR, the C VM executes SLIR, and this repo glues both into a
 | **Core** | Containers (List / Map / Set / Queue / Stack / LinkedList / Tuple / Channel), JSON / XML / YAML / TOML / CSV, ByteBuffer / Codec / LengthPrefix, Lz4 compression, protobuf, Stream element streams |
 | **Math** | Three-precision math (Mathd / Mathf / Mathh, FFI direct calls into a native lib), vectors & matrices (9 vector + 6 matrix value types across three precisions), dynamic matrices, BigNumber / BigDecimal / Factor |
 | **Std** | IO (File / Directory / Console), Net (TCP / UDP / TLS / HTTP/1.1 / WebSocket / MQTT with coroutine-suspending IO), Sqlite, Redis, Log / Profiling / Trace / Monitor, isolates, Base64 / Sha1, GZip / Zip, DateTime / Process / Timer |
-| **SLang.Server** | HTTP / WebSocket service framework (routing / request / response chaining / BodyParser) |
+| **SLang.HttpServer / SLang.WebSocketServer** | HTTP / WebSocket service framework (HttpServer: routing / request / response chaining / BodyParser / Jwt; WebSocketServer: upgrade-router / standalone-port dual forms) |
 | **SLang.Render** | Rendering types (Mesh / Material / Texture / Shader / Camera…) |
 | **Tensora** | Tensors / tensor ops / autograd / optimizers / Transformer (work in progress) |
 | **SLMysql** | MySQL client (⚠ statically links GPL-2.0 MySQL Connector/C, **not shipped** in official release packages) |

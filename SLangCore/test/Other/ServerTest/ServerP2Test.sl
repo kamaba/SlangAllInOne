@@ -166,7 +166,7 @@ ServerP2Test
     {
         Console.println( "[ServerP2Test] T1 begin (port 19421)" )
         File.delete( "p2_hooks.txt" )
-        SLang.Server app = SLang.Server( 19421 )
+        SLang.HttpServer app = SLang.HttpServer( 19421 )
         app.reset()
 
         # 外环中间件：短路 + trace 起始 + 后置环
@@ -256,7 +256,7 @@ ServerP2Test
         File.writeAllText( "p2_static/hello.txt", "static-hello" )
         File.writeAllText( "p2_static/page.html", "<h1>hi</h1>" )
 
-        SLang.Server app = SLang.Server( 19422 )
+        SLang.HttpServer app = SLang.HttpServer( 19422 )
         app.reset()
         app.use( SLang.Plugins.cors() )
         app.use( SLang.Plugins.staticFiles( "p2_static" ) )
@@ -301,7 +301,7 @@ ServerP2Test
     static void t3Stream()
     {
         Console.println( "[ServerP2Test] T3 begin (port 19423, handlerTimeoutMs=400)" )
-        SLang.Server app = SLang.Server( 19423 )
+        SLang.HttpServer app = SLang.HttpServer( 19423 )
         SLang.ServerConfig cfg = app.config
         cfg.handlerTimeoutMs = 400
         app.reset()
@@ -416,7 +416,7 @@ ServerP2Test
         string expected = bb.toString()
         bb.release()
 
-        SLang.Server app = SLang.Server( 19424 )
+        SLang.HttpServer app = SLang.HttpServer( 19424 )
         app.reset()
 
         function hDl = function( SLang.Request req, SLang.Response res )
@@ -444,7 +444,10 @@ ServerP2Test
 
         # wsEvents 事件糖（onOpen/onMessage/onClose；onClose 空实现——
         # 触发判据经 sessions()==0 轮询）
-        SLang.WsEventBuilder eb = app.wsEvents( "/ws/evt" )
+        # WS 注册经 WebSocketServer 实例（形态 A：同端口升级；2026-10-26
+        # 自 SLang.Server.wsEvents 迁移）
+        SLang.WebSocketServer ws = SLang.WebSocketServer()
+        SLang.WsEventBuilder eb = ws.wsEvents( "/ws/evt" )
         function fOpen = function( SLang.WsSession s )
         {
             s.sendText( "opened" )

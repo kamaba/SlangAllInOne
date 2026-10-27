@@ -31,6 +31,7 @@ public Int32 sum(Int32 x, Int32 y) {
 - `ret` 是唯一的返回语句关键字（`ret;` 或 `ret 表达式;`）。`return` **不是**本语言的关键字：词法层即报 Error 20118（`TokenLexerReturnNotSupported`）并阻断编译，报错信息指引改用 `ret`（LID 文案 2026-10-08 预留，词法接线 2026-10-11 落地）；此前 `return` 会作为普通标识符流入语义层，产生 `Name:return not found!` 等误导性报错。`foreach`/`using`/`struct` 等其他语言关键字的统一拦截见 [keywords.md](./keywords.md) §1.8。
 - 若函数标注返回类型则编译器在类型检查阶段会校验返回值；若未显式返回类型，则采用 `dynamic`/`object` 或根据上下文推断。
 - 匿名闭包使用 `function` 关键字：`var f = function(Int32 a) { ret a * 2; };`（`fun` 不是本语言关键字）。
+- **实参位置内联闭包**（0.0.39 起）：`function( 参数 ) { 体 }` 可直接写在任意调用的实参位置，编译器自动提升为具名闭包（先发射定义、原实参位置替换为名字引用），与先定义闭包变量再传入完全等价——如 `app.onPost( "/x", function( Req r, Res s ) { ... } )`。约束：只能在方法体内使用；`function( 参数 ) { 体 }` 必须单独作为一项实参；闭包体内不允许再写内联闭包（嵌套定义不支持）。回调注册场景（HTTP handler / 中间件 / 事件钩子）即写即注册，详见各库文档（如 [Server.md](../lib/Server.md)）。
 
 ---
 

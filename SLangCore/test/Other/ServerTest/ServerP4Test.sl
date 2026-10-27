@@ -246,12 +246,13 @@ ServerP4Test
     static void t1Preload()
     {
         Console.println( "[ServerP4Test] T1 begin" )
-        SLang.Server app = SLang.Server( 19441 )
+        SLang.HttpServer app = SLang.HttpServer( 19441 )
         app.reset()
 
-        # T1a 装配期路由表条数 == 控制器方法数（2+2+2=6 全量并入）
+        # T1a 装配期路由表条数：P4 六条全量并入（P9 落地后全表还含 P9
+        # 控制器条目，故下限断言；P4 语义验证为六条均在并可命中）
         Int32 n = app.usePreloadRoutes()
-        ServerP4Test.check( "T1a preload count == 6", n == 6 )
+        ServerP4Test.check( "T1a preload count >= 6", n >= 6 )
 
         # 动态注册共存（闭包注册与 attribute 注册统一生效）
         function hDyn = function( SLang.Request req, SLang.Response res )
@@ -302,7 +303,7 @@ ServerP4Test
     static void t2AsyncTimeout()
     {
         Console.println( "[ServerP4Test] T2 begin" )
-        SLang.Server app = SLang.Server( 19442 )
+        SLang.HttpServer app = SLang.HttpServer( 19442 )
         SLang.ServerConfig cfg = app.config
         cfg.handlerTimeoutMs = 200
         app.reset()
@@ -326,13 +327,14 @@ ServerP4Test
     static void t3Duplicate()
     {
         Console.println( "[ServerP4Test] T3 begin" )
-        SLang.Server app = SLang.Server( 19443 )
+        SLang.HttpServer app = SLang.HttpServer( 19443 )
         app.reset()
 
-        # 两次拉取：C 表装配期快照不变，每次均并入 6 条（Router.add 不查重）
+        # 两次拉取：C 表装配期快照不变，每次均并入全表（P9 后 >= 6；
+        # Router.add 不查重）
         app.usePreloadRoutes()
         Int32 n2 = app.usePreloadRoutes()
-        ServerP4Test.check( "T3a second pull still 6", n2 == 6 )
+        ServerP4Test.check( "T3a second pull still >= 6", n2 >= 6 )
 
         # start() fail-fast：同 verb+pattern 重复注册抛 DuplicateRoute 且不监听
         bool threw = false

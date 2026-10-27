@@ -21,7 +21,7 @@ namespace SLang
     #     （中间件必须经 res.* 写响应或短路，§6.9 规则）。
     # 与设计的偏差：onInstall() 无参（设计的 onInstall(app) 传实例——维持
 #   无参：插件注册走引擎级静态通道 HttpServerCore.use / .onGet 等，门面
-#   SLang.Server 已转实例形态但插件 onInstall 无实例引用可用，语义等价
+#   SLang.HttpServer 已转实例形态但插件 onInstall 无实例引用可用，语义等价
 #   （Server.sl 门面注记同源）。
     # ============================================================================
 

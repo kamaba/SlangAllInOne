@@ -71,6 +71,36 @@ public class Attribute extends Object
     {
         ret SystemAttributeGetMethodAttributes(className, methodName) as Array<Attribute>
     }
+
+    # ---- 装配期宿主接口（形态 3，attribute _enter_ 内消费）----
+    # 宿主名由触发通道注入（_ownerClassName / _ownerMemberName）；
+    # 具体 attribute 的装配逻辑写在各自 _enter_ 里，经这三个接口
+    # 取宿主素材（方法引用 / 绑定引用 / 新实例），VM 不写 per-attribute 代码
+
+    # 宿主类全名（@Singleton / @OnRoute 类级标记登记键）
+    public get string ownerClassName()
+    {
+        ret this._ownerClassName
+    }
+
+    # 宿主方法引用（LATE 实例闭包：每次调用先 new 宿主实例——每请求
+    # 一实例语义；Core 不依赖 Server，单例策略由消费侧 _enter_ 决定）
+    public Function hostMethodRef()
+    {
+        ret SystemAttributeHostMethodRef( this._ownerClassName, this._ownerMemberName )
+    }
+
+    # 宿主方法绑定实例引用（bound method-ref：全程以 instance 为 this）
+    public Function hostMethodRefOf( object instance )
+    {
+        ret SystemAttributeHostMethodRefOf( this._ownerClassName, this._ownerMemberName, instance )
+    }
+
+    # 构造宿主类新实例（NewObject 同款构造链：字段初始化器 + _init_）
+    public object hostClassNew()
+    {
+        ret SystemAttributeHostClassNew( this._ownerClassName )
+    }
 }
 
 # 序列化标签: 标注在 class/data 上, 声明该类型支持通用序列化

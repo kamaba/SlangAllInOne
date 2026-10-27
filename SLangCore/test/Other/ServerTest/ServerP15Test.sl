@@ -1,4 +1,4 @@
-import Std;
+﻿import Std;
 import Core;
 import SLangServer;
 
@@ -224,7 +224,7 @@ ServerP15Test
         File.delete( "p15_up/dup.txt" )
         File.delete( "p15_up/dup(1).txt" )
 
-        SLang.Server app = SLang.Server( 19411 )
+        SLang.HttpServer app = SLang.HttpServer( 19411 )
         app.reset()
 
         # /up：混合字段 + 文件（T1）
@@ -439,7 +439,7 @@ ServerP15Test
     static void t5FileLimit()
     {
         Console.println( "[ServerP15Test] T5 begin (port 19412)" )
-        SLang.Server app = SLang.Server( 19412 )
+        SLang.HttpServer app = SLang.HttpServer( 19412 )
         SLang.ServerConfig cfg = app.config
         cfg.maxFileBytes = 16
         app.reset()
@@ -474,7 +474,7 @@ ServerP15Test
     static void t6TotalLimit()
     {
         Console.println( "[ServerP15Test] T6 begin (port 19413)" )
-        SLang.Server app = SLang.Server( 19413 )
+        SLang.HttpServer app = SLang.HttpServer( 19413 )
         SLang.ServerConfig cfg = app.config
         cfg.maxUploadBytes = 96
         app.reset()

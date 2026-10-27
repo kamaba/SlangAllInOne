@@ -21,8 +21,11 @@ import SLangServer;
 #   T5  importOpenApi：spec 文件导入 → 未注册路径文档路由（命中 501 +
 #       added 计数）+ 真实路由覆盖让位（元数据继承进 openapi.json）
 #   T6  maxConnections：上限 1 → 第二连接 503（协议层应答）
+#   T7  swaggerUI：GET /swagger 自研 index（外链 dist 资产 + /openapi.json）
+#       + /swagger/<file> dist 直出（MIME 随扩展名）+ '..' 段 403 + 未命中
+#       放行（404 尾环）+ 用户已注册 /swagger 让位
 #
-# 端口：19431-19435（避开 P1/P1.5/P2 的 19401-19424）。
+# 端口：19431-19436（避开 P1/P1.5/P2 的 19401-19424）。
 # 编写约定同 ServerP2Test.sl（原始 HTTP 客户端助手同款实现）。
 # 断言文本回避 "$"（字符串插值前缀，字面量含 $ 会破坏编译——$ref 以
 # "#/components/schemas/" 前缀断言替代）。
@@ -222,7 +225,7 @@ ServerP3Test
     static void t1OpenApi()
     {
         Console.println( "[ServerP3Test] T1 begin (port 19431)" )
-        SLang.Server app = SLang.Server( 19431 )
+        SLang.HttpServer app = SLang.HttpServer( 19431 )
         app.reset()
 
         function hUser = function( SLang.Request req, SLang.Response res )
@@ -291,7 +294,7 @@ ServerP3Test
     static void t2DocsPage()
     {
         Console.println( "[ServerP3Test] T2 begin (port 19432)" )
-        SLang.Server app = SLang.Server( 19432 )
+        SLang.HttpServer app = SLang.HttpServer( 19432 )
         app.reset()
 
         function hPing = function( SLang.Request req, SLang.Response res )
@@ -338,7 +341,7 @@ ServerP3Test
     static void t3Auth()
     {
         Console.println( "[ServerP3Test] T3 begin (port 19431)" )
-        SLang.Server app = SLang.Server( 19431 )
+        SLang.HttpServer app = SLang.HttpServer( 19431 )
         app.reset()
 
         # Bearer 预设 + skip 白名单（登录接口放行）
@@ -386,7 +389,7 @@ ServerP3Test
         app.stop()
 
         # ── API Key 预设（端口 19433）──
-        app = SLang.Server( 19433 )
+        app = SLang.HttpServer( 19433 )
         app.reset()
 
         function hKey = function( SLang.Request req, SLang.Response res )
@@ -416,7 +419,7 @@ ServerP3Test
         app.stop()
 
         # ── 通用回调（双头组合，端口 19434 之前先占 19431 复用）──
-        app = SLang.Server( 19431 )
+        app = SLang.HttpServer( 19431 )
         app.reset()
 
         function hAny = function( SLang.Request req, SLang.Response res )
@@ -497,7 +500,7 @@ ServerP3Test
     static void t5Import() throws
     {
         Console.println( "[ServerP3Test] T5 begin (port 19434)" )
-        SLang.Server app = SLang.Server( 19434 )
+        SLang.HttpServer app = SLang.HttpServer( 19434 )
         app.reset()
 
         # spec 文件（手写 OpenAPI 子集：paths/summary/parameters/security）
@@ -556,7 +559,7 @@ ServerP3Test
     static void t6MaxConn() throws
     {
         Console.println( "[ServerP3Test] T6 begin (port 19435)" )
-        SLang.Server app = SLang.Server( 19435 )
+        SLang.HttpServer app = SLang.HttpServer( 19435 )
         SLang.ServerConfig cfg = app.config
         cfg.maxConnections = 1
         cfg.keepAliveTimeoutMs = 2000
@@ -588,6 +591,79 @@ ServerP3Test
         app.stop()
     }
 
+    # ── T7 swaggerUI（P9 收官，§10 风险 #8）──
+
+    static void t7Swagger() throws
+    {
+        Console.println( "[ServerP3Test] T7 begin (port 19436)" )
+        # 测试宿主 cwd = 测试工程目录 ...\Other\ServerTest（宿主 Main 在 RunCVM
+        # 前切 Environment.CurrentDirectory=projectDir；p2_hooks.txt 等相对路径
+        # 产物落此为证）——fixture 与 cwd 同级，裸相对路径可达
+        string dist = "swagger-ui"
+        SLang.HttpServer app = SLang.HttpServer( 19436 )
+        app.reset()
+        app.use( SLang.Plugins.swaggerUI( dist ) )
+
+        function hPing = function( SLang.Request req, SLang.Response res )
+        {
+            res.text( "pong" )
+        }
+        app.onGet( "/ping", hPing )
+        app.start( 19436 )
+
+        # a) GET /swagger → 200 + 自研 index（外链 bundle.js / swagger-ui.css /
+        #    openapi.json 三引用齐全）
+        string r1 = rawReq( 19436, "GET /swagger HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool idxOk = sfFind( r1, "200" ) >= 0
+            && sfFind( r1, "/swagger/swagger-ui-bundle.js" ) >= 0
+            && sfFind( r1, "/swagger/swagger-ui.css" ) >= 0
+            && sfFind( r1, "/openapi.json" ) >= 0
+            && sfFind( r1, "text/html" ) >= 0
+        ServerP3Test.check( "T7a /swagger 自研 index（外链 dist 资产 + openapi.json）", idxOk )
+
+        # b) GET /swagger/swagger-ui.css → 200 + text/css（dist 直出 MIME）
+        string r2 = rawReq( 19436, "GET /swagger/swagger-ui.css HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool cssOk = sfFind( r2, "200" ) >= 0 && sfFind( r2, "text/css" ) >= 0
+        ServerP3Test.check( "T7b /swagger/swagger-ui.css dist 直出（text/css）", cssOk )
+
+        # c) GET /swagger/swagger-ui-bundle.js → 200 + application/javascript
+        string r3 = rawReq( 19436, "GET /swagger/swagger-ui-bundle.js HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool jsOk = sfFind( r3, "200" ) >= 0 && sfFind( r3, "application/javascript" ) >= 0
+        ServerP3Test.check( "T7c /swagger/swagger-ui-bundle.js dist 直出（application/javascript）", jsOk )
+
+        # d) 穿越防护：/swagger/../secret → 403
+        string r4 = rawReq( 19436, "GET /swagger/../ServerP3Test.sl HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool dotOk = sfFind( r4, "403" ) >= 0
+        ServerP3Test.check( "T7d /swagger/.. 穿越段 403", dotOk )
+
+        # e) dist 未命中 → 放行 → 尾环 404（不误吞其他路由）
+        string r5 = rawReq( 19436, "GET /swagger/no-such-asset.xyz HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool missOk = sfFind( r5, "404" ) >= 0
+        ServerP3Test.check( "T7e dist 未命中放行（尾环 404）", missOk )
+
+        # f) 未注册路径不受插件影响（/ping 正常 200 pong）
+        string r6 = rawReq( 19436, "GET /ping HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool pingOk = sfFind( r6, "200" ) >= 0 && sfFind( r6, "pong" ) >= 0
+        ServerP3Test.check( "T7f 普通路由不受影响（/ping 200 pong）", pingOk )
+
+        app.stop()
+
+        # g) 用户优先让位：用户注册 GET /swagger → 插件让位（用户应答）
+        SLang.HttpServer app2 = SLang.HttpServer( 19436 )
+        app2.reset()
+        app2.use( SLang.Plugins.swaggerUI( dist ) )
+        function hMine = function( SLang.Request req, SLang.Response res )
+        {
+            res.text( "mine" )
+        }
+        app2.onGet( "/swagger", hMine )
+        app2.start( 19436 )
+        string r7 = rawReq( 19436, "GET /swagger HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
+        bool yieldOk = sfFind( r7, "200" ) >= 0 && sfFind( r7, "mine" ) >= 0
+        ServerP3Test.check( "T7g 用户已注册 /swagger 让位（用户应答）", yieldOk )
+        app2.stop()
+    }
+
     static fun()
     {
         ServerP3Test.t1OpenApi()
@@ -616,6 +692,14 @@ ServerP3Test
         catch
         {
             Console.println( "[ServerP3Test] T6 maxConn 异常" )
+        }
+        label t7
+        {
+            ServerP3Test.t7Swagger()
+        }
+        catch
+        {
+            Console.println( "[ServerP3Test] T7 swagger 异常" )
         }
         Console.println( "[ServerP3Test] all done" )
     }

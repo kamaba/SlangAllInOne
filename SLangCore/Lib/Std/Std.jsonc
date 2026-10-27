@@ -46,6 +46,7 @@
       { "path": "Net/Websocket.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
       { "path": "Net/Mqtt.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
       { "path": "Component.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "InstanceAttr.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Debug/Log.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Profiling.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Trace.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
@@ -69,6 +70,7 @@
       { "path": "Zip/GZip.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Base64.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Sha1.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Encoding/Sha256.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Encoding.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 }
     ]
   },
@@ -189,6 +191,7 @@
          ]
       },
       { "class": "Component" },
+      { "class": "InstanceAttr" },
       { "class": "Node" },
       // ---- Std/Debug：SLang 命名空间（Log/Profiling/Trace.sl 均有 namespace SLang 声明）----
       { "namespace": "SLang", "children":
@@ -227,6 +230,9 @@
       // ---- Std/Encoding/Sha1.sl：根级注册（同 Base64，无 namespace 声明）----
       { "enum": "Sha1Error" },
       { "class": "Sha1" },
+      // ---- Std/Encoding/Sha256.sl：根级注册（同上）----
+      { "enum": "Sha256Error" },
+      { "class": "Sha256" },
       { "enum": "EncodingCode" },
       { "enum": "EncodingError" },
       { "class": "Encoding" },
@@ -422,6 +428,12 @@
     // 摘要写入新 ByteBuffer（byte_buffer 注册表项），失败 0。
     // 主要消费方：Std/Net/Websocket.sl 握手 Sec-WebSocket-Accept。
     { "name": "SystemSha1",                    "returnType": "Int64", "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_sha1_digest" },
+    // ---- SHA-256 / HMAC-SHA256 calls (Std/Encoding/Sha256.sl, core: sl_core_sha256.c) ----
+    // 摘要/HMAC 写入新 32 字节 ByteBuffer（byte_buffer 注册表项），失败 0。
+    // 主要消费方：SLangServer Jwt HS256 签验（RFC 7518 §3.2）。
+    // SystemHmacSha256 实参序（SL 调用形态）：keyId, srcId（栈右起弹出）。
+    { "name": "SystemSha256",                  "returnType": "Int64", "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_sha256_digest" },
+    { "name": "SystemHmacSha256",              "returnType": "Int64", "params": ["Int64", "Int64"], "isVariadic": false, "cvmFunction": "vm_sys_hmac_sha256" },
     // ---- crypto random fill (lib: sys_random.c, 消费方 Std/Net/Websocket.sl) ----
     // 填充 length 字节密码学随机数到新 ByteBuffer（byte_buffer 注册表项），失败 0。
     // 用途：握手 Sec-WebSocket-Key 与客户端帧掩码。

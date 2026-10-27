@@ -4,8 +4,8 @@
 - Project Config File: `ServerTest.jsonc`
 
 SLangServer（HTTP/WS 服务框架）验收用例集：P0 前置探针 + P0 引擎 + P1/P1.5/P2/P3/P4/P4.5
-（2026-10-25 自 NetTest / ExpendTest 迁出独立；设计契约见
-`Lib/SLang/Server/SERVER_DESIGN.md` §8）。
++ P5/P6/P7 + P9 单例 + SwaggerUI + Bench（2026-10-25 自 NetTest / ExpendTest 迁出独立；设计契约见
+`Lib/SLang/Server/SERVER_DESIGN.md` §8，2026-10-26 全量 241 OK / 0 FAIL：基线 234 + SwaggerUI T7 新增 7）。
 
 前置：先导出 SLangServer 模块（非系统库，compile-stdlib 三件套不覆盖）：
 

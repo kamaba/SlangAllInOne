@@ -83,6 +83,7 @@ namespace SLang
             {
                 ret 0
             }
+
             if this._owner._cur != this
             {
                 ret 0
@@ -141,6 +142,7 @@ namespace SLang
             {
                 chunk.release()
             }
+
             if fs != null
             {
                 label closeBlock
@@ -219,6 +221,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._cur != null
             {
                 this._drainContent()
@@ -274,6 +277,7 @@ namespace SLang
                                 }
                                 string hname = SystemStringRange( hline, 0, ci )
                                 string hval = SystemStringRange( hline, vs, hl )
+
                                 if Net.Uri.eqFold( hname, "Content-Disposition" )
                                 {
                                     disp = hval
@@ -299,6 +303,7 @@ namespace SLang
                         fileName = BodyParser._dispParam( disp, "filename" )
                     }
                     this._state = 2
+
                     if SystemStringLength( fieldName ) == 0
                     {
                         # 无 name 的 part：内容丢弃（宽容）——排干后取下一 part
@@ -329,6 +334,7 @@ namespace SLang
                             throw Net.HttpError.Protocol
                         }
                     }
+
                     if this._win.startsWith( this._dashClose )
                     {
                         this._state = 4
@@ -403,6 +409,7 @@ namespace SLang
                     this._win.discardReadBytes()
                     ret outS
                 }
+
                 # 窗口不足一个模式长：拉取重试
                 if this._fill() == 0
                 {
@@ -424,10 +431,12 @@ namespace SLang
                 {
                     ret HttpServerCore._stripEol( line )
                 }
+
                 if this._win.readableBytes > this._winMax
                 {
                     throw Net.HttpError.Protocol
                 }
+
                 if this._fill() == 0
                 {
                     throw Net.HttpError.Protocol

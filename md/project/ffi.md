@@ -155,16 +155,34 @@ addf( 20, 22 )      // 42
 
 > `getSymbol` 返回裸地址；当它被赋给函数类型变量时，前端同样改写为 `getFunction` 并注入推导 sig。
 
-### 2.4 回调：把 SL 静态方法交给 native 调用
+### 2.4 回调：把 SL 静态方法交给 native 调用（任意签名形状，0.0.48 起 v2 通用桩）
 
 ```sl
+# INT 类（经典形态）
 Int64 cb = FFI.StaticLibrary.createCallback(
     "SpecialTest.FFICallbacks.OnAdd_2_Core.Int64_Core.Int64", "i64,i64->i64" )
-Int64 r = SystemFFICallI64( callCb, "ptr,i64->i64", cb, 20 )   // C 侧回调回 SL
+Int64 r = SystemFFICallI64( callCb, "ptr,i64->i64", cb, 20 )   # C 侧回调回 SL
 FFI.StaticLibrary.freeCallback( cb )
+
+# 浮点参数 + 浮点返回
+Int64 cbF = FFI.StaticLibrary.createCallback( "OnFpAdd", "f32,f32->f32" )
+Float32 fr = SystemFFICallF32( fpAdd, "ptr,f32,f32->f32", cbF, 1.5f, 2.25f )
+
+# 混合参数（INT/DBL/utf8）与字符串返回
+Int64 cbM = FFI.StaticLibrary.createCallback( "OnMixArgs", "i64,f64,utf8->i64" )
+Int64 mr = SystemFFICallI64( mixArgs, "ptr,i64,f64,utf8->i64", cbM, 3, 2.0, "abcd" )
+
+Int64 cbU = FFI.StaticLibrary.createCallback( "OnUtf8Echo", "utf8->utf8" )
+string us = SystemFFICallUtf8( utf8Echo, "ptr,utf8->utf8", cbU, "world" )  # "cb:world"
 ```
 
-约束：trampoline 形状固定 `int64(int64,int64)` —— **INT 类参数 ≤ 2，返回 void 或 INT 类**（不支持浮点参数）；进程级共 8 个槽。`method` 可传完整 method id 或短方法名（按参数个数匹配）。
+约束（v2 通用桩：参数类 base-3 形状全展开，与调用侧对称）：
+
+- **签名任意形状**：参数 ≤ 6，INT/DBL 类任意混合；返回 `void` / INT 类 / DBL 类 / `utf8` 均可；
+- **utf8 进出**：`utf8` 参数转为 SL `string`（NULL 宽容为空串）；`utf8` 返回值拷入槽静态缓冲（4KB，**下一次同槽回调前有效**，C 侧需即取即用）；
+- ⚠ **C 侧回调形参必须全宽**：整数一律 `int64_t` / `long long`（sig 写 `i64` / `u64`），浮点 `float` / `double`（`f32` / `f64`）。窄整型（`short` / `char` / `int`）形参在寄存器/栈上**只写窄字节**，桩按 int64 读取会混入高位垃圾——Windows x64 ABI 要求跨边界形参类型精确一致。窄类型回调（如 `qsort` 的 `int (*)(const void*, const void*)`）需在 C 侧包一层全宽适配函数；
+- 槽位 8 个（进程级）；`method` 可传完整 method id 或短方法名（按参数个数匹配）；
+- 低精度浮点（f16/bf16/f8）回调形参按 `float` 通道传递（与调用侧约定一致，sig 写 `f16` 等、C 侧形参 `float`）。
 
 ### 2.5 配套：原生内存 `Memory` / `SystemPtr*`
 
@@ -179,6 +197,88 @@ Memory.freeNative( p )
 Int64 addr = Memory.dataToNativeStruct<FFICBook>( "SLBookStruct", book )   // data -> C struct
 FFICBook b = Memory.nativeStructToData<FFICBook>( addr )                   // C struct -> data
 ```
+
+### 2.6 结构体布局与双向 marshal：`FFI.Struct`（0.0.49 / P0-T3）
+
+`Memory.dataToNativeStruct` 按 **C 声明模板**整块转换；`FFI.Struct` 则是 **C 结构体布局**的
+SL 封装（Dart FFI Struct 风格）：先用**布局 sig** 注册布局（字段名即 SL 对象成员名），
+之后 alloc 出 native 内存块，并可把 SL 对象与 native 块**按字段名双向搬运**。
+
+源码：`SLangCore/Lib/Std/FFI/Struct.sl`；lib 层 `csimple_lang/src/lib/ffi/sl_ffi_struct.{h,c}`；
+VM 适配 `src/vm/system_method_call/ffi_system_method.c`（6 个 `SystemFFIStruct*` 系统方法，
+经 `Std.jsonc` 的 `systemCalls[].cvmFunction` 登记）。
+
+**布局 sig**（与 C 侧自然对齐一致；`packed:` 前缀取消对齐）：
+
+```sl
+Int32 id = FFI.Struct.define( "i32 width, i32 height, f64 ratio, utf8 name" )
+// 同 sig 二次 define 幂等返回同一 id；SL 类型名（Int32...）与空串解析失败返回 <=0
+// 推导（x64）：width@0 height@4 ratio@8 name@16，total_size 24（与 C sizeof 一致）
+```
+
+**API 一览**（静态 + 实例两形态）：
+
+```sl
+// 静态
+Int32 FFI.Struct.define( string sig )         // 布局注册（幂等），<=0 失败
+Int32 FFI.Struct.size( Int32 id )             // sizeof；-1 未注册
+Int64 FFI.Struct.alloc( Int32 id )            // 分配 native 块，0 失败
+bool  FFI.Struct.free( Int64 addr )           // 释放本分配器产出的块
+Int64 FFI.Struct.marshalOut( object src, Int32 id )   // SL 对象 -> 新 native 块
+bool  FFI.Struct.marshalIn( Int64 addr, Int32 id, object target )  // native 块 -> SL 对象
+
+// 实例（_init_(id) 即分配）
+var blk = FFI.Struct( id )
+blk.address        // Int64：块地址（free 后归 0）
+blk.layoutId       // Int32：布局 id
+blk.marshalOut( obj )      // 产【新块】并返回其地址（不写本块！须单独 free）
+blk.marshalIn( obj )       // 从本块 this.address 读入
+blk.free()                 // 成功后 address == 0，重复 free 返回 false
+```
+
+**marshal 语义三要点**：
+
+1. **按字段名匹配**：布局字段名即 SL 对象成员名（`vm_object_find_member_index`）；
+   SL 侧未声明同名字段时**跳过**（不视为失败）——FFIHoldClass 这类无关对象也能空转成功。
+2. **utf8 走附属字符串池**：marshalOut 三阶段（快照字段 → 按 utf8 总长一次分配 →
+   逐字段写），串体进块尾附属池、指针槽存池内地址（**槽内存地址不存内容**）；
+   块存活期指针有效，块 free 即失效。marshalIn 经 `vm_object_new_string` 建 SL 字符串；
+   native NULL ↔ SL null 字符串。
+3. **实例 `marshalOut` 产新块**：`blk.marshalOut(obj)` 返回**新分配块**的地址
+   （不写入 `blk` 自身）——与静态 `marshalOut(obj,id)` 同义，须单独 `FFI.Struct.free(新块)`。
+
+**所有权规则（内存安全边界）**：
+
+| 块的来源 | 释放方式 | 说明 |
+|---|---|---|
+| `FFI.Struct.alloc` / `marshalOut` 产物 | `FFI.Struct.free(addr)` 或 `blk.free()` | 块头带 magic + 布局 id，误传普通指针拒释放 |
+| native 侧 `malloc`（如 C 库 alloc 函数） | **必须由 C 侧 free 函数释放** | 两条分配链不可混用（与 `Memory.freeNative` 同律） |
+| SL 声明侧 | 无需管理 | marshalIn 读出的 string/对象由 GC 管理 |
+
+utf8 跨调用注意：FFI 调用的 utf8 **实参缓冲仅调用期有效**——C 侧把该指针存入结构体后
+（如 `sl_size_make`），跨调用 `marshalIn` 回读 name 会读失效内存；跨调用回读须用 C 静态串
+（`fill_const`）或 C 侧 `strdup` 自持（`alloc`）。
+
+**端到端样例**（对照 `CLangdll.cpp` 9c 节 `SLSizeStruct`；完整 60 项断言见
+`test/SpecialTest/FFITest.sl` 的 `testFFIStruct`）：
+
+```sl
+# 1) SL 对象 -> native 块（数值/字符串全量写出）
+Int32 id1 = FFI.Struct.define( "i32 width, i32 height, f64 ratio, utf8 name" )
+FFIWndInfo w = new()          # class：ratio 须显式 Float64（data 推导恒 f32）
+w.width = 800;  w.height = 600;  w.ratio = 800.0d / 600.0d;  w.name = "wnd-out"
+Int64 out1 = FFI.Struct.marshalOut( w, id1 )
+SystemFFICallI64( s_sizeArea, "ptr->i64", out1 )       # C 读字段：480000
+
+# 2) native 块 -> SL 对象（按字段名回填）
+FFIWndInfo back = new()
+FFI.Struct.marshalIn( out1, id1, back )                # back 全字段还原
+FFI.Struct.free( out1 )
+```
+
+> 注意：marshal 双向搬运要求 SL 成员类型与布局槽位兼容（f64 槽需真 `Float64` 成员）；
+> `data` 成员类型从小数字面量推导恒为 Float32（`d` 后缀不参与推导），f64 字段请用
+> class 显式类型声明。
 
 ---
 
@@ -429,6 +529,67 @@ check( "static strlen('abc123')==6", s_statStrlen( "abc123" ) == 6 )
 - **静态绑定路径例外**：assembly build 期直接 `sl_ffi_sig_parse(sig, &plan)`，**不做 SL 名映射**，
   因此 `@DllStaticImport` 的 sig 必须写 FFI 短名（`"i32,i32->i32"` 而非 `"Int32,Int32->Int32"`）。
 
+### 7.4 `.slffi.json` 契约与编译期校验（0.0.49 / P0-T5）
+
+**契约即权威**：动态库同目录放一份 `<dll文件名>.slffi.json`（如 `CLangdll.dll` 旁的
+`CLangdll.dll.slffi.json`），Front 编译期即对 `@DllImport` / `@DllStaticImport` 声明做
+**签名校验**——符号拼错、类型类写错在**编译期报错**（不再运行期静默回退）。契约不存在
+则不校验（math_lib 等既有库零影响）。
+
+**schema v1**（范本 `SlangAllInOne/Project/CLangdll/CLangdll.dll.slffi.json`）：
+
+```jsonc
+{
+  "version": 1,
+  "baseNamespace": "Native",
+  "functionList": [            // 编译期校验的依据（按 entryPoint 索引）
+    { "publicName": "Native.add", "entryPoint": "simplelanguage_addtest",
+      "callingConvention": "Cdecl",
+      "returnType": "I32", "parameterTypeList": ["I32", "I32"] }
+  ],
+  "structs": [                // T3 结构体布局（ffi-check / 文档消费）
+    { "name": "SLSizeStruct", "size": 24,
+      "layoutSig": "i32 width, i32 height, f64 ratio, utf8 name",
+      "fields": [ { "name": "width", "type": "I32", "offset": 0 } ] }
+  ],
+  "callbacks": [              // T4 回调签名模板
+    { "name": "add2", "sig": "i64,i64->i64" }
+  ]
+}
+```
+
+类型名用导出清单同款 Pascal 名（`I32/I64/F32/F64/Bool/Utf8String/Ptr/Void/F16/BF16/
+F8E4M3/F8E5M2/I8/U8/...`）。
+
+**校验规则（x64 槽位语义，类兼容而非逐字相等）**：
+
+| 维度 | 规则 |
+|---|---|
+| 符号 | `entryPoint` 必须登记在 `functionList`——未登记 → **LID 21483** |
+| 参数个数 | 必须一致 |
+| 整型/指针 | `i8..u64/bool/ptr` 同为 64 位整槽**可互换**（宽窄/符号语义由 SL 侧自负，兼容 byte 形参传 C int 槽的既有用法） |
+| 浮点 | `f32/f64/f16/bf16/f8e4m3/f8e5m2` 须**精确一致**（XMM 槽宽不可混） |
+| utf8 / void | 须**精确一致** |
+| 生效 sig | `@DllImport` 第 3 实参手写 sig，缺省用编译期从函数签名推导的 sig；推导失败（含 Ptr）不校验（运行期回退） |
+
+签名不匹配 → **LID 21484**；契约 JSON 坏损/schema 非法 → **LID 21485**。三者均为
+`Error`（pass=FALSE）计入 errorCount，**阻断导出阶段**（module.json 不落盘）。
+
+**触发面**：仅当契约文件存在且该 `@DllImport`/`@DllStaticImport` 的库路径（经 jsonc
+`dllImports` 别名解析 + 工程目录相对展开）旁有契约时生效。C 侧无需任何改动——把契约
+放在 dll 旁边即可让声明获得编译期保护。
+
+**独立校验工具**：`slang ffi-check <contract.slffi.json> [--dll <lib.dll>]`
+（宿主 `SlangAllInOne/Ffi/FfiCheckCommand.cs`）：
+
+```
+slang ffi-check SlangAllInOne\x64\Debug\CLangdll.dll.slffi.json
+```
+
+schema 自检（version / functionList 必填项 / 类型名合法 / entryPoint 去重 / structs
+layoutSig / callbacks sig）+ DLL 导出表比对（缺省按 `X.dll.slffi.json -> X.dll` 推导
+dll，`NativeLibrary` 装载逐 entryPoint 验证符号存在性）；任一失败 exit 1（CI 友好）。
+
 ---
 
 ## 8. 内部原理
@@ -509,10 +670,14 @@ SystemFFIMakeFunction( fn, "Int32", "Int32", "Int32" ) // 分离形态：返回�
 生成的对象带 magic `'NATF'`；解释器的 `CallClosure` 分支先逆序保存实参、弹闭包对象，
 命中 native 闭包后同样走 `vm_sys_ffi_invoke_native_closure`（失败才按普通 SL 闭包处理）。
 
-### 8.6 回调 trampoline
+### 8.6 回调 trampoline（v2 通用签名桩）
 
-`createCallback` 分配 8 个静态槽之一，返回 `s_ffi_trampolines[slot]` 地址（形状 `int64(int64,int64)`）。
-C 侧调用时经 trampoline **重入 VM**：解析宿主 `RuntimeType` → 压实参 → `vm_execute_method_by_id` → 弹返回值。
+`createCallback` 按签名的**参数类形状**（每参归三类：INT→`int64` 走 GR、F32 类→`float` 走 XMM、F64→`double` 走 XMM，base-3 编码）从静态桩表选桩——形状空间 `argc(0..6) × 3^argc` 共 1093 种 × 槽 8 × 返回两类（int64 / double）= **17488 个桩全静态展开**（`sl_ffi_callback_stubs.c`，由 `gen_sl_ffi_callback_stubs.py` 生成，与调用侧 `sl_ffi_call.c` 的 127 形状对称）。
+
+桩把 C 调用方实参打包为 `SLFFICbRawArgs`（gi/gd 分桶 + fp_mask），经 VM 层注册的 dispatcher（`vm_ffi_cb_dispatch`）**重入 VM**：查槽 → 压实参（utf8 转 string、低精度浮点换算位模式）→ `vm_execute_method_by_id` → 弹返回值按桩返回通道转换（INT→RAX 语义 / DBL→位模式经 double 桩走 XMM0 / utf8→槽静态缓冲地址）。
+
+**base-3 而非 base-2 的原因**：C 调用方按 `float` 形参传参时只写 XMM 低 32 位（movss），高 32 位是垃圾——桩形参声明 `float` 才能可靠收值（cvtss2sd），`double` 形参则读全 64 位，两类必须分开生成。
+
 异常/失败返回 0 并丢弃栈上实参。
 
 ### 8.7 `@DllImport` 的完整流水线（导出 + 装配期绑定）
@@ -663,7 +828,7 @@ entry->native_fn == NULL（回退路径）:
 | 参数个数 | ≤ 6（`SL_FFI_MAX_ARGS`），不支持栈传参 |
 | 变参 C 函数 | 不支持 `printf` 类 varargs（与 Dart FFI 一致） |
 | 库个数 | ≤ 32（`SL_FFI_LIB_TABLE_MAX`） |
-| 回调槽 | ≤ 8，且 trampoline 形状固定 `int64(int64,int64)`（**不支持浮点参数，INT 参数 ≤ 2**） |
+| 回调槽 | ≤ 8；签名任意形状（INT/DBL 混合参数 ≤ 6，返回 void/INT/DBL/utf8，0.0.48 起 v2 通用桩）；⚠ C 侧回调形参必须全宽（int64_t/float/double），窄整型只写窄字节会被宽读混入垃圾 |
 | 静态绑定 sig | 必须是 FFI 短名，不接受 SL 类型名（build 期不做映射） |
 | `Ptr` 推导 | 编译期 sig 推导排除 `Ptr`，须手写 sig |
 | `->void` | 非法写法 |
@@ -676,23 +841,28 @@ entry->native_fn == NULL（回退路径）:
 
 ## 10. 相关文件清单
 
-**SL 侧**
+**SL 侧**（2026-10-17 重组后：Front 工程 = `simple_language/source/`，标准库 = `SlangAllInOne/SLangCore/Lib/`）
 
 | 文件 | 说明 |
 |---|---|
-| `source/Front/Lib/Std/FFI/Library.sl` | `FFI.Library` / `FFI.StaticLibrary` |
-| `source/Front/Lib/Std/Std.jsonc` | `SystemFFI*` / `SystemPtr*` 系统方法声明与 `cvmFunction` 绑定 |
-| `source/Front/Core/AttributeManager.cs` | 挂点注册表（`@Nickname` / `@DllStaticImport` 等编译期 attribute 校验分派）+ Runtime Hooks |
-| `source/Front/Core/MetaAttribute.cs` | attribute 解析与 handleType 判定（`ResolveHandleType`） |
-| `source/Front/Core/MetaMemberVariable.cs` / `MetaMemberFunction.cs` | 调用点：express 为空 / ParseStatements 时走 `AttributeManager` 通用分派（挂点机制保留，`@DllImport` 已不再注册） |
-| `source/Front/Core/Statements/MetaDefineVarStatements.cs` | sig 推导（`BuildFFIFunctionSig*`） |
-| `source/Front/Project/ProjectCompile.cs` | `AutoInlineMarkFunctions`：运行时 attribute 方法排除自动 inline |
-| `source/Front/IR/IRCall.cs` | 调用指令发射（CallStatic/CallVirt/CallDynamic；P10 起不再发射 77） |
-| `source/Front/IROpEnum.cs` | opcode 定义 |
-| `source/Front/Export/SLIR/SLIRTypes.cs` | `SLDllImportPackage` / `SLAttributePackage`（`SLFFIStaticCallPackage` P10 已删） |
-| `source/Front/Export/SLIR/SLModulePackageWriter.cs` | 方法级 `attributeList` 导出 + `@DllImport` sig 推导补全 |
-| `source/Front/Project/ProjectConfig.cs`、`ProjectJsoncLoader.cs` | `dllImports` 配置与别名解析 |
-| `source/Front/Project/PorjectClass.cs` | `global.dllImport.<alias>` / `global.<funcName>` 注入 |
+| `SLangCore/Lib/Std/FFI/Library.sl` | `FFI.Library` / `FFI.StaticLibrary` |
+| `SLangCore/Lib/Std/FFI/Struct.sl` | `FFI.Struct`（布局注册 / native 块 / 双向 marshal，T3） |
+| `SLangCore/Lib/Std/Std.jsonc` | `SystemFFI*` / `SystemPtr*` / `SystemFFIStruct*` 系统方法声明与 `cvmFunction` 绑定 + `FFI/Struct.sl` 编译登记 |
+| `simple_language/source/Core/AttributeManager.cs` | 挂点注册表（`@Nickname` / `@DllStaticImport` 等编译期 attribute 校验分派）+ Runtime Hooks |
+| `simple_language/source/Core/MetaAttribute.cs` | attribute 解析与 handleType 判定（`ResolveHandleType`） |
+| `simple_language/source/Core/MetaMemberVariable.cs` / `MetaMemberFunction.cs` | 调用点：express 为空 / ParseStatements 时走 `AttributeManager` 通用分派（挂点机制保留，`@DllImport` 已不再注册） |
+| `simple_language/source/Core/Statements/MetaDefineVarStatements.cs` | sig 推导（`BuildFFIFunctionSig*`） |
+| `simple_language/source/Project/ProjectCompile.cs` | `AutoInlineMarkFunctions`：运行时 attribute 方法排除自动 inline |
+| `simple_language/source/IR/IRCall.cs` | 调用指令发射（CallStatic/CallVirt/CallDynamic；P10 起不再发射 77） |
+| `simple_language/source/IROpEnum.cs` | opcode 定义 |
+| `simple_language/source/Export/SLIR/SLIRTypes.cs` | `SLDllImportPackage` / `SLAttributePackage`（`SLFFIStaticCallPackage` P10 已删） |
+| `simple_language/source/Export/SLIR/SLModulePackageWriter.cs` | 方法级 `attributeList` 导出 + `@DllImport` sig 推导补全 + **契约校验挂钩（T5）** |
+| `simple_language/source/Export/SLIR/SlffiContract.cs` | **.slffi.json 契约加载/解析 + 签名类兼容校验（T5）** |
+| `simple_language/source/Project/ProjectConfig.cs`、`ProjectJsoncLoader.cs`、`ProjectOutputEnvironment.cs` | `dllImports` 配置、别名解析（`ResolveDllImportPath`）、工程目录基准（契约路径展开） |
+| `simple_language/source/Project/PorjectClass.cs` | `global.dllImport.<alias>` / `global.<funcName>` 注入 |
+| `simple_language/source/Log/LID.cs` / `ErrorDefinitions.csv` | 契约校验错误码 21483/21484/21485（T5） |
+| `SlangAllInOne/Ffi/FfiCheckCommand.cs` | `slang ffi-check` 子命令（schema 自检 + DLL 导出表比对，T5） |
+| `SlangAllInOne/Project/CLangdll/CLangdll.dll.slffi.json` | 契约范本（v1：functionList 37 项 + structs + callbacks；vcxproj PostBuild 部署到 dll 同目录） |
 
 **cvm 侧（`csimple_lang`）**
 
@@ -701,7 +871,9 @@ entry->native_fn == NULL（回退路径）:
 | `src/lib/ffi/sl_ffi_types.{h,c}` | 类型表、sig 解析 |
 | `src/lib/ffi/sl_ffi_lib_manager.{h,c}` | 加载 / 去重 / 引用计数 / 卸载 |
 | `src/lib/ffi/sl_ffi_call.{h,c}`（+ `gen_sl_ffi_call.py`） | x64 ABI 派发 |
-| `src/vm/system_method_call/ffi_system_method.{h,c}` | `SystemFFI*`、回调 trampoline、静态绑定表 |
+| `src/lib/ffi/sl_ffi_callback_stubs.{h,c}`（+ `gen_sl_ffi_callback_stubs.py`） | 回调桩表（base-3 形状 × 槽 × 返回通道，17488 桩） |
+| `src/lib/ffi/sl_ffi_struct.{h,c}` | **结构体布局注册表 + native 内存块（T3：sig 解析 / 自然对齐 / packed / magic 头）** |
+| `src/vm/system_method_call/ffi_system_method.{h,c}` | `SystemFFI*`、回调 trampoline、静态绑定表、**`SystemFFIStruct*` 6 系统方法（T3，含双向 marshal 实现）** |
 | `src/vm/runtime/attribute/vm_runtime_attribute.{c,h}` | 运行时 attribute 处理器注册表 + `@DllImport` 绑定器（collect / rewrite 两阶段，73→77 改写） |
 | `src/vm/assembly/sl_runtime_assembly.c` | 静态库预载 + payload 改写 + `vm_runtime_attribute_process` 挂接 |
 | `src/vm/assembly/slir_assembly_data.h` | `SLDllImportPackage`（含 `static_name`）、`SLAttributePackage` 镜像 |
@@ -722,12 +894,19 @@ entry->native_fn == NULL（回退路径）:
 5. 混合标量打包进 struct + 指针读回/改写
 6. 函数指针（native 返回函数指针、ptr 形参调用）
 7. 回调（含嵌套重入 / 双回调）
+7b. **全形状回调**（testCallbackShapes）：f32/f64 参数与返回、float 进 double 出、void 返回、INT/DBL/utf8 混合参数、utf8 进出、6 参满配 INT/DBL 交错、同槽重复触发 100 次
 8. Utf8 字符串进出
 9. 函数值（`Func<>` / typealias / `lookupFunction<T>`）
 10. `Memory` 原生内存、`data` ↔ C struct 互转
 11. `@DllImport`（路径 / 别名 / C# P/Invoke 风格 / fallback）
 12. `dllImports` 配置与 `global.dllImport.<alias>`、`global.<funcName>`
 13. **`@DllStaticImport` 与 `FFI.StaticLibrary.GetStaticLib`**
+14. **`FFI.Struct` 结构体布局与双向 marshal**（testFFIStruct，60 项断言）：define 幂等 /
+    C sizeof/offsetof 对齐 / marshalOut + C 侧读校验 / native malloc 块 marshalIn /
+    实例形态（marshalOut 产新块）/ C 直写 VM 块（make/fill_const）/ 错误路径与
+    无同名字段跳过
+15. **`.slffi.json` 契约编译期校验**：正例（37 声明全过）+ 负例（错签名 21484 /
+    未登记符号 21483 → 编译阻断）；`slang ffi-check` 独立校验
 
 ---
 
@@ -757,4 +936,16 @@ static int g( int a, int b ) { ret a + b }              // 函数体 = fallback
 // ── 配置驱动 ───────────────────────────────────────────
 global.dllImport.<alias>        // FFI.Library 实例
 global.<funcName>( ... )        // dllImports functions 段注入的库函数
+
+// ── 结构体布局（T3）───────────────────────────────────
+Int32 id = FFI.Struct.define( "i32 width, f64 ratio, utf8 name" )
+Int64 blk = FFI.Struct.alloc( id )                    // 或 var blk = FFI.Struct( id )
+Int64 out = FFI.Struct.marshalOut( obj, id )          // SL -> 新 native 块（单独 free）
+FFI.Struct.marshalIn( blk, id, obj )                  // native -> SL（按字段名）
+FFI.Struct.free( out );  blk.free()
+
+// ── 契约校验（T5）─────────────────────────────────────
+slang ffi-check <X.dll>.slffi.json [--dll <X.dll>]    // schema + DLL 导出表比对
+// dll 同目录放 .slffi.json -> @DllImport/@DllStaticImport 编译期签名校验
+//（21483 符号未登记 / 21484 签名不兼容 / 21485 契约损坏）
 ```

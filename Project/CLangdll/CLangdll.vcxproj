@@ -114,6 +114,11 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <!-- T5：FFI 契约随 dll 部署到同目录（Front 按 <dll路径>.slffi.json 查找，
+         契约存在即对 @DllImport/@DllStaticImport 做编译期签名校验） -->
+    <PostBuildEvent>
+      <Command>copy /Y "$(ProjectDir)CLangdll.dll.slffi.json" "$(OutDir)CLangdll.dll.slffi.json"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

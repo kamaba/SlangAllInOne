@@ -1,9 +1,9 @@
 # =========================================================================
-# SLMysql —— MySQL 客户端库（Python DB-API 2.0 / PyMySQL 风味）
+# SLangMysql —— MySQL 客户端库（Python DB-API 2.0 / PyMySQL 风味）
 #
 # 用法（对照 Python）：
 #
-#   conn = SL.Mysql.connect( "127.0.0.1", "root", "123456", "test" )
+#   conn = SLang.Mysql.connect( "127.0.0.1", "root", "123456", "test" )
 #   cur  = conn.cursor()
 #
 #   cur.execute( "INSERT INTO user(name, age) VALUES (?, ?)", Tuple("alice", 18) )
@@ -29,7 +29,7 @@
 # 具体原因通过 conn.errorCode() / conn.errorMessage() 取得。
 #
 # 底层链路：
-#   SLMysql.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_mysql_lib.dll
+#   MysqlClient.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_mysql_lib.dll
 #              ──静态链接──────────────────────> MySQL Connector/C
 #                                                (mysqlclient.lib)
 # sl_mysql_lib.dll 把 MYSQL / MYSQL_RES 收敛为 Int64 句柄，把数据收敛为

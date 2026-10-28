@@ -367,8 +367,9 @@ PtrTest
         # 20. Nested getMemberVar: get PtrDataM2M1 from PtrDataM2
         SystemPrintln("--- nested getMemberVar ---")
         pm2 = Ptr<PtrDataM2>( m2 )
-        # PtrDataM2 layout: a(0,4) pmd(8,8) - pointer aligned to 8
-        m1 = pm2.getMemberVar<PtrDataM2M1>( 8 )
+        # VM member_data layout is PACKED (vm_object_member_byte_length 累加，无对齐填充):
+        # PtrDataM2 layout: a(0,4) pmd(4,8) -> pmd 偏移 4（不是对齐到 8）
+        m1 = pm2.getMemberVar<PtrDataM2M1>( 4 )
         if (m1 != null)
         {
             SystemPrintln("nested getMemberVar<PtrDataM2M1>(8) = non-null: OK")

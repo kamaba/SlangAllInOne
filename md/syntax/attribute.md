@@ -325,6 +325,7 @@ attribute 数据随 module.json 的 `attributeList` 导出（类 / 字段 / 方�
 | `@GPU(...)` | Compiling | Method | `Lib/Std/GPU/GPU.sl` | GPU kernel 标记 |
 | `@DllImport(...)` | Preload | Method | `Lib/Core/DllImport.sl` | 装配期 FFI 静态绑定 + 调用点改写，失败回退 SL 体（详见 [ffi.md](../project/ffi.md)） |
 | `@DllStaticImport(...)` | Preload | Method | `Lib/Core/DllStaticImport.sl` | 编译期发射 FFI 静态调用 + 装配期绑定（无 SL fallback） |
+| `@InstanceAttr([name])` | Preload | Class | `Lib/Std/InstanceAttr.sl` | 类级单例实例字段：Front 合成 `static <宿主类> instance`（缺省名 / 自定义名）静态字段，装配期 `InstanceAttr._enter_` 构造单实例写入——源代码 `ClassA.instance` / `ClassB.inst` 直接访问（类型即宿主类，免转型；`ClassA.instance.method()`） |
 | `@Route(...)` | Preload | All | `Lib/Std/Net/Route.sl` | 占位（随 Net 库另立设计，未接入编译清单） |
 | `@Serializable()` | Runtime | Class | `Lib/Core/Attribute.sl` | 声明该类型按成员展开参与 JSON 序列化 |
 | `@SerializeField()` | Runtime | Field | 同上 | 强制 protected/private 成员参与序列化（补票） |

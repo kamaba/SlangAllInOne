@@ -1,4 +1,4 @@
-import Std;
+﻿﻿import Std;
 
 # 函数类型别名（typealias X = Ret Function( P... ) 形态）：
 # 与 Func<Ret, P...> 等价, FFI 取函数时可从别名签名推导 FFI sig
@@ -49,6 +49,21 @@ data FFICBook
     title = ""
 }
 
+# 结构体布局 marshal 端到端测试用类（对应 CLangdll.cpp 9c 节的
+# SLSizeStruct）：C struct { int32 width; int32 height; double ratio;
+# const char* name; } 布局（自然对齐，24B）：width@0 height@4 ratio@8 name@16
+# 与 FFI.Struct.define("i32 width, i32 height, f64 ratio, utf8 name")
+# 注册的布局按字段名双向搬运（utf8 进出附属字符串池）。
+# 用 class + 显式 Float64：data 成员类型从小数字面量推导恒为 Float32
+#（d 后缀不参与推导），ratio 槽需要真 f64 成员保精度
+class FFIWndInfo
+{
+    width = 0
+    height = 0
+    Float64 ratio = 0.0
+    name = ""
+}
+
 # ============================================================
 # FFICallbacks - FFI 回调目标类
 # C 侧经 trampoline 重入 VM 调用这里的静态方法（签名约束：
@@ -65,6 +80,46 @@ class FFICallbacks
     static Int64 OnMul( Int64 a, Int64 b )
     {
         ret a * b
+    }
+
+    # ── 全形状回调目标（T4 通用签名桩：浮点/utf8/void/满参混合）──
+    static Float32 OnFpAdd( Float32 a, Float32 b )
+    {
+        ret a + b
+    }
+
+    static Float64 OnF64Scale( Float64 x )
+    {
+        ret x * 3.0
+    }
+
+    static Float64 OnF32InF64Out( Float32 a, Float32 b )
+    {
+        ret a + b
+    }
+
+    static Int64 s_voidAcc = 0
+    static OnVoidAccum( Int64 x )
+    {
+        s_voidAcc = s_voidAcc + x
+    }
+
+    static Int64 OnMixArgs( Int64 n, Float64 x, string s )
+    {
+        Int64 xi = x as Int64
+        ret n * 100 + xi * 10 + s.length
+    }
+
+    static string OnUtf8Echo( string s )
+    {
+        ret "cb:" + s
+    }
+
+    static Int64 On6Args( Int64 a, Float64 b, Int32 c, Float32 d, Int64 e, Int64 f )
+    {
+        Int64 bi = b as Int64
+        Int64 di = d as Int64
+        ret a + bi + c + di + e + f
     }
 }
 
@@ -106,45 +161,48 @@ class FFICallbacks
 #  20. dllImports functions 段：project.jsonc 项内 "functions" 列表注入
 #      Project 静态库函数变量，global.<funcName>(...) 直接调用
 #      （C# DllImport 语义；cvm 层数据经 arrayToData 转 C struct 供特殊调用）
+#  24. FFI.Struct 结构体布局与双向 marshal（T3）：define 布局注册（幂等）/
+#      alloc/free native 内存块、marshalOut/marshalIn 按字段名双向搬运
+#      （utf8 走附属字符串池；与 CLangdll 9c 节 SLSizeStruct 对齐校验）
 # ============================================================
 FFITest
 {
-    static string s_dllPath = "../../source/CLangdll/x64/Debug/CLangdll.dll"
+    static string s_dllPath = "../../../x64/Debug/CLangdll.dll"
 
     # ── @DllImport：C# [DllImport("libdemo.so")] static extern Int32 add(...) 风格 ──
     # 统一为函数定义形式（旧 static Func<...> 字段形式已废弃）；
     # 函数体为必填：dll 绑定可用时调用转发 dll 导入函数，不可用
     #（运行平台不符 / 库加载失败 / 符号不存在）时执行函数体（fallback
     # 本体，此处为与 dll 等价的 SL 实现）；sig 缺省从签名推导（i32,i32->i32）
-    @DllImport( "../../source/CLangdll/x64/Debug/CLangdll.dll", "simplelanguage_addtest" )
+    @DllImport( "../../../x64/Debug/CLangdll.dll", "simplelanguage_addtest" )
     static int s_dllAdd( int a, int b )
     {
         ret a + b
     }
 
     # 第 3 实参手写 sig 覆盖推导（Ptr 等不可推导类型用）
-    @DllImport( "../../source/CLangdll/x64/Debug/CLangdll.dll", "sl_mul2", "i64->i64" )
+    @DllImport( "../../../x64/Debug/CLangdll.dll", "sl_mul2", "i64->i64" )
     static Int64 s_dllMul2( Int64 v )
     {
         ret v * 2
     }
 
     # utf8 进出：utf8->i64
-    @DllImport( "../../source/CLangdll/x64/Debug/CLangdll.dll", "sl_strlen_utf8" )
+    @DllImport( "../../../x64/Debug/CLangdll.dll", "sl_strlen_utf8" )
     static Int64 s_dllStrlen( string s )
     {
         ret s.length
     }
 
     # 零参：->utf8
-    @DllImport( "../../source/CLangdll/x64/Debug/CLangdll.dll", "sl_exports_json" )
+    @DllImport( "../../../x64/Debug/CLangdll.dll", "sl_exports_json" )
     static string s_dllJson()
     {
         ret "{}"
     }
 
     # 6 参全宽度混合：u8,i16,u32,i64,f32,f64->f64
-    @DllImport( "../../source/CLangdll/x64/Debug/CLangdll.dll", "sl_mix_all" )
+    @DllImport( "../../../x64/Debug/CLangdll.dll", "sl_mix_all" )
     static double s_dllMix( byte a, short b, uint c, long d, float e, double f )
     {
         # fallback：与 sl_mix_all 等价（a*1 + b*2 + c*3 + d*4 + e*5 + f*6）
@@ -188,6 +246,63 @@ FFITest
     static Int64 s_bookFree( Int64 ptr )
     {
         ret 0
+    }
+
+    # ── 结构体布局 marshal 端到端（T3 testFFIStruct）：对照 9c 节 SLSizeStruct ──
+    # sizeof / offsetof：零参与 i32->i32 的 sig 均可从签名推导
+    @DllImport( "CLangdll", "sl_size_struct_size" )
+    static int s_sizeStructSize()
+    {
+        ret 0
+    }
+
+    @DllImport( "CLangdll", "sl_size_field_offset" )
+    static int s_sizeFieldOffset( int index )
+    {
+        ret -1
+    }
+
+    # C 侧写 SL 分配块：ptr 形参须手写 sig；utf8 形参指针仅调用期有效
+    @DllImport( "CLangdll", "sl_size_make", "i32,i32,utf8,ptr->void" )
+    static void s_sizeMake( int w, int h, string name, Int64 outAddr )
+    {
+    }
+
+    @DllImport( "CLangdll", "sl_size_area", "ptr->i64" )
+    static Int64 s_sizeArea( Int64 ptr )
+    {
+        ret -1
+    }
+
+    @DllImport( "CLangdll", "sl_size_name", "ptr->utf8" )
+    static string s_sizeName( Int64 ptr )
+    {
+        ret ""
+    }
+
+    @DllImport( "CLangdll", "sl_size_checksum", "ptr->i64" )
+    static Int64 s_sizeChecksum( Int64 ptr )
+    {
+        ret -1
+    }
+
+    # native malloc 自持块（C 侧 strdup 持有 name）
+    @DllImport( "CLangdll", "sl_size_alloc", "i32,i32,utf8->ptr" )
+    static Int64 s_sizeAlloc( int w, int h, string name )
+    {
+        ret 0
+    }
+
+    @DllImport( "CLangdll", "sl_size_free", "ptr->i64" )
+    static Int64 s_sizeFree( Int64 ptr )
+    {
+        ret 0
+    }
+
+    # 常量填充（name 为 C 静态串，跨调用回读安全）
+    @DllImport( "CLangdll", "sl_size_fill_const", "ptr->void" )
+    static void s_sizeFillConst( Int64 outAddr )
+    {
     }
 
     # ── @DllImport C# P/Invoke 风格函数声明（与上方形态等价，均须带 fallback 体）──
@@ -584,6 +699,87 @@ FFITest
         # 释放回调槽
         check( "freeCallback OnAdd", FFI.StaticLibrary.freeCallback( cbAdd ) )
         check( "freeCallback OnMul", FFI.StaticLibrary.freeCallback( cbMul ) )
+        lib.release()
+    }
+
+    # ── 8b. 全形状回调：浮点参数/返回、void 返回、utf8 进出、满参混合 ──
+    #        （T4 通用签名桩：参数类 base-3 形状全覆盖 + 两类返回通道）
+    static testCallbackShapes()
+    {
+        Console.println( "===== FFITest.testCallbackShapes =====" )
+        var lib = FFI.Library( s_dllPath )
+        Int64 fpAdd = lib.getSymbol( "sl_cb_fp_add" )
+        Int64 f64Scale = lib.getSymbol( "sl_cb_f64_scale" )
+        Int64 f32InF64Out = lib.getSymbol( "sl_cb_f32_in_f64_out" )
+        Int64 voidAcc = lib.getSymbol( "sl_cb_void_accum" )
+        Int64 mixArgs = lib.getSymbol( "sl_cb_mix_args" )
+        Int64 utf8Echo = lib.getSymbol( "sl_cb_utf8_echo" )
+        Int64 sixArgs = lib.getSymbol( "sl_cb_6args" )
+        Int64 repeatCb = lib.getSymbol( "sl_cb_repeat" )
+
+        # f32,f32->f32：浮点参数 + 浮点返回（float 桩）
+        Int64 cbFpAdd = FFI.StaticLibrary.createCallback( "OnFpAdd", "f32,f32->f32" )
+        check( "createCallback OnFpAdd", cbFpAdd != 0 )
+        check( "cb_fp_add(1.5,2.25)==3.75",
+            SystemFFICallF32( fpAdd, "ptr,f32,f32->f32", cbFpAdd, 1.5f, 2.25f ) == 3.75f )
+
+        # f64->f64：双精度参数 + 双精度返回（double 桩）
+        Int64 cbF64Scale = FFI.StaticLibrary.createCallback( "OnF64Scale", "f64->f64" )
+        check( "createCallback OnF64Scale", cbF64Scale != 0 )
+        check( "cb_f64_scale(1.25)==3.75",
+            SystemFFICallF64( f64Scale, "ptr,f64->f64", cbF64Scale, 1.25 ) == 3.75 )
+
+        # f32,f32->f64：float 参数 + double 返回（混合返回通道）
+        Int64 cbF32InF64 = FFI.StaticLibrary.createCallback( "OnF32InF64Out", "f32,f32->f64" )
+        check( "createCallback OnF32InF64Out", cbF32InF64 != 0 )
+        check( "cb_f32_in_f64_out(1.5,2.25)==3.75",
+            SystemFFICallF64( f32InF64Out, "ptr,f32,f32->f64", cbF32InF64, 1.5f, 2.25f ) == 3.75 )
+
+        # i64->void：void 返回（无返回值回调 + 静态累计验证被调）
+        Int64 cbVoid = FFI.StaticLibrary.createCallback( "OnVoidAccum", "i64->void" )
+        check( "createCallback OnVoidAccum", cbVoid != 0 )
+        FFICallbacks.s_voidAcc = 0
+        SystemFFICallVoid( voidAcc, "ptr,i64->void", cbVoid, 7 )
+        SystemFFICallVoid( voidAcc, "ptr,i64->void", cbVoid, 35 )
+        check( "cb_void_accum(7,35) acc==42", FFICallbacks.s_voidAcc == 42 )
+
+        # i64,f64,utf8->i64：INT/DBL/utf8 三类混合参数
+        Int64 cbMix = FFI.StaticLibrary.createCallback( "OnMixArgs", "i64,f64,utf8->i64" )
+        check( "createCallback OnMixArgs", cbMix != 0 )
+        # n=3, x=2.0, s="abcd" -> 3*100 + 2*10 + 4 = 324
+        check( "cb_mix_args(3,2.0,'abcd')==324",
+            SystemFFICallI64( mixArgs, "ptr,i64,f64,utf8->i64", cbMix, 3, 2.0, "abcd" ) == 324 )
+
+        # utf8->utf8：字符串进 + 字符串出（槽静态缓冲返回）
+        Int64 cbUtf8 = FFI.StaticLibrary.createCallback( "OnUtf8Echo", "utf8->utf8" )
+        check( "createCallback OnUtf8Echo", cbUtf8 != 0 )
+        string cbOut = SystemFFICallUtf8( utf8Echo, "ptr,utf8->utf8", cbUtf8, "world" )
+        check( "cb_utf8_echo('world')=='cb:world'", cbOut == "cb:world" )
+
+        # 6 参满配 INT/DBL 交错：i64,f64,i32,f32,i16,u8（C 侧常量内嵌触发：
+        # 调用侧直传 6 数据参 + cb 会超 SL_FFI_MAX_ARGS=6，故触发器零数据参）
+        Int64 cb6 = FFI.StaticLibrary.createCallback( "On6Args", "i64,f64,i32,f32,i64,i64->i64" )
+        check( "createCallback On6Args", cb6 != 0 )
+        # 常量 (1, 2.0, 3, 4.0, 5, 6) -> 1+2+3+4+5+6 = 21
+        check( "cb_6args(1,2.0,3,4.0,5,6)==21",
+            SystemFFICallI64( sixArgs, "ptr->i64", cb6 ) == 21 )
+
+        # 稳定性：同槽重复触发 100 次
+        Int64 cbAdd2 = FFI.StaticLibrary.createCallback( "SpecialTest.FFICallbacks.OnAdd_2_Core.Int64_Core.Int64", "i64,i64->i64" )
+        check( "createCallback OnAdd(repeat)", cbAdd2 != 0 )
+        # sum_{i=0..99} ( (100+i) + i ) = 100*100 + 9900 = 19900
+        check( "cb_repeat(100,100)==19900",
+            SystemFFICallI64( repeatCb, "ptr,i64,i64->i64", cbAdd2, 100, 100 ) == 19900 )
+
+        # 释放全部回调槽
+        check( "freeCallback OnFpAdd", FFI.StaticLibrary.freeCallback( cbFpAdd ) )
+        check( "freeCallback OnF64Scale", FFI.StaticLibrary.freeCallback( cbF64Scale ) )
+        check( "freeCallback OnF32InF64Out", FFI.StaticLibrary.freeCallback( cbF32InF64 ) )
+        check( "freeCallback OnVoidAccum", FFI.StaticLibrary.freeCallback( cbVoid ) )
+        check( "freeCallback OnMixArgs", FFI.StaticLibrary.freeCallback( cbMix ) )
+        check( "freeCallback OnUtf8Echo", FFI.StaticLibrary.freeCallback( cbUtf8 ) )
+        check( "freeCallback On6Args", FFI.StaticLibrary.freeCallback( cb6 ) )
+        check( "freeCallback OnAdd(repeat)", FFI.StaticLibrary.freeCallback( cbAdd2 ) )
         lib.release()
     }
 
@@ -1095,6 +1291,117 @@ FFITest
         check( "static fallback fbAdd(-5,7)==2", s_statFbAdd( -5, 7 ) == 2 )
     }
 
+    # ── 24. FFI.Struct：布局注册 + native 内存块 + 按字段名双向 marshal（T3）──
+    # 对照 CLangdll 9c 节 SLSizeStruct（"i32 width, i32 height, f64 ratio,
+    # utf8 name"，自然对齐 24B：width@0 height@4 ratio@8 name@16）：
+    # define 布局注册（幂等）-> alloc/free native 块 -> marshalOut/marshalIn
+    # 按字段名双向搬运（utf8 进出附属字符串池）
+    static testFFIStruct()
+    {
+        Console.println( "===== FFITest.testFFIStruct =====" )
+
+        # ── 24.1 布局注册：同 sig 幂等复用同 id；SL 类型名 / 空 sig 失败 ──
+        string sig = "i32 width, i32 height, f64 ratio, utf8 name"
+        Int32 id1 = FFI.Struct.define( sig )
+        check( "define(sig) id > 0", id1 > 0 )
+        check( "define idempotent -> same id", FFI.Struct.define( sig ) == id1 )
+        check( "define SL type name -> 0", FFI.Struct.define( "Int32 width" ) <= 0 )
+        check( "define empty sig -> 0", FFI.Struct.define( "" ) <= 0 )
+
+        # ── 24.2 与 C 侧对齐：sizeof = 24；offsetof 0/4/8/16；越界 -1 ──
+        check( "FFI.Struct.size == 24", FFI.Struct.size( id1 ) == 24 )
+        check( "size == C sizeof", FFI.Struct.size( id1 ) == s_sizeStructSize() )
+        check( "offsetof(0) width == 0", s_sizeFieldOffset( 0 ) == 0 )
+        check( "offsetof(1) height == 4", s_sizeFieldOffset( 1 ) == 4 )
+        check( "offsetof(2) ratio == 8", s_sizeFieldOffset( 2 ) == 8 )
+        check( "offsetof(3) name == 16", s_sizeFieldOffset( 3 ) == 16 )
+        check( "offsetof(4) out of range == -1", s_sizeFieldOffset( 4 ) == -1 )
+        check( "size(-1) <= 0", FFI.Struct.size( -1 ) <= 0 )
+
+        # ── 24.3 marshalOut：SL 对象 -> native 块；C 侧读字段校验 + marshalIn 回读 ──
+        FFIWndInfo w = new()
+        w.width = 800
+        w.height = 600
+        w.ratio = 800.0d / 600.0d
+        w.name = "wnd-out"
+        Int64 out1 = FFI.Struct.marshalOut( w, id1 )
+        check( "static marshalOut(w) != 0", out1 != 0 )
+        check( "C area(out1) == 480000", s_sizeArea( out1 ) == 480000 )
+        check( "C checksum(out1) == 1401", s_sizeChecksum( out1 ) == 1401 )
+        check( "C name(out1) == 'wnd-out'", s_sizeName( out1 ) == "wnd-out" )
+        FFIWndInfo back = new()
+        check( "marshalIn(out1, back)", FFI.Struct.marshalIn( out1, id1, back ) )
+        check( "back.width == 800", back.width == 800 )
+        check( "back.height == 600", back.height == 600 )
+        check( "back.ratio == 800/600", back.ratio == 800.0d / 600.0d )
+        check( "back.name == 'wnd-out'", back.name == "wnd-out" )
+        check( "free(out1)", FFI.Struct.free( out1 ) )
+
+        # ── 24.4 native malloc 自持块（sl_size_alloc 内 strdup）-> marshalIn 回读 ──
+        Int64 nat = s_sizeAlloc( 1024, 768, "native-side" )
+        check( "s_sizeAlloc != 0", nat != 0 )
+        check( "C area(nat) == 786432", s_sizeArea( nat ) == 786432 )
+        FFIWndInfo nb = new()
+        check( "marshalIn(nat, nb)", FFI.Struct.marshalIn( nat, id1, nb ) )
+        check( "nb.width == 1024", nb.width == 1024 )
+        check( "nb.height == 768", nb.height == 768 )
+        check( "nb.ratio == 1024/768", nb.ratio == 1024.0d / 768.0d )
+        check( "nb.name == 'native-side'", nb.name == "native-side" )
+        check( "s_sizeFree(nat) == 1", s_sizeFree( nat ) == 1 )
+        check( "s_sizeFree(0) == 0", s_sizeFree( 0 ) == 0 )
+
+        # ── 24.5 实例形态：new FFI.Struct(id) 即分配块；实例 marshalOut 产新块 ──
+        var blk = FFI.Struct( id1 )
+        check( "blk.address != 0", blk.address != 0 )
+        check( "blk.layoutId == id1", blk.layoutId == id1 )
+        FFIWndInfo w2 = new()
+        w2.width = 320
+        w2.height = 240
+        w2.ratio = 320.0d / 240.0d
+        w2.name = "instance-out"
+        # 实例 marshalOut(obj) 返回新分配块地址（不写本块），须单独释放
+        Int64 out2 = blk.marshalOut( w2 )
+        check( "instance marshalOut != 0", out2 != 0 )
+        check( "instance marshalOut -> new block", out2 != blk.address )
+        check( "C area(out2) == 76800", s_sizeArea( out2 ) == 76800 )
+        check( "C name(out2) == 'instance-out'", s_sizeName( out2 ) == "instance-out" )
+        check( "free(out2)", FFI.Struct.free( out2 ) )
+        # C 侧按 ptr 直写本块（fill_const：name 为 C 静态串，跨调用回读安全）
+        s_sizeFillConst( blk.address )
+        FFIWndInfo w3 = new()
+        check( "blk.marshalIn(w3)", blk.marshalIn( w3 ) )
+        check( "w3.width == 640", w3.width == 640 )
+        check( "w3.height == 400", w3.height == 400 )
+        check( "w3.ratio == 1.6", w3.ratio == 1.6d )
+        check( "w3.name == 'sl-alloc-block'", w3.name == "sl-alloc-block" )
+        check( "blk.free()", blk.free() )
+        check( "blk.address == 0 after free", blk.address == 0 )
+        check( "blk double free -> false", blk.free() == false )
+
+        # ── 24.6 C 侧 make 直写 VM 块：仅数值字段经 C 函数校验 ──
+        # （utf8 实参缓冲仅调用期有效：sl_size_make 存下该指针，跨调用
+        #   marshalIn 回读 name 会读失效内存——本段只验 area/checksum）
+        var blk2 = FFI.Struct( id1 )
+        check( "blk2.address != 0", blk2.address != 0 )
+        s_sizeMake( 800, 600, "transient", blk2.address )
+        check( "make area == 480000", s_sizeArea( blk2.address ) == 480000 )
+        check( "make checksum == 1401", s_sizeChecksum( blk2.address ) == 1401 )
+        check( "blk2.free()", blk2.free() )
+
+        # ── 24.7 错误路径与无同名字段跳过 ──
+        check( "alloc(-1) == 0", FFI.Struct.alloc( -1 ) == 0 )
+        check( "free(0) == false", FFI.Struct.free( 0 ) == false )
+        check( "marshalOut(w, -1) == 0", FFI.Struct.marshalOut( w, -1 ) == 0 )
+        check( "marshalIn(0, id1, w) == false", FFI.Struct.marshalIn( 0, id1, w ) == false )
+        # FFIHoldClass 无同名字段：布局字段全部跳过，不视为失败
+        var hold = FFIHoldClass()
+        Int64 out3 = FFI.Struct.marshalOut( hold, id1 )
+        check( "marshalOut(hold) != 0 (skip no-name fields)", out3 != 0 )
+        check( "marshalIn(out3, hold) (skip no-name fields)",
+            FFI.Struct.marshalIn( out3, id1, hold ) )
+        check( "free(out3)", FFI.Struct.free( out3 ) )
+    }
+
     # ── main entry ──
     static fun()
     {
@@ -1106,6 +1413,7 @@ FFITest
         testMixStruct()
         testFunctionPointer()
         testCallbacks()
+        testCallbackShapes()
         testUtf8()
         testExportsJson()
         testFunctionValue()
@@ -1122,6 +1430,7 @@ FFITest
         testCallConstNarrowing()
         testDllImportFallback()
         testDllStaticImport()
+        testFFIStruct()
         Console.println( "===== all FFI tests done =====" )
     }
 }

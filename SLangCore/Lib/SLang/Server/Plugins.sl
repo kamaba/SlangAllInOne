@@ -110,6 +110,7 @@ namespace SLang
                 nx.go()
                 ret
             }
+
             # 路径穿越防护：'..' 独立段拒绝（403）
             if _StaticFilesPlugin._hasDotDot( rel )
             {
@@ -201,12 +202,14 @@ namespace SLang
                 _SwaggerUIPlugin._serveIndex( res )
                 ret
             }
+
             if SystemStringLength( p ) < 10 || SystemStringRange( p, 0, 9 ) != "/swagger/"
             {
                 # 非 /swagger/ 前缀：放行（不归本插件管）
                 nx.go()
                 ret
             }
+
             # /swagger/<file> → dist 目录直出（staticFiles 同款纪律：
             # '..' 段 403 / 未命中放行 / sendFileRange 流式直出 + MIME + Range）
             if _StaticFilesPlugin._hasDotDot( p )
@@ -577,6 +580,7 @@ namespace SLang
                     }
                 }
             }
+
             if _AuthPlugin._mode == 1
             {
                 # Bearer：Authorization: Bearer <token> → Jwt.decode → req.auth

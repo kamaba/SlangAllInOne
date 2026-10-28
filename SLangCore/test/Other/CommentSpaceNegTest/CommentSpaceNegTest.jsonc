@@ -1,0 +1,56 @@
+{
+  "project":
+  {
+    "name": "CommentSpaceNegTest",
+    "desc": "Negative: line comment without space after '#' with compile.isForceSpaceAfterSharp=true (LID 20120), compile must fail",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false,
+    "isForceSpaceAfterSharp": true
+  },
+  "compileFiles": {
+    "files": []
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" }
+  ],
+  "struct": [
+      { "namespace": "CommentSpaceNegTest", "children": [] }
+  ],
+  "export": {
+    "moduleName": "CommentSpaceNegTest",
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  }
+}

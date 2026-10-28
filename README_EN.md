@@ -40,7 +40,7 @@ The Front compiles SLIR, the C VM executes SLIR, and this repo glues both into a
 | **SLang.HttpServer / SLang.WebSocketServer** | HTTP / WebSocket service framework (HttpServer: routing / request / response chaining / BodyParser / Jwt; WebSocketServer: upgrade-router / standalone-port dual forms) |
 | **SLang.Render** | Rendering types (Mesh / Material / Texture / Shader / Camera…) |
 | **Tensora** | Tensors / tensor ops / autograd / optimizers / Transformer (work in progress) |
-| **SLMysql** | MySQL client (⚠ statically links GPL-2.0 MySQL Connector/C, **not shipped** in official release packages) |
+| **SLang.Mysql** | MySQL client (`SLangMysql` module; ⚠ statically links GPL-2.0 MySQL Connector/C, **not shipped** in official release packages) |
 
 ## Getting Started
 

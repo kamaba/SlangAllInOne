@@ -64,6 +64,7 @@ ServerP7Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -199,6 +200,7 @@ ServerP7Test
                 {
                     break
                 }
+
                 if p.isFile
                 {
                     if p.saveAs( "p7_stream_big.bin" )
@@ -575,6 +577,7 @@ ServerP7Test
                 {
                     break
                 }
+
                 if p.isFile
                 {
                     ByteBuffer piece = ByteBuffer( 100 )
@@ -632,8 +635,7 @@ ServerP7Test
         P7RawClient c = P7RawClient.connect( 19472 )
         c.send( "POST /half HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: multipart/form-data; boundary=P7H\r\nContent-Length: " + blen.toString() + "\r\n\r\n" + bodyStr )
         P7Resp r1 = c.readResp()
-        bool halfOk = r1._ok && sfFind( r1._body, "half:u=partial" ) >= 0
-            && sfFind( r1._body, "got=100" ) >= 0
+        bool halfOk = r1._ok && sfFind( r1._body, "half:u=partial" ) >= 0 && sfFind( r1._body, "got=100" ) >= 0
         c.send( "GET /probe HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
         P7Resp r2 = c.readResp()
         bool probeA = r2._ok && sfFind( r2._body, "probe-ok" ) >= 0
@@ -695,6 +697,7 @@ ServerP7Test
             v = v * 10 + ( c - 48 )
             any = true
         }
+
         if any == false
         {
             ret -1
@@ -727,6 +730,7 @@ ServerP7Test
             {
                 d = c - 55
             }
+
             if d < 0
             {
                 ret -1
@@ -869,6 +873,7 @@ class P7RawClient
             {
                 ret r
             }
+
             if SystemStringLength( line ) == 0
             {
                 headDone = true

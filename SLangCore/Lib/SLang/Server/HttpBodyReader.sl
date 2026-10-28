@@ -84,6 +84,7 @@ namespace SLang
             {
                 ret 0
             }
+
             if this._chunked
             {
                 ret this._readChunked( dst )
@@ -124,6 +125,7 @@ namespace SLang
             {
                 canTake = want
             }
+
             if canTake <= 0
             {
                 this._done = true
@@ -137,10 +139,12 @@ namespace SLang
             }
             this._remain = this._remain - got
             this._total = this._total + got
+
             if this._total > this._maxBytes
             {
                 throw StreamBodyError.LimitExceeded
             }
+
             if this._remain <= 0
             {
                 this._done = true
@@ -173,10 +177,12 @@ namespace SLang
                     }
                     this._chunkRemain = this._chunkRemain - got
                     this._total = this._total + got
+
                     if this._total > this._maxBytes
                     {
                         throw StreamBodyError.LimitExceeded
                     }
+
                     if this._chunkRemain == 0
                     {
                         # 块尾 CRLF
@@ -190,6 +196,7 @@ namespace SLang
                     }
                     ret got
                 }
+
                 # 待读块头 / 终止块
                 if this._chunkEnd
                 {
@@ -206,6 +213,7 @@ namespace SLang
                 {
                     throw Net.HttpError.Protocol
                 }
+
                 if size == 0
                 {
                     # 终止块：消化 trailer 至空行
@@ -216,6 +224,7 @@ namespace SLang
                         {
                             throw Net.HttpError.Protocol
                         }
+
                         if SystemStringLength( HttpServerCore._stripEol( t ) ) == 0
                         {
                             break
@@ -225,6 +234,7 @@ namespace SLang
                     this._done = true
                     ret 0
                 }
+
                 # 块头预检上限（防单块声明超限仍进入读路径）
                 if this._total + size > this._maxBytes
                 {

@@ -27,6 +27,9 @@ namespace SLang
         ByteBuffer _body = null
         string _ip = ""
         Int32 _port = 0
+        # 本请求进入的监听端口（多监听器 v1.1：引擎构造后赋值；构造签名
+        # 不动——0 = 未赋值兜底）
+        Int32 _localPort = 0
         # 路由 {param} 提取结果（无参数路由为空 Map）
         Map<string,string> _pathParams = null
         # 查询参数惰性解析缓存
@@ -34,6 +37,12 @@ namespace SLang
         # form 字段惰性解析缓存（urlencoded；multipart 经 _mpFields 并入）
         Map<string,string> _formParsed = null
         bool _formDone = false
+        # ── cookie 惰性解析缓存（P10，读侧；§4.3）──
+        # Cookie 头（可多条；逐条按 '; ' 拆对、首个 '=' 切键值；值不解码）
+        Map<string,string> _cookieParsed = null
+        # ── form 同名多值缓存（P10，formAll；§6.4）──
+        # urlencoded 逐段扫出的全部同名对（multipart 普通字段同理并入）
+        Map<string, List<string> > _formMulti = null
         # multipart 解析结果（惰性一次；引擎派发前即时触发，§6.5）
         Map<string,string> _mpFields = null
         List<UploadedFile> _mpFiles = null
@@ -73,7 +82,12 @@ namespace SLang
             this._body = body
             this._ip = ip
             this._port = port
+            this._localPort = 0
             this._pathParams = pathParams
+            this._formParsed = null
+            this._formDone = false
+            this._cookieParsed = null
+            this._formMulti = null
             this._mpFields = new()
             this._mpFiles = new()
             this._mpDone = false
@@ -112,6 +126,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._streamReader != null
             {
                 ret this._streamReader
@@ -139,6 +154,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._streamReader != null
             {
                 ret this._streamReader
@@ -160,6 +176,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._mpReader != null
             {
                 ret this._mpReader
@@ -169,6 +186,7 @@ namespace SLang
             {
                 ret null
             }
+
             if BodyParser.isMultipart( ct ) == false
             {
                 ret null
@@ -216,6 +234,19 @@ namespace SLang
         public get Int32 port()
         {
             ret this._port
+        }
+
+        # 本请求进入的监听端口（多监听器 v1.1：主监听器 = 配置端口，
+        # 扩展监听器 = listen() 端口——同一 handler 挂多端口时据此分流）
+        public get Int32 localPort()
+        {
+            ret this._localPort
+        }
+
+        # 引擎赋值（_handleConnection 构造后绑定；用户侧只读）
+        public set void localPort( Int32 p )
+        {
+            this._localPort = p
         }
 
         # ── 请求头 ──
@@ -268,6 +299,129 @@ namespace SLang
                 ret false
             }
             ret HttpServerCore._containsFold( v, "websocket" )
+        }
+
+        # ── cookie（P10 读侧，§4.3；Cookie 头惰性解析）──
+
+        # cookie 值；不存在返回 null。同名多条（RFC 6265 罕见形态）取
+        # 最末一条（路径更具体的在后——浏览器按 Path 长度升序发送）
+        public string cookie( string name )
+        {
+            this._ensureCookie()
+            if this._cookieParsed.containsKey( name ) == false
+            {
+                ret null
+            }
+            ret this._cookieParsed[name]
+        }
+
+        # 是否携带该 cookie
+        public bool hasCookie( string name )
+        {
+            this._ensureCookie()
+            ret this._cookieParsed.containsKey( name )
+        }
+
+        # 全部 cookie 名（无 cookie 为空表；拷贝经 _SrvUtil——formKeys 同款）
+        public List<string> cookieKeys()
+        {
+            List<string> outList = new()
+            this._ensureCookie()
+            _SrvUtil.copyKeys( this._cookieParsed, outList )
+            ret outList
+        }
+
+        # cookie 惰性解析（Cookie 头可多条——HttpHeaders 表内逐条消费；
+        # 每条按 ';' 分段、段内首个 '=' 切键值、两端去空白；值不解码）
+        void _ensureCookie()
+        {
+            if this._cookieParsed != null
+            {
+                ret
+            }
+            this._cookieParsed = new()
+            Net.HttpHeaders hs = this._headers
+            if hs == null
+            {
+                ret
+            }
+            Int32 n = hs.count
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                string hn = hs.nameAt( i )
+                if Net.Uri.eqFold( hn, "Cookie" ) == false
+                {
+                    continue
+                }
+                string hv = hs.valueAt( i )
+                Int32 hvLen = SystemStringLength( hv )
+                Int32 segStart = 0
+                Int32 k = 0
+                while k <= hvLen
+                {
+                    if k == hvLen || SystemStringCharCodeAt( hv, k ) == 59
+                    {
+                        Int32 segLen = k - segStart
+                        if segLen > 0
+                        {
+                            Request._cookiePair( SystemStringRange( hv, segStart, k ), this._cookieParsed )
+                        }
+                        segStart = k + 1
+                    }
+                    k = k + 1
+                }
+            }
+        }
+
+        # 单个 cookie 对（"name=value"）入表；无 '=' 忽略；去键值两端空白
+        static void _cookiePair( string seg, Map<string,string> m )
+        {
+            Int32 sl = SystemStringLength( seg )
+            if sl == 0
+            {
+                ret
+            }
+            Int32 eq = -1
+            for Int32 k = 0, k < sl, k = k + 1
+            {
+                if SystemStringCharCodeAt( seg, k ) == 61
+                {
+                    eq = k
+                    break
+                }
+            }
+            if eq <= 0
+            {
+                # 无 '=' 或空名（RFC 6265 忽略）
+                ret
+            }
+            Int32 ks = 0
+            Int32 ke = eq
+            while ks < ke && SystemStringCharCodeAt( seg, ks ) == 32
+            {
+                ks = ks + 1
+            }
+            while ke > ks && SystemStringCharCodeAt( seg, ke - 1 ) == 32
+            {
+                ke = ke - 1
+            }
+            if ke <= ks
+            {
+                ret
+            }
+            Int32 vs = eq + 1
+            Int32 ve = sl
+            while vs < ve && SystemStringCharCodeAt( seg, vs ) == 32
+            {
+                vs = vs + 1
+            }
+            while ve > vs && SystemStringCharCodeAt( seg, ve - 1 ) == 32
+            {
+                ve = ve - 1
+            }
+            string key = SystemStringRange( seg, ks, ke )
+            string val = SystemStringRange( seg, vs, ve )
+            m[key] = val
         }
 
         # ── body 三视图 ──
@@ -337,6 +491,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._formParsed.containsKey( name ) == false
             {
                 ret null
@@ -368,6 +523,7 @@ namespace SLang
             {
                 ret defVal
             }
+
             if v == "1" || v == "true" || v == "on"
             {
                 ret true
@@ -398,6 +554,71 @@ namespace SLang
             ret outList
         }
 
+        # ── form 同名多值（P10 补齐 P3 裁剪项，§6.4）──
+
+        # 该字段的全部同名值（按出现序；urlencoded 逐段扫描 + multipart
+        # 普通字段并入平行表；不存在返回空表——调用方 length 判定）。
+        # form(name) 与 formAll 的关系：form 走覆盖语义表——键重复时
+        # 后者覆盖前者（§6.4，末值），同名多值全序须用 formAll(name)。
+        public List<string> formAll( string name )
+        {
+            List<string> outList = new()
+            if this._ensureFormMulti() == false
+            {
+                ret outList
+            }
+
+            if this._formMulti.containsKey( name ) == false
+            {
+                ret outList
+            }
+            List<string> vals = this._formMulti[name]
+            Int32 n = vals.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                outList.add( vals[i] )
+            }
+            ret outList
+        }
+
+        # 惰性构建同名多值表：
+        #   urlencoded → bodyText 逐段扫（不去重，formAll 全序语义）；
+        #   multipart  → _ensureMultipart 后按 _mpFields（后者覆盖语义，
+        #     多值经 _MultipartBody 聚平行表——multipart 普通字段值不解码）
+        bool _ensureFormMulti()
+        {
+            if this._formMulti != null
+            {
+                ret this._formMulti != null
+            }
+            this._formMulti = new()
+            EBodyFormat fmt = this.bodyFormat
+            if fmt == EBodyFormat.Form
+            {
+                BodyParser.collectFormMulti( this.bodyText(), this._formMulti )
+                ret true
+            }
+
+            if fmt == EBodyFormat.Multipart
+            {
+                this._ensureMultipart()
+                if this._mpCode == 0 && this._mpFields != null
+                {
+                    List<string> ks = this._mpFields.keys
+                    Int32 kn = ks.length
+                    for Int32 i = 0, i < kn, i = i + 1
+                    {
+                        string k = ks[i]
+                        List<string> vals = new()
+                        vals.add( this._mpFields[k] )
+                        this._formMulti.add( k, vals )
+                    }
+                    ret true
+                }
+            }
+            ret false
+        }
+
         # 惰性解析 form（urlencoded 直解；multipart 普通字段并入，§4.4）
         bool _ensureForm()
         {
@@ -412,6 +633,7 @@ namespace SLang
                 this._formParsed = BodyParser.parseForm( this.bodyText() )
                 ret true
             }
+
             if fmt == EBodyFormat.Multipart
             {
                 # multipart 普通字段同 form API（§4.4 分流表）
@@ -501,6 +723,7 @@ namespace SLang
             {
                 this._mpFields = mp._fields
             }
+
             if mp._files != null
             {
                 this._mpFiles = mp._files
@@ -517,6 +740,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._pathParams.containsKey( name ) == false
             {
                 ret null
@@ -569,6 +793,7 @@ namespace SLang
             {
                 ret defVal
             }
+
             if Request._isNumeric( v ) == false
             {
                 ret defVal
@@ -585,6 +810,7 @@ namespace SLang
             {
                 this._queryParsed = BodyParser.parseForm( this._rawQuery )
             }
+
             if this._queryParsed.containsKey( name ) == false
             {
                 ret null
@@ -616,6 +842,7 @@ namespace SLang
             {
                 ret defVal
             }
+
             if v == "1" || v == "true" || v == "on"
             {
                 ret true

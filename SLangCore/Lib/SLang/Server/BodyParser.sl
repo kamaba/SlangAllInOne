@@ -96,10 +96,12 @@ namespace SLang
             {
                 ret c - 48
             }
+
             if c >= 65 && c <= 70
             {
                 ret c - 55
             }
+
             if c >= 97 && c <= 102
             {
                 ret c - 87
@@ -156,14 +158,17 @@ namespace SLang
             {
                 ret EBodyFormat.Json
             }
+
             if Net.Uri.eqFold( mime, "application/x-www-form-urlencoded" )
             {
                 ret EBodyFormat.Form
             }
+
             if Net.Uri.eqFold( mime, "multipart/form-data" )
             {
                 ret EBodyFormat.Multipart
             }
+
             if BodyParser._startsWithFold( mime, "text/" )
             {
                 ret EBodyFormat.Text
@@ -245,6 +250,62 @@ namespace SLang
             ret m
         }
 
+        # 同名多值收集（P10 formAll 底座，§6.4）："a=1&a=2&b=x" →
+        # { a: [1,2], b: [x] }（出现序保留，不去重；无 '=' 段跳过）。
+        # 与 parseForm 平行实现（后者 Map 覆盖语义无法携带多值）。
+        # 值类型 List<string>：跨模块点分泛型参数 Front 不受限（模块内
+        # 静态方法形参，Request._formMulti 消费端先拷局部再索引——纪律同 HttpHeaders）
+        static void collectFormMulti( string text, Map<string, List<string> > outMulti )
+        {
+            Int32 len = SystemStringLength( text )
+            if len == 0
+            {
+                ret
+            }
+            Int32 segStart = 0
+            Int32 i = 0
+            while i <= len
+            {
+                if i == len || SystemStringCharCodeAt( text, i ) == 38
+                {
+                    Int32 segLen = i - segStart
+                    if segLen > 0
+                    {
+                        string seg = SystemStringRange( text, segStart, i )
+                        Int32 eq = -1
+                        Int32 sl = SystemStringLength( seg )
+                        for Int32 k = 0, k < sl, k = k + 1
+                        {
+                            if SystemStringCharCodeAt( seg, k ) == 61
+                            {
+                                eq = k
+                                break
+                            }
+                        }
+                        if eq > 0
+                        {
+                            string key = _UrlCodec.decode( SystemStringRange( seg, 0, eq ) )
+                            string val = _UrlCodec.decode( SystemStringRange( seg, eq + 1, sl ) )
+                            List<string> vals = null
+                            if outMulti.containsKey( key )
+                            {
+                                vals = outMulti[key]
+                            }
+
+                            if vals == null
+                            {
+                                vals = new()
+                                outMulti.add( key, vals )
+                            }
+                            vals.add( val )
+                        }
+                    }
+                    segStart = i + 1
+                }
+                i = i + 1
+            }
+        }
+
         # ── 文本辅助（大小写折叠前缀/后缀）──
 
         static bool _startsWithFold( string s, string prefix )
@@ -255,6 +316,7 @@ namespace SLang
             {
                 ret true
             }
+
             if sl < pl
             {
                 ret false
@@ -277,6 +339,7 @@ namespace SLang
             {
                 ret true
             }
+
             if sl < fl
             {
                 ret false
@@ -314,10 +377,12 @@ namespace SLang
                 result._errorCode = 400
                 ret result
             }
+
             if body == null
             {
                 ret result
             }
+
             if body.readableBytes == 0
             {
                 ret result
@@ -528,6 +593,7 @@ namespace SLang
                 vs = vs + 1
                 ve = ve - 1
             }
+
             if ve <= vs
             {
                 ret ""
@@ -596,6 +662,7 @@ namespace SLang
                                 vs = vs + 1
                                 ve = ve - 1
                             }
+
                             if ve <= vs
                             {
                                 ret ""
@@ -604,6 +671,7 @@ namespace SLang
                         }
                     }
                 }
+
                 if segEnd >= vlen
                 {
                     break
@@ -659,6 +727,7 @@ namespace SLang
             {
                 ret 0
             }
+
             if fl > sl
             {
                 ret -1

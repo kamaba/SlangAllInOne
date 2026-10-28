@@ -104,6 +104,9 @@ namespace SLang
     # 每环框架构造 Next 实例（内持下一环索引，§6.9——SL 无方法引用，
     # 框架持索引逐环构造）；尾环透传引擎 _tail（handler 派发 / 404 / 405）。
     # 返回值透传 _tail：true = 连接已收尾（超时断连路径，外层 break）
+    # P10：执行序 = 全局中间件（注册序）→ 路由级中间件（该 route 注册序，
+    # §6.9 裁剪项补齐）→ 尾环。索引空间连续：[0, _globalMw) 全局段、
+    # [_globalMw, _mwCount) 路由段。
     # ============================================================================
     class _Pipeline
     {
@@ -115,9 +118,14 @@ namespace SLang
         Request _req = null
         Response _res = null
         bool _isHead = false
+        # 连接所在监听器 tag（多监听器 v1.1：尾环透传 _tail——405 Allow
+        # 生成按本监听器路由视图）
+        Int32 _tag = 0
         Int32 _mwCount = 0
+        # 全局中间件段长（P10：路由级中间件紧随其后）
+        Int32 _globalMw = 0
 
-        _init_( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead )
+        _init_( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead, Int32 tag )
         {
             this._client = client
             this._cfg = cfg
@@ -126,7 +134,14 @@ namespace SLang
             this._req = req
             this._res = res
             this._isHead = isHead
-            this._mwCount = _PluginHost.middlewareCount()
+            this._tag = tag
+            this._globalMw = _PluginHost.middlewareCount()
+            Int32 routeMw = 0
+            if route != null
+            {
+                routeMw = route._mwCount()
+            }
+            this._mwCount = this._globalMw + routeMw
         }
 
         # 管道入口（第 0 环起）
@@ -135,15 +150,38 @@ namespace SLang
             ret this._runFrom( 0 )
         }
 
-        # 从第 idx 环继续（Next.go 入口）；idx == 中间件数 → 尾环
+        # 从第 idx 环继续（Next.go 入口）；idx == 中间件总数 → 尾环。
+        # idx < _globalMw → 全局表；否则路由段（route 可能为 null——防御
+        # 跳回尾环，未匹配请求（404/405）无路由级中间件）
         bool _runFrom( Int32 idx ) throws
         {
             if idx < this._mwCount
             {
                 # Function 取值先拷局部再调用（HttpHeaders 头注记纪律）
-                function mw = _PluginHost.middlewareAt( idx )
-                Next nx = Next( this, idx + 1 )
-                mw( this._req, this._res, nx )
+                function mw = null
+                if idx < this._globalMw
+                {
+                    mw = _PluginHost.middlewareAt( idx )
+                }
+                else
+                {
+                    RouteInfo rt = this._route
+                    if rt != null
+                    {
+                        mw = rt._mwAt( idx - this._globalMw )
+                    }
+                }
+
+                if mw != null
+                {
+                    Next nx = Next( this, idx + 1 )
+                    mw( this._req, this._res, nx )
+                }
+                else
+                {
+                    # 防御（路由段越界/取空）：直接推进下一环
+                    ret this._runFrom( idx + 1 )
+                }
                 ret false
             }
             Net.TcpStream c = this._client
@@ -153,7 +191,8 @@ namespace SLang
             Response rs = this._res
             Int32 nr = this._noRoute
             bool ih = this._isHead
-            ret HttpServerCore._tail( c, cf, rt, nr, rq, rs, ih )
+            Int32 tg = this._tag
+            ret HttpServerCore._tail( c, cf, rt, nr, rq, rs, ih, tg )
         }
     }
 
@@ -174,6 +213,7 @@ namespace SLang
             {
                 _middlewares = new()
             }
+
             if _plugins == null
             {
                 _plugins = new()

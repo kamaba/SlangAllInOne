@@ -209,6 +209,7 @@ namespace SLang
             {
                 throw ServerError.AlreadyResponded
             }
+
             if text == null || SystemStringLength( text ) == 0
             {
                 ret
@@ -225,6 +226,7 @@ namespace SLang
             {
                 throw ServerError.AlreadyResponded
             }
+
             if payload == null || payload.readableBytes == 0
             {
                 ret

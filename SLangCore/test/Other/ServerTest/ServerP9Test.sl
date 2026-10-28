@@ -132,6 +132,7 @@ ServerP9Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -148,6 +149,7 @@ ServerP9Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -182,6 +184,7 @@ ServerP9Test
                     bodyNeed = 0
                 }
             }
+
             if headerEnd >= 0
             {
                 if headOnly
@@ -225,6 +228,7 @@ ServerP9Test
             any = true
             i = i + 1
         }
+
         if any == false
         {
             ret SystemStringLength( text ) >= headerEnd

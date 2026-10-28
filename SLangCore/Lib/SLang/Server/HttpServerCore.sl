@@ -79,6 +79,22 @@ namespace SLang
         # 跨模块点分类型不能作泛型参数（Front：模板中不允许 . 连接符号）——
         # 连接表用 List<object> + as Net.TcpStream 转型
         static List<object> _conns = null
+        # ── 多监听器（v1.1）：同进程多端口挂载 ──
+        # 监听器表（主监听器 + listen() 扩展监听器；object + as 转型同
+        # _conns 纪律），平行 tag / port 表——连接协程经 _tagOf/_portOf
+        # 身份扫描反查（TcpServer 跨模块多实例安全：C 侧 sid 薄包装）。
+        # 主监听器 tag 恒 = 1；扩展监听器由 _nextTag 分配 2,3,...
+        static List<object> _servers = null
+        static List<Int32> _serverTags = null
+        static List<Int32> _serverPorts = null
+        # listen() 待注册缓冲（未 running 时调用先缓存，start() 统一
+        # bind；stop/reset 清空）
+        static List<string> _pendHosts = null
+        static List<Int32> _pendPorts = null
+        static List<Int32> _pendTags = null
+        # 监听器 tag 发生器（主监听器 = 1 固定；listen() 分配 2 起；
+        # stop 重置 2）
+        static Int32 _nextTag = 2
         # 监听参数构造期提取为单层静态字段（this._cfg.host 双层链求值坑规避）
         static string _listenHost = ""
         static Int32 _listenPort = 0
@@ -113,6 +129,20 @@ namespace SLang
             {
                 _conns = new()
             }
+
+            if _servers == null
+            {
+                _servers = new()
+                _serverTags = new()
+                _serverPorts = new()
+            }
+
+            if _pendHosts == null
+            {
+                _pendHosts = new()
+                _pendPorts = new()
+                _pendTags = new()
+            }
         }
 
         # 清空路由表与中间件/插件（stop 后重新配置用；连接表由 stop 清理）；
@@ -125,6 +155,10 @@ namespace SLang
             _hookOnStart = null
             _hookOnStop = null
             _hookOnError = null
+            # 多监听器待注册缓冲清空（stop 后重新配置用）
+            _pendHosts = new()
+            _pendPorts = new()
+            _pendTags = new()
         }
 
         # ── 中间件/插件（P2；SLang.Server.use 转发）──
@@ -233,6 +267,7 @@ namespace SLang
             {
                 throw ServerError.DuplicateRoute
             }
+
             # 文档路由挂载（P3，§4.8/§6.10：start 时自动挂 /docs +
             # /openapi.json；用户已注册同路径则让位——用户优先）
             if _docsEnabled
@@ -248,12 +283,23 @@ namespace SLang
             {
                 host = "0.0.0.0"
             }
+
             if SystemStringLength( host ) == 0
             {
                 host = "0.0.0.0"
             }
             _server = Net.Tcp.listenAddress( host, lport )
             _running = true
+            # 主监听器入表（tag 恒 = 1；多监听器 v1.1）
+            if _servers == null
+            {
+                _servers = new()
+                _serverTags = new()
+                _serverPorts = new()
+            }
+            _servers.add( _server )
+            _serverTags.add( 1 )
+            _serverPorts.add( lport )
             # accept 循环协程：闭包零捕获（NetConcurrentTest.ef 先例），
             # 状态全走静态字段
             Net.TcpServer srv = _server
@@ -262,6 +308,19 @@ namespace SLang
                 HttpServerCore._acceptLoop( a as Net.TcpServer )
             }
             _acceptTask = Coroutine.spawnClosure1( f, srv )
+            # 启动 listen() 在 start 前登记的扩展监听器（缓冲消费；tag 用
+            # 登记期分配值——用户已持 ServerListener 句柄打 scope，不可换号）
+            Int32 pn = _pendHosts.length
+            for Int32 i = 0, i < pn, i = i + 1
+            {
+                string ph = _pendHosts[i]
+                Int32 pp = _pendPorts[i]
+                Int32 pt = _pendTags[i]
+                HttpServerCore._bindListener( ph, pp, pt )
+            }
+            _pendHosts.clear()
+            _pendPorts.clear()
+            _pendTags.clear()
             # 插件生命周期钩子（start 后、accept 循环已在跑——单协程调度
             # 下无竞态；§6.9）
             _PluginHost.notifyStart()
@@ -278,6 +337,112 @@ namespace SLang
             }
         }
 
+        # ── 多监听器（v1.1）：同进程扩展端口挂载 ──
+
+        # 登记扩展监听器（SLang.HttpServer.listen 转发）。主监听器 = 1
+        # 固定，本 API 分配 2,3,... 并返回 tag；未 running 时入缓冲
+        # （start() 统一 bind，tag 不变），running 中立即 bind。
+        public static Int32 listen( string host, Int32 port ) throws
+        {
+            if port <= 0 || port > 65535
+            {
+                throw ServerError.InvalidConfig
+            }
+
+            # host 空值兜底（缓冲存值与 bind 取值同源）
+            if host == null
+            {
+                host = "0.0.0.0"
+            }
+
+            if SystemStringLength( host ) == 0
+            {
+                host = "0.0.0.0"
+            }
+
+            if _running
+            {
+                Int32 rt = _nextTag
+                _nextTag = _nextTag + 1
+                HttpServerCore._bindListener( host, port, rt )
+                ret rt
+            }
+
+            if _pendHosts == null
+            {
+                _pendHosts = new()
+                _pendPorts = new()
+                _pendTags = new()
+            }
+            Int32 tag = _nextTag
+            _nextTag = _nextTag + 1
+            _pendHosts.add( host )
+            _pendPorts.add( port )
+            _pendTags.add( tag )
+            ret tag
+        }
+
+        # 立即绑定一个扩展监听器并启动其 accept 循环（running 中 listen /
+        # start() 缓冲消费共用；tag 由调用方给定——缓冲登记期分配值不可换）
+        static void _bindListener( string host, Int32 port, Int32 tag ) throws
+        {
+            Net.TcpServer srv = Net.Tcp.listenAddress( host, port )
+            if _servers == null
+            {
+                _servers = new()
+                _serverTags = new()
+                _serverPorts = new()
+            }
+            _servers.add( srv )
+            _serverTags.add( tag )
+            _serverPorts.add( port )
+            # accept 循环协程（闭包零捕获；主监听器同款）
+            Net.TcpServer s = srv
+            function f = function( object a )
+            {
+                HttpServerCore._acceptLoop( a as Net.TcpServer )
+            }
+            Coroutine.spawnClosure1( f, s )
+        }
+
+        # 监听器身份 → tag（列表身份扫描；未命中兜底 1 = 主监听器）
+        static Int32 _tagOf( Net.TcpServer srv )
+        {
+            if _servers != null
+            {
+                Int32 n = _servers.length
+                for Int32 i = 0, i < n, i = i + 1
+                {
+                    object so = _servers[i]
+                    if so == srv
+                    {
+                        Int32 t = _serverTags[i]
+                        ret t
+                    }
+                }
+            }
+            ret 1
+        }
+
+        # 监听器身份 → port（_tagOf 同款扫描；未命中兜底配置端口）
+        static Int32 _portOf( Net.TcpServer srv )
+        {
+            if _servers != null
+            {
+                Int32 n = _servers.length
+                for Int32 i = 0, i < n, i = i + 1
+                {
+                    object so = _servers[i]
+                    if so == srv
+                    {
+                        Int32 p = _serverPorts[i]
+                        ret p
+                    }
+                }
+            }
+            ret _listenPort
+        }
+
         # 停止：关监听 + 关全部在途连接（各连接协程随读失败/EOF 退出）
         public static void stop() throws
         {
@@ -286,6 +451,25 @@ namespace SLang
                 throw ServerError.NotRunning
             }
             _running = false
+            # 关全部监听器（主 + 扩展；各 accept 循环随 close 抛错退出）
+            if _servers != null
+            {
+                Int32 sn = _servers.length
+                for Int32 i = 0, i < sn, i = i + 1
+                {
+                    object so = _servers[i]
+                    Net.TcpServer s = so as Net.TcpServer
+                    label closeSrv
+                    {
+                        s.close()
+                    }
+                    catch { }
+                }
+                _servers.clear()
+                _serverTags.clear()
+                _serverPorts.clear()
+            }
+            _nextTag = 2
             if _server != null
             {
                 _server.close()
@@ -349,12 +533,14 @@ namespace SLang
                     else
                     {
                         # 连接处理闭包零捕获（NetConcurrentTest.ef 先例）：
-                        # client 经实参传值，状态全走静态字段
-                        function f = function( object a )
+                        # client + 监听器身份均经实参传值（多监听器 v1.1：
+                        # spawnClosure2 二实参——tag/port 由 _tagOf/_portOf
+                        # 身份扫描反查），状态全走静态字段
+                        function f = function( object a, object b )
                         {
-                            HttpServerCore._runConn( a as Net.TcpStream )
+                            HttpServerCore._runConn( a as Net.TcpStream, b as Net.TcpServer )
                         }
-                        Coroutine.spawnClosure1( f, client )
+                        Coroutine.spawnClosure2( f, client, srv )
                     }
                 }
                 catch
@@ -384,13 +570,14 @@ namespace SLang
             catch { }
         }
 
-        # 连接处理入口（连接协程体）：异常兜底静默（对端异常断开 / 写失败等）
-        static void _runConn( Net.TcpStream c )
+        # 连接处理入口（连接协程体）：异常兜底静默（对端异常断开 / 写失败等）。
+        # srv = 接入连接的监听器（多监听器 v1.1：tag/port 由身份扫描反查）
+        static void _runConn( Net.TcpStream c, Net.TcpServer srv )
         {
             _conns.add( c )
             label connBlock
             {
-                HttpServerCore._handleConnection( c )
+                HttpServerCore._handleConnection( c, srv )
             }
             catch
             {
@@ -400,7 +587,7 @@ namespace SLang
 
         # ── 内部：连接处理（每连接一协程；keep-alive 循环）──
 
-        static void _handleConnection( Net.TcpStream client )
+        static void _handleConnection( Net.TcpStream client, Net.TcpServer srv )
         {
             ServerConfig cfg = _cfg
             client.setReadTimeout( cfg.keepAliveTimeoutMs )
@@ -410,6 +597,10 @@ namespace SLang
                 # 抛 NetError.Timeout → 写侧异常上抛 → 引擎断连路径
                 client.setWriteTimeout( cfg.writeTimeoutMs )
             }
+            # 本连接所在监听器 tag / 端口（连接生命周期不变；多监听器 v1.1
+            # ——路由可见性按 tag 过滤，req.localPort 供 handler 分流）
+            Int32 tag = HttpServerCore._tagOf( srv )
+            Int32 lport = HttpServerCore._portOf( srv )
             ByteBuffer buf = ByteBuffer()
             while true
             {
@@ -433,10 +624,12 @@ namespace SLang
                 {
                     break
                 }
+
                 if r == null
                 {
                     break
                 }
+
                 if r._errorCode != 0
                 {
                     # 协议层错误：应答后优雅断连（431/413/400）。
@@ -456,7 +649,7 @@ namespace SLang
                 # 命中 streamBody=true 的 HTTP 路由：跳过 body 预读，连接 +
                 # 预读残留经 Request._bindStream 移交 handler；未命中（含
                 # 404/405/WS）走第二遍全量解析补 body（见 1b）
-                RouteInfo preRoute = Router.match( r._method, r._path )
+                RouteInfo preRoute = Router.match( r._method, r._path, tag )
                 if preRoute != null && preRoute.streamBody && HttpServerCore._isWsUpgrade( r ) == false
                 {
                     r._body = null
@@ -497,7 +690,7 @@ namespace SLang
                 # 未命中 WS 路由 → 400；握手失败 → 400。该连接退出 keep-alive 循环
                 if HttpServerCore._isWsUpgrade( r )
                 {
-                    RouteInfo wsRoute = Router.findWs( r._path )
+                    RouteInfo wsRoute = Router.findWs( r._path, tag )
                     if wsRoute == null
                     {
                         HttpServerCore._writeSimple( client, 400, HttpServerCore._errorBody( 400 ) )
@@ -516,14 +709,14 @@ namespace SLang
                 # ---- 3) 路由匹配（HEAD 视同 GET；§6.2）----
                 bool isHead = Net.Uri.eqFold( r._method, "HEAD" )
                 bool keepAlive = HttpServerCore._wantKeepAlive( r )
-                RouteInfo route = Router.match( r._method, r._path )
+                RouteInfo route = Router.match( r._method, r._path, tag )
                 # 未命中判定（404 / 405）不再提前应答——统一经中间件管道
                 # 尾环处理（P2：staticFiles / CORS 预检依赖未匹配请求同样
                 # 过管道，§6.9）
                 Int32 noRoute = 0
                 if route == null
                 {
-                    RouteInfo pathHit = Router.findBest( r._path )
+                    RouteInfo pathHit = Router.findBest( r._path, tag )
                     if pathHit == null
                     {
                         noRoute = 404
@@ -537,6 +730,8 @@ namespace SLang
                 # ---- 4) 构造上下文（SERVER_DESIGN.md §6.1）----
                 Map<string,string> pathParams = Router.extractParams( route, r._path )
                 Request req = Request( r._method, r._path, r._rawQuery, r._headers, r._body, client.remoteAddress, client.remotePort, pathParams )
+                # 本请求进入的监听端口（多监听器 v1.1；构造签名不动，构造后赋值）
+                req.localPort = lport
                 # 请求侧流式绑定（P5，§6.6）：streamBody 路由把连接 + 预读
                 # 残留移交 handler（bodyStream() 消费；收尾 drain 见 6a）
                 if preRoute != null && preRoute.streamBody && req._body == null
@@ -578,7 +773,7 @@ namespace SLang
                 bool connKilled = false
                 label pipeBlock
                 {
-                    connKilled = HttpServerCore._runPipeline( client, cfg, route, noRoute, req, res, isHead )
+                    connKilled = HttpServerCore._runPipeline( client, cfg, route, noRoute, req, res, isHead, tag )
                 }
                 catch e
                 {
@@ -691,6 +886,7 @@ namespace SLang
                             drainOk = false
                         }
                     }
+
                     if drainOk
                     {
                         HttpBodyReader drainer = req.bodyStream()
@@ -717,6 +913,7 @@ namespace SLang
                             drainOk = false
                         }
                     }
+
                     if drainOk == false
                     {
                         # 排干失败（截断/超限/multipart 结构残缺）：断连止损
@@ -744,29 +941,37 @@ namespace SLang
 
         # ── 管道与尾环（P2，§6.9 / §6.1）──
 
-        # 管道入口：无中间件直通尾环；有则 _Pipeline 逐环（Next.go 链）。
+        # 管道入口：无任何中间件（全局 + 路由级）直通尾环；有则 _Pipeline
+        # 逐环（Next.go 链）。P10：路由级中间件参与判定——仅全局为空但
+        # 路由级非空同样走 _Pipeline。
         # 返回 true = 尾环已自行断连收尾（handler 超时路径，调用方 break）
-        static bool _runPipeline( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead ) throws
+        static bool _runPipeline( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead, Int32 tag ) throws
         {
-            if _PluginHost.middlewareCount() == 0
+            Int32 routeMw = 0
+            if route != null
             {
-                ret HttpServerCore._tail( client, cfg, route, noRoute, req, res, isHead )
+                routeMw = route._mwCount()
             }
-            _Pipeline pipe = _Pipeline( client, cfg, route, noRoute, req, res, isHead )
+
+            if _PluginHost.middlewareCount() == 0 && routeMw == 0
+            {
+                ret HttpServerCore._tail( client, cfg, route, noRoute, req, res, isHead, tag )
+            }
+            _Pipeline pipe = _Pipeline( client, cfg, route, noRoute, req, res, isHead, tag )
             ret pipe._run()
         }
 
         # 尾环：handler 协程派发（§6.1）或 404/405 应答（经中间件后的终点；
         # res 终端写出由调用方统一处理）。
         # 返回 true = 超时路径已断连收尾（调用方 break）
-        static bool _tail( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead ) throws
+        static bool _tail( Net.TcpStream client, ServerConfig cfg, RouteInfo route, Int32 noRoute, Request req, Response res, bool isHead, Int32 tag ) throws
         {
             if route == null
             {
                 if noRoute == 405
                 {
                     # 路径命中但动词不符：405 + Allow（Allow 头列出可用动词）
-                    res.status( 405 ).header( "Allow", Router.allowMethods( req.path ) ).rawJson( HttpServerCore._errorBody( 405 ) )
+                    res.status( 405 ).header( "Allow", Router.allowMethods( req.path, tag ) ).rawJson( HttpServerCore._errorBody( 405 ) )
                 }
                 else
                 {
@@ -793,6 +998,7 @@ namespace SLang
             {
                 timedOut = !Coroutine.waitTimeout( task, cfg.handlerTimeoutMs )
             }
+
             if timedOut
             {
                 if res.isStreaming
@@ -882,6 +1088,7 @@ namespace SLang
             {
                 req._body.release()
             }
+
             if req._mpFiles != null
             {
                 Int32 n = req._mpFiles.length
@@ -985,6 +1192,7 @@ namespace SLang
                 {
                     ret false
                 }
+
                 if HttpServerCore._containsFold( conn, "keep-alive" )
                 {
                     ret true
@@ -1026,6 +1234,17 @@ namespace SLang
                     continue
                 }
                 head = head + hn + ": " + res._headers.valueAt( i ) + "\r\n"
+            }
+            # Set-Cookie 逐条独立成行（P10：Set-Cookie 多行重复语义，
+            # 不走 HttpHeaders 覆盖；res.setCookie 暂存）
+            List<string> resCookies = res._cookies
+            if resCookies != null
+            {
+                Int32 cn = resCookies.length
+                for Int32 i = 0, i < cn, i = i + 1
+                {
+                    head = head + "Set-Cookie: " + resCookies[i] + "\r\n"
+                }
             }
             head = head + "\r\n"
             client.write( ByteBuffer.fromString( head ) )
@@ -1104,82 +1323,102 @@ namespace SLang
             {
                 ret "OK"
             }
+
             if code == 201
             {
                 ret "Created"
             }
+
             if code == 204
             {
                 ret "No Content"
             }
+
             if code == 301
             {
                 ret "Moved Permanently"
             }
+
             if code == 302
             {
                 ret "Found"
             }
+
             if code == 304
             {
                 ret "Not Modified"
             }
+
             if code == 400
             {
                 ret "Bad Request"
             }
+
             if code == 401
             {
                 ret "Unauthorized"
             }
+
             if code == 403
             {
                 ret "Forbidden"
             }
+
             if code == 404
             {
                 ret "Not Found"
             }
+
             if code == 405
             {
                 ret "Method Not Allowed"
             }
+
             if code == 409
             {
                 ret "Conflict"
             }
+
             if code == 413
             {
                 ret "Payload Too Large"
             }
+
             if code == 415
             {
                 ret "Unsupported Media Type"
             }
+
             if code == 416
             {
                 ret "Range Not Satisfiable"
             }
+
             if code == 429
             {
                 ret "Too Many Requests"
             }
+
             if code == 431
             {
                 ret "Request Header Fields Too Large"
             }
+
             if code == 500
             {
                 ret "Internal Server Error"
             }
+
             if code == 501
             {
                 ret "Not Implemented"
             }
+
             if code == 503
             {
                 ret "Service Unavailable"
             }
+
             if code == 504
             {
                 ret "Gateway Timeout"
@@ -1342,6 +1581,7 @@ namespace SLang
             {
                 chunked = HttpServerCore._containsFold( te, "chunked" )
             }
+
             if stopAtHead
             {
                 # P5 请求侧流式：头区即止——元信息带出，body 由 handler
@@ -1362,6 +1602,7 @@ namespace SLang
                 }
                 ret result
             }
+
             if chunked
             {
                 ByteBuffer body = ByteBuffer()
@@ -1385,11 +1626,13 @@ namespace SLang
                         result._errorCode = 400
                         ret result
                     }
+
                     if cl > bodyLimit
                     {
                         result._errorCode = 413
                         ret result
                     }
+
                     if cl > 0
                     {
                         Int32 need = cl.toInt32()
@@ -1430,6 +1673,7 @@ namespace SLang
             {
                 chunked = HttpServerCore._containsFold( te, "chunked" )
             }
+
             if chunked
             {
                 ByteBuffer body = ByteBuffer()
@@ -1452,11 +1696,13 @@ namespace SLang
                     r._errorCode = 400
                     ret r
                 }
+
                 if cl > bodyLimit
                 {
                     r._errorCode = 413
                     ret r
                 }
+
                 if cl > 0
                 {
                     Int32 need = cl.toInt32()
@@ -1493,6 +1739,7 @@ namespace SLang
                 {
                     ret 400
                 }
+
                 if size == 0
                 {
                     # trailer 头直到空行
@@ -1503,6 +1750,7 @@ namespace SLang
                         {
                             ret 400
                         }
+
                         if SystemStringLength( HttpServerCore._stripEol( t ) ) == 0
                         {
                             break
@@ -1585,6 +1833,7 @@ namespace SLang
                 {
                     ret null
                 }
+
                 if buf.readableBytes > 65536
                 {
                     throw Net.HttpError.Protocol
@@ -1602,6 +1851,7 @@ namespace SLang
             {
                 len = len - 1
             }
+
             if len > 0 && SystemStringCharCodeAt( line, len - 1 ) == 13
             {
                 len = len - 1
@@ -1705,11 +1955,13 @@ namespace SLang
                 {
                     ret -1
                 }
+
                 # 溢出守卫：v*10+d 不越 Int64 上限（9223372036854775807）
                 if v > 922337203685477580
                 {
                     ret -1
                 }
+
                 if v == 922337203685477580 && c > 55
                 {
                     ret -1
@@ -1728,6 +1980,7 @@ namespace SLang
             {
                 ret true
             }
+
             if nl > hl
             {
                 ret false
@@ -1762,6 +2015,7 @@ namespace SLang
             {
                 ret true
             }
+
             if sl < pl
             {
                 ret false

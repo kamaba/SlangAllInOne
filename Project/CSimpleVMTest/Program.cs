@@ -52,6 +52,7 @@ internal static class Program
         // 命名用例（原 CSimpleVMTest）
         ("NullFast",                   Path.Combine("SLangCore", "test", "Other", "NullFastTest", "ProjectTest")),
         ("JsonTest",                   Path.Combine("SLangCore", "test", "Other", "JsonTest", "JsonTest")),
+        ("CommentSpaceNegTest",        Path.Combine("SLangCore", "test", "Other", "CommentSpaceNegTest", "CommentSpaceNegTest")),
         ("PlatformAotNegTest",         Path.Combine("SLangCore", "test", "Other", "PlatformAotNegTest", "PlatformAotNegTest")),
         ("PlatformNegTest",            Path.Combine("SLangCore", "test", "Other", "PlatformNegTest", "PlatformNegTest")),
         ("PlatformOverrideNegTest",    Path.Combine("SLangCore", "test", "Other", "PlatformOverrideNegTest", "PlatformOverrideNegTest")),
@@ -402,6 +403,7 @@ internal static class Program
                 string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))
                     CopyDirectoryRecursive(refPlugins, Path.Combine(refDest, "plugin"));
+                StageNativeDlls(name, srcDir, refDest);
                 if (any)
                     Console.WriteLine($"[stage] referenced module '{name}' staged into package");
             }
@@ -410,6 +412,71 @@ internal static class Program
         {
             // 引用联动拷贝失败不阻断主流程（C VM 装载期自会按回退链解析）
             Console.WriteLine("[stage] reference staging failed: " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// 补拷引用模块关联的原生 DLL（如 SLangMysql -&gt; sl_mysql_lib.dll）到 staged 目录。
+    /// 清单取自模块 json：dllImports[].path（FFI 绑定库，@DllStaticImport 静态预载用，
+    /// "static" 非空时 cvm 装配期按 &lt;模块目录&gt;\&lt;basename&gt; 平铺回退查找）与
+    /// vmDllImports[].name（cvm 扩展 DLL 预载，同样平落模块目录）。*.module.* 通配
+    /// 不匹配 DLL，漏拷即预载落空 → SL 兜底函数体生效（clientVersion 返回 0）。
+    /// staged 目录即该模块装载后的包目录（sl_dirname_from_path），与 cvm 查找位一致。
+    /// 单文件失败仅提示不阻断（与 stage 整体语义一致）。
+    /// </summary>
+    static void StageNativeDlls(string name, string srcDir, string refDest)
+    {
+        string? manifest = Path.Combine(refDest, name + ".module.json");
+        if (!File.Exists(manifest))
+            manifest = Path.Combine(srcDir, name + ".module.json");
+        if (!File.Exists(manifest))
+            return;
+        try
+        {
+            var dlls = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+            using JsonDocument doc = JsonDocument.Parse(File.ReadAllText(manifest));
+            if (doc.RootElement.TryGetProperty("dllImports", out JsonElement imports))
+            {
+                foreach (JsonElement di in imports.EnumerateArray())
+                {
+                    // 只认 "static" 非空条目（cvm vm_sys_ffi_static_lib_register 同语义；
+                    // static 空的是普通 SL 模块引用（如 ../Lib/Std.dll），非原生库
+                    if (!di.TryGetProperty("path", out JsonElement p) ||
+                        !di.TryGetProperty("static", out JsonElement s))
+                        continue;
+                    if (string.IsNullOrEmpty(s.GetString()))
+                        continue;
+                    string path = p.GetString() ?? "";
+                    if (path.Length > 0)
+                        dlls.Add(Path.GetFileName(path));
+                }
+            }
+            if (doc.RootElement.TryGetProperty("vmDllImports", out JsonElement vmDlls))
+            {
+                foreach (JsonElement vm in vmDlls.EnumerateArray())
+                {
+                    string? n = vm.ValueKind == JsonValueKind.Object
+                        ? (vm.TryGetProperty("name", out JsonElement ne) ? ne.GetString() : null)
+                        : vm.GetString();
+                    if (!string.IsNullOrEmpty(n))
+                        dlls.Add(Path.GetFileName(n));
+                }
+            }
+            foreach (string dll in dlls)
+            {
+                string dllSrc = Path.Combine(srcDir, dll);
+                if (!File.Exists(dllSrc))
+                {
+                    Console.WriteLine($"[stage] native dll not found in export dir, skipped: {dll}");
+                    continue;
+                }
+                File.Copy(dllSrc, Path.Combine(refDest, dll), overwrite: true);
+                Console.WriteLine($"[stage] native dll staged: {name}\\{dll}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[stage] native dll staging failed: " + ex.Message);
         }
     }
 
@@ -531,6 +598,18 @@ internal static class Program
 
     private static readonly NegativeFrontCase[] s_negativeFrontCases = new[]
     {
+        new NegativeFrontCase
+        {
+            ArgName = "CommentSpaceNegTest",
+            ExportModuleName = "CommentSpaceNegTest",
+            // compile.isForceSpaceAfterSharp=true: 3 个无空格行注释
+            // (文件级独立 / _main_ 内独立 / 语句后尾随) 各拦截一次；
+            // 块注释 #!...!# 与合规的 "# 注释" 不产生 20120
+            ExpectedLids = new[]
+            {
+                ("TokenLexerCommentSpaceRequired", 3),
+            }
+        },
         new NegativeFrontCase
         {
             ArgName = "InlineLambdaForbiddenTest",

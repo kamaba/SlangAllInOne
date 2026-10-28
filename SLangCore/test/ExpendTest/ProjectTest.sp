@@ -33,6 +33,7 @@ Project
         MiTest.fun()
         AttributeExcludeTest.fun()
         AttributeRuntimeTest.fun()
+        InstanceAttrTest.fun()
         MqttTest.fun()
         # SLangServer P1~P4.5 验收已迁出（2026-10-25）：Server/* 六件 →
         # test/Other/ServerTest/ 独立用例集（宿主选择器 ServerTest）

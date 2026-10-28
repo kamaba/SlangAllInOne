@@ -69,6 +69,7 @@ ServerP1Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -85,6 +86,7 @@ ServerP1Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -119,6 +121,7 @@ ServerP1Test
                     bodyNeed = 0
                 }
             }
+
             if headerEnd >= 0
             {
                 if headOnly
@@ -162,6 +165,7 @@ ServerP1Test
             any = true
             i = i + 1
         }
+
         if any == false
         {
             ret SystemStringLength( text ) >= headerEnd
@@ -890,6 +894,7 @@ class P1WsClient
             {
                 ret null
             }
+
             if flen > 0
             {
                 skip = false

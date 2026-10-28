@@ -1,4 +1,4 @@
-{
+﻿{
   "project":
   {
     "name": "SpecialTest",
@@ -172,12 +172,12 @@
   ],
   "dllImports": [
     {
-      "path": "../../source/CLangdll/x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "CLangdll", "static": "CLangdll",
+      "path": "../../../x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "CLangdll", "static": "CLangdll",
       "functions": [
         { "name": "libaddfunc", "symbol": "simplelanguage_addtest", "sig": "i32,i32->i32" }
       ]
     },
-    { "path": "../../source/CLangdll/x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "cl" }
+    { "path": "../../../x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "cl" }
   ],
   "references": [
     { "path": "./lib/Core.module.slb" },

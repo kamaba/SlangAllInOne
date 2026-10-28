@@ -23,6 +23,7 @@
   "compileFiles": {
     "files": [
       { "path": "HelloWorld.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "EqBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "Fibonacci.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "Loop.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "Levenshtein.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },

@@ -84,6 +84,7 @@ ServerP3Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -101,6 +102,7 @@ ServerP3Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -172,6 +174,7 @@ ServerP3Test
             {
                 d = c - 55
             }
+
             if d < 0
             {
                 ret -1
@@ -203,6 +206,7 @@ ServerP3Test
             v = v * 10 + ( c - 48 )
             any = true
         }
+
         if any == false
         {
             ret -1
@@ -614,11 +618,7 @@ ServerP3Test
         # a) GET /swagger → 200 + 自研 index（外链 bundle.js / swagger-ui.css /
         #    openapi.json 三引用齐全）
         string r1 = rawReq( 19436, "GET /swagger HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n" )
-        bool idxOk = sfFind( r1, "200" ) >= 0
-            && sfFind( r1, "/swagger/swagger-ui-bundle.js" ) >= 0
-            && sfFind( r1, "/swagger/swagger-ui.css" ) >= 0
-            && sfFind( r1, "/openapi.json" ) >= 0
-            && sfFind( r1, "text/html" ) >= 0
+        bool idxOk = sfFind( r1, "200" ) >= 0 && sfFind( r1, "/swagger/swagger-ui-bundle.js" ) >= 0 && sfFind( r1, "/swagger/swagger-ui.css" ) >= 0 && sfFind( r1, "/openapi.json" ) >= 0 && sfFind( r1, "text/html" ) >= 0
         ServerP3Test.check( "T7a /swagger 自研 index（外链 dist 资产 + openapi.json）", idxOk )
 
         # b) GET /swagger/swagger-ui.css → 200 + text/css（dist 直出 MIME）
@@ -815,6 +815,7 @@ class P3RawClient
             {
                 ret r
             }
+
             if SystemStringLength( line ) == 0
             {
                 headDone = true

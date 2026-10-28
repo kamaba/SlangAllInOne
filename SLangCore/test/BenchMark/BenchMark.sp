@@ -9,7 +9,7 @@ Project
 
         #HelloWorld.fun()
         Fibonacci.fun()
-        
+        EqBench.fun()
         Loop.fun()
         Levenshtein.fun()
         DataTypes.fun()

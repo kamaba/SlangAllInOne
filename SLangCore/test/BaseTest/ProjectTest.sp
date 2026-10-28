@@ -57,7 +57,6 @@ Project
         
         EnumTest.fun()
         MonitorTest.fun()
-        #ExitTestNS.ExitTest.fun()
         
         
         EnvironmentTest.fun()
@@ -77,7 +76,7 @@ Project
         IfelseTest.fun()
         NSClosureTest.ClosureTest.fun()
         NSMethodRefTest.MethodRefTest.fun()
-        #PtrTest.fun()
+        PtrTest.fun()
         
 
         MemberFunction1Test.fun()
@@ -103,6 +102,7 @@ Project
 
         nowMs = Environment.sys.nowMillis() - nowMs
         SystemPrintln("===== ProjectTest _main_ end [$nowMs.toString() ms]=====")
+        ExitTestNS.ExitTest.fun()
     }
     _before_()
     {

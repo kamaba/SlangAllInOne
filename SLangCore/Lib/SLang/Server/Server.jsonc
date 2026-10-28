@@ -56,7 +56,8 @@
     }
   },
   // G8 依赖边界（SERVER_DESIGN.md §1.1）：references 白名单仅 Core / Std；
-  // 禁引 Math / Render / Tensora / SLMysql / 插件体系 / 任何 native DLL。
+  // 禁引 Math / Render / Tensora / SLangMysql / 插件体系 / 任何 native DLL。
+  // （MySQL 集成由用例集 ServerMysqlTest 承担，服务框架自身保持零 DB 依赖。）
   // references 用源码目录形态（../../Core，Std.jsonc 同款）；P0 已验证可编译可运行。
   "references": [
     { "path": "../../Core", "name": "Core" },
@@ -82,6 +83,7 @@
       { "class": "RouteParam" },
       { "class": "RouteResp" },
       { "class": "RouteGroup" },
+      { "class": "ServerListener" },
       { "class": "Request" },
       { "class": "Response" },
       { "class": "ApiResult" },

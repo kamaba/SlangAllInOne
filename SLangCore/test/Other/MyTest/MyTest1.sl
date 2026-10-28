@@ -28,6 +28,7 @@ MyTest1
     static fun()
     {
         spawn WaitTimeaa()
+        spawn Waitimeabbb();
         #Coroutine.yieldNow()
         #!
         # [探针1] 分流一直传: 函数值变量实参在 spawn 点立即求值, probe 应为 0/100/200

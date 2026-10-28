@@ -85,6 +85,7 @@ ServerP2Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -101,6 +102,7 @@ ServerP2Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -134,6 +136,7 @@ ServerP2Test
             {
                 d = c - 55
             }
+
             if d < 0
             {
                 ret -1
@@ -655,6 +658,7 @@ class P2RawClient
             {
                 ret r
             }
+
             if SystemStringLength( line ) == 0
             {
                 headDone = true
@@ -724,6 +728,7 @@ class P2RawClient
                 }
                 need = v
             }
+
             if need > 0
             {
                 r._body = this.readN( need )
@@ -854,6 +859,7 @@ class P2WsClient
             {
                 ret null
             }
+
             if flen > 0
             {
                 skip = false

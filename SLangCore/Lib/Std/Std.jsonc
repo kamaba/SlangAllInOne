@@ -65,12 +65,14 @@
       { "path": "Isolate/Isolate.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Isolate/StreamBridge.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "FFI/Library.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "FFI/Struct.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "GPU/GPU.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Zip/Zip.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Zip/GZip.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Base64.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Sha1.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Sha256.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Encoding/Md5.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Encoding.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 }
     ]
   },
@@ -210,7 +212,8 @@
       { "namespace": "FFI", "children":
          [
             { "class": "Library" },
-            { "class": "StaticLibrary" }
+            { "class": "StaticLibrary" },
+            { "class": "Struct" }
          ]
       },
       { "namespace": "Zip", "children":
@@ -233,6 +236,9 @@
       // ---- Std/Encoding/Sha256.sl：根级注册（同上）----
       { "enum": "Sha256Error" },
       { "class": "Sha256" },
+      // ---- Std/Encoding/Md5.sl：根级注册（同上）----
+      { "enum": "Md5Error" },
+      { "class": "Md5" },
       { "enum": "EncodingCode" },
       { "enum": "EncodingError" },
       { "class": "Encoding" },
@@ -400,6 +406,12 @@
     { "name": "SystemFFICreateCallback",  "returnType": "Int64",   "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_create_callback" },
     { "name": "SystemFFIFreeCallback",    "returnType": "bool",    "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_free_callback" },
     { "name": "SystemFFIMakeFunction",    "returnType": "Function", "params": ["Int64", "string"], "isVariadic": true, "cvmFunction": "vm_sys_ffi_make_function" },
+    { "name": "SystemFFIStructDefine",     "returnType": "Int32",   "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_define" },
+    { "name": "SystemFFIStructSize",       "returnType": "Int32",   "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_size" },
+    { "name": "SystemFFIStructAlloc",      "returnType": "Int64",   "params": ["Int32"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_alloc" },
+    { "name": "SystemFFIStructFree",       "returnType": "bool",    "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_free" },
+    { "name": "SystemFFIStructMarshalOut", "returnType": "Int64",   "params": ["object", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_marshal_out" },
+    { "name": "SystemFFIStructMarshalIn",  "returnType": "bool",    "params": ["Int64", "Int32", "object"], "isVariadic": false, "cvmFunction": "vm_sys_ffi_struct_marshal_in" },
     // ---- Component calls (Std/Component.sl；探针 Array<T>(0) 携带目标类型 T) ----
     { "name": "SystemComponentGetComponent",             "returnType": "object", "params": ["object", "object"],       "isVariadic": false, "cvmFunction": "vm_sys_component_get_component" },
     { "name": "SystemComponentGetComponentByType",        "returnType": "object", "params": ["object", "object"],       "isVariadic": false, "cvmFunction": "vm_sys_component_get_component_by_type" },
@@ -434,6 +446,10 @@
     // SystemHmacSha256 实参序（SL 调用形态）：keyId, srcId（栈右起弹出）。
     { "name": "SystemSha256",                  "returnType": "Int64", "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_sha256_digest" },
     { "name": "SystemHmacSha256",              "returnType": "Int64", "params": ["Int64", "Int64"], "isVariadic": false, "cvmFunction": "vm_sys_hmac_sha256" },
+    // ---- MD5 RFC 1321 calls (Std/Encoding/Md5.sl, core: sl_core_md5.c) ----
+    // 摘要写入新 16 字节 ByteBuffer（byte_buffer 注册表项），失败 0。
+    // 主要消费方：slang-server Security 密码兼容（蓝本 sys_user.password = MD5(pwd)）。
+    { "name": "SystemMd5",                     "returnType": "Int64", "params": ["Int64"], "isVariadic": false, "cvmFunction": "vm_sys_md5_digest" },
     // ---- crypto random fill (lib: sys_random.c, 消费方 Std/Net/Websocket.sl) ----
     // 填充 length 字节密码学随机数到新 ByteBuffer（byte_buffer 注册表项），失败 0。
     // 用途：握手 Sec-WebSocket-Key 与客户端帧掩码。

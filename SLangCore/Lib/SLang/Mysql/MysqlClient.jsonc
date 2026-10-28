@@ -2,7 +2,7 @@
   "project":
   {
     "name": "SLangMysql",
-    "desc": "MySQL client library module - namespace SL: Mysql (entry + native bindings) / MysqlConnection / MysqlCursor / MysqlRow, backed by sl_mysql_lib.dll (MySQL Connector/C)",
+    "desc": "MySQL client library module - namespace SLang: Mysql (entry + native bindings) / MysqlConnection / MysqlCursor / MysqlRow, backed by sl_mysql_lib.dll (MySQL Connector/C)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -20,13 +20,13 @@
   // path（原样透传，运行时相对进程 CWD 解析）。
   "dllImports":
   [
-    { "path": "../../out/export/SLMysql/sl_mysql_lib.dll", "name": "sl_mysql_lib", "alias": "sl_mysql_lib", "static": "sl_mysql_lib" }
+    { "path": "sl_mysql_lib.dll", "name": "sl_mysql_lib", "alias": "sl_mysql_lib", "static": "sl_mysql_lib" }
   ],
   // vmDlls 构建规则：导出 SL 模块时，Front 用 MSBuild 编译 project 指向的 VS 工程
   // （路径相对本 jsonc 所在目录），并把产出的 sl_mysql_lib.dll 拷贝到与
-  // SLMysql.module.json 相同的目录（out/export/SLMysql/），即上方 dllImports
-  // 别名指向的位置。
-  // C 实现位于 source/Front/Lib/SLMysql/cvm_sl_mysql_lib/sl_mysql_lib.c
+  // SLangMysql.module.json 相同的目录（out/export/SLangMysql/），即上方
+  // dllImports 别名指向的位置。
+  // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\sl_mysql_lib.c
   // （FFI 普通 C ABI：slm_*），底层静态链接官方 MySQL Connector/C 6.1.11
   // （同目录 mysqlclient/lib/vs14/mysqlclient.lib），因此产物 DLL 自包含，
   // 不依赖外部 libmysql.dll。
@@ -62,8 +62,9 @@
     }
   },
   "references": [
-    // Tuple / List / Array / string 等来自 Core
-    { "path": "../Core", "name": "Core" }
+    // Tuple / List / Array / string 等来自 Core（本 jsonc 位于
+    // SLangCore\Lib\SLang\Mysql\，上 2 级到 SLangCore\Lib\，同层即 Core 包）
+    { "path": "../../Core", "name": "Core" }
   ],
   "struct": [
     { "namespace": "SLang", "children": [

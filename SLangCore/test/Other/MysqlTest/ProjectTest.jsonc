@@ -2,7 +2,7 @@
   "project":
   {
     "name": "ProjectTest",
-    "desc": "Mysql test project - end-to-end MySQL driver tests (connect / DDL / CRUD / transaction / params binding) via SLMysql module, running against a real MySQL server",
+    "desc": "Mysql test project - end-to-end MySQL driver tests (connect / DDL / CRUD / transaction / params binding) via SLangMysql module, running against a real MySQL server",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 1,
@@ -53,7 +53,7 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    { "path": "../../../../out/export/SLMysql/SLMysql.module.json" }
+    { "path": "../../../../out/export/SLangMysql/SLangMysql.module.json" }
   ],
   "struct": [
   ],

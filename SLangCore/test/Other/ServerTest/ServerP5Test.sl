@@ -1,4 +1,4 @@
-﻿import Std;
+import Std;
 import Core;
 import SLangServer;
 
@@ -52,6 +52,7 @@ ServerP5Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -68,6 +69,7 @@ ServerP5Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -106,6 +108,7 @@ ServerP5Test
             v = v * 10 + ( c - 48 )
             any = true
         }
+
         if any == false
         {
             ret -1
@@ -138,6 +141,7 @@ ServerP5Test
             {
                 d = c - 55
             }
+
             if d < 0
             {
                 ret -1
@@ -272,6 +276,7 @@ ServerP5Test
         {
             ret true
         }
+
         if wlen < tlen
         {
             ret false
@@ -465,6 +470,7 @@ ServerP5Test
             {
                 repOk = backCfg.subject == "cfg-user"
             }
+
             if repOk == false
             {
                 t4gFails = t4gFails + 1
@@ -483,6 +489,7 @@ ServerP5Test
         {
             threwMjs = true
         }
+
         if threwMjs == false
         {
             t4gFails = t4gFails + 1
@@ -841,6 +848,7 @@ class P5RawClient
             {
                 ret r
             }
+
             if SystemStringLength( line ) == 0
             {
                 headDone = true
@@ -1011,6 +1019,7 @@ class P5WsClient
                 ext.release()
                 len = 0
             }
+
             if len > 0
             {
                 ByteBuffer pl = ByteBuffer( len )

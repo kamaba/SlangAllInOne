@@ -1,8 +1,8 @@
 import Std;
-import SLMysql;
+import SLangMysql;
 
 # =========================================================================
-# MysqlApiTest —— SLMysql API 细节测试（连接真实 MySQL 服务器）
+# MysqlApiTest —— SLangMysql API 细节测试（连接真实 MySQL 服务器）
 #
 # 覆盖：
 #   A) 参数绑定（? 占位符）与转义（引号 / 反斜杠 / 中文）
@@ -12,7 +12,7 @@ import SLMysql;
 #   E) 错误处理：错误 SQL 的 errorCode / errorMessage
 #   F) Mysql.escape / Mysql.literal 的转义结果
 #
-# SLMysql 的类都在 namespace SL 下，故统一用 SL.xxx 全名访问。
+# SLangMysql 的类都在 namespace SLang 下，故统一用 SLang.xxx 全名访问。
 # =========================================================================
 class MysqlApiTest
 {
@@ -41,21 +41,21 @@ class MysqlApiTest
         string testdb = global.mysqlTestDb
 
         # ── 准备干净的测试环境 ───────────────────────────────────
-        SL.MysqlConnection root = SL.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, global.mysqlDatabase, global.mysqlPort, global.mysqlCharset )
+        SLang.MysqlConnection root = SLang.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, global.mysqlDatabase, global.mysqlPort, global.mysqlCharset )
         if root == null
         {
             Console.println( "connect failed, skip MysqlApiTest" )
             ret
         }
 
-        SL.MysqlCursor rc = root.cursor()
+        SLang.MysqlCursor rc = root.cursor()
         rc.execute( "DROP DATABASE IF EXISTS " + testdb )
         rc.execute( "CREATE DATABASE " + testdb + " DEFAULT CHARACTER SET utf8mb4" )
         check( "A01 CREATE DATABASE " + testdb, root.errorCode() == 0 )
         rc.close()
         root.close()
 
-        SL.MysqlConnection conn = SL.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, testdb, global.mysqlPort, global.mysqlCharset )
+        SLang.MysqlConnection conn = SLang.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, testdb, global.mysqlPort, global.mysqlCharset )
         bool okConn = false
         if conn == null
         {
@@ -72,7 +72,7 @@ class MysqlApiTest
             ret
         }
 
-        SL.MysqlCursor cur = conn.cursor()
+        SLang.MysqlCursor cur = conn.cursor()
         cur.execute( "CREATE TABLE t_api ( id INT NOT NULL AUTO_INCREMENT, title VARCHAR(255), memo VARCHAR(255) NULL, PRIMARY KEY (id) ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" )
         check( "A03 CREATE TABLE t_api", conn.errorCode() == 0 )
 
@@ -83,7 +83,7 @@ class MysqlApiTest
 
         Int64 trickyId = conn.insertId()
         cur.execute( "SELECT title FROM t_api WHERE id = ?", Tuple( trickyId ) )
-        SL.MysqlRow trow = cur.fetchone()
+        SLang.MysqlRow trow = cur.fetchone()
         bool trickyOk = false
         if trow == null
         {
@@ -109,7 +109,7 @@ class MysqlApiTest
         check( "A06 INSERT NULL ok", conn.errorCode() == 0 )
 
         cur.execute( "SELECT title, memo FROM t_api WHERE title = 'null-memo'" )
-        SL.MysqlRow nr = cur.fetchone()
+        SLang.MysqlRow nr = cur.fetchone()
         bool nullOk = false
         bool emptyOk = false
         bool titleOk = false
@@ -135,7 +135,7 @@ class MysqlApiTest
         check( "A10 insert 5 rows", conn.errorCode() == 0 )
 
         cur.execute( "SELECT id, title, memo FROM t_api ORDER BY id" )
-        SL.MysqlRow one = cur.fetchone()
+        SLang.MysqlRow one = cur.fetchone()
         bool oneOk = false
         if one == null
         {
@@ -170,7 +170,7 @@ class MysqlApiTest
         cur.execute( "INSERT INTO t_api (title, memo) VALUES (?, ?)", Tuple( "rollback-me", "x" ) )
         conn.rollback()
         cur.execute( "SELECT COUNT(*) FROM t_api WHERE title = 'rollback-me'" )
-        SL.MysqlRow rbRow = cur.fetchone()
+        SLang.MysqlRow rbRow = cur.fetchone()
         bool rbOk = false
         if rbRow == null
         {
@@ -185,7 +185,7 @@ class MysqlApiTest
         cur.execute( "INSERT INTO t_api (title, memo) VALUES (?, ?)", Tuple( "commit-me", "x" ) )
         conn.commit()
         cur.execute( "SELECT COUNT(*) FROM t_api WHERE title = 'commit-me'" )
-        SL.MysqlRow cmRow = cur.fetchone()
+        SLang.MysqlRow cmRow = cur.fetchone()
         bool cmOk = false
         if cmRow == null
         {
@@ -207,7 +207,7 @@ class MysqlApiTest
         check( "A20 error SQL errorMessage not empty", conn.errorMessage() != "" )
 
         cur.execute( "SELECT 1" )
-        SL.MysqlRow pingRow = cur.fetchone()
+        SLang.MysqlRow pingRow = cur.fetchone()
         bool pingOk = false
         if pingRow == null
         {
@@ -220,14 +220,14 @@ class MysqlApiTest
         check( "A21 connection still usable after error", pingOk )
 
         # ── F. escape / literal ──────────────────────────────────
-        string esc = SL.Mysql.escape( conn.handle, "a'b" )
+        string esc = SLang.Mysql.escape( conn.handle, "a'b" )
         Console.println( "  escape(a'b) = " + esc )
         check( "A22 escape handles quote", esc != "a'b" )
 
-        string lit = SL.Mysql.literal( conn.handle, "xy" )
+        string lit = SLang.Mysql.literal( conn.handle, "xy" )
         check( "A23 literal string quoted", lit == "'xy'" )
 
-        string litNull = SL.Mysql.literal( conn.handle, null )
+        string litNull = SLang.Mysql.literal( conn.handle, null )
         check( "A24 literal(null) == NULL", litNull == "NULL" )
 
         # ── G. 清理 ──────────────────────────────────────────────
@@ -236,10 +236,10 @@ class MysqlApiTest
         cur.close()
         conn.close()
 
-        SL.MysqlConnection cc = SL.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, global.mysqlDatabase, global.mysqlPort, global.mysqlCharset )
+        SLang.MysqlConnection cc = SLang.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, global.mysqlDatabase, global.mysqlPort, global.mysqlCharset )
         if cc != null
         {
-            SL.MysqlCursor dc = cc.cursor()
+            SLang.MysqlCursor dc = cc.cursor()
             dc.execute( "DROP DATABASE IF EXISTS " + testdb )
             check( "A26 DROP DATABASE cleanup", cc.errorCode() == 0 )
             dc.close()

@@ -254,6 +254,7 @@ WhileTest
                     inner++
                     continue
                 }
+
                 if inner == 4
                 {
                     break
@@ -490,6 +491,7 @@ WhileTest
             {
                 continue
             }
+            
             if i > 10
             {
                 break

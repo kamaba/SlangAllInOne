@@ -1,13 +1,14 @@
-﻿# MysqlTest —— SLMysql 端到端测试工程
+# MysqlTest —— SLangMysql 端到端测试工程
 
-对 `source/Front/Lib/SLMysql` 标准库做真实环境验证：连接远端 MySQL、
-建库建表、CRUD、参数绑定、NULL、事务、错误处理、结果集读取。
+对 `SlangAllInOne\SLangCore\Lib\SLang\Mysql\`（SLangMysql 模块，namespace `SLang`）
+做真实环境验证：连接远端 MySQL、建库建表、CRUD、参数绑定、NULL、事务、
+错误处理、结果集读取。
 
 ## 目录
 
 ```
-test/MysqlTest/
-├── ProjectTest.jsonc     # 工程配置（references 里引了 SLMysql 模块）
+test/Other/MysqlTest/
+├── ProjectTest.jsonc     # 工程配置（references 里引了 SLangMysql 模块）
 ├── ProjectTest.sp        # _main_ 入口：依次跑 MysqlTest / MysqlApiTest
 ├── MysqlTest.sl          # 主流程用例 T01~T31
 ├── MysqlApiTest.sl       # API 细节用例 A01~A26
@@ -35,30 +36,44 @@ test/MysqlTest/
 
 ## 编译
 
-```powershell
-cd F:\project\lang\simple_language\source\Front\bin\Debug\net8.0
-.\SimpleLanguageFront.exe compile -p F:\project\lang\simple_language\test\MysqlTest\ProjectTest -e ir --no-banner
-```
-
 前置依赖（`references`）：
 
 | 模块 | 说明 |
 | --- | --- |
-| `out/export/Core` | 核心库 |
-| `out/export/Std` | 标准库 |
-| `out/export/SLMysql` | 被测库，需先编译 `source/Front/Lib/SLMysql/SLMysqlPro` |
+| `./lib/Core.module.slb` / `./lib/Std.module.slb` | 系统库（工程内落空自动回落官方库直查） |
+| `out/export/SLangMysql/SLangMysql.module.json` | 被测库，未命中即报错中止 |
 
-## 运行
+被测库 SLangMysql 需先编译一次（非系统库，compile-stdlib 三件套不覆盖）：
 
 ```powershell
-cd F:\project\lang\simple_language\test\MysqlTest
-F:\project\lang\csimple_lang\build\Debug\bin\csimple_lang.exe run F:\project\lang\simple_language\out\export\MysqlTest\ProjectTest.module.json
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Mysql\MysqlClient.sp --format binary+json --no-banner
 ```
 
-`SLMysqlPro.jsonc` 里 `dllImports` 用的是相对路径
-`../../out/export/SLMysql/sl_mysql_lib.dll`，VM 会先按 CWD 解析、失败再按
-`pkg_dir` 拼接；`out/export/MysqlTest/../../out/export/SLMysql/` 正好落到
-`out/export/SLMysql/`，所以在任意目录运行都能找到原生 DLL。
+再编译本工程（产物落 `SlangAllInOne\out\export\MysqlTest\`）：
+
+```powershell
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\test\Other\MysqlTest\ProjectTest --format binary+json --no-banner
+```
+
+## 运行（联合测试宿主）
+
+```powershell
+dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj -- SlangAllInOne\SLangCore\test\Other\MysqlTest\ProjectTest
+```
+
+宿主把产物 stage 进发布包 `<package>\MysqlTest\` 并**联动拷贝引用模块
+`SLangMysql\`**（`StageReferencedModules`），其中原生 DLL `sl_mysql_lib.dll`
+由 `StageNativeDlls` 读模块 json `dllImports[].path`（`static` 非空的 FFI
+绑定条目）自源导出树平铺补拷，再经包内 `slang.exe run` 执行。
+
+## 原生 DLL 定位（dllImports 平铺形态）
+
+`MysqlClient.jsonc` 的 `dllImports` 用**平铺 basename** 形态：
+`{ "path": "sl_mysql_lib.dll", "static": "sl_mysql_lib" }`——cvm 装载模块即
+预载该库并注册 FFI 静态绑定表（`vmDllImports` 平铺拼路径 LoadLibrary +
+`vm_sys_ffi_static_lib_register`），FFI 运行期按三重回退链定位：
+`pkg_dir/path` → `pkg_dir/<平台>/basename` → `pkg_dir/basename`。
+绑定失败回退 SL 函数体兜底（`clientVersion() <= 0` 即兜底征兆）。
 
 ## 用例清单
 
@@ -95,12 +110,20 @@ F:\project\lang\csimple_lang\build\Debug\bin\csimple_lang.exe run F:\project\lan
 ===== MysqlApiTest end PASS=26 FAIL=0 =====
 ```
 
+2026-10-27 重编复验：MysqlApiTest 16 处 `SL.` → `SLang.` 修正后
+`export module success` 双产物（slb+json），Error 清零。
+
+## 关联
+
+- 库说明：`SlangAllInOne\SLangCore\Lib\SLang\Mysql\MysqlClient.md`
+- HTTP handler 内集成用例：`SlangAllInOne\SLangCore\test\Other\ServerTest\ServerMysqlTest.sl`（端口 19511）
+
 ## 已知取舍
 
 - `?` 占位符统一按「字符串转义 + 加引号」绑定（走 `mysql_real_escape_string`），
   MySQL 会按列类型自动转换，数值同样能正确落库；代价是字符串字面量内部的
   `?` 也会被替换。
 - `MysqlRow.getString(i)` 对 SQL NULL 返回空串，判空请用 `isNull(i)`。
-- SL 前端不支持跨模块类型作泛型实参（如 `List<SL.MysqlRow>` 会让
+- SL 前端不支持跨模块类型作泛型实参（如 `List<SLang.MysqlRow>` 会让
   `MetaClass.AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList` 抛
   空引用），测试里统一用 `var` 让类型推断接管。

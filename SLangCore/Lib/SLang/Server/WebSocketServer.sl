@@ -68,6 +68,7 @@ namespace SLang
             {
                 ret
             }
+
             if pattern == null
             {
                 pattern = ""
@@ -99,6 +100,7 @@ namespace SLang
             {
                 ret outList
             }
+
             if pattern == null
             {
                 pattern = ""
@@ -226,14 +228,17 @@ namespace SLang
             {
                 ret
             }
+
             if SystemStringLength( name ) == 0
             {
                 ret
             }
+
             if s._tags == null
             {
                 s._tags = new()
             }
+
             if _WsSessions._hasTag( s._tags, name )
             {
                 ret
@@ -385,6 +390,7 @@ namespace SLang
             {
                 step = 100
             }
+
             if step > 1000
             {
                 step = 1000
@@ -432,6 +438,7 @@ namespace SLang
             {
                 ret null
             }
+
             if this._pathParams.containsKey( name ) == false
             {
                 ret null
@@ -462,6 +469,7 @@ namespace SLang
             {
                 this._queryParsed = BodyParser.parseForm( this._rawQuery )
             }
+
             if this._queryParsed.containsKey( name ) == false
             {
                 ret null
@@ -698,6 +706,7 @@ namespace SLang
             {
                 throw ServerError.AlreadyRunning
             }
+
             if _listenPort <= 0 || _listenPort > 65535
             {
                 throw ServerError.InvalidConfig
@@ -949,6 +958,7 @@ namespace SLang
             {
                 ret null
             }
+
             if pattern == null
             {
                 pattern = ""

@@ -424,7 +424,8 @@ $@"{{
     ""isUseForceSemiColonInLineEnd"": true,
     ""isForceUseClassKey"": false,
     ""isSupportDoublePlus"": false,
-    ""requireSameNumericTypes"": false
+    ""requireSameNumericTypes"": false,
+    ""isForceSpaceAfterSharp"": false
   }},
   ""compileFiles"": {{
     ""files"": [

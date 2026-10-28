@@ -80,6 +80,7 @@ class Product interface IComparable, IDescribable
     {
         Product o = other as Product
         if o == null { ret 1 }
+        
         if this.price > o.price { ret 1 }
         elif this.price < o.price { ret -1 }
         else { ret 0 }

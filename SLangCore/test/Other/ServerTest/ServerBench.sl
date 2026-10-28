@@ -139,6 +139,7 @@ ServerBench
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -178,6 +179,7 @@ ServerBench
                 {
                     break
                 }
+
                 if p.isFile
                 {
                     if p.saveAs( "bench_stream.bin" )
@@ -293,6 +295,7 @@ ServerBench
             fdata.writeString( blk )
             written = written + 10240
         }
+
         if written < size
         {
             fdata.writeString( SystemStringRange( blk, 0, size - written ) )
@@ -323,16 +326,12 @@ ServerBench
         bool respOk = rw._ok && ServerBench.sfFind( rw._body, "sv=1" ) >= 0
         if streamMode == false
         {
-            respOk = rw._ok && ServerBench.sfFind( rw._body, "u=bench" ) >= 0
-                && ServerBench.sfFind( rw._body, "sz=" + size.toString() ) >= 0
-                && ServerBench.sfFind( rw._body, "sv=1" ) >= 0
+            respOk = rw._ok && ServerBench.sfFind( rw._body, "u=bench" ) >= 0 && ServerBench.sfFind( rw._body, "sz=" + size.toString() ) >= 0 && ServerBench.sfFind( rw._body, "sv=1" ) >= 0
         }
         Int64 saved = File.getSize( saveName )
         bool sizeOk = saved == size
         string all = File.readAllText( saveName )
-        bool winOk = ServerBench.dataWindowOk( all, 0, 16 )
-            && ServerBench.dataWindowOk( all, size / 2, 16 )
-            && ServerBench.dataWindowOk( all, size - 16, 16 )
+        bool winOk = ServerBench.dataWindowOk( all, 0, 16 ) && ServerBench.dataWindowOk( all, size / 2, 16 ) && ServerBench.dataWindowOk( all, size - 16, 16 )
         ServerBench.check( "M1 " + mode + " " + lbl + " respond+save ok", respOk && sizeOk && winOk )
 
         # 计时 3 次取最小（深拷贝在计时窗外；窗 = connect→全量发送→读完整响应）
@@ -365,6 +364,7 @@ ServerBench
                     bestMs = ms
                     haveMs = true
                 }
+
                 if alloc >= 0
                 {
                     if bestAlloc < 0 || alloc < bestAlloc
@@ -562,10 +562,12 @@ ServerBench
         {
             ret "64KB"
         }
+
         if size == 524288
         {
             ret "512KB"
         }
+
         if size == 2097152
         {
             ret "2MB"
@@ -644,6 +646,7 @@ ServerBench
             v = v * 10 + ( c - 48 )
             any = true
         }
+
         if any == false
         {
             ret -1
@@ -676,6 +679,7 @@ ServerBench
             {
                 d = c - 55
             }
+
             if d < 0
             {
                 ret -1
@@ -824,6 +828,7 @@ class BenchRawClient
             {
                 ret r
             }
+
             if SystemStringLength( line ) == 0
             {
                 headDone = true

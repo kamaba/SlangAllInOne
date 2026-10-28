@@ -1,12 +1,78 @@
 {
+  "version": 1,
   "baseNamespace": "Native",
   "functionList": [
+    { "publicName": "Native.add", "entryPoint": "simplelanguage_addtest", "callingConvention": "Cdecl", "returnType": "I32", "parameterTypeList": ["I32", "I32"] },
+    { "publicName": "Native.add64", "entryPoint": "sl_add", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["I64", "I64"] },
+    { "publicName": "Native.mul2", "entryPoint": "sl_mul2", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["I64"] },
+    { "publicName": "Native.mixAll", "entryPoint": "sl_mix_all", "callingConvention": "Cdecl", "returnType": "F64", "parameterTypeList": ["I32", "I32", "I32", "I64", "F32", "F64"] },
+    { "publicName": "Native.float8E4M3ToStruct", "entryPoint": "sl_float8_e4m3_to_struct", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["F32", "Ptr"] },
+    { "publicName": "Native.float8E5M2ToStruct", "entryPoint": "sl_float8_e5m2_to_struct", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["F32", "Ptr"] },
+    { "publicName": "Native.float8BitsToStruct", "entryPoint": "sl_float8_bits_to_struct", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["I32", "Ptr"] },
+    { "publicName": "Native.float8DualToStruct", "entryPoint": "sl_float8_dual_to_struct", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["F32", "Ptr", "Ptr"] },
+    { "publicName": "Native.structToFloat8Bits", "entryPoint": "sl_struct_to_float8_bits", "callingConvention": "Cdecl", "returnType": "I32", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.float8Roundtrip", "entryPoint": "sl_float8_e4m3_roundtrip", "callingConvention": "Cdecl", "returnType": "F32", "parameterTypeList": ["F32"] },
+    { "publicName": "Native.float8E5M2Roundtrip", "entryPoint": "sl_float8_e5m2_roundtrip", "callingConvention": "Cdecl", "returnType": "F32", "parameterTypeList": ["F32"] },
+    { "publicName": "Native.float16Roundtrip", "entryPoint": "sl_float16_roundtrip", "callingConvention": "Cdecl", "returnType": "F32", "parameterTypeList": ["F32"] },
+    { "publicName": "Native.mixToStruct", "entryPoint": "sl_mix_to_struct", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["I32", "I64", "F32", "F64", "Ptr"] },
+    { "publicName": "Native.structSum", "entryPoint": "sl_struct_sum", "callingConvention": "Cdecl", "returnType": "F64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.structAddI64", "entryPoint": "sl_struct_add_i64", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr", "I64"] },
+    { "publicName": "Native.getAdder", "entryPoint": "sl_get_adder", "callingConvention": "Cdecl", "returnType": "Ptr", "parameterTypeList": [] },
+    { "publicName": "Native.getMultiplier", "entryPoint": "sl_get_multiplier", "callingConvention": "Cdecl", "returnType": "Ptr", "parameterTypeList": ["I64"] },
+    { "publicName": "Native.callFnPtr", "entryPoint": "sl_call_fn_ptr", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr", "I64", "I64"] },
+    { "publicName": "Native.callWithCallback", "entryPoint": "sl_call_with_callback", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr", "I64"] },
+    { "publicName": "Native.reduceWithCallback", "entryPoint": "sl_reduce_with_callback", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr", "I64", "I64", "I64"] },
+    { "publicName": "Native.callTwoCallbacks", "entryPoint": "sl_call_two_callbacks", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr", "Ptr", "I64", "I64"] },
+    { "publicName": "Native.echo", "entryPoint": "sl_echo", "callingConvention": "Cdecl", "returnType": "Utf8String", "parameterTypeList": ["Utf8String"] },
+    { "publicName": "Native.concat", "entryPoint": "sl_concat", "callingConvention": "Cdecl", "returnType": "Utf8String", "parameterTypeList": ["Utf8String", "Utf8String"] },
+    { "publicName": "Native.strlen", "entryPoint": "sl_strlen_utf8", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Utf8String"] },
+    { "publicName": "Native.exportsJson", "entryPoint": "sl_exports_json", "callingConvention": "Cdecl", "returnType": "Utf8String", "parameterTypeList": [] },
+    { "publicName": "Native.bookAlloc", "entryPoint": "sl_book_alloc", "callingConvention": "Cdecl", "returnType": "Ptr", "parameterTypeList": ["I32", "F32", "I32", "Utf8String"] },
+    { "publicName": "Native.bookPrint", "entryPoint": "sl_book_print", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.bookFree", "entryPoint": "sl_book_free", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.sizeStructSize", "entryPoint": "sl_size_struct_size", "callingConvention": "Cdecl", "returnType": "I32", "parameterTypeList": [] },
+    { "publicName": "Native.sizeFieldOffset", "entryPoint": "sl_size_field_offset", "callingConvention": "Cdecl", "returnType": "I32", "parameterTypeList": ["I32"] },
+    { "publicName": "Native.sizeMake", "entryPoint": "sl_size_make", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["I32", "I32", "Utf8String", "Ptr"] },
+    { "publicName": "Native.sizeArea", "entryPoint": "sl_size_area", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.sizeName", "entryPoint": "sl_size_name", "callingConvention": "Cdecl", "returnType": "Utf8String", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.sizeChecksum", "entryPoint": "sl_size_checksum", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.sizeAlloc", "entryPoint": "sl_size_alloc", "callingConvention": "Cdecl", "returnType": "Ptr", "parameterTypeList": ["I32", "I32", "Utf8String"] },
+    { "publicName": "Native.sizeFree", "entryPoint": "sl_size_free", "callingConvention": "Cdecl", "returnType": "I64", "parameterTypeList": ["Ptr"] },
+    { "publicName": "Native.sizeFillConst", "entryPoint": "sl_size_fill_const", "callingConvention": "Cdecl", "returnType": "Void", "parameterTypeList": ["Ptr"] }
+  ],
+  "structs": [
     {
-      "publicName": "Native.add",
-      "entryPoint": "simplelanguage_addtest",
-      "callingConvention": "Cdecl",
-      "returnType": "I32",
-      "parameterTypeList": ["I32", "I32"]
+      "name": "SLSizeStruct",
+      "size": 24,
+      "layoutSig": "i32 width, i32 height, f64 ratio, utf8 name",
+      "fields": [
+        { "name": "width", "type": "I32", "offset": 0 },
+        { "name": "height", "type": "I32", "offset": 4 },
+        { "name": "ratio", "type": "F64", "offset": 8 },
+        { "name": "name", "type": "Utf8String", "offset": 16 }
+      ]
+    },
+    {
+      "name": "SLBookStruct",
+      "size": 24,
+      "layoutSig": "i32 id, f32 price, i32 pages, utf8 title",
+      "fields": [
+        { "name": "id", "type": "I32", "offset": 0 },
+        { "name": "price", "type": "F32", "offset": 4 },
+        { "name": "pages", "type": "I32", "offset": 8 },
+        { "name": "title", "type": "Utf8String", "offset": 16 }
+      ]
     }
+  ],
+  "callbacks": [
+    { "name": "add2", "sig": "i64,i64->i64" },
+    { "name": "mul2", "sig": "i64,i64->i64" },
+    { "name": "fpAdd", "sig": "f32,f32->f32" },
+    { "name": "f64Scale", "sig": "f64->f64" },
+    { "name": "f32InF64Out", "sig": "f32,f32->f64" },
+    { "name": "voidAccum", "sig": "i64->void" },
+    { "name": "mixArgs", "sig": "i64,f64,utf8->i64" },
+    { "name": "utf8Echo", "sig": "utf8->utf8" },
+    { "name": "sixArgs", "sig": "i64,f64,i64,f64,i64,i64->i64" }
   ]
 }

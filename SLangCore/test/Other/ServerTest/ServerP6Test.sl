@@ -61,6 +61,7 @@ ServerP6Test
                     break
                 }
             }
+
             if matched
             {
                 ret i

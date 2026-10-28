@@ -10,7 +10,9 @@ import SLangServer;
 #       + @OnRoute 类前缀拼接（@OnPost("/user") -> POST /p4admin/user）
 #       + @Route 双参小写 verb 由 C 侧大写化（"delete" -> DELETE）+ pathParam
 #       + 每请求一实例（LATE 实例闭包：实例字段 hits 两次请求均 == 1）
-#       + 无前缀 @OnGet/@OnAny 直挂（@OnAny 双动词命中 + req.method 回显）
+#       + 无前缀 @OnGet/@OnAny 直挂（形态 2：static 函数绑定不实例化；
+#         @OnAny 双动词命中 + req.method 回显）
+#       + 形态 2 负例：无 @OnRoute + 非 static 方法 -> 注册被拒（404）
 #       + 与动态注册共存（闭包注册与 attribute 注册统一生效）
 #       + 404 未知路径 / 405 + Allow（attribute 入表动词精确性）
 #   T2  异步与超时（cfg.handlerTimeoutMs=200）：协程内 delay(150) 正常应答
@@ -21,10 +23,12 @@ import SLangServer;
 # 编写约定同 ServerP1Test.sl（check/sfFind/sfReadResp/respBodyDone/rawReq
 # 助手同款实现）。
 #
-# 机制回顾（§4.10 / §7）：控制器类 + 方法在装配期（Preload）经 C VM
-# vm_route_attribute.c 收集——方法级条目入路由表、类级 @OnRoute 记前缀
-# join 出 "verb|path|class|method" 行；usePreloadRoutes() 拉取入 Router，
-# handler 为 LATE 实例闭包（每请求实例化全新控制器，this + req/res 两参）。
+# 机制回顾（§4.10 双形态，2026-10-27 修订 / §7）：装配期（Preload）各
+# 方法级 attribute _enter_ 经 registerPreload 注册——
+#   形态 1 · 实例控制器（类级 @OnRoute）：handler 为 LATE 实例闭包，每
+#   请求实例化全新控制器（this + req/res 两参；@InstanceAttr 单例 bind-once）；
+#   形态 2 · 静态直挂（类上无 @OnRoute）：必须 static 函数绑定（静态
+#   method-ref，不实例化；非 static 方法 -> 错误日志 + 拒绝注册 -> 404）。
 # ============================================================================
 
 # ── 控制器 1：类级 @OnRoute("/p4admin") 前缀（Spring RequestMapping 形态）──
@@ -57,40 +61,32 @@ class P4AdminController
     }
 }
 
-# ── 控制器 2：无类前缀直挂 ──
+# ── 控制器 2：无类前缀直挂（§4.10 形态 2：必须 static 函数绑定）──
 
 class P4PlainController
 {
-    _init_()
-    {
-    }
-
-    # -> GET /p4plain
+    # -> GET /p4plain（类上无 @OnRoute -> static handler，不实例化）
     @OnGet( "/p4plain" )
-    public void plainGet( SLang.Request req, SLang.Response res )
+    public static void plainGet( SLang.Request req, SLang.Response res )
     {
         res.text( "plain-ok" )
     }
 
     # -> ANY /p4any（全动词；req.method 回显命中动词）
     @OnAny( "/p4any" )
-    public void anyEcho( SLang.Request req, SLang.Response res )
+    public static void anyEcho( SLang.Request req, SLang.Response res )
     {
         res.text( "any:" + req.method )
     }
 }
 
-# ── 控制器 3：异步 / 超时（T2 配 handlerTimeoutMs=200）──
+# ── 控制器 3：异步 / 超时（T2 配 handlerTimeoutMs=200；形态 2 static）──
 
 class P4AsyncController
 {
-    _init_()
-    {
-    }
-
     # -> GET /p4async（协程内 delay 合法，G12：await/yield/delay；150ms < 200ms）
     @OnGet( "/p4async" )
-    public void asyncOk( SLang.Request req, SLang.Response res )
+    public static void asyncOk( SLang.Request req, SLang.Response res )
     {
         Coroutine.delay( 150 )
         res.text( "async-ok" )
@@ -98,10 +94,23 @@ class P4AsyncController
 
     # -> GET /p4slow（400ms > 200ms：协程 cancel + 504 + 优雅断连）
     @OnGet( "/p4slow" )
-    public void slow( SLang.Request req, SLang.Response res )
+    public static void slow( SLang.Request req, SLang.Response res )
     {
         Coroutine.delay( 400 )
         res.text( "slow-done" )
+    }
+}
+
+# ── 控制器 4：负例（无 @OnRoute + 非 static -> §4.10 形态 2 拒绝注册）──
+
+class P4BadController
+{
+    # -> GET /p4bad —— 类未标 @OnRoute 且方法非 static：registerPreload
+    #    打印错误并拒绝注册（路由不存在 -> 404）
+    @OnGet( "/p4bad" )
+    public void badGet( SLang.Request req, SLang.Response res )
+    {
+        res.text( "bad-ok" )
     }
 }
 
@@ -130,6 +139,7 @@ ServerP4Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -146,6 +156,7 @@ ServerP4Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -180,6 +191,7 @@ ServerP4Test
                     bodyNeed = 0
                 }
             }
+
             if headerEnd >= 0
             {
                 if headOnly
@@ -223,6 +235,7 @@ ServerP4Test
             any = true
             i = i + 1
         }
+
         if any == false
         {
             ret SystemStringLength( text ) >= headerEnd
@@ -249,8 +262,9 @@ ServerP4Test
         SLang.HttpServer app = SLang.HttpServer( 19441 )
         app.reset()
 
-        # T1a 装配期路由表条数：P4 六条全量并入（P9 落地后全表还含 P9
-        # 控制器条目，故下限断言；P4 语义验证为六条均在并可命中）
+        # T1a 装配期路由表条数：P4 六条全量并入（形态 2 负例 1 条被拒
+        # 不入表；P9 落地后全表还含 P9 控制器条目，故下限断言；P4 语义
+        # 验证为六条均在并可命中）
         Int32 n = app.usePreloadRoutes()
         ServerP4Test.check( "T1a preload count >= 6", n >= 6 )
 
@@ -294,6 +308,10 @@ ServerP4Test
         # T1i 405 + Allow（/p4admin/user 仅注册 POST）
         Net.HttpResponse r6 = Net.HttpClient.httpGet( "http://127.0.0.1:19441/p4admin/user" )
         ServerP4Test.check( "T1i 405 + Allow", r6.statusCode == 405 && r6.headers.getHeader( "Allow" ) == "POST" )
+
+        # T1j 形态 2 负例：无 @OnRoute + 非 static 方法 -> 注册被拒（404）
+        Net.HttpResponse r7 = Net.HttpClient.httpGet( "http://127.0.0.1:19441/p4bad" )
+        ServerP4Test.check( "T1j non-static rejected", r7.statusCode == 404 )
 
         app.stop()
     }

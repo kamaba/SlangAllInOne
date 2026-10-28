@@ -11,6 +11,10 @@ Project
         #   P6=19461-19462（app 级事件钩子/WS 标签定向组播/broadcast binary）
         #   P7=19471-19472（multipart 流式解析 MultipartReader/saveAs/分帧鲁棒）
         #   P9=19491-19492（@Singleton 控制器 bind-once 单例/异步单例）
+        #   P10=19501-19502（setCookie 读写往返/formAll 同名多值/路由级
+        #   中间件 params 尾参形态——P3 裁剪三项补齐）
+        #   MultiListen=19521-19523（多监听器 v1.1——ServerMultiListenTest）
+        #   Mysql=19511（HTTP 路由 handler 内 MySQL 查询集成——ServerMysqlTest）
         #   Bench=19481-19482（M1 上传解析矩阵 stream×memory×4 档 / M2 连接矩阵
         #   keepalive×close；SERVER_DESIGN.md §25 BenchMark 实录）
         ServerProbeTest.fun()
@@ -25,6 +29,9 @@ Project
         ServerP6Test.fun()
         ServerP7Test.fun()
         ServerP9Test.fun()
+        ServerP10Test.fun()
+        ServerMultiListenTest.fun()
+        ServerMysqlTest.fun()
         ServerBench.fun()
     }
     _before_()

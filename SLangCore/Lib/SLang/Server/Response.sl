@@ -29,6 +29,10 @@ namespace SLang
         Net.HttpHeaders _headers = null
         ByteBuffer _body = null
         bool _responded = false
+        # ── Set-Cookie 表（P10 补齐 P3 裁剪项，§4.3 / §6.3）──
+        # 已序列化的 Set-Cookie 值（"name=value[; attrs]"，逐条独立成头行——
+        # Set-Cookie 是 HTTP 唯一必须多行重复的头，不走 HttpHeaders 覆盖语义）
+        List<string> _cookies = null
         # ── 流式状态（引擎绑定；P2）──
         # 直写通道（stream/sse/sendFile 用；引擎 _bind 绑定）
         Net.TcpStream _conn = null
@@ -43,6 +47,7 @@ namespace SLang
         override _init_()
         {
             this._headers = Net.HttpHeaders()
+            this._cookies = null
             this._conn = null
             this._keepAlive = true
             this._http10 = false
@@ -93,6 +98,74 @@ namespace SLang
         {
             this._contentType = mime
             ret this
+        }
+
+        # ── Set-Cookie（P10 补齐 P3 裁剪项，SERVER_DESIGN.md §4.3 / §6.3）──
+        # 非终端：暂存 cookie 行，随终端方法一并写出（三条头写出路径统一
+        # 消费 _cookies：缓冲 / 流式头 / sendFile 头——见 _userHeadersText）。
+        # 同名多次调用 = 多条独立 Set-Cookie 行（HTTP 语义：Set-Cookie 是
+        # 唯一必须逐行重复、不可逗号合并的头）。
+
+        # 简单形态：Set-Cookie: name=value
+        public Response setCookie( string name, string value )
+        {
+            this._addCookie( name + "=" + value )
+            ret this
+        }
+
+        # 属性形态：path 常用 "/"；maxAge 秒（<= 0 省略 Max-Age）；
+        # secure / httpOnly 附加标记；sameSite = "Strict"/"Lax"/"None"
+        #（空串省略）。sameSite=None 时按现代浏览器要求自动补 Secure。
+        public Response setCookie( string name, string value, string path, Int32 maxAge, bool secure, bool httpOnly, string sameSite )
+        {
+            string line = name + "=" + value
+            if path != null && SystemStringLength( path ) > 0
+            {
+                line = line + "; Path=" + path
+            }
+
+            if maxAge > 0
+            {
+                line = line + "; Max-Age=" + maxAge.toString()
+            }
+
+            if secure
+            {
+                line = line + "; Secure"
+            }
+
+            if httpOnly
+            {
+                line = line + "; HttpOnly"
+            }
+
+            if sameSite != null && SystemStringLength( sameSite ) > 0
+            {
+                line = line + "; SameSite=" + sameSite
+                if Net.Uri.eqFold( sameSite, "None" ) && secure == false
+                {
+                    # SameSite=None 无 Secure 被现代浏览器拒收（RFC 6265bis）
+                    line = line + "; Secure"
+                }
+            }
+            this._addCookie( line )
+            ret this
+        }
+
+        # 清空已暂存 cookie（改主意场景；幂等）
+        public Response clearCookies()
+        {
+            this._cookies = null
+            ret this
+        }
+
+        void _addCookie( string line )
+        {
+            if this._cookies == null
+            {
+                this._cookies = new()
+            }
+            this._cookies.add( line )
         }
 
         # ── 终端方法（二次调用抛 ServerError.AlreadyResponded）──
@@ -250,6 +323,7 @@ namespace SLang
                         this._writeRangeHead( fsize, 0, 0 )
                         ret
                     }
+
                     if rc == 0
                     {
                         # 有效区间
@@ -353,6 +427,7 @@ namespace SLang
             {
                 ret -1
             }
+
             if l1 > 0
             {
                 # "a-b" / "a-"
@@ -361,6 +436,7 @@ namespace SLang
                 {
                     ret -1
                 }
+
                 if a >= fsize
                 {
                     ret 1
@@ -373,11 +449,13 @@ namespace SLang
                     {
                         ret -1
                     }
+
                     if bv < a
                     {
                         # start > end：畸形（RFC 9110 an unsatisfied... 按 416 处理）
                         ret 1
                     }
+
                     if bv < b
                     {
                         b = bv
@@ -394,6 +472,7 @@ namespace SLang
                 # suffix-length 0 / 非法：忽略
                 ret -1
             }
+
             if n > fsize
             {
                 n = fsize
@@ -465,8 +544,9 @@ namespace SLang
         }
 
         # 用户附加头文本（引擎管理头跳过：Content-Type/Length/Connection/
-        # Transfer-Encoding；跨类静态调用的实参先拷局部——HttpHeaders 纪律）
-        string _userHeadersText()
+        # Transfer-Encoding；跨类静态调用的实参先拷局部——HttpHeaders 纪律）。
+        # Set-Cookie 不经 HttpHeaders（多行重复语义）：逐条独立成行，P10
+        public string _userHeadersText()
         {
             string outText = ""
             Net.HttpHeaders hs = this._headers
@@ -480,6 +560,15 @@ namespace SLang
                 }
                 string hv = hs.valueAt( i )
                 outText = outText + hn + ": " + hv + "\r\n"
+            }
+            List<string> cookies = this._cookies
+            if cookies != null
+            {
+                Int32 cn = cookies.length
+                for Int32 i = 0, i < cn, i = i + 1
+                {
+                    outText = outText + "Set-Cookie: " + cookies[i] + "\r\n"
+                }
             }
             ret outText
         }

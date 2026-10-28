@@ -245,10 +245,12 @@ namespace SLang
             {
                 secret = cfg.jwtSecret
             }
+
             if secret == null
             {
                 secret = ""
             }
+
             if SystemStringLength( secret ) == 0
             {
                 throw ServerError.MissingJwtSecret
@@ -285,6 +287,7 @@ namespace SLang
             {
                 throw ServerError.MissingJwtSecret
             }
+
             if claims == null
             {
                 claims = JwtClaims()
@@ -322,6 +325,7 @@ namespace SLang
             {
                 ret null
             }
+
             if token == null
             {
                 ret null
@@ -370,6 +374,7 @@ namespace SLang
             {
                 ret null
             }
+
             if headerText == null
             {
                 ret null
@@ -379,6 +384,7 @@ namespace SLang
             {
                 ret null
             }
+
             if hj.value.isObject == false
             {
                 ret null
@@ -388,6 +394,7 @@ namespace SLang
             {
                 ret null
             }
+
             if algV.asString() != "HS256"
             {
                 ret null
@@ -454,6 +461,7 @@ namespace SLang
             {
                 ret null
             }
+
             if c.expired
             {
                 ret null
@@ -552,6 +560,7 @@ namespace SLang
                 {
                     break
                 }
+
                 if ch == 43
                 {
                     ch = 45

@@ -273,7 +273,7 @@ this 是**隐式第 0 个实参**（`MetaMemberFunction.Init` 创建 `<类全名
 - 静态函数使用 this → Error 21071/21072
 - 静态方法中定义的闭包使用 this → Error 21070
 - `this()` 调用形态 → Error 21069（构造器委托不支持，仅支持 `base._init_(...)`）
-- 字段初始化器 / 参数默认值中的 this → **Info 级 21066/21067**（检测提示不拦截，Core 标准库自身存在此类用法）
+- 字段初始化器中的 this → **Info 级 21066**（检测提示不拦截，Core 标准库自身存在此类用法；实参/参数默认值中的 this 为合法用法，不再提示——2026-10-28 移除过时 21067/21076 提示，其文案误称 Error 且不拦截，详见 MetaCallNode this/base 分支）
 - this 只能位于链首（`x.this.y`）→ Info 级 21068
 - `Isolate` 入口禁止 this 非静态成员函数（Node 层拦截）
 - this 作变量名/参数名 → 报错（`this._value = b` 前缀豁免链除外）

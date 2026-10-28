@@ -1,4 +1,4 @@
-﻿import Std;
+import Std;
 import Core;
 import SLangServer;
 
@@ -54,6 +54,7 @@ ServerP15Test
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -70,6 +71,7 @@ ServerP15Test
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -101,6 +103,7 @@ ServerP15Test
                     headerEnd = he + 4
                 }
             }
+
             if headerEnd >= 0
             {
                 if headOnly
@@ -144,6 +147,7 @@ ServerP15Test
             any = true
             i = i + 1
         }
+
         if any == false
         {
             ret SystemStringLength( text ) >= headerEnd
@@ -323,6 +327,7 @@ ServerP15Test
             {
                 ok2 = d1.saveInto( "p15_up" )
             }
+
             if d2 != null
             {
                 ok3 = d2.saveInto( "p15_up" )

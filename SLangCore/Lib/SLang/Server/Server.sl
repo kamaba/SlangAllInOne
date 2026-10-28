@@ -296,10 +296,20 @@ namespace SLang
         }
 
         # ── 路由注册（动词家族；get/set 是关键字 → on 前缀）──
+        # P10：每动词两形态——双参基础形 + params 尾参路由级中间件形
+        #（app.onGet( path, fn, mw1, mw2 )，§6.9 裁剪项补齐：mw 在全局
+        # 管道之后、该路由 handler 之前执行）
 
         public RouteInfo onGet( string path, Function handler )
         {
             ret Router.add( "GET", path, handler )
+        }
+
+        public RouteInfo onGet( string path, Function handler, params Function[] mws )
+        {
+            # 两步注册：mws 直传 useAll 显式数组形参（params 版 add 会把数组再装箱）
+            RouteInfo r = Router.add( "GET", path, handler )
+            ret r.useAll( mws )
         }
 
         public RouteInfo onPost( string path, Function handler )
@@ -307,9 +317,21 @@ namespace SLang
             ret Router.add( "POST", path, handler )
         }
 
+        public RouteInfo onPost( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "POST", path, handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onPut( string path, Function handler )
         {
             ret Router.add( "PUT", path, handler )
+        }
+
+        public RouteInfo onPut( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "PUT", path, handler )
+            ret r.useAll( mws )
         }
 
         public RouteInfo onDelete( string path, Function handler )
@@ -317,9 +339,21 @@ namespace SLang
             ret Router.add( "DELETE", path, handler )
         }
 
+        public RouteInfo onDelete( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "DELETE", path, handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onPatch( string path, Function handler )
         {
             ret Router.add( "PATCH", path, handler )
+        }
+
+        public RouteInfo onPatch( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "PATCH", path, handler )
+            ret r.useAll( mws )
         }
 
         public RouteInfo onHead( string path, Function handler )
@@ -327,9 +361,21 @@ namespace SLang
             ret Router.add( "HEAD", path, handler )
         }
 
+        public RouteInfo onHead( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "HEAD", path, handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onOptions( string path, Function handler )
         {
             ret Router.add( "OPTIONS", path, handler )
+        }
+
+        public RouteInfo onOptions( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "OPTIONS", path, handler )
+            ret r.useAll( mws )
         }
 
         # 全动词（对该 pattern 接受全部 HTTP 动词）
@@ -338,10 +384,23 @@ namespace SLang
             ret Router.add( "ANY", path, handler )
         }
 
+        public RouteInfo onAny( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "ANY", path, handler )
+            ret r.useAll( mws )
+        }
+
         # 原始形式（动态注册 / 方法变量）
         public RouteInfo on( string method, string path, Function handler )
         {
             ret Router.add( method, path, handler )
+        }
+
+        # 原始形式 + 路由级中间件（P10 params 尾参形态）
+        public RouteInfo on( string method, string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( method, path, handler )
+            ret r.useAll( mws )
         }
 
         # ── 预装载路由注册中心（P4/P9 §26；attribute _enter_ 消费侧）──
@@ -396,11 +455,16 @@ namespace SLang
         # 预装载路由注册（方法级 attribute _enter_ 调用）：
         #   1. verb 大写规整；宿主类命中 @OnRoute 前缀则 prefix + path
         #      拼接（§4.10）；
-        #   2. 宿主类已标 @InstanceAttr（Std）→ SystemAttributeGetInstanceField
-        #      取装配期单实例（InstanceAttr._enter_ 构造并写入合成静态
-        #      字段）→ hostMethodRefOf(单实例)（绑定实例 method-ref，全程
-        #      复用，bind-once，§26）；否则 hostMethodRef()（LATE 闭包，
-        #      每请求一实例，§4.10）；
+        #   2. §4.10 双形态（2026-10-27 修订）：
+        #      形态 1 · 实例控制器（类级 @OnRoute）：宿主类已标
+        #      @InstanceAttr（Std）→ SystemAttributeGetInstanceField 取装配
+        #      期单实例 → hostMethodRefOf(单实例)（绑定实例 method-ref，全程
+        #      复用，bind-once，§26）；否则 hostMethodRef()（实例方法 →
+        #      LATE 闭包，每请求一实例）；
+        #      形态 2 · 静态直挂（类上无 @OnRoute）：必须绑定静态函数
+        #      （hostMethodRef 对 static 方法返回静态 method-ref，不实例
+        #      化）；非 static 方法 → 打印错误并拒绝注册（请求 404，
+        #      日志可查，装配流程不中断）；
         #   3. (verb, pattern, handler) 入缓冲，usePreloadRoutes() 拉取。
         public void registerPreload( string verb, string path, Attribute attr )
         {
@@ -412,11 +476,13 @@ namespace SLang
             }
             string cls = attr.ownerClassName()
             string full = path
+            bool hasPrefix = false
             Map<string, string> pfxMap = HttpServer._plPrefix
             if pfxMap != null && pfxMap.containsKey( cls )
             {
                 string pfx = pfxMap[ cls ]
                 full = pfx + path
+                hasPrefix = true
             }
             Function h = null
             object inst = SystemAttributeGetInstanceField( cls )
@@ -424,9 +490,31 @@ namespace SLang
             {
                 h = attr.hostMethodRefOf( inst )
             }
+
             if h == null
             {
-                h = attr.hostMethodRef()
+                if hasPrefix
+                {
+                    # 形态 1：实例控制器（LATE 每请求一实例）
+                    h = attr.hostMethodRef()
+                }
+                else
+                {
+                    # 形态 2：无类级 @OnRoute → 必须绑定静态函数
+                    if attr.hostMethodIsStatic()
+                    {
+                        h = attr.hostMethodRef()
+                    }
+                    else
+                    {
+                        Console.println( "[SLang.Server] preload route rejected: "
+                            + HttpServer._upperVerb( verb ) + " " + full
+                            + " -> " + cls + "." + attr.ownerMemberName()
+                            + " is not static (class '" + cls
+                            + "' has no @OnRoute; static handler required)" )
+                        ret
+                    }
+                }
             }
             HttpServer._plVerbs.add( HttpServer._upperVerb( verb ) )
             HttpServer._plPatterns.add( full )
@@ -479,6 +567,32 @@ namespace SLang
             ret RouteGroup( prefix )
         }
 
+        # ── 多监听器（v1.1）：同进程扩展端口挂载 ──
+        # 主监听器 = 构造端口（start()）；listen() 挂扩展端口，返回
+        # ServerListener 视图——其 on*/websocket 注册的路由仅该端口可见
+        # （app.on* 直注路由仍为全局，全部端口共享）。
+        #   var app  = SLang.HttpServer( 8080 );
+        #   var adm  = app.listen( 9090 );
+        #   adm.onGet( "/panel", fn );   # 仅 9090 可达
+        #   app.run();
+        # start 前调用入缓冲（start 统一 bind，tag 已分配不变）；
+        # running 中调用立即 bind。
+
+        # 扩展监听器（host 取运行配置 host）
+        public ServerListener listen( Int32 port ) throws
+        {
+            ServerConfig cfg = this.config()
+            string host = cfg.host
+            ret this.listen( host, port )
+        }
+
+        # 扩展监听器（显式 host；端口非法抛 ServerError.InvalidConfig）
+        public ServerListener listen( string host, Int32 port ) throws
+        {
+            Int32 tag = HttpServerCore.listen( host, port )
+            ret ServerListener( host, port, tag )
+        }
+
         # ── 中间件 / 插件（P2，§4.7）──
 
         # 注册中间件（三参 Function：function( SLang.Request req,
@@ -511,6 +625,176 @@ namespace SLang
         public Int32 importOpenApi( string jsonPath ) throws
         {
             ret Docs.importOpenApi( jsonPath )
+        }
+    }
+
+    # ============================================================================
+    # ServerListener — 扩展监听器视图（多监听器 v1.1）
+    # 由 SLang.HttpServer.listen() 构造（模块内构造，RouteGroup 同款安全
+    # 模式）。语义：本视图 on*/websocket 注册的路由打 scope = 本监听器
+    # tag——仅该端口可见；主端口经 app.on* 直注的路由为全局（scope 0，
+    # 全部端口共享）。tag 由 HttpServerCore.listen() 分配（主监听器 = 1，
+    # 扩展 = 2,3,...；start 前登记入缓冲、start 统一 bind，tag 不变）。
+    # ============================================================================
+    public class ServerListener
+    {
+        Int32 _tag = 0
+        Int32 _port = 0
+        string _host = ""
+
+        _init_( string host, Int32 port, Int32 tag )
+        {
+            if host == null
+            {
+                host = "0.0.0.0"
+            }
+
+            if SystemStringLength( host ) == 0
+            {
+                host = "0.0.0.0"
+            }
+            this._host = host
+            this._port = port
+            this._tag = tag
+        }
+
+        # 本监听器 tag（RouteInfo.scope 打标值；调试 / 会话分流用）
+        public get Int32 tag()
+        {
+            ret this._tag
+        }
+
+        # 本监听器端口
+        public get Int32 port()
+        {
+            ret this._port
+        }
+
+        # 本监听器绑定地址
+        public get string host()
+        {
+            ret this._host
+        }
+
+        # 打标注册（scope = 本监听器 tag；模块内两步注册收口）
+        RouteInfo _reg( string method, string path, Function handler )
+        {
+            RouteInfo r = Router.add( method, path, handler )
+            r.scope = this._tag
+            ret r
+        }
+
+        # ── 路由注册（动词家族，镜像 HttpServer/RouteGroup 形态；
+        # get/set 是关键字 → on 前缀）──
+
+        public RouteInfo onGet( string path, Function handler )
+        {
+            ret this._reg( "GET", path, handler )
+        }
+
+        public RouteInfo onGet( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "GET", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onPost( string path, Function handler )
+        {
+            ret this._reg( "POST", path, handler )
+        }
+
+        public RouteInfo onPost( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "POST", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onPut( string path, Function handler )
+        {
+            ret this._reg( "PUT", path, handler )
+        }
+
+        public RouteInfo onPut( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "PUT", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onDelete( string path, Function handler )
+        {
+            ret this._reg( "DELETE", path, handler )
+        }
+
+        public RouteInfo onDelete( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "DELETE", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onPatch( string path, Function handler )
+        {
+            ret this._reg( "PATCH", path, handler )
+        }
+
+        public RouteInfo onPatch( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "PATCH", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onHead( string path, Function handler )
+        {
+            ret this._reg( "HEAD", path, handler )
+        }
+
+        public RouteInfo onHead( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "HEAD", path, handler )
+            ret r.useAll( mws )
+        }
+
+        public RouteInfo onOptions( string path, Function handler )
+        {
+            ret this._reg( "OPTIONS", path, handler )
+        }
+
+        public RouteInfo onOptions( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "OPTIONS", path, handler )
+            ret r.useAll( mws )
+        }
+
+        # 全动词（对该 pattern 接受全部 HTTP 动词；仅本监听器可见）
+        public RouteInfo onAny( string path, Function handler )
+        {
+            ret this._reg( "ANY", path, handler )
+        }
+
+        public RouteInfo onAny( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( "ANY", path, handler )
+            ret r.useAll( mws )
+        }
+
+        # 原始形式（动态注册 / 方法变量）
+        public RouteInfo on( string method, string path, Function handler )
+        {
+            ret this._reg( method, path, handler )
+        }
+
+        # 原始形式 + 路由级中间件（params 尾参形态）
+        public RouteInfo on( string method, string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = this._reg( method, path, handler )
+            ret r.useAll( mws )
+        }
+
+        # WS 升级路由（仅本监听器可升级）
+        public RouteInfo websocket( string path, Function handler )
+        {
+            RouteInfo r = Router.addWs( path, handler )
+            r.scope = this._tag
+            ret r
         }
     }
 }

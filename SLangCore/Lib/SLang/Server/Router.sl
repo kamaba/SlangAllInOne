@@ -32,6 +32,12 @@ namespace SLang
         public string tags = ""
         public string desc = ""
 
+        # ── 多监听器作用域（v1.1）──
+        # 0 = 所有监听器可见（app.on* 直注默认语义不变）；N > 0 = 仅监听
+        # 器 N 可见（ServerListener.on* 注册时打标——tag 由 HttpServerCore
+        # .listen() 分配，主监听器 = 1）
+        public Int32 scope = 0
+
         # ── 文档元数据（P3，结构化；经链式方法登记，§4.8）──
         # path/query 参数表（kind="param"）
         public List<RouteParam> docParams = null
@@ -55,6 +61,11 @@ namespace SLang
         # 消费不完即 handler 返回 → 引擎丢弃式收尾（drain）后按 keep-alive
         # 规则继续；WS 路由无 body 语义，恒 false
         public bool streamBody = false
+        # ── 路由级中间件（P10 补齐 P3 裁剪项，§6.9）──
+        # 该路由专属中间件（全局之后、handler 之前执行；注册序即执行序）。
+        # RouteInfo.use 链式登记 / Router.add(method, path, handler, mws)
+        # params 尾参形态批量传入
+        List<Function> _mws = null
 
         # ── 匹配预编译（模块内部）──
         List<string> _segs = null
@@ -163,6 +174,62 @@ namespace SLang
         {
             this.security = scheme
             ret this
+        }
+
+        # ── 路由级中间件（P10，§6.9）──
+
+        # 链式登记一条路由级中间件（三参 Function(req,res,nx)）：
+        # 全局管道之后、本路由 handler 之前执行；注册序即执行序
+        public RouteInfo use( Function mw )
+        {
+            if this._mws == null
+            {
+                this._mws = new()
+            }
+            this._mws.add( mw )
+            ret this
+        }
+
+        # 批量登记（app.onGet(path, fn, mw1, mw2) 尾参便捷形态的落地环）
+        # 注意：形参必须用显式数组类型而非 params——SL 的 params 语义是把
+        # "逐个多余实参"装箱成数组，没有 C# 式"尾实参为数组则透传"语义；
+        # 若声明为 params，调用方把现成数组直传时会被再包一层导致元素遍历失败。
+        public RouteInfo useAll( Function[] mws )
+        {
+            if mws == null
+            {
+                ret this
+            }
+            Int32 n = mws.length
+            for Int32 i = 0, i < n, i = i + 1
+            {
+                Function one = mws[i]
+                if one != null
+                {
+                    this.use( one )
+                }
+            }
+            ret this
+        }
+
+        # 路由级中间件数（_Pipeline 执行序合并用）
+        Int32 _mwCount()
+        {
+            if this._mws == null
+            {
+                ret 0
+            }
+            ret this._mws.length
+        }
+
+        # 取第 i 条（越界 null；调用方判空）
+        Function _mwAt( Int32 i )
+        {
+            if this._mws == null
+            {
+                ret null
+            }
+            ret this._mws[i]
         }
     }
 
@@ -301,6 +368,21 @@ namespace SLang
             ret r
         }
 
+        # 路由级中间件形态（P10，§6.9）：Router.add( "GET", path, fn, mw1, mw2 )
+        # —— mw 以 params 尾参批量登记（语义 = Router.add(...) 后逐条
+        # RouteInfo.use；null 项跳过）。
+        # ⚠ 仅适用于"逐个独立实参"传法：SL 的 params 是把多余实参装箱成数组，
+        # 没有尾实参数组透传语义——若把现成数组作为第 4 实参传入，收到的
+        # mws 会是"长度 1、元素为数组"的嵌套数组导致登记失效；库内门面
+        # （HttpServer/RouteGroup on*）已全部改两步调用规避，直传数组请用
+        # 三参 add + RouteInfo.useAll(数组)。
+        public static RouteInfo add( string method, string pattern, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( method, pattern, handler )
+            r.useAll( mws )
+            ret r
+        }
+
         # 路由挂树（ws = WS 表 / HTTP 表；通配挂前缀节点 wild 表）
         static void _attach( RouteInfo r, bool ws )
         {
@@ -322,9 +404,11 @@ namespace SLang
                 {
                     wt = node._wsWild
                 }
+
                 if wt == null
                 {
                     wt = new()
+
                     if ws
                     {
                         node._wsWild = wt
@@ -343,9 +427,11 @@ namespace SLang
             {
                 t = node._wsRoutes
             }
+
             if t == null
             {
                 t = new()
+
                 if ws
                 {
                     node._wsRoutes = t
@@ -379,6 +465,7 @@ namespace SLang
                     {
                         node._static = new()
                     }
+
                     if node._static.containsKey( seg ) == false
                     {
                         _RouteNode child = _RouteNode()
@@ -404,11 +491,13 @@ namespace SLang
             {
                 ret null
             }
+
             # method 兼容（原语义）
             if Net.Uri.eqFold( r.method, method )
             {
                 ret r
             }
+
             if Net.Uri.eqFold( r.method, "ANY" ) || Net.Uri.eqFold( method, "ANY" )
             {
                 ret r
@@ -456,6 +545,7 @@ namespace SLang
                     object cur = node._static[seg]
                     node = cur as _RouteNode
                 }
+
                 if node == null
                 {
                     ret null
@@ -466,14 +556,17 @@ namespace SLang
             {
                 t = node._wsRoutes
             }
+
             if wild
             {
                 t = node._wild
+
                 if ws
                 {
                     t = node._wsWild
                 }
             }
+
             if t == null
             {
                 ret null
@@ -627,7 +720,7 @@ namespace SLang
         #   "动词相等或 ANY" 过滤（HEAD→GET 转换由调用方完成）。
         #   depth == 段数 → 收集本节点精确终止表；节点通配表无条件收集
         #   （吸收剩余 ≥ 0 段，§4.2 {path*} 语义）
-        static void _collect( _RouteNode node, List<string> segs, Int32 depth, string methodFilter, bool wantWs, List<RouteInfo> outCands )
+        static void _collect( _RouteNode node, List<string> segs, Int32 depth, string methodFilter, bool wantWs, Int32 tag, List<RouteInfo> outCands )
         {
             if node == null
             {
@@ -638,13 +731,14 @@ namespace SLang
             {
                 exact = node._wsRoutes
             }
+
             if depth == segs.length && exact != null
             {
                 Int32 n = exact.length
                 for Int32 i = 0, i < n, i = i + 1
                 {
                     RouteInfo r = exact[i]
-                    if Router._methodOk( r, methodFilter )
+                    if Router._methodOk( r, methodFilter ) && Router._scopeOk( r, tag )
                     {
                         outCands.add( r )
                     }
@@ -656,18 +750,20 @@ namespace SLang
             {
                 wilds = node._wsWild
             }
+
             if wilds != null
             {
                 Int32 wn = wilds.length
                 for Int32 i = 0, i < wn, i = i + 1
                 {
                     RouteInfo r = wilds[i]
-                    if Router._methodOk( r, methodFilter )
+                    if Router._methodOk( r, methodFilter ) && Router._scopeOk( r, tag )
                     {
                         outCands.add( r )
                     }
                 }
             }
+
             # 下探（还有剩余段）
             if depth < segs.length
             {
@@ -679,14 +775,30 @@ namespace SLang
                     _RouteNode child = cur as _RouteNode
                     if child != null
                     {
-                        Router._collect( child, segs, depth + 1, methodFilter, wantWs, outCands )
+                        Router._collect( child, segs, depth + 1, methodFilter, wantWs, tag, outCands )
                     }
                 }
+
                 if node._param != null
                 {
-                    Router._collect( node._param, segs, depth + 1, methodFilter, wantWs, outCands )
+                    Router._collect( node._param, segs, depth + 1, methodFilter, wantWs, tag, outCands )
                 }
             }
+        }
+
+        # 监听器作用域过滤（多监听器 v1.1）：scope 0 = 全局可见；N > 0 仅 tag N
+        static bool _scopeOk( RouteInfo r, Int32 tag )
+        {
+            if r.scope == 0
+            {
+                ret true
+            }
+
+            if r.scope == tag
+            {
+                ret true
+            }
+            ret false
         }
 
         # 动词过滤（methodFilter null = 全过）
@@ -696,10 +808,12 @@ namespace SLang
             {
                 ret true
             }
+
             if Net.Uri.eqFold( r.method, methodFilter )
             {
                 ret true
             }
+
             if Net.Uri.eqFold( r.method, "ANY" )
             {
                 ret true
@@ -707,8 +821,10 @@ namespace SLang
             ret false
         }
 
-        # 候选择优（静态段多者优先；同数先注册者优先——seq 升序）
-        static RouteInfo _pickBest( List<RouteInfo> cands )
+        # 候选择优（静态段多者优先；同数先注册者优先——seq 升序）。
+        # 多监听器 v1.1：同静态段数平局时，本监听器专属路由（scope==tag
+        # 且非 0）优先于全局路由（scope 0）——listener 视图覆盖全局同名。
+        static RouteInfo _pickBest( List<RouteInfo> cands, Int32 tag )
         {
             RouteInfo best = null
             Int32 n = cands.length
@@ -723,9 +839,37 @@ namespace SLang
                 {
                     best = r
                 }
-                elif r._staticCount == best._staticCount && r._seq < best._seq
+                elif r._staticCount == best._staticCount
                 {
-                    best = r
+                    bool rHit = false
+                    bool bHit = false
+                    if r.scope != 0 && r.scope == tag
+                    {
+                        rHit = true
+                    }
+
+                    if best.scope != 0 && best.scope == tag
+                    {
+                        bHit = true
+                    }
+                    bool take = false
+                    if rHit && bHit == false
+                    {
+                        take = true
+                    }
+                    elif rHit == false && bHit == false && r._seq < best._seq
+                    {
+                        take = true
+                    }
+                    elif rHit && bHit && r._seq < best._seq
+                    {
+                        take = true
+                    }
+
+                    if take
+                    {
+                        best = r
+                    }
                 }
             }
             ret best
@@ -735,6 +879,13 @@ namespace SLang
         # （§4.2 精确段 > 参数段；同数先注册者优先）；无命中返回 null
         # （404/405 区分由 findBest：路径有注册但动词不符 → findBest 非空 → 405）
         public static RouteInfo match( string method, string path )
+        {
+            ret Router.match( method, path, 0 )
+        }
+
+        # 带 tag 形态（多监听器 v1.1；tag = 连接所在监听器，0 兼容旧语义
+        # —— scope 0 全局路由全部可见）
+        public static RouteInfo match( string method, string path, Int32 tag )
         {
             if _root == null
             {
@@ -748,13 +899,18 @@ namespace SLang
             List<string> segs = new()
             Router._splitSegments( path, segs )
             List<RouteInfo> cands = new()
-            Router._collect( _root, segs, 0, lookup, false, cands )
-            ret Router._pickBest( cands )
+            Router._collect( _root, segs, 0, lookup, false, tag, cands )
+            ret Router._pickBest( cands, tag )
         }
 
         # 路径最优命中（忽略动词；405 判定与 Allow 头生成用）：
         # 静态段多者优先、同数先注册者优先
         public static RouteInfo findBest( string path )
+        {
+            ret Router.findBest( path, 0 )
+        }
+
+        public static RouteInfo findBest( string path, Int32 tag )
         {
             if _root == null
             {
@@ -763,8 +919,8 @@ namespace SLang
             List<string> segs = new()
             Router._splitSegments( path, segs )
             List<RouteInfo> cands = new()
-            Router._collect( _root, segs, 0, null, false, cands )
-            ret Router._pickBest( cands )
+            Router._collect( _root, segs, 0, null, false, tag, cands )
+            ret Router._pickBest( cands, tag )
         }
 
         # 全部 HTTP 路由快照（Docs.openApiJson / importOpenApi 遍历用；
@@ -792,6 +948,7 @@ namespace SLang
                     outList.add( r )
                 }
             }
+
             if node._wild != null
             {
                 Int32 wn = node._wild.length
@@ -801,6 +958,7 @@ namespace SLang
                     outList.add( r )
                 }
             }
+
             if node._static != null
             {
                 List<string> ks = node._static.keys
@@ -813,6 +971,7 @@ namespace SLang
                     Router._gather( child, outList )
                 }
             }
+
             if node._param != null
             {
                 Router._gather( node._param, outList )
@@ -822,6 +981,11 @@ namespace SLang
         # 该路径已注册的全部动词（405 Allow 头用；逗号分隔；ANY 展开全表）
         public static string allowMethods( string path )
         {
+            ret Router.allowMethods( path, 0 )
+        }
+
+        public static string allowMethods( string path, Int32 tag )
+        {
             if _root == null
             {
                 ret ""
@@ -829,7 +993,7 @@ namespace SLang
             List<string> segs = new()
             Router._splitSegments( path, segs )
             List<RouteInfo> cands = new()
-            Router._collect( _root, segs, 0, null, false, cands )
+            Router._collect( _root, segs, 0, null, false, tag, cands )
             string allow = ""
             Int32 n = cands.length
             for Int32 i = 0, i < n, i = i + 1
@@ -839,6 +1003,7 @@ namespace SLang
                 {
                     ret "GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS"
                 }
+
                 if SystemStringLength( allow ) > 0
                 {
                     allow = allow + ", "
@@ -852,6 +1017,11 @@ namespace SLang
         # null → 引擎 400）
         public static RouteInfo findWs( string path )
         {
+            ret Router.findWs( path, 0 )
+        }
+
+        public static RouteInfo findWs( string path, Int32 tag )
+        {
             if _root == null
             {
                 ret null
@@ -859,8 +1029,8 @@ namespace SLang
             List<string> segs = new()
             Router._splitSegments( path, segs )
             List<RouteInfo> cands = new()
-            Router._collect( _root, segs, 0, null, true, cands )
-            ret Router._pickBest( cands )
+            Router._collect( _root, segs, 0, null, true, tag, cands )
+            ret Router._pickBest( cands, tag )
         }
 
         # 提取路径参数（route 命中 path 后调用；无参数路由返回空 Map；
@@ -885,6 +1055,7 @@ namespace SLang
                 {
                     sv = segs[segIdx]
                 }
+
                 if segIdx < sn
                 {
                     m[name] = sv
@@ -910,7 +1081,9 @@ namespace SLang
         # 冲突检测（start() 调用）：同 method+pattern 重复注册返回首个重复
         # 的 pattern 描述（调用方抛 ServerError.DuplicateRoute）；无重复返回 null。
         # 树化等价性：同 pattern 的路由段链确定 → 必挂同一节点 → 节点内
-        # 双循环即全表按 (method, pattern) 分组的完整比较
+        # 双循环即全表按 (method, pattern) 分组的完整比较。
+        # 多监听器 v1.1：同 (method, pattern) 但 scope 不同（全局 vs 各
+        # 监听器专属）不算重复——不同端口的同名路径各自独立。
         public static string checkDuplicate()
         {
             if _root == null
@@ -923,7 +1096,7 @@ namespace SLang
         # 节点递归扫描（节点四表内双循环 + 子树递归）
         static string _dupScan( _RouteNode node )
         {
-            # HTTP 精确表：同 (method, pattern)
+            # HTTP 精确表：同 (method, pattern, scope)
             if node._routes != null
             {
                 Int32 n = node._routes.length
@@ -933,14 +1106,15 @@ namespace SLang
                     for Int32 k = i + 1, k < n, k = k + 1
                     {
                         RouteInfo b = node._routes[k]
-                        if Net.Uri.eqFold( a.method, b.method ) && a.pattern == b.pattern
+                        if Net.Uri.eqFold( a.method, b.method ) && a.pattern == b.pattern && a.scope == b.scope
                         {
                             ret a.method + " " + a.pattern
                         }
                     }
                 }
             }
-            # WS 表：同 pattern
+
+            # WS 表：同 (pattern, scope)
             if node._wsRoutes != null
             {
                 Int32 wn = node._wsRoutes.length
@@ -950,13 +1124,14 @@ namespace SLang
                     for Int32 k = i + 1, k < wn, k = k + 1
                     {
                         RouteInfo b = node._wsRoutes[k]
-                        if a.pattern == b.pattern
+                        if a.pattern == b.pattern && a.scope == b.scope
                         {
                             ret "WS " + a.pattern
                         }
                     }
                 }
             }
+
             # 通配表（同上两两比较）
             if node._wild != null
             {
@@ -967,13 +1142,14 @@ namespace SLang
                     for Int32 k = i + 1, k < vn, k = k + 1
                     {
                         RouteInfo b = node._wild[k]
-                        if Net.Uri.eqFold( a.method, b.method ) && a.pattern == b.pattern
+                        if Net.Uri.eqFold( a.method, b.method ) && a.pattern == b.pattern && a.scope == b.scope
                         {
                             ret a.method + " " + a.pattern
                         }
                     }
                 }
             }
+
             if node._wsWild != null
             {
                 Int32 xw = node._wsWild.length
@@ -983,13 +1159,14 @@ namespace SLang
                     for Int32 k = i + 1, k < xw, k = k + 1
                     {
                         RouteInfo b = node._wsWild[k]
-                        if a.pattern == b.pattern
+                        if a.pattern == b.pattern && a.scope == b.scope
                         {
                             ret "WS " + a.pattern
                         }
                     }
                 }
             }
+
             # 子树递归（静态边全部 + 参数边）
             if node._static != null
             {
@@ -1008,6 +1185,7 @@ namespace SLang
                     }
                 }
             }
+
             if node._param != null
             {
                 string dp = Router._dupScan( node._param )
@@ -1061,15 +1239,18 @@ namespace SLang
             {
                 p = ""
             }
+
             if SystemStringLength( p ) == 0
             {
                 p = "/"
             }
+
             if SystemStringCharCodeAt( p, 0 ) != 47
             {
                 p = "/" + p
             }
             Int32 plen = SystemStringLength( p )
+
             if plen > 1 && SystemStringCharCodeAt( p, plen - 1 ) == 47
             {
                 p = SystemStringRange( p, 0, plen - 1 )
@@ -1084,6 +1265,7 @@ namespace SLang
             {
                 ret this._prefix
             }
+
             if SystemStringCharCodeAt( path, 0 ) == 47
             {
                 ret this._prefix + path
@@ -1096,9 +1278,22 @@ namespace SLang
             ret Router.add( "GET", this._join( path ), handler )
         }
 
+        # 路由级中间件形态（P10，§6.9）
+        public RouteInfo onGet( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "GET", this._join( path ), handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onPost( string path, Function handler )
         {
             ret Router.add( "POST", this._join( path ), handler )
+        }
+
+        public RouteInfo onPost( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "POST", this._join( path ), handler )
+            ret r.useAll( mws )
         }
 
         public RouteInfo onPut( string path, Function handler )
@@ -1106,9 +1301,21 @@ namespace SLang
             ret Router.add( "PUT", this._join( path ), handler )
         }
 
+        public RouteInfo onPut( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "PUT", this._join( path ), handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onDelete( string path, Function handler )
         {
             ret Router.add( "DELETE", this._join( path ), handler )
+        }
+
+        public RouteInfo onDelete( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "DELETE", this._join( path ), handler )
+            ret r.useAll( mws )
         }
 
         public RouteInfo onPatch( string path, Function handler )
@@ -1116,15 +1323,34 @@ namespace SLang
             ret Router.add( "PATCH", this._join( path ), handler )
         }
 
+        public RouteInfo onPatch( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "PATCH", this._join( path ), handler )
+            ret r.useAll( mws )
+        }
+
         public RouteInfo onAny( string path, Function handler )
         {
             ret Router.add( "ANY", this._join( path ), handler )
+        }
+
+        public RouteInfo onAny( string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( "ANY", this._join( path ), handler )
+            ret r.useAll( mws )
         }
 
         # 原始形式（动态注册 / 方法变量）
         public RouteInfo on( string method, string path, Function handler )
         {
             ret Router.add( method, this._join( path ), handler )
+        }
+
+        # 原始形式 + 路由级中间件（P10 params 尾参形态）
+        public RouteInfo on( string method, string path, Function handler, params Function[] mws )
+        {
+            RouteInfo r = Router.add( method, this._join( path ), handler )
+            ret r.useAll( mws )
         }
 
         # WS 升级路由（组内前缀）

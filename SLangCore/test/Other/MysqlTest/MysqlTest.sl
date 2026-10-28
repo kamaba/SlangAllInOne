@@ -1,8 +1,8 @@
 import Std;
-import SLMysql;
+import SLangMysql;
 
 # =========================================================================
-# MysqlTest —— SLMysql 端到端测试（连接真实 MySQL 服务器）
+# MysqlTest —— SLangMysql 端到端测试（连接真实 MySQL 服务器）
 #
 # 覆盖：
 #   1) 原生层可用性（clientVersion / clientInfo —— 非 fallback 说明
@@ -12,7 +12,7 @@ import SLMysql;
 #   4) 结果集元信息（columnCount / columnName / rowCount / row 取值）
 #   5) 清理（DROP DATABASE）
 #
-# SLMysql 的类都在 namespace SL 下，故统一用 SL.xxx 全名访问。
+# SLangMysql 的类都在 namespace SLang 下，故统一用 SLang.xxx 全名访问。
 # 连接参数来自 ProjectTest.jsonc 的 "data" 段，按 global.<name> 读取。
 # =========================================================================
 class MysqlTest
@@ -35,9 +35,9 @@ class MysqlTest
     }
 
     # 连接指定数据库
-    static SL.MysqlConnection connectTo( string db )
+    static SLang.MysqlConnection connectTo( string db )
     {
-        ret SL.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, db, global.mysqlPort, global.mysqlCharset )
+        ret SLang.Mysql.connect( global.mysqlHost, global.mysqlUser, global.mysqlPassword, db, global.mysqlPort, global.mysqlCharset )
     }
 
     static fun()
@@ -46,16 +46,16 @@ class MysqlTest
         Console.println( "===== MysqlTest start =====" )
 
         # ── 1. 原生层可用性 ──────────────────────────────────────
-        Int64 ver = SL.Mysql.clientVersion()
+        Int64 ver = SLang.Mysql.clientVersion()
         Console.println( "clientVersion = " + ver.toString() )
         check( "T01 clientVersion > 0 (DLL loaded, not SL fallback)", ver > 0 )
 
-        string info = SL.Mysql.clientInfo()
+        string info = SLang.Mysql.clientInfo()
         Console.println( "clientInfo = " + info )
         check( "T02 clientInfo not empty", info != "" )
 
         # ── 2. 连接 ──────────────────────────────────────────────
-        SL.MysqlConnection conn = connectTo( global.mysqlDatabase )
+        SLang.MysqlConnection conn = connectTo( global.mysqlDatabase )
         bool connected = false
         if conn == null
         {
@@ -80,7 +80,7 @@ class MysqlTest
         string testdb = global.mysqlTestDb
         Console.println( "test database = " + testdb )
 
-        SL.MysqlCursor cur = conn.cursor()
+        SLang.MysqlCursor cur = conn.cursor()
 
         cur.execute( "DROP DATABASE IF EXISTS " + testdb )
         cur.execute( "CREATE DATABASE " + testdb + " DEFAULT CHARACTER SET utf8mb4" )
@@ -104,7 +104,7 @@ class MysqlTest
         check( "T09 CREATE TABLE user", conn.errorCode() == 0 )
         Console.println( "  create table err = [" + conn.errorMessage() + "]" )
 
-        SL.MysqlCursor tcur = conn.cursor()
+        SLang.MysqlCursor tcur = conn.cursor()
         tcur.execute( "SHOW TABLES" )
         Int64 tblRows = tcur.rowCount()
         check( "T10 SHOW TABLES sees user", tcur.columnCount() == 1 && tblRows == 1 )
@@ -136,7 +136,7 @@ class MysqlTest
         check( "T19 fetchall rows == 3", rows.length == 3 )
         if rows.length >= 3
         {
-            SL.MysqlRow r1 = rows._getItem_( 0 )
+            SLang.MysqlRow r1 = rows._getItem_( 0 )
             check( "T20 row name == alice", r1.getString( 1 ) == "alice" )
             check( "T21 row age == 18", r1.getString( 2 ) == "18" )
             check( "T22 row length == 4", r1.length == 4 )
@@ -149,7 +149,7 @@ class MysqlTest
         check( "T24 UPDATE affectedRows == 1", conn.affectedRows() == 1 )
 
         cur.execute( "SELECT age FROM user WHERE name = 'alice'" )
-        SL.MysqlRow ur = cur.fetchone()
+        SLang.MysqlRow ur = cur.fetchone()
         bool ageOk = false
         if ur == null
         {
@@ -167,7 +167,7 @@ class MysqlTest
         check( "T27 DELETE affectedRows == 1", conn.affectedRows() == 1 )
 
         cur.execute( "SELECT COUNT(*) AS c FROM user" )
-        SL.MysqlRow cnt = cur.fetchone()
+        SLang.MysqlRow cnt = cur.fetchone()
         bool cntOk = false
         if cnt == null
         {
@@ -187,10 +187,10 @@ class MysqlTest
         conn.close()
         check( "T30 isClosed after close", conn.isClosed() )
 
-        SL.MysqlConnection c2 = connectTo( global.mysqlDatabase )
+        SLang.MysqlConnection c2 = connectTo( global.mysqlDatabase )
         if c2 != null
         {
-            SL.MysqlCursor dcur = c2.cursor()
+            SLang.MysqlCursor dcur = c2.cursor()
             dcur.execute( "DROP DATABASE IF EXISTS " + testdb )
             check( "T31 DROP DATABASE cleanup", c2.errorCode() == 0 )
             dcur.close()

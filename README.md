@@ -40,7 +40,7 @@ Front 编译产出 SLIR，C VM 执行 SLIR，本仓库把两者粘合为一条�
 | **SLang.HttpServer / SLang.WebSocketServer** | HTTP / WebSocket 服务框架（HttpServer：路由 / 请求 / 响应链式 / BodyParser / Jwt；WebSocketServer：升级路由器 / 独立端口双形态） |
 | **SLang.Render** | 渲染类型（Mesh / Material / Texture / Shader / Camera…） |
 | **Tensora** | 张量 / 张量算子 / 自动微分 / 优化器 / Transformer（建设中） |
-| **SLMysql** | MySQL 客户端（⚠ 静态链接 GPL-2.0 的 MySQL Connector/C，**不随官方发布包分发**） |
+| **SLang.Mysql** | MySQL 客户端（`SLangMysql` 模块；⚠ 静态链接 GPL-2.0 的 MySQL Connector/C，**不随官方发布包分发**） |
 
 ## 快速开始
 

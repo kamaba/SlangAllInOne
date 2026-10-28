@@ -9,6 +9,8 @@
 //   5. 函数指针：回调（C 调用 SL 侧注册的 trampoline）
 //   6. Utf8 字符串进出
 //   7. sl_exports_json 导出清单（ffi-design.md 0.1 节约定）
+//   9c. 结构体 marshal 端到端（T3：SL FFI.Struct define/alloc/free/
+//       marshalOut/marshalIn 与 SLSizeStruct 的布局对齐 + 双向搬运）
 //
 // 调用约定说明（与 csimple_lang/src/lib/ffi/sl_ffi_call.c 对齐）：
 //   INT 类实参统一 int64 经 GR 传递 → C 侧窄整型形参只读寄存器低位即可；
@@ -16,6 +18,7 @@
 //   double 形参读全 64 位；Float8/Float16 实参由 VM 侧换算为等值 float 传递。
 //   因此本文件形参声明与自然 C 写法完全一致，无需任何特殊标注。
 
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -471,6 +474,88 @@ long long sl_call_two_callbacks(long long (*cb1)(long long, long long),
 }
 
 // ---------------------------------------------------------------------------
+// 5b. 全形状回调（C -> SL，通用签名桩验证）
+//     配合 sl_ffi_callback_stubs：参数类覆盖 INT / float / double，
+//     返回覆盖 int64 / float / double / void；utf8 参数与返回走槽静态缓冲。
+// ---------------------------------------------------------------------------
+
+/* FFI 签名 "ptr,f32,f32->f32"：浮点参数 + 浮点返回（float 桩往返） */
+extern "C" __declspec(dllexport)
+float sl_cb_fp_add(float (*cb)(float, float), float a, float b)
+{
+    if (cb == NULL) return 0.0f;
+    return cb(a, b);
+}
+
+/* FFI 签名 "ptr,f64->f64"：双精度参数 + 双精度返回（double 桩往返） */
+extern "C" __declspec(dllexport)
+double sl_cb_f64_scale(double (*cb)(double), double x)
+{
+    if (cb == NULL) return 0.0;
+    return cb(x);
+}
+
+/* FFI 签名 "ptr,f32,f32->f64"：float 参数 + double 返回（混合返回通道） */
+extern "C" __declspec(dllexport)
+double sl_cb_f32_in_f64_out(double (*cb)(float, float), float a, float b)
+{
+    if (cb == NULL) return 0.0;
+    return cb(a, b);
+}
+
+/* FFI 签名 "ptr,i64->void"：void 返回（无返回值回调） */
+extern "C" __declspec(dllexport)
+void sl_cb_void_accum(void (*cb)(long long), long long x)
+{
+    if (cb == NULL) return;
+    cb(x);
+}
+
+/* FFI 签名 "ptr,i64,f64,utf8->i64"：INT/DBL/utf8 三类混合参数 */
+extern "C" __declspec(dllexport)
+long long sl_cb_mix_args(long long (*cb)(long long, double, const char*),
+                         long long n, double x, const char* s)
+{
+    if (cb == NULL) return -1;
+    return cb(n, x, s);
+}
+
+/* FFI 签名 "ptr,utf8->utf8"：字符串进 + 字符串出（槽静态缓冲返回） */
+extern "C" __declspec(dllexport)
+const char* sl_cb_utf8_echo(const char* (*cb)(const char*), const char* in)
+{
+    if (cb == NULL) return "<null-cb>";
+    return cb(in);
+}
+
+/* FFI 签名 "ptr->i64"：6 数据参满配 INT/DBL 交错（常量内嵌触发——
+   回调桩满参形状验证；调用侧若直传 6 数据参 + cb = 7 参会超
+   SL_FFI_MAX_ARGS=6 的 x64 寄存器上限，故由 C 侧填常量）。
+   回调形参用全宽类型（long long/float/double）：桩按 int64 形参收值，
+   窄整型（short/uchar）在寄存器/栈上只写窄字节，宽读会混入高位垃圾
+   ——Windows x64 ABI 要求跨边界形参类型精确一致。 */
+extern "C" __declspec(dllexport)
+long long sl_cb_6args(long long (*cb)(long long, double, long long, float, long long, long long))
+{
+    if (cb == NULL) return -1;
+    return cb(1, 2.0, 3, 4.0f, 5, 6);
+}
+
+/* FFI 签名 "ptr,i64,i64->i64"：重复触发 n 次（稳定性 + 槽复用） */
+extern "C" __declspec(dllexport)
+long long sl_cb_repeat(long long (*cb)(long long, long long), long long n, long long base)
+{
+    long long acc = 0;
+    long long i;
+    if (cb == NULL) return -1;
+    for (i = 0; i < n; ++i)
+    {
+        acc += cb(base + i, i);
+    }
+    return acc;
+}
+
+// ---------------------------------------------------------------------------
 // 6. Utf8 字符串进出
 // ---------------------------------------------------------------------------
 
@@ -581,6 +666,132 @@ long long sl_book_free(SLBookStruct* s)
 }
 
 // ---------------------------------------------------------------------------
+// 9c. 结构体 marshal 端到端（T3）：SL FFI.Struct define/alloc/free/
+//     marshalOut/marshalIn 与本节 SLSizeStruct 的布局对齐 + 双向搬运。
+//     SLSizeStruct 布局（自然对齐，x64 sizeof = 24）：
+//       offset  0: int32_t     width
+//       offset  4: int32_t     height
+//       offset  8: double      ratio
+//       offset 16: const char* name   （SL 侧 utf8 字段 = char* 指针槽）
+//     SL 侧布局 sig："i32 width, i32 height, f64 ratio, utf8 name"
+//     （sl_ffi_struct.c 自然对齐推导 offset 0/4/8/16、total_size 24）。
+// ---------------------------------------------------------------------------
+
+typedef struct SLSizeStruct
+{
+    int32_t     width;
+    int32_t     height;
+    double      ratio;
+    const char* name;
+} SLSizeStruct;
+
+/* FFI 签名 "->i32"：C 侧 sizeof，与 SL 侧 FFI.Struct.size(id)
+   （布局描述符推导 total_size）跨语言比对。 */
+extern "C" __declspec(dllexport)
+int sl_size_struct_size(void)
+{
+    return (int)sizeof(SLSizeStruct);
+}
+
+/* FFI 签名 "i32->i32"：按字段序号返回 C 侧 offsetof
+   （0->0 width / 1->4 height / 2->8 ratio / 3->16 name），越界返回 -1。 */
+extern "C" __declspec(dllexport)
+int sl_size_field_offset(int index)
+{
+    switch (index)
+    {
+    case 0: return (int)offsetof(SLSizeStruct, width);
+    case 1: return (int)offsetof(SLSizeStruct, height);
+    case 2: return (int)offsetof(SLSizeStruct, ratio);
+    case 3: return (int)offsetof(SLSizeStruct, name);
+    default: return -1;
+    }
+}
+
+/* FFI 签名 "i32,i32,utf8,ptr->void"：向 SL 分配的 native 块（out，
+   FFI.Struct alloc 所得）填充 width/height 并计算 ratio = w / h。
+   注意：name 形参指针指向 VM 调用期 utf8 缓冲，仅本次调用内有效，
+   跨调用回读须走 sl_size_alloc（strdup 自持）或
+   sl_size_fill_const（C 静态串）。 */
+extern "C" __declspec(dllexport)
+void sl_size_make(int w, int h, const char* name, SLSizeStruct* out)
+{
+    if (out == NULL) return;
+    out->width  = w;
+    out->height = h;
+    out->ratio  = (h != 0) ? ((double)w / (double)h) : 0.0;
+    out->name   = name;
+}
+
+/* FFI 签名 "ptr->i64"：返回 width * height（NULL 返回 -1），
+   验证 marshalOut 后 native 读到的数值字段。 */
+extern "C" __declspec(dllexport)
+long long sl_size_area(const SLSizeStruct* s)
+{
+    if (s == NULL) return -1;
+    return (long long)s->width * (long long)s->height;
+}
+
+/* FFI 签名 "ptr->utf8"：读 name 字段（NULL 结构或 NULL name 返回 ""）。
+   指针生命周期随结构体自身：marshalOut 块指向附属字符串池（块存活期
+   有效）、fill_const 为 C 静态串、alloc 为堆串（free 前有效）。 */
+extern "C" __declspec(dllexport)
+const char* sl_size_name(const SLSizeStruct* s)
+{
+    if (s == NULL || s->name == NULL) return "";
+    return s->name;
+}
+
+/* FFI 签名 "ptr->i64"：校验和 width + height + (i64)ratio
+   （NULL 返回 -1）。 */
+extern "C" __declspec(dllexport)
+long long sl_size_checksum(const SLSizeStruct* s)
+{
+    if (s == NULL) return -1;
+    return (long long)s->width + (long long)s->height + (long long)s->ratio;
+}
+
+/* FFI 签名 "i32,i32,utf8->ptr"：native malloc 分配并填充，
+   name 经 sl_strdup 自持（跨调用回读安全），sl_size_free 释放。 */
+extern "C" __declspec(dllexport)
+void* sl_size_alloc(int w, int h, const char* name)
+{
+    SLSizeStruct* s = (SLSizeStruct*)malloc(sizeof(SLSizeStruct));
+    if (s == NULL) return NULL;
+    s->width  = w;
+    s->height = h;
+    s->ratio  = (h != 0) ? ((double)w / (double)h) : 0.0;
+    s->name   = sl_strdup(name);
+    return s;
+}
+
+/* FFI 签名 "ptr->i64"：释放 sl_size_alloc 的块（name + struct）。
+   仅用于释放 C 侧 malloc 的指针；FFI.Struct alloc 块由
+   SystemFFIStructFree 释放，不可混用。 */
+extern "C" __declspec(dllexport)
+long long sl_size_free(SLSizeStruct* s)
+{
+    if (s == NULL) return 0;
+    free((void*)s->name);
+    free(s);
+    return 1;
+}
+
+/* FFI 签名 "ptr->void"：以常量填充 SL 分配的块
+   （width=640 height=400 ratio=1.6），name 指向 C 静态串，
+   跨调用 marshalIn 回读安全。 */
+extern "C" __declspec(dllexport)
+void sl_size_fill_const(SLSizeStruct* out)
+{
+    static const char* kName = "sl-alloc-block";
+    if (out == NULL) return;
+    out->width  = 640;
+    out->height = 400;
+    out->ratio  = 1.6;
+    out->name   = kName;
+}
+
+// ---------------------------------------------------------------------------
 // 7. 导出清单（ffi-design.md 0.1：优先调用原生库导出的 sl_exports_json()）
 // ---------------------------------------------------------------------------
 
@@ -614,7 +825,16 @@ const char* sl_exports_json(void)
         "{\"publicName\":\"Native.strlen\",\"entryPoint\":\"sl_strlen_utf8\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Utf8String\"]},"
         "{\"publicName\":\"Native.bookAlloc\",\"entryPoint\":\"sl_book_alloc\",\"callingConvention\":\"Cdecl\",\"returnType\":\"Ptr\",\"parameterTypeList\":[\"I32\",\"F32\",\"I32\",\"Utf8String\"]},"
         "{\"publicName\":\"Native.bookPrint\",\"entryPoint\":\"sl_book_print\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]},"
-        "{\"publicName\":\"Native.bookFree\",\"entryPoint\":\"sl_book_free\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]}"
+        "{\"publicName\":\"Native.bookFree\",\"entryPoint\":\"sl_book_free\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeStructSize\",\"entryPoint\":\"sl_size_struct_size\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I32\",\"parameterTypeList\":[]},"
+        "{\"publicName\":\"Native.sizeFieldOffset\",\"entryPoint\":\"sl_size_field_offset\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I32\",\"parameterTypeList\":[\"I32\"]},"
+        "{\"publicName\":\"Native.sizeMake\",\"entryPoint\":\"sl_size_make\",\"callingConvention\":\"Cdecl\",\"returnType\":\"Void\",\"parameterTypeList\":[\"I32\",\"I32\",\"Utf8String\",\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeArea\",\"entryPoint\":\"sl_size_area\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeName\",\"entryPoint\":\"sl_size_name\",\"callingConvention\":\"Cdecl\",\"returnType\":\"Utf8String\",\"parameterTypeList\":[\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeChecksum\",\"entryPoint\":\"sl_size_checksum\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeAlloc\",\"entryPoint\":\"sl_size_alloc\",\"callingConvention\":\"Cdecl\",\"returnType\":\"Ptr\",\"parameterTypeList\":[\"I32\",\"I32\",\"Utf8String\"]},"
+        "{\"publicName\":\"Native.sizeFree\",\"entryPoint\":\"sl_size_free\",\"callingConvention\":\"Cdecl\",\"returnType\":\"I64\",\"parameterTypeList\":[\"Ptr\"]},"
+        "{\"publicName\":\"Native.sizeFillConst\",\"entryPoint\":\"sl_size_fill_const\",\"callingConvention\":\"Cdecl\",\"returnType\":\"Void\",\"parameterTypeList\":[\"Ptr\"]}"
         "]"
     "}";
 }

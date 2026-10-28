@@ -698,6 +698,7 @@
     // ---- Attribute preload host interfaces (形态 3, P9 §26; _enter_ 内消费) ----
     { "name": "SystemAttributeHostMethodRef",   "returnType": "object", "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_attribute_host_method_ref" },
     { "name": "SystemAttributeHostMethodRefOf", "returnType": "object", "params": ["string", "string", "object"], "isVariadic": false, "cvmFunction": "vm_sys_attribute_host_method_ref_of" },
+    { "name": "SystemAttributeHostMethodIsStatic", "returnType": "bool", "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_attribute_host_method_is_static" },
     { "name": "SystemAttributeHostClassNew",    "returnType": "object", "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_attribute_host_class_new" },
     // ---- Attribute instance-field interfaces (@InstanceAttr 装配通道, InstanceAttr.sl _enter_ / Server registerPreload 消费) ----
     { "name": "SystemAttributeSetStaticField", "returnType": "bool",   "params": ["string", "string", "object"], "isVariadic": false, "cvmFunction": "vm_sys_attribute_set_static_field" },

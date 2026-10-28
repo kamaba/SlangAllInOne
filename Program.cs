@@ -1,6 +1,7 @@
 using System.Text;
 using SimpleLanguage.ExportLanguage;
 using SlangAllInOne.Backend;
+using SlangAllInOne.Ffi;
 using SlangAllInOne.FrontEnd;
 using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
@@ -68,7 +69,7 @@ internal static class Program
     static readonly HashSet<string> KnownCommands = new(StringComparer.OrdinalIgnoreCase)
     {
         "compile", "run", "run-disk", "info", "publish",
-        "pack-modules", "pack-docs", "version", "help",
+        "pack-modules", "pack-docs", "ffi-check", "version", "help",
     };
 
     static int Main(string[] args)
@@ -92,6 +93,11 @@ internal static class Program
         // stdout；由 slang lsp 每轮 spawn 自身调用，规避 Front 进程内重入残留）。
         if (args.Length > 0 && args[0].Equals("lsp-compile", StringComparison.OrdinalIgnoreCase))
             return LspCompileCommand.Run(args.Skip(1).ToArray());
+
+        // ffi-check: FFI 契约独立校验子命令（P0-T5）——schema 自检 + 可选
+        // DLL 导出表比对（NativeLibrary 装载逐符号验证）。
+        if (args.Length > 0 && args[0].Equals("ffi-check", StringComparison.OrdinalIgnoreCase))
+            return FfiCheckCommand.Run(args.Skip(1).ToArray());
 
         var opts = ParseArgs(args);
         if (opts == null)
@@ -608,6 +614,12 @@ Commands:
                             on the C VM - no compile step.
   run-disk <module>         Alias of `run` (kept for compatibility).
   info <module>             Show module metadata via the C VM.
+  ffi-check <contract>      Validate an FFI contract (.slffi.json): schema
+   [--dll <lib.dll>]         self-check (version / functionList / structs /
+                            callbacks) plus, when the DLL is given or derivable
+                            (X.dll.slffi.json -> X.dll), an export-table
+                            comparison (each entryPoint must exist in the DLL).
+                            Exit 1 on any failure (CI-friendly).
   publish <project>         Publish a project (dotnet-publish style):
                             mode picked by jsonc publish section /
                             --mode - both (default) emits a runnable app

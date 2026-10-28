@@ -83,11 +83,26 @@ public class Attribute extends Object
         ret this._ownerClassName
     }
 
-    # 宿主方法引用（LATE 实例闭包：每次调用先 new 宿主实例——每请求
-    # 一实例语义；Core 不依赖 Server，单例策略由消费侧 _enter_ 决定）
+    # 宿主成员名（方法级 attribute = 宿主方法名；错误提示 / 登记键用）
+    public get string ownerMemberName()
+    {
+        ret this._ownerMemberName
+    }
+
+    # 宿主方法引用（双形态，SERVER_DESIGN.md §4.10：static 方法 → 静态
+    # method-ref，不实例化；实例方法 → LATE 实例闭包，每次调用先 new
+    # 宿主实例——每请求一实例语义；Core 不依赖 Server，策略由消费侧
+    # _enter_ 决定）
     public Function hostMethodRef()
     {
         ret SystemAttributeHostMethodRef( this._ownerClassName, this._ownerMemberName )
+    }
+
+    # 宿主方法是否静态（§4.10 双形态判定：类上无 @OnRoute 的直挂路由
+    # 必须绑定静态函数——SLang/Server registerPreload 消费）
+    public bool hostMethodIsStatic()
+    {
+        ret SystemAttributeHostMethodIsStatic( this._ownerClassName, this._ownerMemberName )
     }
 
     # 宿主方法绑定实例引用（bound method-ref：全程以 instance 为 this）

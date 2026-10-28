@@ -1,7 +1,7 @@
 # MySQL Connector/C（官方发行包，winx64）
 
 本目录存放 **Oracle 官方 MySQL Connector/C 6.1.11（winx64）** 的头文件与客户端库，
-供 `sl_mysql_lib.c` 编译链接使用。这样 SLMysql 模块无需使用者额外安装 MySQL SDK。
+供 `sl_mysql_lib.c` 编译链接使用。这样 SLangMysql 模块无需使用者额外安装 MySQL SDK。
 
 ## 内容
 

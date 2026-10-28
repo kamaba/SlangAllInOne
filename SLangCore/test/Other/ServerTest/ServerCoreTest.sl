@@ -42,6 +42,7 @@ ServerCoreTest
         {
             ret 0
         }
+
         if tlen < slen
         {
             ret -1
@@ -58,6 +59,7 @@ ServerCoreTest
                     break
                 }
             }
+
             if matched
             {
                 ret i
@@ -94,6 +96,7 @@ ServerCoreTest
             any = true
             i = i + 1
         }
+
         if any
         {
             ret v
@@ -131,6 +134,7 @@ ServerCoreTest
                     bodyNeed = bn
                 }
             }
+
             if headerEnd >= 0
             {
                 if headOnly
@@ -317,6 +321,7 @@ ServerCoreTest
                 # Close 帧：对端关闭协商
                 ret null
             }
+
             if len > 0
             {
                 skip = false

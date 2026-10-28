@@ -287,10 +287,12 @@ DataTest
         {
             global.println(" if (metaA == metaB) MetaInfo: equal")
         }
+
         if (metaA != metaC)
         {
             global.println("if (metaA != metaC) MetaInfo: level/passed diff -> not equal")
         }
+
         if (metaA.level == metaB.level && metaA.passed == metaB.passed)
         {
             global.println(" if (metaA.level == metaB.level && metaA.passed == metaB.passed) MetaInfo: level+passed match")
@@ -341,6 +343,7 @@ DataTest
         {
             global.println("builtin DataAllEqual(sameA,sameB) -> true")
         }
+
         if (DataAllEqual(sameA, diffC) == false )
         {
             global.println("builtin DataAllEqual(sameA,diffC) -> false")
@@ -350,14 +353,17 @@ DataTest
         {
             global.println("builtin DataTypeEqual(sameA,sameB) -> true")
         }
+
         if (DataNameAndTypeEqual(sameA, sameB))
         {
             global.println("builtin DataNameAndTypeEqual(sameA,sameB) -> true")
         }
+
         if (DataDataEqual(sameA, sameB))
         {
             global.println("builtin DataDataEqual(sameA,sameB) -> true")
         }
+        
         if DataDataEqual(sameA, diffC) == false
         {
             global.println("builtin DataDataEqual(sameA,diffC) -> false")
@@ -367,10 +373,12 @@ DataTest
         {
             global.println("builtin DataTypeEqual(anon) -> true")
         }
+
         if (DataDataEqual(anonSame1, anonSame2))
         {
             global.println("builtin DataDataEqual(anon) -> true")
         }
+
         if (DataDataEqual(anonSame1, anonDiff) == false)
         {
             global.println("builtin DataDataEqual(anon diff) -> false")
@@ -402,18 +410,22 @@ DataTest
         {
             global.println("whole nested anonymous data: equal")
         }
+
         if (nestedA != nestedC)
         {
             global.println("whole nested anonymous data: nested.a differs -> not equal")
         }
+
         if (nestedA.nested.a == nestedB.nested.a && nestedA.tag == nestedB.tag)
         {
             global.println("field nested anonymous data: nested.a+tag match")
         }
+
         if (nestedA.nested.a != nestedC.nested.a)
         {
             global.println("field nested anonymous data: nested.a diff ok")
         }
+
         if (nestedA.nested.b == nestedC.nested.b)
         {
             global.println("field nested anonymous data: nested.b still equal when only a differs")
@@ -425,10 +437,12 @@ DataTest
         {
             global.println("builtin DataTypeEqual(typed anon pair) -> true")
         }
+
         if (DataDataEqual(typedA, typedB))
         {
             global.println("builtin DataDataEqual(typed anon pair) -> true")
         }
+        
         if !DataAllEqual(typedA, typedB) 
         {
             global.println("builtin DataAllEqual(typed anon, diff type id) -> false expected")

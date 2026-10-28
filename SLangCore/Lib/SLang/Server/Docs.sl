@@ -148,6 +148,7 @@ namespace SLang
                 Docs._kv( s, "type", isInt ? "integer" : "number" )
                 ret
             }
+
             if v.isNull
             {
                 Docs._kv( s, "nullable", "true" )
@@ -364,6 +365,7 @@ namespace SLang
                     }
                 }
             }
+
             # parameters（path/query；in 按 pattern 是否含 {name} 推导）
             if r.docParams != null && r.docParams.length > 0
             {
@@ -408,6 +410,7 @@ namespace SLang
                     }
                 }
             }
+
             if SystemStringLength( r.docBodyText ) > 0
             {
                 Docs._attachRequestBody( op, r, "application/json", r.docBodyText, r.docBodyClass )
@@ -424,6 +427,7 @@ namespace SLang
                     Docs._attachFormBody( op, r, "application/x-www-form-urlencoded", false )
                 }
             }
+
             # responses
             if r.docResponses != null && r.docResponses.length > 0
             {
@@ -497,6 +501,7 @@ namespace SLang
                 {
                     Docs._kv( ps, "format", "binary" )
                 }
+
                 if SystemStringLength( p.desc ) > 0
                 {
                     Docs._kv( ps, "description", p.desc )
@@ -833,6 +838,7 @@ namespace SLang
             {
                 ret 0
             }
+
             if tlen < slen
             {
                 ret -1

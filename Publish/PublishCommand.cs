@@ -44,6 +44,8 @@ internal static class PublishCommand
         public string CvmConfig = "";
         /// <summary>CLI --no-libs 覆盖（null = 走 jsonc includeLibs）。</summary>
         public bool? IncludeLibs = null;
+        /// <summary>CLI --gui 覆盖（null = 走 jsonc publish.gui；--gui 仅强制开）。</summary>
+        public bool? Gui = null;
         public int OptimizeLevel = -1;
     }
 
@@ -76,6 +78,7 @@ internal static class PublishCommand
             return 1;
         }
         bool includeLibs = opts.IncludeLibs ?? pub.IncludeLibs;
+        bool gui = opts.Gui ?? pub.Gui;
 
         /* Step 3: 发布目录（jsonc 目录 = sp 所在目录；清空重建避免陈旧文件）。
          * 注意 ProjectManager.projectPath 语义 = 工程目录（ProjectCompile.
@@ -139,6 +142,11 @@ internal static class PublishCommand
                     string appExe = Path.Combine(publishDir, moduleName + ".exe");
                     AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
                     Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
+                    if (gui)
+                    {
+                        PatchSubsystemWindows(appExe);
+                        Console.WriteLine($"[OK]  gui:  PE subsystem Console -> Windows (no cmd window; see publish-guide.md §5)");
+                    }
 
                     /* C VM exe 唯一动态依赖（delay-load）：按布局规则落
                      * lib\<平台>\（2026-10-22 平台细分）——运行期 exe 经
@@ -188,6 +196,19 @@ internal static class PublishCommand
             {
                 CopyDirectory(pluginsSrc, Path.Combine(publishDir, "plugin"));
                 Console.WriteLine("[OK]  plugin:   copied from module export (plugin\\)");
+            }
+        }
+
+        /* Step 8: 工程 modules\ 整目录拷贝（2026-10-29 spm 规则）：工程
+         * 经 slang spm install 装的包（modules\<名>\<名>.module.slb|json）
+         * 随发布包携带，C VM 装载器 ④ 回退链 <dir>/modules 直查命中
+         * （Front 导出的引用相对路径也按同布局解析）。 */
+        {
+            string modulesSrc = Path.Combine(projectDir, "modules");
+            if (Directory.Exists(modulesSrc) && Directory.EnumerateFileSystemEntries(modulesSrc).Any())
+            {
+                CopyDirectory(modulesSrc, Path.Combine(publishDir, "modules"));
+                Console.WriteLine("[OK]  modules:  copied from project (modules\\)");
             }
         }
 
@@ -271,6 +292,33 @@ internal static class PublishCommand
         output.Write(AppPayloadMagic, 0, AppPayloadMagic.Length);
     }
 
+    /// <summary>publish gui:true：把应用 exe 的 PE Subsystem 字段从
+    /// Console(IMAGE_SUBSYSTEM_WINDOWS_CUI=3) 补丁为 Windows(GUI=2)——发布时
+    /// 一次写入，C VM 模板不动。入口 RVA 不变：Windows 加载器只跳
+    /// AddressOfEntryPoint（_mainCRTStartup→main），子系统字段只决定进程创建
+    /// 时是否自动分配控制台——双击/启动即无 cmd 窗口。C 侧 app 模式配套见
+    /// cli_app_payload.c（无控制台跳过收尾 pause；从终端启动 AttachConsole
+    /// 挂回父控制台看日志）。非 3（已 GUI / 异常值）不动。</summary>
+    static void PatchSubsystemWindows(string exePath)
+    {
+        using var fs = new FileStream(exePath, FileMode.Open, FileAccess.ReadWrite);
+        using var br = new BinaryReader(fs);
+        /* DOS header e_lfanew @0x3C -> PE 头；Subsystem @PE+0x5C（u16 LE） */
+        fs.Seek(0x3C, SeekOrigin.Begin);
+        int peOff = br.ReadInt32();
+        if (peOff <= 0 || peOff + 0x5C + 2 > fs.Length)
+        {
+            return;
+        }
+        fs.Seek(peOff + 0x5C, SeekOrigin.Begin);
+        if (br.ReadUInt16() != 3)
+        {
+            return;
+        }
+        fs.Seek(peOff + 0x5C, SeekOrigin.Begin); /* ReadUInt16 已前移 2 字节，写回前重定位 */
+        fs.WriteByte(2);
+    }
+
     /// <summary>拷官方标准库到 &lt;publish&gt;\lib\（slb 平铺）+ 原生库到
     /// lib\&lt;平台&gt;\（2026-10-22 平台细分）。模块产物来源链：
     /// ① 包布局 &lt;app dir&gt;\lib\&lt;n&gt;.module.slb（官方库直查目录）
@@ -339,12 +387,19 @@ internal static class PublishCommand
     { "Core", "Std", "Math" };
 
     /// <summary>解析主模块 moduleReferences，把非系统库引用（如 ExpendTest ->
-    /// SLangServer）的导出产物 stage 成 &lt;publish&gt;\&lt;名&gt;.module.{slb,json}
-    /// **平铺**——发布目录深度与开发导出树不同，内嵌相对路径必然错位（装载期
-    /// 静默跳过 → 引用方全线失效）；C VM 引用回退链（sl_load_references ②
-    /// basename 直查）恰好按 &lt;主包目录&gt;\&lt;名&gt;.module.json 平铺命中
-    /// （SLB 优先重定向自动改指同名 .slb）。两处标准导出树搜索（out\export\
-    /// 与 SLangCore\out\export\）同 CSimpleVMTest。未找到仅提示不阻断。</summary>
+    /// SLangServer、WebUITest -&gt; SLangWebUI）的导出产物 stage 成
+    /// &lt;publish&gt;\&lt;名&gt;.module.{slb,json} **平铺**——发布目录深度与开发
+    /// 导出树不同，内嵌相对路径必然错位（装载期静默跳过 → 引用方全线失效）；
+    /// C VM 引用回退链（sl_load_references ② basename 直查）恰好按
+    /// &lt;主包目录&gt;\&lt;名&gt;.module.json 平铺命中（SLB 优先重定向自动改指同名
+    /// .slb）；载荷 exe 的主包目录 = exe 目录（cli_app_payload base_dir）。
+    /// 导出目录解析序：标准导出树两处候选（须实含 *.module.* 产物，陈旧空
+    /// 目录不再静默命中）→ moduleReferences.path 字段（相对主 module.json
+    /// 目录解析，Front 导出时即被引用模块导出产物的权威指针）。被引用模块
+    /// 导出目录里的原生库（webui_lib.dll 等）按布局规则落 lib\&lt;平台&gt;\
+    /// ——C VM 两条链均命中：FFI sl_ffi_lib_load 发布布局回退
+    /// （&lt;exe&gt;\lib\&lt;平台&gt;\）与 vm_sys_ffi_static_lib_register 的
+    /// pkg_dir/&lt;平台&gt;/basename。未找到仅提示不阻断。</summary>
     static void StageReferencedModules(string moduleJsonPath, string publishDir, string? repoRoot)
     {
         try
@@ -352,6 +407,7 @@ internal static class PublishCommand
             using var doc = JsonDocument.Parse(File.ReadAllText(moduleJsonPath));
             if (!doc.RootElement.TryGetProperty("moduleReferences", out var refsEl))
                 return;
+            string baseDir = Path.GetDirectoryName(Path.GetFullPath(moduleJsonPath)) ?? ".";
             foreach (var r in refsEl.EnumerateArray())
             {
                 if (!r.TryGetProperty("name", out var nameEl))
@@ -364,10 +420,28 @@ internal static class PublishCommand
                     Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name),
                     Path.Combine(repoRoot, "SlangAllInOne", "SLangCore", "out", "export", name),
                 };
-                string? srcDir = exportRoots.FirstOrDefault(Directory.Exists);
+                /* 候选目录须实含 *.module.* 产物：out\export\ 下的陈旧空壳目录
+                 * （仅剩 Logs\ 残留）命中即静默零拷贝，是发布缺件事故根源。 */
+                string? srcDir = exportRoots.FirstOrDefault(d =>
+                    Directory.Exists(d) && Directory.GetFiles(d, "*.module.*").Length > 0);
+                /* 回退：引用 path 字段（相对主 module.json 目录）指向的权威导出树。 */
+                if (srcDir == null && r.TryGetProperty("path", out var pathEl))
+                {
+                    string? rp = pathEl.GetString();
+                    if (!string.IsNullOrWhiteSpace(rp))
+                    {
+                        string full = Path.GetFullPath(Path.Combine(baseDir, rp));
+                        string? d = Path.GetDirectoryName(full);
+                        if (d != null && Directory.Exists(d)
+                            && Directory.GetFiles(d, "*.module.*").Length > 0)
+                        {
+                            srcDir = d;
+                        }
+                    }
+                }
                 if (srcDir == null)
                 {
-                    Console.WriteLine($"[WARN] reference: module '{name}' export dir not found, skipped (the app needs it if it is referenced)");
+                    Console.WriteLine($"[WARN] reference: module '{name}' export artifacts not found, skipped (the app needs it if it is referenced)");
                     continue;
                 }
                 /* 平铺 stage：主包目录直下 <名>.module.slb / .module.json——
@@ -378,11 +452,26 @@ internal static class PublishCommand
                     File.Copy(f, Path.Combine(publishDir, Path.GetFileName(f)), overwrite: true);
                     any = true;
                 }
+                /* 原生库 stage（布局规则平台细分）：webui_lib.dll 等按宿主平台
+                 * 落 lib\<平台>\，C VM FFI 查找链（sl_ffi_lib_load 发布布局
+                 * 回退）按 basename 命中。 */
+                string platDir = Path.Combine(publishDir, "lib", HostPlatformDir());
+                foreach (string ext in new[] { "*.dll", "*.so", "*.dylib" })
+                {
+                    foreach (string f in Directory.GetFiles(srcDir, ext))
+                    {
+                        Directory.CreateDirectory(platDir);
+                        File.Copy(f, Path.Combine(platDir, Path.GetFileName(f)), overwrite: true);
+                        Console.WriteLine($"[OK]  reference: lib\\{HostPlatformDir()}\\{Path.GetFileName(f)}");
+                    }
+                }
                 string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))
                     CopyDirectory(refPlugins, Path.Combine(publishDir, "plugin"));
                 if (any)
                     Console.WriteLine($"[OK]  reference: {name}.module.* (staged flat into publish)");
+                else
+                    Console.WriteLine($"[WARN] reference: module '{name}' has no *.module.* artifacts in {srcDir}");
             }
         }
         catch (Exception ex)

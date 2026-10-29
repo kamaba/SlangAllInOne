@@ -31,7 +31,7 @@
   // （同目录 mysqlclient/lib/vs14/mysqlclient.lib），因此产物 DLL 自包含，
   // 不依赖外部 libmysql.dll。
   "vmDlls": [
-    { "project": "../../../../project/cvm_sl_mysql_lib/cvm_sl_mysql_lib.vcxproj", "name": "sl_mysql_lib.dll", "configuration": "Debug", "platform": "x64" }
+    { "project": "cvm_sl_mysql_lib/cvm_sl_mysql_lib.vcxproj", "name": "sl_mysql_lib.dll", "configuration": "Debug", "platform": "x64" }
   ],
   // systemCalls：本模块全部能力走 @DllStaticImport 静态绑定直调，不下沉 cvm
   // SystemMethodCall，故留空。

@@ -1,0 +1,69 @@
+{
+  "project":
+  {
+    "name": "WebUITest",
+    "desc": "WebUI smoke test - SLangWebUI module end-to-end (native dll preload / window / bindEvent / show) ",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "WebUITest.sl", "group": "webui", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "path": "../../../../SLangCore/Lib/SLang/WebUI/export/SLangWebUI/SLangWebUI.module.json" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "WebUITest",
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish"
+  }
+}

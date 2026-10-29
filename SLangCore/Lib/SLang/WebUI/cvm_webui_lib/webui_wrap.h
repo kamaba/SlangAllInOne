@@ -27,10 +27,19 @@
 extern "C" {
 #endif
 
-/* 事件结构体：我们只读取 bind_id（首字段），用最小声明即可；真实 webui.c 用完整结构。 */
+/* 事件结构体：布局严格对齐上游 webui.h v2.5.0-beta.4（bind_id 在偏移 32，
+ * 首字段是 window——最小单字段声明会把 window 误读成 bind_id）；
+ * 真实 webui.c 用完整结构，此处按同序声明到 cookies 即可。 */
 typedef struct webui_event_t
 {
-    size_t bind_id;   /* 绑定 ID，webui_bind 返回，用于查 SLang 回调节流点 */
+    size_t window;        /* 窗口号（多窗口绑定表区分键）*/
+    size_t event_type;    /* 事件类型 */
+    char*  element;       /* HTML 元素 ID */
+    size_t event_number;  /* Internal WebUI */
+    size_t bind_id;       /* 绑定 ID（窗口内编号），用于查 SLang 回调节流点 */
+    size_t client_id;     /* Client's unique ID */
+    size_t connection_id; /* Client's connection ID */
+    char*  cookies;       /* Client's full cookies */
 } webui_event_t;
 
 typedef enum webui_config

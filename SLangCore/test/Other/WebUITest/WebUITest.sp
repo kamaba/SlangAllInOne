@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        WebUITest.main()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

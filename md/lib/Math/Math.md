@@ -89,8 +89,8 @@ Math 库是 system method call 的典型使用者，四个层级：
   // vmDlls：导出 Math 时 Front 用 MSBuild 编译该 VS 工程，
   // 并把产出的 math_lib.dll 拷贝到与 Math.module.json 相同的目录
   "vmDlls": [
-    { "project": "../../../../project/cvm_math_lib/cvm_math_lib.vcxproj",
-      "name": "math_lib.dll", "configuration": "Debug", "platform": "x64" }
+    { "project": "cvm_math_lib/cvm_math_lib.vcxproj",
+      "name": "math_lib.dll", "configuration": "Release", "platform": "x64" }
   ],
   // systemCalls：矩阵运算下沉 cvm 声明；
   // cvmFunction 的 DllName 必须与上方 vmDlls.name 一致

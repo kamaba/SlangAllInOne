@@ -358,3 +358,18 @@
 - 如何快速验证：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp -e ir --format binary+json --no-banner` export success；`package\win32-debug\csimple_lang.exe run --no-banner .\ProjectTest2\ProjectTest.module.json` ServerP3Test 33 项全 OK + P1/P1.5/P2 回归全绿。
 - 预防建议：① 新写 .sl 的 for 循环先对照既有文件（全库无一处分号写法）；② 含 "$" 的 JSON/JS 文本一律运行期构造，勿写字面量；③ 超过 ~3 段的字符串拼接一律 StringBuilder（长字面量 "+" 链是静默数据截断，比编译错误危险）；④ `out`/`params`/`data`/`base`/`get`/`set` 进关键字黑名单心算——见到「'=' 后缺少赋值表达式」先查变量名撞关键字再查表达式；⑤ File 层 NRE 无报错时立即上单文件探针工程二分——比读 StructParseToSyntax 源码快一个量级；⑥ 「类名[X]没有找到」若 X 是小写短名，先怀疑链中段裸局部变量被误判，而非真缺定义。
 - 详见 `SlangAllInOne/SLangCore/Lib/SLang/Server/SERVER_DESIGN.md` §16 复盘 5。
+
+### [2026-10-29] 0 参方法引用无法作实参（bindHandle 前置修复）：getter 上下文访问器查找误命中 + SLB 方法旗标丢失 isGet/isSet + VM method-ref 调用 this 被实参顶掉（三联根因）
+- 现象：`win.bindHandle("greet", aaa)`（`static void aaa(){}`）、`callF(Probe.z0)` 等 **0 参方法引用作实参**编译报 `MetaCoreCallNotSupportNotSupport`（错误 token 挂在**外层调用头**上）；同形态 1 参引用、0 参匿名闭包、赋值上下文（`var f0 = Probe.a0`）全部正常。
+- 根因（三层叠加，修复需三处同改）：
+  1. **Front**：非调用形态成员访问先走 getter/setter 分支的 `GetMetaDefineGetSetMemberFunctionByName`——该查找**不检查 isGet/isSet**，0 参普通函数（ipc 空 → 参数个数匹配）被误命中并按"自动调用 getter"处理，抢在方法引用回退（`TryCreateMethodReference`）之前；1 参函数因参数个数不匹配侥幸落进回退。且误命中后实参类型变成函数返回值，外层调用头解析失败 → 报错挂头。
+  2. **SLB 旗标丢失**：`SLModulePackageWriter.BuildMethodFlags` 不导出 isGet/isSet → ref module（SLB）装载重建的 `MetaMemberFunction` 访问器标记恒 false——想在 getter 分支里"只放行真访问器"也无法判定（`f.type`/`x.hashCode` 这类 SLB 访问器与普通函数不可区分）。
+  3. **C VM**：method-ref 调用重推参为 `[receiver, args...]`，而帧按**栈顶对齐声明参数槽**绑定——0 参**实例**引用带参调用时 `this` 绑到实参上（`ca.ttt()` 读 `this.tag` 得到实参值），receiver 成孤儿。
+- 修复点：
+  - `MetaCallLink.Parse`：新增 `AllowUseSettings.allowMethodReference`，仅**链尾 + getter 语义**节点置 true（链中间节点保持自动调用——`f.type`/`x.hashCode.toString()` 等访问器链依赖）。
+  - `MetaCallNode` getter 分支：`allowMethodReference && mmv==null` 时先做访问器探测（isGet/isSet 位可靠后），非访问器才 `TryCreateMethodReference` 优先。
+  - `BuildMethodFlags`/`SLBReader`/`IRMethod`/`ProjectReferenceModuleLoader`：方法旗标补 **512=isGet / 1024=isSet** 全链路 round-trip（旧 SLB 无该位 → 行为回落旧语义，向后兼容）。
+  - `vm_runtime.c` CallClosure method-ref 分支：按 `vm_find_method_by_id(...).argument_count` 对齐重推参（多丢少补 null），声明槽窗口恒为 `[receiver?, arg0..argK-1]`。
+- 语义边界（重要）：实参位置非调用成员函数 = 函数值（方法引用）；链中间节点与表达式上下文维持自动调用。**不要**把规则放宽到链中间——`f.type`、`x.hashCode.toString()`、`re.groupCount.toString()` 等 API 会立刻碎。
+- 排障教训：① "not support type" 挂在**外层调用头**不代表头有问题，是**实参子链解析失败**向传导（插桩 `TryCreateMethodReference` 无日志才定位到分支没走到）；② 修 Front 语义前先跑**全量语料回归**（BaseTest+ExpendTest 编译）——首轮"只放行真访问器"修复就因 SLB 旗标丢失把 `f.type` 碎了；③ 测试用例自身也会骗人：单行多语句 `{ f( 7 )  ret 0 }`（无分号）静默丢语句，曾把问题误导向 JIT/VM；④ 载荷链路加字段要全链核对（writer→SLBReader→IRMethod→loader 四点，漏一点就是"写了但读不回"）。
+- 验证：`test\Other\WebUIProbe`（六形态探针：0 参静态带返/无返、1 参静态、0 参/1 参实例、0 参匿名闭包）全通过；BaseTest+ExpendTest 全量编译干净；WebUITest bindHandle 三形态端到端（窗口/绑定/阻塞）通过。

@@ -2,7 +2,16 @@ TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
 
 VSCode里边，如果识别到是变量，在右键的时候，要弹出一个按钮，叫 添加到监视 的功能，点击后，直接移动到监视栏 看看是否和我内部的监视代码可以整合
 
-把SlMysql 还有Server 打包package的包，然后放到相应的目录 优先
+
+bindEvent 先改成bindHandle 这个要支持 绑定 函数  比如 static void aaa(){}   win.bindHandle( "greet", aaa ) class CA{ void ttt(){} } CA ca = new() win.bindHandle( "greet", ca.ttt )   win.bindHandle( "greet", function(){ Console.println("ok" ) } ) 这种的情况也支持下吧   把这块 静态函数体，非静态函数的函数体，匿名函数的函数体，都可以 当functionObject 的形式传入进去
+
+
+
+需要在cli里边增加管理包，下载包的逻辑 大概逻辑就是这样的，配置 一个地址，然后下载包.zip然后解压到运行的当前工程目录(也就是.jsonc的目录) 
+对了，环境中，增加两个 一个是 lang的目录，一个是运行的当前目录，然后需要把包解压到 运行的当前目录的modules里边，然后 调用，直接先搜索当前目录的modules里边，如果没有，再去lang目录的modules里边搜索   如果确定没有，则认为没有这个包。    然后是plugins 则自动搜索lang下边的  如果打包，也需要把modules直接放到发布包的modules里边 
+
+spm 的装包方式有几种，一种是 通过http直接拉取zip压缩文件，  第二种是通过slang目录里边的modules里边边检查是否有这个模块名称，然后移动到当前工程下边  
+
 
 1. 接入 javascript_quickjs 
 2. nodejs的接入 v8js
@@ -28,12 +37,15 @@ sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
 
 
+
+
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心  
 然后使用http server 写一个若依平台   
 制作结合SLangQT的工程
 制作自己的渲染底层
-制作自己的渲染UI/图形
+制作自己的渲染UI使用webUI的机制。
+在有了渲染底层后，制作浏览器解析 制作一个小的浏览器解析框架。
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 

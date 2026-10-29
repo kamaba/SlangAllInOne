@@ -155,15 +155,15 @@ static int32 mathvm_mat3f_pop(VM* vm, float** out_mat)
 
 ### 2.8 VS 工程配置（vcxproj）
 
-参照 [cvm_math_lib.vcxproj](../../project/cvm_math_lib/cvm_math_lib.vcxproj)：
+参照 [cvm_math_lib.vcxproj](../../SLangCore/Lib/Math/cvm_math_lib/cvm_math_lib.vcxproj)：
 
 | 配置项 | 值 | 说明 |
 |---|---|---|
 | ConfigurationType | `DynamicLibrary` | 产出 DLL |
 | Platform | x64 | **必须与 csimple_lang 相同架构**（镜像布局按 x64） |
 | PlatformToolset | v145 | 与主工程一致 |
-| AdditionalIncludeDirectories | `$(ProjectDir)..\..\..\csimple_lang\src\vm\system_method_call` | 指向 `sl_vm_ext_api.h` 所在目录（路径相对 vcxproj 位置换算） |
-| ClCompile | 逐个列出 `math_lib.c` 与 `*_vm_method_call.c` | 源文件放在库目录 `cvm_math_lib/` 子目录下 |
+| AdditionalIncludeDirectories | `$(ProjectDir)..\..\..\..\..\csimple_lang\src\vm\system_method_call` | 指向 `sl_vm_ext_api.h` 所在目录（路径相对 vcxproj 位置换算） |
+| ClCompile | 逐个列出 `math_lib.c` 与 `*_vm_method_call.c` | 源文件与 vcxproj 同目录（`SLangCore\Lib\Math\cvm_math_lib\`） |
 
 同一个 DLL 可同时承载方式①（`math_lib.c` 的 `mathf_*`/`mathd_*` 普通 C ABI）与方式②（`*_vm_method_call.c` 的 `mathvm_*` VM 函数），互不冲突——FFI 与 systemCalls 的解析链路彼此独立。
 
@@ -208,9 +208,9 @@ static int32 mathvm_mat3f_pop(VM* vm, float** out_mat)
 
 ```jsonc
 "vmDlls": [
-  { "project": "../../../../project/cvm_math_lib/cvm_math_lib.vcxproj",  // 路径相对本 jsonc 所在目录
+  { "project": "cvm_math_lib/cvm_math_lib.vcxproj",  // 路径相对本 jsonc 所在目录
     "name": "math_lib.dll",            // 产物名；cvmFunction 的 DllName 与运行时预载都以此为准
-    "configuration": "Debug",
+    "configuration": "Release",
     "platform": "x64" }
 ]
 ```
@@ -232,7 +232,7 @@ Math.jsonc 两者并存且指向**同一个 DLL**：
 
 ```jsonc
 "dllImports": [ { "path": "../../out/export/Math/math_lib.dll", "name": "math_lib", "alias": "math_lib" } ],
-"vmDlls":     [ { "project": "../../../../project/cvm_math_lib/cvm_math_lib.vcxproj", "name": "math_lib.dll", "configuration": "Debug", "platform": "x64" } ]
+"vmDlls":     [ { "project": "cvm_math_lib/cvm_math_lib.vcxproj", "name": "math_lib.dll", "configuration": "Release", "platform": "x64" } ]
 ```
 
 ### 3.5 references（FFI 需要而 systemCalls 不需要）

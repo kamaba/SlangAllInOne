@@ -84,6 +84,11 @@ namespace SLang
         public static Int64 libBindHandle( Int64 w, string element, Int64 slot, Int64 dispatchCb ) { ret 0 }
 
         # handler 表 + 分发节流点（懒初始化，一次 createCallback 全局共用）
+        # 注意：createCallback 的 method 参数必须传"完整 method id
+        # （Module.NS.Class.Method_argc_T1_T2）"或"短方法名"二者之一；
+        # "NS.Class.Method" 点路径三条查找路径均不命中（VM 日志报
+        # FFI callback: method not found，事件静默丢弃）。短名按
+        # 名字+参数个数全局匹配，_dispatchHandle 唯一，走短名最稳。
         static List<Function> _bindHandles = null
         static Int64 _dispatchCb = 0
 
@@ -95,9 +100,10 @@ namespace SLang
             {
                 _bindHandles = List<Function>()
             }
+
             if ( _dispatchCb == 0 )
             {
-                _dispatchCb = FFI.StaticLibrary.createCallback( "SLang.WebUI._dispatchHandle", "i64,i64->void" )
+                _dispatchCb = FFI.StaticLibrary.createCallback( "_dispatchHandle", "i64,i64->void" )
             }
             _bindHandles.add( handler )
             Int64 slot = ( _bindHandles.length - 1 ) as Int64
@@ -110,7 +116,10 @@ namespace SLang
         # e（webui_event_t*，配合 getArgString/returnString 等使用）。
         public static void _dispatchHandle( Int64 slot, Int64 e )
         {
-            Function f = _bindHandles[slot as Int32]
+            # 下标内联 as 转型（_bindHandles[slot as Int32]）触发 Front 解析断言，
+            # 拆两行规避（2026-10-29 实测）
+            Int32 idx = slot as Int32
+            Function f = _bindHandles[idx]
             f( e )
         }
 

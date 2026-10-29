@@ -15,9 +15,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csimple_lang_lib", "..\csim
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "csimple_lang_exe", "..\csimple_lang\project\vs\vm_exe\csimple_lang_exe\csimple_lang_exe.vcxproj", "{DD4E0975-248F-4B2E-B961-E92B761C738F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_math_lib", "Project\cvm_math_lib\cvm_math_lib.vcxproj", "{251046F2-C183-4704-9894-A31841E12766}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_math_lib", "SLangCore\Lib\Math\cvm_math_lib\cvm_math_lib.vcxproj", "{251046F2-C183-4704-9894-A31841E12766}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_sl_mysql_lib", "Project\cvm_sl_mysql_lib\cvm_sl_mysql_lib.vcxproj", "{5C2A9E14-8F63-4D17-9B31-6E0A7C45D2B8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_sl_mysql_lib", "SLangCore\Lib\SLang\Mysql\cvm_sl_mysql_lib\cvm_sl_mysql_lib.vcxproj", "{5C2A9E14-8F63-4D17-9B31-6E0A7C45D2B8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLangdll", "Project\CLangdll\CLangdll.vcxproj", "{D5C62645-D6BC-42B4-BC6D-76F41F92F5AC}"
 EndProject

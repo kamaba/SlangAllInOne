@@ -24,14 +24,14 @@
   ],
   // vmDlls 构建规则：导出 Math 时，Front 用 MSBuild 编译 project 指向的 VS 工程
   // （路径相对本 jsonc 所在目录），并把产出的 math_lib.dll 拷贝到与 Math.module.json 相同的
-  // 目录（out/export/Math/），即上方 dllImports 别名指向的位置。C 实现位于
-  // source/Front/Lib/Math/cvm_math_lib/math_lib.c（FFI 普通 C ABI：mathf_*/mathd_*），
+  // 目录（out/export/Math/），即上方 dllImports 别名指向的位置。C 实现位于本目录
+  // cvm_math_lib/（vs 工程与源码同目录；FFI 普通 C ABI：mathf_*/mathd_*），
   // 供 Mathf.sl / Mathd.sl / 矩阵类的 @DllImport 三参形式绑定调用。
   // 🔥 configuration 必须 Release（2026-10-18 修正，原 Debug）：Debug 产物链
   // VCRUNTIME140D/ucrtbased（不可再分发的调试 CRT），任何非构建机必然加载失败；
   // cvm_math_lib.vcxproj 两侧配置均已改静态 CRT（/MT|/MTd），产物零 VC 运行库依赖。
   "vmDlls": [
-    { "project": "../../../Project/cvm_math_lib/cvm_math_lib.vcxproj", "name": "math_lib.dll", "configuration": "Release", "platform": "x64" }
+    { "project": "cvm_math_lib/cvm_math_lib.vcxproj", "name": "math_lib.dll", "configuration": "Release", "platform": "x64" }
   ],
   // systemCalls：矩阵运算下沉 cvm（SystemMethodCall）声明。cvmFunction 用
   // "DllName!symbol" 形式（DllName 须与上方 vmDlls.name 一致），cvm 加载

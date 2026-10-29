@@ -101,7 +101,7 @@
       ] }
   ],
   "vmDlls": [                          // 导出期用 MSBuild 编译并拷 DLL 到 module.json 同目录
-    { "project": "../../../../project/cvm_math_lib/cvm_math_lib.vcxproj", // 必填（相对 jsonc 目录）
+    { "project": "cvm_math_lib/cvm_math_lib.vcxproj", // 必填（相对 jsonc 目录）
       "name": "math_lib.dll",           // 必填；产出 DLL 文件名
       "configuration": "Debug",        // MSBuild Configuration，缺省 "Debug"
       "platform": "x64" }               // MSBuild Platform，缺省 "x64"

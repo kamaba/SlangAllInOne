@@ -161,3 +161,9 @@
 - 如何快速验证：Release 树重编后 `%TEMP%` smoke 副本全绿；Debug 树原版 smoke.js 无回归（`result=241`）；`dotnet publish -c Release` 重打 AOT 包后 dap-smoke **30/30**（负例 BadLink 为预期断言项）。
 - 预防建议：① **调试器/诊断路径的运行期数据源禁用编译期宏单件依赖**——Release 构建同样要跑 SL 级调试（发布包 F5），凡 `#if SL_DEBUG`/`#if DEBUG` 包住的字段被运行期功能引用即为隐患，必须有常驻回落源；② 「Debug 好、Release 坏」且与优化级别无关的症状，先 Grep 编译期宏差异点再谈别的；③ 摘要/元信息类输出字段优先选装载层常驻数据（SLIR 字符串、RuntimeClass.name），而非运行期按需分配的 debug-only 副本。
 - 详见 `csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md` §6.5 备注、`slang_vscode_plugin/md/PROGRESS.md` 条目二十九。
+
+### [2026-10-29] CallClosure method-ref 调用按声明参数槽对齐：0 参实例方法引用带参调用 this 被实参顶掉
+- 现象：0 参实例方法引用经 `f( e )` 调用时，`this` 绑到实参上（读 `this.tag` 得到实参值），receiver 成孤儿；静态 0 参引用则表现为实参被静默丢弃。
+- 根因：method-ref 分支重推参为 `[receiver, args...]`，而帧按栈顶对齐**声明参数槽数**绑定——0 参实例方法（声明槽=1）从栈顶取 1 槽拿到的是最后一个实参。
+- 修复：`vm_runtime.c` CallClosure method-ref 分支按 `vm_find_method_by_id(mref_target_id)->argument_count` 对齐重推参（多余实参丢弃取末 K 个、缺失补 null）。
+- 验证：WebUIProbe T4（`ca.ttt` tag=9 正确）；复盘详见 01-front-compile.md 同日条目（bindHandle 三联根因）。

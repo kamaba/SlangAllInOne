@@ -32,7 +32,9 @@
 
 typedef struct _SLWebUIBinding
 {
-    size_t   bind_id;   /* webui_bind 返回的递增绑定 ID */
+    size_t   window;   /* 事件所属窗口号：webui_bind 的 index 按窗口独立编号，
+                          必须与 bind_id 联合作键，否则多窗口同 index 互相覆盖 */
+    size_t   bind_id;  /* webui_bind 返回的（窗口内）绑定 ID */
     int64_t  sl_cb;     /* void(*)(int64_t)：createCallback 节流点 */
     int64_t  slot;      /* bindHandle: SL 层 handler 表槽位 */
     int      has_slot;  /* 0 = bindEvent 单参 cb(e)；1 = bindHandle 双参 cb(slot, e) */
@@ -43,7 +45,7 @@ static SLWebUIBinding* g_bindings = NULL;
 static int             g_bind_count = 0;
 static int             g_bind_cap = 0;
 
-static int sl_webui_add_binding2( size_t bind_id, int64_t sl_cb, int64_t slot, int has_slot )
+static int sl_webui_add_binding2( size_t window, size_t bind_id, int64_t sl_cb, int64_t slot, int has_slot )
 {
     if ( g_bindings == NULL )
     {
@@ -59,59 +61,40 @@ static int sl_webui_add_binding2( size_t bind_id, int64_t sl_cb, int64_t slot, i
         g_bindings = nb;
         g_bind_cap = ncap;
     }
-    g_bindings[g_bind_count].bind_id  = bind_id;
-    g_bindings[g_bind_count].sl_cb    = sl_cb;
-    g_bindings[g_bind_count].slot     = slot;
+    g_bindings[g_bind_count].window  = window;
+    g_bindings[g_bind_count].bind_id = bind_id;
+    g_bindings[g_bind_count].sl_cb   = sl_cb;
+    g_bindings[g_bind_count].slot    = slot;
     g_bindings[g_bind_count].has_slot = has_slot;
     g_bind_count++;
     return 1;
 }
 
-static int64_t sl_webui_find_cb( size_t bind_id )
+static const SLWebUIBinding* sl_webui_find( size_t window, size_t bind_id )
 {
     int i;
     for ( i = 0; i < g_bind_count; i++ )
     {
-        if ( g_bindings[i].bind_id == bind_id ) return g_bindings[i].sl_cb;
+        if ( g_bindings[i].window == window && g_bindings[i].bind_id == bind_id )
+            return &g_bindings[i];
     }
-    return 0;
+    return NULL;
 }
 
-static int sl_webui_has_slot( size_t bind_id )
-{
-    int i;
-    for ( i = 0; i < g_bind_count; i++ )
-    {
-        if ( g_bindings[i].bind_id == bind_id ) return g_bindings[i].has_slot;
-    }
-    return 0;
-}
-
-static int64_t sl_webui_find_slot( size_t bind_id )
-{
-    int i;
-    for ( i = 0; i < g_bind_count; i++ )
-    {
-        if ( g_bindings[i].bind_id == bind_id ) return g_bindings[i].slot;
-    }
-    return -1;
-}
-
-/* webui 调用的原生回调：统一入口，按 bind_id 查 SLang 节流点并重入 VM。
+/* webui 调用的原生回调：统一入口，按 (window, bind_id) 查 SLang 节流点并重入 VM。
  * bindEvent（按名绑定）走单参 cb(e)；bindHandle（函数值绑定）走双参
  * cb(slot, e)，由 SL 层 _dispatchHandle 按槽位取回 Function 值调用。 */
 static void sl_webui_trampoline( webui_event_t* e )
 {
-    int64_t sl_cb = sl_webui_find_cb( e->bind_id );
-    if ( sl_cb == 0 ) return;   /* 未绑定，安全跳过 */
-    if ( sl_webui_has_slot( e->bind_id ) )
+    const SLWebUIBinding* b = sl_webui_find( e->window, e->bind_id );
+    if ( b == NULL || b->sl_cb == 0 ) return;   /* 未绑定 / 桩创建失败，安全跳过 */
+    if ( b->has_slot )
     {
-        int64_t slot = sl_webui_find_slot( e->bind_id );
-        ((void (*)(int64_t, int64_t))sl_cb)( slot, (int64_t)(size_t)e );
+        ((void (*)(int64_t, int64_t))b->sl_cb)( b->slot, (int64_t)(size_t)e );
         return;
     }
     /* 重入 SLang VM：事件指针作为 int64 参数传入 createCallback 节流点 */
-    ((void (*)(int64_t))sl_cb)( (int64_t)(size_t)e );
+    ((void (*)(int64_t))b->sl_cb)( (int64_t)(size_t)e );
 }
 
 /* ========================================================================
@@ -163,7 +146,7 @@ WEBUI_SL_API int64_t webui_bind_sl(int64_t w, const char* element, int64_t sl_cb
 {
     size_t id = webui_bind( (size_t)w, element, sl_webui_trampoline );
     if ( id == 0 ) return 0;          /* webui 失败 */
-    sl_webui_add_binding2( id, sl_cb, 0, 0 ); /* bind_id -> SLang 节流点 */
+    sl_webui_add_binding2( (size_t)w, id, sl_cb, 0, 0 ); /* (win,bind_id) -> SLang 节流点 */
     return (int64_t)id;
 }
 
@@ -174,7 +157,7 @@ WEBUI_SL_API int64_t webui_bind_handle_sl(int64_t w, const char* element, int64_
 {
     size_t id = webui_bind( (size_t)w, element, sl_webui_trampoline );
     if ( id == 0 ) return 0;
-    sl_webui_add_binding2( id, dispatch_cb, slot, 1 );
+    sl_webui_add_binding2( (size_t)w, id, dispatch_cb, slot, 1 );
     return (int64_t)id;
 }
 

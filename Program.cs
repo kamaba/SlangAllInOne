@@ -7,6 +7,7 @@ using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
 using SlangAllInOne.Pack;
 using SlangAllInOne.Publish;
+using SlangAllInOne.Spm;
 
 namespace SlangAllInOne;
 
@@ -59,6 +60,8 @@ internal static class Program
         public string PublishMode = "";
         /// <summary>publish: --no-libs（不携带 lib\ 标准库；jsonc includeLibs 覆盖）。</summary>
         public bool NoLibs = false;
+        /// <summary>publish: --gui（GUI 形态强制开：exe 无 cmd 窗口；jsonc publish.gui 覆盖）。</summary>
+        public bool GuiForce = false;
         public List<string> ProgramArgs = new();
     }
 
@@ -99,6 +102,12 @@ internal static class Program
         if (args.Length > 0 && args[0].Equals("ffi-check", StringComparison.OrdinalIgnoreCase))
             return FfiCheckCommand.Run(args.Skip(1).ToArray());
 
+        // spm: 包管理器（P2 MVP，Spm\SpmCommand.cs）——install（HTTP 拉 zip
+        // 解包 / 从 <lang>\modules 移装到工程 modules\）/ list / remove /
+        // config registry。自带文法，Options 解析前拦截。
+        if (args.Length > 0 && args[0].Equals("spm", StringComparison.OrdinalIgnoreCase))
+            return SpmCommand.Run(args.Skip(1).ToArray());
+
         var opts = ParseArgs(args);
         if (opts == null)
             return 1;
@@ -124,6 +133,7 @@ internal static class Program
                 DestPath = opts.DestPath,
                 CvmConfig = opts.CvmConfigSet ? opts.CvmConfig : "",
                 IncludeLibs = opts.NoLibs ? false : null,
+                Gui = opts.GuiForce ? true : null,
                 OptimizeLevel = opts.OptimizeLevel,
             }),
             "pack-modules" => PackModulesCommand.Run(opts.DestPath, opts.PackConfig),
@@ -458,6 +468,12 @@ internal static class Program
                 // publish: 不携带 lib\ 标准库（覆盖 jsonc includeLibs）
                 opts.NoLibs = true;
             }
+            else if (a == "--gui")
+            {
+                // publish: GUI 形态强制开（exe PE 子系统 Console->Windows，无 cmd 窗口；
+                // 覆盖 jsonc publish.gui。关闭请去掉 jsonc gui 段）
+                opts.GuiForce = true;
+            }
             else if (a == "--config" && i + 1 < args.Length)
             {
                 var c = args[++i];
@@ -629,6 +645,16 @@ Commands:
                             emit just one. Layout: jsonc publish.outputDir
                             (default publish\) or --dest.
   version                   Show Front/Backend versions.
+  spm <sub> [args]          包管理器（P2 MVP）:
+                             slang spm install <url|package>
+                               [--registry <url>] [-g]
+                              URL 直接拉 zip 解包，或按包名三级查找（工程
+                              已装 -> <lang>\modules 移装 -> registry 下载）；
+                              统一装到工程 modules\<包>\（-g 装 <lang>\modules）
+                             slang spm list          列工程 + lang 两处包
+                             slang spm remove <package> [-g]
+                             slang spm config registry [<url>]
+                              查看/写全局 registry（<lang>\spm.json）
   new <project|class> ...   原生脚手架（2026-10-18 自 Front CLI 迁入，
                             Front 只保留 compile/export）:
                              slang new project MyApp   (Name.sp/.jsonc/.sl/.md
@@ -665,6 +691,8 @@ Options:
   --dest <dir>              publish: output directory override (jsonc
                              publish.outputDir); pack-modules: package root
   --no-libs                 publish: skip the bundled lib\ standard library
+  --gui                     publish: GUI exe (no cmd window; PE subsystem
+                             Console->Windows. Override jsonc publish.gui)
   --export-mode <output|temp|memory>
                              Export target (three states, front-to-back
                              handoff): output = the configured export

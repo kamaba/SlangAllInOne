@@ -34,7 +34,8 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
     "outputDir":  "publish",  // 发布目录（相对 jsonc 所在目录；缺省 "publish"）
     "config":     "Release", // C VM 构建树（exe 模板来源；缺省 Release）
     "includeLibs": true,      // 是否携带 lib\ 标准库（缺省 true）
-    "libs":       []          // 精简携带清单（空 = Core/Std/Math 全量；含 Math 自动附带 math_lib.dll）
+    "libs":       [],         // 精简携带清单（空 = Core/Std/Math 全量；含 Math 自动附带 math_lib.dll）
+    "gui":        false       // GUI 应用形态（缺省 false 控制台 exe；见 §5.1）
   }
 }
 ```
@@ -46,6 +47,7 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
 | `config` | `Debug` / `Release` | `Release` | exe 载荷模板取 `csimple_lang\build\{config}\bin\csimple_lang.exe`（JIT/加固属性随该树；发布包内则取 `<slang>\bin\`，不中回落另一配置树） |
 | `includeLibs` | bool | `true` | 是否把官方标准库拷进发布目录 `lib\`。应用引用 Core/Std/Math 时必须为 true |
 | `libs` | string[] | `[]`=全量 | `includeLibs=true` 时生效；如 `["Core","Std"]` 只带这两件（Math 附带 `math_lib.dll`）。缺库仅 `[WARN]` 不中断（工程可能不引用它） |
+| `gui` | bool | `false` | GUI 应用形态：true 时发布把 exe 的 PE 子系统从 Console(3) 补丁为 Windows(2)——启动/双击**不再弹 cmd 窗口**（WebUI 浏览器窗等 GUI 应用用，见 §5.1）。CLI `--gui` 强制开 |
 
 产物命名：`export.moduleName` > `project.name` > `.sp` 文件名，逐级回退。
 
@@ -53,7 +55,7 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
 
 ```
 slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Release]
-              [--no-libs] [-O0..-O3]
+              [--no-libs] [--gui] [-O0..-O3]
 ```
 
 | 旗标 | 覆盖 | 说明 |
@@ -62,6 +64,7 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 | `--dest` | jsonc `publish.outputDir` | 发布目录（绝对/相对 CWD） |
 | `--cvm` | jsonc `publish.config` | exe 模板的 C VM 构建树（**显式传参才覆盖**，不传走 jsonc） |
 | `--no-libs` | jsonc `publish.includeLibs` | 不携带 `lib\` 标准库 |
+| `--gui` | jsonc `publish.gui` | GUI 形态强制开（exe 无 cmd 窗口；关闭请去掉 jsonc `gui` 段，见 §5.1） |
 | `-O0..-O3` | Front 优化级 | 编译期参数，同 `slang compile` |
 
 ## 4. 发布目录布局
@@ -117,6 +120,24 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
     逃生门：环境变量 `SL_NO_PAUSE`（任意值）跳过；stdin 重定向（`< NUL` / 管道）
     时 pause 本就立即返回，自动化批跑不卡死。
 - 仅独立 exe 走检测；dll 宿主（P/Invoke `cli_main`）与 wasm 不经过，测试链路零影响。
+
+### 5.1 GUI 应用形态（`publish.gui: true`，2026-10-29）
+
+WebUI（浏览器窗）、渲染窗口等 **GUI 应用**发布时不想要背后的 cmd 窗口——
+jsonc `publish.gui: true`（或 CLI `--gui` 强制开）：
+
+- **机制**：`PublishCommand.PatchSubsystemWindows` 发布时把 exe 的 PE
+  Subsystem 字段 Console(3)→Windows(2) 一次写入（模板不动；入口 RVA 不变，
+  Windows 加载器只跳 AddressOfEntryPoint，子系统字段只决定进程创建时是否
+  自动分配控制台——成熟补丁做法）。缺省 false = 原控制台形态，零行为变化。
+- **C 侧配套**（`cli_app_payload.c`，仅 app 载荷模式，`slang run`/cli_main 零影响）：
+  - 双击启动（无控制台）：静默跑（`printf` 落 NULL 句柄即丢弃，不崩）；收尾
+    pause **跳过**（GUI 进程里 `system("pause")` 反而会新弹一个 cmd 窗再闪退）；
+  - 从终端启动：`AttachConsole(ATTACH_PARENT_PROCESS)` 挂回父控制台并
+    freopen 重绑 std 流——**日志照常可见**，GUI 形态与可调试性兼得；
+  - `Console.println` / `SL_NO_PAUSE` / stdin 重定向语义均不变。
+- **验证链**（WebUITest，`gui: true` 已配）：发布后查 `PE subsystem = 2`；
+  终端跑 exe 日志可见 + 浏览器窗弹出 + 套件 `RESULT: PASS`；双击无 cmd 窗。
 
 ## 6. 流程与依赖
 

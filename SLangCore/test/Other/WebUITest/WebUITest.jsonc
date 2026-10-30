@@ -40,7 +40,7 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    { "path": "../../../../SLangCore/Lib/SLang/WebUI/export/SLangWebUI/SLangWebUI.module.json" }
+    { "path": "./modules/SLangWebUI" }
   ],
   "struct": [
   ],

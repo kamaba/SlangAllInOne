@@ -194,6 +194,9 @@
     "override": {                       // jsonc 内嵌默认降级通道；key 形如 "<大类>.<成员>"/"<大类>"/裸成员名
       "console.enabled": true           // 值只接受 true/false/number/string；MetaCore 期校验+别名归一
     }
+  },
+  "spm": {                              // 包管理（独立 spm.exe 自解析，Front 不承载；见 §4.17）
+    "registry": ""                      // registry 服务器基 URL：API <registry>/api/packages/...（静态回落 <名>.json）
   }
 }
 ```
@@ -295,14 +298,14 @@
 
 ⚠ 引用模块未在本段声明、或声明了但尚未完成编译导出（其 `export.outputDir` 下无 `*.module.json`）时，源码中对该模块的 `import` 会报 **Error**（「没有找到 import 模块」）并**阻断编译、不导出 module.json**（2026-10-13 起，详见 `md/syntax/namespace.md`「import 导入失败的处理」）——请先编译被引用模块再编译本工程。
 
-**装载规则（2026-10-18 用户规则定稿）**：
+**装载规则（2026-10-18 用户规则定稿；2026-10-29 spm 落地后回退链放宽）**：
 
 1. `path` 工程内命中即装载：直接文件 → 目录内产物（`.module.slb` 优先 → `.package.json` → `.module.json`）→ 源目录产物推导（读其 jsonc 的 `export.outputDir`）→ 源码 struct 壳。
-2. **Core/Std/Math 系统库**（按 `path` 尾段推断模块名；`name` 是别名不作识别依据）工程内未命中 → **自动回落运行目录官方库直查**：`<exe>\lib\` → `<exe>\modules\` 下 `<名>.module.slb|json`（slb 优先；发布包平铺布局见 `md/project/package-layout.md`）。
-3. **其它模块未命中即报错中止编译**（不做运行目录回落；后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）。
+2. **工程内未命中 → 包目录三级搜索链回落**（2026-10-29 spm 用户规则；此前仅限 Core/Std/Math 系统库）：① 本工程 `modules\`（`spm install` 装包位）→ ② `<exe>\modules\`（spm 全局装包 + 官方库平铺）→ ③ `<exe>\lib\`（Core/Std/Math 系统库平铺）；每处对平铺 `<名>.module.slb|json` 与 spm 目录布局 `modules\<名>\<名>.module.slb|json` 双重探测（slb 优先；`spm.exe` 用法见 `md/project/package-layout.md` §四）。
+3. **三级链全落空 = 没有这个包 → 报错中止编译**（后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）。
 4. `name` 为工程内别名供 `import` 解析；缺省自动取模块名。`import <模块>` 引入整模块、`import <模块>:<命名空间>`（无引号冒号形式，2026-10-18）与 `import "<模块>:<命名空间>"`（字符串形式）直达命名空间（成员无前缀直接搜索）；Core 被引用后自动可用无需 import。语法详见 `md/syntax/namespace.md` §4。
 
-**显式后缀兼容形态**（`name` 尾段带 `.slb`/`.json`，如 `{ "path": "./lib", "name": "Core.module.slb" }`）：严格只认指定格式（`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向）——工程内 `path+name` 拼接落空时，系统库同样回落官方库直查（原样文件名）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式。
+**显式后缀兼容形态**（`name` 尾段带 `.slb`/`.json`，如 `{ "path": "./lib", "name": "Core.module.slb" }`）：严格只认指定格式（`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向）——工程内 `path+name` 拼接落空时，**系统库**（Core/Std/Math）回落三级搜索链（原样文件名，含 spm 目录布局探测；非系统库不回落）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式（④ 三级链原样文件名直查，落空硬报错）。
 
 **官方库推荐写法**（name/uuid 省略，导出侧自动回填真实 name/uuid/版本）：
 
@@ -486,6 +489,20 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `config` | `Debug`/`Release` | `Release` | exe 载荷模板的 C VM 构建树 |
 | `includeLibs` | bool | `true` | 是否携带 `lib\` 官方标准库 |
 | `libs` | string[] | 空=全量 | 精简携带清单（Core/Std/Math）；含 Math 自动附带 `math_lib.dll` |
+
+### 4.17 `spm` —— 包管理（spm.exe，2026-10-29 落地、2026-10-30 独立工程）
+
+独立 `spm.exe`（`Project\Spm\` 工程，slang 同目录直接 `spm <命令>` 驱动）的
+工程级配置面；spm 自解析本段（JSONC 容错，不依赖 Front）。**不声明 = 无工程级
+registry**（按名安装只依赖 `--registry` 参数或 `<lang>\spm.json` 全局值）。
+命令手册、服务器 API 约定与安装布局 = `package-layout.md` §四。
+
+| 键 | 类型 | 缺省 | 说明 |
+|----|------|------|------|
+| `registry` | string | `""` | 按名安装（`spm install <包名>`）与查询（search/outdated）的服务器基 URL，实际 API = `<registry>/api/packages/...`（静态回落 `<registry>/<名>.json`）；优先级：CLI `--registry` > 本段 > `<lang>\spm.json` |
+
+安装的包落本工程 `modules\<包名>\<包名>.module.slb|json`；`references` 引用
+纯名（或 `./modules/<包名>`）即可被装载三级搜索链第 ① 级命中（§4.9 装载规则 2）。
 
 ## 5. 已解析但当前无下游消费的键（配置不生效排查表）
 

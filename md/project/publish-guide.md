@@ -85,6 +85,11 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
     │       ├── sqlite3.dll  #   承载 .dll/.so/.dylib/.lib/.a 等——一个发布目录可承载
     │       └── math_lib.dll #   多平台运行体，运行时按当前平台查找（C VM
     │                        #   sl_platform_dir_name；平铺 lib\ 为兼容位）
+    ├── modules\<名>\        # 工程经 slang spm install 装的包整目录拷入（2026-10-29
+    │   └─ <名>.module.slb   # spm 规则，Step 8；布局 modules\<名>\<名>.module.slb|json，
+    │                        # jsonc 引用写 ./modules/<名> 指模块文件夹（2026-10-30）；
+    │                        # C VM 装载回退链 <dir>/modules 直查命中
+    │                        #（链与布局 = package-layout.md §二.6 / §四）
     └── plugins\             # 工程声明了插件时：Front 导出的 plugins\<id>\ 整目录拷贝
 ```
 
@@ -146,12 +151,27 @@ slang publish <工程>
   ├─ ① Front 编译（--format binary+json，R15；slb 主产物 + json 调试副本留工程 export 目录）
   ├─ ② 定位 C VM exe 模板：<slang>\bin\csimple_lang.exe（发布包布局，PackCvmRuntime 随包携带）
   │      → 回落 csimple_lang\build\{publish.config}\bin\ → 另一配置树
-  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\
+  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\ + modules\（工程 spm 包）
   └─ ④ 本配置子目录（debug\|release\）清空重建（publish 根与另一配置保留）
 ```
 
 前提：C VM 对应配置树已构建（`build-vm-win.ps1 -Config Release`）。**注意**：exe 模板与
 `build\{config}\bin` 实时对应——C VM 更新后需重建对应树再发布，否则应用 exe 仍是旧 VM。
+
+**引用 stage 的源目录解析链**（`PublishCommand.StageReferencedModules`，2026-10-30
+WebUITest 实录定稿）——非系统库引用（如 SLangWebUI）按名按序解析产物源：
+
+1. 标准导出树 `out\export\<名>\`（须实含 `*.module.*` 产物，同名陈旧空壳被拒）；
+2. `SLangCore\Lib\**\export\<名>\` —— **库家族导出位**（权威产物树，slb+json+
+   原生库同位；排在 path 回退之前，见下方坑位实录）；
+3. 引用 `path` 字段回退（工程 jsonc references 里的路径；🔥 2026-10-30 起指
+   spm 装包推荐目录形态 `./modules/<名>`——Front Strategy 1 目录扫描命中，
+   与 zip 解压安装布局同构，见 package-layout.md §二.6）。
+
+原生库随 stage 落 `lib\<平台>\`：扫描源目录平铺 + 一级平台子目录（`windows\`、
+`lib\windows\`）的 `.dll/.so/.dylib`。**坑位实录**：`path` 回退若命中工程 `modules\`
+里的裸拷贝（仅 slb 无原生库），发布产物缺 `webui_lib.dll` → C VM FFI 装载失败 →
+`newWindow` 句柄 0 / `RESULT: INCOMPLETE`——库家族导出位排在 path 回退之前即为此故。
 
 ## 7. 相关文件索引
 
@@ -165,6 +185,7 @@ slang publish <工程>
 | `csimple_lang/src/main.c` | 载荷优先分支（检测命中不进 CLI 分派） |
 | `csimple_lang/src/cli/cli.c` | `cli_parse_run_arguments`（run 与 app 模式共用解析） |
 | `csimple_lang/md/cli.md` | C VM 侧应用载荷模式说明 |
+| `SlangAllInOne/Project/Spm/` | 独立 `spm.exe` 包/插件管理器（装包进工程 `modules\`，发布 Step 8 携带；见 package-layout.md §四） |
 
 ## 8. 发布宿主：`SlangAllInOne\out\host\slang.exe`（独立构建输出）
 

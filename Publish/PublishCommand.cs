@@ -424,6 +424,29 @@ internal static class PublishCommand
                  * （仅剩 Logs\ 残留）命中即静默零拷贝，是发布缺件事故根源。 */
                 string? srcDir = exportRoots.FirstOrDefault(d =>
                     Directory.Exists(d) && Directory.GetFiles(d, "*.module.*").Length > 0);
+                /* 库家族导出位（2026-10-30 WebUITest 发布实录）：SLang\* 库工程
+                 * 的权威产物在 Lib\**\export\<名>\（如 SLangWebUI 的
+                 * Lib\SLang\WebUI\export\SLangWebUI\，webui_lib.dll 与产物同位）
+                 * ——out\export 同名陈旧空壳被上方过滤器拒绝后，引用 path 字段
+                 * 回退会命中工程 modules\ 里的**裸拷贝**（只有 slb、无原生库），
+                 * 导致发布缺 webui_lib.dll、应用运行期 FFI 装载全线失败
+                 * （newWindow 句柄 0 实录）。递归找名为 <名> 且实含产物的目录，
+                 * 排在 path 回退之前（优先含原生库的权威导出树）。 */
+                if (srcDir == null)
+                {
+                    try
+                    {
+                        string libRoot = Path.Combine(repoRoot, "SlangAllInOne", "SLangCore", "Lib");
+                        if (Directory.Exists(libRoot))
+                        {
+                            srcDir = Directory.EnumerateDirectories(libRoot, name,
+                                    SearchOption.AllDirectories)
+                                .FirstOrDefault(d => Directory.GetFiles(d, "*.module.*").Length > 0);
+                        }
+                    }
+                    catch (IOException) { }
+                    catch (UnauthorizedAccessException) { }
+                }
                 /* 回退：引用 path 字段（相对主 module.json 目录）指向的权威导出树。 */
                 if (srcDir == null && r.TryGetProperty("path", out var pathEl))
                 {
@@ -454,16 +477,31 @@ internal static class PublishCommand
                 }
                 /* 原生库 stage（布局规则平台细分）：webui_lib.dll 等按宿主平台
                  * 落 lib\<平台>\，C VM FFI 查找链（sl_ffi_lib_load 发布布局
-                 * 回退）按 basename 命中。 */
+                 * 回退）按 basename 命中。扫描面 = srcDir 平铺 + 一级平台子
+                 * 目录（windows\|linux\|macos\ 与 lib\<平台>\——部分导出布局把
+                 * 原生库放子目录）。 */
                 string platDir = Path.Combine(publishDir, "lib", HostPlatformDir());
+                var nativeFiles = new List<string>();
                 foreach (string ext in new[] { "*.dll", "*.so", "*.dylib" })
                 {
-                    foreach (string f in Directory.GetFiles(srcDir, ext))
+                    nativeFiles.AddRange(Directory.GetFiles(srcDir, ext));
+                }
+                foreach (string sub in new[] { HostPlatformDir(), Path.Combine("lib", HostPlatformDir()) })
+                {
+                    string subDir = Path.Combine(srcDir, sub);
+                    if (Directory.Exists(subDir))
                     {
-                        Directory.CreateDirectory(platDir);
-                        File.Copy(f, Path.Combine(platDir, Path.GetFileName(f)), overwrite: true);
-                        Console.WriteLine($"[OK]  reference: lib\\{HostPlatformDir()}\\{Path.GetFileName(f)}");
+                        foreach (string ext in new[] { "*.dll", "*.so", "*.dylib" })
+                        {
+                            nativeFiles.AddRange(Directory.GetFiles(subDir, ext));
+                        }
                     }
+                }
+                foreach (string f in nativeFiles.Distinct(StringComparer.OrdinalIgnoreCase))
+                {
+                    Directory.CreateDirectory(platDir);
+                    File.Copy(f, Path.Combine(platDir, Path.GetFileName(f)), overwrite: true);
+                    Console.WriteLine($"[OK]  reference: lib\\{HostPlatformDir()}\\{Path.GetFileName(f)}");
                 }
                 string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))

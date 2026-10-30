@@ -380,7 +380,7 @@ Write-Step 'Layout checks'
 # (csproj PackThirdPartyLicenses removed); the license texts' source of
 # truth stays in the repo at csimple_lang\third_party\LICENSES\.
 foreach ($must in @(
-    'slang.exe', 'bin\csimple_lang_dll.dll', 'bin\llc.exe', 'lib\windows\sqlite3.dll',
+    'slang.exe', 'spm.exe', 'bin\csimple_lang_dll.dll', 'bin\llc.exe', 'lib\windows\sqlite3.dll',
     'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb', 'lib\windows\math_lib.dll'
 )) {
     if (-not (Test-Path (Join-Path $PkgWinDir $must))) { Fail "windows package incomplete, missing: $must (build without -SkipBuild)" }

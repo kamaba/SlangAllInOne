@@ -7,7 +7,6 @@ using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
 using SlangAllInOne.Pack;
 using SlangAllInOne.Publish;
-using SlangAllInOne.Spm;
 
 namespace SlangAllInOne;
 
@@ -102,11 +101,18 @@ internal static class Program
         if (args.Length > 0 && args[0].Equals("ffi-check", StringComparison.OrdinalIgnoreCase))
             return FfiCheckCommand.Run(args.Skip(1).ToArray());
 
-        // spm: 包管理器（P2 MVP，Spm\SpmCommand.cs）——install（HTTP 拉 zip
-        // 解包 / 从 <lang>\modules 移装到工程 modules\）/ list / remove /
-        // config registry。自带文法，Options 解析前拦截。
+        // spm: 包/插件管理器已独立为 spm.exe（Project\Spm 工程，2026-10-30，
+        // 部署位 = slang.exe 同目录，直接 `spm <命令>` 驱动）——宿主入口保留
+        // 兼容提示，不再内嵌实现。自带文法，Options 解析前拦截。
         if (args.Length > 0 && args[0].Equals("spm", StringComparison.OrdinalIgnoreCase))
-            return SpmCommand.Run(args.Skip(1).ToArray());
+        {
+            Console.WriteLine("spm 已独立为 spm.exe（slang 同目录），请直接使用:");
+            Console.WriteLine("  spm install <url|package> [--registry <url>] [-g]");
+            Console.WriteLine("  spm search <keyword> | spm list | spm outdated | spm remove <name> [-g]");
+            Console.WriteLine("  spm plugin <list|search|probe|install|remove> ...");
+            Console.WriteLine("  spm config registry [<url>]");
+            return 2;
+        }
 
         var opts = ParseArgs(args);
         if (opts == null)
@@ -645,16 +651,12 @@ Commands:
                             emit just one. Layout: jsonc publish.outputDir
                             (default publish\) or --dest.
   version                   Show Front/Backend versions.
-  spm <sub> [args]          包管理器（P2 MVP）:
-                             slang spm install <url|package>
-                               [--registry <url>] [-g]
-                              URL 直接拉 zip 解包，或按包名三级查找（工程
-                              已装 -> <lang>\modules 移装 -> registry 下载）；
-                              统一装到工程 modules\<包>\（-g 装 <lang>\modules）
-                             slang spm list          列工程 + lang 两处包
-                             slang spm remove <package> [-g]
-                             slang spm config registry [<url>]
-                              查看/写全局 registry（<lang>\spm.json）
+  spm <sub> [args]          包/插件管理器已独立为 spm.exe（slang 同目录，
+                            直接 `spm <命令>` 驱动；此处仅兼容提示）:
+                             spm install <url|package> [--registry <url>] [-g]
+                             spm search <keyword> | spm list | spm outdated
+                             spm plugin <list|search|probe|install|remove>
+                             spm config registry [<url>]
   new <project|class> ...   原生脚手架（2026-10-18 自 Front CLI 迁入，
                             Front 只保留 compile/export）:
                              slang new project MyApp   (Name.sp/.jsonc/.sl/.md

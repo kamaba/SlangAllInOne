@@ -115,6 +115,9 @@ function Invoke-BuildWinPackage([string]$Config) {
               'lib\windows\sqlite3.dll', 'lib\windows\math_lib.dll',
               'lib\Core.module.slb', 'lib\Math.module.slb', 'lib\Std.module.slb',
               'plugin\csharp_mono\plugin.jsonc')
+    # spm.exe = release 包随带的包/插件管理器（csproj PackSpm target，2026-10-30
+    # 用户指令：AOT 单文件落包根 = slang.exe 同目录）；Debug 包不带（框架依赖轻量）。
+    if (-not $isDebug) { $must += @('spm.exe') }
     if ($isDebug) { $must += @('slang.pdb', 'lib\Core.module.json', 'bin\csimple_lang_dll.pdb') }
     foreach ($m in $must) {
         if (-not (Test-Path (Join-Path $dir $m))) {

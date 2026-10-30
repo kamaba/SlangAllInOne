@@ -15,6 +15,8 @@
 ```
 <包根>\
 ├── slang(.exe)                 入口 = frontEnd 编译 + cvm_runtime 执行
+├── spm.exe                     包/插件管理器（PackSpm，2026-10-30；Release 包
+│                               Native AOT 单文件，<lang> 语义 = 包根）
 ├── bin\                        打包的工具链产物与 VM 本体：
 │   ├── csimple_lang.exe / csimple_lang_dll.dll（C VM）
 │   ├── llc.exe / mlir-opt.exe / mlir-translate.exe / mlir_float16_utils.dll
@@ -87,8 +89,9 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 | 插件仓库侧 | 4×vcxproj OutDir `..\package\windows\`；3×build-*.ps1 全产物导出 `package\`（obj 隔离 obj\、副产物清理、无部署步）；plugin.jsonc `entry.lib` 键改平台名；🔥 2026-10-25 二次定稿：`lib\` → `package\`（用户指令——产物生成到 package\，不进 lib\） |
 | Front 层 | [PluginFrontendParser.cs](../../../simple_language/source/Core/PluginFrontendParser.cs) 探测 `package\<平台>\`（回退发布包平铺 `<平台>\`）；[PluginManager.cs](../../../simple_language/source/Export/PluginManager.cs) libDir 三级 + 平台目录回退 + 递归拷贝 + module.json 新路径形态 |
 | 发布打包 | csproj **PackMlirTools**（bin\ 工具链）、**PackPlugins**（plugin\ 安装 + 副产物 Exclude）；PackCvmRuntime sqlite3→`lib\windows\`；PackModulesCommand/CompileStdlib math_lib→`lib\windows\`；RelocatePluginFrontends 空壳删除 |
-| 脚本 | build-packages.ps1 / release-slang.ps1 布局校验与 linux 包组装（sqlite → `lib\linux\`、剔除 lib\windows\）按 7.1 |
+| 脚本 | build-packages.ps1 / release-slang.ps1 布局校验与 linux 包组装（sqlite → `lib\linux\`、剔除 lib\windows\）按 7.1；must-list 加 `spm.exe`（Release 侧） |
 | 清理 | MLIR 工具散拷副本（dev 树 exe 旁 + 旧包根）清除，EnsureLocalTools 改进 `bin\` |
+| spm 随包 | csproj **PackSpm**（2026-10-30，挂 PackDocs 链尾）：Release 发布自动对 `Project\Spm\Spm.csproj` 跑 Native AOT，`spm.exe` 落包根；Spm.csproj 侧 AOT 属性组（反射序列化开关 + 自身 TrimmerRootAssembly + pdb 源头不进包） |
 
 
 
@@ -97,7 +100,7 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 | 目录 | 定位 | 现状 |
 |------|------|------|
 | `lib\` | **系统自带文件**：官方标准库（Core / Math / Std 的 `*.module.slb` + `math_lib.dll` + Debug 包 json 调试副本）+ `sqlite3.dll`（C VM 唯一硬动态依赖，2026-10-22 布局规则自 bin\ 迁入：delay-load + 运行期预装载解析） | ✅ 2026-10-18 起由原 `module\` 更名（内容不变，平铺单目录）；🔥 2026-10-22 起关联 dll 统一入此目录（§六） |
-| `modules\` | **用户包目录**：未来 `spm.exe`（SLang Package Manager，类比 npm / NuGet）安装/管理第三方包的落位 | 🧪 预留：Front 与 C VM 的官方库直查已按 `lib\` → `modules\` 顺序查找，目录未建自然落空；spm.exe 落地时无需再动装载器 |
+| `modules\` | **用户包目录**：spm 包管理器安装/管理第三方包的落位（布局 `modules\<名>\<名>.module.slb|json`，见 §四） | ✅ 独立 `spm.exe` 已落地（2026-10-30，`Project\Spm\` 工程：install/search/list/outdated/remove + plugin 子命令组）；装载三级搜索链见 §二.6 |
 | `plugin\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 插件管理器安装整插件目录到 `plugin\<id>\` 后即可被 `@tag{}` 路由（Front `FindPluginsParent` 已支持回退探测；两个运行时插件 frontend 自 2026-10-21 起 C 化为原生 dll、不经 publish 产出/归位，随插件整目录分发） |
 
 包根其余目录不变：`bin\`（C VM 运行时**本体**：`csimple_lang_dll.dll` / `csimple_lang.exe` / pdb 侧车——sqlite3.dll 已按 §六迁 `lib\`）、`md\`（用户文档）。~~`test\RefProbe\`（开箱示例）~~ 已于 2026-10-18 按用户指令移除（v0.0.5 起发布包不再带 `test\`，示例保留在仓库测试树 `SLangCore\test\Other\RefProbe`）。
@@ -110,6 +113,7 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
    - Front 编译期：`ProjectReferenceModuleLoader.TryResolveRuntimeModuleDirPath`（Strategy 4）按 `<exe>\lib\` → `<exe>\modules\` 顺序直查 `<名>.module.slb|json`（slb 优先）；
    - C VM 运行期：`sl_load_references` ④（`csimple_lang/src/vm/load/slir_json_module_loader.c`）同序直查 `<exe_dir>/lib/` → `<exe_dir>/modules/`。
    两端一致，发布包内用户工程继续零相对路径配置。
+   🔥 2026-10-29 起该链扩展为三级搜索链并放宽至所有引用，见 §二.6。
 3. **插件程序集归位**：csproj `RelocatePluginFrontends` target 原把包根的
    插件 frontend 程序集（Front 工程 ProjectReference 的发布伴生物）移入
    `<包>\plugins\`——🔥 2026-10-21 起两个运行时插件 frontend 均已 C 化
@@ -122,6 +126,24 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
    `frontend\` + `slang\`）装进 `plugin\<id>\` 后，`@tag{}` 无需源码树即可路由。
 5. **FFI / vmDllImports 不受影响**：原生库解析本就按「模块包自身目录（现
    `lib\`）+ 相对路径 / basename 回退」，目录随包整体更名，链路不变。
+6. **spm 装载链三级扩展**（2026-10-29，`slang spm` 落地配套，§四）：装载
+   回退链自「官方库直查 lib → modules」（§二.2）扩展为**三级搜索链**，且
+   回退不再限 Core/Std/Math（spm 用户规则：任何引用工程内未命中都按链找，
+   全落空 = 没有这个包 → 报错）：
+   ① **工程目录 `modules\`**（`slang spm install` 装包位）→ ② **`<exe>\modules\`**
+   （`spm install -g` 全局装包 + 官方库平铺）→ ③ **`<exe>\lib\`**（Core/Std/Math
+   系统库平铺）；每处对平铺 `<名>.module.slb|json` 与 spm 目录布局
+   `modules\<名>\<名>.module.slb|json` **双重探测**（slb 优先）。
+   - Front 编译期：Strategy 4（`ProjectReferenceModuleLoader.cs`，裸名引用；
+     显式后缀引用回落仍限系统库，落空硬报错 LID 20042）；
+   - C VM 运行期：`sl_load_references` ④（`slir_json_module_loader.c`）同源
+     三级链（① = 主包目录 `modules\`，发布应用场景即 `<exe>\modules\`）；
+   - `slang publish` 把工程 `modules\` 整目录拷入发布包（PublishCommand
+     Step 8，见 publish-guide.md §4），发布应用按链 ① 直查命中；
+   - 🔥 **显式引用推荐目录形态**（2026-10-30）：references 指工程内 spm 装包
+     写 `{ "path": "./modules/<名>" }`（模块**文件夹**）——Front Strategy 1
+     目录扫描 `*.module.slb`（TopDirectoryOnly 优先）命中，与 zip 解压安装
+     布局同构（WebUITest 实录：编译/发布/exe 实跑 26/26 PASS）。
 
 ## 三、为什么 plugin 独立于 modules（插件 ≠ 普通包）
 
@@ -140,16 +162,70 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 因此插件不进 `modules\` 包目录，独立放 `plugin\<id>\`，由（未来的）插件
 管理器单独管理安装/启停。
 
-## 四、spm.exe 愿景（未实现，备忘）
+## 四、spm 包管理器（已落地：独立 `spm.exe`，2026-10-29 宿主子命令 → 2026-10-30 独立工程）
 
-`spm.exe` = SLang 的包管理器，定位类比 npm / NuGet：
+`spm` = SLang 的包/插件管理器，定位类比 npm / NuGet。**2026-10-30 起独立为
+专用工程 `SlangAllInOne\Project\Spm\`（sln 成员，产物 `spm.exe`，部署位 =
+slang.exe 同目录），直接 `spm <命令>` 驱动**；宿主 `slang spm` 入口保留兼容
+提示。零依赖 Front（工程 jsonc 的 spm 段自解析），随包分发即用。
+🔥 **随 release 打包链自动分发（2026-10-30 用户指令，已集成）**：csproj
+`PackSpm` target（挂 PackDocs 链尾）——`dotnet publish -c Release` /
+`build-packages.ps1 win32-release` / `release-slang.ps1` 打 release 包时自动
+对 Spm.csproj 跑 **Native AOT 发布**（单文件自包含 `spm.exe`，~7.5MB，目标机
+零 .NET 依赖），落包根 = slang.exe 同目录（zip/tar 整目录镜像自动带上）；
+Debug 包不带；逃逸门 `-p:SkipSpmPack=true`；linux 侧（WSL AOT 需 zlib dev）
+列入后续。开发态构建：`dotnet build SlangAllInOne\Project\Spm\Spm.csproj`
+（framework-dependent）。
 
-- 命令集草案：`spm install <pkg>` / `spm remove` / `spm list` / `spm publish`
-  / `spm update`；注册表（registry）与版本解析待定；
-- 安装落位：`<slang>\modules\<pkg>\<pkg>.module.slb|json`——装载器查找链
-  已就绪（本文档 §二.2），`references` 纯模块名即可引用已安装包；
-- `lib\` 与 `modules\` 的边界：lib = 随 slang 发行、官方维护的系统标准库；
-  modules = 用户/第三方生态包。查找序 lib → modules 保证官方库优先。
+**命令集（配合 registry 服务器使用）**：
+
+```
+── 包（module 产物 → modules\<名>\）──
+spm install <url|包名> [--registry <url>] [-g]
+    url  ：http(s) 直接拉 zip 解压装进目标 modules\<包名>\
+    包名 ：① 工程 modules\ 已装 → 跳过；② 语言目录 modules\ 命中 → 移动(move)
+           到工程 modules\；③ 查服务器元数据（版本/描述/产物链接）下载安装
+           （API 不通回落 <registry>/<包名>.zip 直下）；全部落空报错
+    -g   ：装进语言目录（spm.exe 同级）modules\，全局共享
+spm search <关键字>          通过名称查包：先精确 GET /api/packages/<名>，
+                             再全量索引按名称/描述过滤
+spm list                     列工程 + 语言目录两处已装包（含本地版本）
+spm outdated                 与服务器版本对比：本地 modules\<名>\spm.json 清单
+                             vs GET /api/packages/<名>，逐包输出 up to date / 可升级
+spm remove <包名> [-g]       删除包目录（-g 删语言目录侧）
+── 插件（多层扩展 → <lang>\plugin\<id>\，全局共享）──
+spm plugin list              列已装插件（读 plugin\<id>\plugin.jsonc：版本/平台）
+spm plugin search <id>       服务器查插件（GET /api/plugins/<id>）
+spm plugin probe <id>        插件环境探测：支持平台 platforms[] vs 本机 os-arch
+                             （服务器元数据优先，回落本地已装清单；未声明=全平台兼容）
+spm plugin install <id|url>  下载插件 zip（元数据链接或 <reg>/plugins/<id>.zip）
+                             归一装进 <lang>\plugin\<id>\（平台不匹配警告不阻断）
+spm plugin remove <id>       删除插件目录
+── 配置 ──
+spm config registry [<url>]  查看/设置全局 registry（落盘 <lang>\spm.json）
+```
+
+- **服务器 API 约定**（registry 基 URL，官网门户真源 = `SLangOfficialWebsite
+  \doc\18-包管理中心spm设计.md` §9 + `doc\09` §5）：`GET <reg>/api/packages/<名>`
+  （单包元数据 name/version/description/download）、`GET <reg>/api/packages`
+  （全量索引 search 过滤）、`GET <reg>/api/plugins/<id>`（插件元数据含
+  platforms[]）；**静态回落**（无门户 API 的文件服务器）：`<reg>/<名>.json`、
+  `<reg>/plugins/<id>.json` 同构元数据，包体缺省 `<reg>/<名>.zip` /
+  `<reg>/plugins/<id>.zip`（旧约定兼容）；
+- **安装布局**：包 `modules\<包名>\<包名>.module.slb|json` + 本地清单
+  `spm.json`（name/version/source/installedAt，供 outdated 对比）；插件
+  `plugin\<id>\`（zip 内任意层级探测 plugin.jsonc 定位插件根）；
+- **registry 优先级**：`--registry` 参数 > 工程 jsonc `"spm"."registry"` 段
+  （project-config-jsonc-guide.md §4.17）> `<lang>\spm.json` 全局；
+- 装包完只**提示**把包名加进 jsonc `references`（不自动改写工程文件）；🔥
+  **引用写法（2026-10-30）**：`{ "path": "./modules/<名>" }` 指 spm 装包的模块
+  **文件夹**（非 slb 文件）——Front Strategy 1 目录扫描 `*.module.slb` 直接命中、
+  C VM 双重探测同构；与安装形态对齐：包 zip 内含模块同名顶层文件夹，直接解压进
+  `modules\` 即完成安装（WebUITest 实录验证）；
+- `lib\` 与 `modules\` 的边界不变：lib = 随 slang 发行、官方维护的系统标准库；
+  modules = 用户/第三方生态包；
+- **未做**（P2 完整 MVP 范围，见 doc\plans\P2-spm包管理MVP.md）：`spm publish` /
+  `spm update` / 依赖解析与版本约束 / `.spkg` 容器与哈希校验。
 
 ## 五、兼容性说明
 

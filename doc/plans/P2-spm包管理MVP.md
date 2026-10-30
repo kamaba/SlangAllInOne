@@ -1,6 +1,24 @@
 # P2 · spm 包管理 MVP —— 执行计划
 
 > **定位**：生态地基。`modules\` 用户包目录与装载查找链（`lib\ → modules\`）已预留，缺 CLI 落地。
+>
+> **落地进度（2026-10-30 更新）**：spm 已**独立成专用工程 `SlangAllInOne\Project\Spm\`**
+> （产物 `spm.exe`，slang 同目录直接 `spm <命令>` 驱动；2026-10-29 先以宿主子命令
+> `slang spm` 落地、30 日独立）。已实现：`spm install <url|包名>`（URL 直拉 zip /
+> 按名三级：工程已装 → 语言目录移动 → 服务器元数据下载；`-g` 全局装位）、
+> `spm search` 按名查包、`spm list`（含本地版本）、`spm outdated` 与服务器版本对比
+> （本地 `modules\<名>\spm.json` 清单）、`spm remove`、`spm config registry`；
+> **插件命令组** `spm plugin list|search|probe|install|remove`（环境探测 = 服务器
+> platforms vs 本机 os-arch，装到 `<lang>\plugin\<id>\`）。**服务器协作**按官网
+> 门户 API 约定（doc/18 §9：`GET /api/packages/<名>` 等；doc/09 §5 插件同构），
+> 静态文件服务器回落（`<reg>/<名>.json` + zip）兼容。registry 三级优先
+> `--registry` > jsonc `"spm"."registry"`（spm 自解析）> `<lang>\spm.json`。
+> 装载三级搜索链（Front Strategy 4 与 C VM ④ 同源）+ `slang publish` 携带工程
+> `modules\` 已就绪（详见 `md/project/package-layout.md` §四）；🔥 release 发布链
+> **PackSpm** target 已集成（2026-10-30）：打 release 包自动对 Spm.csproj 跑
+> Native AOT，`spm.exe` 单文件落包根 = slang 同目录。**本计划剩余**：
+> T1 `.spkg` 容器、T3 索引与依赖解析/版本约束（当前 outdated 仅对比不自动升级）、
+> T4 pack/publish、T5 update、T6 首发包与官网联动。
 > **参照设计**：官网 `SLangOfficialWebsite\doc\18-包管理中心spm设计.md`（P1 指引期已诚实标注"spm 未落地"）+ `SlangAllInOne\md\project\package-layout.md`。
 > **依赖**：P1（若依拆包作为第一个真实包验证）。**建议节奏**：2~4 周。
 

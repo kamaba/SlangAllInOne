@@ -11,7 +11,12 @@
 安装包。
 
 - 本地包示例：`cx install ./pkg`
-- 未来可扩展：支持从远端源安装（待实现）
+- 远端源安装：参考实现为独立 `spm.exe`（`SlangAllInOne\Project\Spm\` 工程，slang 同目录
+  直接 `spm` 驱动，2026-10-30）——`spm install <url|包名>`（URL 直拉 zip / 按名查服务器
+  `--registry` > jsonc `"spm"."registry"` > `<lang>\spm.json` 三级优先）、`spm search`
+  按名查包、`spm outdated` 与服务器版本对比、`spm plugin <search|probe|install|remove>`
+  插件管理（含环境探测）；详见 `md/project/package-layout.md` §四。`cx install` 的
+  远端形态对齐该实现即可。
 
 ### `cx list`
 列出当前已安装的包。

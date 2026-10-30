@@ -320,6 +320,27 @@
     </PropertyGroup>
   </Target>
 
+  <!-- spm 包管理器随包（2026-10-30 用户指令：打 release 包自动带上，AOT 方式）：
+       独立工程 Project\Spm（sln 成员）以 Native AOT 发布出单文件自包含
+       spm.exe，落包根 = slang.exe 同目录（spm 的 <lang> 目录语义即包根：
+       全局包位 modules\、插件位 plugin\、全局配置 spm.json 都在 spm.exe
+       旁边解析）。以后只要打 release 包（dotnet publish -c Release /
+       build-packages.ps1 win32-release）本 target 自动执行，无需一次性
+       手工拷贝；Debug 包不带（spm 无调试诉求，且保持框架依赖包轻量）。
+       - 命令行显式 /p:PublishAot=true：spm 恒 AOT，不随主工程 -p:PublishAot=false
+         退回托管形态；RID 由 Spm.csproj 按宿主 OS 缺省补（win-x64），与
+         本 target 的「Windows 宿主 + 非 linux RID」门一致（AOT 不支持跨
+         OS；linux 侧打包列入后续——WSL 需 zlib dev，首版不动 linux 链）。
+       - spm.pdb 不进包：Spm.csproj CopyOutputSymbolsToPublishDirectory=false
+         源头关闭（本工程 AOT pdb 复活复盘同款）；TrimReleasePackage 的
+         包根 *.pdb glob 再兜底一层。
+       - 逃逸门：-p:SkipSpmPack=true。
+       - 挂链尾（AfterTargets=PackDocs，声明先于 TrimReleasePackage）：
+         包内容齐后放 spm，Trim 兜底随后跑。 -->
+  <Target Name="PackSpm" AfterTargets="PackDocs" Condition="'$(SkipSpmPack)' != 'true' and '$(Configuration)' == 'Release' and '$(_HostIsWindows)' == 'true' and !$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('linux'))">
+    <Exec Command="dotnet publish &quot;$(MSBuildThisFileDirectory)Project\Spm\Spm.csproj&quot; -c Release /p:PublishAot=true -o &quot;$(PublishDir)&quot;" />
+  </Target>
+
   <!-- Release-package hygiene (part 2/2, AFTER all pack targets): the runtime
        package keeps only what is needed at run time.
          - SimpleLanguageFront.exe: the Front CLI apphost of a referenced Exe

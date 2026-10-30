@@ -160,6 +160,7 @@ powershell -File SlangAllInOne\scripts\build-all.ps1 -Run
 | `info <module.slb\|module.json>` | 查看模块元数据 |
 | `version` | Front 版本 + C VM DLL 路径 / 配置 |
 | `new <project\|class> …` | 创建工程或类文件（**宿主原生脚手架**，2026-10-18 自 Front CLI 迁入）：`slang new project MyApp` 在 `<dir>\MyApp\` 生成 .sp/.jsonc/.sl/.md 成套（UTF-8 BOM，guide 含 AI 描述保留区；重生成保留 AI-DESCRIPTION 标记区）；`slang new class MyClass` 建 .sl 并登记进 jsonc `compileFiles.files[]`（已注册跳过；`-p <dir>` 缺省当前目录） |
+| `spm <install\|search\|list\|outdated\|remove\|plugin\|config> …` | **包/插件管理器（独立 `spm.exe`，2026-10-30 自宿主子命令独立为 `Project\Spm\` 工程，Release 发布链 PackSpm 自动以 Native AOT 打包落 slang 同目录）**：`spm install <url\|包名> [--registry <url>] [-g]`——URL 直接拉 zip，或按名三级（工程 modules 已装 → 语言目录命中则移动 → 服务器元数据下载）；`spm search <关键字>` 按名查包、`spm outdated` 与服务器版本对比（本地 spm.json 清单 vs `/api/packages/<名>`）、`spm list / remove`、`spm plugin <list\|search\|probe\|install\|remove>`（插件环境探测 = platforms vs 本机 os-arch，装到 `<lang>\plugin\<id>\`）、`spm config registry [<url>]`（落盘 `<lang>\spm.json`）。服务器 API 约定 = 官网 doc/18 §9 + doc/09 §5（静态回落兼容）。详见 `md/project/package-layout.md` §四 |
 | `lsp [--stdio]` | **内嵌 LSP 3.17 服务器**（stdio JSON-RPC，2026-10-19 L1+L2+L3 落地）：诊断推送 + 符号补全（全局/成员感知 `IDENT.`）+ 悬停（类/方法签名卡片）+ 定义跳转（工程源 + 标准库源 repo 布局推断）+ 文档大纲 + **格式化**（md/code.md Tab 缩进规范化；块注释/三引号串/@内嵌块原样）+ **重命名**（词级跨工程文件，跳字符串/注释/@块）。Slang VSCode 插件 `slang.diagnostics.engine=lsp` 消费；设计 = `slang_vscode_plugin\07_language_server_lsp.md` |
 | `lsp-compile <sp>` | LSP 专用诊断编译子命令（内部）：**新进程一次编译 + 结构化 JSON 到 stdout**（诊断数组[LID/行/列/Extend/Tips] + 成功时 SLIR 内存包 json）——由 `slang lsp` 每轮 spawn 自身调用，规避 Front 进程内重入残留（`CommandExecutor` 同进程二次编译会因 `isLoaded`/`fileParseList`/`ProcessManager` 静态状态空跑/假失败，2026-10-19 实测；Front 侧已留 `ProjectCompile.ResetForNewSession()` 备用口） |
 | `pack-modules` | 编译标准库三件套并平铺打进 `lib\`（发布包自动调起） |
@@ -178,7 +179,7 @@ SlangAllInOne/
 ├── Backend/    # C VM P/Invoke（内存直传入口 + DLL 定位）
 ├── Pack/       # pack-modules / pack-docs 打包命令（publish 自举）
 ├── Lsp/        # slang lsp（LSP 服务器）+ lsp-compile（诊断编译子命令，LSP 每轮 spawn）
-├── Project/    # 标准库编译驱动（CompileStdlib：core/math/std 分流）、测试宿主（CSimpleVM*Test、Test、Test2）、native 库（cvm_math_lib…）
+├── Project/    # 标准库编译驱动（CompileStdlib：core/math/std 分流）、测试宿主（CSimpleVM*Test、Test、Test2）、native 库（cvm_math_lib…）、独立包/插件管理器 spm（Project\Spm → spm.exe）
 ├── SLangCore/
 │   ├── Lib/    # 标准库源码（Core / Math / Std / SLang：Server、Render、Mysql、Tensora）
 │   ├── test/   # 测试用例集（BaseTest / ExpendTest / MathTest / SpecialTest / BenchMark / RenderTest / TensoraTest…）

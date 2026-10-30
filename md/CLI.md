@@ -21,6 +21,15 @@
 ### `cx list`
 列出当前已安装的包。
 
+### 声明式依赖（工程 jsonc `references` type=module，2026-10-30）
+工程 jsonc 的 `references` 支持声明式模块依赖：
+`{ "type": "module", "name": "SLangWebUI", "channel": "official|git|url", "url": "", "version": "0.0.53" }`。
+编译（`slang compile` / `slang publish`）装载引用前自动执行 **module 检查机制**：本地清单
+（`modules\<名>\spm.json`）版本对比，一致跳过下载；缺失/不一致按渠道检索并下载**指定版本**到
+工程 `modules\<名>\`（official = registry 按 name+version 检索 / git = 仓库 tag 归档 / url = 直链）；
+下载失败降级本地已有版本（Warning）或中止编译（Error）。语法与语义详见
+`md/project/project-config-jsonc-guide.md` §4.9。
+
 ---
 
 ## 2. 工具链

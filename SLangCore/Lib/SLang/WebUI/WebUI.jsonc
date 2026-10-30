@@ -22,7 +22,7 @@
     {
       "project": "cvm_webui_lib/cvm_webui_lib.vcxproj",
       "name": "webui_lib.dll",
-      "configuration": "Debug",
+      "configuration": "Release",
       "platform": "x64"
     }
   ],

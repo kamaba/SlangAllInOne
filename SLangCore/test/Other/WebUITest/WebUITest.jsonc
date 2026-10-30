@@ -40,13 +40,14 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    { "path": "./modules/SLangWebUI" }
+    // type=module：装载前走 module 检查机制（本地命中即跳过下载，回填 Path）
+    { "type": "module", "name": "SLangWebUI", "channel": "url", "url": "https://example.com/SLangWebUI.zip" }
   ],
   "struct": [
   ],
   "export": {
     "moduleName": "WebUITest",
-    "outputDir": "..\\..\\..\\..\\out\\export",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

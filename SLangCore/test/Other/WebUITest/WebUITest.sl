@@ -215,7 +215,7 @@ class WebUITest
         {
             Console.println( "RESULT: FAIL" )
         }
-        SLang.WebUI.exitAll()
+        #SLang.WebUI.exitAll()
     }
 
     # ── 页面 ──────────────────────────────────────────────────────

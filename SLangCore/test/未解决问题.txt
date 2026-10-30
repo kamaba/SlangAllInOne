@@ -2,15 +2,7 @@ TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
 
 VSCode里边，如果识别到是变量，在右键的时候，要弹出一个按钮，叫 添加到监视 的功能，点击后，直接移动到监视栏 看看是否和我内部的监视代码可以整合
 
-
-bindEvent 先改成bindHandle 这个要支持 绑定 函数  比如 static void aaa(){}   win.bindHandle( "greet", aaa ) class CA{ void ttt(){} } CA ca = new() win.bindHandle( "greet", ca.ttt )   win.bindHandle( "greet", function(){ Console.println("ok" ) } ) 这种的情况也支持下吧   把这块 静态函数体，非静态函数的函数体，匿名函数的函数体，都可以 当functionObject 的形式传入进去
-
-
-
-需要在cli里边增加管理包，下载包的逻辑 大概逻辑就是这样的，配置 一个地址，然后下载包.zip然后解压到运行的当前工程目录(也就是.jsonc的目录) 
-对了，环境中，增加两个 一个是 lang的目录，一个是运行的当前目录，然后需要把包解压到 运行的当前目录的modules里边，然后 调用，直接先搜索当前目录的modules里边，如果没有，再去lang目录的modules里边搜索   如果确定没有，则认为没有这个包。    然后是plugins 则自动搜索lang下边的  如果打包，也需要把modules直接放到发布包的modules里边 
-
-spm 的装包方式有几种，一种是 通过http直接拉取zip压缩文件，  第二种是通过slang目录里边的modules里边边检查是否有这个模块名称，然后移动到当前工程下边  
+在.jsonc中， 如果 references 下边 增加项目的一个类型，如果是  { "type"="moudle", "name":"SLangWebUI", "channel":"officail/git/url", "url":"", "version":"0.0.53" } 如果配置的是module的类型，要要启动module检查机制， 通过spm的作用，先看channel officail是官方的渠道，到时候通过官网的地址下载  git 则通过git的地址下载，url 则通过url 的机构下载，下载前，要通过管理包的版本 对比，看是否要更新，还有就是只下载这个版本  然后通过name去找具体对应的    因为官方有自己的对接协议，大概 就是通过name/version 就能检索出具体的url来，git 也类似，因为git也有版本的概念，但url就是直接使用url地址直接去下载 
 
 
 1. 接入 javascript_quickjs 

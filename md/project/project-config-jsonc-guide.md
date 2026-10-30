@@ -21,7 +21,7 @@
    - 不敏感 + 别名归一：`compile.target`（如 `x64`/`X64`）、`platform.require` 封闭值域字段（如 `win64`→`window`）；
    - **敏感**：`export.publicExport` / `export.format` / `plugins.<id>.onUnavailable` 的取值（非法值报 Error）。
 5. **校验时机**：`compile.target` 在加载期即校验（Error 20033）；`platform` 值域 / `override` key / `aot.features` 与 `cpu` 一致性在 MetaCore 阶段 `ValidatePlatformConfig` 步骤校验（此时才计入 errorCount 中止编译）。
-6. **数组条目丢弃规则**：`compileFiles.files[]` 缺 `path`、`references[]` 缺 `path`、`vmDlls[]` 缺 `project` 或 `name` 时整条丢弃；`systemCalls[]` 条目不校验 name 非空（缺省为空串仍会加入）。
+6. **数组条目丢弃规则**：`compileFiles.files[]` 缺 `path`、`vmDlls[]` 缺 `project` 或 `name` 时整条丢弃；`references[]` 普通条目（无 `type`）缺 `path` 丢弃，**type=module 条目不要求 path**（name 非空即收，path 由检查机制回填，§4.9）；`systemCalls[]` 条目不校验 name 非空（缺省为空串仍会加入）。
 
 ## 3. 全字段骨架
 
@@ -85,9 +85,14 @@
       ] }
   ],
   "references": [                     // 引用模块
-    { "path": "../../out/export/Core",       // 必填；空=条目丢弃；相对本 jsonc 目录
+    { "path": "../../out/export/Core",       // 普通条目：path 必填；空=条目丢弃；相对本 jsonc 目录
       "uuid": "123123123213",               // 随 moduleReferences 导出
-      "name": "Core.module.json" }          // 缺失时从已加载包回填
+      "name": "Core.module.json" },         // 缺失时从已加载包回填
+    { "type": "module",                      // module 依赖条目（§4.9 检查机制；path 由检查机制回填）
+      "name": "SLangWebUI",                  // 必填 = 模块名/装包目录名
+      "channel": "official",                 // official | git | url
+      "url": "",                             // official 可空；git = 仓库地址；url = zip 直链
+      "version": "0.0.53" }                  // official/git 必填（只下载该版本）；url 可空
   ],
   "dllImports": [                      // FFI 导入表（旧顶层 "lib" 数组同构兼容）
     { "path": "../../x64/Debug/CLangdll.dll",  // 必填；空=条目丢弃
@@ -290,9 +295,13 @@
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `path` | string | `""` | **指向 module.json/slb 的位置**（相对本 jsonc 所在目录解析）——推荐直接写产物文件路径（`"./lib/Core.module.slb"`、`"../../../out/export/X/X.module.json"`）；兼容旧目录/裸名形态（目录内产物扫描 + 源目录产物推导）；**空则条目丢弃** |
+| `path` | string | `""` | **指向 module.json/slb 的位置**（相对本 jsonc 所在目录解析）——推荐直接写产物文件路径（`"./lib/Core.module.slb"`、`"../../../out/export/X/X.module.json"`）；兼容旧目录/裸名形态（目录内产物扫描 + 源目录产物推导）；普通条目（无 `type`）**空则条目丢弃**；type=module 条目由检查机制回填 |
 | `uuid` | string | `""` | 可选；随导出 `moduleReferences[].uuid`（装载时按已加载包实际值回填覆盖） |
-| `name` | string | `""` | 可选；**工程内别名**，`import <name>:` 按它解析——不写则自动用模块自身名称；定义了就必须与 import 对应。旧文件名形态（`"Core.module.slb"`）仍兼容（剥后缀作别名） |
+| `name` | string | `""` | 可选；**工程内别名**，`import <name>:` 按它解析——不写则自动用模块自身名称；定义了就必须与 import 对应。旧文件名形态（`"Core.module.slb"`）仍兼容（剥后缀作别名）。type=module 条目中 name 必填（= 模块名，也是装包目录名） |
+| `type` | string | `""` | `module` 时该条目启用 **module 检查机制**（装载前版本对比 + 按渠道下载，见下方专段）；不写或其它值 = 普通引用条目（现有行为不变） |
+| `channel` | string | `""` | type=module 时的下载渠道三选一：`official`（官网 registry 按 name+version 检索）/ `git`（仓库 tag 归档）/ `url`（直链下载） |
+| `url` | string | `""` | type=module 时的地址：official 渠道可空（registry 检索）；git 渠道填仓库地址（version=tag，自动推导归档 zip；已是 .zip 直链则直用）；url 渠道填包 zip 直链（必填） |
+| `version` | string | `""` | type=module 时声明版本（**只下载这个版本**）：official/git 必填（name+version 检索依据）；url 可空（= 本地已有即跳过下载）。与本地清单 `spm.json` 的 version 语义化比较（`a.b.c` 逐段） |
 
 引用插件（plugin.jsonc）时，其 `refModule` 段声明的模块与 systemCalls 会在 RefModule 阶段自动加载，无需在本工程重复声明。
 
@@ -306,6 +315,31 @@
 4. `name` 为工程内别名供 `import` 解析；缺省自动取模块名。`import <模块>` 引入整模块、`import <模块>:<命名空间>`（无引号冒号形式，2026-10-18）与 `import "<模块>:<命名空间>"`（字符串形式）直达命名空间（成员无前缀直接搜索）；Core 被引用后自动可用无需 import。语法详见 `md/syntax/namespace.md` §4。
 
 **显式后缀兼容形态**（`name` 尾段带 `.slb`/`.json`，如 `{ "path": "./lib", "name": "Core.module.slb" }`）：严格只认指定格式（`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向）——工程内 `path+name` 拼接落空时，**系统库**（Core/Std/Math）回落三级搜索链（原样文件名，含 spm 目录布局探测；非系统库不回落）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式（④ 三级链原样文件名直查，落空硬报错）。
+
+**type=module 引用（module 检查机制，2026-10-30）**——声明式模块依赖，装载前自动检查/下载：
+
+```jsonc
+"references": [
+    // official：官网 registry 按 name+version 检索包地址（url 可省）
+    { "type": "module", "name": "SLangWebUI", "channel": "official", "version": "0.0.53" },
+    // git：仓库地址 + version=tag，自动推导归档 zip（GitHub/Gitee/GitLab）
+    { "type": "module", "name": "MyLib", "channel": "git", "url": "https://github.com/user/MyLib", "version": "v1.2.0" },
+    // url：直链下载；version 可空 = 本地已有即跳过
+    { "type": "module", "name": "Extra", "channel": "url", "url": "https://example.com/Extra-0.0.53.zip", "version": "0.0.53" }
+]
+```
+
+RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDependency.cs`，Front 自包含复刻 spm 约定——Front 不能引用下游 Spm 工程）：
+
+1. **版本对比**：读本地清单（工程 `modules\<名>\spm.json` → 全局 `<exe>\modules\<名>\spm.json`）的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）；一致即**跳过下载**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。
+2. **缺失/不一致 → 按渠道解析 URL 并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，重写 `spm.json` 清单（name/version/source/installedAt）：
+   - **official**：registry 协议按 name+version 检索——`GET <reg>/api/packages/resolve?name=&version=`（P3 预留端点，先试）→ `GET <reg>/api/packages/<名>`（versions[] 数组取语义匹配版本的 download/file）→ 静态回落 `GET <reg>/<名>.json`（平铺形态 version 须精确匹配）；包体 URL 相对 registry 解析，缺省 `<reg>/<名>.zip`。registry 来源：工程 jsonc `spm.registry`（§4.17）> 全局 `<exe>\spm.json`；均空 = Warning（LID 20049）走降级。
+   - **git**：version = tag；url 以 `.zip` 结尾直用，否则按 host 推导归档（GitHub `<repo>/archive/refs/tags/<tag>.zip` / Gitee `<repo>/repository/archive/<tag>.zip` / GitLab `<repo>/-/archive/<tag>/...`）；未知 host 失败。
+   - **url**：url 字段直接下载。
+   - zip 布局自动探测：单一顶层目录（git tag 归档形态）/ 根含 `<名>.module.slb|json` / 多目录匹配；落位目录名固定 = name。
+3. **失败降级**：下载失败但本地有任意版本 → Warning（LID 20048）+ 回退本地继续编译（编译不中止）；本地完全无副本 → Error（LID 20047）+ **中止编译**（产物不导出，同「没有这个包」规则）。channel 不合法（LID 20043）/ official-git 缺 version（LID 20044）直接拒绝并中止。
+
+无 type=module 条目零开销——普通工程（纯 `path` 引用）行为完全不变。
 
 **官方库推荐写法**（name/uuid 省略，导出侧自动回填真实 name/uuid/版本）：
 
@@ -503,6 +537,9 @@ registry**（按名安装只依赖 `--registry` 参数或 `<lang>\spm.json` 全�
 
 安装的包落本工程 `modules\<包名>\<包名>.module.slb|json`；`references` 引用
 纯名（或 `./modules/<包名>`）即可被装载三级搜索链第 ① 级命中（§4.9 装载规则 2）。
+也可以用 `references` 的 **type=module 条目**（`{ "type": "module", "name": ..., "channel": "official", "version": ... }`）
+声明依赖：编译时自动按 registry 检索 + 版本对比下载到工程 `modules\`（检查机制详见 §4.9 专段）——
+`spm.registry` 本段同时是该机制的 official 渠道 registry 来源。
 
 ## 5. 已解析但当前无下游消费的键（配置不生效排查表）
 

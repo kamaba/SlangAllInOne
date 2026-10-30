@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>spm</AssemblyName>
+    <RootNamespace>Spm</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- ===== Native AOT 发布（2026-10-30 用户指令：随 release 打包链集成）=====
+       发布形态对齐宿主 slang（SlangAllInOne.csproj）：
+       - Release 时 PublishAot 默认开（单文件自包含原生 spm.exe，目标机零 .NET
+         依赖；退回经典托管显式 -p:PublishAot=false）；
+       - RID 缺省按宿主 OS 补 win-x64 / linux-x64（AOT 不支持跨 OS 交叉编译）；
+       - STJ 反射序列化（GlobalConfig / LocalManifest 的 Deserialize<T>）在 AOT
+         下默认被关 → 翻回 true（宿主 slang 同款，反射经 Delegate.CreateDelegate
+         装箱访问器可用；长期正确解 = STJ source-gen）；
+       - AOT 原生 pdb 不进发布目录（CopyOutputSymbolsToPublishDirectory=false，
+         宿主同款——_CopyAotSymbols 会无条件把 pdb 复制进包，源头关闭）。 -->
+  <PropertyGroup>
+    <PublishAot Condition="'$(Configuration)' == 'Release' and '$(PublishAot)' == ''">true</PublishAot>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(PublishAot)' == 'true' and $([MSBuild]::IsOSPlatform('Windows'))">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == '' and '$(PublishAot)' == 'true' and $([MSBuild]::IsOSPlatform('Linux'))">linux-x64</RuntimeIdentifier>
+    <JsonSerializerIsReflectionEnabledByDefault Condition="'$(PublishAot)' == 'true'">true</JsonSerializerIsReflectionEnabledByDefault>
+    <DebugSymbols Condition="'$(PublishAot)' == 'true'">false</DebugSymbols>
+    <DebugType Condition="'$(PublishAot)' == 'true'">none</DebugType>
+    <CopyOutputSymbolsToPublishDirectory Condition="'$(PublishAot)' == 'true'">false</CopyOutputSymbolsToPublishDirectory>
+  </PropertyGroup>
+
+  <!-- AOT 裁剪根（2026-10-30 實測）：GlobalConfig / LocalManifest 兩個 POCO 只經
+       STJ 反射序列化訪問（屬性 getter 無靜態引用點），不置根會被裁掉元數據 →
+       AOT exe 實測 config registry 寫後讀回 (not set)（Deserialize 靜默失敗）。
+       與宿主 slang 同款處置：自身程序集整體置根（類型+成員保形，反射序列化
+       經 Delegate.CreateDelegate 裝箱訪問器恢復）；長期正確解 = STJ source-gen。 -->
+  <ItemGroup Condition="'$(PublishAot)' == 'true'">
+    <TrimmerRootAssembly Include="spm" />
+  </ItemGroup>
+
+</Project>

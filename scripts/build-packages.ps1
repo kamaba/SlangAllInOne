@@ -95,7 +95,11 @@ function Invoke-BuildWinPackage([string]$Config) {
     Write-Step ('Build ' + $dirName + '  (dotnet publish -c ' + $Config + ')')
     if (Test-Path $dir) { Remove-Item $dir -Recurse -Force -Confirm:$false }
     Push-Location $RepoRoot
-    & dotnet publish $ProjFile -c $Config
+    # | Out-Host: keep dotnet's stdout OUT of the function's return pipeline.
+    # Without it $ok = @(publish lines..., $true/$false) is always truthy and
+    # the summary reports FAIL builds as OK (masked the 2026-10-30 locked-exe
+    # failure). Same contract as Invoke-WslBash.
+    & dotnet publish $ProjFile -c $Config | Out-Host
     $code = $LASTEXITCODE
     Pop-Location
     if ($code -ne 0) { Write-Host ('  dotnet publish failed (exit ' + $code + ')') -ForegroundColor Red; return $false }
@@ -136,7 +140,7 @@ function Invoke-BuildWinPackage([string]$Config) {
     $smokeDir = Join-Path $env:TEMP ('slang-pkg-smoke-' + [guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $smokeDir -Force | Out-Null
     Push-Location $smokeDir
-    & (Join-Path $dir 'slang.exe') run (Join-Path $dir 'lib\Std.module.slb')
+    & (Join-Path $dir 'slang.exe') run (Join-Path $dir 'lib\Std.module.slb') | Out-Host
     $exit = $LASTEXITCODE
     Pop-Location
     Remove-Item $smokeDir -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue

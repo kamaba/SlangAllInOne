@@ -1,3 +1,4 @@
+# 16 位有符号整数，取值范围 -32768 ~ 32767，对应 C# short。
 public class Int16 extends Num
 {
     public const static Int16 MaxValue = 0x7fff;

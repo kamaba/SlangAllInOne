@@ -1,5 +1,5 @@
 
-#Abstract numeric base class (Dart-like)
+# 数值类型的抽象基类（类似 Dart 的 num）：定义 size / byteLength 等抽象属性与 abs / floor / ceil / compareTo 等抽象运算，所有具体数值类型（Int* / Float*）均由此派生。
 public abstract class Num extends Object
 {
     

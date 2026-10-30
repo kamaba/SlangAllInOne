@@ -10,6 +10,15 @@ VM 通过 `EIROpCode.CallSystemMethod` 调用；系统方法由工程 `.jsonc` �
 - **类型转换映射不受限**：`int()` / `Int32()` / `sbyte()` / `float()` 等 C 型别名写法（及其 `SystemConvert*` 目标声明的全名写法）属语言级纯值转换，恒可用
 - 判定实现：`SystemMethodCallDeclarationRegistry.IsTypeConvertDecl`（别名映射目标名集合）
 
+## 示例书写约定（文档/示例代码）
+
+SystemMethodCall 属**内部指令机制**（VM `CallSystemMethod` 直调），应用层示例（官网 Playground、README、md/syntax 等）**一律通过标准库包装类调用**，不要裸写系统方法：
+
+- 打印：`SystemPrintln(x)` → `Console.println(x)`；`SystemPrint(x)` → `Console.print(x)`（`Std.IO.Console`，需 `import Std`）
+- 输入：`SystemReadLine()` → `Console.readLine()`；`SystemInput()` → `Console.input()`
+
+**例外**：Core / Std 标准库模块自身的 `.sl` 源码与对应文档（`Lib/Core/`、`Lib/Std/`）就是系统方法的绑定宿主，内部只能使用 SystemMethodCall（如 `UInt8.parse` 内的 `SystemConvertUInt8`、`Console.println` 内的 `SystemPrintln`），保持原样不改。
+
 ---
 
 ## 桥接 / 互操作

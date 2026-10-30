@@ -331,8 +331,9 @@ public class Memory
     }
 
     # Free a block allocated by alloc (double-free is undefined).
-    # Named freeNative to avoid clashing with free(object) above.
-    public static bool freeNative( Int64 addr )
+    # Overloads free(object) above; exact-match overload resolution
+    # picks this for Int64 args, so both can coexist.
+    public static bool free( Int64 addr )
     {
         ret SystemMemoryNativeFree( addr )
     }

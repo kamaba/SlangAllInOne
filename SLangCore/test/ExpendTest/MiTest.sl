@@ -1,7 +1,7 @@
 # MiTest - mimalloc host 堆接管回归用例（P6，证据探针见 test/MiProbe）。
 # 同一份用例在两种构建变体下都必须全 PASS，按 mimallocEnabled() 自动分派：
 #   host 默认（VM_MIMALLOC_DISABLE=1）：探针全部 0/false 编译剔除语义，
-#       Memory.alloc/freeNative 走 libc 兜底。
+#       Memory.alloc/free 走 libc 兜底。
 #   VM_MIMALLOC_ENABLE=ON：mimalloc 全局接管 base_malloc（SBA 超块、LOS、
 #       运行时结构全部落其上），native 分配/释放精确体现在 current 字节上。
 # 统计口径注意（上游 mimalloc v3.5 源码语义）：
@@ -54,7 +54,7 @@ MiTest
         check( "alloc(4096) != 0", p != 0 )
         Memory.writeI64( p, 0, 9000000000 )
         check( "i64 roundtrip on libc heap", Memory.readInt64( p, 0 ) == 9000000000 )
-        check( "freeNative(p)", Memory.freeNative( p ) )
+        check( "free(p)", Memory.free( p ) )
         # collect 在禁用态是安全 no-op，统计保持全 0
         Memory.mimallocCollect( true )
         check( "collect() no-op, still 0", Memory.mimallocCurrentBytes() == 0 )
@@ -86,8 +86,8 @@ MiTest
         # requested 为累计口径（free 不递减、huge 块不计入），只断言不倒退
         check( "requested not decreased", Memory.mimallocRequestedBytes() >= baseReq )
         # 释放 + 归还 OS：current 回落（留 1MiB 余量吸收 check 打印的零星分配）
-        Memory.freeNative( p1 )
-        Memory.freeNative( p2 )
+        Memory.free( p1 )
+        Memory.free( p2 )
         Memory.mimallocCollect( true )
         Int64 endCur = Memory.mimallocCurrentBytes()
         check( "current falls >= 4MiB after free+collect", endCur + 4194304 <= midCur )

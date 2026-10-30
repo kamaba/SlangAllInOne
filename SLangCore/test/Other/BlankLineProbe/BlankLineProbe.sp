@@ -1,0 +1,10 @@
+Project
+{
+    _main_()
+    {
+        BlankLineProbe.runTest()
+    }
+    _before_()
+    {
+    }
+}

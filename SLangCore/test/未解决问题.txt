@@ -11,6 +11,13 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 4. 接一个asm 
 5. 接一个cplus_clang
 
+#![md] ###内容   !# 这里边存放着md的格式，在vs显示的时候， 像鼠标移动到这个方法上边，显示 md格式的内容，然后 如果是#普通的注释，则直接显示注释内容，  都是在成员变量，成员函数上边才会怎么做。
+
+tmol的制作 
+
+D:\project\lang\SlangAllInOne\SLangCore\Lib\Core\Text\BaseConfigFormat.sl 的制作 这个主要是解析linux系统配置文件 还有window下ini一类的文件
+
+
 写更多的使用用例，测试cvm的功能点。
 jsonc整体，增加 AOT, Mix, PureCVM,
 

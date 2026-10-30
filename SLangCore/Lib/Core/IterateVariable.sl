@@ -1,6 +1,7 @@
     
     
     
+    # 迭代器适配器：包装任意 IIterable 提供一个带 index / value 的游标式迭代器（foreach 底层常用），支持复位、前进与取值。
     public class Iterater interface IIterator
     {        
         _start = 0
@@ -62,6 +63,7 @@
         }
     }
     
+    # 泛型迭代器适配器：强类型版 Iterater，包装 IIterable<T> 提供带 index / value 的游标式迭代。
     public class Iterater<T> interface IIterator<T>
     {
         _start = 0

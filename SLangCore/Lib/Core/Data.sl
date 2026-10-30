@@ -1,3 +1,4 @@
+# 数据聚合抽象基类：将一组命名字段聚合成结构化 data 对象（类似 JSON 对象），可序列化为 JSON（toJson / toJsonPretty），是 SLang 结构化数据的根类型。
 public abstract class Data extends object
 {
     override String toString()

@@ -10,15 +10,17 @@
 示例（`test/BaseTest/ProjectTest.sp`）：
 
 ```s
+import Std
+
 Project
 {
     println( txt )
     {
-        SystemPrintln( txt )
+        Console.println( txt )
     }
     print( text )
     {
-        SystemPrint( text )
+        Console.print( text )
     }
 }
 ```

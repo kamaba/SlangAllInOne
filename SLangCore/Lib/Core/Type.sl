@@ -1,3 +1,4 @@
+# 元类：承载类型的命名空间与类名等元信息，供反射读取类型标识。
 public class MetaClass
 {
     string _namespaceName = "";
@@ -6,6 +7,7 @@ public class MetaClass
     get string className(){ ret this._className; }
 }
 
+# 类型对象：运行时类型的统一表示，封装底层类型枚举（eType）与元类（MetaClass），用于反射判断与类型信息读取。
 public class Type extends Object
 {
     byte _eType = 0

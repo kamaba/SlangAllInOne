@@ -156,7 +156,7 @@ Memory.writeI32( p, 36, this.usageFlags )
 Memory.writeI32( p, 40, this.sampleCount )
 # utf8 名字（可选）：Memory.newUtf8 -> 指针写偏移 48
 this.handle = RenderFFI.ffi_textureCreate( p )
-Memory.freeNative( p )
+Memory.free( p )
 ```
 
 ### 3.5 cvm_render_lib 的定位（调整）

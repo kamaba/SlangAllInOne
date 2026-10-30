@@ -1,3 +1,4 @@
+# 32 位无符号整数，取值范围 0 ~ 4294967295，对应 C# uint。
 public class UInt32 extends Num
 {
     const static uint MaxValue = 0xffffffff;

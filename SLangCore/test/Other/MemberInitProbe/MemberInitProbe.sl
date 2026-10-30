@@ -7,7 +7,7 @@ import Std;
 class MemberInitProbe
 {
     # 无初始化成员声明（问题场景）
-    int v;
+    int v = 0;
 
     # 正常初始化成员（对照组，不应报错）
     int ok = 1;

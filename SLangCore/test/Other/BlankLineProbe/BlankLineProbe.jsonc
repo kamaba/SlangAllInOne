@@ -1,0 +1,52 @@
+{
+  "project":
+  {
+    "name": "BlankLineProbe",
+    "desc": "Behavior probe for jsonc compile.isForceBlankLineBetweenIfs (LID 20288, Info): default off = no check, true = if-chain to next-if blank line check",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": false,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false,
+    "isForceBlankLineBetweenIfs": true
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "BlankLineProbe.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+  },
+  "export": {
+    "moduleName": "BlankLineProbe",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  }
+}

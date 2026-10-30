@@ -1,4 +1,5 @@
 
+# 8 位无符号整数，取值范围 0 ~ 255，对应 C# byte。
 public class UInt8 extends Num
 {
     public const static UInt8 MaxValue = 0b11111111;

@@ -1,5 +1,6 @@
 # 历史遗留的 import CSharp.System; 所指命名空间并不存在（曾静默失败），随 import 错误严格化已移除。
 
+# 64 位双精度浮点数（默认浮点字面量类型），对应 C# double，提供高精度浮点运算。
 public class Float64 extends Num
 {
     # IEEE 754 binary64 (double): 1位符号 + 11位指数(bias=1023) + 52位尾数

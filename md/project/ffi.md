@@ -186,13 +186,13 @@ string us = SystemFFICallUtf8( utf8Echo, "ptr,utf8->utf8", cbU, "world" )  # "cb
 
 ### 2.5 配套：原生内存 `Memory` / `SystemPtr*`
 
-FFI 常与原生内存配合。核心原生内存 API 已迁入 `Core/Memory`（`Memory.alloc / allocArray / readXxx / writeXxx / sizeOf / structSize / structFieldOffset / newStruct / newUtf8 / copyUtf8 / freeNative`），另有底层 `SystemPtrAlloc / SystemPtrFree / SystemPtrReadInt32 / SystemPtrWriteFloat64 ...`，以及 `data` ↔ C struct 互转：
+FFI 常与原生内存配合。核心原生内存 API 已迁入 `Core/Memory`（`Memory.alloc / allocArray / readXxx / writeXxx / sizeOf / structSize / structFieldOffset / newStruct / newUtf8 / copyUtf8 / free`，`free(Int64)` 与 `free(object)` 为同名重载），另有底层 `SystemPtrAlloc / SystemPtrFree / SystemPtrReadInt32 / SystemPtrWriteFloat64 ...`，以及 `data` ↔ C struct 互转：
 
 ```sl
 Int64 p  = Memory.alloc( 64 )
 Memory.writeI32( p, 0, -100 );  Memory.writeI64( p, 8, 9000000000 )
 Float64 total = SystemFFICallF64( structSum, "ptr->f64", p )
-Memory.freeNative( p )
+Memory.free( p )
 
 Int64 addr = Memory.dataToNativeStruct<FFICBook>( "SLBookStruct", book )   // data -> C struct
 FFICBook b = Memory.nativeStructToData<FFICBook>( addr )                   // C struct -> data
@@ -252,7 +252,7 @@ blk.free()                 // 成功后 address == 0，重复 free 返回 false
 | 块的来源 | 释放方式 | 说明 |
 |---|---|---|
 | `FFI.Struct.alloc` / `marshalOut` 产物 | `FFI.Struct.free(addr)` 或 `blk.free()` | 块头带 magic + 布局 id，误传普通指针拒释放 |
-| native 侧 `malloc`（如 C 库 alloc 函数） | **必须由 C 侧 free 函数释放** | 两条分配链不可混用（与 `Memory.freeNative` 同律） |
+| native 侧 `malloc`（如 C 库 alloc 函数） | **必须由 C 侧 free 函数释放** | 两条分配链不可混用（与 `Memory.free(Int64)` 同律） |
 | SL 声明侧 | 无需管理 | marshalIn 读出的 string/对象由 GC 管理 |
 
 utf8 跨调用注意：FFI 调用的 utf8 **实参缓冲仅调用期有效**——C 侧把该指针存入结构体后

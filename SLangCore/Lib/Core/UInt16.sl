@@ -1,3 +1,4 @@
+# 16 位无符号整数，取值范围 0 ~ 65535，对应 C# ushort。
 public class UInt16 extends Num
 {
     public const static UInt16 MaxValue = 0xffff;

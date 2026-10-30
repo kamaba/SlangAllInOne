@@ -163,12 +163,13 @@ SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
 ```sl
 import ETC1
 import MFT
+import Std
 
 Project                      # 工程块：静态成员 + 函数
 {
     println( txt )           # 成员函数（工程级，通过 global.println 调用）
     {
-        SystemPrintln( txt )
+        Console.println( txt )
     }
 
     _main_()                 # 主入口

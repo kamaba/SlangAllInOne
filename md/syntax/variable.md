@@ -53,11 +53,13 @@ file:ProjectTest.jsonc（节选）
 ```python
 file:ProjectTest.sp（节选）
 
+import Std
+
 Project
 {
     println( txt )
     {
-        SystemPrintln( txt )
+        Console.println( txt )
     }
     _main_()
     {

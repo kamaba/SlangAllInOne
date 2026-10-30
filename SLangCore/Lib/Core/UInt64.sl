@@ -1,3 +1,4 @@
+# 64 位无符号整数，对应 C# ulong，用于大计数、容量与句柄等场景。
 public class UInt64 extends Num
 {
     const static UInt64 MaxValue = 0xffffffffffffffff;

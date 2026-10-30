@@ -46,7 +46,7 @@
   ],
   "export": {
     "moduleName": "JsonTest",
-    "outputDir": "..\\..\\..\\..\\out\\export",
+    "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

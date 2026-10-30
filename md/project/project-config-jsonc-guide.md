@@ -49,7 +49,8 @@
     "isSupportDoublePlus": false,           // ⚠ 已解析未消费
     "requireSameNumericTypes": false,       // true=混合数值运算报错（byte+Int32 等）
     "isAllowSystemMethodCall": true,        // false=禁止调用系统方法（println 等；int()/Int32() 等类型转换映射不受限），见 §4.3
-    "isForceSpaceAfterSharp": false         // true=强制行注释 '#' 后须空格（# 注释），缺省不检查，见 §4.3
+    "isForceSpaceAfterSharp": false,        // true=强制行注释 '#' 后须空格（# 注释），缺省不检查，见 §4.3
+    "isForceBlankLineBetweenIfs": false     // true=强制 if 链与紧邻的下一个 if 之间空一行（Info 20288），缺省不检查，见 §4.3
   },
   "compileFiles": {
     "files": [                        // 显式编译文件清单
@@ -237,6 +238,7 @@
 | `requireSameNumericTypes` | bool | false | 数值类型严格检查：true 时 `byte + Int32` 等混合数值运算报错（消费于 `MetaExpressOperator.cs`） |
 | `isAllowSystemMethodCall` | bool | true | 系统方法调用开关：false 时 Front 语义解析层拒绝解析到 `systemCalls` 注册表声明的调用（Error 21473），仅约束当前工程自身源码；类型转换映射族（`int()`/`Int32()`/`sbyte()` 等别名写法及对应 `SystemConvert*` 目标声明）属语言级纯值转换，恒可用（消费于 `MetaCallNode.cs` 两处 systemCall 解析点） |
 | `isForceSpaceAfterSharp` | bool | false | 行注释空格强制开关：true 时词法层检查本工程全部源文件（含 `.sp`），普通行注释 `#` 与正文之间必须至少一个空格（`# 注释` 合法、`#注释` Error 20120 阻断编译）；块注释 `#!...!#`/`#!md`/`##!` 嵌套与空注释（`#` 后直接换行/文件尾）不受限；**缺省 false 完全不检查**，除非显式配置开启（消费于 `LexerParseToToken.cs` ReadSharp） |
+| `isForceBlankLineBetweenIfs` | bool | false | if 空行规范开关：true 时结构解析层检查本工程源文件中 if/elif/else 链结束后紧邻的下一个语句是 if 时两者之间必须空一行（连续 LineEnd ≥ 2），不足报 **Info 20288**（`NodeStructParseIfNextNoBlankLine`，不阻断编译）；仅约束当前工程自身源码，不影响引用模块；elif/else 必须紧挨上一语句块的 Error 20289 检查**不受本键控制**（恒开启）；**缺省 false 完全不检查**，除非显式配置开启（消费于 `StructParseToSyntax.cs` 调用点门控） |
 
 ### 4.4 `compileFiles.files[]` —— 显式编译文件清单
 
@@ -331,13 +333,15 @@
 
 RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDependency.cs`，Front 自包含复刻 spm 约定——Front 不能引用下游 Spm 工程）：
 
-1. **版本对比**：读本地清单（工程 `modules\<名>\spm.json` → 全局 `<exe>\modules\<名>\spm.json`）的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）；一致即**跳过下载**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。
-2. **缺失/不一致 → 按渠道解析 URL 并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，重写 `spm.json` 清单（name/version/source/installedAt）：
+1. **工程位检查**：工程 `modules\<名>\` 已存在该模块——清单 `spm.json` 的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）一致，url 渠道未声明 version 时目录存在即满足——**不执行后续操作**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。
+2. **解析目标下载地址**：按渠道推导（official = registry 按 name+version 检索 / git = tag 归档推导 / url 直给，协议见步骤 4）；解析失败走步骤 5 降级。
+3. **全局位复用**：全局 `<exe>\modules\<名>\` 清单与目标**地址 + 版本均一致**（清单含 `url` 时须与目标地址相同；旧清单缺 `url` 字段退化为仅版本对比）→ **复制全局模块到工程 `modules\<名>\`** 再继续（不下载，Info LID 20050）；复制失败（目录占用/磁盘满）走步骤 4 下载。
+4. **全局未命中 → 按渠道下载并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，写 `spm.json` 清单（name/version/source/url/installedAt，`url` 记录下载地址供后续全局复用对比）：
    - **official**：registry 协议按 name+version 检索——`GET <reg>/api/packages/resolve?name=&version=`（P3 预留端点，先试）→ `GET <reg>/api/packages/<名>`（versions[] 数组取语义匹配版本的 download/file）→ 静态回落 `GET <reg>/<名>.json`（平铺形态 version 须精确匹配）；包体 URL 相对 registry 解析，缺省 `<reg>/<名>.zip`。registry 来源：工程 jsonc `spm.registry`（§4.17）> 全局 `<exe>\spm.json`；均空 = Warning（LID 20049）走降级。
    - **git**：version = tag；url 以 `.zip` 结尾直用，否则按 host 推导归档（GitHub `<repo>/archive/refs/tags/<tag>.zip` / Gitee `<repo>/repository/archive/<tag>.zip` / GitLab `<repo>/-/archive/<tag>/...`）；未知 host 失败。
    - **url**：url 字段直接下载。
    - zip 布局自动探测：单一顶层目录（git tag 归档形态）/ 根含 `<名>.module.slb|json` / 多目录匹配；落位目录名固定 = name。
-3. **失败降级**：下载失败但本地有任意版本 → Warning（LID 20048）+ 回退本地继续编译（编译不中止）；本地完全无副本 → Error（LID 20047）+ **中止编译**（产物不导出，同「没有这个包」规则）。channel 不合法（LID 20043）/ official-git 缺 version（LID 20044）直接拒绝并中止。
+5. **失败降级**：下载失败但本地有任意版本（工程位优先，其次全局位）→ Warning（LID 20048）+ 回退本地继续编译（编译不中止）；本地完全无副本 → Error（LID 20047）+ **中止编译**（后续阶段跳过、产物不导出，同「没有这个包」规则）。channel 不合法（LID 20043）/ official-git 缺 version（LID 20044）直接拒绝并中止。
 
 无 type=module 条目零开销——普通工程（纯 `path` 引用）行为完全不变。
 

@@ -26,7 +26,7 @@ Project
             b = Memory.alloc( 262144 )
             c = Memory.alloc( 131072 )
             SystemPrintln( "after abc: used=" + Memory.tlsfUsedBytes().toString() + " free=" + Memory.tlsfFreeBytes().toString() )
-            Memory.freeNative( b )
+            Memory.free( b )
             SystemPrintln( "after free b: used=" + Memory.tlsfUsedBytes().toString() + " free=" + Memory.tlsfFreeBytes().toString() + " frag=" + Memory.tlsfFragmentation().toString() )
             d = Memory.alloc( 131072 )
             SystemPrintln( "after d: used=" + Memory.tlsfUsedBytes().toString() + " free=" + Memory.tlsfFreeBytes().toString() )
@@ -40,10 +40,10 @@ Project
                 SystemPrintln( "big(2M) over-arena fallback alloc: FAILED" )
             }
             SystemPrintln( "after big: used=" + Memory.tlsfUsedBytes().toString() + " free=" + Memory.tlsfFreeBytes().toString() )
-            Memory.freeNative( a )
-            Memory.freeNative( c )
-            Memory.freeNative( d )
-            Memory.freeNative( big )
+            Memory.free( a )
+            Memory.free( c )
+            Memory.free( d )
+            Memory.free( big )
             SystemPrintln( "final: used=" + Memory.tlsfUsedBytes().toString() + " free=" + Memory.tlsfFreeBytes().toString() + " frag=" + Memory.tlsfFragmentation().toString() )
         }
         else
@@ -59,7 +59,7 @@ Project
             {
                 SystemPrintln( "native alloc fallback: FAILED" )
             }
-            if Memory.freeNative( a )
+            if Memory.free( a )
             {
                 SystemPrintln( "native free fallback: ok" )
             }

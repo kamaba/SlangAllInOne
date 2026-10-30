@@ -1,7 +1,7 @@
 # MiProbe v1 - P6 evidence probe for the mimalloc host heap takeover.
 # Variant host-default (VM_MIMALLOC_DISABLE=1): mimallocEnabled() must report
 #   false, version and every byte counter return 0, and Memory.alloc /
-#   freeNative keep working through the libc fallback.
+#   free keep working through the libc fallback.
 # Variant VM_MIMALLOC_ENABLE=ON: mimallocEnabled() reports true, version is
 #   30500 (MI_MALLOC_VERSION, v3.5), the byte counters move as native blocks
 #   come and go, and after free + mimallocCollect(true) the committed
@@ -25,8 +25,8 @@ Project
             a = Memory.alloc( 1048576 )
             b = Memory.alloc( 4194304 )
             SystemPrintln( "after a(1M)+b(4M): current=" + Memory.mimallocCurrentBytes().toString() + " requested=" + Memory.mimallocRequestedBytes().toString() + " committed=" + Memory.mimallocCommittedBytes().toString() )
-            Memory.freeNative( a )
-            Memory.freeNative( b )
+            Memory.free( a )
+            Memory.free( b )
             Memory.mimallocCollect( true )
             committedAfter = Memory.mimallocCommittedBytes()
             SystemPrintln( "after free+collect: current=" + Memory.mimallocCurrentBytes().toString() + " peak=" + Memory.mimallocPeakBytes().toString() + " committed=" + committedAfter.toString() )
@@ -53,7 +53,7 @@ Project
             {
                 SystemPrintln( "native alloc fallback: FAILED" )
             }
-            if Memory.freeNative( a )
+            if Memory.free( a )
             {
                 SystemPrintln( "native free fallback: ok" )
             }

@@ -62,6 +62,15 @@
 - 如何快速验证：基线数据（Release，84KB 文本）：search miss x20 SL 170308ms vs C 33ms（≈5161x）；matchAll 44073 vs 4003（11x）；replace 45678 vs 6354（7x）；backref 22803 vs 2433（9x）；search hit 460 vs 36（13x）；group 109 vs 21（5x）；utf8 95 vs 6（16x）；compile 两版同为 ~3.4s（模式解析仍在 SL，符合预期）。切回 C 路径重编后 sanity 数据与首轮一致，输出值逐项相等。
 - 预防建议：① **改动依赖 Std/Core 等基础模块的库文件时，先确认该文件的 git 提交态**——若整文件未提交（历史仅空壳），禁用 stash/checkout 类版本切换操作，改用文件内开关（双路径函数）做 A/B 对比；② 「测试模块 module.json 引用声明」在编译期冻结、「运行时加载磁盘 module.json」是两份快照——Std 换版后必须重编所有引用它的测试模块再跑，否则方法表错位会以「输出全空/耗时近 0」这类假数据形式出现，比报错更危险；③ 长跑编译命令的输出过滤禁用 `Select-Object -First N`（会截杀上游进程），用 `> file` 落盘后二次 Select-String；④ 根目录 `scripts\compile-tests.ps1` 在仓库根而非 simple_language 下，嵌套 powershell -File 传相对路径会静默失败，一律用绝对路径。
 
+### [2026-10-30] SLangMysql.connect 对 refused 目标挂起不快速失败（slang-server 启动被阻断）——connect_timeout 缺失
+- 现象：本机无 MySQL（3306 拒绝）时 `slang Admin`（slang-server 工程）卡死在 `Db.init` → `SLang.Mysql.connect(...)` 12s+ 无返回；`Db.init` 的 try?/keepalive 退避重连设计（连接失败不阻断启动）整条失效——挂起点在 FFI `Mysql.libConnect` 直调内部，SL 层任何兜底都接不住（不返回就轮不到 null 判断）。
+- 根因：`MysqlClient.connect`（SLangCore/Lib/SLang/Mysql/MysqlClient.sl L255）→ `Mysql.libConnect` FFI 直调 C 层，未注入 `MYSQL_OPT_CONNECT_TIMEOUT`；对 refused/unreachable 主机依赖系统栈默认超时（本机 refused 本应立即 RST 返回，实测挂起，疑 C 侧封装有重试或忽略 ECONNREFUSED）。
+- 规避/修复点（工程侧）：`slang-server/Bootstrap.sl` 新增 `database/enabled` 配置开关（默认 true；本机/CI 无 MySQL 置 false 跳过 Db.init）——无 DB 冒烟通路恢复；libConnect 超时修复归语言仓库（C 层 `mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &5s)` 即可）。
+- 如何快速复现：停掉 MySQL 服务 → `slang Admin`（database/enabled=true）→ 观察卡在 `[boot] cfg ok` 与 `[boot] db init done` 之间。
+- 如何快速验证：config.json `"database": { "enabled": false }` → 服务 15s 内 listening，/health 200。
+- 预防建议：**阻塞型 FFI 调用必须自带超时面**（connect/read/lock 类），否则 SL 层 try?/协程兜底全是摆设；服务工程对「可选依赖」（DB/Redis）的启动装配要有硬开关，健康检查不依赖外部资源可达。
+- 详见 `SLangOfficialWebsite/slang-server/DEFECTS.md` D-020。
+
 ### [2026-10-16] RegExp P4-B 编译下沉首版 31 FAIL：cpack 扁平数组里 cs 段表偏移误用「绝对下标」，SL 侧拷出子数组后所有 class 判定读错段
 - 现象：`SystemRegExpCompile` 落地后 RegExpTest 250 断言 31 FAIL，失败集中在 search/isMatch/全部 class 系（`[a-z]` `\d` `\w` `\s` 等）；字面量与量词组正常（`match anchored at head : OK`）。
 - 首个异常阶段：VM 运行期（C 侧数据装配错位，非 Front）。

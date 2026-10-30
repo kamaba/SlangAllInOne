@@ -1,3 +1,5 @@
+# 64 位有符号整数，取值范围 -2^63 ~ 2^63-1，对应 C# long。
+# 用于大数计数、文件偏移、时间戳等超出 Int32 范围的场景。
 public class Int64 extends Num
 {
     public const static  Int64 MaxValue = 0x7fffffff

@@ -1,3 +1,5 @@
+# 32 位有符号整数（默认整数字面量类型），取值范围 -2^31 ~ 2^31-1，对应 C# int。
+# 是大多数算术、索引与循环计数的基准类型，提供整型家族互转、比较与进制串输出。
 public class Int32 extends Num
 {
     const static  int MaxValue = 0x7fffffff;

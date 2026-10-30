@@ -1,5 +1,6 @@
 # 历史遗留的 import CSharp.System; 所指命名空间并不存在（曾静默失败），随 import 错误严格化已移除。
 
+# 32 位单精度浮点数，对应 C# float，用于通用浮点运算与对外数值交换。
 public class Float32 extends Num
 {
     # IEEE 754 binary32 (single): 1位符号 + 8位指数(bias=127) + 23位尾数

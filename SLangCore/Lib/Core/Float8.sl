@@ -1,4 +1,5 @@
 @Nickname("Float8_E4M3")
+# 8 位浮点数（低精度变体），用于高吞吐/低存储需求的数值批量计算。
 public class Float8 extends Num
 {
     # e4m3: 1位符号 + 4位指数(bias=7) + 3位尾数, 无穷大编码, 仅有NaN

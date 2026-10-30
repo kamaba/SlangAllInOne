@@ -655,7 +655,7 @@ long long sl_book_print(const SLBookStruct* s)
 
 /* FFI 签名 "ptr->i64"：释放 sl_book_alloc 分配的块（title + struct）。
    仅用于释放 C 侧 malloc 的指针；dataToNativeStruct 产生的块由
-   Memory.freeNative 释放，不可混用。 */
+   Memory.free 释放，不可混用。 */
 extern "C" __declspec(dllexport)
 long long sl_book_free(SLBookStruct* s)
 {

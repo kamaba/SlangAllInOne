@@ -72,16 +72,18 @@
 示例（摘录自测试工程 `ProjectTest.sp` 形态，仅说明结构）：
 
 ```sl
+import Std
+
 Project
 {
     println( txt )
     {
-        SystemPrintln( txt )
+        Console.println( txt )
     }
 
     print( text )
     {
-        SystemPrint( text )
+        Console.print( text )
     }
 
     _main_()

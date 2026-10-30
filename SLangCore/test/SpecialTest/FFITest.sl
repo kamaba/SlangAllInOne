@@ -140,7 +140,7 @@ class FFICallbacks
 #  11. 函数值：Func<Ret,P...>/typealias 声明 native 函数变量（Dart lookupFunction 风格）
 #      getFunction/getSymbol 只传 name 时编译期从函数类型定义推导 sig 注入
 #  12. Memory native（原 FFI.NativeMemory 迁入 Core/Memory）：动态构建
-#      C 数组/标量/struct（alloc/读写/布局/native 校验，free->freeNative）
+#      C 数组/标量/struct（alloc/读写/布局/native 校验，alloc/free）
 #  12b. Memory data <-> Array<object> 互转（arrayToData/dataToArray，
 #      fields 布局串；cvm 层数据 <-> C struct 数据格式转换）
 #  13. lookupFunction<Ret,P...>(name)：调用点模板实参注入 sig（内部仍走 getFunction）
@@ -939,15 +939,15 @@ FFITest
         check( "native struct_sum == 8999999902.625", total == 8999999902.625d )
         Int64 added = SystemFFICallI64( structAddI64, "ptr,i64->i64", st, 5 )
         check( "native struct_add_i64 == 9000000005", added == 9000000005 )
-        # 释放（freeNative：避免与 Memory.free(object) 冲突的重命名）
-        check( "free(p)", Memory.freeNative( p ) )
-        check( "free(arr)", Memory.freeNative( arr ) )
-        check( "free(ni)", Memory.freeNative( ni ) )
-        check( "free(nd)", Memory.freeNative( nd ) )
-        check( "free(us)", Memory.freeNative( us ) )
-        check( "free(buf)", Memory.freeNative( buf ) )
-        check( "free(st)", Memory.freeNative( st ) )
-        check( "free(0) -> false", Memory.freeNative( 0 ) == false )
+        # 释放（Memory.free(Int64)：与 free(object) 同名重载，精确匹配优先）
+        check( "free(p)", Memory.free( p ) )
+        check( "free(arr)", Memory.free( arr ) )
+        check( "free(ni)", Memory.free( ni ) )
+        check( "free(nd)", Memory.free( nd ) )
+        check( "free(us)", Memory.free( us ) )
+        check( "free(buf)", Memory.free( buf ) )
+        check( "free(st)", Memory.free( st ) )
+        check( "free(0) -> false", Memory.free( 0L ) == false )
         lib.release()
     }
 
@@ -1055,7 +1055,7 @@ FFITest
         check( "nativeStructToData(未知类型名) == null",
             Memory.nativeStructToData( addr, "NoSuchDataName" ) == null )
 
-        Memory.freeNative( addr )
+        Memory.free( addr )
     }
 
     # ── 22. 端到端全链路：native 分配 -> cvm 读出改值 -> 写回 -> native 打印 ──
@@ -1066,7 +1066,7 @@ FFITest
     #   4) dataToNativeStruct<FFICBook>：cvm data -> 新的 native 内存块
     #   5) sl_bookPrint：指针回传 dll，C 侧 printf 全部字段 + 返回校验和
     #   6) 释放：C malloc 的块由 sl_book_free（dll 侧 free）；
-    #      VM 转换的块由 Memory.freeNative —— 两条分配链不可混用
+    #      VM 转换的块由 Memory.free —— 两条分配链不可混用
     static testNativeDataRoundtrip()
     {
         Console.println( "===== FFITest.testNativeDataRoundtrip =====" )
@@ -1093,9 +1093,9 @@ FFITest
         check( "bookPrint(原始块) checksum == 364", sum0 == 364 )  # 7+312+45
         Int64 sum = s_bookPrint( addr2 )
         check( "bookPrint(改后块) checksum == 777", sum == 777 )    # 99+666+12
-        # 6) 释放：C 块 C 释放 / VM 块 freeNative 释放
+        # 6) 释放：C 块 C 释放 / VM 块 Memory.free 释放
         check( "bookFree == 1", s_bookFree( addr ) == 1 )
-        Memory.freeNative( addr2 )
+        Memory.free( addr2 )
     }
 
     # ── 20. dllImports functions 段：global.<funcName>(...) 全局库函数变量直调 ──

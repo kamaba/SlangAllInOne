@@ -152,18 +152,17 @@ internal static class PublishCommand
                      * lib\<平台>\（2026-10-22 平台细分）——运行期 exe 经
                      * sl_preload_associated_dlls 按 <exe>\lib\<平台>\ 预装载
                      * 绑定（平铺 lib\ 为兼容位）。 */
-                    string? binDir = Path.GetDirectoryName(cvmExe);
-                    string sqlite = Path.Combine(binDir ?? "", "sqlite3.dll");
-                    if (File.Exists(sqlite))
+                    string? sqlite = FindSqlite3Dll(cvmExe);
+                    if (sqlite != null)
                     {
                         string destPlat = Path.Combine(publishDir, "lib", HostPlatformDir());
                         Directory.CreateDirectory(destPlat);
                         File.Copy(sqlite, Path.Combine(destPlat, "sqlite3.dll"), overwrite: true);
-                        Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\sqlite3.dll");
+                        Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\sqlite3.dll  (from {Path.GetRelativePath(AppContext.BaseDirectory, sqlite)})");
                     }
                     else
                     {
-                        Console.WriteLine("[WARN] sqlite3.dll not found next to the C VM exe; the published app needs it at runtime.");
+                        Console.WriteLine("[WARN] sqlite3.dll not found near the C VM exe; the published app needs it at runtime.");
                     }
 
                     /* 官方标准库 lib\（引用 Core/Std/Math 时必须；
@@ -278,6 +277,27 @@ internal static class PublishCommand
             }
         }
         return null;
+    }
+
+    /// <summary>sqlite3.dll 来源探测链（与 C 侧 sl_preload_associated_dlls
+    /// 探测序镜像，2026-10-30）：① VM exe 同目录（dev 树 post-build 副本位）
+    /// ② <pkg>\lib\&lt;平台&gt;\（发布包布局：exe 在 bin\，lib\ 在包根）
+    /// ③ <pkg>\lib\ 平铺兼容位。</summary>
+    static string? FindSqlite3Dll(string cvmExe)
+    {
+        string? binDir = Path.GetDirectoryName(cvmExe);
+        if (binDir == null)
+        {
+            return null;
+        }
+        string plat = HostPlatformDir();
+        string[] candidates =
+        {
+            Path.Combine(binDir, "sqlite3.dll"),
+            Path.Combine(binDir, "..", "lib", plat, "sqlite3.dll"),
+            Path.Combine(binDir, "..", "lib", "sqlite3.dll"),
+        };
+        return candidates.FirstOrDefault(File.Exists);
     }
 
     /// <summary>载荷附着：csimple_lang.exe 副本 + SLB 字节 + u64 小端长度 +

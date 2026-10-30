@@ -1,3 +1,5 @@
+# 8 位有符号整数（二进制补码），取值范围 -128 ~ 127，对应 C# sbyte。
+# 提供与整型家族的显式转换、比较、取绝对值与二进制/十六进制等进制串输出。
 public class Int8 extends Num
 {
     public const static Int8 MaxValue = 127;    # 0b0111_1111

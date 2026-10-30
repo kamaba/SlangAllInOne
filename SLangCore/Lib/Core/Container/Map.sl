@@ -193,11 +193,11 @@ public class Map<TKey,TValue> extends Object interface IMap<TKey,TValue>, Core.I
     }
 
     
-    public bool TryAdd(TKey key, TValue value)
+    public bool tryAdd(TKey key, TValue value)
     {
         ret true;
     }
-    public bool TryGetValue(TKey key, TValue value)
+    public bool tryGetValue(TKey key, TValue value)
     {
         ret true;
     }

@@ -106,7 +106,7 @@ Project
     _main_()
     {
         greeter = Greeter( "SLang" );
-        SystemPrintln( greeter.hello() );
+        Console.println( greeter.hello() );
 
         # 容器
         List<int> nums = new();
@@ -115,13 +115,13 @@ Project
         nums.add( 3 );
         for n in nums
         {
-            SystemPrintln( "n = $n" );
+            Console.println( "n = $n" );
         }
 
         # 协程
         Task task = spawn add2( 20, 22 );
         int sum = await task as int;
-        SystemPrintln( "20 + 22 = $sum" );
+        Console.println( "20 + 22 = $sum" );
     }
 }
 ```

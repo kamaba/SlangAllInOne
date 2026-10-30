@@ -1,3 +1,4 @@
+# 伪随机数生成器：基于线性同余算法（LCG，a=1103515245 c=12345 m=2^31-1）按种子生成确定性随机序列，支持整型 / 浮点 / 区间取样。
 public class Random extends Object
 {
     Int32 _seed = 0

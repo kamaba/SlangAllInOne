@@ -227,7 +227,7 @@ public void uploadToGpu()
         t.generateMipmaps()
         this.gpu = t
     }
-    Memory.freeNative( outPack )
+    Memory.free( outPack )
 }
 ```
 

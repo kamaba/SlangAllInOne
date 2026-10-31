@@ -2104,13 +2104,15 @@ internal sealed class LspServer
             {
                 string sig = hit.TargetName;
                 string ownerName = "";
+                ClassInfo? hcls = null;
+                MethodInfo? mm = null;
                 if (hit.TargetClass.Length > 0 && hit.TargetMethod.Length > 0)
                 {
-                    var hcls = ResolveClassByName(hit.TargetClass, table); // 尾段/全名/短名多形态回退
+                    hcls = ResolveClassByName(hit.TargetClass, table); // 尾段/全名/短名多形态回退
                     if (hcls != null)
                     {
                         ownerName = hcls.FullName;
-                        var mm = FindMember(hcls, hit.TargetMethod);
+                        mm = FindMember(hcls, hit.TargetMethod);
                         if (mm != null)
                         {
                             sig = mm.Signature;
@@ -2118,7 +2120,13 @@ internal sealed class LspServer
                     }
                 }
                 string ownerTail = ownerName.Length > 0 ? $"\n\n`{ownerName}`" : "";
-                return new { contents = new { kind = "markdown", value = $"```slang\n{sig}\n```{ownerTail}" } };
+                var callValue = $"```slang\n{sig}\n```{ownerTail}";
+                if (hcls != null && mm != null)
+                {
+                    var doc = MemberDoc(project, hcls, mm, null);
+                    if (doc != null) callValue += "\n\n" + doc;
+                }
+                return new { contents = new { kind = "markdown", value = callValue } };
             }
         }
 
@@ -2126,23 +2134,44 @@ internal sealed class LspServer
         var sym = ResolveSymbolAt(text, offset, table);
         if (sym?.Method != null && sym.Owner != null)
         {
-            return new
-            {
-                contents = new { kind = "markdown", value = $"```slang\n{sym.Method.Signature}\n```\n\n`{sym.Owner.FullName}`" },
-            };
+            var value = $"```slang\n{sym.Method.Signature}\n```\n\n`{sym.Owner.FullName}`";
+            var doc = MemberDoc(project, sym.Owner, sym.Method, null);
+            if (doc != null) value += "\n\n" + doc;
+            return new { contents = new { kind = "markdown", value } };
         }
         if (sym?.Field != null && sym.Owner != null)
         {
-            return new
-            {
-                contents = new { kind = "markdown", value = $"```slang\n{sym.Field.Type} {sym.Field.Name}\n```\n\n`{sym.Owner.FullName}`" },
-            };
+            var value = $"```slang\n{sym.Field.Type} {sym.Field.Name}\n```\n\n`{sym.Owner.FullName}`";
+            var doc = MemberDoc(project, sym.Owner, null, sym.Field);
+            if (doc != null) value += "\n\n" + doc;
+            return new { contents = new { kind = "markdown", value } };
         }
         if (sym?.Class != null)
         {
             var c0 = sym.Class;
             var card0 = $"```slang\nclass {c0.FullName}\n```\n\n{c0.StaticMethods.Count + c0.InstanceMethods.Count} 个方法 · {c0.Fields.Count} 个字段" + (c0.SourcePath.Length > 0 ? $"\n\n定义于 `{c0.SourcePath}`" : "");
             return new { contents = new { kind = "markdown", value = card0 } };
+        }
+        // 0.5) 成员声明处/类体内裸名：光标所在类体的成员（方法/字段）卡 + 文档。
+        //      成员名是裸词、无 '.' 前缀，SymbolAt 解析不到声明自身，此处补齐
+        var decl = FindEnclosingClass(text, offset, table);
+        if (decl != null)
+        {
+            var dsym = FindMemberSymbol(decl, word);
+            if (dsym?.Method != null)
+            {
+                var dvalue = $"```slang\n{dsym.Method.Signature}\n```\n\n`{decl.FullName}`";
+                var ddoc = MemberDoc(project, decl, dsym.Method, null);
+                if (ddoc != null) dvalue += "\n\n" + ddoc;
+                return new { contents = new { kind = "markdown", value = dvalue } };
+            }
+            if (dsym?.Field != null)
+            {
+                var dvalue = $"```slang\n{dsym.Field.Type} {dsym.Field.Name}\n```\n\n`{decl.FullName}`";
+                var ddoc = MemberDoc(project, decl, null, dsym.Field);
+                if (ddoc != null) dvalue += "\n\n" + ddoc;
+                return new { contents = new { kind = "markdown", value = dvalue } };
+            }
         }
         // 1) 限定名成员（`Console.println`）；未命中不提前返回——`global.println`
         //    的 global 是全局空间别名而非类，须回落到裸名搜索
@@ -2151,10 +2180,10 @@ internal sealed class LspServer
             var m = FindMember(qcls, word);
             if (m != null)
             {
-                return new
-                {
-                    contents = new { kind = "markdown", value = $"```slang\n{m.Signature}\n```\n\n`{qcls.FullName}`" },
-                };
+                var value = $"```slang\n{m.Signature}\n```\n\n`{qcls.FullName}`";
+                var doc = MemberDoc(project, qcls, m, null);
+                if (doc != null) value += "\n\n" + doc;
+                return new { contents = new { kind = "markdown", value } };
             }
         }
         // 2) 类卡片
@@ -2163,15 +2192,15 @@ internal sealed class LspServer
             var card = $"```slang\nclass {cls.FullName}\n```\n\n{cls.StaticMethods.Count + cls.InstanceMethods.Count} 个方法 · {cls.Fields.Count} 个字段" + (cls.SourcePath.Length > 0 ? $"\n\n定义于 `{cls.SourcePath}`" : "");
             return new { contents = new { kind = "markdown", value = card } };
         }
-        // 3) 裸方法名：全表搜同名，取前 5 个签名
-        var hits = new List<MethodInfo>();
+        // 3) 裸方法名：全表搜同名（前 5 个）；唯一命中附定义类与文档
+        var hits = new List<(ClassInfo Owner, MethodInfo M)>();
         foreach (var c2 in table.Classes)
         {
             foreach (var m in c2.StaticMethods.Concat(c2.InstanceMethods))
             {
                 if (string.Equals(m.Name, word, StringComparison.Ordinal))
                 {
-                    hits.Add(m);
+                    hits.Add((c2, m));
                     if (hits.Count >= 5)
                     {
                         break;
@@ -2187,7 +2216,184 @@ internal sealed class LspServer
         {
             return null;
         }
-        return new { contents = new { kind = "markdown", value = "```slang\n" + string.Join("\n", hits.Select(h => h.Signature)) + "\n```" } };
+        if (hits.Count == 1)
+        {
+            var (oc, om) = hits[0];
+            var value = $"```slang\n{om.Signature}\n```\n\n`{oc.FullName}`";
+            var doc = MemberDoc(project, oc, om, null);
+            if (doc != null) value += "\n\n" + doc;
+            return new { contents = new { kind = "markdown", value } };
+        }
+        return new { contents = new { kind = "markdown", value = "```slang\n" + string.Join("\n", hits.Select(h => h.M.Signature)) + "\n```" } };
+    }
+
+    // 取成员上方紧邻的注释块作为文档（供 hover 展示）：
+    //  - 块注释 #![md] ... !#：内容为 Markdown（isMd=true）。词法 SharpLevel 块内是原文、
+    //    不要求 # 前缀，多行 Markdown 直接支持（开闭标记同行或跨行均可）
+    //  - 块注释 #! ... !# 与连续 # 行注释：原样文本（isMd=false）
+    //  文档块须紧贴成员（中间空行即止）
+    private static (string? text, bool isMd) ExtractDocComment(string[] lines, int memberLine)
+    {
+        if (memberLine <= 1) return (null, false);
+        int i = memberLine - 2; // 0-based：紧邻成员上方的那一行
+        if (i < 0) return (null, false);
+        var head = lines[i].Trim();
+
+        // 块注释结尾紧贴成员：闭合行（"!#" 独行或 "正文 !#"）不以 # 开头且含 !# →
+        // 向上回溯开标记（#![tag] 优先，其次 #!），开闭之间为原文内容
+        if (!head.StartsWith("#") && head.IndexOf("!#", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            int open = -1, close = i;
+            string? tag = null;
+            for (int j = close - 1; j >= 0; j--)
+            {
+                var u = lines[j];
+                int lb = u.IndexOf("#![", StringComparison.Ordinal);
+                if (lb >= 0)
+                {
+                    open = j;
+                    int rb = u.IndexOf(']', lb + 3);
+                    tag = rb >= 0 ? u.Substring(lb + 3, rb - lb - 3).Trim() : "";
+                    break;
+                }
+                if (u.Contains("#!")) { open = j; break; }
+                if (u.Contains("!#")) break; // 又见闭合（嵌套等形态）→ 放弃
+            }
+            if (open < 0) return (null, false);
+
+            var content = new List<string>();
+            for (int k = open; k <= close; k++)
+            {
+                var s = lines[k];
+                if (k == open)
+                {
+                    s = s.Substring(s.IndexOf("#!", StringComparison.Ordinal) + 2); // 去 #!
+                    if (tag != null)
+                    {
+                        int rb = s.IndexOf(']');
+                        s = rb >= 0 ? s.Substring(rb + 1) : ""; // 去 [tag]
+                    }
+                    s = s.Trim();
+                }
+                else if (k == close)
+                {
+                    int e = s.IndexOf("!#", StringComparison.OrdinalIgnoreCase);
+                    if (e >= 0) s = s.Substring(0, e);
+                    s = s.Trim();
+                }
+                // 中间行原样保留（含空行——Markdown 段落语义依赖空行）
+                if (s.Length > 0 || (k > open && k < close)) content.Add(s);
+            }
+            // 去公共前导空白（成员缩进会让 Markdown 行渲染成代码块）
+            int minIndent = int.MaxValue;
+            foreach (var s in content)
+            {
+                if (s.Trim().Length == 0) continue;
+                int n = 0;
+                while (n < s.Length && (s[n] == ' ' || s[n] == '\t')) n++;
+                if (n < minIndent) minIndent = n;
+            }
+            if (minIndent == int.MaxValue) minIndent = 0;
+            var joined = string.Join("\n", content.Select(s => s.Length > minIndent ? s.Substring(minIndent) : s)).Trim();
+            if (joined.Length == 0) return (null, false);
+            return (joined, string.Equals(tag, "md", StringComparison.OrdinalIgnoreCase));
+        }
+
+        // 连续 # 行注释（含同行自闭合的单行块注释 #![md] x !# / #! x !#）
+        var collected = new List<string>();
+        while (i >= 0)
+        {
+            var t = lines[i].Trim();
+            if (t.Length == 0) break;          // 空行分隔：文档注释须紧贴成员
+            if (t.StartsWith("#")) collected.Add(t);
+            else break;
+            i--;
+        }
+        if (collected.Count == 0) return (null, false);
+
+        // 检测 markdown 文档块 #![md] ... !#
+        int startIdx = -1, endIdx = -1;
+        for (int k = 0; k < collected.Count; k++)
+        {
+            if (startIdx < 0 && collected[k].StartsWith("#![md]", StringComparison.OrdinalIgnoreCase)) startIdx = k;
+            if (endIdx < 0 && collected[k].IndexOf("!#", StringComparison.OrdinalIgnoreCase) >= 0) endIdx = k;
+        }
+        if (startIdx >= 0 && endIdx >= 0)
+        {
+            var md = new List<string>();
+            for (int k = endIdx; k <= startIdx; k++)
+            {
+                var s = collected[k];
+                if (k == startIdx)
+                {
+                    int close = s.IndexOf(']');
+                    s = close >= 0 ? s.Substring(close + 1) : s;
+                }
+                if (k == endIdx)
+                {
+                    int p = s.IndexOf("!#", StringComparison.OrdinalIgnoreCase);
+                    if (p >= 0) s = s.Substring(0, p);
+                }
+                s = s.Trim();
+                if (s.Length > 0) md.Add(s);
+            }
+            return (string.Join("\n", md), true);
+        }
+
+        // 普通注释：去前导 #（块注释去 #! 与结尾 !#），按原样文本返回
+        var plain = new List<string>();
+        foreach (var s in collected)
+        {
+            var line = s;
+            if (line.StartsWith("#![")) { int c = line.IndexOf(']'); line = c >= 0 ? line.Substring(c + 1) : line.Substring(2); }
+            else if (line.StartsWith("#!")) line = line.Substring(2);
+            else if (line.StartsWith("#")) line = line.Substring(1);
+            if (line.EndsWith("!#")) line = line.Substring(0, line.Length - 2);
+            line = line.Trim();
+            if (line.Length > 0) plain.Add(line);
+        }
+        return (string.Join("\n", plain), false);
+    }
+
+    // 依据成员源码位置，提取其上方文档注释（供 hover 展示）。
+    // 定义锚点表优先（index.symbols 成员名 token 位置 = 声明行）；instruction debugInfo
+    // 首条指向函数体首语句（如 describe 首指令是 ret 行），直接取其上方注释会落空。
+    private string? MemberDoc(ProjectInfo project, ClassInfo owner, MethodInfo? m, FieldInfo? f)
+    {
+        if (owner == null) return null;
+        string name = m != null ? m.Name : (f != null ? f.Name : "");
+        if (name.Length > 0 && _projectDefs.TryGetValue(project.SpPath, out var defs)
+            && defs.TryGetValue(owner.FullName + "." + name, out var def)
+            && def.File.Length > 0 && def.Line > 0)
+        {
+            try
+            {
+                string cand = Path.GetFullPath(Path.Combine(project.Dir, def.File));
+                if (File.Exists(cand))
+                {
+                    var (text0, isMd0) = ExtractDocComment(File.ReadAllLines(cand), def.Line);
+                    if (!string.IsNullOrEmpty(text0))
+                    {
+                        return isMd0 ? text0 : "> " + text0.Replace("\n", "\n> ");
+                    }
+                }
+            }
+            catch { /* 锚点读盘失败回落 debugInfo 位置 */ }
+        }
+        string? sp = m != null ? m.SourcePath : f?.SourcePath;
+        int line = m != null ? m.BeginLine : (f != null ? f.BeginLine : 0);
+        if (string.IsNullOrEmpty(sp) || line <= 0) return null;
+        var file = ResolveSourcePath(project, owner, sp);
+        if (file == null || !File.Exists(file)) return null;
+        try
+        {
+            var lines = File.ReadAllLines(file);
+            var (text, isMd) = ExtractDocComment(lines, line);
+            if (string.IsNullOrEmpty(text)) return null;
+            // Markdown 块直接拼；普通注释用 blockquote 包一层，避免与 markdown 语法冲突
+            return isMd ? text : "> " + text.Replace("\n", "\n> ");
+        }
+        catch { return null; }
     }
 
     private static MethodInfo? FindMember(ClassInfo cls, string name)

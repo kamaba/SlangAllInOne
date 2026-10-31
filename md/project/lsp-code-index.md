@@ -89,6 +89,7 @@ SL 的编译期裁剪（原 static if 已废弃，见 [static-if.md](./static-if
 ## 6. LSP/插件侧行为
 
 - **定义跳转**（`textDocument/definition`）：调用点表命中优先（行 + 光标词 == 词元，token 列语义混杂靠词名匹配免疫；辅以区间容忍）——`tf` 直用 → 本工程定义锚点表（`index.symbols`）→ `MergedTable` 回查（含 ref module 源根推断）。IR 层自身代码不参与跳转（加密侧，不处理）。
+- **悬停文档**（`textDocument/hover`）：方法/字段卡附带成员上方紧邻注释块（`ExtractDocComment`/`MemberDoc`）——声明行取自 `index.symbols` 定义锚点（成员名 token 行；instruction debugInfo 首条指向函数体首语句，不可用）。`#![md] ... !#` 块注释内容按 Markdown 直出（词法 SharpLevel 块内是原文，多行/空行/公共缩进去重支持），普通 `#` 行注释与 `#! ... !#` 块以 blockquote 呈现。覆盖调用点、使用点（`a.b` / `类.成员`）、成员声明处（类体内裸名，`FindEnclosingClass` 补齐）三类悬停位置。
 - **装载**：`index.refs` 为唯一引用通道（原 callSites 已并入），每轮成功编译**整体替换**防跨轮残留。
 - **灰显推送**：自定义通知 `slang/publishInactiveRegions {uri, ranges[]}`——每次成功编译后全量替换（空数组=清除）；didOpen/didSave 时若旧表在先按旧表即时推送（无灰显空窗）。
 - **插件设置**：`slang.editor.fadeInactiveCode`（默认开）——低透明度装饰呈现，可关。
@@ -115,3 +116,4 @@ SL 的编译期裁剪（原 static if 已废弃，见 [static-if.md](./static-if
 | 2026-10-21 | callSites 通道落地（IR 指令流方法调用关联，`LspCallSiteExporter`） |
 | 2026-10-22 | index 通道落地（时为 MetaCore 语义树数据源，`LspMetaIndexExporter`；symbols/excluded/ignoredFiles/refs） |
 | 2026-10-23 | 🔥 **数据源整体切换为 IR 生成数据**（用户定稿）：symbols/refs 全部改读 IRManager，callSites 并入 refs（kind=method），`LspMetaIndexExporter`/`LspCallSiteExporter` 合并删除，统一为 `LspIRIndexExporter`；IR 发射点补 `debugMemberOwnerIrClass` 目标声明类、成员 store 站点 token 修正 |
+| 2026-10-31 | 悬停文档注释落地：方法/字段卡附成员上方注释块（`#![md] ... !#` Markdown 直出 / `#` 与 `#!...!#` blockquote）；声明行改查 index.symbols 定义锚点（instruction 首条 debugInfo 指向函数体首语句不可用）；HandleHover 补成员声明处悬停（类体内裸名）与裸名唯一命中文档；冒烟脚本增 4 个 hover 探针全 PASS |

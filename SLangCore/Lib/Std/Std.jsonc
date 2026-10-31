@@ -32,6 +32,7 @@
       { "path": "Text/Json.sl", "group": "std", "tag": "text", "ignore": false, "priority": 0 },
       { "path": "Text/Xml.sl", "group": "std", "tag": "text", "ignore": false, "priority": 0 },
       { "path": "Text/Yaml.sl", "group": "std", "tag": "text", "ignore": false, "priority": 0 },
+      { "path": "Text/Toml.sl", "group": "std", "tag": "text", "ignore": false, "priority": 0 },
       { "path": "Text/RegExp.sl", "group": "std", "tag": "text", "ignore": false, "priority": 0 },
       { "path": "OS/DateTime.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },
       { "path": "OS/Timer.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },

@@ -92,7 +92,7 @@
 | `RegExpState` | class | [Text/RegExp.sl](Text/RegExp.md) |  | RegExpState - 单次匹配的执行状态（每次匹配新建，天然并发安全） |
 | `RegExpCompiled` | class | [Text/RegExp.sl](Text/RegExp.md) |  | RegExpCompiled - 编译产物缓存条目（P4-D 模式缓存） |
 | `RegExp` | class | [Text/RegExp.sl](Text/RegExp.md) |  | RegExp - 正则表达式主类 模式编译为指令链（List&lt;RegExpInst&gt;，x/y/z/w/v 字段含义见各操作码）， 匹配时经 _run 递归回溯执… |
-| `Toml` | class | [Text/Toml.sl](Text/Toml.md) |  | SLang 标准库类型 Toml（详见源文件）。 |
+| `Text` | class | [Text/Toml.sl](Text/Toml.md) |  | TOML 文件操作门面：在 BaseToml（内存解析/序列化/树操作基础能力）之上扩展文件读写。 BaseToml 只处理文本；本类补充文件进出（load/r… |
 | `Text` | class | [Text/Xml.sl](Text/Xml.md) |  | XML 文件操作门面：在 BaseXml（内存解析/序列化/树操作基础能力）之上扩展文件读写。 BaseXml 只处理文本；本类补充文件进出（load/read… |
 | `Text` | class | [Text/Yaml.sl](Text/Yaml.md) |  | YAML 文件操作门面：在 BaseYaml（内存解析/序列化/树操作基础能力）之上扩展文件读写。 BaseYaml 只处理文本；本类补充文件进出（load/r… |
 | `GZip` | class | [Zip/GZip.sl](Zip/GZip.md) |  | SLang 标准库类型 GZip（详见源文件）。 |

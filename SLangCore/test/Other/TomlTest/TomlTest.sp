@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        TomlTest.fun()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

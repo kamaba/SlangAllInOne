@@ -1,0 +1,108 @@
+﻿从 D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\Properties\launchSettings.json 使用启动设置...
+=== Front compile (in-process) ===
+Front: compile -e ir -p SLangCore\test\Other\WebUIExamples\WebUIExamples.sp --no-banner --format binary+json
+Compiling: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\WebUIExamples.sp
+[10:15:43 022] [Info] [Project]  [ProjectShowConfigPath]  Info:[加载配置文件[D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\WebUIExamples.jsonc]!]
+[FrontLog] OutputPath: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\export\WebUIExamples\Logs\Front.txt
+[10:15:43 037] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: RefModule]
+[10:15:43 046] [Info] [Project]  [ProjectReferenceModuleCheckSkip]  Info:[Module dependency local version hit, skip download: name={}, version={}, dir={}] Extend:[Module dependency local version hit, skip download: name=SLangWebUI, version=unknown, dir=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI]
+[ModuleCheck] SLangWebUI unknown already installed at D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI, skip download
+[10:15:43 291] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Core.module.slb]
+[Reference] Module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Core.module.slb
+[10:15:43 377] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 378] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 379] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 379] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 383] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 384] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 385] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 404] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 406] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:15:43 410] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Std.module.slb]
+[Reference] Module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Std.module.slb
+[10:15:43 432] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI\SLangWebUI.module.slb]
+[Reference] Module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI\SLangWebUI.module.slb
+[10:15:43 433] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[RefModule]完成]
+[10:15:43 433] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: File]
+[10:15:43 434] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[10:15:43 436] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUIExamples.sp]
+[10:15:43 443] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUIExamples.sl]
+[10:15:43 477] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUIExamples.sp]编译File层完成]
+[10:15:43 495] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUIExamples.sl]编译File层完成]
+[10:15:43 496] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[10:15:43 496] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[10:15:43 531] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[10:15:43 610] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[10:15:43 611] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[10:15:43 612] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[10:15:43 613] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[10:15:43 623] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[10:15:43 661] [Info] [GenIR]  [IRManagerStartExportingIR]  Info:[Start exporting IR debug data...] Extend:[Start exporting IR debug data...]
+[10:15:43 749] [Info] [GenIR]  [IRManagerEndExportingIR]  Info:[End exporting IR debug data...] Extend:[End exporting IR debug data...]
+[10:15:43 750] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[10:15:43 750] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[10:15:43 752] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[10:15:43 752] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[10:15:43 818] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (binary): D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\export\WebUIExamples\WebUIExamples.module.slb]
+[10:15:44 013] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\export\WebUIExamples\WebUIExamples.module.json]
+[10:15:44 014] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]
+Compile completed.
+Package: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\export\WebUIExamples\WebUIExamples.module.json
+[stage] native dll not found in export dir, skipped: webui_lib.dll
+Package dir: D:\project\lang\SlangAllInOne\package\win32-debug
+=== slang run (package) ===
+D:\project\lang\SlangAllInOne\package\win32-debug\slang.exe run D:\project\lang\SlangAllInOne\package\win32-debug\WebUIExamples\WebUIExamples.module.slb
+=== C VM run (disk) ===
+csimple_lang run D:\project\lang\SlangAllInOne\package\win32-debug\WebUIExamples\WebUIExamples.module.slb
+SimpleLanguage VM 0.0.52 (C Runtime)
+[+0 ms | unix=1793499347160] [main] ========== WebUIExamples 启动 ==========
+
+[+1 ms | unix=1793499347160] [main] WebUI.init() 耗时 0 ms
+
+[+1 ms | unix=1793499347160] [main] 菜单 newWindow() 耗时 0 ms
+
+[+1 ms | unix=1793499347160] [main] setSize+setCenter 耗时 0 ms
+
+[+2 ms | unix=1793499347161] [main] 10 个 bindHandle 耗时 1 ms
+
+[+2 ms | unix=1793499347161] [main] 菜单 show()（含浏览器窗口就绪） 耗时 0 ms
+
+[+2 ms | unix=1793499347161] [main] 进入 wait()，等待全部窗口关闭...
+
+[+2 ms | unix=1793499347161] [main] wait() 返回（全部窗口已关闭）
+
+[+2 ms | unix=1793499347161] [main] clean() 耗时 0 ms
+
+[+2 ms | unix=1793499347162] [main] ========== 退出 ==========
+
+Front compile + C VM run completed.

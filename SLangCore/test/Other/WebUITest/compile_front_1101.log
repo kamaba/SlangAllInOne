@@ -1,0 +1,77 @@
+﻿从 D:\project\lang\simple_language\source\Properties\launchSettings.json 使用启动设置...
+Compiling: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\WebUITest.sp
+[10:22:22 642] [Info] [Project]  [ProjectShowConfigPath]  Info:[加载配置文件[D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\WebUITest.jsonc]!]
+[FrontLog] OutputPath: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\export\WebUITest\Logs\Front.txt
+[10:22:22 658] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: RefModule]
+[10:22:22 668] [Info] [Project]  [ProjectReferenceModuleCheckSkip]  Info:[Module dependency local version hit, skip download: name={}, version={}, dir={}] Extend:[Module dependency local version hit, skip download: name=SLangWebUI, version=unknown, dir=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\modules\SLangWebUI]
+[ModuleCheck] SLangWebUI unknown already installed at D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\modules\SLangWebUI, skip download
+[10:22:22 863] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Core, path=D:\project\lang\simple_language\source\bin\Debug\net8.0\lib\Core.module.slb]
+[Reference] Module loaded (compiled): name=Core, path=D:\project\lang\simple_language\source\bin\Debug\net8.0\lib\Core.module.slb
+[10:22:22 955] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 957] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 957] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 958] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 962] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 963] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 963] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 986] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 988] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:22:22 991] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Std, path=D:\project\lang\simple_language\source\bin\Debug\net8.0\lib\Std.module.slb]
+[Reference] Module loaded (compiled): name=Std, path=D:\project\lang\simple_language\source\bin\Debug\net8.0\lib\Std.module.slb
+[10:22:23 014] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\modules\SLangWebUI\SLangWebUI.module.slb]
+[Reference] Module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\modules\SLangWebUI\SLangWebUI.module.slb
+[10:22:23 015] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[RefModule]完成]
+[10:22:23 016] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: File]
+[10:22:23 018] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[10:22:23 021] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUITest.sp]
+[10:22:23 027] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUITest.sl]
+[10:22:23 067] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUITest.sp]编译File层完成]
+[10:22:23 087] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUITest.sl]编译File层完成]
+[10:22:23 087] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[10:22:23 088] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[10:22:23 122] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[10:22:23 183] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[10:22:23 184] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[10:22:23 185] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[10:22:23 186] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[10:22:23 197] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[10:22:23 262] [Info] [GenIR]  [IRManagerStartExportingIR]  Info:[Start exporting IR debug data...] Extend:[Start exporting IR debug data...]
+[10:22:23 341] [Info] [GenIR]  [IRManagerEndExportingIR]  Info:[End exporting IR debug data...] Extend:[End exporting IR debug data...]
+[10:22:23 342] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[10:22:23 342] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[10:22:23 343] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[10:22:23 344] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[10:22:23 399] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (binary): D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\export\WebUITest\WebUITest.module.slb]
+[10:22:23 589] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUITest\export\WebUITest\WebUITest.module.json]
+[10:22:23 590] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]
+Compile completed.

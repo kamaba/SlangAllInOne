@@ -1,0 +1,9 @@
+﻿SimpleLanguage VM 0.0.52 (C Runtime)
+[+0 ms | unix=1793499597060] [main] ========== WebUIExamples 启动 ==========
+
+[+4 ms | unix=1793499597065] [main] WebUI.init() 耗时 3 ms
+
+[+6 ms | unix=1793499597066] [main] 菜单 newWindow() 耗时 1 ms
+
+[+6 ms | unix=1793499597066] [main] setSize+setCenter 耗时 0 ms
+

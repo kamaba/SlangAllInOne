@@ -1,0 +1,68 @@
+{
+  "project": {
+    "name": "WebUIExamples",
+    "desc": "python-webui/examples 的 SLang 重写（单工程 + 启动菜单；SLang.WebUI）",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "WebUIExamples.sl", "group": "webui", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "type": "module", "name": "SLangWebUI", "channel": "url", "url": "https://example.com/SLangWebUI.zip" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "WebUIExamples",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish"
+  }
+}

@@ -35,7 +35,9 @@
       { "path": "QuickSort.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "MatrixMul.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BinaryTree.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
-      { "path": "Mandelbrot.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
+      { "path": "Mandelbrot.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "CSharpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -58,6 +60,47 @@
       }
     }
   },
+  // 插件声明（同 SpecialTest/ProjectTest.jsonc 口径）：csharp_mono / java_hotspot
+  // 均用字符串 lib 原位加载（不走 PluginManager 拷贝），相对路径按本 jsonc 所在
+  // 目录解析（上溯 4 级 = D:\project\lang\plugin）。
+  "plugins": {
+    "csharp_mono": {
+      "name": "csharp_runtime_use_mono_engine",
+      "version": "0.1.0",
+      "path": "plugin/csharp_mono",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_csharp_mono_",
+      "lib": "../../../../plugin/csharp_mono/package/windows/cvm_csharp_mono.dll",
+      "sources": [ "CsExtra/SlBenchLib.cs" ],
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "systemCall", "name": "csharp" }
+      ]
+    },
+    "java_hotspot": {
+      "name": "java_runtime_use_hotspot_engine",
+      "version": "0.1.0",
+      "path": "plugin/java_hotspot",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_java_hotspot_",
+      "lib": "../../../../plugin/java_hotspot/package/windows/cvm_java_hotspot.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    }
+  },
+  // @<tag>(){} 内联块哨兵（调用方工程须在自身 systemCalls 声明，Meta 层
+  // SystemMethodCallDeclarationRegistry 只装载当前工程 systemCalls）。
+  // CSharpCall 系列经 csharp_mono 插件 refModule 自动加载，无需在此声明。
+  "systemCalls": [
+    { "name": "AtSignLabelCall",     "returnType": "Int32", "params": ["Int32"], "isVariadic": true,  "cvmFunction": "atsign:label" },
+    { "name": "AtSignLabelCallVoid", "returnType": "Void",  "params": ["Int32"], "isVariadic": true,  "cvmFunction": "atsign:label" }
+  ],
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" }

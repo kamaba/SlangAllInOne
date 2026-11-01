@@ -1,0 +1,23 @@
+﻿=== C VM run (disk) ===
+csimple_lang run D:\project\lang\SlangAllInOne\package\win32-debug\WebUIExamples\WebUIExamples.module.json
+SimpleLanguage VM 0.0.52 (C Runtime)
+[+0 ms | unix=1793499145794] [main] ========== WebUIExamples 启动 ==========
+
+[+1 ms | unix=1793499145794] [main] WebUI.init() 耗时 0 ms
+
+[+1 ms | unix=1793499145794] [main] 菜单 newWindow() 耗时 0 ms
+
+[+1 ms | unix=1793499145795] [main] setSize+setCenter 耗时 0 ms
+
+[+1 ms | unix=1793499145795] [main] 10 个 bindHandle 耗时 0 ms
+
+[+2 ms | unix=1793499145795] [main] 菜单 show()（含浏览器窗口就绪） 耗时 0 ms
+
+[+2 ms | unix=1793499145795] [main] 进入 wait()，等待全部窗口关闭...
+
+[+2 ms | unix=1793499145795] [main] wait() 返回（全部窗口已关闭）
+
+[+2 ms | unix=1793499145795] [main] clean() 耗时 0 ms
+
+[+2 ms | unix=1793499145796] [main] ========== 退出 ==========
+

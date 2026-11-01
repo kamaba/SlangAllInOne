@@ -1,4 +1,5 @@
 # 16 位半精度浮点数，对应 C# Half，用于机器学习/图形等紧凑数值表示。
+@Nickname("half")
 public class Float16 extends Num
 {
     # IEEE 754 binary16 (half): 1位符号 + 5位指数(bias=15) + 10位尾数

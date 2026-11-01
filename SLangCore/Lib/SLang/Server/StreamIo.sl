@@ -142,6 +142,11 @@ namespace SLang
                 ret "video/webm"
             }
 
+            if ext == "wasm"
+            {
+                ret "application/wasm"
+            }
+
             if ext == "pdf"
             {
                 ret "application/pdf"

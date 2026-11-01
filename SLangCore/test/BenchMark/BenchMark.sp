@@ -22,7 +22,9 @@ Project
         MatrixMul.fun()
         BinaryTreeBench.fun()
         Mandelbrot.fun()
-        
+
+        CSharpBench.fun()
+        JavaBench.fun()
 
         nowMs = Environment.sys.nowMillis() - nowMs
          Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")

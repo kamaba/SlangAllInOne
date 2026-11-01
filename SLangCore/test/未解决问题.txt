@@ -2,6 +2,13 @@ TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
 
 VSCode里边，如果识别到是变量，在右键的时候，要弹出一个按钮，叫 添加到监视 的功能，点击后，直接移动到监视栏 看看是否和我内部的监视代码可以整合
 
+增加
+macOs /iOS的环境 
+编译android的环境
+
+把我benchmark里边 增加一个调用csharp_mono调用 的逻辑，然后 在这个调用里边写一些 C#版 的bechmark 和现在slang里边的代码一样，然后让工程跑起来
+把我benchmark里边 增加一个调用java_hotspot调用 的逻辑，然后 在这个调用里边写一些 Java版 的bechmark 和现在slang里边的代码一样，然后让工程跑起来
+
 1. 接入 javascript_quickjs 
 2. nodejs的接入 v8js
 3. 接入python
@@ -10,9 +17,6 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 
 
 现在还需要把运行环境跑起来，第一版 把slang直接在点运行测试 后，然后会把代码发到服务器，然后服务器调用slang进行执行 这个有个注意点，就是沙盒环境，这个slang只允许访问C#规定网页环境下的内容，以外的不允许，然后把跑出来的结果通过流的方式，显示到http://localhost:4321/run 的结果栏
-
-现在要把 推流，的text文本也开放了，首先要在sdk.js里边增加text 的回调接口，这个text要存放一个json的结构体，要推流端和拉流端 同时加这个机制， 然后在播放分段TTS的时候， 要把  {"actionId":"playtts", "uuid":"1123123123123", "index":1", "isEnd":false, "text":"asdfasdfadsf", "durtime":2503 } 这个结构体是把播放TTS的开始播的时候，把这个信息 总结出来，然后通过推流的text协议，发到收流端 对了 simplePlayer.html里边，要把这个对应的结构显示出来
-
 
 
 写更多的使用用例，测试cvm的功能点。
@@ -38,7 +42,7 @@ MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 l
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心  
 然后使用http server 写一个若依平台   
-制作结合SLangQT的工程
+制作结合SLangQT的工程  C:\Qt\qtcreator-20.0.2这个是我的QT工程，现在要制作一个QT的插件，主要就是像pyQT一样，制作slQT  目的就是使用QT的渲染机制，然后使用我的语法当作脚本，然后把QT跑起来  先制作一个D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\doc 文件在这个目录，可以分10-15个文件 用来放 整个slQT制作的过程  
 制作自己的渲染底层
 在有了渲染底层后，制作浏览器解析 制作一个小的浏览器解析框架。
 SLangTorch 的制作

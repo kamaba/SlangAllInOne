@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        Playground.runMain()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

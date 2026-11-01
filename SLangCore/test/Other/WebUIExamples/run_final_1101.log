@@ -1,0 +1,1133 @@
+﻿SimpleLanguage VM 0.0.52 (C Runtime)
+[+0 ms | unix=1793500143862] [main] ========== WebUIExamples 启动 ==========
+
+[+5 ms | unix=1793500143866] [main] WebUI.init() 耗时 4 ms
+
+[+6 ms | unix=1793500143868] [main] 菜单 newWindow() 耗时 1 ms
+
+[+7 ms | unix=1793500143868] [main] setSize+setCenter 耗时 0 ms
+
+[User] webui_config([1], [1])
+[Core]		WebUI v2.5.0-beta.4 (Microsoft Windows, MSVC, Static, Non-Encrypted)
+[Core]		_webui_init()
+[Core]		_webui_get_current_path()
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFA4110)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFA4110) -> Pointer #0 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFB9270)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB9270) -> Pointer #1 saved (260 + 1 bytes)
+[User] webui_new_window()
+[User] webui_get_new_window_id()
+[User] webui_new_window_id([1])
+[Core]		_webui_malloc([2621992])
+[Core]		_webui_ptr_add(0x00000293D0BF9070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293D0BF9070) -> Pointer #2 saved (2621992 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFB9870)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB9870) -> Pointer #3 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFC1FE0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFC1FE0) -> Pointer #4 saved (260 + 1 bytes)
+[User] webui_set_center(1)
+[User] webui_set_center() -> Screen dimensions: width=2560, height=1440
+[User] webui_set_center() -> Window dimensions: width=800, height=600
+[User] webui_set_center() -> Calculated center positions: x=880, y=420
+[User] webui_set_position(1, 880, 420)
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [__webui_core_api__]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([18])
+[Core]		_webui_ptr_add(0x00000293CEFAB7F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB7F0) -> Pointer #5 saved (18 + 1 bytes)
+[User] webui_bind() -> Save bind index 0, address 0x00007FFA3EC38FC0
+[Core]		_webui_send_all()
+[User] webui_new_window_id() -> New window #1 @ 0x00000293D0BF9070
+[Core]		_webui_server_thread()
+[User] webui_set_size(1, 580, 480)
+[User] webui_set_center(1)
+[User] webui_set_center() -> Screen dimensions: width=2560, height=1440
+[User] webui_set_center() -> Window dimensions: width=580, height=480
+[User] webui_set_center() -> Calculated center positions: x=990, y=480
+[User] webui_set_position(1, 990, 480)
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_minimal]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([11])
+[Core]		_webui_ptr_add(0x00000293CEFAB250)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB250) -> Pointer #6 saved (11 + 1 bytes)
+[User] webui_bind() -> Save bind index 1, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_hello]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFAAD50)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAAD50) -> Pointer #7 saved (9 + 1 bytes)
+[User] webui_bind() -> Save bind index 2, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_calljs]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([10])
+[Core]		_webui_ptr_add(0x00000293CEFAB2F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB2F0) -> Pointer #8 saved (10 + 1 bytes)
+[User] webui_bind() -> Save bind index 3, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_callpy]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([10])
+[Core]		_webui_ptr_add(0x00000293CEFAADA0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAADA0) -> Pointer #9 saved (10 + 1 byte[+11 ms | unix=1793500143872] [main] 10 个 bindHandle 耗时 4 ms
+
+s)
+[User] webui_bind() -> Save bind index 4, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_raw]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([7])
+[Core]		_webui_ptr_add(0x00000293CEFAAE40)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAAE40) -> Pointer #10 saved (7 + 1 bytes)
+[User] webui_bind() -> Save bind index 5, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_public]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([10])
+[Core]		_webui_ptr_add(0x00000293CEFAAF30)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAAF30) -> Pointer #11 saved (10 + 1 bytes)
+[User] webui_bind() -> Save bind index 6, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_react]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFAAF80)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAAF80) -> Pointer #12 saved (9 + 1 bytes)
+[User] webui_bind() -> Save bind index 7, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_serve]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFAB020)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB020) -> Pointer #13 saved (9 + 1 bytes)
+[User] webui_bind() -> Save bind index 8, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_editor]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([10])
+[Core]		_webui_ptr_add(0x00000293CEFAB070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB070) -> Pointer #14 saved (10 + 1 bytes)
+[User] webui_bind() -> Save bind index 9, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [exit_all]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([8])
+[Core]		_webui_ptr_add(0x00000293CEFAB3E0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAB3E0) -> Pointer #15 saved (8 + 1 bytes)
+[User] webui_bind() -> Save bind index 10, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_show([1])
+[Core]		_webui_show([1])
+[Core]		_webui_malloc([1572])
+[Core]		_webui_ptr_add(0x00000293CEFC6360)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFC6360) -> Pointer #16 saved (1572 + 1 bytes)
+[Core]		_webui_is_valid_url([<!doctyp...])
+[Core]		_webui_show() -> Embedded HTML:
+---[ HTML ]--------
+[Core]		_webui_malloc([1573])
+[Core]		_webui_ptr_add(0x00000293CEFC69D0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFC69D0) -> Pointer #17 saved (1573 + 1 bytes)
+<!doctype html><html><head><meta charset=utf-8><script src=/webu ... , t)'>退出所有窗口 (Exit All)</button></div></body></html>[Core]		_webui_free_mem(0x00000293CEFC69D0)
+[Core]		_webui_free_mem(0x00000293CEFC69D0) -> Pointer #17 freed (1573 + 1 bytes)
+
+-----------------
+[Core]		_webui_show_window(HTML, [1])
+[Core]		_webui_get_free_port()
+[Core]		_webui_port_is_used([38363])
+[Core]		_webui_socket_test_listen_win32([38363])
+[Core]		_webui_malloc([32])
+[Core]		_webui_ptr_add(0x00000293CEFB3950)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB3950) -> Pointer #17 saved (32 + 1 bytes)
+[Core]		_webui_malloc([22])
+[Core]		_webui_ptr_add(0x00000293CEFB3650)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB3650) -> Pointer #18 saved (22 + 1 bytes)
+[Core]		_webui_timer_start()
+[Core]		_webui_malloc([64])
+[Core]		_webui_ptr_add(0x00000293CEF99EF0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF99EF0) -> Pointer #19 saved (64 + 1 bytes)
+[Core]		_webui_server_thread -> mg_start ctx=0x00000293CEFC6C20 (port 38363)
+[Core]		_webui_server_thread([1]) -> URL: [http://localhost:38363]
+[Core]		_webui_server_thread([1]) -> Listening Success
+[Core]		_webui_server_thread([1]) -> HTTP/WS Port: 127.0.0.1:38363
+[Core]		_webui_server_thread([1]) -> Root path: .
+[Core]		_webui_server_thread([1]) -> Timeout is 15 seconds
+[Core]		_webui_server_thread([1]) -> Waiting for connection
+[Core]		_webui_timer_start()
+[Core]		_webui_browser_start([http://localhost:38363], [1])
+[Core]		_webui_malloc([68])
+[Core]		_webui_ptr_add(0x00000293CEFA69E0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFA69E0) -> Pointer #20 saved (68 + 1 bytes)
+[Core]		_webui_browser_launch(["http://localhost:38363"], [1])
+[Core]		_webui_find_the_best_browser()
+[Core]		_webui_is_process_running([chrome.exe])
+[Core]		_webui_is_process_running([msedge.exe])
+[Core]		_webui_is_process_running([epic.exe])
+[Core]		_webui_is_process_running([vivaldi.exe])
+[Core]		_webui_is_process_running([brave.exe])
+[Core]		_webui_is_process_running([firefox.exe])
+[Core]		_webui_is_process_running([browser.exe])
+[Core]		_webui_is_process_running([chrome.exe])
+[Core]		_webui_browser_exist([2])
+[Core]		_webui_custom_browser_exist([2])
+[Core]		_webui_get_windows_reg_value([Software\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe])
+[Core]		_webui_get_windows_reg_value([Software\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe])
+[Core]		_webui_is_google_chrome_folder([C:\Users\Administrator\AppData\Local\Google\Chrome\Bin])
+[Core]		_webui_file_exist([C:\Users\Administrator\AppData\Local\Google\Chrome\Bin\master_preferences])
+[Core]		_webui_file_exist() -> Parsed to [C:\Users\Administrator\AppData\Local\Google\Chrome\Bin\master_preferences]
+[Core]		_webui_malloc([148])
+[Core]		_webui_ptr_add(0x00000293CEFF15A0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF15A0) -> Pointer #21 saved (148 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFF15A0)
+[Core]		_webui_free_mem(0x00000293CEFF15A0) -> Pointer #21 freed (148 + 1 bytes)
+[Core]		_webui_file_exist([C:\Users\Administrator\AppData\Local\Google\Chrome\Bin\initial_preferences])
+[Core]		_webui_file_exist() -> Parsed to [C:\Users\Administrator\AppData\Local\Google\Chrome\Bin\initial_preferences]
+[Core]		_webui_malloc([150])
+[Core]		_webui_ptr_add(0x00000293CEFF15A0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF15A0) -> Pointer #21 saved (150 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFF15A0)
+[Core]		_webui_free_mem(0x00000293CEFF15A0) -> Pointer #21 freed (150 + 1 bytes)
+[Core]		_webui_browser_exist([4])
+[Core]		_webui_custom_browser_exist([4])
+[Core]		_webui_get_windows_reg_value([Software\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe])
+[Core]		_webui_file_exist([C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe])
+[Core]		_webui_file_exist() -> Parsed to [C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe]
+[Core]		_webui_malloc([122])
+[Core]		_webui_ptr_add(0x00000293CEFAE420)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAE420) -> Pointer #21 saved (122 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFAE420)
+[Core]		_webui_free_mem(0x00000293CEFAE420) -> Pointer #21 freed (122 + 1 bytes)
+[Core]		_webui_browser_start_edge(["http://localhost:38363"])
+[Core]		_webui_browser_exist([4])
+[Core]		_webui_browser_create_new_profile(4)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFF2690)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF2690) -> Pointer #21 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CEFF27E0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF27E0) -> Pointer #22 saved (260 + 1 bytes)
+[Core]		_webui_browser_create_new_profile(4) -> Generating WebUI profile
+[Core]		_webui_get_temp_path()
+[Core]		_webui_get_browser_args([4])
+[Core]		_webui_run_browser()
+[Core]		_webui_cmd_async()
+[Core]		_webui_cmd_async() -> Running [cmd /c "START "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --user-data-dir="C:\Users\Administrator\.WebUI\WebUIEdgeProfile" --no-first-run --safe-mode --disable-extensions --disable-background-mode --disable-plugins --disable-plugins-discovery --disable-translate --disable-features=Translate --bwsi --disable-sync --disable-sync-preferences --disable-component-update --allow-insecure-localhost --auto-accept-camera-and-microphone-capture --window-size=580,480 --window-position=990,480 --no-proxy-server --app="http://localhost:38363"" > nul 2>&1] 
+[Core]		_webui_system_win32()
+[Core]		_webui_malloc([1140])
+[Core]		_webui_ptr_add(0x00000293CEFF2930)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF2930) -> Pointer #23 saved (1140 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFF2930)
+[Core]		_webui_free_mem(0x00000293CEFF2930) -> Pointer #23 freed (1140 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFA69E0)
+[Core]		_webui_free_mem(0x00000293CEFA69E0) -> Pointer #20 freed (68 + 1 bytes)
+[Core]		_webui_show_window() -> App-mode browser succeeded
+[Core]		_webui_free_mem(0x00000293CEFB3650)
+[Core]		_webui_free_mem(0x00000293CEFB3650) -> Pointer #18 freed (22 + 1 bytes)
+[Core]		_webui_show_window() -> Waiting for window connection & token validation
+[Core]		_webui_timer_start()
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWNtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID not found
+[Core]		_webui_http_handler() -> Embedded Index HTML
+---[ HTML (1572 bytes)]--------------
+[Core]		_webui_malloc([1573])
+[Core]		_webui_ptr_add(0x00000293CF000540)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF000540) -> Pointer #18 saved (1573 + 1 bytes)
+<!doctype html><html><head><meta charset=utf-8><script src=/webu ... , t)'>退出所有窗口 (Exit All)</button></div></body></html>[Core]		_webui_free_mem(0x00000293CF000540)
+[Core]		_webui_free_mem(0x00000293CF000540) -> Pointer #18 freed (1573 + 1 bytes)
+
+------------------------------------
+[Core]		_webui_http_send([1])
+[Core]		_webui_http_send_header([1])
+[Core]		_webui_http_send_header() -> mime_type: [text/html]
+[Core]		_webui_http_send_header() -> body_len: [1572]
+[Core]		_webui_http_send_header() -> cache: [0]
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_generate_cookies()
+[Core]		_webui_client_cookies_save()
+[Core]		_webui_malloc([33])
+[Core]		_webui_ptr_add(0x00000293CEFB41F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB41F0) -> Pointer #18 saved (33 + 1 bytes)
+[Core]		_webui_http_send() -> New auth cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+---[ HTTP Header ]-----------------
+HTTP/1.1 200 OK
+
+Set-Cookie: webui_auth=1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5; Path=/; HttpOnly; SameSite=Strict
+
+Access-Control-Allow-Origin: *
+
+Cache-Control: no-cache, no-store, must-revalidate, private, max-age=0
+
+Content-Type: text/html
+
+Content-Length: 1572
+
+Connection: close
+
+
+
+
+-----------------------------------
+[Core]		_webui_http_handler() -> HTTP Status Code: 200
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/webui.js]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID found [0]
+[Core]		_webui_http_handler() -> WebUI-Bridge
+[Core]		_webui_generate_js_bridge()
+[Core]		_webui_malloc([18951])
+[Core]		_webui_ptr_add(0x00000293CF005D20)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF005D20) -> Pointer #20 saved (18951 + 1 bytes)
+[Core]		_webui_http_send([1])
+[Core]		_webui_http_send_header([1])
+[Core]		_webui_http_send_header() -> mime_type: [application/javascript]
+[Core]		_webui_http_send_header() -> body_len: [18924]
+[Core]		_webui_http_send_header() -> cache: [0]
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+---[ HTTP Header ]-----------------
+HTTP/1.1 200 OK
+
+Access-Control-Allow-Origin: *
+
+Cache-Control: no-cache, no-store, must-revalidate, private, max-age=0
+
+Content-Type: application/javascript
+
+Content-Length: 18924
+
+Connection: close
+
+
+
+
+-----------------------------------
+[Core]		_webui_free_mem(0x00000293CF005D20)
+[Core]		_webui_free_mem(0x00000293CF005D20) -> Pointer #20 freed (18951 + 1 bytes)
+[Core]		_webui_http_handler() -> HTTP Status Code: 200
+[Core]		_webui_ws_connect_handler()
+[Core]		_webui_get_cookies()
+[Core]		_webui_ws_connect_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_ws_connect_handler() -> Client ID found [0]
+[Core]		_webui_ws_connect_handler() -> Connection authentication OK
+[Core]		_webui_ws_ready_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #0]	_webui_receive([1], [2], [0])
+[Core]		_webui_connection_save([1])
+[Core]		_webui_connection_save() -> Registering client #0 
+[Core] [WS #0]	_webui_receive(1) -> Connection #0 registered
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A070) -> Pointer #20 saved (56 + 1 bytes)
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core] [WS #0]	_webui_ws_process()
+[Core] [WS #0]	_webui_ws_process() -> Start
+[Core] [WS #0]	_webui_ws_process() -> WEBUI_WS_OPEN 
+[Core] [WS #0]	_webui_ws_process() -> Finished.
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_free_mem(0x00000293CEF9A070)
+[Core]		_webui_free_mem(0x00000293CEF9A070) -> Pointer #20 freed (56 + 1 bytes)
+[Core]		_webui_server_thread([1]) -> Window Connected.
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #1]	_webui_receive([1], [1], [9])
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFCF1E0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF1E0) -> Pointer #20 saved (9 + 1 bytes)
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A070) -> Pointer #23 saved (56 + 1 bytes)
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core] [WS #1]	_webui_ws_process()
+[Core] [WS #1]	_webui_ws_process() -> Start
+[Core]		_webui_get_token()
+[Core]		_webui_get_token() -> 0x6B0FEC13
+[Core]		_webui_get_id()
+[Core]		_webui_get_id() -> 0x0000
+[Core] [WS #1]	_webui_ws_process() -> Data received
+[Core] [WS #1]	_webui_ws_process() -> Packet Size : 9 bytes
+[Core] [WS #1]	_webui_ws_process() -> Packet Header : [ 0xDD 0x13 0xEC 0x0F 0x6B 0x00 0x00 0xF5 ]
+[Core] [WS #1]	_webui_ws_process() -> Packet Token: 0x6B0FEC13 (1796205587)
+[Core] [WS #1]	_webui_ws_process() -> Packet ID: 0x0000 (0)
+[Core] [WS #1]	_webui_ws_process() -> Packet Data: []
+[Core] [WS #1]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core] [WS #1]	_webui_ws_process() -> WS #1 is locked.
+[Core] [WS #1]	_webui_ws_process() -> WEBUI_CMD_CHECK_TK 
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core] [WS #1]	_webui_ws_process() -> Token accepted. Sending bind list
+[Core]		_webui_malloc([123])
+[Core]		_webui_ptr_add(0x00000293CEFADFA0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFADFA0) -> Pointer #24 saved (123 + 1 bytes)
+[Core]		_webui_send_client()
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core]		_webui_send_client() -> Connection ID = 0 
+[Core]		_webui_send_client() -> Packet ID = 0x0000 
+[Core]		_webui_send_client() -> Packet CMD = 0xf5 
+[Core]		_webui_send_client() -> Packet Data = 123 bytes 
+[Core]		_webui_malloc([132])
+[Core]		_webui_ptr_add(0x00000293CEFF15A0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFF15A0) -> Pointer #25 saved (132 + 1 bytes)
+[Core]		_webui_send_client_ws()
+[Core]		_webui_send_client_ws() -> Client #0
+[Core]		_webui_send_client_ws() -> Packet size: 132 bytes 
+[Core]		_webui_send_client_ws() -> Packet hex : [ 0xDD 0xFF 0xFF 0xFF 0xFF 0x00 0x00 0xF5 0x01 0x5F 0x5F 0x77 0x65 0x62 0x75 0x69 0x5F 0x63 0x6F 0x72 0x65 0x5F 0x61 0x70 0x69 0x5F 0x5F 0x2C 0x72 0x75 0x6E 0x5F 0x6D 0x69 0x6E 0x69 0x6D 0x61 0x6C 0x2C 0x72 0x75 0x6E 0x5F 0x68 0x65 0x6C 0x6C 0x6F 0x2C 0x72 0x75 0x6E 0x5F 0x63 0x61 0x6C 0x6C 0x6A 0x73 0x2C 0x72 0x75 0x6E 0x5F 0x63 0x61 0x6C 0x6C 0x70 0x79 0x2C 0x72 0x75 0x6E 0x5F 0x72 0x61 0x77 0x2C 0x72 0x75 0x6E 0x5F 0x70 0x75 0x62 0x6C 0x69 0x63 0x2C 0x72 0x75 0x6E 0x5F 0x72 0x65 0x61 0x63 0x74 0x2C 0x72 0x75 0x6E 0x5F 0x73 0x65 0x72 0x76 0x65 0x2C 0x72 0x75 0x6E 0x5F 0x65 0x64 0x69 0x74 0x6F 0x72 0x2C 0x65 0x78 0x69 0x74 0x5F 0x61 0x6C 0x6C 0x2C 0x00 ]
+[Core]		_webui_send_client_ws() -> 132 bytes sent.
+[Core]		_webui_free_mem(0x00000293CEFF15A0)
+[Core]		_webui_free_mem(0x00000293CEFF15A0) -> Pointer #25 freed (132 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFADFA0)
+[Core]		_webui_free_mem(0x00000293CEFADFA0) -> Pointer #24 freed (123 + 1 bytes)
+[Core] [WS #1]	_webui_ws_process() -> WS #1 is unlocked.
+[Core] [WS #1]	_webui_ws_process() -> Finished.
+[Core]		_webui_free_mem(0x00000293CEFCF1E0)
+[Core]		_webui_free_mem(0x00000293CEFCF1E0) -> Pointer #20 freed (9 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEF9A070)
+[Core]		_webui_free_mem(0x00000293CEF9A070) -> Pointer #23 freed (56 + 1 bytes)
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/favicon.ico]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID found [0]
+[Core]		_webui_file_exist_mg()
+[Core]		_webui_malloc([12])
+[Core]		_webui_ptr_add(0x00000293CEFCF780)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF780) -> Pointer #20 saved (12 + 1 bytes)
+[Core]		_webui_malloc([13])
+[Core]		_webui_ptr_add(0x00000293CEFCF640)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF640) -> Pointer #23 saved (13 + 1 bytes)
+[Core]		_webui_file_exist([.\favicon.ico])
+[Core]		_webui_file_exist() -> Parsed to [.\favicon.ico]
+[Core]		_webui_malloc([28])
+[Core]		_webui_ptr_add(0x00000293CEFB36B0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB36B0) -> Pointer #24 saved (28 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFB36B0)
+[Core]		_webui_free_mem(0x00000293CEFB36B0) -> Pointer #24 freed (28 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFCF780)
+[Core]		_webui_free_mem(0x00000293CEFCF780) -> Pointer #20 freed (12 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFCF640)
+[Core]		_webui_free_mem(0x00000293CEFCF640) -> Pointer #23 freed (13 + 1 bytes)
+[Core]		_webui_http_handler() -> HTTP Status Code: 302
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/favicon.svg]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID found [0]
+[Core]		_webui_file_exist_mg()
+[Core]		_webui_malloc([12])
+[Core]		_webui_ptr_add(0x00000293CEFCF460)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF460) -> Pointer #20 saved (12 + 1 bytes)
+[Core]		_webui_malloc([13])
+[Core]		_webui_ptr_add(0x00000293CEFCF280)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF280) -> Pointer #23 saved (13 + 1 bytes)
+[Core]		_webui_file_exist([.\favicon.svg])
+[Core]		_webui_file_exist() -> Parsed to [.\favicon.svg]
+[Core]		_webui_malloc([28])
+[Core]		_webui_ptr_add(0x00000293CEFB36B0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB36B0) -> Pointer #24 saved (28 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFB36B0)
+[Core]		_webui_free_mem(0x00000293CEFB36B0) ->[+604 ms | unix=1793500144465] [main] 菜单 show()（含浏览器窗口就绪） 耗时 592 ms
+
+[+604 ms | unix=1793500144465] [main] 进入 wait()，等待全部窗口关闭...
+
+[+15192 ms | unix=1793500159053] [run_hello] 点击 -> 回调入口延迟 = 2 ms
+
+ Pointer #24 freed (28 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFCF460)
+[Core]		_webui_free_mem(0x00000293CEFCF460) -> Pointer #20 freed (12 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFCF280)
+[Core]		_webui_free_mem(0x00000293CEFCF280) -> Pointer #23 freed (13 + 1 bytes)
+[Core]		_webui_http_send([1])
+[Core]		_webui_http_send_header([1])
+[Core]		_webui_http_send_header() -> mime_type: [image/svg+xml]
+[Core]		_webui_http_send_header() -> body_len: [561]
+[Core]		_webui_http_send_header() -> cache: [0]
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+---[ HTTP Header ]-----------------
+HTTP/1.1 200 OK
+
+Access-Control-Allow-Origin: *
+
+Cache-Control: no-cache, no-store, must-revalidate, private, max-age=0
+
+Content-Type: image/svg+xml
+
+Content-Length: 561
+
+Connection: close
+
+
+
+
+-----------------------------------
+[Core]		_webui_http_handler() -> HTTP Status Code: 200
+[User] webui_focus([1])
+[Core]		_webui_win32_find_pid_by_cmd([http://localhost:38363])
+[Core]		_webui_malloc([46])
+[Core]		_webui_ptr_add(0x00000293CEFBA050)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFBA050) -> Pointer #20 saved (46 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFBA050)
+[Core]		_webui_free_mem(0x00000293CEFBA050) -> Pointer #20 freed (46 + 1 bytes)
+[Core]		_webui_win32_find_pid_by_cmd() -> PID 9212 (supported: 1)
+[Core]		_webui_win32_get_browser_hwnd([1]) -> Found
+[Loop] _webui_wait(Blocking)
+[Loop] _webui_wait() -> Waiting (Timeout in 15 seconds)
+[Loop] _webui_wait() -> Windows web browser loop
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #2]	_webui_receive([1], [1], [35])
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core]		_webui_malloc([35])
+[Core]		_webui_ptr_add(0x00000293CEFB3AD0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFB3AD0) -> Pointer #20 saved (35 + 1 bytes)
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A070) -> Pointer #23 saved (56 + 1 bytes)
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core] [WS #2]	_webui_ws_process()
+[Core] [WS #2]	_webui_ws_process() -> Start
+[Core]		_webui_get_token()
+[Core]		_webui_get_token() -> 0x6B0FEC13
+[Core]		_webui_get_id()
+[Core]		_webui_get_id() -> 0xFFFF
+[Core] [WS #2]	_webui_ws_process() -> Data received
+[Core] [WS #2]	_webui_ws_process() -> Packet Size : 35 bytes
+[Core] [WS #2]	_webui_ws_process() -> Packet Header : [ 0xDD 0x13 0xEC 0x0F 0x6B 0xFF 0xFF 0xF9 ]
+[Core] [WS #2]	_webui_ws_process() -> Packet Token: 0x6B0FEC13 (1796205587)
+[Core] [WS #2]	_webui_ws_process() -> Packet ID: 0xFFFF (65535)
+[Core] [WS #2]	_webui_ws_process() -> Packet Data: []
+[Core] [WS #2]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core] [WS #2]	_webui_ws_process() -> WS #2 is locked.
+[Core] [WS #2]	_webui_ws_process() -> WEBUI_CMD_CALL_FUNC 
+[Core] [WS #2]	_webui_ws_process() -> Call ID: [65535] 
+[Core] [WS #2]	_webui_ws_process() -> Element: [run_hello] 
+[Core]		_webui_malloc([384])
+[Core]		_webui_ptr_add(0x00000293CF00A0A0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00A0A0) -> Pointer #24 saved (384 + 1 bytes)
+[Core] [WS #2]	_webui_ws_process() -> Argument 0: 13 bytes
+[Core] [WS #2]	_webui_ws_process() -> Expected and received 14 bytes of data.
+[Core]		_webui_client_get_id()
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_get_cookies_full()
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [run_hello]
+[Core]		_webui_get_cb_index() -> Found at 2
+[Core] [WS #2]	_webui_ws_process() -> Calling user callback at address 0x00007FFA3EC373C0
+[Call]
+[User] webui_get_int_at([0])
+[User] webui_get_string_at([0])
+[User] webui_new_window()
+[User] webui_get_new_window_id()
+[User] webui_new_window_id([2])
+[Core]		_webui_malloc([2621992])
+[Core]		_webui_ptr_add(0x00000293D0F4B070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293D0F4B070) -> Pointer #25 saved (2621992 + 1 by[+15194 ms | unix=1793500159055] [hello_world] newWindow() 耗时 1 ms
+
+[+15195 ms | unix=1793500159056] [hello_world] 2 个 bindHandle 耗时 1 ms
+
+tes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CF00B680)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00B680) -> Pointer #26 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CF00B7D0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00B7D0) -> Pointer #27 saved (260 + 1 bytes)
+[User] webui_set_center(2)
+[User] webui_set_center() -> Screen dimensions: width=2560, height=1440
+[User] webui_set_center() -> Window dimensions: width=800, height=600
+[User] webui_set_center() -> Calculated center positions: x=880, y=420
+[User] webui_set_position(2, 880, 420)
+[User] webui_bind([2])
+[Core]		_webui_get_cb_index([2])
+[Core]		_webui_get_cb_index() -> Element: [__webui_core_api__]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([18])
+[Core]		_webui_ptr_add(0x00000293CEFCF870)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF870) -> Pointer #28 saved (18 + 1 bytes)
+[User] webui_bind() -> Save bind index 11, address 0x00007FFA3EC38FC0
+[Core]		_webui_send_all()
+[User] webui_new_window_id() -> New window #2 @ 0x00000293D0F4B070
+[Core]		_webui_server_thread()
+[User] webui_set_size(2, 360, 280)
+[User] webui_set_center(2)
+[User] webui_set_center() -> Screen dimensions: width=2560, height=1440
+[User] webui_set_center() -> Window dimensions: width=360, height=280
+[User] webui_set_center() -> Calculated center positions: x=1100, y=580
+[User] webui_set_position(2, 1100, 580)
+[User] webui_bind([2])
+[Core]		_webui_get_cb_index([2])
+[Core]		_webui_get_cb_index() -> Element: [CheckPassword]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([13])
+[Core]		_webui_ptr_add(0x00000293CEFCFFA0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCFFA0) -> Pointer #29 saved (13 + 1 bytes)
+[User] webui_bind() -> Save bind index 12, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_bind([2])
+[Core]		_webui_get_cb_index([2])
+[Core]		_webui_get_cb_index() -> Element: [Exit]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([4])
+[Core]		_webui_ptr_add(0x00000293CEFCF640)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF640) -> Pointer #30 saved (4 + 1 bytes)
+[User] webui_bind() -> Save bind index 13, address 0x00007FFA3EC373C0
+[Core]		_webui_send_all()
+[User] webui_show([2])
+[Core]		_webui_show([1])
+[Core]		_webui_malloc([787])
+[Core]		_webui_ptr_add(0x00000293CF00CC60)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00CC60) -> Pointer #31 saved (787 + 1 bytes)
+[Core]		_webui_is_valid_url([<!doctyp...])
+[Core]		_webui_show() -> Embedded HTML:
+---[ HTML ]--------
+<!doctype html><html><head><meta charset=utf-8><title>WebUI Python Example</title><script src=/webui.js></script><style>body{font-family:Arial,sans-serif;color:#fff;text-align:center;padding:40px;background:linear-gradient(to right,#507d91,#1c596f,#022737)}input{padding:8px;border-radius:3px;border:1px solid #ccc;outline:none}button{padding:8px 14px;border-radius:3px;border:1px solid #ccc;background:#3498db;color:#fff;cursor:pointer;font-size:14px}h3{color:#dbd552}</style></head><body><h1>WebUI Python Example</h1><input type=password id=MyInput placeholder=Password><h3 id=err>&nbsp;</h3><button id=CheckPassword onclick='t=Date.now();webui.call("CheckPassword", t)'>Check Password</button> - <button id=Exit onclick='t=Date.now();webui.call("Exit", t)'>Exit</button></body></html>
+-----------------
+[Core]		_webui_show_window(HTML, [1])
+[Core]		_webui_get_free_port()
+[Core]		_webui_port_is_used([10041])
+[Core]		_webui_socket_test_listen_win32([10041])
+[Core]		_webui_malloc([32])
+[Core]		_webui_ptr_add(0x00000293CF00AA80)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00AA80) -> Pointer #32 saved (32 + 1 bytes)
+[Core]		_webui_malloc([22])
+[Core]		_webui_ptr_add(0x00000293CF00B4A0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00B4A0) -> Pointer #33 saved (22 + 1 bytes)
+[Core]		_webui_timer_start()
+[Core]		_webui_malloc([64])
+[Core]		_webui_ptr_add(0x00000293CEF9A0F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A0F0) -> Pointer #34 saved (64 + 1 bytes)
+[Core]		_webui_server_thread -> mg_start ctx=0x00000293CF00CFB0 (port 10041)
+[Core]		_webui_server_thread([2]) -> URL: [http://localhost:10041]
+[Core]		_webui_server_thread([2]) -> Listening Success
+[Core]		_webui_server_thread([2]) -> HTTP/WS Port: 127.0.0.1:10041
+[Core]		_webui_server_thread([2]) -> Root path: .
+[Core]		_webui_server_thread([2]) -> Timeout is 15 seconds
+[Core]		_webui_server_thread([2]) -> Waiting for connection
+[Core]		_webui_timer_start()
+[Core]		_webui_browser_start([http://localhost:10041], [1])
+[Core]		_webui_malloc([68])
+[Core]		_webui_ptr_add(0x00000293CEFA77F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFA77F0) -> Pointer #35 saved (68 + 1 bytes)
+[Core]		_webui_browser_launch(["http://localhost:10041"], [1])
+[Core]		_webui_browser_start_edge(["http://localhost:10041"])
+[Core]		_webui_browser_exist([4])
+[Core]		_webui_custom_browser_exist([4])
+[Core]		_webui_get_windows_reg_value([Software\Microsoft\Windows\CurrentVersion\App Paths\msedge.exe])
+[Core]		_webui_file_exist([C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe])
+[Core]		_webui_file_exist() -> Parsed to [C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe]
+[Core]		_webui_malloc([122])
+[Core]		_webui_ptr_add(0x00000293CEFAE060)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFAE060) -> Pointer #36 saved (122 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFAE060)
+[Core]		_webui_free_mem(0x00000293CEFAE060) -> Pointer #36 freed (122 + 1 bytes)
+[Core]		_webui_browser_create_new_profile(4)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CF037280)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF037280) -> Pointer #36 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x00000293CF0373D0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF0373D0) -> Pointer #37 saved (260 + 1 bytes)
+[Core]		_webui_browser_create_new_profile(4) -> Generating WebUI profile
+[Core]		_webui_get_temp_path()
+[Core]		_webui_get_browser_args([4])
+[Core]		_webui_run_browser()
+[Core]		_webui_cmd_async()
+[Core]		_webui_cmd_async() -> Running [cmd /c "START "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --user-data-dir="C:\Users\Administrator\.WebUI\WebUIEdgeProfile" --no-first-run --safe-mode --disable-extensions --disable-background-mode --disable-plugins --disable-plugins-discovery --disable-translate --disable-features=Translate --bwsi --disable-sync --disable-sync-preferences --disable-component-update --allow-insecure-localhost --auto-accept-camera-and-microphone-capture --window-size=360,280 --window-position=1100,580 --no-proxy-server --app="http://localhost:10041"" > nul 2>&1] 
+[Core]		_webui_system_win32()
+[Core]		_webui_malloc([1142])
+[Core]		_webui_ptr_add(0x00000293CF037520)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF037520) -> Pointer #38 saved (1142 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CF037520)
+[Core]		_webui_free_mem(0x00000293CF037520) -> Pointer #38 freed (1142 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFA77F0)
+[Core]		_webui_free_mem(0x00000293CEFA77F0) -> Pointer #35 freed (68 + 1 bytes)
+[Core]		_webui_show_window() -> App-mode browser succeeded
+[Core]		_webui_free_mem(0x00000293CF00B4A0)
+[Core]		_webui_free_mem(0x00000293CF00B4A0) -> Pointer #33 freed (22 + 1 bytes)
+[Core]		_webui_show_window() -> Waiting for window connection & token validation
+[Core]		_webui_timer_start()
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID found [0]
+[Core]		_webui_http_handler() -> Embedded Index HTML
+---[ HTML (787 bytes)]--------------
+<!doctype html><html><head><meta charset=utf-8><title>WebUI Python Example</title><script src=/webui.js></script><style>body{font-family:Arial,sans-serif;color:#fff;text-align:center;padding:40px;background:linear-gradient(to right,#507d91,#1c596f,#022737)}input{padding:8px;border-radius:3px;border:1px solid #ccc;outline:none}button{padding:8px 14px;border-radius:3px;border:1px solid #ccc;background:#3498db;color:#fff;cursor:pointer;font-size:14px}h3{color:#dbd552}</style></head><body><h1>WebUI Python Example</h1><input type=password id=MyInput placeholder=Password><h3 id=err>&nbsp;</h3><button id=CheckPassword onclick='t=Date.now();webui.call("CheckPassword", t)'>Check Password</button> - <button id=Exit onclick='t=Date.now();webui.call("Exit", t)'>Exit</button></body></html>
+------------------------------------
+[Core]		_webui_http_send([2])
+[Core]		_webui_http_send_header([2])
+[Core]		_webui_http_send_header() -> mime_type: [text/html]
+[Core]		_webui_http_send_header() -> body_len: [787]
+[Core]		_webui_http_send_header() -> cache: [0]
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+---[ HTTP Header ]-----------------
+HTTP/1.1 200 OK
+
+Access-Control-Allow-Origin: *
+
+Cache-Control: no-cache, no-store, must-revalidate, private, max-age=0
+
+Content-Type: text/html
+
+Content-Length: 787
+
+Connection: close
+
+
+
+
+-----------------------------------
+[Core]		_webui_http_handler() -> HTTP Status Code: 200
+[Core]		_webui_http_handler()
+[Core]		---[ HTTP Request ]----------------
+[Core]		_webui_http_handler() -> GET [/webui.js]
+[Core]		_webui_get_cookies()
+[Core]		_webui_http_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_http_handler() -> Client ID found [0]
+[Core]		_webui_http_handler() -> WebUI-Bridge
+[Core]		_webui_generate_js_bridge()
+[Core]		_webui_malloc([18951])
+[Core]		_webui_ptr_add(0x00000293CF049230)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF049230) -> Pointer #33 saved (18951 + 1 bytes)
+[Core]		_webui_http_send([2])
+[Core]		_webui_http_send_header([2])
+[Core]		_webui_http_send_header() -> mime_type: [application/javascript]
+[Core]		_webui_http_send_header() -> body_len: [18925]
+[Core]		_webui_http_send_header() -> cache: [0]
+[Core]		_webui_get_cookies()
+[Core]		_webui_client_cookies_get_id()
+---[ HTTP Header ]-----------------
+HTTP/1.1 200 OK
+
+Access-Control-Allow-Origin: *
+
+Cache-Control: no-cache, no-store, must-revalidate, private, max-age=0
+
+Content-Type: application/javascript
+
+Content-Length: 18925
+
+Connection: close
+
+
+
+
+-----------------------------------
+[Core]		_webui_free_mem(0x00000293CF049230)
+[Core]		_webui_free_mem(0x00000293CF049230) -> Pointer #33 freed (18951 + 1 bytes)
+[Core]		_webui_http_handler() -> HTTP Status Code: 200
+[Core]		_webui_ws_connect_handler()
+[Core]		_webui_get_cookies()
+[Core]		_webui_ws_connect_handler() -> Client cookies [1_1AOCaNf54egbYGNYqiXWLtaD0MNBlq5]
+[Core]		_webui_client_cookies_get_id()
+[Core]		_webui_ws_connect_handler() -> Client ID found [0]
+[Core]		_webui_ws_connect_handler() -> Connection authentication OK
+[Core]		_webui_ws_ready_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #3]	_webui_receive([2], [2], [0])
+[Core]		_webui_connection_save([2])
+[Core]		_webui_connection_save() -> Registering client #1 
+[Core] [WS #3]	_webui_receive(2) -> Connection #1 registered
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A370)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A370) -> Pointer #33 saved (56 + 1 bytes)
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core] [WS #3]	_webui_ws_process()
+[Core] [WS #3]	_webui_ws_process() -> Start
+[Core] [WS #3]	_webui_ws_process() -> WEBUI_WS_OPEN 
+[Core] [WS #3]	_webui_ws_process() -> Finished.
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_free_mem(0x00000293CEF9A370)
+[Core]		_webui_free_mem(0x00000293CEF9A370) -> Pointer #33 freed (56 + 1 bytes)
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #4]	_webui_receive([2], [1], [9])
+[Core[+30305 ms | unix=1793500174166] [hello_world] show()（含浏览器窗口就绪） 耗时 15109 ms
+
+[+30305 ms | unix=1793500174167] [run_hello] handler 总计 耗时 15113 ms
+
+]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFCF0F0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF0F0) -> Pointer #33 saved (9 + 1 bytes)
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A370)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A370) -> Pointer #35 saved (56 + 1 bytes)
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core] [WS #4]	_webui_ws_process()
+[Core] [WS #4]	_webui_ws_process() -> Start
+[Core]		_webui_get_token()
+[Core]		_webui_get_token() -> 0x6B0FEC22
+[Core]		_webui_get_id()
+[Core]		_webui_get_id() -> 0x0000
+[Core] [WS #4]	_webui_ws_process() -> Data received
+[Core] [WS #4]	_webui_ws_process() -> Packet Size : 9 bytes
+[Core] [WS #4]	_webui_ws_process() -> Packet Header : [ 0xDD 0x22 0xEC 0x0F 0x6B 0x00 0x00 0xF5 ]
+[Core] [WS #4]	_webui_ws_process() -> Packet Token: 0x6B0FEC22 (1796205602)
+[Core] [WS #4]	_webui_ws_process() -> Packet ID: 0x0000 (0)
+[Core] [WS #4]	_webui_ws_process() -> Packet Data: []
+[Core] [WS #4]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core]		_webui_server_thread([2]) -> Window Connected.
+[User] webui_focus([2])
+[Core]		_webui_win32_find_pid_by_cmd([http://localhost:10041])
+[Core]		_webui_malloc([46])
+[Core]		_webui_ptr_add(0x00000293CEFBA7C0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFBA7C0) -> Pointer #38 saved (46 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFBA7C0)
+[Core]		_webui_free_mem(0x00000293CEFBA7C0) -> Pointer #38 freed (46 + 1 bytes)
+[Core]		_webui_win32_find_pid_by_cmd() -> PID 0 (supported: 1)
+[Core]		_webui_win32_get_browser_hwnd([2]) -> Found
+[Core] [WS #2]	_webui_ws_process() -> user-callback response [(null)]
+[Core]		_webui_send_client()
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core]		_webui_send_client() -> Connection ID = 0 
+[Core]		_webui_send_client() -> Packet ID = 0xFFFF 
+[Core]		_webui_send_client() -> Packet CMD = 0xf9 
+[Core]		_webui_send_client() -> Packet Data = 0 bytes 
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFCFCD0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCFCD0) -> Pointer #38 saved (9 + 1 bytes)
+[Core]		_webui_send_client_ws()
+[Core]		_webui_send_client_ws() -> Client #0
+[Core]		_webui_send_client_ws() -> Packet size: 9 bytes 
+[Core]		_webui_send_client_ws() -> Packet hex : [ 0xDD 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF 0xF9 0x00 ]
+[Core]		_webui_send_client_ws() -> 9 bytes sent.
+[Core]		_webui_free_mem(0x00000293CEFCFCD0)
+[Core]		_webui_free_mem(0x00000293CEFCFCD0) -> Pointer #38 freed (9 + 1 bytes)
+[User] webui_free([0x00000293CEFB3AE5])
+[Core]		_webui_free_mem(0x00000293CEFB3AE5)
+[User] webui_free([0x00000293CF00A0A0])
+[Core]		_webui_free_mem(0x00000293CF00A0A0)
+[Core]		_webui_free_mem(0x00000293CF00A0A0) -> Pointer #24 freed (384 + 1 bytes)
+[Core] [WS #2]	_webui_ws_process() -> WS #2 is unlocked.
+[Core] [WS #2]	_webui_ws_process() -> Finished.
+[Core]		_webui_free_mem(0x00000293CEFB3AD0)
+[Core]		_webui_free_mem(0x00000293CEFB3AD0) -> Pointer #20 freed (35 + 1 bytes)
+[Core] [WS #4]	_webui_ws_process() -> WS #4 is locked.
+[Core]		_webui_free_mem(0x00000293CEF9A070)
+[Core] [WS #4]	_webui_ws_process() -> WEBUI_CMD_CHECK_TK 
+[Core]		_webui_free_mem(0x00000293CEF9A070) -> Pointer #23 freed (56 + 1 bytes)
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core] [WS #4]	_webui_ws_process() -> Token accepted. Sending bind list
+[Core]		_webui_malloc([39])
+[Core]		_webui_ptr_add(0x00000293CEFBA0C0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFBA0C0) -> Pointer #20 saved (39 + 1 bytes)
+[Core]		_webui_send_client()
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core]		_webui_send_client() -> Connection ID = 1 
+[Core]		_webui_send_client() -> Packet ID = 0x0000 
+[Core]		_webui_send_client() -> Packet CMD = 0xf5 
+[Core]		_webui_send_client() -> Packet Data = 39 bytes 
+[Core]		_webui_malloc([48])
+[Core]		_webui_ptr_add(0x00000293CEFBAB40)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFBAB40) -> Pointer #23 saved (48 + 1 bytes)
+[Core]		_webui_send_client_ws()
+[Core]		_webui_send_client_ws() -> Client #1
+[Core]		_webui_send_client_ws() -> Packet size: 48 bytes 
+[Core]		_webui_send_client_ws() -> Packet hex : [ 0xDD 0xFF 0xFF 0xFF 0xFF 0x00 0x00 0xF5 0x01 0x5F 0x5F 0x77 0x65 0x62 0x75 0x69 0x5F 0x63 0x6F 0x72 0x65 0x5F 0x61 0x70 0x69 0x5F 0x5F 0x2C 0x43 0x68 0x65 0x63 0x6B 0x50 0x61 0x73 0x73 0x77 0x6F 0x72 0x64 0x2C 0x45 0x78 0x69 0x74 0x2C 0x00 ]
+[Core]		_webui_send_client_ws() -> 48 bytes sent.
+[Core]		_webui_free_mem(0x00000293CEFBAB40)
+[Core]		_webui_free_mem(0x00000293CEFBAB40) -> Pointer #23 freed (48 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEFBA0C0)
+[Core]		_webui_free_mem(0x00000293CEFBA0C0) -> Pointer #20 freed (39 + 1 bytes)
+[Core] [WS #4]	_webui_ws_process() -> WS #4 is unlocked.
+[Core] [WS #4]	_webui_ws_process() -> Finished.
+[Core]		_webui_free_mem(0x00000293CEFCF0F0)
+[Core]		_webui_free_mem(0x00000293CEFCF0F0) -> Pointer #33 freed (9 + 1 bytes)
+[Core]		_webui_free_mem(0x00000293CEF9A370)
+[Core]		_webui_free_mem(0x00000293CEF9A370) -> Pointer #35 freed (56 + 1 bytes)
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #5]	_webui_receive([2], [1], [30])
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core]		_webui_malloc([30])
+[Core]		_webui_ptr_add(0x00000293CF00A780)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CF00A780) -> Pointer #20 saved (30 + 1 bytes)
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A070) -> Pointer #23 saved (56 + 1 bytes)
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #6]	_webui_receive([2], [1], [39])
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core]		_webui_malloc([39])
+[Core]		_webui_ptr_add(0x00000293CEFBA0C0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFBA0C0) -> Pointer #24 saved (39 + 1 bytes)
+[Core]		_webui_malloc([56])
+[Core]		_webui_ptr_add(0x00000293CEF9A370)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEF9A370) -> Pointer #33 saved (56 + 1 bytes)
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		_webui_ws_data_handler()
+[Core]		[Thread .] _webui_ws_process_thread()
+[Core]		_webui_get_ws_process_number()
+[Core] [WS #7]	_webui_receive([2], [1], [39])
+[Core] [WS #5]	_webui_ws_process()
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core] [WS #5]	_webui_ws_process() -> Start
+[Core]		_webui_malloc([39])
+[Core]		_webui_get_token()
+[Core]		_webui_ptr_add(0x00000293CEFBA7C0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_get_token() -> 0x6B0FEC22
+[Core]		_webui_get_id()
+[Core]		_webui_ptr_add(0x00000293CEFBA7C0) -> Pointer #35 saved (39 + 1 bytes)
+[Core]		_webui_get_id() -> 0xFFFF
+[Core]		_webui_malloc([56])
+[Core] [WS #5]	_webui_ws_process() -> Data received
+[Core]		_webui_ptr_add(0x00000293CF04B750)
+[Core]		_webui_ptr_exist()
+[Core] [WS #5]	_webui_ws_process() -> Packet Size : 30 bytes
+[Core] [WS #5]	_webui_ws_process() -> Packet Header : [ [Core]		_webui_ptr_add(0x00000293CF04B750) -> Pointer #38 saved (56 + 1 bytes)
+0xDD 0x22 0xEC 0x0F 0x6B [Core]		[Thread .] _webui_ws_process_thread()
+0xFF 0xFF 0xF9 ]
+[Core] [WS #6]	_webui_ws_process()
+[Core] [WS #6]	_webui_ws_process() -> Start
+[Core] [WS #5]	_webui_ws_process() -> Packet Token: 0x6B0FEC22 (1796205602)
+[Core]		_webui_get_token()
+[Core]		_webui_ws_data_handler() -> Finished
+[Core] [WS #5]	_webui_ws_process() -> Packet ID: 0xFFFF (65535)
+[Core]		_webui_get_token() -> 0x6B0FEC22
+[Core]		_webui_get_id()
+[Core] [WS #5]	_webui_ws_process() -> Packet Data: []
+[Core]		_webui_get_id() -> 0xFFFE
+[Core] [WS #6]	_webui_ws_process() -> Data received
+[Core] [WS #5]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core] [WS #6]	_webui_ws_process() -> Packet Size : 39 bytes
+[Core] [WS #5]	_webui_ws_process() -> WS #5 is locked.
+[Core] [WS #6]	_webui_ws_process() -> Packet Header [+30317 ms | unix=1793500174178] [hello_world:Exit] 点击 -> 回调入口延迟 = 2103 ms
+
+: [ 0xDD 0x22 [Core] [WS #5]	_webui_ws_process() -> WEBUI_CMD_CALL_FUNC 
+0xEC [Core]		[Thread .] _webui_ws_process_thread()
+0x0F 0x6B 0xFE 0xFF [Core] [WS #5]	_webui_ws_process() -> Call ID: [65535] 
+0xF9 ]
+[Core] [WS #7]	_webui_ws_process()
+[Core] [WS #5]	_webui_ws_process() -> Element: [Exit] 
+[Core] [WS #7]	_webui_ws_process() -> Start
+[Core] [WS #6]	_webui_ws_process() -> Packet Token: 0x6B0FEC22 (1796205602)
+[Core]		_webui_malloc([384])
+[Core]		_webui_get_token()
+[Core] [WS #6]	_webui_ws_process() -> Packet ID: 0xFFFE (65534)
+[Core]		_webui_ptr_add(0x00000293CF00A3F0)
+[Core]		_webui_get_token() -> 0x6B0FEC22
+[Core]		_webui_ptr_exist()
+[Core]		_webui_get_id()
+[Core] [WS #6]	_webui_ws_process() -> Packet Data: []
+[Core]		_webui_get_id() -> 0xFFFD
+[Core]		_webui_ptr_add(0x00000293CF00A3F0) -> Pointer #39 saved (384 + 1 bytes)
+[Core] [WS #6]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core] [WS #7]	_webui_ws_process() -> Data received
+[Core] [WS #7]	_webui_ws_process() -> Packet Size : 39 bytes
+[Core] [WS #5]	_webui_ws_process() -> Argument 0: 13 bytes
+[Core] [WS #7]	_webui_ws_process() -> Packet Header : [ 0xDD [Core] [WS #5]	_webui_ws_process() -> Expected and received 14 bytes of data.
+0x22 0xEC [Core]		_webui_client_get_id()
+0x0F 0x6B 0xFD [Core]		_webui_get_cookies()
+0xFF 0xF9 ]
+[Core]		_webui_client_cookies_get_id()
+[Core] [WS #7]	_webui_ws_process() -> Packet Token: 0x6B0FEC22 (1796205602)
+[Core]		_webui_get_cookies_full()
+[Core]		_webui_get_cb_index([2])
+[Core] [WS #7]	_webui_ws_process() -> Packet ID: 0xFFFD (65533)
+[Core]		_webui_get_cb_index() -> Element: [Exit]
+[Core] [WS #7]	_webui_ws_process() -> Packet Data: []
+[Core]		_webui_get_cb_index() -> Found at 13
+[Core] [WS #7]	_webui_ws_process() -> Waiting for the previous event to finish...
+[Core] [WS #5]	_webui_ws_process() -> Calling user callback at address 0x00007FFA3EC373C0
+[Call]
+[User] webui_get_int_at([0])
+[User] webui_get_string_at([0])
+[User] webui_exit()
+[Core]		_webui_send_all()
+[Core]		_webui_send_client()
+[Core]		_webui_connection_get_id([1], [00000293CEFD19F0])
+[Core]		_webui_send_client() -> Connection ID = 0 
+[Core]		_webui_send_client() -> Packet ID = 0x0000 
+[Core]		_webui_send_client() -> Packet CMD = 0xfa 
+[Core]		_webui_send_client() -> Packet Data = 0 bytes 
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFCFA00)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCFA00) -> Pointer #40 saved (9 + 1 bytes)
+[Core]		_webui_send_client_ws()
+[Core]		_webui_send_client_ws() -> Client #0
+[Core]		_webui_send_client_ws() -> Packet size: 9 bytes 
+[Core]		_webui_send_client_ws() -> Packet hex : [ 0xDD 0xFF 0xFF 0xFF 0xFF 0x00 0x00 0xFA 0x00 ]
+[Core]		_webui_send_client_ws() -> 9 bytes sent.
+[Core]		_webui_free_mem(0x00000293CEFCFA00)
+[Core]		_webui_free_mem(0x00000293CEFCFA00) -> Pointer #40 freed (9 + 1 bytes)
+[Core]		_webui_send_all()
+[Core]		_webui_send_client()
+[Core]		_webui_connection_get_id([2], [00000293CF017D80])
+[Core]		_webui_send_client() -> Connection ID = 1 
+[Core]		_webui_send_client() -> Packet ID = 0x0000 
+[Core]		_webui_send_client() -> Packet CMD = 0xfa 
+[Core]		_webui_send_client() -> Packet Data = 0 bytes 
+[Core]		_webui_malloc([9])
+[Core]		_webui_ptr_add(0x00000293CEFCF690)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x00000293CEFCF690) -> Pointer #40 saved (9 + 1 bytes)
+[Core]		_webui_send_client_ws()
+[Core]		_webui_send_client_ws() -> Client #1
+[Core]		_webui_send_client_ws() -> Packet size: 9 bytes 
+[Core]		_webui_send_client_ws() -> Packet hex : [ 0xDD 0xFF 0xFF 0xFF 0xFF 0x00 0x00 0xFA 0x00 ]
+[Core]		_webui_send_client_ws() -> 9 bytes sent.
+[Core]		_webui_free_mem(0x00000293CEFCF690)
+[Core]		_webui_free_mem(0x00000293CEFCF690) -> Pointer #40 freed (9 + 1 bytes)
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_ws_data_handler() -> Finished
+[Core]		_webui_ws_close_handler()
+[Core]		_webui_ws_data_handler()
+[Core]		_webui_ws_close_handler()
+[Core]		_webui_make_window_reusable(1)
+[Core]		_webui_make_window_reusable(2)
+[Core]		_webui_condition_signal()
+[Core]		_webui_condit[+31177 ms | unix=1793500175038] [hello_world:Exit] exitAll() 耗时 860 ms
+
+ion_signal()
+[Core]		_webui_server_thread([2]) -> Server stopping...
+[Core]		_webui_server_thread([1]) -> Server stopping...
+[Core]		_webui_window_wait_for_tasks([2]) -> Waiting for 3 tasks
+[Core]		_webui_timer_start()
+[Loop] _webui_wait_clean(Blocking) -> Cleaning...
+[Core]		_webui_window_clear_clients([1]) -> Removing client #0
+[Core]		_webui_free_port([38363])
+[Core]		_webui_free_mem(0x00000293CEF99EF0)
+[Core]		_webui_free_mem(0x00000293CEF99EF0) -> Pointer #19 freed (64 + 1 bytes)
+[Core]		_webui_server_thread([1]) -> Server stopped.
+[Core]		_webui_make_window_reusable(1)
+[Loop] _webui_wait_clean() -> Main loop exit successfully

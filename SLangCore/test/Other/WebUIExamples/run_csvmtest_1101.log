@@ -1,0 +1,74 @@
+﻿从 D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\Properties\launchSettings.json 使用启动设置...
+=== Front compile (in-process) ===
+Front: compile -e ir -p SLangCore\test\Other\WebUIExamples\WebUIExamples.sp --no-banner --format binary+json
+Compiling: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\WebUIExamples.sp
+[10:14:40 003] [Info] [Project]  [ProjectShowConfigPath]  Info:[加载配置文件[D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\WebUIExamples.jsonc]!]
+[FrontLog] OutputPath: D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\export\WebUIExamples\Logs\Front.txt
+[10:14:40 019] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: RefModule]
+[10:14:40 029] [Info] [Project]  [ProjectReferenceModuleCheckSkip]  Info:[Module dependency local version hit, skip download: name={}, version={}, dir={}] Extend:[Module dependency local version hit, skip download: name=SLangWebUI, version=unknown, dir=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI]
+[ModuleCheck] SLangWebUI unknown already installed at D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI, skip download
+[10:14:40 247] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Core.module.slb]
+[Reference] Module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Core.module.slb
+[10:14:40 351] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 353] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 354] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 355] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 359] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 360] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 361] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 391] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 393] [Warning] [ParseMeta]  [MetaCoreRepeatDefineFunction]  Info:[重复定义了函数 原来函数位置: 新函数位置:] Extend:[AddMetaMemberFunction]
+[10:14:40 399] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Std.module.slb]
+[Reference] Module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\Project\CSimpleVMTest\bin\Debug\net8.0\lib\Std.module.slb
+[10:14:40 428] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI\SLangWebUI.module.slb]
+[Reference] Module loaded (compiled): name=SLangWebUI, path=D:\project\lang\SlangAllInOne\SLangCore\test\Other\WebUIExamples\modules\SLangWebUI\SLangWebUI.module.slb
+[10:14:40 429] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[RefModule]完成]
+[10:14:40 430] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: File]
+[10:14:40 431] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:1]
+[10:14:40 433] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUIExamples.sp]
+[10:14:40 440] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:WebUIExamples.sl]
+[10:14:40 479] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUIExamples.sp]编译File层完成]
+[10:14:40 498] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[WebUIExamples.sl]编译File层完成]
+[10:14:40 498] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[10:14:40 499] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[10:14:40 534] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[10:14:40 585] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundInClass] File:[WebUIExamples.sl] Line:[508] Col:[18]  Info:[解析链 节点[setPublic] 没有在类[SLangWebUI.SLang.WebUIWindow]中没有被发现]
+[10:14:40 585] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[WebUIExamples.sl] Line:[508] Col:[18]  Info:[Error not support type] Extend:[Error not support type]
+[10:14:40 586] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[WebUIExamples.sl] Line:[508] Col:[8]  Info:[解析链 [Lex: w Path:WebUIExamples.sl Line: 508 Pos: 8  ] 出现了错误] Extend:[Call link parse failed!]
+[10:14:40 619] [Error] [Process]  [ProcessPhaseFailed]  Info:[编译阶段[MetaCore]失败: 阶段内产生了 2 个错误]
+[10:14:40 620] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[IR]被跳过，前置阶段未成功完成]
+[10:14:40 621] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[Export]被跳过，前置阶段未成功完成]
+[10:14:40 622] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Failed] MetaCore : 阶段内产生了 2 个错误 errors: 2
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements errors: 2
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Skipped] IR : 前置阶段[MetaCore]失败
+  [Pending] TranslateIR
+[Skipped] Export : 前置阶段[MetaCore]失败
+  [Pending] ExportModule
+]
+Compile completed.
+Front compile failed, error count: 3
+Front compile failed, exit code: 1

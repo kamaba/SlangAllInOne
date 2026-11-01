@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        WebUIExamples.main()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

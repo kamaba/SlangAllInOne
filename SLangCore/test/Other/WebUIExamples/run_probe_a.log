@@ -1,0 +1,49 @@
+﻿SimpleLanguage VM 0.0.52 (C Runtime)
+[probe] newWindow...
+
+[probe] bindHandle #1...
+
+[User] webui_new_window()
+[User] webui_get_new_window_id()
+[Core]		WebUI v2.5.0-beta.4 (Microsoft Windows, MSVC, Static, Non-Encrypted)
+[Core]		_webui_init()
+[Core]		_webui_get_current_path()
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x000001D2DC9ED090)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DC9ED090) -> Pointer #0 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x000001D2DC9FDE70)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DC9FDE70) -> Pointer #1 saved (260 + 1 bytes)
+[User] webui_new_window_id([1])
+[Core]		_webui_malloc([2621992])
+[Core]		_webui_ptr_add(0x000001D2DE6E1070)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DE6E1070) -> Pointer #2 saved (2621992 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x000001D2DCA00370)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DCA00370) -> Pointer #3 saved (260 + 1 bytes)
+[Core]		_webui_malloc([260])
+[Core]		_webui_ptr_add(0x000001D2DCA004C0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DCA004C0) -> Pointer #4 saved (260 + 1 bytes)
+[User] webui_set_center(1)
+[User] webui_set_center() -> Screen dimensions: width=2560, height=1440
+[User] webui_set_center() -> Window dimensions: width=800, height=600
+[User] webui_set_center() -> Calculated center positions: x=880, y=420
+[User] webui_set_position(1, 880, 420)
+[User] webui_bind([1])
+[Core]		_webui_get_cb_index([1])
+[Core]		_webui_get_cb_index() -> Element: [__webui_core_api__]
+[Core]		_webui_get_cb_index() -> Not found
+[Core]		_webui_free_mem(0x0000000000000000)
+[Core]		_webui_malloc([18])
+[Core]		_webui_ptr_add(0x000001D2DC9D5BA0)
+[Core]		_webui_ptr_exist()
+[Core]		_webui_ptr_add(0x000001D2DC9D5BA0) -> Pointer #5 saved (18 + 1 bytes)
+[User] webui_bind() -> Save bind index 0, address 0x00007FF9A35C8FC0
+[Core]		_webui_send_all()
+[User] webui_new_window_id() -> New window #1 @ 0x000001D2DE6E1070
+[Core]		_webui_server_thread()

@@ -98,11 +98,94 @@ static void sl_webui_trampoline( webui_event_t* e )
 }
 
 /* ========================================================================
+ * 文件处理器桥（webui_set_file_handler -> SLang handler）
+ * ------------------------------------------------------------------------
+ * webui 期望 const void* (*)(const char* filename, int* length)。SLang FFI
+ * 回调只能返回标量，故本层中转：
+ *   1) trampoline 收到 filename，重入 SLang handler（sig "ptr->void"）；
+ *   2) SLang handler 经 webui_file_response_sl() 把响应（含 HTTP 头的完整
+ *      报文）拷入本层缓冲（自持堆拷贝，规避 SL 字符串封送生命周期）；
+ *   3) trampoline 把缓冲拷入 webui_malloc（webui 自动释放）并置 *length；
+ *      SLang 未设置响应 -> 返回 NULL，webui 回落本地文件。
+ * 串行化依赖 webui_init_sl 的 ui_event_blocking（单缓冲即安全）。
+ * ======================================================================== */
+
+static int64_t g_file_sl_cb = 0;            /* SLang handler 节流点 */
+static char*   g_file_response = NULL;      /* webui_file_response_sl 写入 */
+static int     g_file_response_len = 0;
+static int     g_file_has_response = 0;
+
+static const void* sl_webui_file_trampoline( const char* filename, int* length )
+{
+    g_file_response = NULL;
+    g_file_response_len = 0;
+    g_file_has_response = 0;
+    if ( g_file_sl_cb != 0 )
+    {
+        ((void (*)(int64_t))g_file_sl_cb)( (int64_t)(size_t)filename );
+    }
+    if ( !g_file_has_response || g_file_response == NULL )
+    {
+        *length = 0;
+        return NULL;                        /* 回落本地文件 */
+    }
+    {
+        void* buf = webui_malloc( (size_t)g_file_response_len );
+        if ( buf == NULL )
+        {
+            *length = 0;
+            return NULL;
+        }
+        memcpy( buf, g_file_response, (size_t)g_file_response_len );
+        *length = g_file_response_len;
+        return buf;
+    }
+}
+
+WEBUI_SL_API void webui_set_file_handler_sl(int64_t w, int64_t sl_cb)
+{
+    g_file_sl_cb = sl_cb;
+    webui_set_file_handler( (size_t)w, sl_webui_file_trampoline );
+}
+
+/* SLang handler 回调体内调用：写入本次文件请求的响应（完整 HTTP 报文）。
+ * has_content = 0 -> 本次回落本地文件。内容立即拷贝，调用返回后失效。 */
+WEBUI_SL_API void webui_file_response_sl(const char* content, int32_t has_content)
+{
+    if ( has_content == 0 || content == NULL )
+    {
+        g_file_has_response = 0;
+        return;
+    }
+    {
+        size_t len = strlen( content );
+        char* nb = (char*)realloc( g_file_response, len + 1 );
+        if ( nb == NULL )
+        {
+            g_file_has_response = 0;
+            return;
+        }
+        g_file_response = nb;
+        memcpy( nb, content, len + 1 );
+        g_file_response_len = (int)len;
+        g_file_has_response = 1;
+    }
+}
+
+/* ========================================================================
  * 窗口生命周期 / 控制
  * ======================================================================== */
 
 WEBUI_SL_API int64_t webui_new_window_sl(void) {
     return (int64_t)webui_new_window();
+}
+
+WEBUI_SL_API int64_t webui_new_window_id_sl(int64_t id) {
+    return (int64_t)webui_new_window_id( (size_t)id );
+}
+
+WEBUI_SL_API int64_t webui_get_new_window_id_sl(void) {
+    return (int64_t)webui_get_new_window_id();
 }
 
 WEBUI_SL_API int32_t webui_show_sl(int64_t w, const char* c) {
@@ -189,6 +272,21 @@ WEBUI_SL_API void webui_set_resizable_sl(int64_t w, int32_t on) {
 WEBUI_SL_API void webui_focus_sl(int64_t w) { webui_focus( (size_t)w ); }
 WEBUI_SL_API void webui_minimize_sl(int64_t w) { webui_minimize( (size_t)w ); }
 WEBUI_SL_API void webui_maximize_sl(int64_t w) { webui_maximize( (size_t)w ); }
+WEBUI_SL_API void webui_set_frameless_sl(int64_t w, int32_t on) {
+    webui_set_frameless( (size_t)w, on != 0 );
+}
+WEBUI_SL_API void webui_set_transparent_sl(int64_t w, int32_t on) {
+    webui_set_transparent( (size_t)w, on != 0 );
+}
+WEBUI_SL_API void webui_set_high_contrast_sl(int64_t w, int32_t on) {
+    webui_set_high_contrast( (size_t)w, on != 0 );
+}
+WEBUI_SL_API void webui_set_icon_sl(int64_t w, const char* icon, const char* icon_type) {
+    webui_set_icon( (size_t)w, icon, icon_type );
+}
+WEBUI_SL_API void webui_set_public_sl(int64_t w, int32_t on) {
+    webui_set_public( (size_t)w, on != 0 );
+}
 
 /* ========================================================================
  * JS 执行
@@ -196,6 +294,10 @@ WEBUI_SL_API void webui_maximize_sl(int64_t w) { webui_maximize( (size_t)w ); }
 
 WEBUI_SL_API void webui_run_sl(int64_t w, const char* js) {
     webui_run( (size_t)w, js );
+}
+
+WEBUI_SL_API void webui_run_client_sl(int64_t e, const char* js) {
+    webui_run_client( (webui_event_t*)(size_t)e, js );
 }
 
 /* webui_script 的 char* buf/len 是输出缓冲区，SLang FFI 无法表达 ->
@@ -218,6 +320,27 @@ WEBUI_SL_API int32_t webui_set_root_folder_sl(int64_t w, const char* path) {
 WEBUI_SL_API const char* webui_start_server_sl(int64_t w, const char* content) {
     return webui_start_server( (size_t)w, content );
 }
+WEBUI_SL_API int32_t webui_set_port_sl(int64_t w, int64_t port) {
+    return webui_set_port( (size_t)w, (size_t)port ) ? 1 : 0;
+}
+WEBUI_SL_API int64_t webui_get_port_sl(int64_t w) {
+    return (int64_t)webui_get_port( (size_t)w );
+}
+WEBUI_SL_API const char* webui_get_url_sl(int64_t w) {
+    return webui_get_url( (size_t)w );
+}
+WEBUI_SL_API void webui_open_url_sl(const char* url) {
+    webui_open_url( url );
+}
+WEBUI_SL_API void webui_navigate_sl(int64_t w, const char* url) {
+    webui_navigate( (size_t)w, url );
+}
+WEBUI_SL_API void webui_set_timeout_sl(int64_t second) {
+    webui_set_timeout( (size_t)second );
+}
+WEBUI_SL_API void webui_set_runtime_sl(int64_t w, int64_t runtime) {
+    webui_set_runtime( (size_t)w, (size_t)runtime );
+}
 
 /* ========================================================================
  * 事件参数读取（回调内调用，e = webui_event_t*）
@@ -237,6 +360,32 @@ WEBUI_SL_API const char* webui_get_string_at_sl(int64_t e, int64_t i) {
 }
 WEBUI_SL_API int32_t webui_get_bool_at_sl(int64_t e, int64_t i) {
     return webui_get_bool_at( (webui_event_t*)(size_t)e, (size_t)i ) ? 1 : 0;
+}
+
+/* ---- 事件结构体字段读取（回调内；e = webui_event_t*）---- */
+
+WEBUI_SL_API int64_t webui_event_window_sl(int64_t e) {
+    return (int64_t)((webui_event_t*)(size_t)e)->window;
+}
+WEBUI_SL_API int64_t webui_event_type_sl(int64_t e) {
+    return (int64_t)((webui_event_t*)(size_t)e)->event_type;
+}
+WEBUI_SL_API const char* webui_event_element_sl(int64_t e) {
+    return ((webui_event_t*)(size_t)e)->element;
+}
+WEBUI_SL_API int64_t webui_event_client_id_sl(int64_t e) {
+    return (int64_t)((webui_event_t*)(size_t)e)->client_id;
+}
+WEBUI_SL_API int64_t webui_event_connection_id_sl(int64_t e) {
+    return (int64_t)((webui_event_t*)(size_t)e)->connection_id;
+}
+WEBUI_SL_API const char* webui_event_cookies_sl(int64_t e) {
+    return ((webui_event_t*)(size_t)e)->cookies;
+}
+
+/* 读任意 C 字符串（如文件处理器回调收到的 filename 指针） */
+WEBUI_SL_API const char* webui_peek_string_sl(int64_t ptr) {
+    return (const char*)(size_t)ptr;
 }
 
 /* ========================================================================

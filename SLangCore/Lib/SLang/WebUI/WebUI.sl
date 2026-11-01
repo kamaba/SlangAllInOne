@@ -138,6 +138,9 @@ namespace SLang
         public static void libSetHide( Int64 w, bool on ) {}
         @DllStaticImport( "webui_lib", "webui_set_resizable_sl" )
         public static void libSetResizable( Int64 w, bool on ) {}
+
+        @DllStaticImport( "webui_lib", "webui_set_public_sl" )
+        public static void libSetPublic( Int64 w, bool on ) {}
         @DllStaticImport( "webui_lib", "webui_focus_sl" )
         public static void libFocus( Int64 w ) {}
         @DllStaticImport( "webui_lib", "webui_minimize_sl" )
@@ -239,6 +242,7 @@ namespace SLang
         public void setKiosk( bool on ) { SLang.WebUI.libSetKiosk( this._handle, on ) }
         public void setHide( bool on ) { SLang.WebUI.libSetHide( this._handle, on ) }
         public void setResizable( bool on ) { SLang.WebUI.libSetResizable( this._handle, on ) }
+        public void setPublic( bool on ) { SLang.WebUI.libSetPublic( this._handle, on ) }
         public void focus() { SLang.WebUI.libFocus( this._handle ) }
         public void minimize() { SLang.WebUI.libMinimize( this._handle ) }
         public void maximize() { SLang.WebUI.libMaximize( this._handle ) }

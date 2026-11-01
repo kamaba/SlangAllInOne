@@ -93,7 +93,7 @@ TomlTest
     # 数组表：[[x]] 多元素 / 空元素 / 嵌套子表挂末元素
     static testArrayTables()
     {
-        global.println( "----- testArrayTables -----" )
+        Console.println( "----- testArrayTables -----" )
         string text = "[[products]]\nname = \"hammer\"\nsku = 738594947\n\n[[products]]\n\n[[products]]\nname = \"nail\"\nsku = 284758393\n\n[[products.sub]]\nlevel = 1\n"
         BaseToml t = BaseToml( text )
         check( "数组表 isArray", BaseToml.isArray( t.select( "products" ) ) )
@@ -108,7 +108,7 @@ TomlTest
     # 内联表与数组：单行内联/跨行数组/尾逗号/数组内注释/数组内内联表
     static testInline()
     {
-        global.println( "----- testInline -----" )
+        Console.println( "----- testInline -----" )
         string text = "point = { x = 1, y = 2 }\nempty = {}\nnums = [1, 2, 3]\nmixed = [\"a\", 2, true]\n"
         BaseToml t = BaseToml( text )
         check( "内联表 isObject", BaseToml.isObject( t.select( "point" ) ) )

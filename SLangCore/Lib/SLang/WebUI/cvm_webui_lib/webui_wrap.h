@@ -57,6 +57,8 @@ typedef enum webui_config
 
 /* ---- 窗口生命周期 / 控制 ---- */
 size_t webui_new_window(void);
+size_t webui_new_window_id(size_t window_number);
+size_t webui_get_new_window_id(void);
 bool   webui_show(size_t window, const char* content);
 bool   webui_show_browser(size_t window, const char* content, size_t browser);
 bool   webui_show_wv(size_t window, const char* content);
@@ -85,14 +87,28 @@ void   webui_set_resizable(size_t window, bool status);
 void   webui_focus(size_t window);
 void   webui_minimize(size_t window);
 void   webui_maximize(size_t window);
+void   webui_set_frameless(size_t window, bool status);
+void   webui_set_transparent(size_t window, bool status);
+void   webui_set_high_contrast(size_t window, bool status);
+void   webui_set_icon(size_t window, const char* icon, const char* icon_type);
+void   webui_set_public(size_t window, bool status);
 
 /* ---- JS 执行 ---- */
 void   webui_run(size_t window, const char* script);
+void   webui_run_client(webui_event_t* e, const char* script);
 bool   webui_script(size_t window, const char* script, size_t timeout, char* buffer, size_t buffer_length);
 
 /* ---- 服务器 / 文件 ---- */
 bool   webui_set_root_folder(size_t window, const char* path);
 const char* webui_start_server(size_t window, const char* content);
+bool   webui_set_port(size_t window, size_t port);
+size_t webui_get_port(size_t window);
+const char* webui_get_url(size_t window);
+void   webui_open_url(const char* url);
+void   webui_navigate(size_t window, const char* url);
+void   webui_set_file_handler(size_t window, const void* (*handler)(const char* filename, int* length));
+void*  webui_malloc(size_t size);
+void   webui_free(void* ptr);
 
 /* ---- 事件参数读取 ---- */
 size_t webui_get_count(webui_event_t* e);

@@ -17,6 +17,7 @@ EqBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("i32 != 2e6 = " + s.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("EqBench", "i32 != 2e6", nowMs)
 
         # 2. Int64 != 循环（Cne：Int64 x Int64）
         nowMs = Environment.sys.nowMillis()
@@ -29,6 +30,7 @@ EqBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("i64 != 2e6 = " + s64.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("EqBench", "i64 != 2e6", nowMs)
 
         # 3. Num/F64 != 循环（Cne：F64 x F64）
         nowMs = Environment.sys.nowMillis()
@@ -41,6 +43,7 @@ EqBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("f64 != 2e6 = " + sd.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("EqBench", "f64 != 2e6", nowMs)
 
         # 4. bool == 循环（Ceq：BOOL x BOOL）
         nowMs = Environment.sys.nowMillis()
@@ -55,6 +58,7 @@ EqBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("bool == 1e6 = " + cnt.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("EqBench", "bool == 1e6", nowMs)
 
         Console.println("========== EqBench (end) ==========")
     }

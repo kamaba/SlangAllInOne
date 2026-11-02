@@ -38,7 +38,8 @@
       { "path": "Mandelbrot.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CSharpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
-      { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
+      { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {

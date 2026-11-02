@@ -14,19 +14,71 @@ CSharpBench
 {
     static fun()
     {
+        # SL 侧整块计时包裹各子项（含引擎调用开销，首轮另含编译部署），逐项记录进 BenchCollector
+        t = Environment.sys.nowMillis()
         CSharpBench.fibonacci()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("Fibonacci", "fib(0..21) 递归求和（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.eqBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("EqBench", "4子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.loopBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("Loop", "3子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.levenshtein()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("Levenshtein", "levenshtein x5000（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.dataTypes()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("DataTypes", "5子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.stringBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("StringBench", "4子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.regExpBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("RegExpBench", "8子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.nQueens()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("NQueens", "n=11 单轮 + n=9 x10（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.sieve()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("Sieve", "1e6 单轮 + 5e5 x5（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.quickSort()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("QuickSort", "quicksort 3e4 x5（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.matrixMul()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("MatrixMul", "matmul 100x100 x3（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.binaryTree()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("BinaryTree", "depth12 x10 + depth16 x2（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         CSharpBench.mandelbrot()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordCSharp("Mandelbrot", "mandelbrot 240x180 x3（整块含引擎开销）", t)
     }
 
     # 1. Fibonacci：fib(0..21) 递归求和（= 17711）

@@ -15,6 +15,7 @@ StringBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("concat 1e4  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("StringBench", "concat 1e4", nowMs)
 
         # 2. 插值构建
         nowMs = Environment.sys.nowMillis()
@@ -25,6 +26,7 @@ StringBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("interp 1e4  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("StringBench", "interp 1e4", nowMs)
 
         # 3. format
         nowMs = Environment.sys.nowMillis()
@@ -35,6 +37,7 @@ StringBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("format 1e4  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("StringBench", "format 1e4", nowMs)
 
         # 4. 字符串比较
         nowMs = Environment.sys.nowMillis()
@@ -48,6 +51,7 @@ StringBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("compare 1e5  count=" + c.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("StringBench", "compare 1e5", nowMs)
 
         # 5. 最终内容校验
         Console.println("concat endswith ab = " + (s == u).toString())

@@ -33,6 +33,7 @@ Levenshtein
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("levenshtein x5000 = " + total.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Levenshtein", "levenshtein x5000", nowMs)
         Console.println("========== Levenshtein (end) ==========")
     }
 

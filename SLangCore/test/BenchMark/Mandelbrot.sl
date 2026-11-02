@@ -24,6 +24,7 @@ Mandelbrot
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("mandelbrot 240x180 x3  [$nowMs.toString() ms]  iterSum = " + Mandelbrot.iterSum.toString() + "  inside = " + Mandelbrot.insideCount.toString())
+        BenchCollector.recordSL("Mandelbrot", "mandelbrot 240x180 x3", nowMs)
 
         Console.println("========== Mandelbrot (end) ==========")
     }

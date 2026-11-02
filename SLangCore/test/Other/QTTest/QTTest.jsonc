@@ -1,0 +1,62 @@
+{
+  "project": {
+    "name": "QTTest",
+    "desc": "slQT smoke test - SLangQT module end-to-end (native dll preload / factories / bind)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "QTTest.sl", "group": "qt", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    // SLangQT = Lib\SLang\QT 标准库形态模块（2026-11-02 去插件化）：与 Core/Std
+    // 同款 lib\ 打包形态——SLangQT.module.slb + slang_qt.dll（FFI 预载）由
+    // cvm\build-slqt.ps1 步骤 5 一键打包到本目录。
+    { "path": "./lib/SLangQT.module.slb" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "QTTest",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish"
+  }
+}

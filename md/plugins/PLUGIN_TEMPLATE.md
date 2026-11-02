@@ -2,7 +2,8 @@
 
 > 蓝本：`plugin/csharp_mono`（首个按本模板落地的完整实例，2026-09-26 全链路验收）；
 > 第二实例：`plugin/java_hotspot`（HotSpot JVM via JNI，2026-09-29 代码侧 P3 收官——「接第二种运行时」的同构验证：JNI 233 槽表自带声明不依赖 JDK 头、javac 探测 + 无 JDK 降级、build 脚本含 slang refModule 编译步；设计 = `csimple_lang/md/design/HOTSPOT_JNI_INTEGRATION_DESIGN.md`）；
-> 最小范本：`plugin/echo`（六件套单文件 C99，§8.1 骨架的提取源）。
+> 最小范本：`plugin/echo`（六件套单文件 C99，§8.1 骨架的提取源）；
+> FFI 型范式：原生库经模块 `dllImports` FFI 预载直调、不走六件套路由（实例：`SLangCore/Lib/SLang/QT`——slQT 原为 FFI 型插件 `plugin/slqt`，2026-11-02 去插件化迁标准库模块形态，references 显式引用 + `vmDlls` 自动部署 DLL；同范式参考 `SLangCore/Lib/SLang/WebUI`；设计 = `Lib/SLang/QT/doc/`）。
 > 设计总纲：`csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md`（Part I 插件系统 / Part II `@tag{}` AtSignLabel 详规）。
 > 适用：给 SL 接入**一种语言 / 一个运行时 / 一台设备 / 一类工具**——新增插件目录即可，编译器与 VM 零改动。
 > 新写插件直接跳 **§8**（接口真源索引 + 六件套 C 骨架 + frontend 双契约骨架 + slang 样例 + 从零生成流程），再回 §2 查字段、§5 对 checklist、§7 避坑。

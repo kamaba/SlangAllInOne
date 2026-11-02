@@ -40,6 +40,7 @@ QuickSort
             }
         }
         Console.println("quicksort 3e4 x5  [" + totalMs.toString() + " ms]  checksum = " + checksum.toString())
+        BenchCollector.recordSL("QuickSort", "quicksort 3e4 x5", totalMs)
 
         Console.println("========== QuickSort (end) ==========")
     }

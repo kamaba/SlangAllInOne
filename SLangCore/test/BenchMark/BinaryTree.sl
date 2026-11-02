@@ -31,6 +31,7 @@ BinaryTreeBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("tree depth12 x10 checksum = " + total.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("BinaryTree", "tree depth12 x10", nowMs)
 
         # 2. depth 16 x2 轮（每轮 65535 节点）
         nowMs = Environment.sys.nowMillis()
@@ -42,6 +43,7 @@ BinaryTreeBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("tree depth16 x2 checksum = " + total2.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("BinaryTree", "tree depth16 x2", nowMs)
 
         Console.println("========== BinaryTree (end) ==========")
     }

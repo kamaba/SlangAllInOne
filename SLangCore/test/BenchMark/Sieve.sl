@@ -12,6 +12,7 @@ Sieve
         primes = Sieve.countPrimes(1000000)
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("sieve 1e6 primes = " + primes.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Sieve", "sieve 1e6 单轮", nowMs)
 
         # 2. 5e5 x5 轮（每轮 41538，合计 207690）
         nowMs = Environment.sys.nowMillis()
@@ -22,6 +23,7 @@ Sieve
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("sieve 5e5 x5 = " + total.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Sieve", "sieve 5e5 x5", nowMs)
 
         Console.println("========== Sieve (end) ==========")
     }

@@ -15,6 +15,7 @@ DataTypes
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("Int32 sum 2e6 = " + s32.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("DataTypes", "Int32 sum 2e6", nowMs)
 
         # 2. Int64
         nowMs = Environment.sys.nowMillis()
@@ -25,6 +26,7 @@ DataTypes
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("Int64 sum 2e6 = " + s64.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("DataTypes", "Int64 sum 2e6", nowMs)
 
         # 3. Num (double)
         nowMs = Environment.sys.nowMillis()
@@ -35,6 +37,7 @@ DataTypes
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("Num sum 2e6 = " + sf.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("DataTypes", "Num sum 2e6", nowMs)
 
         # 4. 混合运算（int/float 混用 + 取模）
         nowMs = Environment.sys.nowMillis()
@@ -45,6 +48,7 @@ DataTypes
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("Mixed ops 1e6 = " + mix.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("DataTypes", "Mixed ops 1e6", nowMs)
 
         # 5. bool 短路判断
         nowMs = Environment.sys.nowMillis()
@@ -58,6 +62,7 @@ DataTypes
         }
         nowMs = Environment.sys.nowMillis() - nowMs
        Console.println("bool mod 1e6 = " + count.toString() + "  [$nowMs.toString() ms]")
+       BenchCollector.recordSL("DataTypes", "bool mod 1e6", nowMs)
 
         Console.println("========== DataTypes (end) ==========")
     }

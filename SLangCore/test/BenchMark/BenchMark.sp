@@ -28,7 +28,10 @@ Project
         JsBench.fun()
 
         nowMs = Environment.sys.nowMillis() - nowMs
-         Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")
+        Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")
+
+        # 汇总采集数据，生成 .md 对比报告（以时间戳命名，写入工作目录）
+        BenchCollector.generateReport()
     }
     _before_()
     {

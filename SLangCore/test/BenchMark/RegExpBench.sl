@@ -30,6 +30,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "compile x2000  [" + nowMs.toString() + " ms]" )
+        BenchCollector.recordSL( "RegExpBench", "compile x2000", nowMs )
 
         # 1. search 早命中 "def456" x500（第 8 字节命中）
         var re1 = Text.RegExp( "def456" )
@@ -41,6 +42,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "search hit x500  [" + nowMs.toString() + " ms]  value=" + hit )
+        BenchCollector.recordSL( "RegExpBench", "search hit x500", nowMs )
 
         # 2. search 全扫不命中 "zzz999" x20（80000 个起点全部失败）
         var re2 = Text.RegExp( "zzz999" )
@@ -52,6 +54,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "search miss x20  [" + nowMs.toString() + " ms]  miss=" + miss.toString() )
+        BenchCollector.recordSL( "RegExpBench", "search miss x20", nowMs )
 
         # 3. matchAll "[a-z]+" x5（12000 个单词匹配）
         var re3 = Text.RegExp( "[a-z]+" )
@@ -63,6 +66,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "matchAll x5  [" + nowMs.toString() + " ms]  count=" + words.toString() )
+        BenchCollector.recordSL( "RegExpBench", "matchAll x5", nowMs )
 
         # 4. replace "[0-9]+" x5（12000 处替换）
         var re4 = Text.RegExp( "[0-9]+" )
@@ -74,6 +78,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "replace x5  [" + nowMs.toString() + " ms]  len=" + rep.length.toString() )
+        BenchCollector.recordSL( "RegExpBench", "replace x5", nowMs )
 
         # 5. 分组捕获 search + group 取值 x200
         var re5 = Text.RegExp( "([a-z]+)([0-9]+)" )
@@ -88,6 +93,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "group search x200  [" + nowMs.toString() + " ms]  g1=" + g1 + " g2=" + g2 )
+        BenchCollector.recordSL( "RegExpBench", "group search x200", nowMs )
 
         # 6. backref 文本 "abc abc def def " x 2000 = 32000 字节
         string chunk2 = "abc abc def def "
@@ -105,6 +111,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "backref matchAll x10  [" + nowMs.toString() + " ms]  count=" + pairs.toString() )
+        BenchCollector.recordSL( "RegExpBench", "backref matchAll x10", nowMs )
 
         # 7. UTF-8 中文："中文测试123 " x 2000 = 44000 字节
         string chunk3 = "中文测试123 "
@@ -122,6 +129,7 @@ RegExpBench
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println( "utf8 search x100  [" + nowMs.toString() + " ms]  value=" + zh )
+        BenchCollector.recordSL( "RegExpBench", "utf8 search x100", nowMs )
 
         Console.println( "========== RegExpBench (end) ==========" )
     }

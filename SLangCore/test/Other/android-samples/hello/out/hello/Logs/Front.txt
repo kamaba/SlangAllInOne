@@ -1,0 +1,49 @@
+﻿[07:04:47 939] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:0]
+[07:04:47 940] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:hello.sp]
+[07:04:47 941] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[hello.sp]编译File层完成]
+[07:04:47 941] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[07:04:47 941] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[07:04:47 942] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=0]
+[07:04:47 943] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[07:04:47 954] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[07:04:47 955] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[07:04:47 955] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[07:04:47 955] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[07:04:47 956] [Info] [GenIR]  [IRManagerStartExportingIR]  Info:[Start exporting IR debug data...] Extend:[Start exporting IR debug data...]
+[07:04:48 003] [Info] [GenIR]  [IRManagerEndExportingIR]  Info:[End exporting IR debug data...] Extend:[End exporting IR debug data...]
+[07:04:48 004] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[07:04:48 004] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[07:04:48 004] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[07:04:48 004] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[07:04:48 017] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (binary): d:\project\lang\csimple_lang\android-samples\hello\out\hello\hello.module.slb]
+[07:04:48 053] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: d:\project\lang\csimple_lang\android-samples\hello\out\hello\hello.module.json]
+[07:04:48 053] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]

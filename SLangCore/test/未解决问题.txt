@@ -6,11 +6,10 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 macOs /iOS的环境 
 编译android的环境
 
-1. 接入 javascript_quickjs 
-2. nodejs的接入 v8js
-3. 接入python
-4. 接一个asm 
-5. 接一个cplus_clang
+1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 
+2. 接入python
+3. 接一个asm 
+4. 接一个cplus_clang
 
 
 现在还需要把运行环境跑起来，第一版 把slang直接在点运行测试 后，然后会把代码发到服务器，然后服务器调用slang进行执行 这个有个注意点，就是沙盒环境，这个slang只允许访问C#规定网页环境下的内容，以外的不允许，然后把跑出来的结果通过流的方式，显示到http://localhost:4321/run 的结果栏
@@ -42,7 +41,7 @@ npm 也要可以下载插件  和包有点类似，但插件是优先下载的sl
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心  
 然后使用http server 写一个若依平台   
-制作结合SLangQT的工程  C:\Qt\qtcreator-20.0.2这个是我的QT工程，现在要制作一个QT的插件，主要就是像pyQT一样，制作slQT  目的就是使用QT的渲染机制，然后使用我的语法当作脚本，然后把QT跑起来  先制作一个D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\doc 文件在这个目录，可以分10-15个文件 用来放 整个slQT制作的过程  
+制作结合SLangQT的工程  C:\Qt\qtcreator-20.0.2这个是我的QT工程，现在要制作一个QT的插件，主要就是像pyQT一样，制作slQT  目的就是使用QT的渲染机制，然后使用我的语法当作脚本，然后把QT跑起来  先制作一个D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\doc 文件在这个目录，可以分10-15个文件 用来放 整个slQT制作的过程  （2026-11-02 已落地：slQT 以标准库模块形态接入 SLangCore\Lib\SLang\QT，去插件化——引用方 references 显式引用，QTTest 跑通 PASS）  
 制作自己的渲染底层
 在有了渲染底层后，制作浏览器解析 制作一个小的浏览器解析框架。
 SLangTorch 的制作

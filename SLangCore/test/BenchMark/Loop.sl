@@ -26,6 +26,7 @@ Loop
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("array sum x3000 = " + total.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Loop", "array sum x3000", nowMs)
 
         # 2. while 循环
         nowMs = Environment.sys.nowMillis()
@@ -38,6 +39,7 @@ Loop
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("while sum 5e6 = " + wsum.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Loop", "while sum 5e6", nowMs)
 
         # 3. for 步进
         nowMs = Environment.sys.nowMillis()
@@ -48,6 +50,7 @@ Loop
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("for step +7 1e6 = " + stepSum.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Loop", "for step +7 1e6", nowMs)
 
         Console.println("========== Loop (end) ==========")
     }

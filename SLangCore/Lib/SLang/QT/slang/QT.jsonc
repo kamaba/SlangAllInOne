@@ -1,0 +1,101 @@
+{
+  // slQT 模块编译清单（模块名 SLangQT；标准库形态模块，Lib\SLang\QT\，非插件——
+  // 2026-11-02 去插件化：无 plugin.jsonc，引用方经 references 显式引用本模块产物）。
+  // 对照 SLang/WebUI/WebUI.jsonc（FFI 原生绑定 + vmDlls 自动构建原生 DLL）。
+  // 构建：cvm/build-slqt.ps1（或直接 dotnet run --project
+  // simple_language/source/SimpleLanguageFront.csproj -- compile -p SlangAllInOne/SLangCore/Lib/SLang/QT/slang/QT.sp -e ir）
+  "project": {
+    "name": "SLangQT",
+    "desc": "SLang binds Qt6 Widgets (PyQt-like GUI library, backed by slang_qt.dll)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "dllImports": [
+    {
+      "path": "slang_qt.dll",
+      "name": "slang_qt",
+      "alias": "slang_qt",
+      "static": "slang_qt"
+    }
+  ],
+  // 模块构建时顺带编译原生 DLL（Front 按 name 拷贝产物到导出目录，便于运行期装载）。
+  // 默认 STUB 版（纯 C，无需 Qt，可 headless 验证 SL 链路）；真实 Qt 渲染替换为 slang_qt_qt.vcxproj。
+  "vmDlls": [
+    {
+      "project": "../cvm/slang_qt.vcxproj",
+      "name": "slang_qt.dll",
+      "configuration": "Release",
+      "platform": "x64"
+    }
+  ],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "QTFFI.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QObject.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QWidget.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QPushButton.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QLabel.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QLineEdit.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QMainWindow.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QApplication.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "layout/QLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "layout/QVBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "layout/QHBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "layout/QGridLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 }
+    ]
+  },
+  "references": [
+    // 本 jsonc 位于 SLangCore\Lib\SLang\QT\slang\，上 3 级到 SLangCore\Lib\（同层 Core/Std 包）
+    { "path": "../../../Core", "name": "Core" },
+    { "path": "../../../Std", "name": "Std" }
+  ],
+  "struct": [
+    {
+      "namespace": "SLang",
+      "children": [
+        { "class": "QT" },
+        { "class": "QObject" },
+        { "class": "QWidget" },
+        { "class": "QPushButton" },
+        { "class": "QLabel" },
+        { "class": "QLineEdit" },
+        { "class": "QMainWindow" },
+        { "class": "QApplication" },
+        { "class": "QLayout" },
+        { "class": "QVBoxLayout" },
+        { "class": "QHBoxLayout" },
+        { "class": "QGridLayout" }
+      ]
+    }
+  ],
+  "export": {
+    "moduleName": "SLangQT",
+    "outputDir": "../../../../../out/export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true
+  },
+  "global": {
+    "imports": []
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  }
+}

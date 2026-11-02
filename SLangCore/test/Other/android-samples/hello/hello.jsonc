@@ -1,0 +1,40 @@
+{
+  "project": {
+    "name": "hello",
+    "desc": "slang hello world for Android (arm64)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": []
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": []
+  },
+  "references": [
+    { "path": "../../../SlangAllInOne/out/export/Core/Core.module.slb" }
+  ],
+  "export": {
+    "moduleName": "hello",
+    "outputDir": "out",
+    "format": "binary+json"
+  }
+}

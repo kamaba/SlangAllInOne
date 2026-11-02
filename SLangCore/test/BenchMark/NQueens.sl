@@ -13,6 +13,7 @@ NQueens
         solutions = NQueens.solve(11)
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("nqueens(11) solutions = " + solutions.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("NQueens", "nqueens(11) 单轮", nowMs)
 
         # 2. n=9 x10 轮（解数 352 x10 = 3520）
         nowMs = Environment.sys.nowMillis()
@@ -23,6 +24,7 @@ NQueens
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("nqueens(9) x10 = " + total.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("NQueens", "nqueens(9) x10", nowMs)
 
         Console.println("========== NQueens (end) ==========")
     }

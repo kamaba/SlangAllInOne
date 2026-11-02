@@ -38,6 +38,7 @@ MatrixMul
             checksum += c[i]
         }
         Console.println("matmul 100x100 x3  [$nowMs.toString() ms]  checksum = " + checksum.toString())
+        BenchCollector.recordSL("MatrixMul", "matmul 100x100 x3", nowMs)
 
         Console.println("========== MatrixMul (end) ==========")
     }

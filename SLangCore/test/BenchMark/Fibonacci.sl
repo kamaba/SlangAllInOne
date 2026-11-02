@@ -13,6 +13,7 @@ Fibonacci
         }
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("fib(0..21) sum = " + sum.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Fibonacci", "fib(0..21) 递归求和", nowMs)
         Console.println("========== Fibonacci (end) ==========")
     }
 

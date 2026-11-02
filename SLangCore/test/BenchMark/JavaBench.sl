@@ -17,19 +17,71 @@ JavaBench
 {
     static fun()
     {
+        # SL 侧整块计时包裹各子项（含引擎调用开销，首轮另含编译部署），逐项记录进 BenchCollector
+        t = Environment.sys.nowMillis()
         JavaBench.fibonacci()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("Fibonacci", "fib(0..21) 递归求和（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.eqBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("EqBench", "4子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.loopBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("Loop", "3子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.levenshtein()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("Levenshtein", "levenshtein x5000（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.dataTypes()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("DataTypes", "5子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.stringBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("StringBench", "4子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.regExpBench()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("RegExpBench", "8子项整块（含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.nQueens()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("NQueens", "n=11 单轮 + n=9 x10（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.sieve()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("Sieve", "1e6 单轮 + 5e5 x5（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.quickSort()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("QuickSort", "quicksort 3e4 x5（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.matrixMul()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("MatrixMul", "matmul 100x100 x3（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.binaryTree()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("BinaryTree", "depth12 x10 + depth16 x2（整块含引擎开销）", t)
+
+        t = Environment.sys.nowMillis()
         JavaBench.mandelbrot()
+        t = Environment.sys.nowMillis() - t
+        BenchCollector.recordJava("Mandelbrot", "mandelbrot 240x180 x3（整块含引擎开销）", t)
     }
 
     # 1. Fibonacci：fib(0..21) 递归求和（= 17711）

@@ -90,7 +90,21 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
     │                        # jsonc 引用写 ./modules/<名> 指模块文件夹（2026-10-30）；
     │                        # C VM 装载回退链 <dir>/modules 直查命中
     │                        #（链与布局 = package-layout.md §二.6 / §四）
-    └── plugins\             # 工程声明了插件时：Front 导出的 plugins\<id>\ 整目录拷贝
+    └── plugins\             # 工程声明了插件时随包（2026-11-02 规则）：
+                             #   ① lib 对象插件：Front 导出 plugin\<id>\<平台>\
+                             #    随模块 export 整目录拷入；② lib 字符串直给
+                             #    插件：宿主 StageStringLibPlugins 把插件
+                             #    package\<平台>\ 整树（cvm 主库 + 同目录解析的
+                             #    运行期依赖 mono BCL/jvm classes 等）剥 package\
+                             #    层 stage 为 plugin\<id>\<平台>\（PackPlugins
+                             #    同形）+ plugin.jsonc；**frontend 部分
+                             #    （plugin.jsonc frontendNative.lib，仅 Front
+                             #    编译期 @tag 路由用）不进发布包**。C VM 装载：
+                             #    module.json plugins[].lib 主路径（dev 相对
+                             #    形态）在发布目录错位时，registry 预算的回退链
+                             #    <pkg>\plugin\<id>\<平台>\<basename> 兜底命中
+                             #    （sl_plugin_registry_publish_fallback；
+                             #    plugin list/info available 同链判定）
 ```
 
 > 🔥 **发布规则（2026-10-22 用户定稿）**：① 发布分 **debug/release 两型**，落
@@ -151,7 +165,7 @@ slang publish <工程>
   ├─ ① Front 编译（--format binary+json，R15；slb 主产物 + json 调试副本留工程 export 目录）
   ├─ ② 定位 C VM exe 模板：<slang>\bin\csimple_lang.exe（发布包布局，PackCvmRuntime 随包携带）
   │      → 回落 csimple_lang\build\{publish.config}\bin\ → 另一配置树
-  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\ + modules\（工程 spm 包）
+  ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\（对象 lib 随 export + 字符串直给插件 cvm 运行位 stage，frontend 不进包）+ modules\（工程 spm 包）
   └─ ④ 本配置子目录（debug\|release\）清空重建（publish 根与另一配置保留）
 ```
 

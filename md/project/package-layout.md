@@ -79,7 +79,7 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 | Front PluginLib 导出段 | 平台目录回退（`<os>` 新标准位优先）→ **递归拷贝** `outDir\plugin\<id>\<平台>\`；module.json 记 `plugin/<id>/<平台>/<file>` |
 | C VM 引用装载 | `<exe>\lib\` → `<exe>\modules\` 直查（slb 优先） |
 | C VM 关联 dll 预载 | `<exe>\lib\<平台>\` → 平铺 `lib\` → `<exe>\..\lib\<平台>\` → `<exe>\..\lib\`（sqlite delay-load 绑定） |
-| C VM FFI/插件库 | 候选链含 `<exe>\lib\<平台>\<basename>`；插件 dll 按 module.json 包相对路径（Front 已按 7.2 求值）拼接加载 |
+| C VM FFI/插件库 | 候选链含 `<exe>\lib\<平台>\<basename>`；插件 dll 按 module.json 包相对路径（Front 已按 7.2 求值）拼接加载；🔥 2026-11-02 **发布回退链**：主路径（字符串直给 lib 的 dev 相对形态）在独立 exe 发布包错位时，按 `<pkg>\plugin\<id>\<平台>\<basename>` 兜底（`sl_plugin_registry_publish_fallback` 预算 + manager 装载重试；发布宿主 StageStringLibPlugins stage 位，frontendNative.lib 不进包） |
 | AOT 工具链 | MLIRToolchain 探测 `<exe>\bin\` 优先（发布包 PackMlirTools 就位；开发树回落 `simple_language\tools\llvm`，auto-deploy 也进 `<exe>\bin\`） |
 
 ### 7.4 落点清单（本次强制执行改动，2026-10-25）

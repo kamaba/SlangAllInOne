@@ -25,6 +25,7 @@ Project
 
         CSharpBench.fun()
         JavaBench.fun()
+        JsBench.fun()
 
         nowMs = Environment.sys.nowMillis() - nowMs
          Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")

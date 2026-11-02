@@ -6,9 +6,6 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 macOs /iOS的环境 
 编译android的环境
 
-把我benchmark里边 增加一个调用csharp_mono调用 的逻辑，然后 在这个调用里边写一些 C#版 的bechmark 和现在slang里边的代码一样，然后让工程跑起来
-把我benchmark里边 增加一个调用java_hotspot调用 的逻辑，然后 在这个调用里边写一些 Java版 的bechmark 和现在slang里边的代码一样，然后让工程跑起来
-
 1. 接入 javascript_quickjs 
 2. nodejs的接入 v8js
 3. 接入python
@@ -36,7 +33,10 @@ ffmpeg的dll 引入
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
 
+做Unity3d的附属语言
+做cocos的附属语言
 
+npm 也要可以下载插件  和包有点类似，但插件是优先下载的slang下边的plugins的目录下的，
 
 
 制作http server相关的逻辑  

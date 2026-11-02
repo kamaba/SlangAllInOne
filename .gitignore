@@ -81,3 +81,6 @@
 /SLangCore/Lib/Math/publish
 /Project/Spm/obj
 /Project/Spm/bin
+/SLangCore/Lib/SLang/QT/cvm_qt_lib/x64
+/SLangCore/Lib/SLang/QT/cvm_qt_lib/build
+/SLangCore/Lib/SLang/QT/cvm_qt_lib/slang_qt

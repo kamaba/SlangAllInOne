@@ -198,6 +198,18 @@ internal static class PublishCommand
             }
         }
 
+        /* Step 7b: 字符串直给 lib 插件的 cvm 运行位 stage（2026-11-02 规则）。
+         * lib 对象插件 Front 导出期已按 plugin\<id>\<平台>\ 落到 export
+         * 目录（Step 7 随包）；字符串直给插件 dev 期原位装载（相对路径指向
+         * 仓库 plugin\ 树）——发布目录里必然错位，需把 cvm 运行位搬进发布包，
+         * C VM 装载回退链 <pkg>\plugin\<id>\<平台>\ 兜底命中。只带 cvm 部分
+         * （package\<平台>\ 整树：cvm 主库 + 同目录解析的运行期依赖 BCL/jvm
+         * 等），剥 package\ 层平铺为 plugin\<id>\<平台>\（PackPlugins 同形）；
+         * frontend 承载（plugin.jsonc frontendNative.lib，仅 Front 编译期
+         * @tag 路由用）不进发布包。普通 `slang app.jsonc`（dev）不经此路径
+         * ——slang.exe 入口按仓库 plugin\ 树原位解析，行为不变。 */
+        StageStringLibPlugins(projectDir, publishDir);
+
         /* Step 8: 工程 modules\ 整目录拷贝（2026-10-29 spm 规则）：工程
          * 经 slang spm install 装的包（modules\<名>\<名>.module.slb|json）
          * 随发布包携带，C VM 装载器 ④ 回退链 <dir>/modules 直查命中
@@ -537,6 +549,202 @@ internal static class PublishCommand
             /* stage 失败不阻断主流程（C VM 装载期按回退链解析，可诊断） */
             Console.WriteLine("[WARN] reference staging failed: " + ex.Message);
         }
+    }
+
+    /// <summary>字符串直给 lib 插件的 cvm 运行位 stage（Step 7b）。遍历工程
+    /// jsonc plugins 段，对 lib 用字符串直给（LibSpec == null，dev 期原位
+    /// 装载、Front 不拷贝导出）的插件：解析插件根目录（镜像 Front
+    /// PluginManager.ResolvePluginDir 三级链）→ 拷 package\&lt;平台&gt;\ 整树 →
+    /// publish\plugin\&lt;id&gt;\&lt;平台&gt;\（剥 package\ 层，csproj PackPlugins
+    /// 同形）→ 剔除 frontendNative.lib（frontend 部分，仅 Front 编译期用）。
+    /// lib 对象插件 / disabled / 路径解析失败均跳过（对象插件已随 Step 7
+    /// 导出随包；失败仅 [WARN]，运行期 C VM 回退链未命中会有明确诊断）。</summary>
+    static void StageStringLibPlugins(string projectDir, string publishDir)
+    {
+        var plugins = ProjectManager.config?.Plugins;
+        if (plugins == null || plugins.Count == 0)
+        {
+            return;
+        }
+        foreach (var p in plugins)
+        {
+            if (p == null || !p.Enabled || string.IsNullOrWhiteSpace(p.Id) || p.LibSpec != null)
+            {
+                continue;
+            }
+            string? pluginDir = ResolvePluginDir(p.Path, projectDir);
+            if (pluginDir == null)
+            {
+                Console.WriteLine($"[WARN] plugin: '{p.Id}' dir not found (path={p.Path}); string-lib plugin needs it staged for standalone exe");
+                continue;
+            }
+            string plat = HostPlatformDir();
+            /* cvm 运行位：package\<平台>\（2026-10-25 插件包标准位），空则
+             * 回退发布包平铺位 <插件根>\<平台>\。 */
+            string srcPlat = Path.Combine(pluginDir, "package", plat);
+            if (!Directory.Exists(srcPlat))
+            {
+                srcPlat = Path.Combine(pluginDir, plat);
+                if (!Directory.Exists(srcPlat))
+                {
+                    Console.WriteLine($"[WARN] plugin: '{p.Id}' has no {plat} runtime dir under {pluginDir} (run the plugin's build script first)");
+                    continue;
+                }
+            }
+            string destId = Path.Combine(publishDir, "plugin", p.Id);
+            CopyDirectory(srcPlat, Path.Combine(destId, plat));
+
+            /* frontendNative.lib 不进发布包（frontend 部分：Front 编译期
+             * @tag 路由承载，C VM 运行期只加载 entry.lib 不加载它）。 */
+            string? feLib = ReadFrontendNativeLib(pluginDir);
+            if (!string.IsNullOrWhiteSpace(feLib))
+            {
+                string fe = Path.Combine(destId, plat, feLib);
+                if (File.Exists(fe))
+                {
+                    File.Delete(fe);
+                }
+            }
+            string manifest = Path.Combine(pluginDir, "plugin.jsonc");
+            if (File.Exists(manifest))
+            {
+                File.Copy(manifest, Path.Combine(destId, "plugin.jsonc"), overwrite: true);
+            }
+            Console.WriteLine($"[OK]  plugin:  {p.Id}  (cvm: {plat}\\ staged; frontend excluded)");
+        }
+    }
+
+    /// <summary>插件目录解析（镜像 Front PluginManager.ResolvePluginDir）：
+    /// 绝对路径 → 相对工程 jsonc 目录 → 逐级上溯（SpecialTest 类深嵌工程
+    /// path="plugin/echo" 常指仓库根）→ CWD 兜底。</summary>
+    static string? ResolvePluginDir(string? path, string projectDir)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+        try
+        {
+            if (Path.IsPathRooted(path))
+            {
+                return Directory.Exists(path) ? Path.GetFullPath(path) : null;
+            }
+            string direct = Path.GetFullPath(Path.Combine(projectDir, path));
+            if (Directory.Exists(direct))
+            {
+                return direct;
+            }
+            string dir = projectDir;
+            while (!string.IsNullOrEmpty(dir))
+            {
+                string? up = Path.GetDirectoryName(dir);
+                if (string.IsNullOrEmpty(up) || up == dir)
+                {
+                    break;
+                }
+                dir = up;
+                string cand = Path.GetFullPath(Path.Combine(dir, path));
+                if (Directory.Exists(cand))
+                {
+                    return cand;
+                }
+            }
+            string cwd = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, path));
+            return Directory.Exists(cwd) ? cwd : null;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>读 plugin.jsonc 的 frontendNative.lib 文件名（jsonc 带注释，
+    /// 先剥注释再 JSON 解析；解析失败返回 null——frontend 剔除是锦上添花，
+    /// 不因清单读取失败中断 stage）。</summary>
+    static string? ReadFrontendNativeLib(string pluginDir)
+    {
+        try
+        {
+            string manifest = Path.Combine(pluginDir, "plugin.jsonc");
+            if (!File.Exists(manifest))
+            {
+                return null;
+            }
+            using var doc = JsonDocument.Parse(StripJsoncComments(File.ReadAllText(manifest)));
+            if (doc.RootElement.TryGetProperty("frontendNative", out var fe)
+                && fe.TryGetProperty("lib", out var libEl))
+            {
+                return libEl.GetString();
+            }
+        }
+        catch (Exception)
+        {
+            /* 清单异常不阻断：多带一个 frontend dll 仅冗余不致错 */
+        }
+        return null;
+    }
+
+    /// <summary>剥 jsonc 注释（// 与 /* */，字符串字面量内不剥——状态机
+    /// 实现，plugin.jsonc 无需处理转义之外的特殊形态）。</summary>
+    static string StripJsoncComments(string text)
+    {
+        var sb = new StringBuilder(text.Length);
+        bool inString = false, escaped = false;
+        for (int i = 0; i < text.Length; i++)
+        {
+            char c = text[i];
+            if (inString)
+            {
+                sb.Append(c);
+                if (escaped)
+                {
+                    escaped = false;
+                }
+                else if (c == '\\')
+                {
+                    escaped = true;
+                }
+                else if (c == '"')
+                {
+                    inString = false;
+                }
+                continue;
+            }
+            if (c == '"')
+            {
+                inString = true;
+                sb.Append(c);
+                continue;
+            }
+            if (c == '/' && i + 1 < text.Length && text[i + 1] == '/')
+            {
+                while (i < text.Length && text[i] != '\n')
+                {
+                    i++;
+                }
+                if (i < text.Length)
+                {
+                    sb.Append('\n');
+                }
+                continue;
+            }
+            if (c == '/' && i + 1 < text.Length && text[i + 1] == '*')
+            {
+                i += 2;
+                while (i + 1 < text.Length && !(text[i] == '*' && text[i + 1] == '/'))
+                {
+                    if (text[i] == '\n')
+                    {
+                        sb.Append('\n'); /* 保留行号便于错误定位 */
+                    }
+                    i++;
+                }
+                i++; /* 跳过结尾 '/' */
+                continue;
+            }
+            sb.Append(c);
+        }
+        return sb.ToString();
     }
 
     /// <summary>单模块 slb 产物来源链（包布局优先 → dev out\export）。</summary>

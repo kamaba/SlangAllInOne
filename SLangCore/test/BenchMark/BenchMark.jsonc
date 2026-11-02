@@ -37,7 +37,8 @@
       { "path": "BinaryTree.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "Mandelbrot.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CSharpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
-      { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
+      { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -87,6 +88,20 @@
       "abi": 1,
       "prefix": "sl_java_hotspot_",
       "lib": "../../../../plugin/java_hotspot/package/windows/cvm_java_hotspot.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    "javascript_quickjs": {
+      "name": "javascript_runtime_use_quickjs_engine",
+      "version": "0.1.0",
+      "path": "plugin/javascript_quickjs",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_javascript_quickjs_",
+      "lib": "../../../../plugin/javascript_quickjs/package/windows/cvm_javascript_quickjs.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

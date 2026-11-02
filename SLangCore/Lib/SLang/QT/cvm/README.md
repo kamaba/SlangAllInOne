@@ -28,18 +28,34 @@ powershell -ExecutionPolicy Bypass -File build-slqt.ps1 -Qt -Qt6Dir "C:\Qt\6.8.0
 ### 手动（单工程）
 
 ```powershell
-msbuild slang_qt.vcxproj /p:Configuration=Release /p:Platform=x64        # STUB
+msbuild slang_qt.vcxproj /p:Configuration=Release /p:Platform=x64        # STUB -> x64\Release\
 msbuild slang_qt_qt.vcxproj /p:Configuration=Release /p:Platform=x64 `
-  /p:Qt6_DIR="C:\Qt\6.8.0\msvc2019_64"                                  # Qt6
+  /p:Qt6_DIR="C:\Qt\6.8.1\msvc2022_64"                                  # Qt6 -> x64\QtRelease\
 ```
 
-或在编译 SLangQT 模块时由 Front 自动构建（`../slang/QT.jsonc` 的 `vmDlls` 指向
+或在编译 SLangQT 模块时由 Front 自动构建（`QT.jsonc` 的 `vmDlls` 指向
 `slang_qt.vcxproj`，产物拷入模块导出目录）。真实 Qt 版把 `vmDlls.project` 切到
 `slang_qt_qt.vcxproj` 重编模块即可；运行期需 Qt6 运行库
 （`Qt6Core.dll` / `Qt6Widgets.dll` / `Qt6Gui.dll`）位于 PATH 或程序目录。
 
-> 本机 Qt 安装：`C:\Qt\qtcreator-20.0.2` 是 Qt Creator（IDE），Qt 运行/库通常在
-> `C:\Qt\<版本>\msvc20xx_64`。以实际目录为准设置 `Qt6_DIR`。
+> **本机 Qt6 SDK（2026-11-02 实装）**：`C:\Qt\qtcreator-20.0.2` 是 Qt Creator（IDE）
+> 本体，`include\`/`lib\` 无 Qt 开发文件、不能当 SDK；真实 SDK 经 aqtinstall 装于
+> `C:\Qt\6.8.1\msvc2022_64`（`python -m aqt install-qt -O C:\Qt windows desktop 6.8.1 win64_msvc2022_64`）。
+> `slang_qt_qt.vcxproj` 已带 `/std:c++17 /Zc:__cplusplus /EHsc`（Qt 6.8 MSVC 硬性要求），
+> 默认 `Qt6_DIR` 已指向该装位；Qt 后端输出独立落 `x64\QtRelease\`（与 STUB 的
+> `x64\Release\` 相互隔离，vmDlls 重编 STUB 不会覆盖 Qt 后端）。
+
+### 运行真实 Qt 窗口（QTTest smoke）
+
+```powershell
+powershell -ExecutionPolicy Bypass -File run-qttest.ps1
+```
+
+助手做三件事：把 Qt 后端 `x64\QtRelease\slang_qt.dll` 同步进暂存包
+`package\win32-debug\SLangQT\`（vmDlls 每次重编模块都会回填 STUB，真实运行前必须重铺）、
+注入 Qt 运行环境（`PATH` += SDK `bin\`、`QT_QPA_PLATFORM_PLUGIN_PATH` = `plugins\platforms`）、
+前台运行 `slang.exe run <暂存 slb>`。窗口在你自己终端所在桌面弹出（agent/CI 会话
+无可视桌面时 `exec()` 无窗口可等会即刻返回，属预期）。
 
 ## 符号约定
 

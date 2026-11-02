@@ -37,9 +37,9 @@ public class App
 
 ## 构建 / 运行（标准库形态模块 `Lib/SLang/QT/`）
 
-- 本库是 `SlangAllInOne\SLangCore\Lib\SLang\QT\` 标准库形态模块（2026-11-02 自插件形态迁移，无 `plugin.jsonc`）。引用方工程在 `references` 显式引用本模块产物——开发树 `{ "path": "../../../../out/export/SLangQT/SLangQT.module.slb" }` 或打包副本 `{ "path": "./lib/SLangQT.module.slb" }`（`lib\` 下 slb + slang_qt.dll 一对，与 Core/Std 打包形态一致）；原生 `slang_qt.dll` 经模块 `dllImports` FFI 预载（见 `doc/08-Packaging.md` §2）。
-- 一键构建：`powershell -File cvm/build-slqt.ps1`（在 `QT\` 目录下执行；默认 STUB；`-Qt -Qt6Dir <dir>` 切真实 Qt6 后端）。`vmDlls` 挂 `../cvm/slang_qt.vcxproj`，编译模块时 Front 自动 msbuild 出 DLL 并拷入模块导出目录。
+- 本库是 `SlangAllInOne\SLangCore\Lib\SLang\QT\` 标准库形态模块，**与 Mysql/Server 同构布局**（模块源文件在模块根：`QT.sp`/`QT.jsonc`/`QTFFI.sl`/`core\`/`layout\`，原生层 `cvm\`；2026-11-02 自插件形态迁移并展平）。引用方工程走 **spm 包形态**：`references` 写 `{ "path": "./modules/SLangQT" }`，产物（slb + json + slang_qt.dll）由 `cvm\build-slqt.ps1` 步骤 5 一键打包进工程 `modules\SLangQT\`；备选直引 out\export 产物 `{ "path": "../../../../out/export/SLangQT/SLangQT.module.json" }`。原生 `slang_qt.dll` 经模块 `dllImports` FFI 预载（见 `doc/08-Packaging.md` §2）。
+- 一键构建：`powershell -File cvm/build-slqt.ps1`（在 `QT\` 目录下执行；默认 STUB；`-Qt -Qt6Dir <dir>` 切真实 Qt6 后端）。`vmDlls` 挂 `cvm/slang_qt.vcxproj`，编译模块时 Front 自动 msbuild 出 DLL 并拷入模块导出目录。
 - **已验证（2026-11-02）**：`QTTest` 经 `CSimpleVMTest` 宿主以模块形态跑通，`ffi_connect` 返回真实 `bind_id > 0`（FFI 回退体返回 0，故 PASS 即证明原生 DLL 真被装载），输出 `slQT smoke test: PASS`。
-- 真实 Qt 渲染：`build-slqt.ps1 -Qt`（或把 `vmDlls.project` 切到 `../cvm/slang_qt_qt.vcxproj` 并设 `Qt6_DIR`）重编即可弹出真实 Qt 窗口。
+- 真实 Qt 渲染：`build-slqt.ps1 -Qt`（Qt6_DIR 默认 `C:\Qt\6.8.1\msvc2022_64`，本机 aqtinstall 装位）编出 Qt 后端（独立落 `cvm/x64/QtRelease/`），再跑 `cvm/run-qttest.ps1` 在自己终端弹真实 Qt 窗口（agent 会话无可视桌面时 exec 即返属预期）。
 - 已知显示怪癖（VM 层，非 slQT 范畴）：`"text=" + Int64` 拼接输出为空（`bind_id` 数值不回显），判断逻辑（`bid != 0`）不受影响；WebUITest 同样存在。
 - 详见 `../doc/` 设计文档集（00-Index 起）、`../README.md` 与 `../cvm/README.md`。

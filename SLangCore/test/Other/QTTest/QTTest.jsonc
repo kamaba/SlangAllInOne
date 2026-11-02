@@ -39,10 +39,10 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    // SLangQT = Lib\SLang\QT 标准库形态模块（2026-11-02 去插件化）：与 Core/Std
-    // 同款 lib\ 打包形态——SLangQT.module.slb + slang_qt.dll（FFI 预载）由
-    // cvm\build-slqt.ps1 步骤 5 一键打包到本目录。
-    { "path": "./lib/SLangQT.module.slb" }
+    // SLangQT = spm 包形态模块（package-layout §二.6 / publish-guide §6）：
+    // 产物装在工程 modules\SLangQT\（slb + json + slang_qt.dll，cvm\build-slqt.ps1
+    // 步骤 5 一键打包）；原生 dll 经模块 dllImports FFI 预载（pkg_dir 平铺命中）。
+    { "path": "./modules/SLangQT" }
   ],
   "struct": [
   ],

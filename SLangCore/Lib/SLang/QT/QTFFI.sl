@@ -159,15 +159,19 @@ namespace SLang
         }
 
         # 连接信号到任意 SLang 函数值；按 signalId 选择 trampoline 形态。
+        # createCallback 失败（cb=0，方法查找 miss）时不连接、bind 返回 0
+        # ——原生层对 cb=0 同款拒绝（slqt_connect_sl），悬空 null 桩会让
+        # 信号发射即崩溃；bind=0 在调用侧可见可诊断。
         public static Int64 connect( Int64 h, Int32 signalId, Function handler )
         {
             if ( _handlers == null ) { _handlers = List<Function>() }
             if ( _dispatchVoidCb == 0 ) { _dispatchVoidCb = FFI.StaticLibrary.createCallback( "SLang.QT._dispatchVoid", "i64->void" ) }
             if ( _dispatchStringCb == 0 ) { _dispatchStringCb = FFI.StaticLibrary.createCallback( "SLang.QT._dispatchString", "i64,utf8->void" ) }
-            _handlers.add( handler )
-            Int64 slot = ( _handlers.length - 1 ) as Int64
             Int64 cb = _dispatchVoidCb
             if ( signalId == SIG_TEXT_CHANGED ) { cb = _dispatchStringCb }
+            if ( cb == 0 ) { ret 0 }
+            _handlers.add( handler )
+            Int64 slot = ( _handlers.length - 1 ) as Int64
             ret ffi_connect( h, signalId, cb, slot )
         }
 

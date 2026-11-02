@@ -74,6 +74,13 @@ internal static class Program
         "pack-modules", "pack-docs", "ffi-check", "version", "help",
     };
 
+    /* STAThread（2026-11-02）：宿主主线程 COM 初始化为 STA。缺省 MTA 会让进程内
+     * C VM（RunCli → cli_main）里 Qt 的 OleInitialize 以 RPC_E_CHANGED_MODE
+     * 失败（QTTest 实录 0x80010106）——窗口仍可弹出但 OLE 家族能力退化
+     * （QWindowsClipboard 初始化失败 → QLineEdit 粘贴/拖放失效），且每次
+     * GUI 运行 stderr 刷警告。STA 与 Qt Windows 期望一致，剪贴板完整。
+     * Front 本身无 MTA 依赖（纯编译宿主 + P/Invoke 原生 C VM），切换无副作用。 */
+    [STAThread]
     static int Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;

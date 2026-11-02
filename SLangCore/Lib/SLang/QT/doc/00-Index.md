@@ -1,8 +1,8 @@
 # slQT · SimpleLanguage 绑定 Qt 设计文档集
 
-- 版本：v3（2026-11-02 去插件化：迁标准库模块形态；v1/v2 插件包方案留档 git 历史）
+- 版本：v4（2026-11-02 去插件化 + 模块布局对齐 Mysql/Server 规则：源文件展平模块根、引用方直引 out\export 产物；v1/v2 插件包方案留档 git 历史）
 - 日期：2026-11-02
-- 关联代码根：`SlangAllInOne/SLangCore/Lib/SLang/QT/`（标准库形态模块，与 Mysql/Render/WebUI 同级）
+- 关联代码根：`SlangAllInOne/SLangCore/Lib/SLang/QT/`（标准库形态模块，与 Mysql/Render/WebUI 同级同构）
 - 机制依据：
   - FFI 机制：[`SlangAllInOne/md/project/ffi.md`](../../../SlangAllInOne/md/project/ffi.md)
   - 原生绑定范式（参考实现）：`SlangAllInOne/SLangCore/Lib/SLang/Render/doc/04-NativeBinding-And-Platform.md`
@@ -42,31 +42,29 @@
 
 ---
 
-## 2. 目录规划（已落地 = 标准库模块形态）
+## 2. 目录规划（已落地 = 标准库模块形态，Mysql/Server 同构布局）
 
 ```
-SLangCore/Lib/SLang/QT/
-├── README.md                         # 模块说明（构建 / 引用用法）
-├── doc/                              # 本文档集（00-11 共 12 份）
-├── slang/                            # SLangQT 模块源码
-│   ├── QT.jsonc                      #   编译清单 + dllImports（slang_qt 静态名绑定）+ vmDlls
-│   ├── QT.sp                         #   工程入口
-│   ├── QT.md                         #   库说明
-│   ├── QTFFI.sl                      #   单一原生绑定面（@DllStaticImport -> slqt_*）
-│   ├── core/                         #   SL 封装类（QApplication/QObject/QWidget/QPushButton/
-│   │                                 #   QLabel/QLineEdit/QMainWindow）
-│   └── layout/                       #   布局类（QLayout/QVBoxLayout/QHBoxLayout/QGridLayout）
-└── cvm/                              # 原生粘合层（独立原生 DLL，非 cvm 内部）
-    ├── src/slang_qt/
-    │   ├── slang_qt.h                #   slqt_*_sl 扁平导出声明（extern "C"）
-    │   ├── slang_qt_backend.h        #   后端接口 slqt_be_*（stub / Qt 两套实现）
-    │   ├── slang_qt.c                #   绑定层：句柄注册表 + 信号绑定表，转发到 slqt_be_*
-    │   ├── slang_qt_stub.c           #   STUB 后端：纯 C 无操作（headless 验证用）
-    │   └── slang_qt_qt.cpp           #   Qt6 后端：真实 Qt 实现（lambda 回调节流点）
-    ├── slang_qt.vcxproj              #   默认 STUB 工程（纯 C）
-    ├── slang_qt_qt.vcxproj           #   真实 Qt 工程（需 Qt6 + VC++）
-    ├── build-slqt.ps1                #   一键构建（DLL + SL 模块 + 部署）
-    └── README.md                     #   构建 / 切换说明
+SLangCore/Lib/SLang/QT/            # 模块根（模块源文件在此层，无 slang/ 子目录）
+├── README.md / QT.md              # 模块说明（构建 / 引用用法）
+├── QT.jsonc                       # 编译清单 + dllImports（slang_qt 静态名绑定）+ vmDlls
+├── QT.sp                          # 工程入口
+├── QTFFI.sl                       # 单一原生绑定面（@DllStaticImport -> slqt_*）
+├── core/                          # SL 封装类（QApplication/QObject/QWidget/QPushButton/
+│                                  #   QLabel/QLineEdit/QMainWindow）
+├── layout/                        # 布局类（QLayout/QVBoxLayout/QHBoxLayout/QGridLayout）
+├── cvm/                           # 原生粘合层（独立原生 DLL，非 cvm 内部）
+│   ├── src/slang_qt/
+│   │   ├── slang_qt.h             #   slqt_*_sl 扁平导出声明（extern "C"）
+│   │   ├── slang_qt_backend.h     #   后端接口 slqt_be_*（stub / Qt 两套实现）
+│   │   ├── slang_qt.c             #   绑定层：句柄注册表 + 信号绑定表，转发到 slqt_be_*
+│   │   ├── slang_qt_stub.c        #   STUB 后端：纯 C 无操作（headless 验证用）
+│   │   └── slang_qt_qt.cpp        #   Qt6 后端：真实 Qt 实现（lambda 回调节流点）
+│   ├── slang_qt.vcxproj           #   默认 STUB 工程（纯 C）
+│   ├── slang_qt_qt.vcxproj        #   真实 Qt 工程（需 Qt6 + VC++）
+│   ├── build-slqt.ps1             #   一键构建（DLL + SL 模块 + 部署）
+│   └── README.md                  #   构建 / 切换说明
+└── doc/                           # 本文档集（00-11 共 12 份）
 ```
 
 > 信号槽桥接逻辑位于 `slang/QTFFI.sl`（`_dispatchVoid` / `_dispatchString` + `connect`），无需独立 `event/` 目录。

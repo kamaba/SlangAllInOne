@@ -84,3 +84,8 @@
 /SLangCore/Lib/SLang/QT/cvm_qt_lib/x64
 /SLangCore/Lib/SLang/QT/cvm_qt_lib/build
 /SLangCore/Lib/SLang/QT/cvm_qt_lib/slang_qt
+/SLangCore/Lib/SLang/QT/cvm/x64
+/SLangCore/Lib/SLang/QT/cvm/obj
+/SLangCore/Lib/SLang/QT/cvm/slang_qt_qt
+/SLangCore/Lib/SLang/QT/publish
+/SLangCore/test/Other/QTTest/publish

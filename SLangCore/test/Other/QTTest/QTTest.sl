@@ -38,6 +38,9 @@ public class QTTest
 
         Int64 bid1 = btn.clicked( QTTest.onClick )
         Int64 bid2 = edit.onTextChanged( QTTest.onText )
+        # 程序化端到端信号验证：setText 同步发射 textChanged → FFI 桩重入
+        # VM → onText 打印（不依赖人工交互；bind/probe 只证明连接成功）。
+        edit.setText( "signal-e2e" )
         Console.println( "slQT smoke: clicked bind=" + bid1 + " textChanged bind=" + bid2 )
 
         if ( bid1 != 0 )

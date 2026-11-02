@@ -2,11 +2,13 @@
 # (Lib/SLang/QT, stdlib-style module - NOT a plugin since 2026-11-02).
 #   1) native DLL (stub backend by default; -Qt switches to the real Qt6 backend)
 #      -> intermediate copy in cvm\obj\slang_qt.dll
-#   2) SL module (Front compile <QT>\slang\QT.sp, R15 format binary+json)
+#   2) SL module (Front compile <QT>\QT.sp, R15 format binary+json)
 #      -> <repo>\SlangAllInOne\out\export\SLangQT\SLangQT.module.slb
 #      (QT.jsonc vmDlls also msbuilds the stub vcxproj and copies the DLL there)
 #   3) deploy: copy the step-1 DLL next to the module product (pkg_dir flat slot,
 #      the FFI static-lib preload candidate).
+# Consumers reference the module product directly (ServerTest/MysqlTest form):
+#   { "path": "<...>\out\export\SLangQT\SLangQT.module.json" }
 # Usage: powershell -ExecutionPolicy Bypass -File build-slqt.ps1 [-Qt] [-Qt6Dir <dir>]
 # Deps: MSVC x64 cl.exe + dotnet SDK. -Qt additionally needs Qt6 (widgets/gui/core).
 # NOTE: keep comments pure ASCII - PS 5.1 -File reads BOM-less UTF-8 as GBK
@@ -14,7 +16,7 @@
 
 param(
     [switch]$Qt,
-    [string]$Qt6Dir = "C:\Qt\6.8.0\msvc2019_64"
+    [string]$Qt6Dir = "C:\Qt\6.8.1\msvc2022_64"
 )
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path   # Lib/SLang/QT/cvm
@@ -51,10 +53,15 @@ $dll = Join-Path $objDir "slang_qt.dll"
 if ($Qt) {
     # Real Qt6 backend: msbuild the Qt vcxproj (Qt6_DIR resolves moc-less C++ glue).
     $msbuild = Get-Command msbuild.exe -ErrorAction SilentlyContinue
-    if ($null -eq $msbuild) { throw "msbuild not on PATH (needed for -Qt builds)" }
+    if ($null -eq $msbuild) {
+        # fall back to the VS-bundled MSBuild (same VS root probing as cl above)
+        $vsMb = "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
+        if (Test-Path $vsMb) { $msbuild = @{ Source = $vsMb } }
+    }
+    if ($null -eq $msbuild) { throw "msbuild not found (PATH and VS 18 Community probing failed)" }
     & $msbuild.Source (Join-Path $here "slang_qt_qt.vcxproj") /nologo /v:m /p:Configuration=Release /p:Platform=x64 /p:Qt6_DIR="$Qt6Dir"
     if ($LASTEXITCODE -ne 0) { throw "msbuild slang_qt_qt failed (exit $LASTEXITCODE)" }
-    Copy-Item (Join-Path $here "x64\Release\slang_qt.dll") $dll -Force
+    Copy-Item (Join-Path $here "x64\QtRelease\slang_qt.dll") $dll -Force
     Write-Host "SLangQT native built (Qt6 backend, Qt6_DIR=$Qt6Dir) -> $dll"
 }
 else {
@@ -67,7 +74,7 @@ else {
 
 # --- 3) compile the SLangQT module (R15: binary+json) ---
 $front = Join-Path $repo "simple_language\source\SimpleLanguageFront.csproj"
-& dotnet run --project $front -- compile -p (Join-Path $qtRoot "slang\QT.sp") -e ir --format binary+json
+& dotnet run --project $front -- compile -p (Join-Path $qtRoot "QT.sp") -e ir --format binary+json
 if ($LASTEXITCODE -ne 0) { Write-Host "warning: Front compile exit $LASTEXITCODE (Front errors are in the log above)" }
 
 # --- 4) deploy: DLL next to the module product (FFI pkg_dir flat candidate) ---
@@ -80,18 +87,21 @@ else {
     Write-Host "warning: module export dir missing ($exportDir) - Front compile did not export?"
 }
 
-# --- 5) pack the module for the smoke test: QTTest\lib\ (slb + native dll) ---
-# Same packaged-module shape as Core/Std in the test lib dir; QTTest.jsonc
-# references ./lib/SLangQT.module.slb and the FFI preload hits ./lib/slang_qt.dll.
-$testLib = Join-Path $repo "SlangAllInOne\SLangCore\test\Other\QTTest\lib"
-$slb = Join-Path $repo "SlangAllInOne\out\export\SLangQT\SLangQT.module.slb"
-if ((Test-Path $testLib) -and (Test-Path $slb)) {
-    Copy-Item $slb (Join-Path $testLib "SLangQT.module.slb") -Force
-    Copy-Item $dll (Join-Path $testLib "slang_qt.dll") -Force
-    Write-Host "packed SLangQT module -> $testLib (SLangQT.module.slb + slang_qt.dll)"
+# --- 5) pack the module into the consumer project modules\ slot (spm layout) ---
+# modules\SLangQT\{SLangQT.module.slb|json + slang_qt.dll} - the QTTest project
+# references ./modules/SLangQT (package-layout section 2.6 form); publish step 8
+# carries the whole dir into the app package.
+$exportRoot = Join-Path $repo "SlangAllInOne\out\export\SLangQT"
+$testModules = Join-Path $repo "SlangAllInOne\SLangCore\test\Other\QTTest\modules\SLangQT"
+if ((Test-Path $exportRoot) -and (Test-Path (Split-Path -Parent $testModules))) {
+    New-Item -ItemType Directory -Force -Path $testModules | Out-Null
+    Copy-Item (Join-Path $exportRoot "SLangQT.module.slb") $testModules -Force
+    Copy-Item (Join-Path $exportRoot "SLangQT.module.json") $testModules -Force
+    Copy-Item $dll (Join-Path $testModules "slang_qt.dll") -Force
+    Write-Host "packed SLangQT module -> $testModules (slb + json + dll, spm layout)"
 }
 else {
-    Write-Host "warning: skip pack (testLib=$testLib slb=$slb)"
+    Write-Host "warning: skip pack (exportRoot=$exportRoot)"
 }
 
 Write-Host "SLangQT module build done."

@@ -25,6 +25,8 @@
     <CharacterSet>Unicode</CharacterSet>
     <!-- 产出文件名必须等于 QT.jsonc vmDlls.name（Front 按该名拷贝产物）。 -->
     <TargetName>slang_qt</TargetName>
+    <!-- 独立输出位：与 STUB 工程 x64\Release\ 相互隔离（后建者覆盖对方即翻车）。 -->
+    <OutDir>$(ProjectDir)x64\QtRelease\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -33,6 +35,7 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <TargetName>slang_qt</TargetName>
+    <OutDir>$(ProjectDir)x64\QtRelease\</OutDir>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -51,8 +54,8 @@
        例：msbuild slang_qt_qt.vcxproj /p:Qt6_DIR=C:\Qt\6.8.0\msvc2019_64 -->
   <PropertyGroup>
     <QT_SRC>$(ProjectDir)src\slang_qt</QT_SRC>
-    <!-- 默认 Qt6 路径占位：实际构建请通过 /p:Qt6_DIR=... 覆盖 -->
-    <Qt6_DIR Condition="'$(Qt6_DIR)'==''">C:\Qt\6.8.0\msvc2019_64</Qt6_DIR>
+    <!-- 默认 Qt6 路径（本机 aqtinstall 装位）：实际构建请通过 /p:Qt6_DIR=... 覆盖 -->
+    <Qt6_DIR Condition="'$(Qt6_DIR)'==''">C:\Qt\6.8.1\msvc2022_64</Qt6_DIR>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -60,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /std:c++17 /Zc:__cplusplus /EHsc %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -81,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /std:c++17 /Zc:__cplusplus /EHsc %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

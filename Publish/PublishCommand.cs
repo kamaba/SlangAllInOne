@@ -183,7 +183,7 @@ internal static class PublishCommand
          * basename 直查即命中（slb 优先重定向）。 */
         if (result.ModuleJsonPath != null && File.Exists(result.ModuleJsonPath))
         {
-            StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot);
+            StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot, projectDir);
         }
 
         /* Step 7: 插件产物（Front 导出已按 plugin\<id>\ 布局落到模块
@@ -432,7 +432,7 @@ internal static class PublishCommand
     /// ——C VM 两条链均命中：FFI sl_ffi_lib_load 发布布局回退
     /// （&lt;exe&gt;\lib\&lt;平台&gt;\）与 vm_sys_ffi_static_lib_register 的
     /// pkg_dir/&lt;平台&gt;/basename。未找到仅提示不阻断。</summary>
-    static void StageReferencedModules(string moduleJsonPath, string publishDir, string? repoRoot)
+    static void StageReferencedModules(string moduleJsonPath, string publishDir, string? repoRoot, string projectDir)
     {
         try
         {
@@ -440,6 +440,8 @@ internal static class PublishCommand
             if (!doc.RootElement.TryGetProperty("moduleReferences", out var refsEl))
                 return;
             string baseDir = Path.GetDirectoryName(Path.GetFullPath(moduleJsonPath)) ?? ".";
+            string modulesRoot = Path.GetFullPath(Path.Combine(projectDir, "modules"))
+                + Path.DirectorySeparatorChar;
             foreach (var r in refsEl.EnumerateArray())
             {
                 if (!r.TryGetProperty("name", out var nameEl))
@@ -447,6 +449,32 @@ internal static class PublishCommand
                 string name = nameEl.GetString() ?? "";
                 if (name.Length == 0 || SystemModuleNames.Contains(name) || repoRoot == null)
                     continue;
+                /* spm 包形态引用（QTTest 实录 2026-11-02）：引用 path 指进工程
+                 * modules\ 树（jsonc references "./modules/<名>" 的导出形态）
+                 * 时 Step 8 已整目录携带（modules\<名>\ 保 spm 布局 + 原生 dll
+                 * 平铺同位，C VM ④ 回退链与 pkg_dir FFI 预载均按该布局命中）；
+                 * 此处再平铺 stage 会产生双份模块文件，且平铺位装载优先
+                 * （回退链 ② basename 直查先于 ④ modules\）连带 lib\<平台>\
+                 * 里从 out\export 扫来的原生库（vmDlls 回填的 STUB）盖过
+                 * modules\ 里的权威拷贝——发布包运行期行为错乱（QTTest 无窗
+                 * 口实录）。跳过，交 Step 8 唯一携带。 */
+                if (r.TryGetProperty("path", out var spmPathEl))
+                {
+                    string? spmPath = spmPathEl.GetString();
+                    if (!string.IsNullOrWhiteSpace(spmPath))
+                    {
+                        try
+                        {
+                            string full = Path.GetFullPath(Path.Combine(baseDir, spmPath));
+                            if (full.StartsWith(modulesRoot, StringComparison.OrdinalIgnoreCase))
+                            {
+                                Console.WriteLine($"[OK]  reference: {name} (spm package form; carried by modules\\ copy)");
+                                continue;
+                            }
+                        }
+                        catch (Exception) { /* 路径解析异常走常规平铺 stage */ }
+                    }
+                }
                 string[] exportRoots =
                 {
                     Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name),

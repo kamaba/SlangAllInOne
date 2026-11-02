@@ -101,10 +101,18 @@ static int slqt_add_binding(int64_t h, int32_t signalId, int64_t dispatchCb, int
 
 /* ========================================================================
  * 信号连接（绑定层）：记录绑定 + 转发后端真正连接。
+ * dispatchCb == 0（createCallback 失败，如方法查找 miss）时拒绝连接并
+ * 返回 0——放行会让 Qt 后端挂一个 null-call 桩，信号一发射即 0xC0000005
+ * 崩溃（QTTest 发布版实录 2026-11-02）；拒绝后 SL 侧 bind=0 可见可诊断。
  * ======================================================================== */
 SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t slot)
 {
-    int bind_id = slqt_add_binding(h, signalId, dispatchCb, slot);
+    int bind_id;
+    if (dispatchCb == 0)
+    {
+        return 0;
+    }
+    bind_id = slqt_add_binding(h, signalId, dispatchCb, slot);
     if (bind_id == 0) return 0;
     slqt_be_connect(h, signalId, dispatchCb, slot);
     return (int64_t)bind_id;

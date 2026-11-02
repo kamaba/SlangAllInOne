@@ -14,6 +14,12 @@
 #include "slang_qt_backend.h"
 
 #include <cstdio>
+#include <cstring>
+
+#ifdef _WIN32
+#define NOMINMAX
+#include <windows.h>
+#endif
 
 #include <QString>
 #include <QApplication>
@@ -33,13 +39,76 @@ static char g_text_buf[8192];
 static QWidget* asWidget(int64_t h) { return static_cast<QWidget*>((QObject*)slqt_resolve(h)); }
 
 /* ── 应用 ─────────────────────────────────────────────────────────────── */
+
+/* Qt 6 Windows 可重定位前缀基于应用程序目录（QLibraryInfo，Qt7 才计划改为
+ * QtCore 装载位），与 Qt6Core.dll 实际装载目录无关——模块包同位部署
+ * （slang_qt.dll 与 Qt6*.dll、plugins\platforms\ 同目录，经 FFI 的
+ * LOAD_WITH_ALTERED_SEARCH_PATH 自洽装载）后，QApplication 构造期插件
+ * 扫描只查 <exe>\platforms 与 QT_QPA_PLATFORM_PLUGIN_PATH，同位
+ * plugins\platforms 自动发现落空 → qFatal fail-fast（0xC0000409，
+ * QTTest 实录）。且进程内 SetEnvironmentVariable 补设存在读取时机
+ * 不可靠问题（实测 set 成功、Qt 构造仍读到空），改经 QApplication
+ * 构造参数 -platformpluginpath 注入（构造期解析，时机确定）。 */
+static int slqt_be_plugin_dir(char* out, size_t out_size)
+{
+#ifdef _WIN32
+    HMODULE self = NULL;
+    char dll_path[MAX_PATH];
+    DWORD n;
+    char* slash;
+    if (!GetModuleHandleExA(
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            (LPCSTR)&slqt_be_plugin_dir, &self)
+        || self == NULL)
+    {
+        return 0;
+    }
+    n = GetModuleFileNameA(self, dll_path, MAX_PATH);
+    if (n == 0 || n >= MAX_PATH)
+    {
+        return 0;
+    }
+    slash = strrchr(dll_path, '\\');
+    if (slash == NULL)
+    {
+        return 0;
+    }
+    *slash = '\0';
+    if (snprintf(out, out_size, "%s\\plugins\\platforms", dll_path)
+            >= (int)out_size
+        || GetFileAttributesA(out) == INVALID_FILE_ATTRIBUTES)
+    {
+        return 0;
+    }
+    return 1;
+#else
+    (void)out;
+    (void)out_size;
+    return 0;
+#endif
+}
+
 int64_t slqt_be_app_create(void)
 {
     if (!g_app)
     {
-        static int   argc = 1;
-        static char  arg0[] = "slang_qt";
-        static char* argv[] = { arg0, nullptr };
+        static int    argc = 1;
+        static char   arg0[] = "slang_qt";
+        static char   arg1[] = "-platformpluginpath";
+        static char   plugin_dir[MAX_PATH + 64];
+        static char*  argv[4] = { arg0, nullptr };
+        /* 用户显式设置了 QT_QPA_PLATFORM_PLUGIN_PATH 时不注入（arg 会
+         * 覆盖 env，尊重用户）；否则按 dll 同位 plugins\platforms 注入。 */
+        if (GetEnvironmentVariableA("QT_QPA_PLATFORM_PLUGIN_PATH", NULL, 0) == 0
+            && slqt_be_plugin_dir(plugin_dir, sizeof(plugin_dir)))
+        {
+            argv[1] = arg1;
+            argv[2] = plugin_dir;
+            argv[3] = nullptr;
+            argc = 3;
+            SetEnvironmentVariableA("QT_QPA_PLATFORM_PLUGIN_PATH", plugin_dir);
+        }
         g_app = new QApplication(argc, argv);
     }
     return slqt_register(g_app);
@@ -50,7 +119,7 @@ void slqt_be_app_set_stylesheet(const char* c) { if (g_app && c) g_app->setStyle
 void slqt_be_app_exec(void) { if (g_app) g_app->exec(); }
 void slqt_be_app_process_events(void) { if (g_app) g_app->processEvents(); }
 void slqt_be_app_quit(void) { if (g_app) g_app->quit(); }
-int32_t slqt_be_app_argc(void) { return g_app ? (int32_t)g_app->argc() : 0; }
+int32_t slqt_be_app_argc(void) { return g_app ? (int32_t)g_app->arguments().size() : 0; }
 
 /* ── 对象 / 控件 ─────────────────────────────────────────────────────── */
 void slqt_be_object_delete(int64_t h) { void* o = slqt_resolve(h); if (o) delete (QObject*)o; }

@@ -39,12 +39,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <!-- 版本号四端统一锚点（AGENTS.md R17 / PROJECTS.md §7）：与 Front
-         CommandExecutor.VersionString、C VM cli_version.h SLVM_VERSION_*、
-         VSCode package.json version 共用同一 主.发布.小版本 号；任一端改动，
-         四处锚点同步 +1。中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），
-         末位 = 随时递增的小版本。 -->
-    <Version>0.0.64</Version>
+    <!-- 版本分开管理锚点（AGENTS.md R17 / PROJECTS.md §7，2026-11-03 用户改版）：
+         本体（Front VersionString / C VM SLVM_VERSION_* / 本 csproj）独立演进，
+         与 VSCode / 插件 / 包 分开；改写经后管 admin-server。
+         中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），末位 = 随时递增的小版本。 -->
+    <Version>0.0.68</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>

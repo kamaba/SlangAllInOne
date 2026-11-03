@@ -55,10 +55,22 @@
       { "path": "core/QLineEdit.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "core/QMainWindow.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "core/QApplication.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QTimer.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QVBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QHBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
-      { "path": "layout/QGridLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 }
+      { "path": "layout/QGridLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-03 扩展面（qtRuntime 组合部署配套；tag=ext 便于按需裁剪）
+      { "path": "net/Net.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "sql/Sql.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "svg/Svg.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "gl/GL.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "print/Print.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "xml/Xml.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "concurrent/Concurrent.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "uitools/UiTools.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "help/Help.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 },
+      { "path": "dbus/DBus.sl", "group": "qt", "tag": "ext", "ignore": false, "priority": 0 }
     ]
   },
   "references": [
@@ -79,10 +91,26 @@
         { "class": "QLineEdit" },
         { "class": "QMainWindow" },
         { "class": "QApplication" },
+        { "class": "QTimer" },
         { "class": "QLayout" },
         { "class": "QVBoxLayout" },
         { "class": "QHBoxLayout" },
-        { "class": "QGridLayout" }
+        { "class": "QGridLayout" },
+        { "class": "QNetworkAccessManager" },
+        { "class": "QNetworkReply" },
+        { "class": "QSqlDatabase" },
+        { "class": "QSqlQuery" },
+        { "class": "QSvgWidget" },
+        { "class": "QSvgRenderer" },
+        { "class": "QGLPanel" },
+        { "class": "QPrinter" },
+        { "class": "QDomDocument" },
+        { "class": "QConcurrentTask" },
+        { "class": "QLoadedWidget" },
+        { "class": "QUiLoader" },
+        { "class": "QFormBuilder" },
+        { "class": "QHelpEngine" },
+        { "class": "QDBus" }
       ]
     }
   ],

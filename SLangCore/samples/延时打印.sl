@@ -1,19 +1,14 @@
-import Std;
+# 延时打印：await 挂起 200ms（协程最小示例，不阻塞调度）
+import Std
 
-JJ
+DelayPrint
 {
     static Fun()
     {
-        start = Core.Time.clock();
-
-        await WaitTime( 20 )
-
-        Console.print( "Execlute Time: " + Time.clock() - start )
-    }
-    async WaitTime( int dtime )
-    {
-        await Time.delay( dtime )
-
-        yield 0;
+        start = Environment.sys.nowMillis()
+        Console.print("wait 200ms ...")
+        await Coroutine.delay(200)
+        cost = Environment.sys.nowMillis() - start
+        Console.println("delay done, cost=$cost ms")
     }
 }

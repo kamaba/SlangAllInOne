@@ -4,6 +4,6 @@ HelloWorld
 {
     static fun()
     {
-        Console.print("Hello World" );      
+        Console.println("Hello, Slang!")
     }
 }

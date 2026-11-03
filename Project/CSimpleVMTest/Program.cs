@@ -392,7 +392,14 @@ internal static class Program
                     Console.WriteLine($"[stage] referenced module '{name}' export dir not found, skipped");
                     continue;
                 }
-                string refDest = Path.Combine(pkgDir, name);
+                // 2026-11-03 布局对齐修复：暂存到 <pkgDir>\modules\<name>\，对齐
+                // C VM sl_load_references 回退链 root②（spm 目录布局
+                // <exe>\modules\<名>\<名>.module.json；publish 场景工程 modules\
+                // 整目录拷入发布包 modules\ 同款落位）。原 <pkgDir>\<名>\ 平铺
+                // 不在任何回退 root 下 → 包内运行期引用解析全部落空 → 引用模块
+                // 未装载（SLangQT 的 @DllStaticImport 装配期不可见 → FFI 全失效
+                // 的运行期根因）。
+                string refDest = Path.Combine(pkgDir, "modules", name);
                 Directory.CreateDirectory(refDest);
                 bool any = false;
                 foreach (string f in Directory.GetFiles(srcDir, "*.module.*"))
@@ -403,6 +410,19 @@ internal static class Program
                 string refPlugins = Path.Combine(srcDir, "plugin");
                 if (Directory.Exists(refPlugins))
                     CopyDirectoryRecursive(refPlugins, Path.Combine(refDest, "plugin"));
+                // Qt 同位运行件联动（2026-11-03）：带 Qt 后端的引用模块（SLangQT）
+                // 导出槽内还有 qtRuntime 部署的 Qt6*.dll / opengl32sw.dll /
+                // d3dcompiler_47.dll 与 plugins\ 插件分类子树（复数；Front 的
+                // plugin\ 载荷树是单数，二者并存）。模块装载后 slang_qt.dll 的
+                // 依赖解析与 QApplication 插件发现都按模块目录同位进行，缺件即
+                // native 装载失败 / 插件分类探测为空，一并拷入（无 Qt 件的引用
+                // 模块如 SLangServer 匹配为空，自然跳过）。
+                foreach (string qtPat in new[] { "Qt6*.dll", "opengl32sw.dll", "d3dcompiler_47.dll" })
+                    foreach (string f in Directory.GetFiles(srcDir, qtPat))
+                        File.Copy(f, Path.Combine(refDest, Path.GetFileName(f)), overwrite: true);
+                string qtPluginsTree = Path.Combine(srcDir, "plugins");
+                if (Directory.Exists(qtPluginsTree))
+                    CopyDirectoryRecursive(qtPluginsTree, Path.Combine(refDest, "plugins"));
                 StageNativeDlls(name, srcDir, refDest);
                 if (any)
                     Console.WriteLine($"[stage] referenced module '{name}' staged into package");

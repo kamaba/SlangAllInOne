@@ -1,0 +1,39 @@
+{
+  "project": {
+    "name": "MDExamples",
+    "desc": "md/syntax 文档示例可运行合并工程（5 例一次跑通）",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": false,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "01_BaseRectangle/Doc01_BaseRectangle.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "02_StringInterpolation/Doc02_StringInterpolation.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "03_GlobalJsonc/Doc03_GlobalJsonc.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "04_RangeFor/Doc04_RangeFor.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "05_SwitchValue/Doc05_SwitchValue.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "global": {
+    "imports": [],
+    "data": {
+      "var1": 42
+    }
+  },
+  "references": [
+    { "path": "../../../out/export/Core/Core.module.slb" },
+    { "path": "../../../out/export/Std/Std.module.slb" }
+  ]
+}

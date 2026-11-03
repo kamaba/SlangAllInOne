@@ -7,7 +7,7 @@ Rectangle
     width = 0
     height = 0
 
-    toString()
+    string toString()
     {
         ret "Rectangle(${this.width} x ${this.height})"
     }

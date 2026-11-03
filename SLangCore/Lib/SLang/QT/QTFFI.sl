@@ -31,7 +31,7 @@ namespace SLang
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
         public static Int64 ffi_appCreate() { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_app_set_style_sl" )
-        public static void ffi_appSetStyle( string name ) {}
+        public static bool ffi_appSetStyle( string name ) { ret false }
         @DllStaticImport( "slang_qt", "slqt_app_set_stylesheet_sl" )
         public static void ffi_appSetStyleSheet( string css ) {}
         @DllStaticImport( "slang_qt", "slqt_app_exec_sl" )
@@ -135,6 +135,212 @@ namespace SLang
         @DllStaticImport( "slang_qt", "slqt_connect_sl" )
         public static Int64 ffi_connect( Int64 h, Int32 signalId, Int64 cb, Int64 slot ) { ret 0 }
 
+        # ════════════════════════════════════════════════════════════════
+        # 2026-11-03 扩展面：运行时探测 / QTimer / Network / Sql / Svg /
+        # GL / Print / Xml / Concurrent / Test / UiTools / Help / DBus /
+        # Designer / 图像图标。可选模块组合部署（jsonc qtRuntime），缺件时
+        # moduleAvailable 探测失败、调用方跳过（不触碰未装载模块的导出）。
+        # ════════════════════════════════════════════════════════════════
+
+        # ── 运行时自描述 / 探测 ────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_backend_kind_sl" )
+        public static string ffi_backendKind() { ret "stub" }
+        @DllStaticImport( "slang_qt", "slqt_runtime_dir_sl" )
+        public static string ffi_runtimeDir() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_module_available_sl" )
+        public static bool ffi_moduleAvailable( string dllName ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_app_platform_name_sl" )
+        public static string ffi_appPlatformName() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_app_library_paths_sl" )
+        public static string ffi_appLibraryPaths() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_app_style_keys_sl" )
+        public static string ffi_appStyleKeys() { ret "" }
+
+        # ── 控件移动 + QTimer ──────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_widget_move_sl" )
+        public static void ffi_widgetMove( Int64 h, int x, int y ) {}
+        @DllStaticImport( "slang_qt", "slqt_timer_create_sl" )
+        public static Int64 ffi_timerCreate( int ms, bool single, Int64 cb, Int64 slot ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_timer_delete_sl" )
+        public static void ffi_timerDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_timer_start_sl" )
+        public static void ffi_timerStart( Int64 h, int ms ) {}
+        @DllStaticImport( "slang_qt", "slqt_timer_stop_sl" )
+        public static void ffi_timerStop( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_timer_active_sl" )
+        public static bool ffi_timerActive( Int64 h ) { ret false }
+
+        # ── Network（Qt6Network）───────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_net_create_sl" )
+        public static Int64 ffi_netCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_net_delete_sl" )
+        public static void ffi_netDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_net_is_online_sl" )
+        public static int ffi_netIsOnline() { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_net_backend_name_sl" )
+        public static string ffi_netBackendName() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_net_get_sl" )
+        public static Int64 ffi_netGet( Int64 h, string url ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_net_reply_delete_sl" )
+        public static void ffi_netReplyDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_net_reply_wait_sl" )
+        public static bool ffi_netReplyWait( Int64 h, int ms ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_net_reply_status_sl" )
+        public static int ffi_netReplyStatus( Int64 h ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_net_reply_error_sl" )
+        public static string ffi_netReplyError( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_net_reply_body_sl" )
+        public static string ffi_netReplyBody( Int64 h ) { ret "" }
+
+        # ── Sql（Qt6Sql）───────────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_sql_drivers_sl" )
+        public static string ffi_sqlDrivers() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_sql_add_database_sl" )
+        public static Int64 ffi_sqlAddDatabase( string type ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_sql_delete_sl" )
+        public static void ffi_sqlDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_sql_set_database_name_sl" )
+        public static void ffi_sqlSetDatabaseName( Int64 h, string name ) {}
+        @DllStaticImport( "slang_qt", "slqt_sql_open_sl" )
+        public static bool ffi_sqlOpen( Int64 h ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_sql_close_sl" )
+        public static void ffi_sqlClose( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_sql_last_error_sl" )
+        public static string ffi_sqlLastError( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_sql_query_create_sl" )
+        public static Int64 ffi_sqlQueryCreate( Int64 db ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_sql_query_delete_sl" )
+        public static void ffi_sqlQueryDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_sql_query_exec_sl" )
+        public static bool ffi_sqlQueryExec( Int64 h, string sql ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_sql_query_next_sl" )
+        public static bool ffi_sqlQueryNext( Int64 h ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_sql_query_value_text_sl" )
+        public static string ffi_sqlQueryValueText( Int64 h, int i ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_sql_query_value_int_sl" )
+        public static Int64 ffi_sqlQueryValueInt( Int64 h, int i ) { ret 0 }
+
+        # ── Svg（Qt6Svg / Qt6SvgWidgets）───────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_svgwidget_create_sl" )
+        public static Int64 ffi_svgWidgetCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_svgwidget_load_file_sl" )
+        public static bool ffi_svgWidgetLoadFile( Int64 h, string path ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_svgwidget_load_data_sl" )
+        public static bool ffi_svgWidgetLoadData( Int64 h, string xml ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_svg_renderer_create_sl" )
+        public static Int64 ffi_svgRendererCreate( string xml ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_svg_renderer_delete_sl" )
+        public static void ffi_svgRendererDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_svg_renderer_valid_sl" )
+        public static bool ffi_svgRendererValid( Int64 h ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_svg_renderer_check_size_sl" )
+        public static bool ffi_svgRendererCheckSize( Int64 h, int w, int hh ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_svg_render_to_label_sl" )
+        public static bool ffi_svgRenderToLabel( Int64 r, Int64 l, int w, int hh ) { ret false }
+
+        # ── 图像 / 图标（Qt6Gui 插件探测）─────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_image_formats_sl" )
+        public static string ffi_imageFormats() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_image_save_solid_sl" )
+        public static bool ffi_imageSaveSolid( string path, string fmt, int r, int g, int b ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_image_check_size_sl" )
+        public static bool ffi_imageCheckSize( string path, int w, int hh ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_icon_render_sl" )
+        public static bool ffi_iconRender( string path, int size ) { ret false }
+
+        # ── OpenGL（Qt6OpenGLWidgets）──────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_glwidget_create_sl" )
+        public static Int64 ffi_glWidgetCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_glwidget_set_color_sl" )
+        public static void ffi_glWidgetSetColor( Int64 h, int r, int g, int b ) {}
+        @DllStaticImport( "slang_qt", "slqt_glwidget_set_spinning_sl" )
+        public static void ffi_glWidgetSetSpinning( Int64 h, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_glwidget_frame_count_sl" )
+        public static Int64 ffi_glWidgetFrameCount( Int64 h ) { ret 0 }
+
+        # ── Print（Qt6PrintSupport）────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_printer_create_sl" )
+        public static Int64 ffi_printerCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_printer_delete_sl" )
+        public static void ffi_printerDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_printer_set_output_filename_sl" )
+        public static void ffi_printerSetOutputFilename( Int64 h, string path ) {}
+        @DllStaticImport( "slang_qt", "slqt_printer_set_page_size_a4_sl" )
+        public static void ffi_printerSetPageSizeA4( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_printer_print_text_sl" )
+        public static bool ffi_printerPrintText( Int64 h, string title, string body ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_printer_output_file_sl" )
+        public static string ffi_printerOutputFile( Int64 h ) { ret "" }
+
+        # ── Xml（Qt6Xml）───────────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_dom_create_sl" )
+        public static Int64 ffi_domCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_dom_delete_sl" )
+        public static void ffi_domDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_dom_set_content_sl" )
+        public static bool ffi_domSetContent( Int64 h, string xml ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_dom_root_tag_sl" )
+        public static string ffi_domRootTag( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_dom_count_by_tag_sl" )
+        public static Int64 ffi_domCountByTag( Int64 h, string tag ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_dom_first_text_sl" )
+        public static string ffi_domFirstText( Int64 h, string tag ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_dom_to_string_sl" )
+        public static string ffi_domToString( Int64 h ) { ret "" }
+
+        # ── Concurrent（Qt6Concurrent）─────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_concurrent_task_create_sl" )
+        public static Int64 ffi_concurrentTaskCreate( int kind, Int64 n ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_concurrent_task_delete_sl" )
+        public static void ffi_concurrentTaskDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_concurrent_task_is_finished_sl" )
+        public static bool ffi_concurrentTaskIsFinished( Int64 h ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_concurrent_task_result_sl" )
+        public static Int64 ffi_concurrentTaskResult( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_thread_pool_max_sl" )
+        public static int ffi_threadPoolMax() { ret 0 }
+
+        # ── Test（Qt6Test）─────────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_test_qsleep_sl" )
+        public static void ffi_testQSleep( int ms ) {}
+        @DllStaticImport( "slang_qt", "slqt_test_qwait_sl" )
+        public static void ffi_testQWait( int ms ) {}
+        # 探针：手写 sig（第 3 参）对照自动推导——FFI utf8 返回丢失定位
+        @DllStaticImport( "slang_qt", "slqt_test_version_sl", "->utf8" )
+        public static string ffi_testVersion() { ret "" }
+
+        # ── UiTools / Designer ─────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_uiloader_create_sl" )
+        public static Int64 ffi_uiLoaderCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_uiloader_delete_sl" )
+        public static void ffi_uiLoaderDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_uiloader_load_file_sl" )
+        public static Int64 ffi_uiLoaderLoadFile( Int64 h, string path, Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_uiloader_available_widgets_sl" )
+        public static string ffi_uiLoaderAvailableWidgets( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_designer_formbuilder_create_sl" )
+        public static Int64 ffi_formBuilderCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_designer_formbuilder_delete_sl" )
+        public static void ffi_formBuilderDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_designer_formbuilder_load_sl" )
+        public static Int64 ffi_formBuilderLoad( Int64 h, string path, Int64 parent ) { ret 0 }
+
+        # ── Help（Qt6Help）─────────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_help_engine_create_sl" )
+        public static Int64 ffi_helpEngineCreate( string collection ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_help_engine_delete_sl" )
+        public static void ffi_helpEngineDelete( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_help_setup_data_sl" )
+        public static bool ffi_helpSetupData( Int64 h ) { ret false }
+        @DllStaticImport( "slang_qt", "slqt_help_error_sl" )
+        public static string ffi_helpError( Int64 h ) { ret "" }
+
+        # ── DBus（Qt6DBus）─────────────────────────────────────────
+        @DllStaticImport( "slang_qt", "slqt_dbus_connected_sl" )
+        public static bool ffi_dbusConnected() { ret false }
+        @DllStaticImport( "slang_qt", "slqt_dbus_base_service_sl" )
+        public static string ffi_dbusBaseService() { ret "" }
+
         # ── 回调桥：handler 表 + 两个 dispatch trampoline ─────────────
         # 任意 SLang 函数值（静态方法引用 / 实例方法引用 / 闭包）登记进 _handlers，
         # 原生层只保存 (bind_id -> slot)；事件到达经对应 trampoline 取回调用。
@@ -162,11 +368,16 @@ namespace SLang
         # createCallback 失败（cb=0，方法查找 miss）时不连接、bind 返回 0
         # ——原生层对 cb=0 同款拒绝（slqt_connect_sl），悬空 null 桩会让
         # 信号发射即崩溃；bind=0 在调用侧可见可诊断。
+        # method 参数形态（2026-11-03 修复，WebUI 同款教训）：必须传完整
+        # method id（Module.NS.Class.Method_argc_T1_T2）或短方法名；
+        # "SLang.QT._dispatchVoid" 点路径三条查找路径均不命中 → cb=0 →
+        # bind=0（本次 smoke FAIL 根因）。短名按 名字+参数个数 全局匹配，
+        # _dispatchVoid/_dispatchString 全局唯一，走短名（WebUI._dispatchHandle 同款）。
         public static Int64 connect( Int64 h, Int32 signalId, Function handler )
         {
             if ( _handlers == null ) { _handlers = List<Function>() }
-            if ( _dispatchVoidCb == 0 ) { _dispatchVoidCb = FFI.StaticLibrary.createCallback( "SLang.QT._dispatchVoid", "i64->void" ) }
-            if ( _dispatchStringCb == 0 ) { _dispatchStringCb = FFI.StaticLibrary.createCallback( "SLang.QT._dispatchString", "i64,utf8->void" ) }
+            if ( _dispatchVoidCb == 0 ) { _dispatchVoidCb = FFI.StaticLibrary.createCallback( "_dispatchVoid", "i64->void" ) }
+            if ( _dispatchStringCb == 0 ) { _dispatchStringCb = FFI.StaticLibrary.createCallback( "_dispatchString", "i64,utf8->void" ) }
             Int64 cb = _dispatchVoidCb
             if ( signalId == SIG_TEXT_CHANGED ) { cb = _dispatchStringCb }
             if ( cb == 0 ) { ret 0 }
@@ -175,8 +386,47 @@ namespace SLang
             ret ffi_connect( h, signalId, cb, slot )
         }
 
+        # QTimer 桥：与 connect 同款 trampoline（void dispatch），超时重入 VM。
+        # 返回句柄 > 0 表示创建成功；QTTest 动画面板据此驱动 widget move。
+        public static Int64 timer( int ms, bool single, Function handler )
+        {
+            if ( _handlers == null ) { _handlers = List<Function>() }
+            if ( _dispatchVoidCb == 0 ) { _dispatchVoidCb = FFI.StaticLibrary.createCallback( "_dispatchVoid", "i64->void" ) }
+            if ( _dispatchVoidCb == 0 ) { ret 0 }
+            _handlers.add( handler )
+            Int64 slot = ( _handlers.length - 1 ) as Int64
+            ret ffi_timerCreate( ms, single, _dispatchVoidCb, slot )
+        }
+
+        # ── 运行时门面（组合部署探测 / 自描述输出）──────────────────
+        public static string backendKind() { ret ffi_backendKind() }
+        public static string runtimeDir() { ret ffi_runtimeDir() }
+        public static bool moduleAvailable( string dll ) { ret ffi_moduleAvailable( dll ) }
+        public static string appPlatformName() { ret ffi_appPlatformName() }
+        public static string appLibraryPaths() { ret ffi_appLibraryPaths() }
+        public static string appStyleKeys() { ret ffi_appStyleKeys() }
+        public static string sqlDrivers() { ret ffi_sqlDrivers() }
+        public static string imageFormats() { ret ffi_imageFormats() }
+        public static int threadPoolMax() { ret ffi_threadPoolMax() }
+        public static string testVersion() { ret ffi_testVersion() }
+        public static bool imageSaveSolid( string path, string fmt, int r, int g, int b ) { ret ffi_imageSaveSolid( path, fmt, r, g, b ) }
+        public static bool imageCheckSize( string path, int w, int h ) { ret ffi_imageCheckSize( path, w, h ) }
+        public static bool iconRender( string path, int size ) { ret ffi_iconRender( path, size ) }
+
         # ── 工厂（规避带命名空间 new 的限制；类构造函数仍保留供高级用户）──
         public static QApplication newApp() { ret QApplication() }
+        public static QTimer newTimer( int ms, bool single, Function handler ) { ret QTimer( ms, single, handler ) }
+        public static QNetworkAccessManager newNetManager() { ret QNetworkAccessManager() }
+        public static QSqlDatabase addDatabase( string type ) { ret QSqlDatabase( type ) }
+        public static QSvgRenderer newSvgRenderer( string xml ) { ret QSvgRenderer( xml ) }
+        public static QSvgWidget newSvgWidget( Int64 parent ) { ret QSvgWidget( parent ) }
+        public static QGLPanel newGLPanel( Int64 parent ) { ret QGLPanel( parent ) }
+        public static QPrinter newPrinter() { ret QPrinter() }
+        public static QDomDocument newDomDocument() { ret QDomDocument() }
+        public static QConcurrentTask runConcurrent( int kind, Int64 n ) { ret QConcurrentTask( kind, n ) }
+        public static QUiLoader newUiLoader() { ret QUiLoader() }
+        public static QFormBuilder newFormBuilder() { ret QFormBuilder() }
+        public static QHelpEngine newHelpEngine( string collection ) { ret QHelpEngine( collection ) }
         public static QPushButton newButton( Int64 parent, string text )
         {
             QPushButton b = QPushButton(parent)

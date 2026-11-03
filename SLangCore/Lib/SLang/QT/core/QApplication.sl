@@ -11,7 +11,8 @@ namespace SLang
             this.setHandle( SLang.QT.ffi_appCreate() )
         }
 
-        public void setStyle( string name ) { SLang.QT.ffi_appSetStyle( name ) }
+        # 设置样式（styles 插件探测点：命中插件样式返回 true）
+        public bool setStyle( string name ) { ret SLang.QT.ffi_appSetStyle( name ) }
         public void setStyleSheet( string css ) { SLang.QT.ffi_appSetStyleSheet( css ) }
         public void exec() { SLang.QT.ffi_appExec() }
         public void processEvents() { SLang.QT.ffi_appProcessEvents() }

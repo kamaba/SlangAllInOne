@@ -36,6 +36,7 @@
 | [project/project_arguments.md](./project/project_arguments.md) | InputArgsTest 工程说明：`global._inputArgs`（系统集成的 CLI 程序参数）专用测试用例 |
 | [project/package-layout.md](./project/package-layout.md) | 🔥 **发布包目录布局（决策记录）**：`lib\`（系统自带标准库）/ `modules\`（spm 包管理器用户包目录）/ `plugins\`（插件安装与管理位，插件 ≠ 普通包）；module→lib 迁移实录、装载三级搜索链（工程 modules → exe modules → exe lib，平铺+spm 目录布局双探测）、**独立 `spm.exe` 包/插件管理器已落地（2026-10-30：install/search/list/outdated/remove + plugin 环境·探测·安装·删除，服务器 API = 官网 doc/18 §9）** |
 | [project/publish-guide.md](./project/publish-guide.md) | 🔥 **工程发布（slang publish）**：类比 dotnet publish——jsonc `publish` 段（mode/outputDir/config/includeLibs/libs）+ `slang publish` 命令；双产物形态：载荷附着式应用 exe（SLVMAPP1 trailer，双击直跑）与 `<Module>.module.slb`（`slang run <file>.slb` 启动）；布局/依赖/相关文件索引 |
+| [project/docs-web.md](./project/docs-web.md) | 🔥 **文档站 + 后管平台（docs-web）**：`tools/docs-web` 零依赖——`md/lib` 全量转静态站（首页/入门/示例库/关于/API 索引），后管 `admin-server.js`（/admin 控制台：**版本分开管理** 本体/VSCode/插件/包、site-data 在线编辑、一键重建）；索引文件 `api/index.json`（分组→文档→类→成员 + 分组件 `versions`）供官网/后管消费 |
 | [project/test-guide.md](./project/test-guide.md) | **测试引导**：`test/` 各测试用例集（测什么、代表用例）与 `project/` 各测试宿主工程（默认测试集、C VM / C# VM）对照表、运行方式（VS / dotnet / Debug vs Release） |
 
 ---
@@ -180,6 +181,29 @@
 | [vm/VirtualMachine.md](./vm/VirtualMachine.md) | 虚拟机相关语法与概念（IR 语句） |
 | [../../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md](../../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md) | C VM x86-64 内联汇编快路径（设计评审稿）：加法/比较最热形态整段融合汇编（lib/asm 平台层 + vm 侧 #if 门控）、MSVC/wasm C 兜底矩阵、WSL clang 树 A/B 协议与 kill 判据 |
 | [../../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md](../../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md) | **C VM 调试协议 SLDP 设计真源**：NDJSON over TCP localhost（CLI `--debug-server=<port>`，等号式）、~15 条命令全表、调试泵（主循环指令边界单点注入）、per-method 断点指令位图、D-P0..D-P4 分期（D-P1 已交付：断点→resume→stopped→stack 手测全绿，§8.1 实录）；D-P3 = 插件侧 DAP adapter |
+
+---
+
+## 5.1 平台整合（Unity3D 热更）
+
+> 把 SL 当 Unity3D 热更新脚本：C VM 编译为 Unity 原生插件（C++ 库）+ C# 宿主桥接层 + 绑定层。设计集在 `md/unity3d/`。
+
+| 文档 | 说明 |
+|------|------|
+| [unity3d/00-INDEX.md](./unity3d/00-INDEX.md) | **Unity3D 热更整合设计集导航**：架构、与现有设计（SLB/MONO/插件/JIT）的关系、R 规则挂钩 |
+| [unity3d/01-架构总览.md](./unity3d/01-架构总览.md) | 三明治模型、磁盘/内存两条执行链路、与 Mono/IL2CPP 后端的关系 |
+| [unity3d/02-本地插件编译与平台布局.md](./unity3d/02-本地插件编译与平台布局.md) | C VM → Unity 原生插件；复用 `lib\{windows,linux,macos,ios,android}` 布局；R6 登记 |
+| [unity3d/03-CSharp宿主桥接层.md](./unity3d/03-CSharp宿主桥接层.md) | Unity C# 调 `csimple_lang_dll` 的 `cli_main`/`cli_run_module_in_memory`；flags/UTF-8/IL2CPP |
+| [unity3d/04-模块装载与热更新机制.md](./unity3d/04-模块装载与热更新机制.md) | 热更核心：SLB + 「读取优先 SLB」mtime 守卫；文件监视触发重装载 |
+| [unity3d/05-脚本绑定与Unity API映射.md](./unity3d/05-脚本绑定与Unity API映射.md) | SL↔Unity 引擎对象绑定（反向 Mono 桥）；handle 表防 GC 悬垂；R7 四端同步 |
+| [unity3d/06-热更生命周期与Unity回调.md](./unity3d/06-热更生命周期与Unity回调.md) | Unity 生命周期/Domain Reload/IL2CPP AOT 与 SL 模块加载时机 |
+| [unity3d/07-调试与诊断.md](./unity3d/07-调试与诊断.md) | 复用 SLDP `--debug-server=<port>`；日志桥接 `Debug.Log` |
+| [unity3d/08-JIT与IL2CPP约束.md](./unity3d/08-JIT与IL2CPP约束.md) | **硬约束**：IL2CPP/iOS/WebGL 必须关 JIT（`SL_JIT=0`/`--no-jit`） |
+| [unity3d/09-构建管线集成.md](./unity3d/09-构建管线集成.md) | Unity 构建事件把 `.sl` 编译进包；StreamingAssets/Addressables |
+| [unity3d/10-跨平台与部署.md](./unity3d/10-跨平台与部署.md) | Win/Mac/iOS/Android/WebGL 部署清单；原生插件 `.meta` |
+| [unity3d/11-安全与沙箱.md](./unity3d/11-安全与沙箱.md) | 热更代码沙箱、系统方法白名单、isolate 隔离（可选） |
+| [unity3d/12-示例与最佳实践.md](./unity3d/12-示例与最佳实践.md) | HelloCube + 热更改色最小示例；目录约定；常见坑 |
+| [unity3d/13-已知问题与设计待办.md](./unity3d/13-已知问题与设计待办.md) | 关联 known issues；分阶段落地（类比 MONO 四阶段） |
 
 ---
 

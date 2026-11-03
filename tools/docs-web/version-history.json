@@ -1,0 +1,128 @@
+[
+ {
+  "at": "2026-11-03T07:42:06.793Z",
+  "key": "package:Core",
+  "from": "9.9.9",
+  "to": "0.1.1",
+  "file": "SlangAllInOne/SLangCore/Lib/Core/Core.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:06.680Z",
+  "key": "package:Core",
+  "from": "0.1.1",
+  "to": "9.9.9",
+  "file": "SlangAllInOne/SLangCore/Lib/Core/Core.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:06.504Z",
+  "key": "package:Std",
+  "from": "9.9.9",
+  "to": "0.1.0",
+  "file": "SlangAllInOne/SLangCore/Lib/Std/Std.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:06.389Z",
+  "key": "package:Std",
+  "from": "0.1.0",
+  "to": "9.9.9",
+  "file": "SlangAllInOne/SLangCore/Lib/Std/Std.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:06.216Z",
+  "key": "plugin:echo",
+  "from": "9.9.9",
+  "to": "0.1.0",
+  "file": "plugin/echo/plugin.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:06.097Z",
+  "key": "plugin:echo",
+  "from": "0.1.0",
+  "to": "9.9.9",
+  "file": "plugin/echo/plugin.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:05.925Z",
+  "key": "plugin:csharp_mono",
+  "from": "9.9.9",
+  "to": "0.1.0",
+  "file": "plugin/csharp_mono/plugin.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:05.804Z",
+  "key": "plugin:csharp_mono",
+  "from": "0.1.0",
+  "to": "9.9.9",
+  "file": "plugin/csharp_mono/plugin.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:42:05.635Z",
+  "key": "vscode",
+  "from": "9.9.9",
+  "to": "0.0.67",
+  "file": "slang_vscode_plugin/package.json"
+ },
+ {
+  "at": "2026-11-03T07:42:05.522Z",
+  "key": "vscode",
+  "from": "0.0.67",
+  "to": "9.9.9",
+  "file": "slang_vscode_plugin/package.json"
+ },
+ {
+  "at": "2026-11-03T07:42:05.328Z",
+  "key": "host",
+  "from": "9.9.9",
+  "to": "0.0.68",
+  "file": "SlangAllInOne/SlangAllInOne.csproj"
+ },
+ {
+  "at": "2026-11-03T07:42:05.209Z",
+  "key": "host",
+  "from": "0.0.68",
+  "to": "9.9.9",
+  "file": "SlangAllInOne/SlangAllInOne.csproj"
+ },
+ {
+  "at": "2026-11-03T07:42:05.029Z",
+  "key": "cvm",
+  "from": "9.9.9",
+  "to": "0.0.68",
+  "file": "csimple_lang/src/cli/cli_version.h"
+ },
+ {
+  "at": "2026-11-03T07:42:04.912Z",
+  "key": "cvm",
+  "from": "0.0.68",
+  "to": "9.9.9",
+  "file": "csimple_lang/src/cli/cli_version.h"
+ },
+ {
+  "at": "2026-11-03T07:42:04.728Z",
+  "key": "front",
+  "from": "9.9.9",
+  "to": "0.0.68",
+  "file": "simple_language/source/CLI/CommandExecutor.cs"
+ },
+ {
+  "at": "2026-11-03T07:42:04.597Z",
+  "key": "front",
+  "from": "0.0.68",
+  "to": "9.9.9",
+  "file": "simple_language/source/CLI/CommandExecutor.cs"
+ },
+ {
+  "at": "2026-11-03T07:24:35.422Z",
+  "key": "package:Std",
+  "from": "0.1.1",
+  "to": "0.1.0",
+  "file": "SlangAllInOne/SLangCore/Lib/Std/Std.jsonc"
+ },
+ {
+  "at": "2026-11-03T07:24:35.242Z",
+  "key": "package:Std",
+  "from": "0.1.0",
+  "to": "0.1.1",
+  "file": "SlangAllInOne/SLangCore/Lib/Std/Std.jsonc"
+ }
+]

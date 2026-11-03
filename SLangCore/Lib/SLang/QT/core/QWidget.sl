@@ -17,6 +17,8 @@ namespace SLang
         public string text() { ret SLang.QT.ffi_widgetText( this.handle ) }
         public void setGeometry( int x, int y, int w, int h ) { SLang.QT.ffi_widgetSetGeometry( this.handle, x, y, w, h ) }
         public void resize( int w, int h ) { SLang.QT.ffi_widgetResize( this.handle, w, h ) }
+        # 移动控件（动画面板：QTimer onTick 里连续 move 形成移动效果）
+        public void move( int x, int y ) { SLang.QT.ffi_widgetMove( this.handle, x, y ) }
         public void show() { SLang.QT.ffi_widgetShow( this.handle ) }
         public void hide() { SLang.QT.ffi_widgetHide( this.handle ) }
         public void setEnabled( bool on ) { SLang.QT.ffi_widgetSetEnabled( this.handle, on ) }

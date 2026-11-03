@@ -1,0 +1,150 @@
+﻿using MSVC 14.51.36231 + SDK 10.0.26100.0
+
+  slang_qt_qt.cpp
+    正在创建库 D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\cvm\x64\QtRelease\slang_qt.lib 和对象 D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\cvm\x64\QtRelease\slang_qt.exp
+  正在生成代码
+  7 of 772 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  已完成代码的生成
+  slang_qt_qt.vcxproj -> D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\cvm\x64\QtRelease\slang_qt.dll
+SLangQT native built (Qt6 backend, Qt6_DIR=C:\Qt\6.8.1\msvc2022_64) -> D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\cvm\obj\slang_qt.dll
+从 D:\project\lang\simple_language\source\Properties\launchSettings.json 使用启动设置...
+SimpleLanguage Frontend Compiler v0.0.68
+
+Compiling: D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\QT.sp
+[06:47:30 236] [Info] [Project]  [ProjectShowConfigPath]  Info:[加载配置文件[D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\QT.jsonc]!]
+[FrontLog] OutputPath: D:\project\lang\SlangAllInOne\out\export\SLangQT\Logs\Front.txt
+[06:47:30 257] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: RefModule]
+[06:47:30 887] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\out\export\Core\Core.module.json]
+[Reference] Module loaded (compiled): name=Core, path=D:\project\lang\SlangAllInOne\out\export\Core\Core.module.json
+[06:47:31 348] [Info] [Project]  [ProjectReferenceModuleReferenceModuleLoaded]  Info:[Reference module loaded (compiled): name={}, path={}] Extend:[Reference module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\out\export\Std\Std.module.json]
+[Reference] Module loaded (compiled): name=Std, path=D:\project\lang\SlangAllInOne\out\export\Std\Std.module.json
+[06:47:31 349] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[RefModule]完成]
+[06:47:31 349] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: File]
+[06:47:31 351] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:23]
+[06:47:31 354] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:QT.sp]
+[06:47:31 361] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:QTFFI.sl]
+[06:47:31 369] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QObject.sl]
+[06:47:31 371] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QWidget.sl]
+[06:47:31 372] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QPushButton.sl]
+[06:47:31 373] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QLabel.sl]
+[06:47:31 375] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QLineEdit.sl]
+[06:47:31 376] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QMainWindow.sl]
+[06:47:31 377] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QApplication.sl]
+[06:47:31 378] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:core/QTimer.sl]
+[06:47:31 380] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:layout/QLayout.sl]
+[06:47:31 381] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:layout/QVBoxLayout.sl]
+[06:47:31 382] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:layout/QHBoxLayout.sl]
+[06:47:31 384] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:layout/QGridLayout.sl]
+[06:47:31 385] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:net/Net.sl]
+[06:47:31 387] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:sql/Sql.sl]
+[06:47:31 388] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:svg/Svg.sl]
+[06:47:31 390] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:gl/GL.sl]
+[06:47:31 391] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:print/Print.sl]
+[06:47:31 392] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:xml/Xml.sl]
+[06:47:31 393] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:concurrent/Concurrent.sl]
+[06:47:31 394] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:uitools/UiTools.sl]
+[06:47:31 396] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:help/Help.sl]
+[06:47:31 397] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:dbus/DBus.sl]
+[06:47:31 445] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[QT.sp]编译File层完成]
+[06:47:31 475] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[QTFFI.sl]编译File层完成]
+[06:47:31 477] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QObject.sl]编译File层完成]
+[06:47:31 478] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QWidget.sl]编译File层完成]
+[06:47:31 479] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QPushButton.sl]编译File层完成]
+[06:47:31 480] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QLabel.sl]编译File层完成]
+[06:47:31 480] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QLineEdit.sl]编译File层完成]
+[06:47:31 481] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QMainWindow.sl]编译File层完成]
+[06:47:31 482] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QApplication.sl]编译File层完成]
+[06:47:31 483] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[core/QTimer.sl]编译File层完成]
+[06:47:31 484] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[layout/QLayout.sl]编译File层完成]
+[06:47:31 485] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[layout/QVBoxLayout.sl]编译File层完成]
+[06:47:31 486] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[layout/QHBoxLayout.sl]编译File层完成]
+[06:47:31 487] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[layout/QGridLayout.sl]编译File层完成]
+[06:47:31 488] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[net/Net.sl]编译File层完成]
+[06:47:31 489] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[sql/Sql.sl]编译File层完成]
+[06:47:31 490] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[svg/Svg.sl]编译File层完成]
+[06:47:31 491] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[gl/GL.sl]编译File层完成]
+[06:47:31 492] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[print/Print.sl]编译File层完成]
+[06:47:31 493] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[xml/Xml.sl]编译File层完成]
+[06:47:31 494] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[concurrent/Concurrent.sl]编译File层完成]
+[06:47:31 495] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[uitools/UiTools.sl]编译File层完成]
+[06:47:31 496] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[help/Help.sl]编译File层完成]
+[06:47:31 496] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[dbus/DBus.sl]编译File层完成]
+[06:47:31 497] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[06:47:31 497] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[06:47:31 527] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QObject.sl] Line:[11] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QObject] 方法: _init_ 重写了父类方法但未使用 override 标记: Core.Object._init_]
+[06:47:31 532] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[uitools/UiTools.sl] Line:[37] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QFormBuilder] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 532] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[uitools/UiTools.sl] Line:[19] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QUiLoader] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 533] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[xml/Xml.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QDomDocument] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 533] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[print/Print.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QPrinter] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 534] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[svg/Svg.sl] Line:[25] Col:[26]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QSvgRenderer] 方法: isValid 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject.isValid]
+[06:47:31 535] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[sql/Sql.sl] Line:[12] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QSqlQuery] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 536] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[net/Net.sl] Line:[12] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QNetworkReply] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 536] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[net/Net.sl] Line:[25] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QNetworkAccessManager] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 536] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QApplication.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QApplication] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 537] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QMainWindow.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QMainWindow] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 537] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QWidget.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QWidget] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QObject._init_]
+[06:47:31 538] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[layout/QHBoxLayout.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QHBoxLayout] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QLayout._init_]
+[06:47:31 538] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[layout/QVBoxLayout.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QVBoxLayout] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QLayout._init_]
+[06:47:31 539] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[svg/Svg.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QSvgWidget] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 539] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[gl/GL.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QGLPanel] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 539] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QLineEdit.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QLineEdit] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 540] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QLineEdit.sl] Line:[17] Col:[62]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QLineEdit] 方法: text 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget.text]
+[06:47:31 540] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QLabel.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QLabel] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 540] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[uitools/UiTools.sl] Line:[11] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QLoadedWidget] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 541] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[core/QPushButton.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QPushButton] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QWidget._init_]
+[06:47:31 541] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[layout/QGridLayout.sl] Line:[9] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[SLangQT.SLang.QGridLayout] 方法: _init_ 重写了父类方法但未使用 override 标记: SLangQT.SLang.QLayout._init_]
+[06:47:31 556] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=133]
+[06:47:31 659] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[MetaCore]完成]
+[06:47:31 660] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: IR]
+[06:47:31 661] [Info] [GenIR]  [IRManagerStartTranslatingIR]  Info:[Start translating IR...] Extend:[Start translating IR...]
+[06:47:31 662] [Info] [GenIR]  [IRManagerStartTranslatingIRMetaClass]  Info:[Start translating IRMetaClass...] Extend:[Start translating IRMetaClass...]
+[06:47:31 677] [Info] [GenIR]  [IRManagerEndTranslatingIRMetaClass]  Info:[End translating IRMetaClass...] Extend:[End translating IRMetaClass...]
+[06:47:31 723] [Info] [GenIR]  [IRManagerStartExportingIR]  Info:[Start exporting IR debug data...] Extend:[Start exporting IR debug data...]
+[06:47:31 826] [Info] [GenIR]  [IRManagerEndExportingIR]  Info:[End exporting IR debug data...] Extend:[End exporting IR debug data...]
+[06:47:31 826] [Info] [GenIR]  [IRManagerEndTranslatingIR]  Info:[End translating IR...] Extend:[End translating IR...]
+[06:47:31 827] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[IR]完成]
+[06:47:31 828] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Completed] MetaCore
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Completed] ParseStatements
+  [Completed] InjectInitCall
+  [Completed] ExportMetaDebug
+  [Completed] AddGlobalData
+  [Completed] ProjectCompileAfter
+  [Completed] AutoInlineMark
+[Completed] IR
+  [Completed] TranslateIR
+[Pending] Export
+  [Pending] ExportModule
+]
+[06:47:31 829] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: Export]
+[06:47:32 033] [Info] [GenIR]  [ExportVmDllBuildFailed]  Info:[vmDll: build failed, skip copy:] Extend:[vmDll: project not found: D:\project\lang\SlangAllInOne\SLangCore\Lib\SLang\QT\cvm\slang_qt.vcxproj]
+[06:47:32 120] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success (binary): D:\project\lang\SlangAllInOne\out\export\SLangQT\SLangQT.module.slb]
+[06:47:32 228] [Info] [GenIR]  [ExportSLModulePackageExportModuleSuccess]  Info:[export module success:] Extend:[export module success: D:\project\lang\SlangAllInOne\out\export\SLangQT\SLangQT.module.json]
+[06:47:32 229] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[Export]完成]
+Compile completed.
+deployed slang_qt.dll -> D:\project\lang\SlangAllInOne\out\export\SLangQT
+packed SLangQT module -> D:\project\lang\SlangAllInOne\SLangCore\test\Other\QTTest\modules\SLangQT (slb + json + dll, spm layout)
+SLangQT module build done.
+next: deploy a Qt runtime combo to run with the real backend:
+  powershell -ExecutionPolicy Bypass -File deploy-qt.ps1 -Combo full   (or minimal|gui|data)
+  powershell -ExecutionPolicy Bypass -File run-qttest.ps1 -Combo full  (deploys + runs)

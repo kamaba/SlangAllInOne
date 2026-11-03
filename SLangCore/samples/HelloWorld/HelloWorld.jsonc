@@ -1,0 +1,29 @@
+{
+  "project": {
+    "name": "HelloWorld",
+    "desc": "入门示例：第一个 SLang 程序（编译即运行）",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": false,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "HelloWorld.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "references": [
+    { "path": "../../../out/export/Core/Core.module.slb" },
+    { "path": "../../../out/export/Std/Std.module.slb" }
+  ]
+}

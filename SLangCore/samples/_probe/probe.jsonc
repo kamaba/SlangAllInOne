@@ -1,0 +1,10 @@
+{
+  "project": { "name": "probe", "desc": "语法探针（临时）" },
+  "source": { "root": "." },
+  "compile": { "optimize": false, "target": "x64", "debug": true },
+  "compileFiles": { "files": [ { "path": "probe.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 } ] },
+  "references": [
+    { "path": "../../../out/export/Core/Core.module.slb" },
+    { "path": "../../../out/export/Std/Std.module.slb" }
+  ]
+}

@@ -1,0 +1,31 @@
+// docs-web 站点数据（后管平台可直接编辑本文件，改完重跑 build-docs-web.js 即全站生效）
+// 注意：jsonc 支持 // 行注释；URL 中的 // 不受影响。
+{
+  "site": {
+    "name": "SLang 标准库文档"
+  },
+  // 自举说明：当前按需求「先注释掉」——生成器会把它以 HTML 注释形态嵌入首页（不上屏）。
+  // 要启用上屏展示时，把下方文案补进首页 hero-sub 或由后管平台另行插桩。
+  "bootstrapNote": "本站为 SLang 自举项目：门户 / 前端 / 后管均由 SLang 生态技术栈构建。",
+
+  // 友情链接（关于页「友情链接」卡片；申请收录由后管审核后在此追加）
+  "friendLinks": [
+    { "name": "simple_language", "url": "https://github.com/kamaba/simple_language", "desc": "FrontEnd 编译器仓库（词法/语义/IR/SLIR）" },
+    { "name": "SlangAllInOne", "url": "https://github.com/kamaba/SlangAllInOne", "desc": "一体化工具链总仓库（本站文档真源）" },
+    { "name": "Releases 下载", "url": "https://github.com/kamaba/SlangAllInOne/releases", "desc": "双平台发布包（零依赖 Native AOT）" },
+    { "name": "Visual Studio Code", "url": "https://code.visualstudio.com/", "desc": "SLang 语言支持插件的宿主编辑器" }
+  ],
+
+  // 社区资讯大分类（关于页；已有信息复用 README/LICENSE，缺项为新增占位，可随时润色）
+  "community": {
+    "intro": "SLang 是一门从零构建的静态类型语言：编译器前端（C#/.NET 8）把 .sl 源码编译为 SLIR 模块包，C99 虚拟机负责执行。社区围绕语言语法、标准库、虚拟机与工具链展开，欢迎通过代码仓库的 Issues / Discussions 参与共建。",
+    "repos": [
+      { "name": "SlangAllInOne（总仓库）", "url": "https://github.com/kamaba/SlangAllInOne", "stack": "C#/.NET 8 + C99", "desc": "统合宿主 slang + 标准库源码 + 测试用例集 + 用户文档 + 构建/发布脚本" },
+      { "name": "simple_language（FrontEnd）", "url": "https://github.com/kamaba/simple_language", "stack": "C#/.NET 8", "desc": "词法/结构解析、语义与类型系统、IR 生成、SLIR 导出、CLI" }
+    ],
+    "copyright": "本项目源码以 Apache License 2.0 发布（仓库根 LICENSE 文件）。标准库中的 SLang.Mysql 模块静态链接 GPL-2.0 的 MySQL Connector/C，该模块不随官方发布包分发，使用时请自行遵循 GPL-2.0。",
+    "proposal": "功能 / 语法 / 标准库提案请走 GitHub Issues 提交 RFC：需包含「动机（解决什么问题）· 方案（语法/接口草案）· 兼容性影响 · 备选方案」四要素；重大语法变更会先经社区讨论再进入实施排期。",
+    "minutes": "版本节点与发布记要：正式发布见 GitHub Releases（每版双平台同发，附更新说明）；仓库内 `SlangAllInOne/PROJECTS.md` §7 保留逐次演进记录（含每版改动摘要），问题复盘见 `md/ai/troubleshooting/` 分片。",
+    "sponsor": "欢迎赞助支持项目的构建农场 / 测试设备 / 文档站点托管。赞助方式与赞助者名录（待补充）：请通过代码仓库 Issues 联系维护者。"
+  }
+}

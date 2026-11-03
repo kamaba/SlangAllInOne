@@ -1,0 +1,29 @@
+﻿{
+  "project": {
+    "name": "NineTable",
+    "desc": "入门脚本示例（SLangCore/samples）",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": false,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "九九乘法表.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "references": [
+    { "path": "../../../out/export/Core/Core.module.slb" },
+    { "path": "../../../out/export/Std/Std.module.slb" }
+  ]
+}

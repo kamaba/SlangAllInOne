@@ -223,6 +223,16 @@ internal static class PublishCommand
             }
         }
 
+        /* Step 8b: Qt 运行库部署（jsonc "qtRuntime" 段，2026-11-03）：把
+         * Qt SDK 的模块 dll 与插件分类复制进发布包自身运行目录（缺省
+         * modules\SLangQT\，slang_qt.dll 同位槽，FFI 装载用
+         * LOAD_WITH_ALTERED_SEARCH_PATH 依赖从该目录解析）——发布版不再
+         * 引用系统 Qt 安装。qt.conf（exe 同位）重定向插件搜索并抑制
+         * 编译期烘焙的 SDK 前缀（双保险：后端另有 dll 同位 addLibraryPath）。
+         * qtRuntime.enabled=true 时缺 SDK / 缺模块按 FAIL 处理（发布必须
+         * 自洽可移植，静默降级成引用系统装位即违背本规则）。 */
+        failures += DeployQtRuntime(publishDir);
+
         if (failures == 0)
         {
             Console.WriteLine($"Publish completed -> {publishDir}");
@@ -817,6 +827,157 @@ internal static class PublishCommand
             }
         }
         return null;
+    }
+
+    /// <summary>Qt SDK 根解析：jsonc 显式 qt6Dir 优先（存在性校验）；空则
+    /// 探测 C:\Qt\*&lt;ver&gt;\msvc*_64（bin\Qt6Core.dll 实在才命中）。
+    /// 未命中返回 null（调用方按 qtRuntime 语义报 FAIL/WARN）。</summary>
+    static string? ResolveQt6Dir(string configured)
+    {
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            return Directory.Exists(Path.Combine(configured, "bin"))
+                && File.Exists(Path.Combine(configured, "bin", "Qt6Core.dll"))
+                ? Path.GetFullPath(configured)
+                : null;
+        }
+        string qtRoot = "C:\\Qt";
+        if (!Directory.Exists(qtRoot))
+        {
+            return null;
+        }
+        foreach (string sdk in Directory.EnumerateDirectories(qtRoot, "msvc*_64", SearchOption.AllDirectories)
+                     .OrderByDescending(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            if (File.Exists(Path.Combine(sdk, "bin", "Qt6Core.dll")))
+            {
+                return sdk;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>Step 8b：Qt 运行库部署（jsonc "qtRuntime" 段）。enabled=false
+    /// 直接跳过（缺省行为不变）；enabled=true 时按 modules/plugins/
+    /// extraBinDlls 把 Qt SDK 件复制到 &lt;publish&gt;\&lt;targetDir&gt;\（缺省
+    /// modules\SLangQT\ = slang_qt.dll 同位槽），Core/Gui/Widgets 三件套强制
+    /// 补齐（slang_qt.dll 硬依赖），并写 &lt;publish&gt;\qt.conf（Plugins 重定向 +
+    /// 抑制编译期 SDK 前缀，运行彻底不依赖系统装位）。缺件 = FAIL（发布版
+    /// 必须自带运行库，见方法头注释）。返回失败计数。</summary>
+    static int DeployQtRuntime(string publishDir)
+    {
+        var qt = ProjectManager.config?.QtRuntime;
+        if (qt == null || !qt.Enabled)
+        {
+            return 0;
+        }
+
+        string? sdk = ResolveQt6Dir(qt.Qt6Dir);
+        if (sdk == null)
+        {
+            Console.WriteLine($"[FAIL] qtRuntime: Qt SDK not found (qt6Dir='{qt.Qt6Dir}'; probed C:\\Qt\\*\\msvc*_64 with bin\\Qt6Core.dll)");
+            Console.WriteLine("       a release build must carry its own Qt runtime - fix qtRuntime.qt6Dir or install the SDK");
+            return 1;
+        }
+
+        string suffix = qt.DebugRuntime ? "d" : "";
+        string relTarget = (qt.TargetDir.Length == 0 ? "modules/SLangQT" : qt.TargetDir)
+            .Replace('/', Path.DirectorySeparatorChar);
+        string targetDir = Path.IsPathRooted(relTarget)
+            ? relTarget
+            : Path.GetFullPath(Path.Combine(publishDir, relTarget));
+        Directory.CreateDirectory(targetDir);
+
+        Console.WriteLine($"[OK]  qtRuntime: sdk {sdk} -> {Path.GetRelativePath(publishDir, targetDir)}" +
+                          (qt.DebugRuntime ? " (debug runtime)" : ""));
+
+        int failures = 0;
+
+        /* 模块 dll：Core/Gui/Widgets 强制（slang_qt.dll 硬依赖），其余按配置。 */
+        var modules = new List<string>(qt.Modules.Where(m => !string.IsNullOrWhiteSpace(m)));
+        foreach (string must in new[] { "Core", "Gui", "Widgets" })
+        {
+            if (!modules.Any(m => string.Equals(m.Trim(), must, StringComparison.OrdinalIgnoreCase)))
+            {
+                modules.Add(must);
+            }
+        }
+        foreach (string mod in modules)
+        {
+            string name = $"Qt6{mod.Trim()}{suffix}.dll";
+            string src = Path.Combine(sdk, "bin", name);
+            if (!File.Exists(src))
+            {
+                Console.WriteLine($"[FAIL] qtRuntime: Qt module dll missing: {src}");
+                failures++;
+                continue;
+            }
+            File.Copy(src, Path.Combine(targetDir, name), overwrite: true);
+            Console.WriteLine($"[OK]  qtRuntime: {name}");
+        }
+
+        /* 插件分类：分类名 → 插件名列表，落 plugins\<分类>\<插件>.dll。
+         * 插件名不带 .dll 时按发布运行库形态补后缀（qwindows → qwindows[d].dll）。 */
+        foreach (var kv in qt.Plugins)
+        {
+            string cat = kv.Key.Trim();
+            if (cat.Length == 0)
+            {
+                continue;
+            }
+            foreach (string plug in kv.Value.Where(p => !string.IsNullOrWhiteSpace(p)))
+            {
+                string baseName = plug.Trim();
+                string fileName = baseName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                    ? baseName
+                    : baseName + suffix + ".dll";
+                string src = Path.Combine(sdk, "plugins", cat, fileName);
+                if (!File.Exists(src))
+                {
+                    Console.WriteLine($"[FAIL] qtRuntime: plugin dll missing: {src}");
+                    failures++;
+                    continue;
+                }
+                string destCat = Path.Combine(targetDir, "plugins", cat);
+                Directory.CreateDirectory(destCat);
+                File.Copy(src, Path.Combine(destCat, fileName), overwrite: true);
+                Console.WriteLine($"[OK]  qtRuntime: plugins\\{cat}\\{fileName}");
+            }
+        }
+
+        /* 额外 bin dll（opengl32sw.dll 等非 Qt6 命名件）。 */
+        foreach (string extra in qt.ExtraBinDlls.Where(e => !string.IsNullOrWhiteSpace(e)))
+        {
+            string src = Path.Combine(sdk, "bin", extra.Trim());
+            if (!File.Exists(src))
+            {
+                Console.WriteLine($"[FAIL] qtRuntime: extra bin dll missing: {src}");
+                failures++;
+                continue;
+            }
+            File.Copy(src, Path.Combine(targetDir, extra.Trim()), overwrite: true);
+            Console.WriteLine($"[OK]  qtRuntime: {extra.Trim()}");
+        }
+
+        /* qt.conf（exe 同位 = publish 根）：Plugins 指向部署槽位的 plugins\，
+         * 同时抑制 Qt6Core 编译期烘焙的 SDK 前缀（未抑制时 SDK 在机即被
+         * libraryPaths 命中，发布包悄悄引用系统装位）。相对路径以 qt.conf
+         * 所在目录解析。 */
+        try
+        {
+            string pluginsRel = Path.GetFullPath(Path.Combine(targetDir, "plugins"));
+            string pluginsEntry = Path.GetRelativePath(publishDir, pluginsRel).Replace('\\', '/');
+            File.WriteAllText(Path.Combine(publishDir, "qt.conf"),
+                "[Paths]\r\nPlugins = " + pluginsEntry + "\r\n");
+            Console.WriteLine($"[OK]  qtRuntime: qt.conf (Plugins = {pluginsEntry})");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[FAIL] qtRuntime: qt.conf write failed: " + ex.Message);
+            failures++;
+        }
+
+        return failures;
     }
 
     static void CopyDirectory(string srcDir, string destDir)

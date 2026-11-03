@@ -9,14 +9,17 @@
 #      the FFI static-lib preload candidate).
 # Consumers reference the module product directly (ServerTest/MysqlTest form):
 #   { "path": "<...>\out\export\SLangQT\SLangQT.module.json" }
-# Usage: powershell -ExecutionPolicy Bypass -File build-slqt.ps1 [-Qt] [-Qt6Dir <dir>]
+# Usage: powershell -ExecutionPolicy Bypass -File build-slqt.ps1 [-Qt] [-Qt6Dir <dir>] [-DeployQt minimal|gui|data|full]
 # Deps: MSVC x64 cl.exe + dotnet SDK. -Qt additionally needs Qt6 (widgets/gui/core).
+#       -DeployQt additionally stages a Qt runtime combo after the build
+#       (deploy-qt.ps1 -Targets modules,package; requires the Qt SDK).
 # NOTE: keep comments pure ASCII - PS 5.1 -File reads BOM-less UTF-8 as GBK
 # and mojibake in comments can swallow quotes and break parsing.
 
 param(
     [switch]$Qt,
-    [string]$Qt6Dir = "C:\Qt\6.8.1\msvc2022_64"
+    [string]$Qt6Dir = "C:\Qt\6.8.1\msvc2022_64",
+    [string]$DeployQt = ""
 )
 $ErrorActionPreference = "Stop"
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path   # Lib/SLang/QT/cvm
@@ -105,3 +108,17 @@ else {
 }
 
 Write-Host "SLangQT module build done."
+
+# --- 6) optional: stage a Qt runtime combo (own-dir deployment, 2026-11-03) --
+if ($DeployQt -ne "") {
+    $valid = @("minimal","gui","data","full")
+    if ($valid -notcontains $DeployQt) {
+        throw "invalid -DeployQt '$DeployQt' (expected $($valid -join '|'))"
+    }
+    & (Join-Path $here "deploy-qt.ps1") -Combo $DeployQt -Targets @("modules","package") -Qt6Dir $Qt6Dir
+}
+else {
+    Write-Host "next: deploy a Qt runtime combo to run with the real backend:"
+    Write-Host "  powershell -ExecutionPolicy Bypass -File deploy-qt.ps1 -Combo full   (or minimal|gui|data)"
+    Write-Host "  powershell -ExecutionPolicy Bypass -File run-qttest.ps1 -Combo full  (deploys + runs)"
+}

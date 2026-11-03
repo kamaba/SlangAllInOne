@@ -61,16 +61,20 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!-- SLQT_QT_DEBUG：绑定层可选模块预装载清单切 d 后缀调试运行库（slang_qt.c）。 -->
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;SLQT_QT_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 /std:c++17 /Zc:__cplusplus /EHsc %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;$(Qt6_DIR)\include\QtNetwork;$(Qt6_DIR)\include\QtSql;$(Qt6_DIR)\include\QtSvg;$(Qt6_DIR)\include\QtSvgWidgets;$(Qt6_DIR)\include\QtOpenGL;$(Qt6_DIR)\include\QtOpenGLWidgets;$(Qt6_DIR)\include\QtPrintSupport;$(Qt6_DIR)\include\QtXml;$(Qt6_DIR)\include\QtConcurrent;$(Qt6_DIR)\include\QtTest;$(Qt6_DIR)\include\QtUiTools;$(Qt6_DIR)\include\QtHelp;$(Qt6_DIR)\include\QtDBus;$(Qt6_DIR)\include\QtDesigner;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(Qt6_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Qt6Widgetsd.lib;Qt6Guid.lib;Qt6Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- 2026-11-03 扩展面：全部可选 Qt 模块 /DELAYLOAD（组合部署缺件时本 dll
+           装载不失败；绑定层同位预装载后延迟桩按模块名命中）。 -->
+      <AdditionalDependencies>delayimp.lib;Qt6Widgetsd.lib;Qt6Guid.lib;Qt6Cored.lib;Qt6Networkd.lib;Qt6Sqld.lib;Qt6Svgd.lib;Qt6SvgWidgetsd.lib;Qt6OpenGLd.lib;Qt6OpenGLWidgetsd.lib;Qt6PrintSupportd.lib;Qt6Xmld.lib;Qt6Concurrentd.lib;Qt6Testd.lib;Qt6UiToolsd.lib;Qt6Helpd.lib;Qt6DBusd.lib;Qt6Designerd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Qt6Networkd.dll;Qt6Sqld.dll;Qt6Svgd.dll;Qt6SvgWidgetsd.dll;Qt6OpenGLd.dll;Qt6OpenGLWidgetsd.dll;Qt6PrintSupportd.dll;Qt6Xmld.dll;Qt6Concurrentd.dll;Qt6Testd.dll;Qt6UiToolsd.dll;Qt6Helpd.dll;Qt6DBusd.dll;Qt6Designerd.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -85,13 +89,15 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 /std:c++17 /Zc:__cplusplus /EHsc %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(QT_SRC);$(Qt6_DIR)\include;$(Qt6_DIR)\include\QtWidgets;$(Qt6_DIR)\include\QtGui;$(Qt6_DIR)\include\QtCore;$(Qt6_DIR)\include\QtNetwork;$(Qt6_DIR)\include\QtSql;$(Qt6_DIR)\include\QtSvg;$(Qt6_DIR)\include\QtSvgWidgets;$(Qt6_DIR)\include\QtOpenGL;$(Qt6_DIR)\include\QtOpenGLWidgets;$(Qt6_DIR)\include\QtPrintSupport;$(Qt6_DIR)\include\QtXml;$(Qt6_DIR)\include\QtConcurrent;$(Qt6_DIR)\include\QtTest;$(Qt6_DIR)\include\QtUiTools;$(Qt6_DIR)\include\QtHelp;$(Qt6_DIR)\include\QtDBus;$(Qt6_DIR)\include\QtDesigner;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(Qt6_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Qt6Widgets.lib;Qt6Gui.lib;Qt6Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!-- opengl32.lib：paintGL 直接调 glClear/glDrawArrays（系统库，非 Qt SDK 件）。 -->
+      <AdditionalDependencies>delayimp.lib;Qt6Widgets.lib;Qt6Gui.lib;Qt6Core.lib;Qt6Network.lib;Qt6Sql.lib;Qt6Svg.lib;Qt6SvgWidgets.lib;Qt6OpenGL.lib;Qt6OpenGLWidgets.lib;Qt6PrintSupport.lib;Qt6Xml.lib;Qt6Concurrent.lib;Qt6Test.lib;Qt6UiTools.lib;Qt6Help.lib;Qt6DBus.lib;Qt6Designer.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Qt6Network.dll;Qt6Sql.dll;Qt6Svg.dll;Qt6SvgWidgets.dll;Qt6OpenGL.dll;Qt6OpenGLWidgets.dll;Qt6PrintSupport.dll;Qt6Xml.dll;Qt6Concurrent.dll;Qt6Test.dll;Qt6UiTools.dll;Qt6Help.dll;Qt6DBus.dll;Qt6Designer.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>

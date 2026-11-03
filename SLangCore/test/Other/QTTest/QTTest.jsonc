@@ -39,10 +39,14 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    // SLangQT = spm 包形态模块（package-layout §二.6 / publish-guide §6）：
-    // 产物装在工程 modules\SLangQT\（slb + json + slang_qt.dll，cvm\build-slqt.ps1
-    // 步骤 5 一键打包）；原生 dll 经模块 dllImports FFI 预载（pkg_dir 平铺命中）。
-    { "path": "./modules/SLangQT" }
+    // SLangQT 引用形态（2026-11-03 修复）：文件形态直引产物（Core/Std 同款）。
+    // 原目录形态 "./modules/SLangQT" 会让 Front 以 ref 导入副本（空壳、无
+    // attributeList）把 SLangQT 方法整体重导出进 QTTest，且运行期真实模块
+    // 路径在包内落空被静默跳过 → 空壳遮蔽实现 + @DllStaticImport 丢失 →
+    // FFI 全部失效（2026-11-02 的 smoke PASS 是 Int64 null != 0 恒真的
+    // 假阳性）。文件形态下 SLangQT 保持独立模块装载，属性完好，装配期
+    // 77 绑定正常（WebUITest/ServerTest 同款机制）。
+    { "path": "./modules/SLangQT/SLangQT.module.slb", "name": "SLangQT" }
   ],
   "struct": [
   ],
@@ -58,5 +62,32 @@
     "mode": "both",
     "gui": true,
     "outputDir": "publish"
+  },
+  // Qt 运行库部署（2026-11-03）：发布必须把 Qt 模块 dll + 插件分类复制进
+  // 自己的运行目录（modules\SLangQT\ 同位槽），不引用系统 Qt 安装。
+  // enabled=true 时 slang publish 缺 SDK/缺件按 FAIL 处理（发布必须自带）。
+  // 组合实验：改 modules/plugins 列表即换组合（cvm\deploy-qt.ps1 -Combo
+  // 是脚本级等价物，用于开发态快速换组合看效果）。
+  "qtRuntime": {
+    "enabled": true,
+    "qt6Dir": "C:\\Qt\\6.8.1\\msvc2022_64",
+    "debugRuntime": false,
+    "targetDir": "modules/SLangQT",
+    "modules": [
+      "Network", "Sql", "Svg", "SvgWidgets", "OpenGL", "OpenGLWidgets",
+      "PrintSupport", "Xml", "Concurrent", "Test", "UiTools", "Help",
+      "DBus", "Designer"
+    ],
+    "plugins": {
+      "platforms": ["qwindows", "qoffscreen", "qminimal"],
+      "styles": ["qmodernwindowsstyle"],
+      "imageformats": ["qgif", "qico", "qjpeg", "qsvg"],
+      "iconengines": ["qsvgicon"],
+      "sqldrivers": ["qsqlite"],
+      "tls": ["qschannelbackend", "qcertonlybackend"],
+      "networkinformation": ["qnetworklistmanager"],
+      "generic": ["qtuiotouchplugin"]
+    },
+    "extraBinDlls": ["opengl32sw.dll"]
   }
 }

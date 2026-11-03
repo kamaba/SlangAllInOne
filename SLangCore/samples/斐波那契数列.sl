@@ -1,30 +1,20 @@
-import CSharp.System;
+# 斐波那契数列：循环 + 字符串插值（输出前 10 项）
+import Std
 
-FB
+Fib
 {
-    static Fun( array arr )
+    static Fun()
     {
-        int first = 1
-        int second = 1;
-        next = 0
-        n = arr.length;
-        for i = 0, i < n，i++
+        a = 1
+        b = 1
+        line = ""
+        for i = 1, i <= 10, i++
         {
-            if i == 0
-            {
-                next = first;
-            }
-            elif i == 1
-            {
-                next = second
-            }
-            else{
-                next = first + second
-                first = second
-                second = next
-            }
-
-            Debug.Write("output$next “)
+            line = line + "$a "
+            sum = a + b
+            a = b
+            b = sum
         }
+        Console.println(line)
     }
 }

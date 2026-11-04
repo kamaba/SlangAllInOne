@@ -61,7 +61,7 @@ JsonTest
 
         for v in j.data.info.book
         {
-            Debug.WriteLine(" book=" + v )
+            Console.println(" book=" + v )
         }
     }
 }

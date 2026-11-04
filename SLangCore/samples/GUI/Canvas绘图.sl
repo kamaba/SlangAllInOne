@@ -1,5 +1,6 @@
-import CSharp.System;
-import Tkinter;
+# 历史示例（早期宿主 GUI）：import CSharp.System 与 import Tkinter 所指模块均已随
+# 宿主迁移移除（2026-10-13 起 import 为硬错误），Canvas 宿主类亦不再提供；
+# 保留作语法参考，当前编译器下不可编译。
 
 PTS
 {

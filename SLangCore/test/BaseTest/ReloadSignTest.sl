@@ -1,6 +1,4 @@
 import Std
-import CSharp.SimpleLanguage
-import CSharp.System
 
 public class Class1
 {

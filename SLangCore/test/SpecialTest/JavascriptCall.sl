@@ -121,12 +121,12 @@ Application.MFC.Core
                 cl2 = Class2.New(){ m = 10 };
                 ob3 = { tm = cl2, tm3 = obj2 };
                 #obj2.Cast<Class3>().mut.Set( 20 );
-                Debug.Write("temp: = @obj2.t1 qx2 @msg ");    #@变量空格 可以直接访问变量 并且变量直接加.ToString()  
+                Console.print("temp: = @obj2.t1 qx2 @msg ");    #@变量空格 可以直接访问变量 并且变量直接加.ToString()  
                 Print( "xxx" ); 
                 Class2.Print();
                 bbb.PrintX();
             }
-            Debug.Write( msg.ToString() + "mqqqq" );
+            Console.print( msg.ToString() + "mqqqq" );
         }
         else
         {
@@ -149,22 +149,22 @@ Application.MFC.Core
         tip = "Show: {0}   OK! @na";
         for( int i = 0; i < 10; i++ )
         {
-            Debug.Write( tip.Format( i.ToString() ) );
-            Debug.Write( tip, i );
+            Console.print( tip.Format( i.ToString() ) );
+            Console.print( tip, i );
         }
 #label( dingo );
         bool flag = false;
         dowhile( flag )
         {
             flag = false;
-            Debug.Write( "Flag: " + flag );
+            Console.print( "Flag: " + flag );
         }
 
         flag = true;
         while( flag )
         {
             x2 = "MM";
-            Debug.Write( "OK" + x2 );
+            Console.print( "OK" + x2 );
         }
         arr = [1,2,3,4];
         for( a in arr )
@@ -179,7 +179,7 @@ Application.MFC.Core
                 break dingo;
             else
             {
-                Debug.Write(" mtk:  " + a.ToString() );
+                Console.print(" mtk:  " + a.ToString() );
             }
         }
         x = 2;
@@ -218,7 +218,7 @@ Application.MFC.Core
 
         Console = GetHandle( "System.Console", 1 );   #变成表达示去看待
 
-        Debug.Write( msg );
+        Console.print( msg );
 
         Set( Count, GetA().a + 30 / 1.3 + 100%10 );          
 

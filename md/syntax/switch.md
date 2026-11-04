@@ -276,8 +276,6 @@ switch classObject
 > ⚠ 下面的示例为综合示意：其中示例 1、示例 4 使用了 switch 表达式与 `tr` 返回值，示例 3 使用了枚举 case 值绑定（`case Book.name n`）与枚举构造调用，这些均为**暂不实现**的计划语法，当前编译器不支持；类型匹配请使用 `case is` 形式。
 
 ```ruby
-import CSharp.System;
-
 ProjectEnter
 {
     # 定义基类
@@ -287,12 +285,12 @@ ProjectEnter
     }
     
     # 定义子类
-    ClassChild1 extend ClassBase
+    ClassChild1 extends ClassBase
     {
         public name = "Child1";
     }
     
-    ClassChild2 extend ClassBase
+    ClassChild2 extends ClassBase
     {
         public name = "Child2";
     }

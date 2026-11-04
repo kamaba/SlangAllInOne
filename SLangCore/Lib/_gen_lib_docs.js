@@ -119,7 +119,7 @@ function deriveMemberDesc(kind, sig) {
   if (kind === 'prop') return /^get\b/.test(sig) ? `获取 ${name} 的值。` : `设置 ${name} 的值。`;
   if (kind === 'field') return `字段 ${name}（类型见签名）。`;
   const conv = name.match(/^to(Int|UInt|Float)(\d+)$/i) || name.match(/^to(Bool|String|Double|Object)$/i);
-  if (conv) { const t = conv[1] ? conv[1] + conv[2] : conv[3]; return `转换为 ${t} 类型（${name}）。`; }
+  if (conv) { const t = (conv[1] && conv[2]) ? conv[1] + conv[2] : (conv[3] || conv[1]); return `转换为 ${t} 类型（${name}）。`; }
   for (const [re, v] of VERB) if (re.test(lower)) return `${v}（${name}）。`;
   const ps = sigParams(sig);
   if (ps.length) return `执行 ${name}(${ps.join(', ')})，行为详见源实现。`;

@@ -1,4 +1,5 @@
-import CSharp.System;
+import Std
+
 ProjectEnter
 {
     BubbleSort( int[] arr )
@@ -15,16 +16,16 @@ ProjectEnter
                 }
             }
         }
-        Debug.Write("Bubble整理后的序列");
+        Console.print("Bubble整理后的序列");
         for v in arr
         {
-            Debug.Write( v );
+            Console.print( v );
             if v.next == null
             {
-                Debug.Write( "," );
+                Console.print( "," );
             }
         }
-        Debug.Write();
+        Console.println();
     }
     SelectedSort( int[] arr )
     {        
@@ -46,16 +47,16 @@ ProjectEnter
                 arr[i] = t;
             }
         }
-        Debug.Write("Selected整理后的序列");
+        Console.print("Selected整理后的序列");
         for v in arr
         {
-            Debug.Write( v );
+            Console.print( v );
             if v.next == null
             {
-                Debug.Write( "," );
+                Console.print( "," );
             }
         }
-        Debug.Write();
+        Console.println();
     }
     InsertSort( Array<int> arr )
     {
@@ -100,7 +101,7 @@ ProjectEnter
                     result.Add(right.Shift() );
                 }
             }
-            return result;
+            ret result;
         }
         int mid = arr.len / 2;
         left = List<int>();
@@ -115,7 +116,7 @@ ProjectEnter
         }
         left = MergeSort( left )
         right = MergeSort( right )
-        return merge( left, right )
+        ret merge( left, right )
     }
     ShellSort( int[] arr )
     {
@@ -148,13 +149,13 @@ ProjectEnter
     static Main()
     {
         arr = int[]{ 10,32, 15, 31, 2, 44, 19, 26, 30, 8, 22, 1, 6 };
-        Debug.Write("原来的序列");
+        Console.print("原来的序列");
         for v in arr
         {
-            Debug.Write( v );
+            Console.print( v );
             if v.next == null
             {
-                Debug.Write( "," );
+                Console.print( "," );
             }
         }
         BubbleSort( arr );

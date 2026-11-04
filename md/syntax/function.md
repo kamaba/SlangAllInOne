@@ -17,12 +17,12 @@
 成员函数的一般形式（函数定义在类内；文件顶层仅允许 namespace/class/data/enum 等类型声明）：
 
 ```s
-// 带返回类型的函数
+# 带返回类型的函数
 Int32 add(Int32 a, Int32 b) {
     ret a + b;
 }
 
-// 成员方法（在 class 内，返回类型可省略）
+# 成员方法（在 class 内，返回类型可省略）
 public Int32 sum(Int32 x, Int32 y) {
     ret x + y;
 }
@@ -118,10 +118,10 @@ var p = Point(1, 2);
 `get` / `set` 是保留关键字（不能用作成员名），属性以特殊函数形式声明：getter 为「返回类型 + `get` + 属性名」、setter 为「`set` + 属性名(参数)」（见 Lib/Core/Object.sl、test/BaseTest/GenFunction.sl）：
 
 ```s
-// getter：返回类型后跟 get，再跟属性名
+# getter：返回类型后跟 get，再跟属性名
 public Int32 get Count() { ret this._count; }
 
-// setter：set 后跟属性名，可声明 void 返回类型
+# setter：set 后跟属性名，可声明 void 返回类型
 public void set Count(Int32 v) { this._count = v; }
 ```
 
@@ -159,7 +159,7 @@ class MethodRefDemo {
     Int32 instanceAdd(Int32 a, Int32 b) { ret this.base + a + b; }
 }
 
-// 引用值类型统一为 Function（闭包基类），可与匿名函数混用同一形参
+# 引用值类型统一为 Function（闭包基类），可与匿名函数混用同一形参
 callWith(Function f, Int32 x, Int32 y) {
     ret f(x, y);
 }
@@ -203,12 +203,10 @@ class MethodRefTest {
 完整示例展示类方法、模板与构造：
 
 ```s
-import CSharp.System;
-
-// 成员函数（返回类型可省略）
+# 成员函数（返回类型可省略）
 max(Int32 a, Int32 b) { ret a > b ? a : b; }
 
-// 模板函数：类型参数跟在函数名后
+# 模板函数：类型参数跟在函数名后
 static T2 min<T2>(T2 t1, T2 t2) {
     ret t2;
 }

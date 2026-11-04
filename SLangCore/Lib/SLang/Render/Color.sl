@@ -95,22 +95,14 @@ public class Color
     }
 
     # ── 运算符重载 ───────────────────────────────────────
-    override Color _add_( Object obj1 )
+    override Color _add_( Color c )
     {
-        if obj1 is Color c
-        {
-            ret Color( this.r + c.r, this.g + c.g, this.b + c.b, this.a + c.a )
-        }
-        ret this
+        ret Color( this.r + c.r, this.g + c.g, this.b + c.b, this.a + c.a )
     }
 
-    override Color _sub_( Object obj1 )
+    override Color _sub_( Color c )
     {
-        if obj1 is Color c
-        {
-            ret Color( this.r - c.r, this.g - c.g, this.b - c.b, this.a - c.a )
-        }
-        ret this
+        ret Color( this.r - c.r, this.g - c.g, this.b - c.b, this.a - c.a )
     }
 
     # 支持 Color * Color（分量乘）与 Color * Float32（整体缩放）
@@ -127,13 +119,9 @@ public class Color
         ret this
     }
 
-    override bool _eq_( Object obj1 )
+    override bool _eq_( Color obj1 )
     {
-        if obj1 is Color c
-        {
-            ret this.r == c.r && this.g == c.g && this.b == c.b && this.a == c.a
-        }
-        ret false
+        ret this.r == c.r && this.g == c.g && this.b == c.b && this.a == c.a
     }
 
     override bool _ne_( Object obj1 )

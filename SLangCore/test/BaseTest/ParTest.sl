@@ -1,4 +1,3 @@
-import CSharp.System.Math as AB;
 import Application.Core;
 
 namespace Application.Core;
@@ -35,11 +34,11 @@ Class1
         int x2 = 20;
         int a2 = 20;
         {
-            Debug.Write( "p1=" + p1 , " x=" + a );
+            Console.print( "p1=" + p1 , " x=" + a );
         }
 
         Class2 c;
-        Debug.Write("aaaaaaaaa");
+        Console.print("aaaaaaaaa");
     }
 }
 
@@ -82,7 +81,7 @@ namespace Application
                     {
                         if( x == 35 )
                         {
-                            System.Debug.Write( "x=" + x );
+                            Console.print( "x=" + x );
                             #Debug.Write("x= $x ");
                             ret mc2;
                         }
@@ -90,11 +89,11 @@ namespace Application
                     a3a = true ? x > 15 : false
                     if a3a
                     {
-                        Debug.Write("value > 15" )
+                        Console.print("value > 15" )
                     }
                     else
                     {
-                        Debug.Write("Value < 15 );
+                        Console.print("Value < 15" );
                     }
                 }
 

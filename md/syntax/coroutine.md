@@ -81,8 +81,6 @@ spawn ──► Created ──► Ready ──► Running ──► Suspended �
 ## 2. 快速开始
 
 ```sl
-import CSharp.System;
-
 Worker
 {
     # 被 spawn 转发的目标：静态方法（裸名直接写）或函数值变量均可

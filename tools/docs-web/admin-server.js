@@ -23,6 +23,7 @@ const PORT = parseInt(process.argv[2], 10) || 8932;
 const HERE = __dirname;
 const OUT_ROOT = path.resolve(HERE, '..', '..', 'out', 'docs_web');
 const SITE_DATA = path.join(HERE, 'site-data.jsonc');
+const STORIES = path.join(HERE, 'stories.json');
 const HISTORY = path.join(HERE, 'version-history.json');
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -54,6 +55,14 @@ function readBody(req, cap) {
   });
 }
 
+function loadStories() {
+  try { const a = JSON.parse(fs.readFileSync(STORIES, 'utf8')); return Array.isArray(a) ? a : []; }
+  catch (e) { return []; }
+}
+function saveStories(list) {
+  fs.writeFileSync(STORIES, JSON.stringify(list, null, 2), 'utf8');
+}
+
 function loadHistory() {
   try { return JSON.parse(fs.readFileSync(HISTORY, 'utf8')); } catch (e) { return []; }
 }
@@ -64,7 +73,8 @@ function appendHistory(entry) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = (req.url || '/').split('?')[0];
+  const rawUrl = req.url || '/';
+  const url = rawUrl.split('?')[0];
   try {
     if (url === '/api/versions' && req.method === 'GET') {
       return sendJson(res, 200, { ok: true, ...scanVersions(), history: loadHistory() });
@@ -90,6 +100,30 @@ const server = http.createServer(async (req, res) => {
       const tail = ((r.stdout || '') + (r.stderr || '')).split('\n').filter(Boolean).slice(-8).join('\n');
       return sendJson(res, 200, { ok: r.status === 0, tail });
     }
+
+    // 我的故事（关于页栏目）：GET 列表 / POST 新增 / DELETE 删除
+    if (url === '/api/stories' && req.method === 'GET') {
+      return sendJson(res, 200, { ok: true, stories: loadStories() });
+    }
+    if (url === '/api/stories' && req.method === 'POST') {
+      const body = JSON.parse(await readBody(req, 64 * 1024));
+      const label = String(body.label || '').trim();
+      const content = String(body.content || '').trim();
+      if (!label || !content) return sendJson(res, 400, { ok: false, error: 'label 与 content 必填' });
+      const list = loadStories();
+      list.unshift({ id: 'st-' + Date.now().toString(36), label, content, createdAt: new Date().toISOString().slice(0, 10) });
+      saveStories(list);
+      return sendJson(res, 200, { ok: true, stories: list });
+    }
+    if (url.startsWith('/api/stories') && req.method === 'DELETE') {
+      const id = (rawUrl.split('?')[1] || '').split('&').map((s) => s.split('=')).find((kv) => kv[0] === 'id');
+      const key = id ? decodeURIComponent(id[1] || '') : '';
+      const list = loadStories().filter((s) => s.id !== key);
+      if (list.length === loadStories().length) return sendJson(res, 404, { ok: false, error: '未找到该故事' });
+      saveStories(list);
+      return sendJson(res, 200, { ok: true, stories: list });
+    }
+
     if (url.startsWith('/api/')) return sendJson(res, 404, { ok: false, error: 'unknown api' });
 
     // 静态文件（/admin → admin.html）

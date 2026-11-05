@@ -79,7 +79,36 @@ const SITE_DATA_DEFAULTS = {
     minutes: '版本节点与发布记要：正式发布见 GitHub Releases（每版双平台同发，附更新说明）；仓库内 `SlangAllInOne/PROJECTS.md` §7 保留逐次演进记录（含每版改动摘要），问题复盘见 `md/ai/troubleshooting/` 分片。',
     sponsor: '欢迎赞助支持项目的构建农场 / 测试设备 / 文档站点托管。赞助方式与赞助者名录（待补充）：请通过代码仓库 Issues 联系维护者。',
   },
+  about: {
+    projectStory: { title: '项目故事', body: 'SLang 从「造一门能直接编译到自研虚拟机的语言」这一念头起步，把词法 / 语义 / IR / SLIR 到 C99 虚拟机执行串成一条可端到端验证的链路。' },
+    techLoading: { title: '技术加载', body: '`.sl` 源码 → Front `compile` → SLIR 包 → `csimple_lang.exe run` 执行。前端 C#/.NET 8，虚拟机 C99；产物优先二进制 `*.module.slb` 装载。' },
+    designTradeoff: { title: '设计取舍', body: '取舍一：前端 C# 换开发效率，运行时 C99 保可移植；取舍二：SLIR 二进制运行 + JSON 排障双格式；取舍三：Mysql 模块 GPL-2.0 不随官方包分发。' },
+    roadmap: { title: '路线图', body: '一期 ✅ C# 前端 + 内置 VM；二期 🔄 C99 重写 VM + 跨语言互操作（当前主线）；三期 🧪 LLVM/MLIR 后端。' },
+    cases: { title: '案例', body: '标准库文档站（本站）、FFI 跨语言调用、SLang.HttpServer / WebSocketServer 服务框架等。' },
+    licenseCommunity: { title: '许可证与社区', body: '源码 Apache-2.0；提案走 GitHub Issues 提交 RFC（动机 · 方案 · 兼容性影响 · 备选方案）。' },
+    sponsor: {
+      title: '赞助入口',
+      intro: '若本项目对你有帮助，欢迎扫码赞助。下方为占位二维码，可在 site-data.jsonc 的 about.sponsor.qrcodes 替换为真实图片路径。',
+      qrcodes: [
+        { img: 'assets/sponsor/wechat.svg', caption: '微信赞赏' },
+        { img: 'assets/sponsor/alipay.svg', caption: '支付宝' },
+      ],
+    },
+  },
 };
+
+/** 「我的故事」数据（后管平台 stories.json 维护；缺省回退种子） */
+function loadStories() {
+  const file = path.join(HERE, 'stories.json');
+  try {
+    const arr = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return Array.isArray(arr) ? arr : [];
+  } catch (e) {
+    return [
+      { id: 'st-seed-1', label: '示例故事', content: '（暂无故事，去后管平台「我的故事」菜单添加）', createdAt: '' },
+    ];
+  }
+}
 
 function loadSiteData() {
   const file = path.join(HERE, 'site-data.jsonc');
@@ -90,6 +119,7 @@ function loadSiteData() {
       ...data,
       site: { ...SITE_DATA_DEFAULTS.site, ...(data.site || {}) },
       community: { ...SITE_DATA_DEFAULTS.community, ...(data.community || {}) },
+      about: { ...SITE_DATA_DEFAULTS.about, ...(data.about || {}) },
       friendLinks: Array.isArray(data.friendLinks) ? data.friendLinks : SITE_DATA_DEFAULTS.friendLinks,
     };
   } catch (e) {
@@ -99,6 +129,7 @@ function loadSiteData() {
 }
 
 const SITE_DATA = loadSiteData();
+const STORIES = loadStories(); // 「我的故事」列表（构建期嵌入 about.html）
 let FOOTER_VERSIONS = ''; // main() 中由版本扫描填充（本体/VSCode 分行展示）
 let ADMIN_VERSION_GROUPS = []; // main() 中填充（admin.html 静态只读回退）
 
@@ -575,7 +606,7 @@ function pageShell(o) {
     '<a href="' + o.relRoot + 'examples.html">示例</a>' +
     '<a href="' + o.relRoot + 'api/index.html" class="nav-api">API 索引</a>' +
     '<a href="' + o.relRoot + 'index.html#groups">库目录</a>' +
-    '<a href="' + o.relRoot + 'about.html">关于</a>' +
+    '<a href="' + o.relRoot + 'about.html">社区资讯</a>' +
     '<a href="' + o.relRoot + 'admin.html">后管</a>' +
     '</nav>' +
     '<span class="gen-at">' + esc(o.genAt || '') + '</span>' +
@@ -1032,6 +1063,14 @@ a.md-missing{opacity:.65;border-bottom:1px dashed var(--fg-dim)}
 .missing{color:var(--warn);font-size:13px}
 .dim{color:var(--fg-dim);font-size:13px}
 
+/* 社区资讯大分类入口 */
+.community-cats{margin:18px 0 26px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.cat-card{display:flex;align-items:center;justify-content:center;text-align:center;background:var(--bg-card);
+  border:1px solid var(--line);border-radius:var(--radius);padding:16px 12px;font-weight:600;color:var(--fg);
+  box-shadow:var(--shadow)}
+.cat-card:hover{text-decoration:none;border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
 /* 示例库页 */
 .ex-grid{display:grid;grid-template-columns:1fr;gap:14px}
 @media (min-width:1400px){.ex-grid{grid-template-columns:repeat(auto-fill,minmax(700px,1fr))}}
@@ -1051,6 +1090,51 @@ a.md-missing{opacity:.65;border-bottom:1px dashed var(--fg-dim)}
   .gen-at{display:none}
 }
 @media print{.topbar,.toc,.footer,.cta-row{display:none}.doc{border:none;box-shadow:none}}
+
+/* 关于页 Tab 切换 */
+.about-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.about-tab{appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--bg-card);color:var(--fg);
+  border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;transition:.15s}
+.about-tab:hover{border-color:var(--accent);color:var(--accent)}
+.about-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:var(--shadow)}
+.about-panel{display:none;animation:fade .2s ease}
+.about-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.about-panel h2{margin-top:4px}
+
+/* 我的故事 */
+.story-list{display:flex;flex-direction:column;gap:14px;margin:14px 0}
+.story-card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.story-tag{display:inline-block;background:var(--bg-chip);color:var(--accent);border:1px solid var(--accent-soft,#c7d2fe);
+  border-radius:999px;padding:3px 14px;font-size:13px;font-weight:700;margin-bottom:10px}
+.story-body{line-height:1.8;color:var(--fg);white-space:normal}
+.story-date{font-size:12px;margin-top:8px}
+.pager{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+.pg{cursor:pointer;border:1px solid var(--line);background:var(--bg-card);color:var(--fg);border-radius:8px;padding:6px 12px;font-size:13px;min-width:38px}
+.pg:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.pg.cur{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.pg:disabled{opacity:.45;cursor:not-allowed}
+
+/* 赞助入口 + 二维码 */
+.sponsor-box{margin-top:34px;padding:22px 24px;background:var(--bg-chip);border:1px solid var(--line);border-radius:var(--radius)}
+.qr-grid{display:flex;flex-wrap:wrap;gap:24px;margin:16px 0 6px}
+.qr-item{margin:0;text-align:center}
+.qr-img{width:160px;height:160px;border-radius:12px;background:#fff;border:1px solid var(--line);object-fit:contain;display:block}
+.qr-placeholder{display:flex;align-items:center;justify-content:center;color:var(--fg-dim);font-size:14px;background:#fff}
+.qr-item figcaption{margin-top:8px;font-size:13px;color:var(--fg-dim)}
+
+/* 后管：我的故事 */
+.admin-menu{position:sticky;top:0;z-index:5;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg-card);
+  border:1px solid var(--line);border-radius:var(--radius);padding:8px 12px;margin:14px 0}
+.admin-menu a{padding:6px 14px;border-radius:8px;color:var(--fg);font-weight:600;text-decoration:none}
+.admin-menu a:hover{background:var(--bg-chip);color:var(--accent)}
+.story-edit{display:grid;grid-template-columns:200px 1fr;gap:12px;margin:12px 0;align-items:start}
+.story-edit input,.story-edit textarea{border-radius:8px;border:1px solid var(--line);background:var(--bg-card);color:var(--fg);padding:8px 10px;font-size:13px;width:100%}
+.story-edit textarea{min-height:90px;resize:vertical;font-family:inherit}
+.story-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0}
+.story-row .sr-tag{background:var(--bg-chip);color:var(--accent);border-radius:999px;padding:2px 12px;font-size:12px;font-weight:700;white-space:nowrap}
+.story-row .sr-body{flex:1;font-size:13px;line-height:1.6}
+.story-row button{cursor:pointer;border:1px solid #ffccc7;background:#fff1f0;color:#a8071a;border-radius:6px;padding:3px 10px;font-size:12px;white-space:nowrap}
 `;
 
 /* ---------------------------------------------------------------- 入门页（使用示例） */
@@ -1255,57 +1339,149 @@ function mdInline(text) {
 }
 
 function renderAbout() {
-  const c = SITE_DATA.community;
+  const a = SITE_DATA.about || {};
   const html = [];
   html.push('<main class="wrap about-page">');
   html.push('<h1 class="doc-title">关于</h1>');
-  html.push('<p class="hero-sub">社区资讯 · 友情链接</p>');
+  html.push('<p class="hero-sub">项目故事 · 技术加载 · 设计取舍 · 路线图 · 案例 · 许可证社区 · 我的故事</p>');
 
-  html.push('<h2 id="intro">社区介绍</h2>');
-  html.push('<p>' + mdInline(c.intro) + '</p>');
-  html.push('<p>语言特性与标准库全貌见<a href="index.html#groups">库目录</a>与 <a href="getting-started.html">入门</a>；' +
-    '语法细节以 <a href="syntax/introduction.html">md/syntax</a> 各章为准。</p>');
+  // 顶部 Tab 切换
+  const tabDefs = [
+    ['projectStory', '项目故事'],
+    ['techLoading', '技术加载'],
+    ['designTradeoff', '设计取舍'],
+    ['roadmap', '路线图'],
+    ['cases', '案例'],
+    ['licenseCommunity', '许可证社区'],
+    ['myStory', '我的故事'],
+  ];
+  html.push('<div class="about-tabs" role="tablist" aria-label="关于页栏目切换">');
+  tabDefs.forEach(([id, label], i) => {
+    html.push('<button class="about-tab' + (i === 0 ? ' active' : '') + '" role="tab" data-tab="' + id + '">' + esc(label) + '</button>');
+  });
+  html.push('</div>');
 
-  html.push('<h2 id="repos">代码仓库</h2>');
-  html.push('<div class="table-scroll"><table class="md-table"><thead><tr><th>仓库</th><th>定位</th><th>技术栈</th></tr></thead><tbody>');
-  for (const r of c.repos) {
-    html.push('<tr><td><a href="' + esc(r.url) + '" target="_blank" rel="noopener"><code>' + esc(r.name) + '</code></a></td>' +
-      '<td>' + esc(r.desc) + '</td><td>' + esc(r.stack || '') + '</td></tr>');
-  }
-  html.push('<tr><td><a href="https://github.com/kamaba/SlangAllInOne/releases" target="_blank" rel="noopener"><code>Releases</code></a></td>' +
-    '<td>版本发布（双平台同发，附更新说明）</td><td>Native AOT</td></tr>');
-  html.push('</tbody></table></div>');
+  // 各 Tab 面板
+  tabDefs.forEach(([id, label], i) => {
+    html.push('<section class="about-panel' + (i === 0 ? ' active' : '') + '" data-panel="' + id + '">');
+    if (id === 'myStory') {
+      html.push('<h2>我的故事</h2>');
+      html.push('<p class="dim">由后管平台「我的故事」菜单维护：每条含一个<b>小标签</b> + <b>故事内容</b>，支持分页浏览。</p>');
+      html.push('<div id="story-list" class="story-list"></div>');
+      html.push('<div id="story-pager" class="pager"></div>');
+    } else {
+      const seg = a[id] || {};
+      html.push('<h2>' + esc(seg.title || label) + '</h2>');
+      html.push('<p>' + mdInline(seg.body || '（内容待补充，可在 site-data.jsonc 的 about.' + id + ' 中编辑）') + '</p>');
+    }
+    html.push('</section>');
+  });
 
-  html.push('<h2 id="copyright">版权信息</h2>');
-  html.push('<p>' + mdInline(c.copyright) + '</p>');
-
-  html.push('<h2 id="proposal">提案（RFC）</h2>');
-  html.push('<p>' + mdInline(c.proposal) + '</p>');
-  html.push('<p><a href="https://github.com/kamaba/SlangAllInOne/issues" target="_blank" rel="noopener">GitHub Issues · 提交提案 →</a></p>');
-
-  html.push('<h2 id="minutes">节点记要</h2>');
-  html.push('<p>' + mdInline(c.minutes) + '</p>');
-
-  html.push('<h2 id="sponsor">赞助</h2>');
-  html.push('<p>' + mdInline(c.sponsor) + '</p>');
-
-  html.push('<h2 id="friend-links">友情链接</h2>');
-  html.push('<div class="link-grid">');
-  for (const l of SITE_DATA.friendLinks) {
-    html.push('<a class="friend-card" href="' + esc(l.url) + '" target="_blank" rel="noopener">' +
-      '<b>' + esc(l.name) + '</b><span>' + esc(l.desc || '') + '</span></a>');
+  // 页脚「赞助」入口（两个二维码占位）
+  const sp = a.sponsor || {};
+  const qrs = (sp.qrcodes && sp.qrcodes.length) ? sp.qrcodes : [
+    { img: 'assets/sponsor/wechat.svg', caption: '微信赞赏' },
+    { img: 'assets/sponsor/alipay.svg', caption: '支付宝' },
+  ];
+  html.push('<section class="sponsor-box">');
+  html.push('<h2>' + esc(sp.title || '赞助入口') + '</h2>');
+  if (sp.intro) html.push('<p>' + mdInline(sp.intro) + '</p>');
+  html.push('<div class="qr-grid">');
+  for (const q of qrs) {
+    html.push('<figure class="qr-item">');
+    if (q.img && q.img !== 'placeholder') {
+      html.push('<img class="qr-img" src="' + esc(q.img) + '" alt="' + esc(q.caption || '赞助二维码') + '">');
+    } else {
+      html.push('<div class="qr-img qr-placeholder">二维码</div>');
+    }
+    html.push('<figcaption>' + esc(q.caption || '') + '</figcaption>');
+    html.push('</figure>');
   }
   html.push('</div>');
-  html.push('<p class="dim">申请收录友情链接：请到 <a href="https://github.com/kamaba/SlangAllInOne/issues" target="_blank" rel="noopener">GitHub Issues</a> 提交（站点名 / 地址 / 简介与 SLang 或脚本语言生态的相关性说明）。</p>');
+  html.push('<p class="dim">赞助者名录与更多方式（待补充）：请通过代码仓库 Issues 联系维护者。</p>');
+  html.push('</section>');
+
   html.push('</main>');
-  return pageShell({ title: '关于', relRoot: '', body: html.join('\n'), genAt: GEN_AT, sourcePath: 'site-data.jsonc + README + LICENSE' });
+
+  // 客户端脚本：Tab 切换 + 我的故事分页（构建期嵌入，后管服务在线时实时刷新）
+  html.push('<script>window.__STORIES__=' + JSON.stringify(STORIES).replace(/</g, '\\u003c') + ';</script>');
+  html.push('<script>' + ABOUT_PAGE_JS + '</script>');
+  return pageShell({ title: '关于', relRoot: '', body: html.join('\n'), genAt: GEN_AT, sourcePath: 'site-data.jsonc + stories.json' });
 }
+
+/* ---------------------------------------------------------------- 关于页客户端脚本（Tab 切换 + 我的故事分页） */
+const ABOUT_PAGE_JS = `
+(function(){
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // 1) Tab 切换
+  var tabs = document.querySelectorAll('.about-tab');
+  var panels = document.querySelectorAll('.about-panel');
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){
+      var id = t.getAttribute('data-tab');
+      tabs.forEach(function(x){ x.classList.remove('active'); });
+      panels.forEach(function(p){ p.classList.remove('active'); });
+      t.classList.add('active');
+      var panel = document.querySelector('.about-panel[data-panel="'+id+'"]');
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // 2) 我的故事分页
+  var PAGE = 4;
+  var all = (window.__STORIES__ || []).slice();
+  var cur = 1;
+  function renderStories(){
+    var list = document.getElementById('story-list');
+    var pager = document.getElementById('story-pager');
+    if (!list) return;
+    if (!all.length){
+      list.innerHTML = '<p class="dim">暂无故事，去后管平台「我的故事」菜单添加吧。</p>';
+      pager.innerHTML = '';
+      return;
+    }
+    var pages = Math.max(1, Math.ceil(all.length / PAGE));
+    if (cur > pages) cur = pages;
+    if (cur < 1) cur = 1;
+    var start = (cur - 1) * PAGE;
+    var slice = all.slice(start, start + PAGE);
+    list.innerHTML = slice.map(function(s){
+      return '<article class="story-card">' +
+        '<span class="story-tag">'+esc(s.label)+'</span>' +
+        '<div class="story-body">'+esc(s.content||'').replace(/\\n/g,'<br>')+'</div>' +
+        (s.createdAt ? '<div class="story-date dim">'+esc(s.createdAt)+'</div>' : '') +
+        '</article>';
+    }).join('');
+    var btns = [];
+    btns.push('<button class="pg" data-p="prev"'+(cur===1?' disabled':'')+'>‹ 上一页</button>');
+    for (var i=1;i<=pages;i++) btns.push('<button class="pg'+(i===cur?' cur':'')+'" data-p="'+i+'">'+i+'</button>');
+    btns.push('<button class="pg" data-p="next"'+(cur===pages?' disabled':'')+'>下一页 ›</button>');
+    pager.innerHTML = btns.join('');
+    pager.querySelectorAll('.pg').forEach(function(b){
+      b.addEventListener('click', function(){
+        var p = b.getAttribute('data-p');
+        if (p === 'prev') cur = Math.max(1, cur - 1);
+        else if (p === 'next') cur = Math.min(pages, cur + 1);
+        else cur = parseInt(p, 10);
+        renderStories();
+      });
+    });
+  }
+  // 后管服务在线时实时拉取最新故事
+  fetch('/api/stories').then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.ok && Array.isArray(d.stories)) { all = d.stories; cur = 1; renderStories(); }
+  }).catch(function(){ /* 静态托管：用构建期嵌入数据 */ });
+  renderStories();
+})();
+`;
 
 /* ---------------------------------------------------------------- 后管控制台页 */
 function renderAdmin() {
   const body = '<main class="wrap admin-page">' +
     '<h1 class="doc-title">后管控制台</h1>' +
-    '<p class="hero-sub">版本管理（本体 / VSCode / 插件 / 包 分组件）· 站点数据 · 一键重建</p>' +
+    '<p class="hero-sub">版本管理（本体 / VSCode / 插件 / 包 分组件）· 站点数据 · 我的故事 · 一键重建</p>' +
+    '<nav class="admin-menu" aria-label="后管菜单"><a href="#versions">版本管理</a><a href="#site-data">站点数据</a><a href="#my-stories">我的故事</a></nav>' +
     '<div class="run-note" id="admin-hint">ⓘ 后管能力需经本机服务启用：<code>node tools/docs-web/admin-server.js 8932</code>，' +
     '然后访问 <code>http://127.0.0.1:8932/admin</code>。当前为静态预览模式（只读）。</div>' +
 
@@ -1323,6 +1499,17 @@ function renderAdmin() {
     '<button class="btn" id="sd-reload">重新载入</button>' +
     '<button class="btn" id="rb-btn">🔄 重建站点</button></div>' +
     '<pre id="rb-out" class="rb-out" style="display:none"></pre>' +
+
+    '<h2 id="my-stories">我的故事（「关于」页栏目维护）</h2>' +
+    '<p class="dim">每条故事含一个<b>小标签</b> + <b>故事内容</b>，保存后由关于页「我的故事」Tab 分页展示。需经本机后管服务才能写入；静态预览仅展示快照。</p>' +
+    '<div class="story-edit">' +
+    '<input id="st-label" maxlength="40" placeholder="小标签（如：SLang 是怎么开始的）">' +
+    '<textarea id="st-content" placeholder="故事内容（支持换行）"></textarea>' +
+    '</div>' +
+    '<div class="cta-row" style="justify-content:flex-start;margin:6px 0 14px">' +
+    '<button class="btn btn-primary" id="st-add">＋ 添加故事</button>' +
+    '<span id="st-hint" class="dim"></span></div>' +
+    '<div id="story-rows"></div>' +
     '</main>' +
     '<style>.ver-table{width:100%;margin:10px 0 22px}.ver-table td,.ver-table th{padding:6px 10px}' +
     '#sd-editor{width:100%;min-height:320px;border-radius:10px;border:1px solid var(--line);background:var(--bg-card);' +
@@ -1334,6 +1521,7 @@ function renderAdmin() {
     '.hint-error{background:#fff1f0;border-color:#ffccc7;border-left-color:#ff4d4f!important;color:#a8071a}' +
     '</style>' +
     '<script>window.__ADMIN_FALLBACK__=' + JSON.stringify({ groups: ADMIN_VERSION_GROUPS, history: [] }).replace(/</g, '\\u003c') + ';</script>' +
+    '<script>window.__STORIES__=' + JSON.stringify(STORIES).replace(/</g, '\\u003c') + ';</script>' +
     '<script>' + ADMIN_PAGE_JS + '</script>';
   return pageShell({ title: '后管控制台', relRoot: '', body, genAt: GEN_AT, sourcePath: 'admin-server API' });
 }
@@ -1423,6 +1611,50 @@ const ADMIN_PAGE_JS = `
 
   renderTables(window.__ADMIN_FALLBACK__ || { groups: [], history: [] });
   load();
+
+  /* ---------- 我的故事管理 ---------- */
+  var curStories = (window.__STORIES__ || []).slice();
+  function renderStoryRows() {
+    var rows = $('story-rows');
+    if (!rows) return;
+    if (!curStories.length) { rows.innerHTML = '<p class="dim">暂无故事，使用上方表单添加。</p>'; return; }
+    rows.innerHTML = curStories.map(function(s){
+      return '<div class="story-row"><span class="sr-tag">'+esc(s.label)+'</span>' +
+        '<div class="sr-body">'+esc(s.content||'').replace(/\n/g,'<br>')+(s.createdAt?' <span class="dim">('+esc(s.createdAt)+')</span>':'')+'</div>' +
+        '<button data-id="'+esc(s.id)+'">删除</button></div>';
+    }).join('');
+    rows.querySelectorAll('button[data-id]').forEach(function(b){
+      b.addEventListener('click', function(){
+        if (!LIVE) return alert('静态预览模式不可写：请以 admin-server 启动后操作。');
+        if (!confirm('确认删除该故事？')) return;
+        fetch('/api/stories?id='+encodeURIComponent(b.getAttribute('data-id')), { method:'DELETE' })
+          .then(function(r){ return r.json(); })
+          .then(function(j){ if (!j.ok) throw new Error(j.error||'删除失败'); refreshStories(); })
+          .catch(function(e){ alert(e.message); });
+      });
+    });
+  }
+  function refreshStories() {
+    if (LIVE) {
+      api('/api/stories').then(function(d){ if (d && d.ok) curStories = d.stories || []; renderStoryRows(); })
+        .catch(function(){ renderStoryRows(); });
+    } else {
+      curStories = (window.__STORIES__ || []).slice();
+      renderStoryRows();
+    }
+  }
+  $('st-add').addEventListener('click', function(){
+    if (!LIVE) return alert('静态预览模式不可写：请以 admin-server 启动后操作。');
+    var label = $('st-label').value.trim();
+    var content = $('st-content').value.trim();
+    if (!label || !content) return alert('请填写小标签与故事内容');
+    api('/api/stories', { label: label, content: content }).then(function(){
+      $('st-label').value = ''; $('st-content').value = '';
+      $('st-hint').textContent = '已添加，记得点「重建站点」让关于页生效';
+      refreshStories();
+    }).catch(function(e){ alert(e.message); });
+  });
+  refreshStories();
 })();
 `;
 
@@ -1511,6 +1743,13 @@ function main() {
   writeUtf8(path.join(OUT_ROOT, 'about.html'), renderAbout());
   writeUtf8(path.join(OUT_ROOT, 'admin.html'), renderAdmin());
   writeUtf8(path.join(OUT_ROOT, 'assets', 'style.css'), CSS);
+
+  // 拷贝静态资源（赞助二维码等；style.css 已在上方单独生成，此处不覆盖）
+  const assetsSrc = path.join(HERE, 'assets');
+  if (fs.existsSync(assetsSrc)) {
+    fs.cpSync(assetsSrc, path.join(OUT_ROOT, 'assets'), { recursive: true });
+    writeUtf8(path.join(OUT_ROOT, 'assets', 'style.css'), CSS);
+  }
 
   console.log('[docs-web] 完成：' + indexJson.stats.docs + ' 篇文档 · ' + indexJson.stats.groups +
     ' 个分组 · ' + indexJson.stats.classes + ' 个类/枚举 · ' + indexJson.stats.members + ' 个成员');

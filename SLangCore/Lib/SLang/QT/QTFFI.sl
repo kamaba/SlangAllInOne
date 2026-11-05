@@ -368,11 +368,12 @@ namespace SLang
         # createCallback 失败（cb=0，方法查找 miss）时不连接、bind 返回 0
         # ——原生层对 cb=0 同款拒绝（slqt_connect_sl），悬空 null 桩会让
         # 信号发射即崩溃；bind=0 在调用侧可见可诊断。
-        # method 参数形态（2026-11-03 修复，WebUI 同款教训）：必须传完整
-        # method id（Module.NS.Class.Method_argc_T1_T2）或短方法名；
-        # "SLang.QT._dispatchVoid" 点路径三条查找路径均不命中 → cb=0 →
-        # bind=0（本次 smoke FAIL 根因）。短名按 名字+参数个数 全局匹配，
-        # _dispatchVoid/_dispatchString 全局唯一，走短名（WebUI._dispatchHandle 同款）。
+        # method 参数形态（回调目标识别契约归 SL 库层，2026-11-05 定稿）：
+        # 必须传完整 method id（Module.NS.Class.Method_argc_T1_T2）或短方法名
+        # （按 名字+参数个数 全局匹配）。"SLang.QT._dispatchVoid" 点路径
+        # 不在 VM 查找表内——VM 曾为其加过 type_path 兜底（2026-11-02），
+        # 已随本契约移除，勿再回退点路径写法。_dispatchVoid/_dispatchString
+        # 全局唯一，走短名（WebUI._dispatchHandle 同款）。
         public static Int64 connect( Int64 h, Int32 signalId, Function handler )
         {
             if ( _handlers == null ) { _handlers = List<Function>() }

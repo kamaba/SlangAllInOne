@@ -27,5 +27,41 @@
     "proposal": "功能 / 语法 / 标准库提案请走 GitHub Issues 提交 RFC：需包含「动机（解决什么问题）· 方案（语法/接口草案）· 兼容性影响 · 备选方案」四要素；重大语法变更会先经社区讨论再进入实施排期。",
     "minutes": "版本节点与发布记要：正式发布见 GitHub Releases（每版双平台同发，附更新说明）；仓库内 `SlangAllInOne/PROJECTS.md` §7 保留逐次演进记录（含每版改动摘要），问题复盘见 `md/ai/troubleshooting/` 分片。",
     "sponsor": "欢迎赞助支持项目的构建农场 / 测试设备 / 文档站点托管。赞助方式与赞助者名录（待补充）：请通过代码仓库 Issues 联系维护者。"
+  },
+
+  // 关于页 Tab 分区（项目故事 / 技术加载 / 设计取舍 / 路线图 / 案例 / 许可证社区；「我的故事」由后管 stories.json 维护）
+  "about": {
+    "projectStory": {
+      "title": "项目故事",
+      "body": "SLang 从「造一门能直接编译到自研虚拟机的语言」这一念头起步：把词法、语义、IR、SLIR 到 C99 虚拟机执行串成一条可端到端验证的链路。一期完成 C# 前端 + 完整语言体系 + 内置 VM；二期以 C99 重写虚拟机、打通跨语言互操作并支持导出为库；三期规划 LLVM/MLIR 后端与多目标导出。"
+    },
+    "techLoading": {
+      "title": "技术加载",
+      "body": "编译链路：`.sl` 源码 → Front `compile` → `SlangAllInOne/out/export/<模块>/*.module.json`（SLIR 包）→ `csimple_lang.exe run` 执行。前端为 C#/.NET 8，虚拟机为 C99；产物优先以二进制 `*.module.slb` 装载（mtime 守卫，陈旧回落 json）。调试器 SLDP v1.1 支持断点 / 单步 / 变量树 / 表达式求值；Release 默认开启 JIT（x86-64）。"
+    },
+    "designTradeoff": {
+      "title": "设计取舍",
+      "body": "取舍一：前端用 C#/.NET 8 而非纯 C，换取开发效率与生态；运行时用 C99 重写以保证可移植与可控。取舍二：SLIR 同时提供二进制（运行）与 JSON（排障/跨语言）双格式，运行默认二进制、排障才走 JSON。取舍三：标准库 `SLang.Mysql` 静态链接 GPL-2.0 的 MySQL Connector/C，故该模块不随官方发布包分发，使用时自行遵循 GPL-2.0。"
+    },
+    "roadmap": {
+      "title": "路线图",
+      "body": "一期 ✅ C# 前端 + 完整语言体系 + 内置 VM 运行。二期 🔄 C99 重写 VM、跨语言互操作、可导出为库（当前主线）。三期 🧪 LLVM/MLIR 后端、多目标导出、本地化运行时（设计中）。版本节点与发布记要以 GitHub Releases 与 `SlangAllInOne/PROJECTS.md` §7 为准。"
+    },
+    "cases": {
+      "title": "案例",
+      "body": "• 标准库文档站（本站）：门户 / 前端 / 后管均由 `tools/docs-web` 自动生成，后管平台可写回仓库并一键重建。• 跨语言调用：FFI 直调原生库（含数学/进程/MySQL 等）。• 服务端：`SLang.HttpServer` / `SLang.WebSocketServer` 双形态框架支撑 HTTP + WS 服务。更多实践见 `SLangCore/test` 用例集。"
+    },
+    "licenseCommunity": {
+      "title": "许可证与社区",
+      "body": "项目源码以 Apache License 2.0 发布（仓库根 LICENSE）。社区围绕语言语法、标准库、虚拟机与工具链展开；功能 / 语法 / 标准库提案请走 GitHub Issues 提交 RFC（动机 · 方案 · 兼容性影响 · 备选方案四要素）。欢迎通过 Issues / Discussions 参与共建。"
+    },
+    "sponsor": {
+      "title": "赞助入口",
+      "intro": "若本项目对你有帮助，欢迎扫码赞助，支持构建农场 / 测试设备 / 文档站点托管。下方为占位二维码，可在 `site-data.jsonc` 的 `about.sponsor.qrcodes` 替换为真实图片路径。",
+      "qrcodes": [
+        { "img": "assets/sponsor/wechat.svg", "caption": "微信赞赏" },
+        { "img": "assets/sponsor/alipay.svg", "caption": "支付宝" }
+      ]
+    }
   }
 }

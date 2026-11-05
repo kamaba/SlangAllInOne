@@ -66,6 +66,5 @@ public class FloatTest
 {
     public static fun()
     {
-        Float32_3x3
     }
 }

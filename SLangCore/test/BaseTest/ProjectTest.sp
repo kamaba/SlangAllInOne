@@ -83,6 +83,7 @@ Project
         MemberFunction2Test.fun()
         NestedPlatformTest.fun()
         MemberStaticFunction.fun()
+        RefTest.fun()
         TupleTest.fun()
         BindDataTest.fun()
         LocalTest1.fun()

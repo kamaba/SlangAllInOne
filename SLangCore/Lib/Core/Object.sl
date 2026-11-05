@@ -12,6 +12,10 @@ public class Object
     void _init_()
     {
     }
+    void _exit_()
+    {
+        
+    }
     final get Type type()
     {
         ret SystemObjectGetType(this)

@@ -1,28 +1,28 @@
-import Std
+import Core
 
 
 Level1
 {
 }
 
-GenClass2
+RefTest
 {
     static fun()
     {
         global.println("========== Ref / GenClass2 (start) ==========")
         Level1 l1 = new()
         # Switch to manual management so we can control lifetime
-        Memory.Manual(l1)
+        Memory.manual(l1)
 
         var refl1 = l1
-        refl11 = Memory.Ref(l1)
+        var refl11 = Memory.ref(l1)
 
-        Memory.Release(l1)
+        Memory.release(l1)
 
-        ref12 = Memory.WeakRef(l1)
-        Memory.Free(l1)
+        var ref12 = Memory.weakRef(l1)
+        Memory.free(l1)
 
-        var cl1 = Memory.Clone(l1)
+        var cl1 = Memory.clone(l1)
         global.println("clone non-null -> " + (cl1 != null).toString())
         global.println("========== Ref / GenClass2 (end) ==========")
     }

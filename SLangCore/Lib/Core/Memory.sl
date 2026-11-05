@@ -139,7 +139,7 @@ public class Memory
     }
 
     # Total number of GC cycles performed.
-    public static Int32 GcCycleCount()
+    public static Int32 gcCycleCount()
     {
         ret SystemMemoryGetGcCycleCount()
     }

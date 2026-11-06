@@ -90,3 +90,6 @@
 /SLangCore/Lib/SLang/QT/publish
 /SLangCore/test/Other/QTTest/publish
 /SLangCore/Lib/SLang/Server/publish/release/SLangServer.zip
+/SLangCore/samples/GUI/GUIDemo/publish
+/SLangCore/samples/GUI/GUIDemo/modules
+/SLangCore/test/BenchMark/report

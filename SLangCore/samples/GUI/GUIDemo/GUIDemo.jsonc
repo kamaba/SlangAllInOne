@@ -1,0 +1,88 @@
+{
+  "project": {
+    "name": "GUIDemo",
+    "desc": "SLQT rewrite of the historical GUI samples: chord art, concentric rings, frame ui",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "GUIDemo.sl", "group": "gui", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    // Mathf.sin/cos/Pi（弦艺术取点）来自 Math 模块
+    { "path": "./lib/Math.module.slb" },
+    // SLangQT 文件形态直引产物（QTTest.jsonc 2026-11-03 同款：目录形态会让
+    // Front 以 ref 导入空壳副本遮蔽实现并丢失 @DllStaticImport，勿改回目录形态）
+    { "path": "./modules/SLangQT/SLangQT.module.slb", "name": "SLangQT" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "GUIDemo",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish"
+  },
+  // Qt 运行库自位部署（QTTest.jsonc 同款 full 组合）：发布把 Qt 模块 dll +
+  // 插件分类复制进自身运行目录 modules\SLangQT，不引用系统 Qt 安装。
+  // 开发态等价物：Lib\SLang\QT\cvm\deploy-qt.ps1 -Combo full -Targets package
+  "qtRuntime": {
+    "enabled": true,
+    "qt6Dir": "C:\\Qt\\6.8.1\\msvc2022_64",
+    "debugRuntime": false,
+    "targetDir": "modules/SLangQT",
+    "modules": [
+      "Network", "Sql", "Svg", "SvgWidgets", "OpenGL", "OpenGLWidgets",
+      "PrintSupport", "Xml", "Concurrent", "Test", "UiTools", "Help",
+      "DBus", "Designer"
+    ],
+    "plugins": {
+      "platforms": ["qwindows", "qoffscreen", "qminimal"],
+      "styles": ["qmodernwindowsstyle"],
+      "imageformats": ["qgif", "qico", "qjpeg", "qsvg"],
+      "iconengines": ["qsvgicon"],
+      "sqldrivers": ["qsqlite"],
+      "tls": ["qschannelbackend", "qcertonlybackend"],
+      "networkinformation": ["qnetworklistmanager"],
+      "generic": ["qtuiotouchplugin"]
+    },
+    "extraBinDlls": ["opengl32sw.dll"]
+  }
+}

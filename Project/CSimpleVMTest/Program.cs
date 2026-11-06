@@ -53,6 +53,8 @@ internal static class Program
         ("NullFast",                   Path.Combine("SLangCore", "test", "Other", "NullFastTest", "ProjectTest")),
         ("JsonTest",                   Path.Combine("SLangCore", "test", "Other", "JsonTest", "JsonTest")),
         ("CommentSpaceNegTest",        Path.Combine("SLangCore", "test", "Other", "CommentSpaceNegTest", "CommentSpaceNegTest")),
+        ("DollarSubscriptTest",        Path.Combine("SLangCore", "test", "Other", "DollarSubscriptTest", "DollarSubscriptTest")),
+        ("DollarSubscriptNegTest",     Path.Combine("SLangCore", "test", "Other", "DollarSubscriptNegTest", "DollarSubscriptNegTest")),
         ("PlatformAotNegTest",         Path.Combine("SLangCore", "test", "Other", "PlatformAotNegTest", "PlatformAotNegTest")),
         ("PlatformNegTest",            Path.Combine("SLangCore", "test", "Other", "PlatformNegTest", "PlatformNegTest")),
         ("PlatformOverrideNegTest",    Path.Combine("SLangCore", "test", "Other", "PlatformOverrideNegTest", "PlatformOverrideNegTest")),
@@ -628,6 +630,19 @@ internal static class Program
             ExpectedLids = new[]
             {
                 ("TokenLexerCommentSpaceRequired", 3),
+            }
+        },
+        new NegativeFrontCase
+        {
+            ArgName = "DollarSubscriptNegTest",
+            ExportModuleName = "DollarSubscriptNegTest",
+            // compile.isSupportDollarSubscript=false: 4 个 obj.$name 用法各拦截一次
+            // (变量下标 $i / 常量下标 $0 / 复合赋值目标 $1 / 字符串键 $"key")；
+            // [] 形式不受影响；独立 $x 走既有 20117 规则 1 次
+            ExpectedLids = new[]
+            {
+                ("TokenParseDollarSubscriptDisabled", 4),
+                ("TokenParseNodeIssue2", 1),
             }
         },
         new NegativeFrontCase

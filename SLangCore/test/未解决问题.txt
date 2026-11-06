@@ -9,7 +9,7 @@ macOs /iOS的环境
 1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 
 2. 接入python
 3. 接一个asm 
-4. 接一个cplus_clang
+4. 接一个cplus_clang  这块的话  思路和csharp_mono/java_hotspot有点像  就是写的 cplus_clang代码 先打包成.dll/.lib/.so一类的包 和其它不太一样的地方是，如果定义了 函数入口，可以通过ffi直接在slang中调用，所以这块加载的时候 ffi也能加载到这个导出的连接文件，然后在slang中通过映射调用。
 5. R语言的接入
 6. Go语言的接入
 7. Php的接入
@@ -26,7 +26,6 @@ D:\project\lang\SlangAllInOne\SLangCore\test\BaseTest\ForTest.sl 里边的 204�
 是否支持$i 这种的语言，需要在jsonc里边增加相关的配置  如果配置了支持该语法，则在FrontEnd层，可以使用这种方式访问，如果不允许，则在FrontEnd不允许使用这样的语法处理
 
 Monitor需要 在底层增加 条件+断点功能，也就是监视某个变量 变化到条件后，立马暂停 都是明的方法
-
 增加FrameData的概念
 
 写更多的使用用例，测试cvm的功能点。
@@ -41,18 +40,14 @@ libcurl
 ffmpeg的dll 引入
 找一个轻量级的 webview一类的，做成 dll
 
-wasm 需要增加对h5像canvas的支持
 在WebUI上制作 Scratch
 
 
 在aot的中，处理llvm内置的一些结构，在生成这个数据后，要有一个id的概念，也就是定义这个对象的hashCode 虽然是在llvm里边生成的，也要有这个概念，因为这个在 llvm的.struct转成VMObject一类的时候，要先检查vm里边有没有这个，如果没有，再去创建VMObject 而且这个不受内存gc管理，因为这个还属于llvm  所以Object.sl 你看下是不是要增加一个int _hashCode这样的概念呀，是不是这样更合理  你确定下，原来好像我看着是用的指针进行hash运算的，这种方式确定可以吗？
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
-MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了 
+MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了
 
 做cocos的附属语言
-
-
-
 
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心    主版本/插件/包 要在后管平台分开管理  前端页显示，需要使用数据库的数据显示内容， 跑起来wasm  增加贡献的功能，显示捐助

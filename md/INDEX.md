@@ -50,7 +50,7 @@
 | [syntax/introduction.md](./syntax/introduction.md) | **简介与语言基础**：文档约定、工程三件套（`.sp`/`.jsonc`/`.sl`）、`global` 与配置的关系、注释、标识符与关键字、最小串联示例 |
 | [syntax/keywords.md](./syntax/keywords.md) | **关键字与语法糖总表**：全量关键字分类表（词法器实测）、运算符与特殊符号、语法糖对照（ret/next/yield/await/spawn/$插值/小写容器构造糖/static if 已废弃）、类成员保留名规则、Core 引用后直接可用类型清单、Core / Environment / Platform 命名空间 |
 | [syntax/namespace.md](./syntax/namespace.md) | 命名空间 |
-| [syntax/variable.md](./syntax/variable.md) | 变量（含 `const` 只读变量/形参与传参约束） |
+| [syntax/variable.md](./syntax/variable.md) | **变量总览（2026-11-06 重写）**：四层作用域 / 四类变量、声明形式与初始化硬要求、类成员（继承重名、静态槽、初始化顺序）、局部作用域、工程级 `global`、`const` 三位置与跨模块/传参约束、命名规则、错误码与实现锚点 |
 | [syntax/local.md](./syntax/local.md) | 局部与作用域相关 |
 | [syntax/global.md](./syntax/global.md) | `global` 与工程 / `Project{}` 联动 |
 
@@ -60,7 +60,7 @@
 |------|------|
 | [syntax/number.md](./syntax/number.md) | 数值类型：字面量、内置类型词法、`Num` 语义 |
 | [syntax/float8_16.md](./syntax/float8_16.md) | 低精度浮点类型：`Float8`/`Float8_E5M2`/`Float16`/`Float16_Brain` 字面量后缀、存储约定、转换与运算语义 |
-| [syntax/string.md](./syntax/string.md) | 字符串 |
+| [syntax/string.md](./syntax/string.md) | **字符串使用说明**：四类字面量（双引号/单引号/`f"""`/`$"..."`）与转义表、`$name` / `${expr}` 插值、`String` 全部成员方法与可直调系统函数、边界行为、`format` 占位符规则、UTF-8 **字节**语义、bool 文本化大小写差异、不存在的 API 与替代方案、综合示例 |
 | [syntax/data.md](./syntax/data.md) | 数据类型 |
 | [syntax/array.md](./syntax/array.md) | 数组 |
 | [syntax/type.md](./syntax/type.md) | 类型 |

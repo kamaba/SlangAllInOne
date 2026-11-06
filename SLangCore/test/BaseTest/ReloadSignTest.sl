@@ -5,7 +5,6 @@ public class Class1
     public int a = 20
     public int b = 10
 
-
     # C1 + C2  内置函数，传参，必须是Object类型，或者是不可以定义的类型  要在代码里边进行类型判断
     override Class1 _add_( Object obj1 )
     {
@@ -52,7 +51,7 @@ public class Class1
         #!
         if obj1 != null && obj1.a == 30
         {
-            ret true
+        ret true
         }
         !#
         ret null
@@ -81,7 +80,7 @@ public class Class1
     override bool _gt_( obj1 )
     {
         ret false
-    }    
+    }
     # C1 >= C2
     override bool _ge_( obj1 )
     {
@@ -100,7 +99,7 @@ public class Class1
         }
         else
         {
-            ret true            
+            ret true
         }
     }
     # C1 != C2
@@ -116,7 +115,7 @@ public class Class1
         }
         else
         {
-            ret true            
+            ret true
         }
     }
 
@@ -140,8 +139,7 @@ ReloadSignTest
     }
 }
 
-
-# 系统重载符号  使用 _add_,_sub_ 等函数进行重载   
+# 系统重载符号  使用 _add_,_sub_ 等函数进行重载
 # 可以重载 的符号有 + - * / % ** // += -= *= /= %= & |
 # 重载行为是动态的行为，所以在重载传参，必须定义为Object类型，如果需要，要在代码里边进行类型判断后，再进行操作
 # 重载函数，需要进行语句解析时，进行多维函数生成

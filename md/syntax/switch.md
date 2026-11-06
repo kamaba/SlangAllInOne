@@ -32,7 +32,7 @@ switch expression
 
 **示例：**
 ```ruby
-let day = 3;
+var day = 3;
 switch day
 {
     case 1 { Console.print("星期一"); }
@@ -52,6 +52,7 @@ switch day
 一个 case 可以匹配多个值，逗号或 `|` 分隔（两者等价）：
 
 ```ruby
+var score = 8;
 switch score
 {
     case 1, 2, 3 { Console.print("低分"); }
@@ -72,6 +73,7 @@ switch score
 switch 可以检查值的类型，并根据类型执行不同的代码。类型模式使用 `case is 类型名` 形式（参考 C# 的 `is` 用法）：
 
 ```ruby
+var classObject = "this is string type";
 switch classObject
 {
     case is Int32 { statement(); }
@@ -88,6 +90,7 @@ switch classObject
 在匹配类型的同时，可以声明一个变量来使用该值：
 
 ```ruby
+classObject = Class1();
 switch classObject
 {
     case is Class1 obj1
@@ -148,7 +151,7 @@ enum Book
     name = "Book Title";
     price = 20;
 }
-let book = Book.price;
+var book = Book.price;
 switch book
 {
     case Book.name { Console.print("是书名"); }
@@ -163,7 +166,7 @@ switch book
 switch 可以作为表达式使用，返回一个值（**暂不实现**：`a = switch {}` 形式当前编译器直接报错 "暂不支持 a = if/switch{}语法"，见 `source/Front/Parse/StructParseToSyntax.cs`；示例中的 `case 90..100` 范围匹配同样暂不支持）：
 
 ```ruby
-let result = switch value
+result = switch value
 {
     case 1 { tr 10; }      # 使用 tr 返回值
     case 2 { tr 20; }
@@ -176,7 +179,7 @@ let result = switch value
 **完整示例：**
 ```ruby
 let grade = 85;
-let level = switch grade
+level = switch grade
 {
     case 90..100 { tr "优秀"; }
     case 80..89 { tr "良好"; }
@@ -200,7 +203,7 @@ Console.print("等级: $level");
 如果需要继续执行下一个 case，使用 `next` 关键字：
 
 ```ruby
-let x = 0;
+x = 0;
 switch value
 {
     case 1 
@@ -226,6 +229,7 @@ switch value
 ## 复合匹配示例
 
 ```ruby
+var classObject = ChildClass2();
 switch classObject
 {
     case BaseClass base
@@ -276,7 +280,7 @@ switch classObject
 > ⚠ 下面的示例为综合示意：其中示例 1、示例 4 使用了 switch 表达式与 `tr` 返回值，示例 3 使用了枚举 case 值绑定（`case Book.name n`）与枚举构造调用，这些均为**暂不实现**的计划语法，当前编译器不支持；类型匹配请使用 `case is` 形式。
 
 ```ruby
-ProjectEnter
+Project
 {
     # 定义基类
     ClassBase

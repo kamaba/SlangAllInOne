@@ -135,13 +135,13 @@ public class Mesh
             Float32_3 a = this._vertices[i0]
             Float32_3 b = this._vertices[i1]
             Float32_3 c = this._vertices[i2]
-            Float32_3 ab = b._sub_( a ) as Float32_3
-            Float32_3 ac = c._sub_( a ) as Float32_3
+            Float32_3 ab = b._sub_( a )
+            Float32_3 ac = c._sub_( a )
             Float32_3 faceNormal = ab.cross( ac )
 
-            normals[i0] = normals[i0]._add_( faceNormal ) as Float32_3
-            normals[i1] = normals[i1]._add_( faceNormal ) as Float32_3
-            normals[i2] = normals[i2]._add_( faceNormal ) as Float32_3
+            normals[i0] = normals[i0]._add_( faceNormal )
+            normals[i1] = normals[i1]._add_( faceNormal )
+            normals[i2] = normals[i2]._add_( faceNormal ) 
             t = t + 3
         }
 

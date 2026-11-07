@@ -39,6 +39,8 @@
       { "path": "CSharpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "CBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
@@ -103,6 +105,26 @@
       "abi": 1,
       "prefix": "sl_javascript_quickjs_",
       "lib": "../../../../plugin/javascript_quickjs/package/windows/cvm_javascript_quickjs.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // cplus_clang：CBench（C 惯用：malloc/裸指针/函数指针）与 CppBench
+    //（C++ 惯用：对象/STL/RAII）两组基准经此插件在 Front 导出期合并编译成
+    // SLCpp.dll 部署插件 dll 同目录。块构建产物 SLCpp.dll 为各工程共享部署
+    // 位（后编译覆盖），运行 BenchMark 前需最后编译本工程（同 java classes
+    // 目录的共享行为）。块内 SLCPP_EXPORT 函数入口可被 FFI 直调（SLCpp.dll.
+    // slffi.json 契约伴生部署）。
+    "cplus_clang": {
+      "name": "cplus_runtime_clang_engine",
+      "version": "0.1.0",
+      "path": "plugin/cplus_clang",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_cplus_clang_",
+      "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

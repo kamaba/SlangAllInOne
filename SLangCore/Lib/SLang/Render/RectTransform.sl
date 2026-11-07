@@ -39,22 +39,26 @@ public class RectTransform extends Transform
     # ── 设置 ─────────────────────────────────────────────
     public void setSize( Float32_2 size )
     {
-        this.sizeDelta = size.clone()
+        this.sizeDelta.x = size.x
+        this.sizeDelta.y = size.y
     }
 
     public void setSize( Float32 w, Float32 h )
     {
-        this.sizeDelta = Float32_2( w, h )
+        this.sizeDelta.x = w
+        this.sizeDelta.y = h
     }
 
     public void setAnchoredPosition( Float32_2 pos )
     {
-        this.anchoredPosition = pos.clone()
+        this.anchoredPosition.x = pos.x
+        this.anchoredPosition.y = pos.y
     }
 
     public void setPivot( Float32_2 p )
     {
-        this.pivot = Float32_2( Mathf.clamp( p.x, 0.0f, 1.0f ), Mathf.clamp( p.y, 0.0f, 1.0f ) )
+        this.pivot.x = Mathf.clamp( p.x, 0.0f, 1.0f )
+        this.pivot.y = Mathf.clamp( p.y, 0.0f, 1.0f )
     }
 
     # 设置锚点（四个角同时设为同一点，常见于固定位置布局）
@@ -62,16 +66,21 @@ public class RectTransform extends Transform
     {
         Float32 x = Mathf.clamp( anchor.x, 0.0f, 1.0f )
         Float32 y = Mathf.clamp( anchor.y, 0.0f, 1.0f )
-        this.anchorMin = Float32_2( x, y )
-        this.anchorMax = Float32_2( x, y )
+        this.anchorMin.x = x
+        this.anchorMax.x = x
+        this.anchorMin.y = y
+        this.anchorMax.y = y
     }
 
     # 拉伸到父级边缘（anchorMin=0, anchorMax=1, 偏移为 0）
     public void stretch()
     {
-        this.anchorMin = Float32_2.zero()
-        this.anchorMax = Float32_2.one()
-        this.sizeDelta = Float32_2.zero()
+        this.anchorMin.x = 0.0f
+        this.anchorMin.y = 0.0f
+        this.anchorMax.x = 1.0f
+        this.anchorMax.y = 1.0f
+        this.sizeDelta.x = 0.0f
+        this.sizeDelta.y = 0.0f
     }
 
     # ── 命中检测 ─────────────────────────────────────────

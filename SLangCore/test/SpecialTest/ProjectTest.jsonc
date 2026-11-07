@@ -31,6 +31,7 @@
       { "path": "CSharpTest3.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "JavaTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "JavaTest2.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CPlusClangTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AOT.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
       { "path": "MapTest.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
@@ -147,6 +148,30 @@
       "capabilities": [
         { "type": "signLabel", "name": "signLabel" }
       ]
+    },
+    // cplus_clang：块体经 frontend（clang++ 优先 / MSVC cl 回退，dotnet 宿主
+    // 内 INCLUDE/LIB/PATH 环境注入）在 Front 导出期合并编译成原生
+    // SLCpp.dll 部署插件 dll 同目录；labelExec 走固定原型派发
+    //（cvm_cplus_clang.c：LoadLibrary + GetProcAddress("<entry>_main")，
+    // SLCppValue 布局镜像零转换）。差异点：块内 SLCPP_EXPORT 函数入口是
+    // extern "C" 导出，SL 侧经既有 FFI 机制（@DllImport 装配期 73→77 改写 +
+    // 伴生契约 SLCpp.dll.slffi.json 编译期签名校验 LID 21483/21484/21485）
+    // 直接按签名映射调用，不经 labelExec 通道。prefix 必须显式
+    // = "sl_cplus_clang_"（plugin.jsonc entry.prefix）。块编译产物
+    // SLCpp.dll 运行中进程占用时重编译会 deployFailed（先退出宿主再编）。
+    "cplus_clang": {
+      "name": "cplus_runtime_clang_engine",
+      "version": "0.1.0",
+      "path": "plugin/cplus_clang",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_cplus_clang_",
+      "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "disable",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
     }
   },
   // 插件系统方法（PLUGIN_SYSTEM_DESIGN.md §10.1）：cvmFunction = "plugin:<capability name>"，
@@ -177,7 +202,12 @@
         { "name": "libaddfunc", "symbol": "simplelanguage_addtest", "sig": "i32,i32->i32" }
       ]
     },
-    { "path": "../../../x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "cl" }
+    { "path": "../../../x64/Debug/CLangdll.dll", "name": "CLangdll", "alias": "cl" },
+    // SLCpp（cplus_clang 块构建产物）：块内 SLCPP_EXPORT 导出函数的 FFI
+    // 直调绑定（@DllImport 第 1 实参别名查表，见 CPlusClangTest.sl）；
+    // SLCpp.dll 与伴生契约 SLCpp.dll.slffi.json 由 Front 导出期构建段
+    // 部署（path 与 plugins.cplus_clang.lib 同目录）。
+    { "path": "../../../../plugin/cplus_clang/package/windows/SLCpp.dll", "name": "SLCpp", "alias": "SLCpp" }
   ],
   "references": [
     { "path": "./lib/Core.module.slb" },
@@ -187,7 +217,11 @@
   ],
   "export": {
     "moduleName": "SpecialTest",
-    "outputDir": "export",
+    // 标准导出位 SlangAllInOne\out\export\SpecialTest\（common.ps1 TestMap
+    // 与全部相对路径的解析基准：plugins 4 级上溯到仓库 plugin\ 树、
+    // dllImports CLangdll 3 级上溯到 SlangAllInOne\x64\Debug——改成本地
+    // "export" 会让运行期路径全部错位，勿动）
+    "outputDir": "../../../out/export",
     "versionMain": 0,
     "versionSub": 0,
     "versionPatch": 1,

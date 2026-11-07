@@ -103,7 +103,7 @@ public class GUIDemo
         int jWhole = 1
         int jTenth = 0
         int i = 0
-        while ( i < 26 )
+        while i < 26
         {
             svg = svg + "<circle cx='310' cy='250' r='" + kWhole.toString() + "." + kTenth.toString() + "' fill='none' stroke='black'/>"
 

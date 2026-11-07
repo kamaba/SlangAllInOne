@@ -46,12 +46,12 @@ public class Transform extends Component
     # 本地 -> 世界（含父级链）
     public get Float32_4x4 localToWorldMatrix()
     {
-        Float32_4x4 local = MatrixUtil.trs( this.position, this.rotation, this.localScale )
+        Float32_4x4 local1 = MatrixUtil.trs( this.position, this.rotation, this.localScale )
         if this.parent != null
         {
-            ret this.parent.localToWorldMatrix().multiply( local )
+            ret this.parent.localToWorldMatrix().multiply( local1 )
         }
-        ret local
+        ret local1
     }
 
     # 世界 -> 本地
@@ -93,7 +93,7 @@ public class Transform extends Component
     # 按世界空间增量平移
     public void translate( Float32_3 delta )
     {
-        this.position = this.position._add_( delta ) as Float32_3
+        this.position = this.position._add_( delta )
     }
 
     # 按自身局部方向平移（localDirection 为局部向量）

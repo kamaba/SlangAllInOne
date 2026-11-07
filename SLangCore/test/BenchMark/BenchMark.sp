@@ -27,6 +27,12 @@ Project
         JavaBench.fun()
         JsBench.fun()
 
+        # C/C++ 原生基准（cplus_clang 插件：C 惯用指针版 + C++ 惯用对象版，
+        # 逐项同算法同规模对齐；编译产物 SLCpp.dll 共享部署位，运行前本工程
+        # 须最后编译）
+        CBench.fun()
+        CppBench.fun()
+
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")
 

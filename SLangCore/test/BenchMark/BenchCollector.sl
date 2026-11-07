@@ -29,7 +29,7 @@ data BenchEntry
     optDesc = ""
     testType = ""
     testParam = ""
-    timeMs = 0L
+    timeUs = 0L
 }
 
 BenchCollector
@@ -37,9 +37,14 @@ BenchCollector
     # 采集列表（懒初始化：静态字段无 new 初始化先例，首次 record 时创建）
     static List<BenchEntry> _entries = null
 
-    # ---------- 统一采集入口 ----------
+    # ---------- 统一采集入口（时间存储单位一律 us） ----------
+    # 存储单位用微秒而非纳秒：SL 侧整块计时为毫秒（×1000 换算），若 ×1e6
+    # 换 ns，超 2147ms 的 SL 大项（NQueens/Mandelbrot 等）会在 Int32×字面量
+    # 乘法里按 32 位语义溢出成负值（实测 -2147483648ns）。C/C++ 的 ns 精确
+    # 值在 recordC/recordCpp 入口 /1000 折算（亚微秒项在报表显示为 0us，
+    # 块内 printf 细节输出保留原始 ns）。
 
-    static record( string language, string languageDesc, string optDesc, string testType, string testParam, long timeMs )
+    static record( string language, string languageDesc, string optDesc, string testType, string testParam, long timeUs )
     {
         if BenchCollector._entries == null
         {
@@ -51,30 +56,43 @@ BenchCollector
         e.optDesc = optDesc
         e.testType = testType
         e.testParam = testParam
-        e.timeMs = timeMs
+        e.timeUs = timeUs
         BenchCollector._entries.add( e )
     }
 
-    # ---------- 四语言便捷入口 ----------
+    # ---------- 各语言便捷入口 ----------
+    # SL/CSharp/Java/JS：参数为毫秒（SL 侧 nowMillis 整块计时粒度所限），
+    # 内部 ×1000 换 us 存储；C/C++：参数为块内 QPC/steady_clock 纳秒精确
+    # 值（经出通道回传，不含装载开销），入口 /1000 折算 us。
 
     static recordSL( string testType, string testParam, long timeMs )
     {
-        BenchCollector.record( "SL", "SLang 自研语言，SL VM 字节码解释执行", "VM 默认（无 JIT）", testType, testParam, timeMs )
+        BenchCollector.record( "SL", "SLang 自研语言，SL VM 字节码解释执行", "VM 默认（无 JIT）", testType, testParam, timeMs * 1000L )
     }
 
     static recordCSharp( string testType, string testParam, long timeMs )
     {
-        BenchCollector.record( "CSharp", "C# / mono 运行时（csharp_mono 插件内嵌）", "Mono JIT 默认优化", testType, testParam, timeMs )
+        BenchCollector.record( "CSharp", "C# / mono 运行时（csharp_mono 插件内嵌）", "Mono JIT 默认优化", testType, testParam, timeMs * 1000L )
     }
 
     static recordJava( string testType, string testParam, long timeMs )
     {
-        BenchCollector.record( "Java", "Java 17 / Hotspot 运行时（java_hotspot 插件内嵌）", "HotSpot 分层 JIT", testType, testParam, timeMs )
+        BenchCollector.record( "Java", "Java 17 / Hotspot 运行时（java_hotspot 插件内嵌）", "HotSpot 分层 JIT", testType, testParam, timeMs * 1000L )
     }
 
     static recordJs( string testType, string testParam, long timeMs )
     {
-        BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT）", testType, testParam, timeMs )
+        BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT）", testType, testParam, timeMs * 1000L )
+    }
+
+    static recordC( string testType, string testParam, long timeNs )
+    {
+        BenchCollector.record( "C", "C 惯用法（@cplus_clang 块，malloc/裸指针/函数指针）", "MSVC cl /O2 原生编译，块内 ns 精确计时（cplus_clang 插件）", testType, testParam, timeNs / 1000L )
+    }
+
+    static recordCpp( string testType, string testParam, long timeNs )
+    {
+        BenchCollector.record( "C++", "C++ 惯用法（@cplus_clang 块，对象/STL/RAII）", "MSVC cl /O2 原生编译，块内 ns 精确计时（cplus_clang 插件）", testType, testParam, timeNs / 1000L )
     }
 
     # ---------- 报告生成 ----------
@@ -119,23 +137,26 @@ BenchCollector
         md = md + "- 生成时间: " + dt.year.toString() + "-" + BenchCollector.pad2( dt.month ) + "-" + BenchCollector.pad2( dt.day )
         md = md + " " + BenchCollector.pad2( dt.hour ) + ":" + BenchCollector.pad2( dt.minute ) + ":" + BenchCollector.pad2( dt.second ) + nl
         md = md + "- 数据条目: " + BenchCollector._entries.length.toString() + " 条" + nl
-        md = md + "- 计时口径: 全部为毫秒（Environment.sys.nowMillis / Stopwatch / System.nanoTime / Date.now）" + nl
-        md = md + "- CSharp/Java/JavaScript 为插件块整块计时，含引擎调用开销，首轮另含编译部署" + nl + nl
+        md = md + "- 计时口径: 时间存储单位一律微秒；SL/CSharp/Java/JS 为 SL 侧整块毫秒计时（×1000 存 us，粒度毫秒）；C/C++ 为块内 QPC/steady_clock 纳秒精确计时（经出通道回传，/1000 存 us，不含装载开销；原始 ns 见运行日志）" + nl
+        md = md + "- 单元格显示自适应单位（us 值过大时折算 ms），附录保留原始微秒值" + nl
+        md = md + "- C/C++/CSharp/Java/JavaScript 为插件块计时，首轮另含编译部署" + nl + nl
 
         # 语言与优化说明表（取各语言首条记录的说明）
         md = md + "## 语言与优化说明" + nl + nl
         md = md + "| 语言 | 使用说明 | 优化选项 |" + nl
         md = md + "|------|----------|----------|" + nl
         md = md + BenchCollector.langRow( "SL" )
+        md = md + BenchCollector.langRow( "C" )
+        md = md + BenchCollector.langRow( "C++" )
         md = md + BenchCollector.langRow( "CSharp" )
         md = md + BenchCollector.langRow( "Java" )
         md = md + BenchCollector.langRow( "JavaScript" )
         md = md + nl
 
-        # 四语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和）
-        md = md + "## 耗时对比总表（毫秒，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
-        md = md + "| 测试类型 | 参数 | SL | CSharp | Java | JavaScript |" + nl
-        md = md + "|----------|------|----|--------|------|------------|" + nl
+        # 多语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和，us 域）
+        md = md + "## 耗时对比总表（自适应单位，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
+        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript |" + nl
+        md = md + "|----------|------|----|---|-----|--------|------|------------|" + nl
         List<BenchEntry> rows = BenchCollector.collectRows()
         for i = 0, i < rows.length, i++
         {
@@ -148,22 +169,24 @@ BenchCollector
             }
             md = md + "| " + row.testType + " | " + param + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "SL" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "C" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "C++" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "CSharp" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "Java" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |" + nl
         }
         md = md + nl
 
-        # 附录：全量原始条目（采集顺序）
+        # 附录：全量原始条目（采集顺序，时间列保留原始微秒值）
         md = md + "## 附录: 全部原始条目" + nl + nl
-        md = md + "| 序号 | 语言 | 测试类型 | 参数 | 运行时间(ms) |" + nl
+        md = md + "| 序号 | 语言 | 测试类型 | 参数 | 运行时间(us) |" + nl
         md = md + "|------|------|----------|------|--------------|" + nl
         int seq = 0
         for i = 0, i < BenchCollector._entries.length, i++
         {
             BenchEntry e = BenchCollector._entries._getItem_( i )
             seq = seq + 1
-            md = md + "| " + seq.toString() + " | " + e.language + " | " + e.testType + " | " + e.testParam + " | " + e.timeMs.toString() + " |" + nl
+            md = md + "| " + seq.toString() + " | " + e.language + " | " + e.testType + " | " + e.testParam + " | " + e.timeUs.toString() + " |" + nl
         }
         ret md
     }
@@ -225,7 +248,7 @@ BenchCollector
         ret cnt
     }
 
-    # 指定（测试类型, 语言）全部子项耗时求和；无记录返回 "-"
+    # 指定（测试类型, 语言）全部子项耗时求和（us 域）；无记录返回 "-"
     static string timeCell( string testType, string language )
     {
         long total = 0L
@@ -235,7 +258,7 @@ BenchCollector
             BenchEntry e = BenchCollector._entries._getItem_( i )
             if e.testType == testType && e.language == language
             {
-                total = total + e.timeMs
+                total = total + e.timeUs
                 found = true
             }
         }
@@ -243,7 +266,17 @@ BenchCollector
         {
             ret "-"
         }
-        ret total.toString()
+        ret BenchCollector.fmtUs( total )
+    }
+
+    # 微秒自适应单位：<1000 → us；否则折算 ms（总表统一）
+    static string fmtUs( long us )
+    {
+        if us < 1000
+        {
+            ret us.toString() + "us"
+        }
+        ret ( us / 1000 ).toString() + "ms"
     }
 
     # 两位数补零

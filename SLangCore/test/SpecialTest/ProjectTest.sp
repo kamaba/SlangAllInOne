@@ -24,6 +24,12 @@ Project
         # jvm.dll 运行期），未装 JDK 时运行期报错退出；装机后恢复这两行。
         #JavaTest.fun();
 
+        # CPlusClangTest：@cplus_clang 块（Front 导出期经 clang++/cl 合并编译成
+        # SLCpp.dll，labelExec 固定原型派发）+ 块内 SLCPP_EXPORT 导出函数
+        # FFI 直调（@DllImport 别名绑定 + slffi 契约校验）。
+        # 前置：先跑 plugin\cplus_clang\cvm\build-cplus-clang.ps1。
+        CPlusClangTest.fun();
+
         # JavaTest2：callSL 通道（P4 §5.7）——Java 块内 SLChannel.call 回调
         # SL 静态方法（int/string/double/void-null/嵌套块 save/restore 回归）
         #JavaTest2.fun()

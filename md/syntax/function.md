@@ -28,7 +28,7 @@ public Int32 sum(Int32 x, Int32 y) {
 }
 ```
 
-- `ret` 是唯一的返回语句关键字（`ret;` 或 `ret 表达式;`）。`return` **不是**本语言的关键字：词法层即报 Error 20118（`TokenLexerReturnNotSupported`）并阻断编译，报错信息指引改用 `ret`（LID 文案 2026-10-08 预留，词法接线 2026-10-11 落地）；此前 `return` 会作为普通标识符流入语义层，产生 `Name:return not found!` 等误导性报错。`foreach`/`using`/`struct` 等其他语言关键字的统一拦截见 [keywords.md](./keywords.md) §1.8。
+- `ret` 是唯一的返回语句关键字（`ret;` 或 `ret 表达式;`）。`return` **不是**本语言的关键字：词法层即报错并阻断编译，报错信息指引改用 `ret`；此前 `return` 会作为普通标识符流入语义层，产生误导性报错。`foreach`/`using`/`struct` 等其他语言关键字的统一拦截见 [keywords.md](./keywords.md) §1.8。
 - 若函数标注返回类型则编译器在类型检查阶段会校验返回值；若未显式返回类型，则采用 `dynamic`/`object` 或根据上下文推断。
 - 匿名闭包使用 `function` 关键字：`var f = function(Int32 a) { ret a * 2; };`（`fun` 不是本语言关键字）。
 - **实参位置内联闭包**（0.0.39 起）：`function( 参数 ) { 体 }` 可直接写在任意调用的实参位置，编译器自动提升为具名闭包（先发射定义、原实参位置替换为名字引用），与先定义闭包变量再传入完全等价——如 `app.onPost( "/x", function( Req r, Res s ) { ... } )`。约束：只能在方法体内使用；`function( 参数 ) { 体 }` 必须单独作为一项实参；闭包体内不允许再写内联闭包（嵌套定义不支持）。回调注册场景（HTTP handler / 中间件 / 事件钩子）即写即注册，详见各库文档（如 [Server.md](../lib/Server.md)）。
@@ -83,7 +83,7 @@ T sumAll<T extends Number>(List<T> values) { /* ... */ }
 - `static`：声明为类级别函数，不需要实例即可调用。
 - `override`：用于子类方法，表示显式重写父类或接口中的方法；若父方法是 `abstract`，子类必须 `override` 并提供实现（否则子类必须声明为 `abstract`）。
 - `abstract`：在类内声明抽象方法（无方法体）。编译器不会对抽象方法进行函数体解析。
-- `final`：标记方法为不可重写；子类 `override` 父类 final 方法会在 MetaCore 阶段报 12274 MetaCoreFinalFunctionCannotOverride。final 也可用于类表示禁止继承（见 md/syntax/class.md 1.6 节）。
+- `final`：标记方法为不可重写；子类 `override` 父类 final 方法会报错。final 也可用于类表示禁止继承（见 md/syntax/class.md 1.6 节）。
 - 访问权限：`public` / `private` / `protected` / `extern` 等，用于控制可见性与链接方式。
 
 示例：
@@ -127,7 +127,7 @@ public void set Count(Int32 v) { this._count = v; }
 
 只读属性可省略 setter；抽象属性可声明为 `abstract get int size();`（见 Lib/Core/Num.sl）。C# 风格的属性块（`Int32 Count { get {...} set {...} }`）不受支持。
 
-编译器将在元模型中把 get/set 标记为对应的访问器函数（`isGet` / `isSet` 标志）。
+编译器把 get/set 识别为对应的访问器函数。
 
 ---
 
@@ -182,17 +182,17 @@ class MethodRefTest {
 - receiver 状态与原对象实时联动（引用不复制对象）；
 - 引用可作为函数参数、返回值、容器元素（如 `Array.forEach(MethodRefDemo.staticAdd)` 形式的回调传递）。
 
-**约束与错误码**：
+**约束**：
 
-| 场景 | 错误 | 说明 |
-|------|------|------|
-| 同名重载不唯一 | 21474 `MetaCoreMethodReferenceAmbiguous` | 非调用形态无法凭实参消歧，要求同名方法唯一；调用形态不受影响 |
-| 引用模板方法 / 构造函数 `_init_` / `get`·`set` 访问器 | 21475 `MetaCoreMethodReferenceUnsupported` | 模板方法需调用点显式实例化，不产生可引用实体；访问器请包装为匿名闭包 |
-| IR 层目标方法解析失败 | 21476 `IRMethodReferenceTargetNotFound` | 跨模块方法需确认 references 已加载 |
+| 场景 | 说明 |
+|------|------|
+| 同名重载不唯一 | 非调用形态无法凭实参消歧，要求同名方法唯一；调用形态不受影响 |
+| 引用模板方法 / 构造函数 `_init_` / `get`·`set` 访问器 | 不产生可引用实体，请包装为匿名闭包 |
+| 跨模块目标方法解析失败 | 需确认 references 已加载 |
 
-**与匿名闭包的边界**：方法引用值是特殊的闭包对象（复用 `CLSR` 结构、以标志位区分，无捕获上下文数组），两者同以 `Function` 为基类、可互换使用。差异：方法引用**零捕获成本**（仅 methodId + receiver），且实例引用天然携带 `this`；匿名闭包适合内联逻辑、方法引用适合复用具名方法。
+**与匿名闭包的边界**：方法引用值是特殊的闭包对象，与匿名闭包同以 `Function` 为基类、可互换使用。差异：方法引用**零捕获成本**（仅记录方法与 receiver），且实例引用天然携带 `this`；匿名闭包适合内联逻辑、方法引用适合复用具名方法。
 
-**VM 侧注**：方法引用闭包不携带 ctx 上下文数组，凡按「闭包上下文协议」工作的接口（Debug.watch 订阅等）不支持直接传入方法引用，需包装为 `function(...){ ... }`（C VM 侧运行期拒绝并给出提示）。**协程 spawn 例外**：`Coroutine.spawnClosure0..3` 与直接 await 糖（coroutine.md §4.2）支持方法引用——`spawnClosure` 系列走专用方法引用通道（receiver 随闭包携带、实例引用虚重分派；P4 attribute 路由的每请求一实例同机制）；仅变长 `spawnClosure( closure, Array<object> )` 形态 v1 拒绝方法引用。
+**注意**：部分需要捕获上下文的接口（如调试订阅）不支持直接传入方法引用，需包装为 `function(...){ ... }`。
 
 完整 7 案例（静态/实例/this/覆写重分派/三来源同参/forEach 回调/引用作返回值）见 `test/BaseTest/MethodRefTest.sl`；`=>` 内联表达式的另一形态见 [inline_lambda.md](./inline_lambda.md)。
 

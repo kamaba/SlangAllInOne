@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        CudaTest.fun()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

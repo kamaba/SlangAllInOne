@@ -1,8 +1,3 @@
-# S 语言的类 
-当你定义一个类时，你定义了一个数据类型的集合。这实际上并没有定义任何的数据，但它定义了类的名称意味着什么，也就是说，类的对象由什么组成及在这个对象上可执行什么操作。对象是类的实例。构成类的方法和变量称为类的成员。
-
-—————————————————————————————————————————————————————————
-
 ## 类的定义
 
 类定义用于声明对象的结构（字段）与行为（方法）。S 语言允许在顶层、`namespace` 内或其它类中嵌套定义类。
@@ -16,36 +11,10 @@ MyClass {
     Int32 x = 0;
     String name = "";
 
-    MyChildClass
-    {
-
-    }
-}
-final Application.MyClass2   #不允许继承
-{
-    
-}
-MyClass3
-{
-    
-}
-```
-
-file: test.sp
-```python
-ProjectEnter
-{
-    static _main_()
-    {  
-        amc = Application.MyClass();
-        amcc = Application.MyClass.MyChildClass();
-        amc2 = Application.MyClass2();
-    }
-    static _test_()
+    _init_()
     {
     }
 }
-```
 
 # S 语言的类（class）
 
@@ -107,52 +76,36 @@ _init_(Int32 a) { this.x = a; }
 _init_(Float32[] arr) { ... }
 ```
 
-#### 1.3.1 空体无参构造调用的编译期省略（2026-10-13 实装）
-
-构造函数体为空（形如 `_init_() { }`，含跨模块 SLIR 包内指令体为空/仅 Nop 的方法）且调用点**无实参**时，
-Front 编译器不再发射构造调用指令（`Dup`+实参+`CallVirt _init_`），`NewObject`/`NewTemplateObject`
-压入的新对象直接留在栈上，VM 侧完全不执行这次空调用。
-
-- 判据单点：`MetaMemberFunction.isEmptyCtorBody`（本地空链方法体 / 跨模块 `isEmptyBodyFromRefModule`）
-- 三处发射点统一接省略守卫：`IRExpress.IRNewExpress`（数组路径 + 普通类/泛型类路径）、
-  `IRMetaCallLink.ParseNewInCallLink`（链中 New，如 `HashSet<int>().add(...)` 的 receiver 构造）
-- **带实参的空体构造不省略**：实参表达式可能含副作用，求值语义必须保留
-- 安全性依据：SL 的 `new` 只调用解析出的单个构造函数（无隐式基类构造链），空体构造函数中
-  没有任何用户代码接触 `this`，省略调用语义不变；该判据同时供 ARC v1 非逃逸 new 局部认领复用
-
 ### 1.4 静态成员
 - 用 static 修饰，属于类本身
 
 ```s
 public static Float32_3 one = new(1.0f, 1.0f, 1.0f);
-static Main() { ... }
+static _main_() { ... }
 ```
 
 ### 1.5 访问修饰符
 - public：公开（默认）
 - private：仅类内可见
-- protected：特殊作用域（词法映射为 Projected 标记，标准库 Attribute.sl 即用 `protected` 修饰字段）
+- protected：特殊作用域（标准库 Attribute.sl 即用 `protected` 修饰字段）
 
-#### 1.5.1 类的导出权限（extern 标记 + publicExport 三态，2026-10-08 实装）
+#### 1.5.1 类的导出权限（extern 标记）
 
-类是否随模块包（`*.module.json`）导出，由**类级显式标记**与 jsonc 配置共同决定：
+类是否随模块包导出，由**类级显式标记**与工程配置共同决定：
 
-- `extern class` / `extern data` / `extern enum`：类级**显式导出标记**，不受配置影响恒导出（SLIR 包内 permission 记 Export）
-- `public class` 与无标记 `class`：按工程 `.jsonc` 的 `export.publicExport` 三态决定
-  （`"none"`=不导出 / `"public"`=照常导出（默认）/ `"extern"`=照常导出且包内记 Export）
+- `extern class` / `extern data` / `extern enum`：显式导出标记，不受配置影响**恒导出**
+- `public class` 与无标记 `class`：按工程配置决定是否导出（默认导出）
 - `private` / `protected`：恒不导出
-- 旧语法 `export class` / `export data` / `export enum` 的 `export` 关键字已移除权限语义（映射为不导出），
-  显式导出统一使用 `extern` 声明
+- 旧语法 `export class` / `export data` / `export enum` 的 `export` 关键字已不再表示导出权限，统一改用 `extern` 声明
 
 ```s
 extern class LibApi { }        # 显式导出：恒导出
-public class Helper { }        # 按 publicExport 三态
-class Internal { }             # 按 publicExport 三态
+public class Helper { }        # 按配置
+class Internal { }             # 按配置
 private class Hidden { }       # 恒不导出
 ```
 
-三态取值表与判定优先级详见 [../project/project-config-jsonc-guide.md](../project/project-config-jsonc-guide.md) §2.2；
-探针用例：`test/Other/ExportPermTest/`。
+导出开关的工程配置详见工程配置文档。
 
 ### 1.6 继承与 final
 - 继承：`class Child extends Parent {}`
@@ -168,18 +121,18 @@ class MyChild extends MyClass { }
 **final 类**：
 - 语法：`final class X { ... }` 或 `final X { ... }`（final 置于 class 关键字/类名之前）
 - 语义：final 类不允许被任何类 `extends` 继承；final 类本身可正常实例化、调用其成员
-- final 仅允许用于 `class`；出现在 `data` / `enum` / `interface` 上报错 21470
-- `abstract final` 组合无意义，报错 21471
-- 跨模块约束：final 标记随 SLIR 导出（module.json 类节点 `isFinal` 字段），引用方模块 `extends` 其它模块导出的 final 类同样被拦截
-- 错误码：21469 MetaCoreFinalClassCannotExtend（`类[X] 继承了 final 类： Y`）
+- final 仅允许用于 `class`；用于 `data` / `enum` / `interface` 会报错
+- `abstract final` 组合无意义，会报错
+- 跨模块同样约束：引用其它模块导出的 final 类时也无法继承
 
 **final 方法**（详见 md/syntax/function.md）：
 - 语法：`final int locked() { ... }`
-- 语义：子类不允许 `override` 父类的 final 方法；错误码 12274 MetaCoreFinalFunctionCannotOverride
+- 语义：子类不允许 `override` 父类的 final 方法
 
 ```s
 # final 类：禁止继承
-final class SealedBase {
+final class SealedBase 
+{
     int v = 0;
     int getV()
     {
@@ -191,7 +144,7 @@ final class SealedBase {
     }
 }
 
-# class SealedChild extends SealedBase { }   # 编译错误 21469
+# class SealedChild extends SealedBase { }   # 编译错误：不能继承 final 类
 
 class MethodBase
 {
@@ -203,7 +156,7 @@ class MethodBase
 
 class MethodChild extends MethodBase
 {
-    # override int locked() { ret 200 }      # 编译错误 12274
+    # override int locked() { ret 200 }      # 编译错误：不能重写 final 方法
 }
 ```
 
@@ -211,20 +164,19 @@ class MethodChild extends MethodBase
 
 ### 1.6.1 类级修饰符使用范围（2026-10-11 FileMetaClass 解析期校验）
 
-类型声明头部的修饰符按类型种类限定，非法组合在 **File 解析阶段**即报错（不再等到 MetaCore 兜底）：
+类型声明头部的修饰符按类型种类限定，非法组合会在编译期报错：
 
 | 修饰符 | class | interface | data | enum |
 |--------|-------|-----------|------|------|
-| `abstract` | ✅ | ❌ 23014 族 | ❌ 23015 | ❌ 23014 |
-| `final` | ✅ | ❌ 21470 | ❌ | ❌ |
-| `static` | ❌ 23012 | ❌ 23012 | ✅（静态数据单例） | ❌ 23011 |
-| `const` | ❌ 23013 | ❌ 23013 | ✅（只读数据） | ✅（只读枚举） |
+| `abstract` | ✅ | ❌ | ❌ | ❌ |
+| `final` | ✅ | ❌ | ❌ | ❌ |
+| `static` | ❌ | ❌ | ✅（静态数据单例） | ❌ |
+| `const` | ❌ | ❌ | ✅（只读数据） | ✅（只读枚举） |
 
 - `static` 仅允许 `data`：`static data X { }` 表示静态数据单例（成员直接经类型名访问；data.md §3.4）；类成员的静态性用**成员级** `static` 修饰，不允许写在类型头
-- `const` 仅允许 `data` / `enum`：`const data` 只读数据、`const enum` 只读枚举；class/interface 上使用直接报 23013（此前仅 MetaCore 后置兜底）
-- `abstract + final` 互斥：报 `FileMetaClassAbstractFinal`（abstract 要求被继承，final 禁止继承）
-- 同一修饰符重复（如 `static static data`）报 23010
-- 探针用例：`test/Other/ClassModifierProbe/`（负例 6 项逐一报错 / 正例 5 项编译运行通过）
+- `const` 仅允许 `data` / `enum`：`const data` 只读数据、`const enum` 只读枚举；class/interface 上使用会报错
+- `abstract + final` 互斥：会报错
+- 同一修饰符重复（如 `static static data`）会报错
 
 ### 1.7 泛型与嵌套类
 - 泛型：`List<T> extends Object { ... }`
@@ -247,38 +199,30 @@ class C22 extends Application.CI2 {
 }
 ```
 
-### 1.9 this 关键字（2026-10-23 场景实证）
+### 1.9 this 关键字
 
-`this` 指当前实例，Front 全链路（Token → Node → File → MetaCore → IR）已整合；标准库为最大消费方。
-this 是**隐式第 0 个实参**（`MetaMemberFunction.Init` 创建 `<类全名>.<方法名>.this`，`EVariableFrom.Argument`），IR 侧 `ParseArgumentsOnly` 以 index 0 注册。
-
-**已支持场景**（专项用例 `test/BaseTest/ThisBaseTest.sl`，2026-10-23 接入 BaseTest 套件）：
+`this` 指当前实例，可用于实例方法中访问成员、调用方法、作为实参传递等：
 
 | 场景 | 示例 |
 |------|------|
 | 成员读/写 | `this.x` / `this.x = v`（含 get/set 访问器内） |
-| 方法调用 | `this.method()`（虚方法/覆写/final 均运行时绑定） |
+| 方法调用 | `this.method()` |
 | 属性式 getter | `this.geta`（无括号） |
 | 构造函数 `_init_` 内 | 与 `base._init_(...)` 混用 |
-| 继承链 this/base | `base.x` 的实例指针直接取 `thisMetaVariable`（base 与 this 共享实例） |
-| `this?.x` 安全访问 | 链路字段 `isQuestionMarkDot` 透传（this 恒非空，语义等价 `this.x`） |
-| `ret this` 链式 | `this.add(1).add(2)`（receiver 连续叠加，标准库 `Redis.sl` 同款） |
-| this 作方法实参 | `Cls.staticFn(this, other)`（隐式第 0 实参显式化传递） |
-| 闭包内 this 读写 | 捕获自宿主实例方法（`capturedThis`），同一宿主多个闭包**共享同一 this 槽位** |
-| 协程 | `spawn this.方法`（脱糖为无参包装闭包，实参延迟求值） |
-| 隐式 this | `local{}` init 上下文裸名字等价 `this.xxx`（链首自动补入 this 访问节点） |
+| `this?.x` 安全访问 | 当 this 可能为空时安全读取成员 |
+| `ret this` 链式 | `this.add(1).add(2)` |
+| this 作方法实参 | `Cls.staticFn(this, other)` |
+| 协程 | `spawn this.方法` |
+| 隐式 this | 在实例方法体内可直接写成员名，等价于 `this.xxx` |
 
 **禁止/受限场景**：
 
-- 静态函数使用 this → Error 21071/21072
-- 静态方法中定义的闭包使用 this → Error 21070
-- `this()` 调用形态 → Error 21069（构造器委托不支持，仅支持 `base._init_(...)`）
-- 字段初始化器中的 this → **Info 级 21066**（检测提示不拦截，Core 标准库自身存在此类用法；实参/参数默认值中的 this 为合法用法，不再提示——2026-10-28 移除过时 21067/21076 提示，其文案误称 Error 且不拦截，详见 MetaCallNode this/base 分支）
-- this 只能位于链首（`x.this.y`）→ Info 级 21068
-- `Isolate` 入口禁止 this 非静态成员函数（Node 层拦截）
-- this 作变量名/参数名 → 报错（`this._value = b` 前缀豁免链除外）
+- 静态方法（及静态方法中定义的闭包）内不能使用 `this`，会报错
+- `this()` 这种构造器委托写法不支持，只能用 `base._init_(...)` 调用父类构造
+- `this` 只能出现在访问链的开头
+- `this` 不能作为变量名或参数名
 
-**已知限制**：嵌套闭包的内层闭包不能引用外层捕获变量与 this（`MetaClosureBlockStatements.CaptureFromHost` 显式拦截"闭包嵌套定义暂不支持"）；内层闭包只能使用自身参数。多态下对父类布局字段的 this 写入为设计约束（见 ThisBaseTest.sl 注释）。
+**已知限制**：嵌套闭包的内层闭包不能直接引用外层捕获的变量与 `this`；内层闭包只能使用自身参数。
 
 
 ---

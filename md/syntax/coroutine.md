@@ -1,8 +1,6 @@
 # 协程（Coroutine）与通道（Channel）
 
-> **本文档以「当前实现」为准**，对应 `source/Front/Lib/Core/Coroutine.sl`、`source/Front/Lib/Core/Container/Channel.sl`
-> 与 `test/BaseTest/CoroutineTest.sl`（1583 行，13 组验收用例：A–H、J–L、N、W，I/M 缺号）。
-> 历史设计档 `COROUTINE_DESIGN.md`（原 `simple_language/md/design/` 已删除）现位于 `csimple_lang/md/design/COROUTINE_DESIGN.md`——**该设计档部分内容尚未实现**，差异清单见 §13。
+> 本文档描述协程与通道的**当前可用能力**，并列出与设计稿的差异（见 §13）。
 
 ---
 
@@ -64,17 +62,6 @@ spawn ──► Created ──► Ready ──► Running ──► Suspended �
 | `Await` | 3 | `awaitTask` / `waitAll` / `waitAny` |
 | `Delay` | 4 | `delay` / `waitUntil` / `waitTimeout` |
 | `IO` | 5 | 阻塞 IO（**预留未使用**） |
-
-### 1.2 源码位置
-
-| 层 | 文件 |
-|---|---|
-| SL API | `source/Front/Lib/Core/Coroutine.sl`、`source/Front/Lib/Core/Container/Channel.sl` |
-| 系统调用注册 | `source/Front/Lib/Core/Core.jsonc` → `systemCalls[]`（`cvmFunction` 为 C 侧函数名） |
-| 关键字展开 | `source/Front/Compile/Parse/StructParseToSyntax.cs` |
-| C VM 协程核心 | `csimple_lang/src/vm/runtime/coroutine/vm_coroutine.c/.h` |
-| C VM 系统调用 | `csimple_lang/src/vm/system_method_call/coroutine_system_method.c/.h` |
-| 验收用例 | `test/BaseTest/CoroutineTest.sl` |
 
 ---
 
@@ -161,12 +148,12 @@ public class CoroutineBlockReason extends Object
 
 ## 4. 关键字：spawn / await / yield
 
-三个关键字都在 **Node 层展开**为库调用（`StructParseToSyntax.cs`），因此显式调用库方法同样合法。
+三个关键字都会展开为库调用，因此显式调用库方法同样合法。
 
 | 关键字 | 语法身份 | 展开为 |
 |---|---|---|
 | `spawn E` | 一元前缀**表达式** | 函数值变量：`Coroutine.spawnClosureN( f, 实参... )` 直传；静态方法名/实例链：`Coroutine.spawnClosure0( 合成包装闭包 )` |
-| `await e` | 一元前缀**表达式** | 操作数为**调用形态**：`Coroutine.__awaitCall( e )` 标记 → MetaCore 按返回类型换绑（见 §4.2 直接 await 糖）；其余形态：`Coroutine.awaitTask( e )` |
+| `await e` | 一元前缀**表达式** | 操作数为**调用形态**：编译器标记该调用、按返回类型换绑（见 §4.2 直接 await 糖）；其余形态：`Coroutine.awaitTask( e )` |
 | `await spawn E` | 组合前缀**表达式** | 先按 `spawn E` 脱糖为 `spawnClosureN` 合成调用（返回 Task），再以该调用为操作数走 `await` 透传（见 §4.2 `await spawn` 组合） |
 | `yield` | **语句**（无参） | `Coroutine.yieldNow()` |
 
@@ -191,7 +178,7 @@ Task h7 = spawn c1.coroInstAdd2( 3, 4 )          # 实例链（同上，见 §5.
 Task h8 = spawn this.coroInstAdd2( 1, 2 )        # this 前缀实例链（同上）
 ```
 
-前端在 Node 层按目标形态**分流脱糖**（判据：目标名在当前作用域内是否有局部定义，见 `StructParseToSyntax.cs` `IsLocalScopeDefineName`）：
+编译器按目标形态**分流脱糖**（判据：目标名在当前作用域内是否有局部定义）：
 
 ```sl
 # 分流一 · 函数值变量 (function/Func<> 变量/方法参数) -> 直传，实参在 spawn 点立即求值
@@ -260,7 +247,7 @@ int r4 = await spawn adder( 1, 2 ) as int                  # 函数值变量（�
 | 匿名闭包目标 | 不支持（只接调用形态） | 支持 `await spawn function(){...}` |
 | 展开等价 | — | `Task t = spawn fun( 实参 ); ret await t` |
 
-实现（`StructParseToSyntax.cs` `TransformCoroutineKeywordNodes` 两遍扫描）：第一遍展开 `spawn`（匿名闭包 → 提升具名闭包 + `spawnClosure0`；调用 → 包装闭包/直传 `spawnClosureN`，产物为返回 Task 的合成调用节点），第二遍 `await` 以该调用为操作数命中 `__awaitCall` 糖，MetaCore 换绑见其返回 Task 走透传分支。单独 `spawn` / `await` 的展开时序不变。
+实现上分两遍处理：第一遍展开 `spawn`（匿名闭包提升为具名闭包后走 `spawnClosure0`；调用态走 `spawnClosureN` 直传或包装闭包）；第二遍 `await` 以该调用为操作数走 `Coroutine.awaitTask` 透传。单独 `spawn` / `await` 的展开时序不变。
 
 ⚠️ **边界**：实参超过 3 个时同裸 `spawn` 与 Error 21480 限制，请改用显式两步写法。
 
@@ -416,7 +403,7 @@ static coroFairA()
 # 与 coroFairB 并行 -> "ABABABABABABABABABAB"
 ```
 
-⚠️ **前端不发射 `SCHED_CHECK` 公平性指令**——纯计算循环不会自动让出。需要公平交替时**必须显式调用**，否则长循环会独占调度器。
+⚠️ **编译器不自动插入公平性检查指令**——纯计算循环不会自动让出。需要公平交替时**必须显式调用**，否则长循环会独占调度器。
 
 ### 6.2 `delay( millis )` — 延时
 
@@ -903,7 +890,6 @@ check( g_f3count == 40 )
 
 ## 13. 与设计档 COROUTINE_DESIGN.md 的差异（设计档中**未实现**的部分）
 
-> 设计档现位于 `csimple_lang/md/design/COROUTINE_DESIGN.md`（原 `simple_language/md/design/` 目录已删除）。
 > 设计档写于实现之前，以下条目**尚未落地**。照设计档写会编译失败。
 
 | 设计档描述 | 实际 |
@@ -916,7 +902,7 @@ check( g_f3count == 40 )
 | `c.Error` 实例属性 | ❌ 不存在 |
 | `spawn function(){...}` 函数字面量 | ✅ 已支持（闭包提升 + `spawnClosure0`） |
 | `Coroutine<T>` / `cor<T>` 泛型句柄 | ❌ 统一为非泛型 `Task` |
-| **循环回边自动插入 `OpCode_SchedCheck`** | ❌ **前端不发射 `SCHED_CHECK`**，需显式 `Coroutine.yieldNow()` |
+| **循环回边自动插入公平性检查** | ❌ **前端不自动插入公平性检查**，需显式 `Coroutine.yieldNow()` |
 | 错误统一用 `Error` 枚举 int32 码承载 | SL 层用 `enum extends Error` 异常；C VM 侧抛出的取消/非法操作异常**值为 `null`**（`error_code = -63` / `-64`） |
 | `Error.Cancelled` / `Error.StackOverflow` 等常量 | ❌ 无对应常量；用裸 `catch{}` 捕获 |
 | 设计档未列出的**新增能力** | ✅ `spawnClosure*` / `waitUntil` / 实例链 `spawn 实例.方法( 实参... )` 自动脱糖（按名 `spawnByName` 与 `spawnInstance*` 已移除） |
@@ -929,7 +915,7 @@ check( g_f3count == 40 )
 |:-:|---|---|
 | 1 | **spawn 支持函数值 / 静态方法名 / 实例链三种形态** | 按名 `spawn0..3` / `spawnByName` / `spawnInstance0..3` **已移除**（按名解析不区分类名、要求全工程唯一，编译器不好定义且不直观）。函数值变量 `spawn f( 实参... )` 直传 `spawnClosureN`（实参立即求值）；裸静态方法名 `spawn 静态方法( 实参... )` 与实例链 `spawn 实例.方法( 实参... )` / `spawn this.方法( 实参... )` 由前端分流脱糖为包装闭包（实参延迟到协程首跑求值，§4.1/§5.1-§5.3），无命名约束 |
 | 2 | **参数按 `object` 装箱传递** | `int` / `string` 等值可直接传入并自动装箱，round-trip 无损；**最多 3 个参数**（`spawnClosure0..3`） |
-| 3 | **无自动公平性** | 前端不发射 `SCHED_CHECK`；纯计算循环必须显式 `Coroutine.yieldNow()`，否则独占调度器、饿死其它协程 |
+| 3 | **无自动公平性** | 编译器不自动插入公平性检查；纯计算循环必须显式 `Coroutine.yieldNow()`，否则独占调度器、饿死其它协程 |
 | 4 | **`native` 函数体内禁止挂起** | 挂起只发生在解释循环的指令边界（安全点） |
 | 5 | **子 VM（静态初始化器）内禁止用协程 API** | 编译期拦截 `spawn` / `await` / `yield` 三关键字 |
 | 6 | **`yield` 不支持带参** | 条件等待用 `Coroutine.waitUntil( 谓词闭包 )` |
@@ -1348,63 +1334,17 @@ check( await hp as int == 30 )
 
 ---
 
-## 16. 实现要点与排障
-
-### 16.1 调度器要点
-
-| 行为 | 说明 |
-|---|---|
-| 主入口即 root 协程 | `vm_scheduler_enter` 把 `static fun()` 包装为 root 协程，故主入口可直接 `await`/`yield`/`delay`/`current` |
-| 就绪队列 + 定时器链表 | **就绪队列先于定时器处理**；被目标死亡唤醒的等待者先于其残余定时器运行 |
-| 定时器链表升序 | 按 `wake_at_ms` 升序插入，`delay` 到期即唤醒 |
-| 重复唤醒安全 | 多次 `enqueue_ready` 同一协程有守卫，不会重复入队 |
-| 全部结束则收敛 | `vm_scheduler_enter` 的 drain 循环退出 |
-| `delay(0)` 为空操作 | `ms <= 0` 直接返回：不挂起、不入就绪队列、不上定时器；仅 `ms > 0` 才挂起并由定时器唤醒 |
-
-### 16.2 挂起系统调用的通用协议（Option A）
-
-会挂起的系统调用遵循统一约定（见 `coroutine_system_method.h`）：
-
-1. **peek 而不 pop** 参数（挂起期间参数留在栈上）
-2. 以 `reexecute = TRUE` 挂起 → 恢复后**同一条指令重跑一遍**
-3. 重跑时重新检查等待条件，条件满足才 pop 参数并推进
-
-> `delay` 是唯一例外：它先 pop 参数（恢复后继续下一条指令）。
-
-### 16.3 常见症状对照
+## 16. 排障速查
 
 | 症状 | 原因 | 处理 |
 |---|---|---|
 | 后台协程"没执行" | 主协程没让出 | 主协程加 `delay` / `yieldNow` / `await` |
-| 长循环卡住其它协程 | 无 `SCHED_CHECK` | 循环内显式 `Coroutine.yieldNow()` |
-| `spawn` 报方法找不到 | 函数值名拼写错 / 实例链 receiver 或方法名不符 | 编译期即检查：函数值形态需先经包装闭包（§5.1）；实例链直接写 `实例.方法( 实参... )`（§5.3） |
-| `spawn` 创建失败 | 资源不足等 | 错误码 `-62` |
-| 取消后 `catch X ex` 拿到 `null` | C 侧异常值为 `null`（`-63`） | 改用裸 `catch{}` |
-| `await` 自己报错 | C 侧非法操作（`-64`） | 裸 `catch{}`；检查是否误用 `Coroutine.current()` |
+| 长循环卡住其它协程 | 无自动公平性，需显式让出 | 循环内显式 `Coroutine.yieldNow()` |
+| `spawn` 报方法找不到 | 函数值名拼写错 / 实例链 receiver 或方法名不符 | 函数值形态需先定义闭包变量；实例链直接写 `实例.方法( 实参... )` |
+| 取消后 `catch X ex` 拿到 `null` | 取消/非法操作异常值为 `null` | 改用裸 `catch{}` |
+| `await` 自己报错 | 非法操作（await 自身） | 裸 `catch{}`；检查是否误用 `Coroutine.current()` |
 | `yield return X` 编译失败 | `yield` 不支持带参 | 改用 `Coroutine.waitUntil( 谓词闭包 )` |
 | 协程永久挂住 | 条件永不成立 / Channel 未 `close` | 用 `waitTimeout` 兜底；生产者务必 `close()` |
 | CPU 100% | 忙等循环 | 循环内 `delay(1)` 或 `yieldNow()`；改用 Channel 事件驱动 |
-| 静态初始化器里协程 API 报错 | 子 VM 不支持挂起 | 把逻辑移到普通静态方法 |
-
-### 16.4 错误码（C VM 侧）
-
-| 码 | 含义 |
-|---|---|
-| `-61` | spawn：按名字找不到方法 |
-| `-62` | spawn：协程创建失败 |
-| `-63` | cancelled：取消异常（**值为 `null`**） |
-| `-64` | `Error.InvalidOperation`：非法句柄 / 无协程上下文 / 向已关闭通道 send（**值为 `null`**） |
-
----
-
-## 附：与本文档相关的文件
-
-| 文件 | 关系 |
-|---|---|
-| `csimple_lang/md/design/COROUTINE_DESIGN.md` | 设计规格（部分未实现，见 §13） |
-| `md/ai/故障排查流程.md` | 项目级排查主文档 |
-| `md/ai/DEBUG_WORKFLOW.md` | `Logs/` 与 `DebugCode/` 产物阅读顺序 |
-| `test/BaseTest/CoroutineTest.sl` | 全量验收用例，13 组（本文档示例的可运行版本） |
-| `csimple_lang/src/vm/runtime/coroutine/vm_coroutine.c` | 协程核心：创建 / 调度器 / 帧链 / 唤醒 / 取消 |
-| `csimple_lang/src/vm/system_method_call/coroutine_system_method.c` | `SystemCoroutine*` 与 `SystemChannel*` 实现 |
+| 静态初始化器里协程 API 报错 | 静态初始化阶段不支持挂起 | 把逻辑移到普通静态方法 |
 

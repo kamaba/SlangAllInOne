@@ -41,10 +41,6 @@ public static class SlU
     public static extern int slu_last_run_code();
     [DllImport("$dllCs", CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr slu_obj_name(long handle);
-    [DllImport("$dllCs", CallingConvention = CallingConvention.Cdecl)]
-    public static extern double slu_renderer_color(long handle, int axis);
-    [DllImport("$dllCs", CallingConvention = CallingConvention.Cdecl)]
-    public static extern double slu_tr_pos(long handle, int axis);
 }
 "@
 Add-Type -TypeDefinition $cs -ErrorAction Stop
@@ -57,16 +53,6 @@ Write-Host ('    version: ' + [System.Runtime.InteropServices.Marshal]::PtrToStr
 # Editor loading the same DLL path, and reset would wipe its engine binding.
 $rc = [SlU]::slu_boot([System.Text.Encoding]::UTF8.GetBytes($slb + "`0"))
 Write-Host ("    slu_boot rc = $rc (last_run_code = " + [SlU]::slu_last_run_code() + ')')
-Write-Host ('    direct read handle=1 colorG = ' + [SlU]::slu_renderer_color(1, 1))
-Write-Host ('    direct read handle=1 posY   = ' + [SlU]::slu_tr_pos(1, 1))
-Write-Host '== loaded native modules (after boot) =='
-foreach ($m in (Get-Process -Id $PID).Modules)
-{
-    if ($m.ModuleName -like '*slang*' -or $m.ModuleName -like '*csimple*')
-    {
-        Write-Host ('    ' + $m.ModuleName + ' @ ' + $m.BaseAddress + ' <- ' + $m.FileName)
-    }
-}
 
 $stride = 20
 $maxObjects = 64

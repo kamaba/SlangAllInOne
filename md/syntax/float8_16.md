@@ -1,6 +1,6 @@
 # 低精度浮点类型（Float8 / Float16）
 
-本文说明四种**低精度浮点系统类型**：`Float8`（e4m3）、`Float8_E5M2`（e5m2）、`Float16`（IEEE half）、`Float16_Brain`（bfloat16）。覆盖**字面量后缀**、**底层存储约定**、**强制转换**、**算术/比较语义**以及 **Front / C VM 实现要点**。实现细节以 `source/Front` 与 `csimple_lang` 代码为准。
+本文说明四种**低精度浮点系统类型**：`Float8`（e4m3）、`Float8_E5M2`（e5m2）、`Float16`（IEEE half）、`Float16_Brain`（bfloat16）。覆盖**字面量后缀**、**声明与初始化**、**强制转换**、**算术/比较语义**以及使用示例。
 
 ---
 
@@ -15,7 +15,7 @@
 
 要点：
 
-- 四个类型均定义于 Core 库（`source/Front/Lib/Core/Float8.sl`、`Float16.sl`），`extends Num`。
+- 四个类型均为系统内置数值类型，`extends Num`。
 - **e4m3**（OCP FP8）：无 `Infinity`，`S.1111.111` 编码为 NaN，指数全 1 且尾数非全 1 时仍表示有限值（因此最大值为 448 而非 240 量级）。
 - **e5m2**（OCP FP8）：保留 `Infinity`/`NaN` 编码。
 - **Float16** 即 IEEE 754 binary16（half precision）。
@@ -59,7 +59,7 @@ Float16_Brain d = 0.3hb
 
 - `Float8` / `Float8_E5M2`：真实存储类型为 **`uint8`**（1 字节位模式）。
 - `Float16` / `Float16_Brain`：真实存储类型为 **`uint16`**（2 字节位模式）。
-- 栈槽、局部变量、成员变量均保存**原始位模式**，类型标记（`EVMType.Float8_E4M3` 等）决定如何解码。
+- 栈槽、局部变量、成员变量均保存**原始位模式**，类型标记决定如何解码。
 
 ```
 1.5fe4 的 e4m3 位模式 = 0x3C（0 0111 100）：1.5 * 2^0
@@ -92,16 +92,16 @@ global.println(a.toString())
 
 ## 5. 强制转换
 
-低精度类型与普通类型（`Float32` / `Float64` / `Num` / 整数）之间**赋值即触发强制转换**，编译器插入 `Convert` 系列指令；**同类型赋值不产生转换指令**：
+低精度类型与普通类型（`Float32` / `Float64` / `Num` / 整数）之间**赋值即触发强制转换**；**同类型赋值不产生转换**：
 
-| 转换方向                        | IR 指令          |
-|---------------------------------|------------------|
-| `Float32` / `Float64` → `Float8` | `Convert_F8E4M3` |
-| `Float32` / `Float64` → `Float8_E5M2` | `Convert_F8E5M2` |
-| `Float32` / `Float64` → `Float16` | `Convert_F16`    |
-| `Float32` / `Float64` → `Float16_Brain` | `Convert_F16B` |
-| 低精度 → `Float32`               | `Convert_R4`     |
-| 低精度 → `Float64`               | `Convert_R8`     |
+| 转换方向                        |
+|---------------------------------|
+| `Float32` / `Float64` → `Float8` |
+| `Float32` / `Float64` → `Float8_E5M2` |
+| `Float32` / `Float64` → `Float16` |
+| `Float32` / `Float64` → `Float16_Brain` |
+| 低精度 → `Float32`               |
+| 低精度 → `Float64`               |
 
 ```slang
 # Float32 -> Float8（赋值即显式转换）
@@ -136,7 +136,7 @@ p = 6.25f                    # 6.25 在 e4m3 与 6.0/6.5 等距 -> ties-to-even 
 
 ## 6. 算术运算
 
-低精度运算采用**「解码 → double 计算 → 重新编码」**语义（`runtime_value_compute`）：
+低精度运算采用**「解码 → double 计算 → 重新编码」**语义：
 
 1. 两侧操作数按各自类型标记解码为 `double`。
 2. 以 `double` 完成加/减/乘/除。
@@ -169,7 +169,7 @@ m + n        # 1
 
 ## 7. 比较运算
 
-`== != > >= < <=` 均按**解码后的数值**比较（`runtime_value_compare`），支持**跨类型比较**（任一侧为低精度/浮点则按 `double` 比较）：
+`== != > >= < <=` 均按**解码后的数值**比较，支持**跨类型比较**（任一侧为低精度/浮点则按 `double` 比较）：
 
 ```slang
 Float8 a = 2.0fe4
@@ -195,7 +195,7 @@ p > q        # True  （bf16 与 f16 混合比较）
 ## 8. 真值判断与 toString
 
 - **真值判断**：低精度值**解码后判零**——`0.0` 为 falsy，任何非零（含次正规数）为 truthy。
-- **toString**：解码为 double 后以 `%g` 格式输出，委托 `Core.Float8.toString()` → `SystemConvertString(this)`。
+- **toString**：解码为 double 后以紧凑格式输出。
 
 ```slang
 Float8 z = 0.0fe4
@@ -216,39 +216,10 @@ global.println(5.9604644775390625e-8h.toString())  # 5.96046e-08
 
 ---
 
-## 9. 实现要点
+## 9. 使用技巧与注意事项
 
-### 9.1 Front（编译器）
-
-| 环节         | 位置 / 说明 |
-|--------------|-------------|
-| 词法后缀     | `Parse/LexerParseToToken.cs`：识别 `fe4` / `fe5` / `h` / `hb` 数字后缀 |
-| EType        | `EType.Float8`（`@Nickname("Float8_E4M3")`）/ `Float8_E5M2` / `Float16` / `Float16_Brain` |
-| 类型提升     | `MetaTypeFactory.CalcETypeByLeftAndRight`：低精度参与的二元运算类型分支 |
-| 常量编码     | 字面量编译期完成十进制 → 位模式的 RNE 编码 |
-| IR 常量指令  | `LoadConstFloat8_E4M3` / `LoadConstFloat8_E5M2` / `LoadConstFloat16` / `LoadConstFloat16_Brain`（操作数为原始位模式） |
-| IR 转换指令  | `Convert_F8E4M3` / `Convert_F8E5M2` / `Convert_F16` / `Convert_F16B` / `Convert_R4` / `Convert_R8` |
-| Core 类      | `Lib/Core/Float8.sl`（`Float8` + `Float8_E5M2`）、`Lib/Core/Float16.sl`（`Float16` + `Float16_Brain`） |
-
-### 9.2 C VM（csimple_lang）
-
-| 环节             | 位置 / 说明 |
-|------------------|-------------|
-| EVMType          | `EVMType_Float8_E4M3` / `Float8_E5M2` / `Float16` / `Float16_Brain` |
-| 栈槽 kind        | `VM_STACK_SLOT_FLOAT8_E4M3` / `FLOAT8_E5M2` / `FLOAT16` / `FLOAT16_BRAIN`（byte 长度 1/1/2/2） |
-| 位级编解码       | `runtime_value_convert.c`：`runtime_value_f32_to_f8e4m3_bits` / `f8e5m2_bits` / `f16_bits` / `bf16_bits` 及对应反向解码 |
-| 计算             | `runtime_value_compute.c`：低精度解码 → double 运算 → 重编码；取反翻符号位 |
-| 比较             | `runtime_value_compare.c`：按 `runtime_value_get_as_double` 解码比较（含跨类型） |
-| Convert 指令     | `vm_runtime.c` Convert opcode 分发：`Convert_F8E4M3` 等六种指令的 etype 映射 |
-| toString         | `convert_system_method.c` `vm_sys_convert_string`：按栈槽 kind 解码后 `%g` 输出 |
-| 局部/成员存储    | `runtime_object.c`：按 `runtime_type` 位宽读写 data slice（float8=1 字节、float16=2 字节位模式） |
-| 类型标记         | `runtime_type_manager.c` `vm_runtime_type_manager_class_name_hint_e_type`：`Core.Float8*` / `Core.Float16*` 类名 → EVMType 映射 |
-
-**存储不变式**：从 `LoadConst` 压栈、`StoreLocal/LoadLocal`、方法传参到成员读写，float8/16 全程以**原始位模式**流动；任何需要数值语义的出口（计算/比较/转换/格式化）都基于栈槽 kind 或 etype 解码。栈上 pop/peek 辅助函数（`vm_try_pop_i32` 等）对低精度槽按位模式镜像 `UInt8`/`UInt16` 处理。
-
-### 9.3 测试
-
-- `test/BaseTest/Float8Test.sl`：字面量 / 算术 / 转换 / 比较 / 存储五组用例（e4m3 + e5m2）。
-- `test/BaseTest/Float16Test.sl`：同结构五组用例（f16 + bf16）。
-- 两组用例在 `test/BaseTest/ProjectTest.sp` 的 `_main_()` 中调用 `Float8Test.fun()` / `Float16Test.fun()` 触发编译与导出。
-- 验证方式：Front 编译导出（`-e ir`）后用 C VM 运行 `ProjectTest.module.json`，确认无 `(ERROR)` 输出且数值符合本文各表格预期。
+1. **精度有限，注意舍入**：低精度类型的尾数位数很少，很多常见小数无法精确表示，赋值时按就近偶数舍入。需要精确累加/比较时，先用 `Float32` / `Float64` 计算再转回低精度。
+2. **字面量后缀别写错**：`fe4` / `fe5` / `h` / `hb` 分别对应四种类型，后缀决定类型与编码。
+3. **跨类型比较自由**：低精度与 `Float32` / `Float64` / 整数混合比较均按数值进行，可直接写 `a == f`。
+4. **零值判断按数值**：值解码为 0 才是 falsy，次正规非零值仍为 truthy。
+5. **典型用途**：神经网络权重/梯度（省内存）、批量数值计算、与外部低精度数据格式互操作。

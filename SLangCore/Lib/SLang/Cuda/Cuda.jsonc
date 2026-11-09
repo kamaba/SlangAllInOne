@@ -1,0 +1,98 @@
+{
+  "project":
+  {
+    "name": "SLangCuda",
+    "desc": "CUDA GPU compute library module - namespace SLang: Cuda (entry + native bindings) / CudaDevice / CudaBuffer / CudaStream / CudaEvent / CudaKernel / CudaKernelArgs, backed by sl_cuda_lib.dll (NVIDIA driver API via nvcuda.dll, zero CUDA-Toolkit dependency)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  // FFI 导入表（jsonc "dllImports" 段）。"static" 非空（静态注册名）时 cvm 加载
+  // SL 模块即预载该库并注册进 FFI.StaticLibrary，@DllStaticImport("sl_cuda_lib",
+  // "slc_memcpy_h2d") 静态调用点由 cvm 装配期 attribute 注册表改写为 CallFFIStatic(77)
+  // 直调绑定表。绑定失败（库未注册 / 符号缺失）时回退 SL 函数体兜底（返回
+  // 0/false/null，driverVersion() <= 0 即兜底征兆）。"alias" 仍供 @DllImport
+  // 三参形式按别名解析 path（运行时相对进程 CWD 解析）。
+  "dllImports":
+  [
+    { "path": "sl_cuda_lib.dll", "name": "sl_cuda_lib", "alias": "sl_cuda_lib", "static": "sl_cuda_lib" }
+  ],
+  // vmDlls 构建规则：导出 SL 模块时，Front 用 MSBuild 编译 project 指向的 VS 工程
+  // （路径相对本 jsonc 所在目录），并把产出的 sl_cuda_lib.dll 拷贝到与
+  // SLangCuda.module.json 相同的目录（out/export/SLangCuda/），即上方
+  // dllImports 别名指向的位置。
+  // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Cuda\cvm_sl_cuda_lib\sl_cuda_lib.c
+  // （FFI 普通 C ABI：slc_*）。零外部依赖：CUDA 驱动 API（cuInit / cuMemAlloc /
+  // cuLaunchKernel ...）全部运行期从 nvcuda.dll（随 NVIDIA 显卡驱动安装于
+  // System32）LoadLibrary + GetProcAddress 解析，构建与运行均不需要 CUDA
+  // Toolkit，产物 DLL 自包含。
+  "vmDlls": [
+    { "project": "cvm_sl_cuda_lib/cvm_sl_cuda_lib.vcxproj", "name": "sl_cuda_lib.dll", "configuration": "Debug", "platform": "x64" }
+  ],
+  // systemCalls：本模块全部能力走 @DllStaticImport 静态绑定直调，不下沉 cvm
+  // SystemMethodCall，故留空。
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "Cuda.sl", "group": "cuda", "tag": "gpu", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    // Memory.alloc / readF32 / writeF32 等来自 Core（本 jsonc 位于
+    // SLangCore\Lib\SLang\Cuda\，上 2 级到 SLangCore\Lib\，同层即 Core 包）
+    { "path": "../../Core", "name": "Core" }
+  ],
+  "struct": [
+    { "namespace": "SLang", "children": [
+      { "class": "Cuda" },
+      { "class": "CudaDevice" },
+      { "class": "CudaBuffer" },
+      { "class": "CudaStream" },
+      { "class": "CudaEvent" },
+      { "class": "CudaKernel" },
+      { "class": "CudaKernelArgs" }
+    ]}
+  ],
+  "export": {
+    "moduleName": "SLangCuda",
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 1,
+    "versionSub": 0,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    // Front 调试文本实际目录：{export.outputDir}/{export.moduleName}/DebugCode/；以下 outputDir 仅兼容旧字段，可为空。
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  }
+}

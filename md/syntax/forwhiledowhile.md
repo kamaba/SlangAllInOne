@@ -10,7 +10,7 @@
 2. 使用 for in 语句，一般是迭代数组或者是迭代表达式去执行， for 迭代变量 in 数组/迭代表达式{} 这个语句不可以省略任何组成部分。
 
 for条件示例
-```ruby 
+```sl 
 for init_express, end_condition_express, change_variable_express
 {
     #语句
@@ -38,7 +38,7 @@ for i = 10, i < 100, i++
 > 注意：`for { }`（三段全部省略）当前**不支持**，解析器要求 for 后至少一段表达式（见 `test/BaseTest/ForTest.sl` 尾注「for{} 无条件循环 —— 当前不支持」）。
 
 for的遍历Array示例
-```python
+```sl
 Array arr = [1,2,3,5]
 for v in arr
 {
@@ -46,7 +46,7 @@ for v in arr
 }
 ```
 for的遍历Range示例
-```python
+```sl
 range ran = 1..100
 for v in ran
 {
@@ -55,7 +55,7 @@ for v in ran
 ```
 
 for的遍历enum示例
-```csharp
+```sl
 enum EMusicType{ classic = 1, rocky = 2}
 for v in EMusicType
 {
@@ -65,7 +65,7 @@ for v in EMusicType
 ```
 
 break,continue的使用
-```python
+```sl
 for v in 1..10
 {
     if v < 4
@@ -79,8 +79,7 @@ for v in 1..10
     }
     #输出当前遍历值
     # v是当前遍历的对象，直接识别为当前元素值
-    # 注意：for-in 迭代器自带的 index/value 属性当前未实现（解析器中 indexVariable 已注释，
-    # 见 test/BaseTest/ForTest.sl 尾注「文档1.2.1: x.index 索引访问 —— 当前未实现」）。
+    # 注意：for-in 迭代器自带的 index/value 属性当前未实现；
     # 若 v 本身是带 index 游标成员的对象（如 Array，初值 -1，可读写），v.index 访问的是该对象自身的游标。
     global.println( "v=$v");
 }
@@ -91,21 +90,21 @@ for v in 1..10
 - for{}语句，可以配合break/continue等使用
 - for 后边的表达示都为可选表达式，但如果省略只能从后往前依次略（三段全省的 `for { }` 暂不支持），一般结束条件可用break结束。
 - for in表达式，支持数组、Range（含 `1..100` 快捷写法与 `range()` 函数）与 enum 的遍历；List/Map/Set/Queue/LinkedList 的 for-in 暂不支持（见 `test/BaseTest/ForTest.sl` 尾注）。
-- for-in 迭代器自带的 index/value 属性当前未实现（indexVariable 已注释）；若迭代对象自身带 index 游标成员（如 Array），可按成员方式访问。
+- for-in 迭代器自带的 index/value 属性当前未实现；若迭代对象自身带 index 游标成员（如 Array），可按成员方式访问。
 -------
 ### while的语法
 1. 使用while语句执行，相当于每次语句结束后，通过while判断是否返回的是布尔表达式，如果是true,则继续执行
 2. 使用dowhile语句和while类似，但判断条件是首次跳过判断，而在执行后进行判断布尔表达式，如果true则继续执行。
 
 while示例
-```python 
+```sl 
 while boolean_express
 {
     #语句  注意，上边的参数不允许省略
 }
 ```
 dowhile示例
-```python
+```sl
 dowhile boolean_express
 {
     #语句
@@ -118,7 +117,7 @@ dowhile boolean_express
 
 
 #### 实例
-```ruby
+```sl
 enum ArrEnum
 {
     a = 1;

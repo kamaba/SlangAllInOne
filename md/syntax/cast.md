@@ -8,7 +8,7 @@ S 语言的类型转换与类型测试通过三个关键字完成：
 | `is`   | 类型测试 | 返回 `Boolean`；带绑定变量时同时完成转换 + 判空 + 绑定 |
 | `isnot`| 类型测试取反 | `is` 结果取反 |
 
-三者最终都编译为同一条 VM 指令 `CastClass`（opcode 78），区别在于 IR 层对结果的后续处理。
+三者底层由统一的类型转换机制处理，区别在于对结果的后续使用方式。
 
 ## as：安全转换
 
@@ -109,11 +109,11 @@ if obj isnot Level3 lv        # 等价于 !(obj is Level3 lv)
 - `Interface`（目标为接口且表达式类型实现了它）
 - `Num`（数值类型之间）
 
-两侧完全无关时编译报错（`data type convert error`）。实现见 `Core/MetaExpressNode/MetaExpressAsIs.cs`（`TypeManager.ResolveTypeRelation` + `IsAcceptableForAsIs`）。
+两侧完全无关时编译报错（`data type convert error`）。
 
 ## 运行时规则
 
-`CastClass`（C VM `vm/runtime/vm_runtime.c`）按目标类型分类处理：
+类型转换为运行时操作，按目标类型分类处理：
 
 | 目标类型 | 行为 |
 |----------|------|
@@ -127,7 +127,7 @@ if obj isnot Level3 lv        # 等价于 !(obj is Level3 lv)
 
 ## 语法限制
 
-1. `as/is/isnot` 优先级为 `Level9_AsOsIs`（低于 `&&`/`||` 与算术运算符），**表达式必须独立成句**，不能与其他运算混用：
+1. `as/is/isnot` 优先级较低（低于 `&&`/`||` 与算术运算符），**表达式必须独立成句**，不能与其他运算混用：
 
 ```s
 #! 以下写法是语法错误 !#
@@ -148,11 +148,6 @@ elif b is string str2 { ... }
 ```s
 import Math as M
 ```
-
-## 与旧 Cast<T>() 的关系
-
-所有类默认继承 `Core.Object`，历史上通过 `Cast<T>()` / `_cast_<T>()` 系统方法完成转换（`20.3f.Cast<int>()`）。现行推荐写法是 `as/is/isnot`；若类定义了 `_cast_<T>()` 自定义转换方法，转换时会优先走该方法（此优先逻辑为预留设计，当前以 `CastClass` 的默认继承探测为准）。
-
 ## 参考用例
 
 - `test/BaseTest/ClassAs_Is.sl` —— as/is/isnot 全量覆盖（继承链、泛型、绑定变量、错误写法示例）

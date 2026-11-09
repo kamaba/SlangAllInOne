@@ -59,7 +59,7 @@ else
 如果boolean_expression1表达式为 true，则执行 if 块内的代码。如果boolean_expression2表达式为true 则执行elif( boolean_expression2 )后边的内容,后续可以跟多个，一但符合布尔条件，则执行。
 
 ### if/elif 中不支持 next 字段
-`next` **不能**出现在 if/elif 分支中，否则编译报错（LID 21384：`Error next 只能出现在 for/while/dowhile 循环体内或 switch case 体内`，见 `source/Front/Core/Statements/MetaBreakContinueGoStatements.cs`）。
+`next` **不能**出现在 if/elif 分支中，否则编译报错（`Error：next 只能出现在 for/while/dowhile 循环体内或 switch case 体内`）。
 
 if/elif 链的语义是：命中第一个为真的分支后，整条链结束，不再检查后续 elif（测试 `test/BaseTest/IfelseTest.sl` 的 `multiElifChainTest` 验证了 "only first match evaluated"）。若需要命中后继续向下匹配，请使用 `switch` 的 `next`（见 [switch.md](./switch.md)）。
 
@@ -97,13 +97,13 @@ Project
 若 `x = 0`，则输出:
 执行else的内容
 
-## 计划中或部分实现的扩展（以测试文件中的注释为准）
+## 尚未实现的能力（请勿使用）
 
-以下能力在 `test/BaseTest/IfelseTest.sl` 的 `FunIfCondition` 一节以 `#` 注释形式记录设计意图，**默认不应假定已完全实现**：
+以下能力**当前尚未实现**，写入代码会导致编译/运行错误，请勿使用：
 
-- **Truthiness**：`if a` 计划等价于 `if a != null`；`if !a` 计划等价于 `if a == null`；对数值/字符串等计划按非零、非空等规则解释。
-- **条件表达式内局部返回 `tr`**：形如 `int x = if cond { tr 1 } else { tr 2 }`，用于在分支块内返回值而不离开外层函数（与 `ret` 区分）。
-- **三元运算符**：`a ? b : c` 类语法。
+- **`if a` 真值简写**：计划让 `if a` 等价于 `if a != null`、`if !a` 等价于 `if a == null`，并对数值/字符串按非零、非空解释。当前不可用。
+- **分支内局部返回 `tr`**：形如 `int x = if cond { tr 1 } else { tr 2 }` 的写法当前不支持（`tr` 不是语言关键字）。
+- **三元运算符**：`a ? b : c` 类语法当前不支持。
 
-实现状态以编译器/VM 报错或发行说明为准；文档仅描述目标语义。
+如需条件表达式，目前请使用 `if/elif/else` 语句。
 

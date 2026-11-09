@@ -34,8 +34,9 @@ $sllibDst  = Join-Path $sampleDst 'sllib'
 $streamDst = Join-Path $UnityProject 'Assets\StreamingAssets\Slang'
 $streamLib = Join-Path $streamDst 'lib'
 $streamSllib = Join-Path $streamDst 'sllib'
+$pluginLib  = Join-Path $pluginDst 'lib'
 
-foreach ($d in @($pkgDst, $pluginDst, $sampleDst, $sampleLib, $sllibDst, $streamDst, $streamLib, $streamSllib))
+foreach ($d in @($pkgDst, $pluginDst, $pluginLib, $sampleDst, $sampleLib, $sllibDst, $streamDst, $streamLib, $streamSllib))
 {
     if (-not (Test-Path -LiteralPath $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
 }
@@ -117,6 +118,10 @@ foreach ($m in @('Core', 'Std'))
     if (-not (Test-Path -LiteralPath $p)) { throw "standard library module not found: $p" }
     Copy-Item -LiteralPath $p -Destination (Join-Path $sampleLib ($m + '.module.slb')) -Force
     Copy-Item -LiteralPath $p -Destination (Join-Path $streamLib ($m + '.module.slb')) -Force
+    # The SLB's moduleReferences are relative to the Front export dir, so they
+    # cannot resolve from StreamingAssets. The C VM CLI falls back to
+    # <exe>/lib/<name>.module.slb; keep the standard modules next to the CLI.
+    Copy-Item -LiteralPath $p -Destination (Join-Path $pluginLib ($m + '.module.slb')) -Force
 }
 foreach ($f in @('HelloCube.module.slb', 'HelloCube.module.json', 'HelloCube.sl', 'HelloCube.sp', 'HelloCube.jsonc'))
 {

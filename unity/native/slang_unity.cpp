@@ -409,10 +409,10 @@ SLU_API void slu_reset(void)
     slu_unlock();
 }
 
-/* Boot runs the module once in the full CLI binary. The in-memory DLL entry
- * does not bind instance/property method calls, so the SL class library
- * would silently lose every setter. The child shares state with this
- * process through the .slushare section of the very same DLL path. */
+/* Boot runs the module once in the full CLI binary, which performs the
+ * complete assembly rewrite pass and resolves Core/Std module references
+ * from <exe>/lib. The child shares state with this process through the
+ * .slushare section of the very same DLL path. */
 static int slu_run_vm_child(const char* slbPath)
 {
     char dllPath[MAX_PATH];

@@ -15,6 +15,11 @@ macOs /iOS的环境
 10. 接入kotlin
 
 
+Unity的机制
+1. 有了对应的类 并且命名空间与Unity3d里边CSharp里边的类同命名空间+类名
+2. 机制重构，需要使用data->逻辑的做法
+3. 可以调试
+
 
 
 网站问题:
@@ -33,7 +38,6 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 
 frontend然后再进行优化。
 官方第三方库:
-接入cuda  要制作成modules
 libcurl 要制作成modules
 ffmpeg的dll 引入  要制作成modules
 找一个轻量级的 webview一类的，做成 dll  要制作成modules

@@ -1,0 +1,68 @@
+{
+  "project":
+  {
+    "name": "ProjectTest",
+    "desc": "Cuda test project - end-to-end CUDA driver-API tests (device / memory / copy / stream / event / PTX kernel launch) via SLangCuda module, running on the local NVIDIA GPU",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "CudaTest.sl", "group": "cuda", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "path": "../../../../out/export/SLangCuda/SLangCuda.module.json" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "CudaTest",
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
+  }
+}

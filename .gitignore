@@ -93,3 +93,5 @@
 /SLangCore/samples/GUI/GUIDemo/publish
 /SLangCore/samples/GUI/GUIDemo/modules
 /SLangCore/test/BenchMark/report
+/SLangCore/Lib/SLang/Cuda/cvm_sl_cuda_lib/x64
+/SLangCore/Lib/SLang/Cuda/cvm_sl_cuda_lib/cvm_sl_cuda_lib

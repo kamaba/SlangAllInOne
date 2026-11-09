@@ -41,6 +41,7 @@
       { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "PythonBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
@@ -125,6 +126,27 @@
       "abi": 1,
       "prefix": "sl_cplus_clang_",
       "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // python_cpython：PythonBench 13 项共享基准经此插件执行（Front 导出期
+    // 免编译部署 <libDir>\pysrc\Entry_N.py，运行期 CPython 内嵌 import +
+    // run()，块内 perf_counter_ns 计时经出通道以 us 回传）。块产物 pysrc\
+    // 与 SLCpp.dll / java classes 同款共享部署位（后编译覆盖）——运行
+    // BenchMark 前须最后编译本工程。运行时依赖本机 CPython 3.10+
+    //（python3xx.dll 在 PATH / SL_PY_DLL 覆盖），无则块运行期报 -102
+    //（onUnavailable=warn 不阻断）。
+    "python_cpython": {
+      "name": "python_runtime_use_cpython_engine",
+      "version": "0.1.0",
+      "path": "plugin/python_cpython",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_python_cpython_",
+      "lib": "../../../../plugin/python_cpython/package/windows/cvm_python_cpython.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

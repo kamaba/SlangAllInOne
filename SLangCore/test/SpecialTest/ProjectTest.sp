@@ -30,6 +30,12 @@ Project
         # 前置：先跑 plugin\cplus_clang\cvm\build-cplus-clang.ps1。
         CPlusClangTest.fun();
 
+        # PythonTest：@python_cpython 块（Front 导出期免编译部署 .py 到插件
+        # package\windows\pysrc\，CVM 内嵌 CPython 运行期 import 执行）。
+        # 前置：先跑 plugin\python_cpython\cvm\build-python-cpython.ps1；
+        # 机器须有 CPython 3.10+（python3xx.dll 在 PATH 或 SL_PY_DLL 覆盖）。
+        PythonTest.fun();
+
         # JavaTest2：callSL 通道（P4 §5.7）——Java 块内 SLChannel.call 回调
         # SL 静态方法（int/string/double/void-null/嵌套块 save/restore 回归）
         #JavaTest2.fun()

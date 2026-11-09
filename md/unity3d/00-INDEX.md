@@ -4,9 +4,14 @@
 > 整合方式：将 C VM（`csimple_lang`，C99 可当 C++ 编译）编译为 **Unity 原生插件（C++ 库）**，
 > 由 Unity C# 侧通过宿主桥接层加载并运行 SL 编译产物（SLB / 内存 JSON），实现「改 `.sl` → 重编译 → 热重载」的开发闭环。
 >
-> 本文集只承载**设计与整合路径**，不写最终实现代码（参照 `csimple_lang/md/design/MONO_INTEGRATION_DESIGN.md` 的设计风格）。
+> 00~13 承载**设计与整合路径**；**14 是第一版真实落地的实现记录**，最终实现代码在
+> `SlangAllInOne/unity/`（源码/构建/验证）与 Unity 工程 `Assets/SlangUnity/`（极薄 C# 驱动）。
 >
-> 版本号：与全仓统一锚定 `0.0.59`（AGENTS.md R17）。本整合落地时四端版本号须同步 +1。
+> 🔥 2026-11-09 落地：用户定稿「尽量用 C++ 绑定、不用 C# 逻辑绑定，SL 直接调 C++」，
+> 故实际走 `05` §2.2 的 FFI 直调路线，未采用 §2.1 的 systemCall → C# 反向桥；详见 14 §1。
+> 同日 v2 追加「尽量直调引擎 C++、最省消耗、做成 Unity 插件包」：交付形态升级为 UPM 包
+> `com.slang.unity`，C++ 经 `UnityPluginLoad` 直连引擎日志/图形接口，每帧仅 1 次跨边界；见 14 §9。
+> 本次落地不动任何版本锚点（R17 现行规则 = 各组件版本独立演进）。
 
 ---
 
@@ -17,7 +22,7 @@
 | 用 SL 当 Unity 热更代码 | SL 编译为 SLB，Unity 启动时/热更时装载运行（`04-模块装载与热更新机制.md`） |
 | 用 Unity 的 C++ 库（原生插件） | C VM 编译为 Unity 原生插件，平台目录对齐 `lib\{windows,linux,macos,ios,android}`（`02-本地插件编译与平台布局.md`） |
 | C# 侧如何驱动 VM | P/Invoke / IL2CPP `extern "C"` 调 `csimple_lang_dll` 的 `cli_main` / `cli_run_module_in_memory`（`03-CSharp宿主桥接层.md`） |
-| SL 怎么调 Unity API | 反向桥：Unity C# 经宿主回调把引擎对象暴露给 SL（`05-脚本绑定与Unity API映射.md`，类比 `MONO_INTEGRATION_DESIGN.md`） |
+| SL 怎么调 Unity API | 设计稿给反向桥（`05` §2.1，Unity C# 宿主回调）；**落地改走 FFI 直调 C++**（`05` §2.2 + `14`），零 C# API 映射 |
 | 生命周期 / 域重载 / AOT | Unity 回调 ↔ SL 模块加载时机、热重载状态策略（`06-热更生命周期与Unity回调.md`） |
 | IL2CPP / iOS 不能 JIT | 强制 `SL_JIT=0` / `--no-jit`（`08-JIT与IL2CPP约束.md`） |
 | 调试 | 复用 SLDP `--debug-server=<port>`（`07-调试与诊断.md`） |
@@ -44,6 +49,7 @@
 | 11 | `11-安全与沙箱.md` | 热更代码沙箱、系统方法白名单、isolate 隔离 |
 | 12 | `12-示例与最佳实践.md` | HelloCube + 热更改色最小示例；目录约定 |
 | 13 | `13-已知问题与设计待办.md` | 关联现有 known issues；分阶段落地（类比 MONO 四阶段） |
+| 14 | `14-实例落地记录.md` | **第一版实现记录**：FFI 直调 C++ 选型、文件清单、编译要点、五项实测证据、坑与后续演进 |
 
 ---
 

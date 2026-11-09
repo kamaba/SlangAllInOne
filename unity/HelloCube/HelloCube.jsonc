@@ -1,0 +1,82 @@
+{
+  "project":
+  {
+    "name": "HelloCube",
+    "desc": "SLang Unity companion language: SL -> C++ native binding demo (no C# API mapping)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": false,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "sllib/UnityFFI.sl",       "group": "core", "tag": "ffi",      "ignore": false, "priority": 0 },
+      { "path": "sllib/Vector3.sl",        "group": "core", "tag": "value",    "ignore": false, "priority": 0 },
+      { "path": "sllib/Color.sl",          "group": "core", "tag": "value",    "ignore": false, "priority": 0 },
+      { "path": "sllib/Object.sl",         "group": "core", "tag": "object",   "ignore": false, "priority": 0 },
+      { "path": "sllib/Component.sl",      "group": "core", "tag": "object",   "ignore": false, "priority": 0 },
+      { "path": "sllib/GameObject.sl",     "group": "core", "tag": "object",   "ignore": false, "priority": 0 },
+      { "path": "sllib/Transform.sl",      "group": "core", "tag": "object",   "ignore": false, "priority": 0 },
+      { "path": "sllib/Camera.sl",         "group": "core", "tag": "component","ignore": false, "priority": 0 },
+      { "path": "sllib/AudioSource.sl",    "group": "core", "tag": "component","ignore": false, "priority": 0 },
+      { "path": "sllib/Renderer.sl",       "group": "core", "tag": "component","ignore": false, "priority": 0 },
+      { "path": "sllib/Debug.sl",          "group": "core", "tag": "system",   "ignore": false, "priority": 0 },
+      { "path": "sllib/Time.sl",           "group": "core", "tag": "system",   "ignore": false, "priority": 0 },
+      { "path": "HelloCube.sl",            "group": "core", "tag": "sample",   "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ]
+  },
+  // The C++ native plugin is the ONLY binding target. @DllImport("slang_unity", ...)
+  // resolves through this alias; "static" makes the C VM preload the same DLL
+  // instance that Unity C# P/Invoke uses, so SL and C# share native state.
+  // If the Unity project moves, update this one path and rerun build-hello-cube.ps1.
+  "dllImports": [
+    {
+      "path": "C:/Users/Administrator/My project/Packages/com.slang.unity/Plugins/x86_64/slang_unity_native3.dll",
+      "name": "slang_unity",
+      "alias": "slang_unity",
+      "static": "slang_unity"
+    }
+  ],
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
+  ],
+  "export": {
+    "moduleName": "HelloCube",
+    "outputDir": "..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  }
+}

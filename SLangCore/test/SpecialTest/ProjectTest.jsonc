@@ -32,6 +32,7 @@
       { "path": "JavaTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "JavaTest2.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "CPlusClangTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "PythonTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AOT.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
       { "path": "MapTest.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
@@ -169,6 +170,28 @@
       "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "disable",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // python_cpython：块体经 frontend（SLPF v3 契约）在 Front 导出期
+    // 免编译部署为 <libDir>\pysrc\Entry_N.py（def run 源码，Python 解释
+    // 型无需工具链）；labelExec 运行期经 py_bridge（LoadLibrary
+    // python3xx.dll + Py_Initialize + sys.path 挂载 + import）执行。
+    // 运行时依赖本机 CPython 3.10+（SL_PY_DLL 覆盖 / vendored dll 同目录
+    // / PATH），无 CPython 时 enter 报 -102（onUnavailable=warn 不阻断，
+    // 块运行期报错）。prefix = "sl_python_cpython_"（plugin.jsonc
+    // entry.prefix）。块内 Boolean 放行（CPython 原生 bool 编组 INT 0|1）。
+    "python_cpython": {
+      "name": "python_runtime_use_cpython_engine",
+      "version": "0.1.0",
+      "path": "plugin/python_cpython",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_python_cpython_",
+      "lib": "../../../../plugin/python_cpython/package/windows/cvm_python_cpython.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
       "capabilities": [
         { "type": "signLabel", "name": "signLabel" }
       ]

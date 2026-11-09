@@ -204,6 +204,8 @@
 | [unity3d/11-安全与沙箱.md](./unity3d/11-安全与沙箱.md) | 热更代码沙箱、系统方法白名单、isolate 隔离（可选） |
 | [unity3d/12-示例与最佳实践.md](./unity3d/12-示例与最佳实践.md) | HelloCube + 热更改色最小示例；目录约定；常见坑 |
 | [unity3d/13-已知问题与设计待办.md](./unity3d/13-已知问题与设计待办.md) | 关联 known issues；分阶段落地（类比 MONO 四阶段） |
+| [unity3d/14-实例落地记录.md](./unity3d/14-实例落地记录.md) | **HelloCube 落地记录（2026-11-09）**：v1 SL 经 FFI 直调 C++ / C# 零 API 映射；v2（§9）UPM 包 `com.slang.unity`、C++ 直连引擎原生接口、每帧 1 次跨边界、引擎渲染回调与热更实测证据 |
+| [../unity/README.md](../unity/README.md) | **SlangUnity HelloCube 使用说明**：一键构建、Play Mode 运行、改 `.sl` 热更、可用 C++ 方法与签名、已知坑 |
 
 ---
 

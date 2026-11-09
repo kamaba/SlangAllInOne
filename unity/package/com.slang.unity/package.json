@@ -1,0 +1,16 @@
+{
+  "name": "com.slang.unity",
+  "version": "1.0.0",
+  "displayName": "SLang Unity (C++ Native Binding)",
+  "description": "SLang as a Unity companion scripting language. SL calls C++ directly through FFI; the native plugin attaches Unity engine interfaces (IUnityLog / IUnityGraphics) and runs SLB modules on the C VM. C# is only a thin host.",
+  "unity": "2022.3",
+  "keywords": ["slang", "scripting", "native", "ffi", "hotreload"],
+  "author": { "name": "SLang" },
+  "samples": [
+    {
+      "displayName": "HelloCube",
+      "description": "SLang HelloCube sample: SL source, compiled SLB and standard library modules.",
+      "path": "Samples~/HelloCube"
+    }
+  ]
+}

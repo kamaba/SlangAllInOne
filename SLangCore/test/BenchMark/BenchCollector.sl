@@ -85,6 +85,15 @@ BenchCollector
         BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT）", testType, testParam, timeMs * 1000L )
     }
 
+    # Python：参数为微秒（CPython 块内 perf_counter_ns 纳秒精确计时——ns 粒度
+    # 超 int32 出通道上限（>2.1s 子项在解释执行下普遍超限，参照 C++
+    # RegExpBench 先例），块内统一 //1000 折算 us 回传；模块导入在 run() 外
+    # 不计入，与 C/C++ 块内 ns 口径同为"净算法耗时"）。
+    static recordPython( string testType, string testParam, long timeUs )
+    {
+        BenchCollector.record( "Python", "Python / CPython 3.14 内嵌（python_cpython 插件）", "CPython 字节码解释器（无 JIT），块内 perf_counter_ns 计时（us 回传）", testType, testParam, timeUs )
+    }
+
     static recordC( string testType, string testParam, long timeNs )
     {
         BenchCollector.record( "C", "C 惯用法（@cplus_clang 块，malloc/裸指针/函数指针）", "MSVC cl /O2 原生编译，块内 ns 精确计时（cplus_clang 插件）", testType, testParam, timeNs / 1000L )
@@ -137,9 +146,9 @@ BenchCollector
         md = md + "- 生成时间: " + dt.year.toString() + "-" + BenchCollector.pad2( dt.month ) + "-" + BenchCollector.pad2( dt.day )
         md = md + " " + BenchCollector.pad2( dt.hour ) + ":" + BenchCollector.pad2( dt.minute ) + ":" + BenchCollector.pad2( dt.second ) + nl
         md = md + "- 数据条目: " + BenchCollector._entries.length.toString() + " 条" + nl
-        md = md + "- 计时口径: 时间存储单位一律微秒；SL/CSharp/Java/JS 为 SL 侧整块毫秒计时（×1000 存 us，粒度毫秒）；C/C++ 为块内 QPC/steady_clock 纳秒精确计时（经出通道回传，/1000 存 us，不含装载开销；原始 ns 见运行日志）" + nl
+        md = md + "- 计时口径: 时间存储单位一律微秒；SL/CSharp/Java/JS 为 SL 侧整块毫秒计时（×1000 存 us，粒度毫秒）；C/C++ 为块内 QPC/steady_clock 纳秒精确计时（经出通道回传，/1000 存 us，不含装载开销；原始 ns 见运行日志）；Python 为块内 perf_counter_ns 纳秒精确计时（ns 超 int32 出通道上限，块内 //1000 回传 us 直存；原始 ns 明细见运行日志）" + nl
         md = md + "- 单元格显示自适应单位（us 值过大时折算 ms），附录保留原始微秒值" + nl
-        md = md + "- C/C++/CSharp/Java/JavaScript 为插件块计时，首轮另含编译部署" + nl + nl
+        md = md + "- C/C++/CSharp/Java/JavaScript/Python 为插件块计时，首轮另含编译部署" + nl + nl
 
         # 语言与优化说明表（取各语言首条记录的说明）
         md = md + "## 语言与优化说明" + nl + nl
@@ -151,12 +160,13 @@ BenchCollector
         md = md + BenchCollector.langRow( "CSharp" )
         md = md + BenchCollector.langRow( "Java" )
         md = md + BenchCollector.langRow( "JavaScript" )
+        md = md + BenchCollector.langRow( "Python" )
         md = md + nl
 
         # 多语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和，us 域）
         md = md + "## 耗时对比总表（自适应单位，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
-        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript |" + nl
-        md = md + "|----------|------|----|---|-----|--------|------|------------|" + nl
+        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript | Python |" + nl
+        md = md + "|----------|------|----|---|-----|--------|------|------------|--------|" + nl
         List<BenchEntry> rows = BenchCollector.collectRows()
         for i = 0, i < rows.length, i++
         {
@@ -173,7 +183,8 @@ BenchCollector
             md = md + " " + BenchCollector.timeCell( row.testType, "C++" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "CSharp" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "Java" ) + " |"
-            md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |" + nl
+            md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "Python" ) + " |" + nl
         }
         md = md + nl
 

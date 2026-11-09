@@ -33,6 +33,10 @@ Project
         CBench.fun()
         CppBench.fun()
 
+        # Python 惯用基准（python_cpython 插件：块内 perf_counter_ns 计时
+        # 经出通道 us 回传；pysrc 共享部署位，本工程须最后编译——同上）
+        PythonBench.fun()
+
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")
 

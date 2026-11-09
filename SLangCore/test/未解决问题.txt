@@ -7,25 +7,20 @@ macOs /iOS的环境
 编译android的环境
 
 1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 
-2. 接入python
 3. 接一个asm 
-4. 接一个cplus_clang  这块的话  思路和csharp_mono/java_hotspot有点像  就是写的 cplus_clang代码 先打包成.dll/.lib/.so一类的包 和其它不太一样的地方是，如果定义了 函数入口，可以通过ffi直接在slang中调用，所以这块加载的时候 ffi也能加载到这个导出的连接文件，然后在slang中通过映射调用。
 5. R语言的接入
 6. Go语言的接入
 7. Php的接入
-8. 接入cuda
 9. 接入dart 
 10. 接入kotlin
+
+
 
 
 网站问题:
 2. http://localhost:4321/run 后边增加 ?exmaple=helloworld 这种形式，然后把示例代码，要放到一个数据库里边，然后可能后管平台，增加一个救命代码管理的功能  把现在已经有的示例代码，先默认入库。 然后现在页面上所有的示例，都可以和后管平台的进行匹配，然后 在后管平台，还要有  编译过程 正确结果 的字段，说明是否正确运行
 做Unity3d的附属语言
 spm 也要可以下载插件  和包有点类似，但插件是优先下载的slang下边的plugins的目录下的，
-
-D:\project\lang\SlangAllInOne\SLangCore\test\BaseTest\ForTest.sl 里边的 204行[1..4] 这是什么呀 我记的1..4会转成range呀 不需要外边套[] 吧，这个地方 会自动变成[rangle(1,4,1)] 是个对象的遍历吧，这块一定要注意下我这块的规则。
-
-是否支持$i 这种的语言，需要在jsonc里边增加相关的配置  如果配置了支持该语法，则在FrontEnd层，可以使用这种方式访问，如果不允许，则在FrontEnd不允许使用这样的语法处理
 
 Monitor需要 在底层增加 条件+断点功能，也就是监视某个变量 变化到条件后，立马暂停 都是明的方法
 增加FrameData的概念
@@ -38,9 +33,10 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 
 frontend然后再进行优化。
 官方第三方库:
-libcurl
-ffmpeg的dll 引入
-找一个轻量级的 webview一类的，做成 dll
+接入cuda  要制作成modules
+libcurl 要制作成modules
+ffmpeg的dll 引入  要制作成modules
+找一个轻量级的 webview一类的，做成 dll  要制作成modules
 
 在WebUI上制作 Scratch
 

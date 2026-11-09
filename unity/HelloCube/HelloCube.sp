@@ -1,0 +1,17 @@
+Project
+{
+    _main_()
+    {
+        HelloCube.runMain()
+    }
+    _test_()
+    {
+        HelloCube.runMain()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

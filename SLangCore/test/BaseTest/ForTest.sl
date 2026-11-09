@@ -197,11 +197,12 @@ ForTest
         }
     }
 
-    # for-in [1..4] range 字面量遍历
+    # for-in 1..4 range 字面量遍历（注意：1..4 本身就是 Range 对象，不需要也不能套 []，
+    # [1..4] 会被解析成 Array<Range<int>>（含 1 个 Range 元素的数组），遍历的是数组而非 1..4）
     static forInRangeLiteral()
-    {       
-        global.println("---------------forInRangeLiteral--------------")      
-        for v in [1..4]   
+    {
+        global.println("---------------forInRangeLiteral--------------")
+        for v in 1..4
         {
             global.println(" v= $v ")
         }

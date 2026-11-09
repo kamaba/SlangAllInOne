@@ -2,6 +2,10 @@
 
 > SL 脚本如何**访问 / 操作 Unity 引擎对象**（GameObject / Transform / Component / 输入 / 日志…）。
 > 这是 `MONO_INTEGRATION_DESIGN.md` 的**反向版**：那里 SL 调独立 Mono 的 C#；这里 SL 调**宿主 Unity 自己的 C#**。
+>
+> 🔥 **落地口径（2026-11-09，用户定稿）**：第一版实例采用本文 §2.2「FFI 直调」——SL 经 `@DllImport`
+> 直调 C++ 原生插件，**未采用 §2.1 的 systemCall → C# host 回调**，C# 侧零 API 映射。
+> 见 `14-实例落地记录.md` §1 与使用文档 `SlangAllInOne/unity/README.md`。
 
 ---
 

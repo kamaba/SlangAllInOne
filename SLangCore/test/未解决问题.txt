@@ -6,7 +6,7 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 macOs /iOS的环境 
 编译android的环境
 
-1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 
+1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 但要使用typescript的语言类型
 3. 接一个asm 
 5. R语言的接入
 6. Go语言的接入
@@ -20,10 +20,15 @@ Unity的机制
 2. 机制重构，需要使用data->逻辑的做法
 3. 可以调试
 
+让其它人测下 我的功能点，提建议
+
 
 
 网站问题:
 2. http://localhost:4321/run 后边增加 ?exmaple=helloworld 这种形式，然后把示例代码，要放到一个数据库里边，然后可能后管平台，增加一个救命代码管理的功能  把现在已经有的示例代码，先默认入库。 然后现在页面上所有的示例，都可以和后管平台的进行匹配，然后 在后管平台，还要有  编译过程 正确结果 的字段，说明是否正确运行
+
+
+
 做Unity3d的附属语言
 spm 也要可以下载插件  和包有点类似，但插件是优先下载的slang下边的plugins的目录下的，
 

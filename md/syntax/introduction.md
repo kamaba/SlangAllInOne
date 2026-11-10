@@ -14,7 +14,7 @@
 - 模板与泛型语法
 - 对象创建与构造（_init_）、匿名对象字面量
 
-此外，编译器会把语言结构降低为中间表示（IR），常见 IR 操作示例：NewArray、CallVirt、CastClass、Pop、Convert 系列、Switch 等。语言层面请优先参考本目录下各章节的语法说明与示例。
+写业务代码只需关注下文的「代码结构（工程）」与「语言基础」；编译、导出与执行由工具链自动完成，无需手动介入。语言层面请优先参考本目录下各章节的语法说明与示例。
 
 约定：示例代码使用 `.sl` 风格（仓库内 Core、测试、示例均以 `.sl` 为主；文档或历史材料里偶见 `.s` 写法，语义上仍指同一类源文件）；关键字与标识采用小写（例如 `class`、`if`、`for`）。
 
@@ -29,7 +29,7 @@
 - **源码**：以 **`.sl`** 为主（仓库内 Core、测试、示例均如此）；文档或历史材料里偶见 `.s` 写法，语义上仍指同一类源文件。
 - **工程入口**：**`<工程名>.sp`**，内写工程级声明（如 `Project { }` / `ProjectEnter { }`）、运行入口与可暴露给全工程的成员。
 - **工程配置**：与 `.sp` **同名、同目录** 的 **`<工程名>.jsonc`**（JSON with Comments），供 `Front` 加载：源码根、参与编译的文件列表、编译选项、`global` 段、`references`、`struct` 等。
-- **语言特性**：受 C#/Dart 启发，支持 `namespace`、`class`、`data`、`enum`、`interface`、函数、模板/泛型、模块化等；编译产物经 **IR** 导出后可由内置 **VM** 执行（见 [`../ai/EXPORT_PATHS.md`](../ai/EXPORT_PATHS.md)）。
+- **语言特性**：受 C#/Dart 启发，支持 `namespace`、`class`、`data`、`enum`、`interface`、函数、模板/泛型、模块化等；编译产物可交给内置 **VM** 执行（产物格式与工具链见 `../ai/` 下编译器设计文档）。
 
 ### 2.2 工程三件套（必须先理解）
 
@@ -105,7 +105,7 @@ Project
 1. **`global.xxx` / `global.func()`**（非 `global.data` 树形配置段）：主要来自 **`.sp` 里 `Project` / `ProjectEnter` 的静态成员与函数**。
 2. **`global` 上来自配置的常量/数据**：来自 **`.jsonc` → `global.data`**（数值、字符串、数组、嵌套对象等会注入为可链式访问的成员，规则见 [`../project/project_sp-guide.md`](../project/project_sp-guide.md) 第 3 节）。
 
-示例用例：**`test/BaseTest/GlobalTest.sl`**。
+示例用例：标准库与运行页中的全局符号示例。
 
 ### 2.6 注释
 

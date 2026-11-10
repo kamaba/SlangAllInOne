@@ -47,6 +47,16 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 
+/* 2026-11-10 VS 式主框架扩展（Widgets 核心，非可选模块） */
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
+#include <QToolBar>
+#include <QDockWidget>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QDialog>
+
 /* 2026-11-03 扩展面（可选模块，vcxproj 一律 /DELAYLOAD；绑定层预装载后命中） */
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -395,6 +405,11 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
     case SLQT_SIG_RETURN_PRESSED:
         if (auto* e = qobject_cast<QLineEdit*>(sender))
             QObject::connect(e, &QLineEdit::returnPressed, [=]() { ((void (*)(int64_t))dispatchCb)(slot); });
+        break;
+    case SLQT_SIG_TRIGGERED:
+        /* QAction::triggered（菜单/工具栏动作；QAction 是 QObject） */
+        if (auto* a = qobject_cast<QAction*>(sender))
+            QObject::connect(a, &QAction::triggered, [=]() { ((void (*)(int64_t))dispatchCb)(slot); });
         break;
     case SLQT_SIG_DESTROYED:
         QObject::connect(sender, &QObject::destroyed, [=]() { ((void (*)(int64_t))dispatchCb)(slot); });
@@ -1166,4 +1181,231 @@ const char* slqt_be_dbus_base_service(void)
     snprintf(buf, sizeof(buf), "%s",
              QDBusConnection::sessionBus().baseService().toUtf8().constData());
     return buf;
+}
+
+/* ========================================================================
+ * 2026-11-10 VS 式主框架扩展实现（菜单/工具栏/Dock/MDI/对话框）
+ * ======================================================================== */
+
+/* ── 菜单（QMenuBar / QMenu / QAction）────────────────────────────────── */
+
+int64_t slqt_be_menubar_create(void) { return slqt_register(new QMenuBar()); }
+
+void slqt_be_mainwindow_set_menubar(int64_t win, int64_t mb)
+{
+    auto* mw = qobject_cast<QMainWindow*>((QObject*)slqt_resolve(win));
+    auto* bar = qobject_cast<QMenuBar*>((QObject*)slqt_resolve(mb));
+    if (mw && bar) mw->setMenuBar(bar);
+}
+
+/* parent 为 QMenuBar（一级菜单）或 QMenu（二级/子菜单） */
+int64_t slqt_be_menu_create(int64_t parent, const char* title)
+{
+    QObject* p = (QObject*)slqt_resolve(parent);
+    QString t = QString::fromUtf8(title ? title : "");
+    if (auto* mb = qobject_cast<QMenuBar*>(p)) return slqt_register(mb->addMenu(t));
+    if (auto* m = qobject_cast<QMenu*>(p)) return slqt_register(m->addMenu(t));
+    return 0;
+}
+
+/* 菜单项：menu->addAction(text) 返回 QAction，登记句柄供 connect(triggered) */
+int64_t slqt_be_menu_add_action(int64_t menu, const char* text)
+{
+    auto* m = qobject_cast<QMenu*>((QObject*)slqt_resolve(menu));
+    if (!m) return 0;
+    QAction* a = m->addAction(QString::fromUtf8(text ? text : ""));
+    return a ? slqt_register(a) : 0;
+}
+
+void slqt_be_menu_add_separator(int64_t menu)
+{
+    auto* m = qobject_cast<QMenu*>((QObject*)slqt_resolve(menu));
+    if (m) m->addSeparator();
+}
+
+void slqt_be_action_set_text(int64_t a, const char* t)
+{
+    auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
+    if (act && t) act->setText(QString::fromUtf8(t));
+}
+
+void slqt_be_action_set_enabled(int64_t a, int32_t on)
+{
+    auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
+    if (act) act->setEnabled(on != 0);
+}
+
+/* ── 工具栏（QToolBar，快捷图标区）────────────────────────────────────── */
+
+int64_t slqt_be_toolbar_create(int64_t parent, const char* title)
+{
+    QWidget* parentW = parent ? asWidget(parent) : nullptr;
+    QToolBar* tb = new QToolBar(QString::fromUtf8(title ? title : ""), parentW);
+    return slqt_register(tb);
+}
+
+void slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb)
+{
+    auto* mw = qobject_cast<QMainWindow*>((QObject*)slqt_resolve(win));
+    auto* bar = qobject_cast<QToolBar*>((QObject*)slqt_resolve(tb));
+    if (mw && bar) mw->addToolBar(Qt::TopToolBarArea, bar);
+}
+
+int64_t slqt_be_toolbar_add_action(int64_t tb, const char* text)
+{
+    auto* bar = qobject_cast<QToolBar*>((QObject*)slqt_resolve(tb));
+    if (!bar) return 0;
+    QAction* a = bar->addAction(QString::fromUtf8(text ? text : ""));
+    return a ? slqt_register(a) : 0;
+}
+
+void slqt_be_toolbar_add_separator(int64_t tb)
+{
+    auto* bar = qobject_cast<QToolBar*>((QObject*)slqt_resolve(tb));
+    if (bar) bar->addSeparator();
+}
+
+/* ── Dock（QDockWidget 自由停靠面板）──────────────────────────────────── */
+
+int64_t slqt_be_dock_create(int64_t parent, const char* title)
+{
+    QWidget* parentW = parent ? asWidget(parent) : nullptr;
+    QDockWidget* d = new QDockWidget(QString::fromUtf8(title ? title : ""), parentW);
+    /* VS 式：可关、可浮动、可拖拽；默认不过度嵌套 */
+    d->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    return slqt_register(d);
+}
+
+/* area 传 Qt::DockWidgetArea 位值：1=左 2=右 4=顶 8=底 */
+void slqt_be_mainwindow_add_dock(int64_t win, int64_t dock, int32_t area)
+{
+    auto* mw = qobject_cast<QMainWindow*>((QObject*)slqt_resolve(win));
+    auto* d = qobject_cast<QDockWidget*>((QObject*)slqt_resolve(dock));
+    if (mw && d) mw->addDockWidget((Qt::DockWidgetArea)area, d);
+}
+
+void slqt_be_dock_set_widget(int64_t dock, int64_t w)
+{
+    auto* d = qobject_cast<QDockWidget*>((QObject*)slqt_resolve(dock));
+    QWidget* cw = asWidget(w);
+    if (d) d->setWidget(cw);
+}
+
+void slqt_be_dock_set_features(int64_t dock, int32_t f)
+{
+    auto* d = qobject_cast<QDockWidget*>((QObject*)slqt_resolve(dock));
+    if (d) d->setFeatures((QDockWidget::DockWidgetFeatures)f);
+}
+
+void slqt_be_dock_set_floating(int64_t dock, int32_t on)
+{
+    auto* d = qobject_cast<QDockWidget*>((QObject*)slqt_resolve(dock));
+    if (d) d->setFloating(on != 0);
+}
+
+/* ── MDI（QMdiArea 多文档代码区）──────────────────────────────────────── */
+
+int64_t slqt_be_mdiarea_create(int64_t parent)
+{
+    QWidget* parentW = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QMdiArea(parentW));
+}
+
+int64_t slqt_be_mdiarea_add_subwindow(int64_t mdi, int64_t w)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    QWidget* cw = asWidget(w);
+    if (!area || !cw) return 0;
+    QMdiSubWindow* sub = area->addSubWindow(cw);
+    return sub ? slqt_register(sub) : 0;
+}
+
+int32_t slqt_be_mdiarea_count(int64_t mdi)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    return area ? area->subWindowList().count() : 0;
+}
+
+void slqt_be_mdiarea_tile(int64_t mdi)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    if (area) area->tileSubWindows();
+}
+
+void slqt_be_mdiarea_cascade(int64_t mdi)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    if (area) area->cascadeSubWindows();
+}
+
+void slqt_be_mdiarea_close_active(int64_t mdi)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    if (area) area->closeActiveSubWindow();
+}
+
+int64_t slqt_be_mdiarea_active_sub(int64_t mdi)
+{
+    auto* area = qobject_cast<QMdiArea*>((QObject*)slqt_resolve(mdi));
+    if (!area) return 0;
+    QMdiSubWindow* sub = area->activeSubWindow();
+    return sub ? slqt_register(sub) : 0;
+}
+
+void slqt_be_subwindow_set_title(int64_t sub, const char* t)
+{
+    auto* s = qobject_cast<QMdiSubWindow*>((QObject*)slqt_resolve(sub));
+    if (s && t) s->setWindowTitle(QString::fromUtf8(t));
+}
+
+void slqt_be_subwindow_show_maximized(int64_t sub)
+{
+    auto* s = qobject_cast<QMdiSubWindow*>((QObject*)slqt_resolve(sub));
+    if (s) s->showMaximized();
+}
+
+/* ── 对话框（QDialog，BaseDialog 基类）────────────────────────────────── */
+
+int64_t slqt_be_dialog_create(int64_t parent)
+{
+    QWidget* parentW = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QDialog(parentW));
+}
+
+void slqt_be_dialog_set_modal(int64_t d, int32_t on)
+{
+    auto* dlg = qobject_cast<QDialog*>((QObject*)slqt_resolve(d));
+    if (dlg) dlg->setModal(on != 0);
+}
+
+int32_t slqt_be_dialog_exec(int64_t d)
+{
+    auto* dlg = qobject_cast<QDialog*>((QObject*)slqt_resolve(d));
+    return dlg ? (int32_t)dlg->exec() : 0;
+}
+
+void slqt_be_dialog_accept(int64_t d)
+{
+    auto* dlg = qobject_cast<QDialog*>((QObject*)slqt_resolve(d));
+    if (dlg) dlg->accept();
+}
+
+void slqt_be_dialog_reject(int64_t d)
+{
+    auto* dlg = qobject_cast<QDialog*>((QObject*)slqt_resolve(d));
+    if (dlg) dlg->reject();
+}
+
+/* ── 控件 min/max 尺寸（面板规格钳制落地到 Qt 原生）───────────────────── */
+
+void slqt_be_widget_set_min_size(int64_t h, int32_t w, int32_t hh)
+{
+    QWidget* o = asWidget(h);
+    if (o) o->setMinimumSize(w, hh);
+}
+
+void slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh)
+{
+    QWidget* o = asWidget(h);
+    if (o) o->setMaximumSize(w, hh);
 }

@@ -1,7 +1,6 @@
 # 关键字与语法糖总表
 
-本文按 `source/Front/Compile/Parse/LexerParseToToken.cs` 的 `ReadIdentifier()` 当前实现整理（权威来源是词法器的实际映射，不是理想设计）。
-配套写代码规则见 `md/code.md`（关键字与 Core 库使用约束）。
+本文汇总 SLang 的关键字、保留字、运算符与语法糖，并给出「写错时的正确写法」。配套代码规范（关键字与 Core 库使用约束）见工程内的代码规范文档。
 
 ---
 
@@ -56,6 +55,17 @@
 | `goto` | 跳转（配合 `label`） | [labelgoto.md](./labelgoto.md) |
 | `ret` | 返回语句（见 §3.1；`return` 不是关键字，词法层拦截报错，见 §1.8） | — |
 
+```sl
+function max(int a, int b)
+{
+    if (a > b)
+    {
+        ret a          # 用 ret 返回，不要写 return
+    }
+    ret b
+}
+```
+
 ### 1.4 异常
 
 | 关键字 | 用途 | 详见 |
@@ -78,7 +88,7 @@
 
 ### 1.6 类型关键字（保留类型词）
 
-以下词在词法层映射为 `Type` token 并携带实际类型，是保留字；与 Core 类型类的对应关系如下：
+以下词是保留类型词，与 Core 类型类的对应关系如下：
 
 | 类型词 | 实际类型 | 类型词 | 实际类型 |
 |--------|----------|--------|----------|
@@ -94,46 +104,33 @@
 
 | 词 | 说明 |
 |----|------|
-| `map` `list` `stack` `hashset` `queue` `tuple` `array` `range` | 小写容器构造糖（见 §3.8）。词法按普通标识符处理：可作局部变量/参数名；**禁止作类成员声明名**（字段/方法/getter/setter，MetaCore 层编译报错 LID 11042） |
+| `map` `list` `stack` `hashset` `queue` `tuple` `array` `range` | 小写容器构造糖（见 §3.8）。词法按普通标识符处理：可作局部变量/参数名；**禁止作类成员声明名**（字段/方法/getter/setter，编译报错） |
 | `error` `errmsg` | Result 机制保留名，同上禁止作类成员声明名（见 [result.md](./result.md) §7） |
 | `async` | 已禁用，按普通标识符处理 |
 
 ### 1.8 非本语言关键字（词法层拦截报错）
 
-以下词是其他语言（C/C#/Java/Go/Python/Rust 等）的关键字，但 **SL 没有对应语法**。词法层（`LexerParseToToken.ReadIdentifier` 的 `s_UnsupportedKeywords` 拦截表）识别到即报 **Error 并阻断编译**，报错 Extend 附加信息给出改写指引；不会像普通标识符那样流入语义层产生 `Name:xxx not found!` 等误导性报错（2026-10-11 落地；20118 文案 2026-10-08 预留）。
+以下词是其他语言（C/C#/Java/Go/Python/Rust 等）的关键字，但 **SL 没有对应语法**。词法层识别到即报 **Error 并阻断编译**，报错信息会给出改写指引；不会像普通标识符那样流入语义层产生 `Name:xxx not found!` 等误导性报错。
 
-| 拦截词 | SL 正确写法 | LID |
-|--------|------------|-----|
-| `return` | `ret;` / `ret 表达式;`（[function.md](./function.md)） | 20118（专用） |
-| `foreach` | `for ( x in collection )`（[forwhiledowhile.md](./forwhiledowhile.md)） | 20119 |
-| `using` / `include` | `import`（[namespace.md](./namespace.md)） | 20119 |
-| `elseif` | `elif` | 20119 |
-| `struct` | `data` / `class`（[data.md](./data.md)） | 20119 |
-| `let` | `var` 或显式类型声明（[variable.md](./variable.md)） | 20119 |
-| `raise` | `throw`（[try.md](./try.md)） | 20119 |
-| `lambda` | `function` 表达式或 `x => expr`（§3.4） | 20119 |
-| `def` | 函数直接以名称声明（[function.md](./function.md)） | 20119 |
-| `package` | `namespace`（[namespace.md](./namespace.md)） | 20119 |
-| `impl` | `class` + `extends` / `interface` | 20119 |
-| `trait` | `interface`（[interface.md](./interface.md)） | 20119 |
-| `pub` | `public` | 20119 |
-| `unless` | `if not ( ... )` | 20119 |
-| `until` | `while not ( ... )` | 20119 |
+| 拦截词 | SL 正确写法 |
+|--------|------------|
+| `return` | `ret;` / `ret 表达式;`（[function.md](./function.md)） |
+| `foreach` | `for ( x in collection )`（[forwhiledowhile.md](./forwhiledowhile.md)） |
+| `using` / `include` | `import`（[namespace.md](./namespace.md)） |
+| `elseif` | `elif` |
+| `struct` | `data` / `class`（[data.md](./data.md)） |
+| `let` | `var` 或显式类型声明（[variable.md](./variable.md)） |
+| `raise` | `throw`（[try.md](./try.md)） |
+| `lambda` | `function` 表达式或 `x => expr`（§3.4） |
+| `def` | 函数直接以名称声明（[function.md](./function.md)） |
+| `package` | `namespace`（[namespace.md](./namespace.md)） |
+| `impl` | `class` + `extends` / `interface` |
+| `trait` | `interface`（[interface.md](./interface.md)） |
+| `pub` | `public` |
+| `unless` | `if not ( ... )` |
+| `until` | `while not ( ... )` |
 
-**刻意不拦截**的近似词（标准库/测试中已作普通标识符使用，仍按标识符处理；新增拦截词前必须全仓 Grep 复核）：
-
-| 词 | 现存标识符用法示例 |
-|----|------------------|
-| `end` | `String.slice(int start, int end)`、`Monitor.end(string tag)`、`CommandBuffer.end()` |
-| `fn` | `Function fn = this._encoderFn`（BinaryCodec / Encoding / JsonCodec / ProtoCodec / Stream） |
-| `match` | `RegExp.match(string text)` |
-| `delete` | `File.delete(string path)`、`Directory.delete(string path)` |
-| `self` | `Task self = Coroutine.current()`（CoroutineTest） |
-| `func` | `func<int, int>` 函数类型用法（ExpressTest） |
-| `nil` | `var nil = j.toData(...)`（JsonTest） |
-| `then` / `loop` | 过于通用（Promise.then / loop 变量名风险），无强对应误用场景 |
-
-> `@csharp(){}` 等内嵌语言块体由词法器整块原文捕获（`TryCaptureAtSignBlock`，不透明 AtSignBlock token），块内出现 `using` / `return` 等**不受拦截影响**。
+> `@csharp(){}` 等内嵌语言块体内的 `using` / `return` 等**不受上述拦截影响**（块体按原样捕获）。
 
 ---
 
@@ -141,18 +138,18 @@
 
 常规算术 / 比较 / 逻辑运算符见 [operator.md](./operator.md)。特殊符号：
 
-| 符号 | token | 用途 |
-|------|-------|------|
-| `??` | EmptyRet | 空合并：左值为 null 取右值 |
-| `?.` | QuestionMarkDot | 空条件访问：对象为 null 时短路返回 null |
-| `..` | NumberArrayLink | 区间语法糖，构造 `Range`（见 [range.md](./range.md)） |
-| `=>` | Lambda | lambda 表达式（见 §3.4） |
-| `===` / `!==` | ValueEqual / ValueNotEqual | 值等 / 值不等比较（内容比较） |
-| `? :` | — | 三元条件 |
-| `@` | — | 属性前缀：`@Nickname`、`@DllImport` 等（见 [attribute.md](./attribute.md)） |
-| `$` | — | 字符串插值前缀（见 §3.5） |
-| `#` | — | 行注释 |
-| `#! ... !#` | — | 块注释 |
+| 符号 | 用途 |
+|------|------|
+| `??` | 空合并：左值为 null 取右值 |
+| `?.` | 空条件访问：对象为 null 时短路返回 null |
+| `..` | 区间语法糖，构造 `Range`（见 [range.md](./range.md)） |
+| `=>` | lambda 表达式（见 §3.4） |
+| `===` / `!==` | 值等 / 值不等比较（内容比较） |
+| `? :` | 三元条件 |
+| `@` | 属性前缀：`@Nickname`、`@DllImport` 等（见 [attribute.md](./attribute.md)） |
+| `$` | 字符串插值前缀（见 §3.5） |
+| `#` | 行注释 |
+| `#! ... !#` | 块注释 |
 
 ---
 
@@ -160,9 +157,9 @@
 
 ### 3.1 语句与控制流糖
 
-| 糖 | 展开为 / 语义 |
+| 糖 | 语义 |
 |----|---------------|
-| `ret` | `return` |
+| `ret` | 从函数返回 |
 | `next`（switch case 体内） | 显式贯穿到下一个 case（不写则隐式 break） |
 | `tr` | Transience（保留，当前无实际用例） |
 
@@ -174,12 +171,12 @@
 | `await expr` | `Coroutine.awaitTask(expr)` |
 | `spawn f(实参...)` | `Coroutine.spawnClosureN(...)`（挂起当前协程，异步执行 f） |
 
-展开发生在 `StructParseToSyntax.cs` 的 `TransformCoroutineKeywordNodes`。详见 [coroutine.md](./coroutine.md)。
+详见 [coroutine.md](./coroutine.md)。
 
 ### 3.3 编译期条件 `static if`（已废弃）
 
-> **已废弃**（attribute 重构，旧隔离机制收编）：现在写 `static if` 报 **Error（LID 21467）**，该语句按普通 `if` 继续解析（退化为运行期逻辑）。
-> 迁移：成员/类裁剪用 `@Exclude` attribute（PreCompile，标注即不参与编译）；整文件剔除用 jsonc `compileFiles.ignore`；配置值保留 `global.macro.X` 运行期只读访问。详见 [static-if.md](../project/static-if.md)。
+> **已废弃**（attribute 重构，旧隔离机制收编）：现在写 `static if` 报 **Error**，该语句按普通 `if` 继续解析（退化为运行期逻辑）。
+> 迁移：成员/类裁剪用 `@Exclude` attribute（标注即不参与编译）；整文件剔除用 jsonc `compileFiles.ignore`；配置值保留 `global.macro.X` 运行期只读访问。详见 [static-if.md](../project/static-if.md)。
 
 ### 3.4 表达式糖
 
@@ -223,25 +220,28 @@ d = f"""x=${ a + 1 }""";    # 三引号 f 形式仅支持 ${expr}
 
 ### 3.8 小写容器构造糖
 
-`map(...)` / `list(...)` / `stack(...)` / `hashset(...)` / `queue(...)` / `tuple(...)` / `array(...)` / `range(...)` 作为**链首裸调用**时，会被展开为对应容器构造（`Map(...)` / `List(...)` / `Stack(...)` …），实现在 `MetaCallNode` 的 `s_LowercaseContainerClassNameDict`。
+`map(...)` / `list(...)` / `stack(...)` / `hashset(...)` / `queue(...)` / `tuple(...)` / `array(...)` / `range(...)` 作为**链首裸调用**时，会被展开为对应容器构造（`Map(...)` / `List(...)` …）：
 
-由此带来的命名约束（MetaClass 层检查，编译报错 LID 11042）：
+```sl
+var nums = list(1, 2, 3)              # 展开为 List(1, 2, 3)
+var kv = map("a", 1, "b", 2)         # 展开为 Map("a", 1, "b", 2)
+var r = range(0, 10)                 # 展开为 Range
+```
+
+由此带来的命名约束（编译期检查，编译报错）：
 
 1. 这 8 个糖名**禁止作类成员声明名**（字段/方法/getter/setter）——例如成员方法 `map(...)` 的裸调用形式会被糖劫持，永远无法被正常调用，声明即报错；
 2. `error` / `errmsg` 是 Result 机制保留名（见 [result.md](./result.md) §7），同样禁止作类成员声明名；
 3. 局部变量与参数不受限制（糖只劫持链首裸调用，不影响成员访问 `obj.map(...)` 与变量引用）。
 
-### 3.9 成员变量定义期名称冲突自检（LID 23017）
+### 3.9 成员变量定义期名称冲突自检
 
-成员变量在定义期自带名称冲突检查（`MetaMemberVariable.CheckDefineNameConflict`，MetaCore 层，跳过该成员注册），成员名需要避开两类名称：
+编译器在定义期会对成员名做名称冲突检查，成员名需避开两类名称：
 
-1. **语言关键字**（含基本类型关键字 `int` / `string` / `object` 等）：成员名 token 必须是普通标识符，与局部变量/参数名的关键字检查同源（LID 20287）；
-2. **定义文件 `import` 下可索引到的类名 / 命名空间名称**（LID 23017）：裸名解析时 import 平面先于类成员命中（`MetaCallNode.GetFirstNode`），重名成员会被遮蔽产生歧义。查找平面与裸名解析一致，包括 `import as` 别名、import 的模块根/命名空间自身名称及其下直接子名（如 `import Std;` 后成员名不可用 `Std`，`import Std:IO;` 后不可用 `IO` 及 Std 根下的顶层名称）。
+1. **语言关键字**（含基本类型关键字 `int` / `string` / `object` 等）：成员名必须是普通标识符；
+2. **当前文件 `import` 下可索引到的类名 / 命名空间名称**：裸名解析时 import 平面先于类成员命中，重名成员会被遮蔽产生歧义。例如 `import Std;` 后成员名不能用 `Std`，`import Std:IO;` 后不能用 `IO` 及 Std 根下的顶层名称。
 
-豁免与边界：
-
-- `dllImports` 合成持有类 `___DllImportGlobal___` 的成员（成员名 = jsonc 别名，如 alias `"Std"` 与模块名相同是合法配置）免检——仅经 `global.dllImport.<alias>` 限定访问，不参与裸名解析；
-- 旧的 `CheckProjectMemberNameConflict` 后置检查（Project 成员 vs Module 根名称）已移除；jsonc 注入成员（`global.data` / `global.macro` / `dllImports`）的模块根防护保留在注入期（`MetaClass.IsNameConflictWithModuleRoot`）。
+> jsonc 注入成员（`global.data` / `global.macro` / `dllImports`）走限定名访问（如 `global.dllImport.<alias>`），不参与裸名解析，不受此约束。
 
 ---
 
@@ -327,5 +327,4 @@ jsonc `platform` 段关键字全表见 [../project/environment-guide.md](../proj
 
 ## 6) 系统方法
 
-`println` / `print` 等系统方法由 `Core.jsonc` 的 `systemCalls[]` 注册（`SystemPrint`、`SystemConvert*`、`SystemCoroutine*`、`SystemByteBuffer*`、`SystemChannel*`、`SystemMemory*`、`SystemJson*`、`SystemLz4*` 等数百个），实现下沉在 C VM 的 `system_method_call/` 适配器。
-语言侧使用说明见 [system_method.md](./system_method.md)。
+`println` / `print` 等系统方法由 Core 标准库注册（涵盖转换、协程、字节缓冲、通道、内存、JSON、Lz4 等数百个），语言侧统一通过全局调用使用。使用说明见 [system_method.md](./system_method.md)。

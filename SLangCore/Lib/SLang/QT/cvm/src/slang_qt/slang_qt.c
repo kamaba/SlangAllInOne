@@ -414,3 +414,43 @@ SLQT_API const char* slqt_help_error_sl(int64_t h) { return slqt_be_help_error(h
 
 SLQT_API int32_t     slqt_dbus_connected_sl(void) { return slqt_be_dbus_connected(); }
 SLQT_API const char* slqt_dbus_base_service_sl(void) { return slqt_be_dbus_base_service(); }
+
+/* ==== 2026-11-10 VS 式主框架扩展转发（菜单/工具栏/Dock/MDI/对话框）==== */
+
+SLQT_API int64_t slqt_menubar_create_sl(void) { return slqt_be_menubar_create(); }
+SLQT_API void    slqt_mainwindow_set_menubar_sl(int64_t win, int64_t mb) { slqt_be_mainwindow_set_menubar(win, mb); }
+SLQT_API int64_t slqt_menu_create_sl(int64_t parent, const char* t) { return slqt_be_menu_create(parent, t); }
+SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* t) { return slqt_be_menu_add_action(menu, t); }
+SLQT_API void    slqt_menu_add_separator_sl(int64_t menu) { slqt_be_menu_add_separator(menu); }
+SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t) { slqt_be_action_set_text(a, t); }
+SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int32_t on) { slqt_be_action_set_enabled(a, on); }
+
+SLQT_API int64_t slqt_toolbar_create_sl(int64_t p, const char* t) { return slqt_be_toolbar_create(p, t); }
+SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb) { slqt_be_mainwindow_add_toolbar(win, tb); }
+SLQT_API int64_t slqt_toolbar_add_action_sl(int64_t tb, const char* t) { return slqt_be_toolbar_add_action(tb, t); }
+SLQT_API void    slqt_toolbar_add_separator_sl(int64_t tb) { slqt_be_toolbar_add_separator(tb); }
+
+SLQT_API int64_t slqt_dock_create_sl(int64_t p, const char* t) { return slqt_be_dock_create(p, t); }
+SLQT_API void    slqt_mainwindow_add_dock_sl(int64_t win, int64_t dock, int32_t area) { slqt_be_mainwindow_add_dock(win, dock, area); }
+SLQT_API void    slqt_dock_set_widget_sl(int64_t dock, int64_t w) { slqt_be_dock_set_widget(dock, w); }
+SLQT_API void    slqt_dock_set_features_sl(int64_t dock, int32_t f) { slqt_be_dock_set_features(dock, f); }
+SLQT_API void    slqt_dock_set_floating_sl(int64_t dock, int32_t on) { slqt_be_dock_set_floating(dock, on); }
+
+SLQT_API int64_t slqt_mdiarea_create_sl(int64_t p) { return slqt_be_mdiarea_create(p); }
+SLQT_API int64_t slqt_mdiarea_add_subwindow_sl(int64_t mdi, int64_t w) { return slqt_be_mdiarea_add_subwindow(mdi, w); }
+SLQT_API int32_t slqt_mdiarea_count_sl(int64_t mdi) { return slqt_be_mdiarea_count(mdi); }
+SLQT_API void    slqt_mdiarea_tile_sl(int64_t mdi) { slqt_be_mdiarea_tile(mdi); }
+SLQT_API void    slqt_mdiarea_cascade_sl(int64_t mdi) { slqt_be_mdiarea_cascade(mdi); }
+SLQT_API void    slqt_mdiarea_close_active_sl(int64_t mdi) { slqt_be_mdiarea_close_active(mdi); }
+SLQT_API int64_t slqt_mdiarea_active_sub_sl(int64_t mdi) { return slqt_be_mdiarea_active_sub(mdi); }
+SLQT_API void    slqt_subwindow_set_title_sl(int64_t sub, const char* t) { slqt_be_subwindow_set_title(sub, t); }
+SLQT_API void    slqt_subwindow_show_maximized_sl(int64_t sub) { slqt_be_subwindow_show_maximized(sub); }
+
+SLQT_API int64_t slqt_dialog_create_sl(int64_t p) { return slqt_be_dialog_create(p); }
+SLQT_API void    slqt_dialog_set_modal_sl(int64_t d, int32_t on) { slqt_be_dialog_set_modal(d, on); }
+SLQT_API int32_t slqt_dialog_exec_sl(int64_t d) { return slqt_be_dialog_exec(d); }
+SLQT_API void    slqt_dialog_accept_sl(int64_t d) { slqt_be_dialog_accept(d); }
+SLQT_API void    slqt_dialog_reject_sl(int64_t d) { slqt_be_dialog_reject(d); }
+
+SLQT_API void    slqt_widget_set_min_size_sl(int64_t h, int32_t w, int32_t hh) { slqt_be_widget_set_min_size(h, w, hh); }
+SLQT_API void    slqt_widget_set_max_size_sl(int64_t h, int32_t w, int32_t hh) { slqt_be_widget_set_max_size(h, w, hh); }

@@ -1,148 +1,110 @@
-# 数值类型
+# 数字（Number / Num）
 
-本文说明：**内置数值类型与词法**、**字面量后缀**、以及 **`Num` 通用数值类型** 在语言与运行时的语义。实现细节以 `source/Front` 与 VM 代码为准。
+SLang 提供固定的数值类型（`int` / `long` / `float` / `double` / `decimal`）以及一个万能数字类型 `Num`，用于在不同数值形态之间灵活转换。
 
----
+## 1. 字面量
 
-## 1. 内置类型与词法（Lexer）
+```sl
+var a = 42            # 十进制 int
+var b = 0x1F          # 十六进制
+var c = 0b1010        # 二进制
+var d = 1_000_000     # 下划线分隔，提升可读性
+var e = 1.5e3         # 科学计数法（= 1500.0）
 
-扫描参考：`source/Front/Parse/LexerParseToToken.cs`
-
-### 1.1 词法中的类型关键字（小写）
-
-词法直接识别的小写关键字包括：
-
-`byte`, `sbyte`, `short`, `ushort`, `int`, `uint`, `long`, `ulong`, `float`, `double`, `bool`, `string`
-
-与内部 `EType` 映射示例：
-
-| 关键字   | EType   |
-|----------|---------|
-| `short`  | Int16   |
-| `ushort` | UInt16  |
-| `int`    | Int32   |
-| `uint`   | UInt32  |
-| `long`   | Int64   |
-| `ulong`  | UInt64  |
-| `byte`   | Byte    |
-| `sbyte`  | SByte   |
-
-### 1.2 数值字面量后缀（词法）
-
-| 写法   | 类型     |
-|--------|----------|
-| `1s`   | Int16    |
-| `1us`  | UInt16   |
-| `1i`   | Int32    |
-| `1ui`  | UInt32   |
-| `1L`   | Int64    |
-| `1uL`  | UInt64   |
-| `1.0f` | Float32  |
-| `1.0d` | Float64  |
-
-### 1.3 FileMeta / 类型系统（Meta 层）
-
-扫描参考：`FileMetatUtil.cs`、`TypeManager.cs`、`CoreMetaClassManager.cs`、`Define.cs` 等。
-
-- 核心运行时类型枚举（`EType`，见 `source/Front/Define.cs`）为规范 **PascalCase**：`UInt8`, `Int8`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Float32`, `Float64`, `Boolean`, `String`, `Num`。
-- 源码中的 `Byte` / `SByte` 是 `UInt8` / `Int8` 的别名写法（`CoreMetaClassManager.GetSelfMetaName` 中映射）。
-- `FileMeta` 阶段通过 meta/class 解析类型引用，不仅限于小写别名。
-- 源码中可使用 **PascalCase 核心类型名**（如 `Int16`、`Byte`）作为类风格类型名。
-
-### 1.4 推荐书写风格（声明）
-
-为减少歧义、与工程一致：
-
-- **声明优先**使用核心类型名：`Byte`, `SByte`, `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Float32`, `Float64`, `Boolean`, `String`, `Num`。
-- 与小写关键字对应关系（语义等价）：`short == Int16`，`byte == Byte`，`int == Int32`，`long == Int64` 等。
-- 测试与文档中尽量**统一一种风格**（推荐 PascalCase），避免同一文件混用小写别名与核心名。
-
-`test/BaseTest/NumberTest.sl` 已按上述风格调整示例（如 `Int32`、`Num`、`String`、`as Int32` 等）。
-
----
-
-## 2. 字面量与示例
-
-语言支持多种整数与浮点类型；字面量可使用后缀与二进制写法。
-
-后缀约定（与词法一致，可与上表对照）：
-
-- `i` — Int32，例如 `10i`。
-- `ui` — UInt32（无符号整型后缀需结合位宽）。
-- `s` / `us` — Int16 / UInt16。
-- `L` / `uL` — Int64 / UInt64。
-- `f` / `d` — 浮点（见词法 `1.0f` / `1.0d`）。
-- 二进制与下划线分组：`0b0011_1100`。
-
-```s
-var a1 = 10i;
-Int32 a2 = 10;
-var a3 = 10ui;
-var a4 = 20s;   // short / Int16
-var a5 = 20us;  // unsigned short
-var a6 = 100000000L;
-var a7 = 10000000000uL;
-var b1 = 0b0011_1100;
+var i = 100i          # 显式 int
+var l = 100l          # 显式 long
+var f = 1.5f          # 显式 float
+var db = 1.5d         # 显式 double
+var m = 3.14m         # 显式 decimal（高精度）
 ```
 
-**比较**：对基本数值类型，`==` 表示值相等；对对象类型，`==` 多为引用相等，值语义比较需看类型是否提供 `===` 等约定。
+- 后缀：`i`=int、`l`=long、`f`=float、`d`=double、`m`=decimal。
+- 不带后缀时：整数默认 `int`，小数默认 `double`。
+- 十六进制以 `0x` 开头，二进制以 `0b` 开头；数字中间可用 `_` 分隔。
 
----
+## 2. 固定数值类型
 
-## 3. `Num` — 通用数值类型
+| 类型 | 位数 | 典型用途 |
+|------|------|----------|
+| `int` | 32 | 默认整数、计数、索引 |
+| `long` | 64 | 大整数 |
+| `float` | 32 | 单精度浮点 |
+| `double` | 64 | 双精度浮点（默认小数） |
+| `decimal` | 128 | 金融 / 高精度十进制运算 |
 
-### 3.1 概述
+```sl
+int x = 10
+long big = 10000000000l
+float f = 3.14f
+double d = 3.14159265358979
+decimal money = 9.99m
 
-- `Num` 表示任意数值（整数或浮点场景的通用容器）。
-- 运行时原始 `Num` 在 C VM 的 `VMRuntimeValue` 中以 **8 字节 `double`（Float64）槽** 存储（标量槽长 8）。
-- 内部枚举对应 **`EVMType.Num`**。
-
-### 3.2 运行时表示
-
-- **原始 `Num`**：存于 `VMRuntimeValue` 的 `f64` 槽（`EVMType_Num`）；计算/比较出口按 `double` 取值（`runtime_value_get_as_double` 中 `Num` 与 `Float64` 同分支，见 `csimple_lang/src/vm/runtime/runtime_value/runtime_value_compute.c`）。
-
-### 3.3 赋值与类型兼容
-
-- 赋给声明为 `Num` 的变量时，来源须为数值类型（`Byte` … `Float64` 及 `Num`）；`String`、`Boolean`、自定义类等不可隐式赋给 `Num`（实现中常用 `Debug.Assert` 提示不兼容）。
-- C VM 的装载/赋值路径会检查来源值与目标类型的兼容性（`runtime_value.h` 的 `runtime_value_try_get_*` / `runtime_value_is_narrowing_conversion` 等辅助）。
-
-### 3.4 计算与提升
-
-1. 运算走 C VM `runtime_value_compute`：操作数先做标量归一化（`runtime_value_try_normalize_object_scalar_in_place`），再进入字符串/数值分支。
-2. 原始路径中 **`Num` 按 Float64 处理**（`Num` 参与的运算结果仍写入 `Num` 的 `f64` 槽）。
-3. **提升**：任一侧为 `Float32`/`Float64` 或 `Num` 时走双精度浮点路径；否则整数路径（有符号 `long` 语义 / 无符号 `ulong` 语义由标志决定）。
-4. **`Num` 不支持位运算**（`& | ^ << >>`），需在整数类型上运算或先显式转换为整数类型。
-
-### 3.5 比较（==, !=, >, …）
-
-- `Num` 按 **double** 比较；与运算的提升规则一致：一侧为浮点或 `Num` 则按浮点比较。
-
-### 3.6 示例
-
-```slang
-Num a = 3
-Num b = 2.5
-Int32 i = 2
-
-a = a + b
-a = a + i
-
-Int32 x = 1
-Num y = x + 1
-
-Num no = 10
-var res = no + 5   // 走 C VM 浮点路径
-
-# Num n = "abc"   # 错误：不可隐式转换
+Console.println(x + big)        # int 与 long 运算，结果自动提升为 long
+Console.println(f + d)          # float 与 double 运算，结果提升为 double
 ```
 
-### 3.7 实现注意与边界
+> 运算时，参与运算的两个数会按「更宽」的类型统一：`int + long -> long`，`float + double -> double`。
 
-- `runtime_value_compute.c`、`runtime_value_compare.c` 等将 **`Num` 按浮点** 纳入路径。
-- **精度**：`double` 无法精确表示所有极大无符号整数。
-- **除零**：当前浮点除零可能返回 `0`（避免抛异常），可按产品需求改为错误或 `Infinity/NaN`。
+## 3. 万能类型 Num
 
-### 3.8 何时用 `Num` 与何时用具体类型
+`Num` 能在 `int` / `long` / `float` / `double` / `decimal` 之间自动转换，适合「来源不确定、需要统一处理」的场景（如配置文件、动态解析）。
 
-- 需要**位运算**或**严格整型范围**：用 `Int32`、`UInt64` 等具体类型。
-- 需要**通用数值**、默认以小数为主：用 **`Num`**。
+```sl
+Num n = 10          # 当前是 int 形态
+n = 3.14           # 切换到 double 形态
+n = 10000000000l   # 切换到 long 形态
+
+int i = n as int           # 显式取出 int 形态
+double d = n as double     # 显式取出 double 形态
+long l = n.ToInt64()       # 方法形式转换
+```
+
+常用成员：
+
+- 类型判断：`IsInt()` / `IsLong()` / `IsFloat()` / `IsDouble()` / `IsDecimal()`
+- 转换取出：`ToInt32()` / `ToInt64()` / `ToSingle()` / `ToDouble()` / `ToDecimal()`
+- 查询当前形态：`GetNumberType()`
+
+```sl
+Num n = readUserInput()     # 来源不确定
+if (n.IsInt())
+{
+    int v = n.ToInt32()
+    Console.println("整数：" + v)
+}
+else
+{
+    double v = n.ToDouble()
+    Console.println("小数：" + v)
+}
+```
+
+## 4. 运算与比较
+
+```sl
+int a = 10
+int b = 3
+Console.println(a + b)     # 13
+Console.println(a - b)     # 7
+Console.println(a * b)     # 30
+Console.println(a / b)     # 3（整数除法，向零截断）
+Console.println(a % b)     # 1
+
+Console.println(a == b)    # false
+Console.println(a > b)     # true
+Console.println(a <= b)    # false
+```
+
+- 加减乘除取模：`+` `-` `*` `/` `%`。
+- 比较：`==` `!=` `<` `>` `<=` `>=`。
+- 整数除法会**截断为整数**；需要小数结果时，先把操作数转成 `double` / `float`。
+
+## 5. 注意事项
+
+- **整数除法截断**：`10 / 3` 得到 `3` 而非 `3.333`。要保留小数，使用 `10d / 3` 或先把变量声明为浮点类型。
+- **浮点误差**：`float` / `double` 不适合金额等需要精确相等的场景，改用 `decimal`。
+- **除零**：除以 `0` 会抛出异常，运算前请先判断除数。
+- **常量折叠**：编译期能确定的常量表达式会在编译阶段求值。
+- **类型推导**：用 `var` 声明时，整数推导出 `int`、小数推导出 `double`；需要其它类型请写显式后缀或类型标注。
+- **格式化输出**：数值类型支持 `.ToString("F2")` 之类的格式串（具体格式符见字符串 / 标准库文档）。
+- **范围限制**：`int` 约 ±21 亿、`long` 约 ±9.2×10¹⁸；超过范围请改用 `long` / `decimal`。

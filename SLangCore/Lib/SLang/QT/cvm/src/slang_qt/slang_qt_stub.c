@@ -202,3 +202,43 @@ const char* slqt_be_help_error(int64_t h) { (void)h; return g_empty; }
 
 int32_t     slqt_be_dbus_connected(void) { return 0; }
 const char* slqt_be_dbus_base_service(void) { return g_empty; }
+
+/* ---- 2026-11-10 VS 式主框架扩展 stub（no-op，headless 验证 SL 链路）---- */
+
+int64_t slqt_be_menubar_create(void) { return slqt_register(NULL); }
+void    slqt_be_mainwindow_set_menubar(int64_t win, int64_t mb) { (void)win;(void)mb; }
+int64_t slqt_be_menu_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
+int64_t slqt_be_menu_add_action(int64_t menu, const char* text) { (void)menu;(void)text; return slqt_register(NULL); }
+void    slqt_be_menu_add_separator(int64_t menu) { (void)menu; }
+void    slqt_be_action_set_text(int64_t a, const char* t) { (void)a;(void)t; }
+void    slqt_be_action_set_enabled(int64_t a, int32_t on) { (void)a;(void)on; }
+
+int64_t slqt_be_toolbar_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
+void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb) { (void)win;(void)tb; }
+int64_t slqt_be_toolbar_add_action(int64_t tb, const char* text) { (void)tb;(void)text; return slqt_register(NULL); }
+void    slqt_be_toolbar_add_separator(int64_t tb) { (void)tb; }
+
+int64_t slqt_be_dock_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
+void    slqt_be_mainwindow_add_dock(int64_t win, int64_t dock, int32_t area) { (void)win;(void)dock;(void)area; }
+void    slqt_be_dock_set_widget(int64_t dock, int64_t w) { (void)dock;(void)w; }
+void    slqt_be_dock_set_features(int64_t dock, int32_t f) { (void)dock;(void)f; }
+void    slqt_be_dock_set_floating(int64_t dock, int32_t on) { (void)dock;(void)on; }
+
+int64_t slqt_be_mdiarea_create(int64_t parent) { (void)parent; return slqt_register(NULL); }
+int64_t slqt_be_mdiarea_add_subwindow(int64_t mdi, int64_t w) { (void)mdi;(void)w; return slqt_register(NULL); }
+int32_t slqt_be_mdiarea_count(int64_t mdi) { (void)mdi; return 0; }
+void    slqt_be_mdiarea_tile(int64_t mdi) { (void)mdi; }
+void    slqt_be_mdiarea_cascade(int64_t mdi) { (void)mdi; }
+void    slqt_be_mdiarea_close_active(int64_t mdi) { (void)mdi; }
+int64_t slqt_be_mdiarea_active_sub(int64_t mdi) { (void)mdi; return 0; }
+void    slqt_be_subwindow_set_title(int64_t sub, const char* t) { (void)sub;(void)t; }
+void    slqt_be_subwindow_show_maximized(int64_t sub) { (void)sub; }
+
+int64_t slqt_be_dialog_create(int64_t parent) { (void)parent; return slqt_register(NULL); }
+void    slqt_be_dialog_set_modal(int64_t d, int32_t on) { (void)d;(void)on; }
+int32_t slqt_be_dialog_exec(int64_t d) { (void)d; return 0; }
+void    slqt_be_dialog_accept(int64_t d) { (void)d; }
+void    slqt_be_dialog_reject(int64_t d) { (void)d; }
+
+void    slqt_be_widget_set_min_size(int64_t h, int32_t w, int32_t hh) { (void)h;(void)w;(void)hh; }
+void    slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh) { (void)h;(void)w;(void)hh; }

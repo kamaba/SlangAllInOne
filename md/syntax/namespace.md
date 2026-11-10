@@ -7,9 +7,7 @@
 1. 命名空间，直接在 `.sl` 源码中声明：用 `namespace X { ... }` 关键字形式（可嵌套），也可以用「限定名 + `{}`」形式直接声明命名空间下的类（如 `Application.Core.UI.Layout { ... }`），无需在工程配置中预先登记。工程 `.jsonc` 的 `struct[]`（命名空间树）用于工程组织与校验登记：
 
 命名空间登记实例（jsonc `struct[]`）:
-```javascript
-file:test.jsonc
-
+```jsonc
 "struct": [
     { "namespace": "Std", "children":
         [
@@ -24,9 +22,7 @@ file:test.jsonc
 3. 在引导类时，也可以根据全局命名空间引导使用，如果使用外部模块，则要使用模块的名称，再使用命名空间的名称
 
 命名类定义使用实例:
-```csharp
-file:class1.s
-
+```sl
 Application.Core.UI.Layout
 {
     width = 0i;
@@ -76,9 +72,7 @@ Core.MyClass
 ```
 
 命名空间类引用的实例:
-```csharp
-file:test.sp
-
+```sl
 import Application;
 import Application.Core as AC;
 
@@ -86,7 +80,7 @@ ProjectEnter
 {
     static _main_()
     {    
-        layout = Application.Core.UI.Layout();
+        layout = new Application.Core.UI.Layout();
         layout.PrintWidthAndHeight();
 
         UtilClass.PrintUtilClass();
@@ -104,7 +98,7 @@ ProjectEnter
 
 ## import 导入失败的处理（2026-10-13 起为硬错误）
 
-自 2026-10-13 起，**import 解析失败不再静默放行**：一律按 **Error 级**报错（LID 20377-20382，pass=FALSE 计入 errorCount），MetaCore 阶段失败后 **IR/Export 阶段跳过、不导出 module.json**——不会在下游产生「方法未发现」之类的连锁迷惑错误，最早的 import 错误即根因（排障只看最早 Error）。
+自 2026-10-13 起，**import 解析失败不再静默放行**：一律按 **Error 级**报错并停止编译——不会在下游产生「方法未发现」之类的连锁迷惑错误，最早的 import 错误即根因（排障只看最早 Error）。
 
 常见失败场景与提示含义：
 
@@ -189,8 +183,8 @@ SearchOption.TopDirectoryOnly.toString()      # enum 成员同样直达
 
 - 命名空间部分可为点分链（`import Std:OS.Files`）；冒号后为空报 Error。
 - 与整模块导入的关系：`import Std` 引入模块根，**裸模块名前缀链**（`Std.Console.println` / `Std.FileMode` 类型位置）与 as 别名同机制续解（2026-10-18 补全）；`import Std:IO` 只引入 IO 命名空间（成员无前缀直达）。
-- **Core 自动导入**：Core 模块被 references 引用后即自动可用（基础类型 int/string/List 等本就内置），源码中无需写 `import Core`；写了也不冲突（按模块根导入处理）。用例见 `test\Other\CoreAutoProbe\`（零 import 用 List/Map/string + `import Core:Environment` 命名空间直达）。
-- 引用模块自身的 references 别名（jsonc `references[].name`）也可作冒号前的模块名——`name` 是工程内别名，`import <别名>:<命名空间>` 同样命中；别名与 `as` 可组合（`import SLStd as SS` → `SS.Console.println` 前缀链直达），裸别名前缀链（`import SLStd` → `SLStd.Console.println`）同样可用。用例见 `test\Other\AliasProbe\`（jsonc `name=SLStd` + `import SLStd as SS` / `import SLStd` / `import SLStd:IO`）。
+- **Core 自动导入**：Core 模块被 references 引用后即自动可用（基础类型 int/string/List 等本就内置），源码中无需写 `import Core`；写了也不冲突（按模块根导入处理）。
+- 引用模块自身的 references 别名（jsonc `references[].name`）也可作冒号前的模块名——`name` 是工程内别名，`import <别名>:<命名空间>` 同样命中；别名与 `as` 可组合（`import SLStd as SS` → `SS.Console.println` 前缀链直达），裸别名前缀链（`import SLStd` → `SLStd.Console.println`）同样可用。
 
 ### 与 typealias 配合
 
@@ -204,4 +198,4 @@ typealias LibAliasAlpha = SUB.Alpha
 
 ### 验证用例
 
-以上全部形态在探针工程 `test/Other/AliasProbe/`（AliasProbe.sp + AliasProbeLib.sl + AliasProbe.jsonc）中覆盖：Front 编译零 Error，C VM（csimple_lang）运行输出全部正确。
+以上全部形态在探针工程中覆盖：Front 编译零 Error，内置 VM 运行输出全部正确。

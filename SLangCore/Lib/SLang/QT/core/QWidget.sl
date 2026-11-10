@@ -26,6 +26,9 @@ namespace SLang
         public void setToolTip( string t ) { SLang.QT.ffi_widgetSetTooltip( this.handle, t ) }
         public void setStyleSheet( string css ) { SLang.QT.ffi_widgetSetStyleSheet( this.handle, css ) }
         public void setFixedSize( int w, int h ) { SLang.QT.ffi_widgetSetFixedSize( this.handle, w, h ) }
+        # 2026-11-10 VS 扩展：min/max 尺寸钳制（面板规格落地到 Qt 原生）
+        public void setMinimumSize( int w, int h ) { SLang.QT.ffi_widgetSetMinSize( this.handle, w, h ) }
+        public void setMaximumSize( int w, int h ) { SLang.QT.ffi_widgetSetMaxSize( this.handle, w, h ) }
         public void update() { SLang.QT.ffi_widgetUpdate( this.handle ) }
         public void setParent( SLang.QObject p ) { SLang.QT.ffi_widgetSetParent( this.handle, p.handle ) }
         public void setLayout( SLang.QLayout layout ) { SLang.QT.ffi_widgetSetLayout( this.handle, layout.handle ) }

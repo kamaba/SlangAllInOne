@@ -216,6 +216,46 @@ const char* slqt_be_help_error(int64_t h);
 int32_t     slqt_be_dbus_connected(void);
 const char* slqt_be_dbus_base_service(void);
 
+/* ── 2026-11-10 VS 式主框架扩展（与 slang_qt.h 新增导出一一对应）─────── */
+/* 菜单：QMenuBar / QMenu / QAction（QAction.triggered → SIG_TRIGGERED） */
+int64_t slqt_be_menubar_create(void);
+void    slqt_be_mainwindow_set_menubar(int64_t win, int64_t mb);
+int64_t slqt_be_menu_create(int64_t parent, const char* title);
+int64_t slqt_be_menu_add_action(int64_t menu, const char* text);
+void    slqt_be_menu_add_separator(int64_t menu);
+void    slqt_be_action_set_text(int64_t a, const char* t);
+void    slqt_be_action_set_enabled(int64_t a, int32_t on);
+/* 工具栏：QToolBar */
+int64_t slqt_be_toolbar_create(int64_t parent, const char* title);
+void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb);
+int64_t slqt_be_toolbar_add_action(int64_t tb, const char* text);
+void    slqt_be_toolbar_add_separator(int64_t tb);
+/* Dock：QDockWidget（area 为 Qt::DockWidgetArea 位值） */
+int64_t slqt_be_dock_create(int64_t parent, const char* title);
+void    slqt_be_mainwindow_add_dock(int64_t win, int64_t dock, int32_t area);
+void    slqt_be_dock_set_widget(int64_t dock, int64_t w);
+void    slqt_be_dock_set_features(int64_t dock, int32_t f);
+void    slqt_be_dock_set_floating(int64_t dock, int32_t on);
+/* MDI：QMdiArea + QMdiSubWindow（多文档代码区） */
+int64_t slqt_be_mdiarea_create(int64_t parent);
+int64_t slqt_be_mdiarea_add_subwindow(int64_t mdi, int64_t w);
+int32_t slqt_be_mdiarea_count(int64_t mdi);
+void    slqt_be_mdiarea_tile(int64_t mdi);
+void    slqt_be_mdiarea_cascade(int64_t mdi);
+void    slqt_be_mdiarea_close_active(int64_t mdi);
+int64_t slqt_be_mdiarea_active_sub(int64_t mdi);
+void    slqt_be_subwindow_set_title(int64_t sub, const char* t);
+void    slqt_be_subwindow_show_maximized(int64_t sub);
+/* 对话框：QDialog（BaseDialog 基类） */
+int64_t slqt_be_dialog_create(int64_t parent);
+void    slqt_be_dialog_set_modal(int64_t d, int32_t on);
+int32_t slqt_be_dialog_exec(int64_t d);
+void    slqt_be_dialog_accept(int64_t d);
+void    slqt_be_dialog_reject(int64_t d);
+/* 控件 min/max 尺寸（面板规格钳制落地） */
+void    slqt_be_widget_set_min_size(int64_t h, int32_t w, int32_t hh);
+void    slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh);
+
 #ifdef __cplusplus
 }
 #endif

@@ -495,5 +495,93 @@ namespace SLang
         public static QVBoxLayout newVBox( Int64 parent ) { ret QVBoxLayout(parent) }
         public static QHBoxLayout newHBox( Int64 parent ) { ret QHBoxLayout(parent) }
         public static QGridLayout newGrid( Int64 parent ) { ret QGridLayout(parent) }
+
+        # ── 2026-11-10 VS 式主框架扩展 FFI 面 ──────────────────────
+        # 菜单：QMenuBar / QMenu / QAction（SIG_TRIGGERED 触发）
+        @DllStaticImport( "slang_qt", "slqt_menubar_create_sl" )
+        public static Int64 ffi_menubarCreate() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mainwindow_set_menubar_sl" )
+        public static void ffi_mainwindowSetMenubar( Int64 win, Int64 mb ) {}
+        @DllStaticImport( "slang_qt", "slqt_menu_create_sl" )
+        public static Int64 ffi_menuCreate( Int64 parent, string title ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_menu_add_action_sl" )
+        public static Int64 ffi_menuAddAction( Int64 menu, string text ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_menu_add_separator_sl" )
+        public static void ffi_menuAddSeparator( Int64 menu ) {}
+        @DllStaticImport( "slang_qt", "slqt_action_set_text_sl" )
+        public static void ffi_actionSetText( Int64 a, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_action_set_enabled_sl" )
+        public static void ffi_actionSetEnabled( Int64 a, bool on ) {}
+
+        # 工具栏：QToolBar（快捷图标区）
+        @DllStaticImport( "slang_qt", "slqt_toolbar_create_sl" )
+        public static Int64 ffi_toolbarCreate( Int64 parent, string title ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mainwindow_add_toolbar_sl" )
+        public static void ffi_mainwindowAddToolbar( Int64 win, Int64 tb ) {}
+        @DllStaticImport( "slang_qt", "slqt_toolbar_add_action_sl" )
+        public static Int64 ffi_toolbarAddAction( Int64 tb, string text ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_toolbar_add_separator_sl" )
+        public static void ffi_toolbarAddSeparator( Int64 tb ) {}
+
+        # Dock：QDockWidget（自由停靠；area = Qt::DockWidgetArea 位值）
+        @DllStaticImport( "slang_qt", "slqt_dock_create_sl" )
+        public static Int64 ffi_dockCreate( Int64 parent, string title ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mainwindow_add_dock_sl" )
+        public static void ffi_mainwindowAddDock( Int64 win, Int64 dock, int area ) {}
+        @DllStaticImport( "slang_qt", "slqt_dock_set_widget_sl" )
+        public static void ffi_dockSetWidget( Int64 dock, Int64 w ) {}
+        @DllStaticImport( "slang_qt", "slqt_dock_set_features_sl" )
+        public static void ffi_dockSetFeatures( Int64 dock, int f ) {}
+        @DllStaticImport( "slang_qt", "slqt_dock_set_floating_sl" )
+        public static void ffi_dockSetFloating( Int64 dock, bool on ) {}
+
+        # MDI：QMdiArea + QMdiSubWindow（多文档代码区）
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_create_sl" )
+        public static Int64 ffi_mdiareaCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_add_subwindow_sl" )
+        public static Int64 ffi_mdiareaAddSubWindow( Int64 mdi, Int64 w ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_count_sl" )
+        public static int ffi_mdiareaCount( Int64 mdi ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_tile_sl" )
+        public static void ffi_mdiareaTile( Int64 mdi ) {}
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_cascade_sl" )
+        public static void ffi_mdiareaCascade( Int64 mdi ) {}
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_close_active_sl" )
+        public static void ffi_mdiareaCloseActive( Int64 mdi ) {}
+        @DllStaticImport( "slang_qt", "slqt_mdiarea_active_sub_sl" )
+        public static Int64 ffi_mdiareaActiveSub( Int64 mdi ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_subwindow_set_title_sl" )
+        public static void ffi_subwindowSetTitle( Int64 sub, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_subwindow_show_maximized_sl" )
+        public static void ffi_subwindowShowMaximized( Int64 sub ) {}
+
+        # 对话框：QDialog（BaseDialog 基类）
+        @DllStaticImport( "slang_qt", "slqt_dialog_create_sl" )
+        public static Int64 ffi_dialogCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_dialog_set_modal_sl" )
+        public static void ffi_dialogSetModal( Int64 d, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_dialog_exec_sl" )
+        public static int ffi_dialogExec( Int64 d ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_dialog_accept_sl" )
+        public static void ffi_dialogAccept( Int64 d ) {}
+        @DllStaticImport( "slang_qt", "slqt_dialog_reject_sl" )
+        public static void ffi_dialogReject( Int64 d ) {}
+
+        # 控件 min/max 尺寸（面板规格钳制落地）
+        @DllStaticImport( "slang_qt", "slqt_widget_set_min_size_sl" )
+        public static void ffi_widgetSetMinSize( Int64 h, int w, int hh ) {}
+        @DllStaticImport( "slang_qt", "slqt_widget_set_max_size_sl" )
+        public static void ffi_widgetSetMaxSize( Int64 h, int w, int hh ) {}
+
+        # ── VS 扩展工厂 ────────────────────────────────────────────
+        public static QMenuBar newMenuBar() { ret QMenuBar() }
+        public static QMenu newMenu( Int64 parent, string title ) { ret QMenu( parent, title ) }
+        public static QToolBar newToolBar( Int64 parent, string title ) { ret QToolBar( parent, title ) }
+        public static QDockWidget newDockWidget( Int64 parent, string title ) { ret QDockWidget( parent, title ) }
+        public static QMdiArea newMdiArea( Int64 parent ) { ret QMdiArea( parent ) }
+        public static QDialog newDialog( Int64 parent ) { ret QDialog( parent ) }
+        # QAction / QMdiSubWindow 由原生创建（menu/toolbar/mdi 返回句柄），工厂按句柄收养
+        public static QAction newAction( Int64 handle ) { ret QAction( handle ) }
+        public static QMdiSubWindow newMdiSubWindow( Int64 handle ) { ret QMdiSubWindow( handle ) }
     }
 }

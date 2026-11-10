@@ -235,6 +235,44 @@ SLQT_API const char* slqt_help_error_sl(int64_t h);
 SLQT_API int32_t     slqt_dbus_connected_sl(void);
 SLQT_API const char* slqt_dbus_base_service_sl(void);
 
+/* ── 2026-11-10 VS 式主框架扩展：菜单 / 工具栏 / Dock / MDI / 对话框 ──
+ * QMenuBar + QMenu（一二级菜单，QAction.triggered → SIG_TRIGGERED）
+ * QToolBar（快捷图标区）、QDockWidget（自由 Dock 面板）、
+ * QMdiArea + QMdiSubWindow（多文档代码区）、QDialog（BaseDialog 基类）
+ * 以及 QWidget min/max 尺寸（面板规格钳制落地到 Qt 原生）。 */
+SLQT_API int64_t slqt_menubar_create_sl(void);
+SLQT_API void    slqt_mainwindow_set_menubar_sl(int64_t win, int64_t mb);
+SLQT_API int64_t slqt_menu_create_sl(int64_t parent, const char* title);  /* parent: QMenuBar 或 QMenu */
+SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* text); /* 返回 QAction 句柄 */
+SLQT_API void    slqt_menu_add_separator_sl(int64_t menu);
+SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t);
+SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int32_t on);
+SLQT_API int64_t slqt_toolbar_create_sl(int64_t parent, const char* title);
+SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb);
+SLQT_API int64_t slqt_toolbar_add_action_sl(int64_t tb, const char* text); /* 返回 QAction 句柄 */
+SLQT_API void    slqt_toolbar_add_separator_sl(int64_t tb);
+SLQT_API int64_t slqt_dock_create_sl(int64_t parent, const char* title);
+SLQT_API void    slqt_mainwindow_add_dock_sl(int64_t win, int64_t dock, int32_t area);
+SLQT_API void    slqt_dock_set_widget_sl(int64_t dock, int64_t w);
+SLQT_API void    slqt_dock_set_features_sl(int64_t dock, int32_t f);
+SLQT_API void    slqt_dock_set_floating_sl(int64_t dock, int32_t on);
+SLQT_API int64_t slqt_mdiarea_create_sl(int64_t parent);
+SLQT_API int64_t slqt_mdiarea_add_subwindow_sl(int64_t mdi, int64_t w);   /* 返回 QMdiSubWindow 句柄 */
+SLQT_API int32_t slqt_mdiarea_count_sl(int64_t mdi);
+SLQT_API void    slqt_mdiarea_tile_sl(int64_t mdi);
+SLQT_API void    slqt_mdiarea_cascade_sl(int64_t mdi);
+SLQT_API void    slqt_mdiarea_close_active_sl(int64_t mdi);
+SLQT_API int64_t slqt_mdiarea_active_sub_sl(int64_t mdi);                 /* 0=无活动子窗 */
+SLQT_API void    slqt_subwindow_set_title_sl(int64_t sub, const char* t);
+SLQT_API void    slqt_subwindow_show_maximized_sl(int64_t sub);
+SLQT_API int64_t slqt_dialog_create_sl(int64_t parent);
+SLQT_API void    slqt_dialog_set_modal_sl(int64_t d, int32_t on);
+SLQT_API int32_t slqt_dialog_exec_sl(int64_t d);
+SLQT_API void    slqt_dialog_accept_sl(int64_t d);
+SLQT_API void    slqt_dialog_reject_sl(int64_t d);
+SLQT_API void    slqt_widget_set_min_size_sl(int64_t h, int32_t w, int32_t hh);
+SLQT_API void    slqt_widget_set_max_size_sl(int64_t h, int32_t w, int32_t hh);
+
 #ifdef __cplusplus
 }
 #endif

@@ -68,6 +68,20 @@ SLQT_API void    slqt_edit_set_placeholder_sl(int64_t h, const char* t);
 SLQT_API const char* slqt_edit_text_sl(int64_t h);
 SLQT_API void    slqt_edit_set_readonly_sl(int64_t h, int32_t on);
 
+/* ── 多行文本编辑 / 列表（QTextEdit / QListWidget）──────────────────── */
+SLQT_API int64_t     slqt_textedit_create_sl(int64_t parent);
+SLQT_API void        slqt_textedit_set_text_sl(int64_t h, const char* t);
+SLQT_API const char* slqt_textedit_text_sl(int64_t h);      /* 大缓冲（g_big_buf） */
+SLQT_API void        slqt_textedit_set_readonly_sl(int64_t h, int32_t on);
+SLQT_API void        slqt_textedit_append_sl(int64_t h, const char* t);
+SLQT_API int64_t     slqt_list_create_sl(int64_t parent);
+SLQT_API void        slqt_list_add_item_sl(int64_t h, const char* t);
+SLQT_API void        slqt_list_clear_sl(int64_t h);
+SLQT_API int32_t     slqt_list_count_sl(int64_t h);
+SLQT_API int32_t     slqt_list_current_row_sl(int64_t h);
+SLQT_API void        slqt_list_set_current_row_sl(int64_t h, int32_t row);
+SLQT_API const char* slqt_list_item_text_sl(int64_t h, int32_t row);
+
 /* ── 主窗口 / 对话框 ─────────────────────────────────────────────────── */
 SLQT_API int64_t slqt_mainwindow_create_sl(void);
 SLQT_API void    slqt_mainwindow_set_central_sl(int64_t h, int64_t widget);
@@ -96,8 +110,10 @@ SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb
 #define SLQT_SIG_CLICKED        0
 #define SLQT_SIG_RETURN_PRESSED 1
 #define SLQT_SIG_TRIGGERED      2
-#define SLQT_SIG_DESTROYED      3
+#define SLQT_SIG_DESTROYED     3
 #define SLQT_SIG_TEXT_CHANGED   4
+/* QListWidget::currentRowChanged(int)：int 载荷经 _dispatchInt 桥重入 VM */
+#define SLQT_SIG_CURRENT_ROW_CHANGED 5
 
 /* ==========================================================================
  * 2026-11-03 扩展面：按 jsonc qtRuntime 组合部署（模块 dll + 插件分类）后，

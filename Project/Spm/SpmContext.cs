@@ -18,14 +18,26 @@ internal static class SpmContext
     /// <summary>语言目录插件安装位 plugin\（package-layout.md §7.2）。</summary>
     public static string LangPluginsDir => Path.Combine(LangDir, "plugin");
 
-    /// <summary>全局配置 &lt;lang&gt;\spm.json（registry）。</summary>
+    /// <summary>全局配置 &lt;lang&gt;\spm.json（registry / servers）。</summary>
     public static string GlobalConfigPath => Path.Combine(LangDir, "spm.json");
+
+    /// <summary>sync 产物缓存目录 &lt;lang&gt;\spm-cache\（按 key 存 zip）。</summary>
+    public static string CacheDir => Path.Combine(LangDir, "spm-cache");
+
+    /// <summary>sync 记录文件 &lt;lang&gt;\spm-cache.json（key → md5/版本/安装位）。</summary>
+    public static string SyncCachePath => Path.Combine(LangDir, "spm-cache.json");
 
     // ==== 全局配置（spm.json）====
 
     public sealed class GlobalConfig
     {
         public string Registry { get; set; } = "";
+
+        /// <summary>后管平台地址（旧单值字段；新配置写 Servers，读取时兜底兼容）。</summary>
+        public string Server { get; set; } = "";
+
+        /// <summary>后管平台地址列表（spm config server 写入；spm sync 按序逐个尝试）。</summary>
+        public List<string> Servers { get; set; } = new();
     }
 
     public static GlobalConfig LoadGlobalConfig()
@@ -50,6 +62,74 @@ internal static class SpmContext
     {
         var reg = LoadGlobalConfig().Registry;
         return string.IsNullOrWhiteSpace(reg) ? null : reg.Trim();
+    }
+
+    // ==== 后管平台地址（spm config server / spm sync）====
+
+    /// <summary>
+    /// 内置缺省服务器列表（spm.json 未配置 Servers 时启用）：官网远程服务 → 本机。
+    /// </summary>
+    public static readonly string[] DefaultServers =
+    {
+        "http://110.40.210.34:35221", // 官网远程服务（后管平台）
+        "http://127.0.0.1:35221",     // 本机后管平台
+    };
+
+    /// <summary>已配置的后管平台地址列表（归一化去重）；未配置返回空表。</summary>
+    public static List<string> GlobalServers()
+    {
+        var cfg = LoadGlobalConfig();
+        var list = new List<string>();
+        foreach (var s in cfg.Servers)
+        {
+            var n = NormalizeServerUrl(s);
+            if (n != null && !list.Contains(n))
+            {
+                list.Add(n);
+            }
+        }
+        if (list.Count == 0)
+        {
+            // 旧单值字段兜底（0.3.0 及之前 spm config server 写的 Server）
+            var legacy = NormalizeServerUrl(cfg.Server);
+            if (legacy != null)
+            {
+                list.Add(legacy);
+            }
+        }
+        return list;
+    }
+
+    /// <summary>sync 实际使用的服务器列表：spm.json 配置 &gt; 内置缺省（官网 + 本机）。</summary>
+    public static List<string> EffectiveServers()
+    {
+        var configured = GlobalServers();
+        return configured.Count > 0 ? configured : DefaultServers.ToList();
+    }
+
+    /// <summary>
+    /// 后管平台地址归一化（spm-registry.md §2：SLANG_API_BASE 形态）：
+    ///   裸 IP / 主机名            → http://&lt;host&gt;:35221（后管平台缺省端口）
+    ///   host:port                 → http://host:port
+    ///   http(s)://...             → 原样（去尾部斜杠）
+    /// 非法（空）返回 null。
+    /// </summary>
+    public static string? NormalizeServerUrl(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return null;
+        }
+        var s = input.Trim().TrimEnd('/');
+        if (s.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+            || s.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            return s;
+        }
+        // 裸地址：补 scheme；无端口补后管平台缺省端口 35221
+        return s.Contains(':')
+            ? "http://" + s
+            : "http://" + s + ":35221";
     }
 
     // ==== registry 三级解析 ====

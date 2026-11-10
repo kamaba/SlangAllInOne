@@ -59,6 +59,20 @@ void    slqt_be_edit_set_placeholder(int64_t h, const char* t) { (void)h;(void)t
 const char* slqt_be_edit_text(int64_t h) { (void)h; return g_empty; }
 void    slqt_be_edit_set_readonly(int64_t h, int32_t on) { (void)h;(void)on; }
 
+/* QTextEdit / QListWidget stub：伪句柄 + 安全值（headless 链路验证用） */
+int64_t     slqt_be_textedit_create(int64_t p) { (void)p; return slqt_register(NULL); }
+void        slqt_be_textedit_set_text(int64_t h, const char* t) { (void)h;(void)t; }
+const char* slqt_be_textedit_text(int64_t h) { (void)h; return g_empty; }
+void        slqt_be_textedit_set_readonly(int64_t h, int32_t on) { (void)h;(void)on; }
+void        slqt_be_textedit_append(int64_t h, const char* t) { (void)h;(void)t; }
+int64_t     slqt_be_list_create(int64_t p) { (void)p; return slqt_register(NULL); }
+void        slqt_be_list_add_item(int64_t h, const char* t) { (void)h;(void)t; }
+void        slqt_be_list_clear(int64_t h) { (void)h; }
+int32_t     slqt_be_list_count(int64_t h) { (void)h; return 0; }
+int32_t     slqt_be_list_current_row(int64_t h) { (void)h; return -1; }
+void        slqt_be_list_set_current_row(int64_t h, int32_t row) { (void)h;(void)row; }
+const char* slqt_be_list_item_text(int64_t h, int32_t row) { (void)h;(void)row; return g_empty; }
+
 int64_t slqt_be_mainwindow_create(void) { return slqt_register(NULL); }
 void    slqt_be_mainwindow_set_central(int64_t h, int64_t w) { (void)h;(void)w; }
 void    slqt_be_mainwindow_set_title(int64_t h, const char* t) { (void)h;(void)t; }

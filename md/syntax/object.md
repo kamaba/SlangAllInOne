@@ -1,51 +1,181 @@
-# 对象与构造（Objects & Construction）
+# 类与对象（class / object）
 
-对象是在运行时由类实例化得到的实体。S 语言通过 `ClassName(args)` 或字面量 `{ ... }` 等方式创建对象，并使用特殊方法 `_init_` 作为构造函数。
+`class` 是组织状态（字段）与行为（方法）的基本单元；`object` 泛指运行时的实例。本文讲如何定义类、构造对象、使用属性与方法、做类型判断与转换。
 
-创建对象的方式：
+## 1. 定义类与字段
 
-1. 声明但不实例化：`Class1 c2 = null;` 等价于声明变量，未赋值（默认 null）。
-2. 直接实例化：`c1 = Class1(20);` 调用 `_init_` 构造函数。
-3. 初始化字面量：`Class1 c4 = { m1 = 20 };` 相当于 `Class1 c4 = Class1(); c4.m1 = 20;`，用于匿名或内联成员初始化。
-4. 组合方式：`Class2 c1 = Class2(1,2){ m1 = 1, m2 = 2 };` — 先构造再对成员赋值。
-5. 通过new函数 Class2 c1 = new(1,2){ m1 = 1, m2 = 2 };
+```sl
+class Point
+{
+    int x
+    int y
+}
+```
 
-构造函数（`_init_`）注意点：
-- `_init_` 不能声明返回类型，也不应显式 `return` 值；构造过程首先分配对象，再运行 `_init_`。
-- 在 `_init_` 中应只访问或修改当前实例 (`this`) 的成员，避免直接引用其它对象的内部成员（例如 `this.ct.t = 20` 不被鼓励）。
-- 若父类有构造参数，子类在 `_init_` 中通过 `base._init_(args)` 调用父类构造（见 test/BaseTest/ConstructionClass.sl）。
+- 字段在类体内声明，可在声明处直接赋初值：`int x = 0`。
+- 字段默认带访问控制（见 §5），未显式声明时按默认可见性。
 
-继承与方法重写：
-- 语言无 `virtual` 关键字（也没有 C# 式 `new` 方法隐藏）。若子类想替换父类方法，必须显式使用 `override`。
-- 父类声明了 `abstract` 方法，子类必须 `override` 并实现该方法（或自身声明为 `abstract`）。
+## 2. 构造函数 `_init_`
 
-示例：
+构造逻辑写在名为 `_init_` 的方法里；调用时通过 `new 类名(实参)` 触发。
 
-```s
-class Point {
-    Int32 x = 0;
-    Int32 y = 0;
-    _init_(Int32 a, Int32 b) {
-        this.x = a;
-        this.y = b;
+```sl
+class Point
+{
+    int x
+    int y
+
+    void _init_(int x, int y)
+    {
+        this.x = x
+        this.y = y
     }
 }
 
-// 使用
-var p = Point(10, 20);
-var p2 = Point(0,0){ x = 5 }; // 先创建后赋值
+function main()
+{
+    Point p = new Point(10, 20)   # 必须写 new
+    Console.println(p.x)
+}
+
+main()
 ```
 
-## 根类型 `Object` 上的常用操作（测试用例摘要）
+- 不写 `_init_` 时会有默认无参构造。
+- `this` 指向当前对象，用于区分同名字段与参数。
 
-与 `test/BaseTest/ObjectTest.sl`、`ConstructionClass.sl` 等用例对应，运行时通常提供以下能力（具体以标准库/Core 导出为准）：
+## 3. 创建对象
 
-- **创建实例**：`Object obj = new()` 或 `Object obj = Object()`（等价性以实现为准），得到新引用。
-- **引用相等**：`obj1 == obj2` 在对象为同一引用时为真；静态方法 `Object.refEquals(a, b)` 用于显式比较引用（含 `null` 对）。
-- **值/逻辑相等**：实例方法 `equals(other)`（默认委托运行时相等助手，可能按引用比较，见 Lib/Core/Object.sl）。
-- **哈希与字符串**：`hashCode`（属性/get）、`toString()`、`type`（属性/get）。
-- **引用计数与弱引用**：静态方法 `Memory.refCount(obj)`、`Memory.weakRef(obj)`、`Memory.ref(obj)`（见 Lib/Core/Memory.sl）。
-- **生命周期**：`Memory.manual(obj)` 进入手动模式后，可用 `Memory.free(obj)` / `Memory.retain(obj)` / `Memory.release(obj)`（行为依赖 VM/宿主，测试仅做 smoke）。
+- **必须写 `new`**：`new Point(10, 20)` 合法；`Point(10, 20)` 不合法。
+- **字面初始化**：构造后立刻给字段赋值，用 `{ 字段 = 值 }`：
 
-编写新用例时，将「引用相等」与「逻辑相等」分开断言，避免混用。
+```sl
+Point p2 = new Point(0, 0){ x = 5 }
+```
 
+- **空对象**：`new Object()` 得到一个无字段的基类对象，可后续当字典用。
+
+## 4. 属性（get / set）
+
+用 `get` / `set` 把「读写某个值」包装成方法，调用时像字段一样自然：
+
+```sl
+class Counter
+{
+    int _n = 0
+
+    int get count() { ret _n }
+    void set count(int v)
+    {
+        if (v >= 0) _n = v
+    }
+}
+
+function main()
+{
+    Counter c = new Counter()
+    c.count = 3          # 实际调用 set count
+    Console.println(c.count)   # 实际调用 get count
+}
+
+main()
+```
+
+- `get` / `set` 是**保留方法名**，不能当作普通成员名（见 [keywords.md](./keywords.md)）。
+- 只读属性只写 `get` 即可；只写 `set` 则是只写属性。
+
+## 5. 方法与方法重写
+
+```sl
+class Animal
+{
+    void speak()
+    {
+        Console.println("some sound")
+    }
+}
+
+class Dog : Animal
+{
+    override void speak()
+    {
+        Console.println("woof")
+    }
+}
+
+function main()
+{
+    Dog d = new Dog()
+    d.speak()            # 输出 woof
+}
+
+main()
+```
+
+- 子类覆盖父类方法要加 `override`。
+- 没有 `virtual` 关键字：`override` 本身就是覆盖声明。
+
+## 6. 访问控制
+
+字段 / 方法可加可见性前缀（如 `public` / `private` 等，按工程约定）。常见用法：
+
+```sl
+class Account
+{
+    private int balance = 0
+
+    public void deposit(int amount)
+    {
+        balance = balance + amount
+    }
+
+    public int getBalance() { ret balance }
+}
+```
+
+> 具体可见性关键字以工程配置为准；未显式声明时按默认规则生效。
+
+## 7. 类型判断与转换（is / as）
+
+```sl
+Object obj = new Point(1, 2)
+
+if (obj is Point)
+{
+    Point p = obj as Point      # 转换成功后按目标类型使用
+    Console.println(p.x)
+}
+```
+
+- `is` 判断对象是否属于某类型（也可配合模式 `is int n` 直接取出值）。
+- `as` 把对象转成目标类型；类型不匹配时为 `null`，使用前请先做 `is` 判断。
+
+## 8. 嵌套类与命名空间
+
+类可以放在 `namespace` 下，也可以嵌套：
+
+```sl
+namespace Geometry
+{
+    class Point
+    {
+        int x
+        int y
+    }
+}
+
+# 使用带命名空间的全名
+Geometry.Point p = new Geometry.Point(1, 2)
+```
+
+## 9. 常见写法与注意点
+
+- **构造必须 `new`**：这是本语言与部分语言的不同之处，省略 `new` 会编译报错。
+- `this` 只在实例方法 / 构造 / 属性里可用，用于区分同名参数与字段。
+- 所有对象都派生自 `Object`，因此 `Object` 上的通用方法（如 `equals`、`toString`、`getTypeName`、`hashCode`）都可调用：
+
+```sl
+Point p = new Point(1, 2)
+Console.println(p.toString())
+Console.println(p.getTypeName())
+```

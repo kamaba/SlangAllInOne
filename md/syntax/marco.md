@@ -1,89 +1,90 @@
-# S语言的宏（global.macro）
+# 宏（macro）
 
-> ⚠️ 本文档描述的是**现行宏机制**：编译期宏值 `global.macro`。
-> 旧版「`$xxx` 文本替换 + `ProjectConfigBegin{ globalReplace }` 内嵌配置 + `ProjectEnter` 入口」机制已从编译器移除（词法层与工程解析层均无对应实现），不再支持。
-> 权威文档：`md/project/static-if.md`（`global.macro` 与 `_before_()` 钩子）、`md/project/project-config-jsonc-guide.md`（`global.macro` 段）。
+`macro` 是**编译期**确定的全局只读配置。你在工程里声明一组键值，编译时这些值被注入代码；运行时代码像读取普通全局变量一样使用它们，常用于「同一份源码，按工程切换行为 / 版本 / 开关」。
 
-S 语言的宏不是文本替换，而是一套**编译期宏数据面**：宏值在工程 jsonc 中定义、编译期定稿，注入为 Project 静态成员 `macro`，源码中以 `global.macro.<name>` 只读访问；按平台/配置裁剪代码用 `@Exclude` attribute。
+## 1. 核心概念
 
-—————————————————————————————————————————————————————————
+- `macro` 来自**工程配置**（`.jsonc` 文件里的 `macro` 段），不是运行时变量。
+- 编译完成后，代码里引用的 `global.macro.名称` 已经是编译期代入的具体值。
+- 运行时它表现为一个**只读全局对象**：可读，不可改。
 
-## 宏的定义（工程 jsonc）
+## 2. 定义 macro
 
-1. 在 `<ProjectName>.jsonc` 的 `global.macro` 段定义宏，值只支持**布尔 / 数值 / 字符串**。
-2. 源码中直接以 `global.macro.xxx` 读取（运行期只读，值为编译定稿后的最终值）。
+在工程的 `.jsonc` 配置里加一个 `macro` 段：
 
-```python
-file:test_project.jsonc
-
+```jsonc
 {
-  "global": {
-    "macro": {
-      "platform": "Win32",
-      "useFastMath": true,
-      "maxThreads": 8
-    }
+  "name": "MyApp",
+  "macro": {
+    "useFastMath": true,
+    "appVersion": "1.2.3",
+    "maxRetry": 3
   }
 }
 ```
 
-```python
-file:test_project.sp
+## 3. 使用 macro
 
-Project
+在代码里通过 `global.macro.名称` 读取，**像普通变量一样参与表达式与判断**：
+
+```sl
+# 编译期已代入具体值，运行时直接当作只读全局使用
+if (global.macro.useFastMath)
 {
-    _main_()
-    {
-        if global.macro.useFastMath
-        {
-            global.println("fast math on")
-        }
-        global.println(global.macro.platform)   # Win32
-    }
+    Console.println("using fast math")
+}
+else
+{
+    Console.println("using precise math")
+}
+
+Console.println("version = " + global.macro.appVersion)
+```
+
+- 因为是只读全局，直接读取即可，**不需要也不能**用条件编译语法去「选择是否编译某段代码」。
+- 值类型支持布尔 / 数字 / 字符串等；读取后按对应类型使用。
+
+## 4. 完整示例
+
+`app.jsonc`：
+
+```jsonc
+{
+  "name": "MyApp",
+  "macro": {
+    "enableLog": true,
+    "buildTag": "release"
+  }
 }
 ```
 
-## 宏的修改：_before_() 钩子
+`app.sl`：
 
-宏值只能在 `.sp` 工程文件 `Project` 类的 `_before_(){}` 钩子中修改（编译期求值，唯一合法的源码内修改入口，其它位置对 `global.macro` 赋值直接报错），右值只允许常量（布尔/数值/字符串）或另一个宏引用 `global.macro.Y`：
-
-```python
-Project
+```sl
+function log(string msg)
 {
-    _before_()
+    if (global.macro.enableLog)
     {
-        # 编译期把 platform 从 jsonc 里的 "Win32" 改为 "Linux"
-        global.macro.platform = "Linux"
-    }
-    _main_()
-    {
-        global.println(global.macro.platform)   # Linux
+        Console.println("[${global.macro.buildTag}] " + msg)
     }
 }
-```
 
-## 外部注入（优先级从低到高）
-
-| 来源 | 形式 |
-|------|------|
-| jsonc 初值 | `global.macro` 段 |
-| 环境变量 | `SL_MACRO_<name>=<value>` |
-| CLI | `--macro name=value`（可重复） |
-| 钩子 | `Project._before_(){}` 内赋值（优先级最高） |
-
-## 条件编译（@Exclude）
-
-旧的 `static if` / `static elif` / `static else` 编译期条件已废弃（继续书写报 **LID 21467**），按平台/配置裁剪成员或类改用 `@Exclude` attribute（PreCompile 时点，标注即跳过编译，成员不进 module.json）：
-
-```python
-class Foo
+function main()
 {
-    @Exclude
-    static winOnlyFun()
-    {
-        # 该方法不参与编译，不进 module.json
-    }
+    log("start")
+    # ... 业务逻辑 ...
+    log("done")
 }
+
+main()
 ```
 
-详见 `md/syntax/attribute.md` 与 `md/project/static-if.md`。
+- 同一份 `app.sl`，把 `enableLog` 改成 `false` 重新编译，日志分支即被关闭——无需改动业务代码。
+
+## 5. 常见写法与注意点
+
+- **只读**：`global.macro.x = ...` 不合法；macro 是编译期定值，运行期不可改写。
+- **区分大小写**：`global.macro.useFastMath` 与 `global.macro.usefastmath` 不是同一个键。
+- **必须先声明**：引用了工程 `.jsonc` 里没定义的 `macro` 键会编译报错。
+- **适合做什么**：功能开关、版本号、平台 / 构建标签、容量上限等「编译期可知」的配置。运行期才确定的值请用普通变量 / 配置读取，不要用 macro。
+- 调试时可在代码里 `Console.println(global.macro.键名)` 打印代入后的值，确认编译期注入是否符合预期。

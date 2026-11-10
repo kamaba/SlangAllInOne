@@ -284,6 +284,19 @@ SLQT_API void    slqt_edit_set_placeholder_sl(int64_t h, const char* t) { slqt_b
 SLQT_API const char* slqt_edit_text_sl(int64_t h) { return slqt_be_edit_text(h); }
 SLQT_API void    slqt_edit_set_readonly_sl(int64_t h, int32_t on) { slqt_be_edit_set_readonly(h, on); }
 
+SLQT_API int64_t     slqt_textedit_create_sl(int64_t p) { return slqt_be_textedit_create(p); }
+SLQT_API void        slqt_textedit_set_text_sl(int64_t h, const char* t) { slqt_be_textedit_set_text(h, t); }
+SLQT_API const char* slqt_textedit_text_sl(int64_t h) { return slqt_be_textedit_text(h); }
+SLQT_API void        slqt_textedit_set_readonly_sl(int64_t h, int32_t on) { slqt_be_textedit_set_readonly(h, on); }
+SLQT_API void        slqt_textedit_append_sl(int64_t h, const char* t) { slqt_be_textedit_append(h, t); }
+SLQT_API int64_t     slqt_list_create_sl(int64_t p) { return slqt_be_list_create(p); }
+SLQT_API void        slqt_list_add_item_sl(int64_t h, const char* t) { slqt_be_list_add_item(h, t); }
+SLQT_API void        slqt_list_clear_sl(int64_t h) { slqt_be_list_clear(h); }
+SLQT_API int32_t     slqt_list_count_sl(int64_t h) { return slqt_be_list_count(h); }
+SLQT_API int32_t     slqt_list_current_row_sl(int64_t h) { return slqt_be_list_current_row(h); }
+SLQT_API void        slqt_list_set_current_row_sl(int64_t h, int32_t row) { slqt_be_list_set_current_row(h, row); }
+SLQT_API const char* slqt_list_item_text_sl(int64_t h, int32_t row) { return slqt_be_list_item_text(h, row); }
+
 SLQT_API int64_t slqt_mainwindow_create_sl(void) { return slqt_be_mainwindow_create(); }
 SLQT_API void    slqt_mainwindow_set_central_sl(int64_t h, int64_t w) { slqt_be_mainwindow_set_central(h, w); }
 SLQT_API void    slqt_mainwindow_set_title_sl(int64_t h, const char* t) { slqt_be_mainwindow_set_title(h, t); }

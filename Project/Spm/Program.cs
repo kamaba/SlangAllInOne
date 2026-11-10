@@ -46,6 +46,7 @@ namespace Spm
                 "outdated" or "check" => PackageCommands.RunOutdated(rest),
                 "remove" or "uninstall" => PackageCommands.RunRemove(rest),
                 "config" => PackageCommands.RunConfig(rest),
+                "sync" or "update" => SyncCommands.Run(rest),
                 "plugin" or "plugins" => PluginCommands.Run(rest),
                 "help" or "--help" or "-h" => PrintUsage(code: 0),
                 "version" => PrintVersion(),
@@ -55,7 +56,7 @@ namespace Spm
 
         static int PrintVersion()
         {
-            Console.WriteLine("spm 0.2.0 (SLang package & plugin manager)");
+            Console.WriteLine("spm 0.3.1 (SLang package & plugin manager)");
             Console.WriteLine($"lang dir: {SpmContext.LangDir}");
             return 0;
         }
@@ -98,12 +99,36 @@ Plugins (multi-layer runtime extensions -> <lang>\plugin\<id>\):
   spm plugin remove <id>
       Delete <lang>\plugin\<id>\.
 
+Sync (admin platform, md5 verify + reinstall on change -> doc spm-registry.md):
+  spm sync [core|vscode|plugin|package|all ...] [name] [--server <url>]
+      Compare admin-platform md5 with local cache, redownload + extract
+      when mismatched (download is md5-verified before install):
+        core    (本体包)  -> merge into <lang>\
+        vscode            -> %USERPROFILE%\.vscode\extensions\
+        plugin  (插件)    -> <lang>\plugin\<id>\
+        package (包)      -> <lang>\modules\<name>\
+      default = all four types; plugin/package accept a name filter
+      (spm sync plugin echo). Cache: <lang>\spm-cache\*.zip + spm-cache.json.
+      Servers are tried in order (unreachable / 404 -> next); when ALL fail,
+      each server's failure reason is listed in the output.
+  Server APIs used:
+      GET /api/registry/resolve?type=&name=&version=latest -> { md5, url }
+      GET /api/plugins | /api/packages                     -> id index
+
 Config:
+  spm config server [<ip[:port]|url> ...]
+      Show / set the admin platform addresses (stored in <lang>\spm.json
+      ""servers""). Multiple addresses are tried in order by spm sync.
+      Bare IP defaults to port 35221. Built-in default list when unset:
+      the official remote server + 127.0.0.1.
+      e.g. `spm config server 192.168.1.10 127.0.0.1`
   spm config registry [<url>]
       Show / set the global registry (stored in <lang>\spm.json).
 
 Registry resolution: --registry > project jsonc ""spm"".""registry"" >
-<lang>\spm.json.  Server API contract: SLangOfficialWebsite doc/18 & doc/09.");
+<lang>\spm.json.  Server resolution (sync): --server > spm config server
+(servers list) > built-in defaults (official remote + 127.0.0.1).
+Server API contract: SLangOfficialWebsite doc/18 & doc/09 & spm-registry.md.");
             return code;
         }
     }

@@ -41,7 +41,10 @@ param(
     [string]$Combo = "full",
     [string]$Qt6Dir = "C:\Qt\6.8.1\msvc2022_64",
     [string[]]$Targets = @("modules","package"),
-    [string]$SlangQtDll = ""
+    [string]$SlangQtDll = "",
+    # package slot flavor: win32-debug (default, historical) or win32-release
+    [ValidateSet("debug","release")]
+    [string]$PkgFlavor = "debug"
 )
 $ErrorActionPreference = "Stop"
 $here    = Split-Path -Parent $MyInvocation.MyCommand.Path   # Lib/SLang/QT/cvm
@@ -117,7 +120,7 @@ function Write-QtConf([string]$exeDir, [string]$pluginsEntry) {
 }
 
 # --- slot map ----------------------------------------------------------------
-$pkgRoot  = Join-Path $repo "SlangAllInOne\package\win32-debug"
+$pkgRoot  = Join-Path $repo ("SlangAllInOne\package\win32-" + $PkgFlavor)
 $pubRoot  = Join-Path $testDir "publish\release"
 $slotMap = @{
     modules = @{ dir = Join-Path $testDir "modules\SLangQT"; conf = ""; entry = "" }

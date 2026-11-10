@@ -55,6 +55,21 @@ void    slqt_be_edit_set_placeholder(int64_t h, const char* t);
 const char* slqt_be_edit_text(int64_t h);
 void    slqt_be_edit_set_readonly(int64_t h, int32_t on);
 
+/* 多行文本编辑 / 列表（QTextEdit / QListWidget；currentRowChanged 的 int
+   载荷经 dispatchCb(slot, row) 重入，SL 侧 _dispatchInt 桥接回 handler） */
+int64_t     slqt_be_textedit_create(int64_t parent);
+void        slqt_be_textedit_set_text(int64_t h, const char* t);
+const char* slqt_be_textedit_text(int64_t h);
+void        slqt_be_textedit_set_readonly(int64_t h, int32_t on);
+void        slqt_be_textedit_append(int64_t h, const char* t);
+int64_t     slqt_be_list_create(int64_t parent);
+void        slqt_be_list_add_item(int64_t h, const char* t);
+void        slqt_be_list_clear(int64_t h);
+int32_t     slqt_be_list_count(int64_t h);
+int32_t     slqt_be_list_current_row(int64_t h);
+void        slqt_be_list_set_current_row(int64_t h, int32_t row);
+const char* slqt_be_list_item_text(int64_t h, int32_t row);
+
 /* 主窗口 / 对话框 */
 int64_t slqt_be_mainwindow_create(void);
 void    slqt_be_mainwindow_set_central(int64_t h, int64_t widget);

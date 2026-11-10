@@ -397,11 +397,27 @@ internal static class PackageCommands
 
     public static int RunConfig(string[] args)
     {
-        if (args.Length == 0 || !args[0].Equals("registry", StringComparison.OrdinalIgnoreCase))
+        if (args.Length == 0)
         {
             Console.WriteLine("Usage: spm config registry [<url>]");
+            Console.WriteLine("       spm config server [<ip[:port]|url> ...]   （可一次配多个，按序尝试）");
             return 2;
         }
+        var key = args[0].ToLowerInvariant();
+        if (key == "registry")
+        {
+            return RunConfigRegistry(args);
+        }
+        if (key == "server")
+        {
+            return RunConfigServer(args);
+        }
+        Console.WriteLine($"[FAIL] 未知配置项: {args[0]}（可用: registry / server）");
+        return 2;
+    }
+
+    static int RunConfigRegistry(string[] args)
+    {
         if (args.Length == 1)
         {
             var reg = SpmContext.GlobalRegistry();
@@ -420,6 +436,58 @@ internal static class PackageCommands
         SpmContext.SaveGlobalConfig(cfg);
         Console.WriteLine($"[OK]  registry saved -> {SpmContext.GlobalConfigPath}");
         Console.WriteLine($"      {cfg.Registry}");
+        return 0;
+    }
+
+    static int RunConfigServer(string[] args)
+    {
+        if (args.Length == 1)
+        {
+            Console.WriteLine($"servers -> {SpmContext.GlobalConfigPath}");
+            var configured = SpmContext.GlobalServers();
+            if (configured.Count > 0)
+            {
+                for (int i = 0; i < configured.Count; i++)
+                {
+                    Console.WriteLine($"  {i + 1}. {configured[i]}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("  (未配置，使用内置缺省，按序尝试:)");
+                foreach (var s in SpmContext.DefaultServers)
+                {
+                    Console.WriteLine($"  - {s}");
+                }
+                Console.WriteLine("       配置方式: spm config server <ip[:port]|url> [<ip[:port]|url> ...]");
+            }
+            return 0;
+        }
+
+        // 全量设置（一个或多个地址；sync 按此顺序逐个尝试）
+        var list = new List<string>();
+        foreach (var raw in args.Skip(1))
+        {
+            var n = SpmContext.NormalizeServerUrl(raw);
+            if (n == null)
+            {
+                Console.WriteLine($"[FAIL] 地址无效: \"{raw}\"。示例: spm config server 192.168.1.10:35221 127.0.0.1");
+                return 2;
+            }
+            if (!list.Contains(n))
+            {
+                list.Add(n);
+            }
+        }
+        var cfg = SpmContext.LoadGlobalConfig();
+        cfg.Servers = list;
+        cfg.Server = ""; // 清掉旧单值字段（读取时 Servers 优先，这里避免歧义残留）
+        SpmContext.SaveGlobalConfig(cfg);
+        Console.WriteLine($"[OK]  servers saved -> {SpmContext.GlobalConfigPath}");
+        for (int i = 0; i < list.Count; i++)
+        {
+            Console.WriteLine($"      {i + 1}. {list[i]}");
+        }
         return 0;
     }
 

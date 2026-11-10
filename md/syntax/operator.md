@@ -161,7 +161,7 @@ i--          # 自减
 
 ## 9) 运算符重载
 
-自定义类可以通过约定方法名实现运算符重载。编译器在语义层按方法名把 `a op b` 解析为 `a._op_(b)` 的方法调用，运行时按名查找并调用。
+自定义类可以通过约定方法名实现运算符重载：凡是出现 `a op b` 形式的运算，语言都会去查找左操作数类型上对应的约定方法并调用它。
 
 > **关键规则（与旧文档不同，务必注意）**：
 > - 重载方法是**实例方法**，必须带 **`override`** 标记（或 `final`），**不能写成 `static`**。
@@ -254,7 +254,7 @@ var eq = (v1 == v2)     # 调用 _eq_
 >   ```
 >   正确写法：先构造赋给变量，再相加（如上例 `v1 + v2`）。
 >
-> 标准库里 `Math/Int32_2.sl`、`Math/Matrix.sl`、`Math/Quaternion.sl` 等都是这种写法，可参考。
+> 标准库里 `Math` 命名空间下的 `Int32_2`、`Matrix`、`Quaternion` 等数学类型就是这种写法，可参考。
 
 ---
 
@@ -376,4 +376,4 @@ Console.println("p=" + p.toString())
 ## 14) 相关文档
 
 - 语法：[`./cast.md`](./cast.md)（`as` / `is` / `isnot`）、[`./string.md`](./string.md)（字符串拼接与 `toString` 行为）、[`./if.md`](./if.md)（条件真值）
-- 库：[`../lib/Core/`](../lib/Core/) 下的数学/容器文档（运算符重载范例：`Math/Int32_2.sl`、`Math/Matrix.sl`、`Math/Quaternion.sl`）
+- 库：[`../lib/Core/`](../lib/Core/) 下的数学/容器文档（运算符重载范例见 `Math` 命名空间下的 `Int32_2` / `Matrix` / `Quaternion` 等类型）

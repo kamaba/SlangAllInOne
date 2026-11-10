@@ -26,6 +26,7 @@ namespace SLang
         public static Int32 SIG_TRIGGERED      = 2
         public static Int32 SIG_DESTROYED      = 3
         public static Int32 SIG_TEXT_CHANGED   = 4
+        public static Int32 SIG_CURRENT_ROW_CHANGED = 5
 
         # ── 应用 ────────────────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
@@ -92,6 +93,32 @@ namespace SLang
         public static string ffi_editText( Int64 h ) { ret "" }
         @DllStaticImport( "slang_qt", "slqt_edit_set_readonly_sl" )
         public static void ffi_editSetReadonly( Int64 h, bool on ) {}
+
+        # ── 多行文本编辑 / 列表（QTextEdit / QListWidget）────────────
+        @DllStaticImport( "slang_qt", "slqt_textedit_create_sl" )
+        public static Int64 ffi_texteditCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_textedit_set_text_sl" )
+        public static void ffi_texteditSetText( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_textedit_text_sl" )
+        public static string ffi_texteditText( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_textedit_set_readonly_sl" )
+        public static void ffi_texteditSetReadonly( Int64 h, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_textedit_append_sl" )
+        public static void ffi_texteditAppend( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_list_create_sl" )
+        public static Int64 ffi_listCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_list_add_item_sl" )
+        public static void ffi_listAddItem( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_list_clear_sl" )
+        public static void ffi_listClear( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_list_count_sl" )
+        public static Int32 ffi_listCount( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_list_current_row_sl" )
+        public static Int32 ffi_listCurrentRow( Int64 h ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_list_set_current_row_sl" )
+        public static void ffi_listSetCurrentRow( Int64 h, Int32 row ) {}
+        @DllStaticImport( "slang_qt", "slqt_list_item_text_sl" )
+        public static string ffi_listItemText( Int64 h, Int32 row ) { ret "" }
 
         # ── 主窗口 / 对话框 ────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_mainwindow_create_sl" )
@@ -341,12 +368,13 @@ namespace SLang
         @DllStaticImport( "slang_qt", "slqt_dbus_base_service_sl" )
         public static string ffi_dbusBaseService() { ret "" }
 
-        # ── 回调桥：handler 表 + 两个 dispatch trampoline ─────────────
+        # ── 回调桥：handler 表 + 三个 dispatch trampoline ─────────────
         # 任意 SLang 函数值（静态方法引用 / 实例方法引用 / 闭包）登记进 _handlers，
         # 原生层只保存 (bind_id -> slot)；事件到达经对应 trampoline 取回调用。
         static List<Function> _handlers = null
         static Int64 _dispatchVoidCb = 0
         static Int64 _dispatchStringCb = 0
+        static Int64 _dispatchIntCb = 0
 
         # 无参信号（clicked / returnPressed / destroyed）重入点
         public static void _dispatchVoid( Int64 slot )
@@ -364,6 +392,14 @@ namespace SLang
             f( s )
         }
 
+        # 带 int 参数信号（currentRowChanged）重入点
+        public static void _dispatchInt( Int64 slot, Int64 value )
+        {
+            Int32 idx = slot as Int32
+            Function f = _handlers[idx]
+            f( value as Int32 )
+        }
+
         # 连接信号到任意 SLang 函数值；按 signalId 选择 trampoline 形态。
         # createCallback 失败（cb=0，方法查找 miss）时不连接、bind 返回 0
         # ——原生层对 cb=0 同款拒绝（slqt_connect_sl），悬空 null 桩会让
@@ -379,8 +415,10 @@ namespace SLang
             if ( _handlers == null ) { _handlers = List<Function>() }
             if ( _dispatchVoidCb == 0 ) { _dispatchVoidCb = FFI.StaticLibrary.createCallback( "_dispatchVoid", "i64->void" ) }
             if ( _dispatchStringCb == 0 ) { _dispatchStringCb = FFI.StaticLibrary.createCallback( "_dispatchString", "i64,utf8->void" ) }
+            if ( _dispatchIntCb == 0 ) { _dispatchIntCb = FFI.StaticLibrary.createCallback( "_dispatchInt", "i64,i64->void" ) }
             Int64 cb = _dispatchVoidCb
             if ( signalId == SIG_TEXT_CHANGED ) { cb = _dispatchStringCb }
+            if ( signalId == SIG_CURRENT_ROW_CHANGED ) { cb = _dispatchIntCb }
             if ( cb == 0 ) { ret 0 }
             _handlers.add( handler )
             Int64 slot = ( _handlers.length - 1 ) as Int64
@@ -448,6 +486,12 @@ namespace SLang
         }
         public static QWidget newWidget( Int64 parent ) { ret QWidget(parent) }
         public static QMainWindow newMainWindow() { ret QMainWindow() }
+        public static QTextEdit newTextEdit( Int64 parent )
+        {
+            QTextEdit e = QTextEdit(parent)
+            ret e
+        }
+        public static QListWidget newListWidget( Int64 parent ) { ret QListWidget(parent) }
         public static QVBoxLayout newVBox( Int64 parent ) { ret QVBoxLayout(parent) }
         public static QHBoxLayout newHBox( Int64 parent ) { ret QHBoxLayout(parent) }
         public static QGridLayout newGrid( Int64 parent ) { ret QGridLayout(parent) }

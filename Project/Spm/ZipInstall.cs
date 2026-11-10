@@ -33,13 +33,29 @@ internal static class ZipInstall
     /// <summary>下载 zip 并按包布局归一装进 modulesDir；version 记入本地清单。</summary>
     public static InstallResult? InstallPackageZip(string url, string modulesDir, string? expectedName, string version, string source)
     {
-        return InstallCore(url, dir => DetectPackageLayout(dir, expectedName, url), layout =>
+        byte[] zipBytes;
+        try
+        {
+            zipBytes = RegistryClient.Download(url);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[FAIL] 下载失败: {ex.Message}");
+            return null;
+        }
+        return InstallPackageZip(zipBytes, modulesDir, expectedName, version, source);
+    }
+
+    /// <summary>已下载的 zip 字节按包布局归一装进 modulesDir（spm sync 用，免二次下载）。</summary>
+    public static InstallResult? InstallPackageZip(byte[] zipBytes, string modulesDir, string? expectedName, string version, string source, bool replaceExisting = false)
+    {
+        return InstallCore(zipBytes, dir => DetectPackageLayout(dir, expectedName, ""), layout =>
         {
             string dest = Path.Combine(modulesDir, layout.Name);
-            bool placed = Place(layout, modulesDir, dest);
+            bool placed = Place(layout, modulesDir, dest, replaceExisting);
             if (placed)
             {
-                WriteLocalManifest(dest, layout.Name, version, source);
+                WriteLocalManifest(dest, layout.Name, version, source, replaceExisting);
             }
             return new InstallResult { Name = layout.Name, DestDir = dest, AlreadyInstalled = !placed };
         });
@@ -48,10 +64,26 @@ internal static class ZipInstall
     /// <summary>下载 zip 并按插件布局归一装进 pluginsDir（&lt;lang&gt;\plugin\&lt;id&gt;\）。</summary>
     public static InstallResult? InstallPluginZip(string url, string pluginsDir, string expectedId)
     {
-        return InstallCore(url, dir => DetectPluginLayout(dir, expectedId, url), layout =>
+        byte[] zipBytes;
+        try
+        {
+            zipBytes = RegistryClient.Download(url);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[FAIL] 下载失败: {ex.Message}");
+            return null;
+        }
+        return InstallPluginZip(zipBytes, pluginsDir, expectedId);
+    }
+
+    /// <summary>已下载的 zip 字节按插件布局归一装进 pluginsDir（spm sync 用，免二次下载）。</summary>
+    public static InstallResult? InstallPluginZip(byte[] zipBytes, string pluginsDir, string expectedId, bool replaceExisting = false)
+    {
+        return InstallCore(zipBytes, dir => DetectPluginLayout(dir, expectedId, ""), layout =>
         {
             string dest = Path.Combine(pluginsDir, layout.Name);
-            bool placed = Place(layout, pluginsDir, dest);
+            bool placed = Place(layout, pluginsDir, dest, replaceExisting);
             return new InstallResult { Name = layout.Name, DestDir = dest, AlreadyInstalled = !placed };
         });
     }
@@ -65,22 +97,11 @@ internal static class ZipInstall
     }
 
     /// <summary>
-    /// 下载 → 临时解压 → 探测 → place 回调（移动/拷贝必须在 temp 生命周期内
+    /// 解压 zip 字节 → 探测 → place 回调（移动/拷贝必须在 temp 生命周期内
     /// 完成——finally 清理 tempRoot，故不能把 SrcDir 带出本函数再用）。
     /// </summary>
-    static InstallResult? InstallCore(string url, Func<string, Layout> detect, Func<Layout, InstallResult> place)
+    static InstallResult? InstallCore(byte[] zipBytes, Func<string, Layout> detect, Func<Layout, InstallResult> place)
     {
-        byte[] zipBytes;
-        try
-        {
-            zipBytes = RegistryClient.Download(url);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[FAIL] 下载失败: {ex.Message}");
-            return null;
-        }
-
         string tempRoot = Path.Combine(Path.GetTempPath(), "slang-spm-" + Guid.NewGuid().ToString("N"));
         string tempZip = tempRoot + ".zip";
         try
@@ -107,13 +128,28 @@ internal static class ZipInstall
         }
     }
 
-    /// <summary>落位：目标已存在 → false（仅提示）；否则移动/拷贝 → true。</summary>
-    static bool Place(Layout layout, string parentDir, string dest)
+    /// <summary>
+    /// 落位：目标已存在 → false（仅提示；replaceExisting=true 时先删旧目录再落，
+    /// 删除失败视为安装失败）；否则移动/拷贝 → true。
+    /// </summary>
+    static bool Place(Layout layout, string parentDir, string dest, bool replaceExisting = false)
     {
         if (Directory.Exists(dest))
         {
-            Console.WriteLine($"[OK]  {layout.Name} 已安装: {dest}（如需重装请先 spm remove）");
-            return false;
+            if (!replaceExisting)
+            {
+                Console.WriteLine($"[OK]  {layout.Name} 已安装: {dest}（如需重装请先 spm remove）");
+                return false;
+            }
+            try
+            {
+                Directory.Delete(dest, recursive: true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[FAIL] 无法替换已安装目录 {dest}: {ex.Message}（文件被占用？）");
+                return false;
+            }
         }
         Directory.CreateDirectory(parentDir);
         TryMoveOrCopy(layout.SrcDir, dest);
@@ -249,12 +285,12 @@ internal static class ZipInstall
         return null;
     }
 
-    static void WriteLocalManifest(string packageDir, string name, string version, string source)
+    static void WriteLocalManifest(string packageDir, string name, string version, string source, bool overwrite = false)
     {
         try
         {
             var path = Path.Combine(packageDir, "spm.json");
-            if (File.Exists(path))
+            if (File.Exists(path) && !overwrite)
             {
                 return; // 保留既有清单（重装语义 = 先 remove）
             }

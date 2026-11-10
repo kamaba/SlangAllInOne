@@ -6,7 +6,7 @@
 
 ## 1. 基础类型：`Result`
 
-等价于 Core 库中的 `Result` 类（`source/Front/Lib/Core/Result.sl`）：
+等价于 Core 库中的 `Result` 类：
 
 ```txt
 class Result
@@ -44,7 +44,7 @@ class Result<T>
 
 返回类型为 `Result` / `Result<T>` 的函数，函数体内直接使用编译器注入的 `result` 变量：
 
-```ruby
+```sl
 result.code = 100
 result.message = "ok"
 ```
@@ -64,7 +64,7 @@ result.message = "ok"
 
 调用函数得到的结果是一个 `Result`（或 `Result<T>`），调用方可以访问：
 
-```ruby
+```sl
 a.code
 a.message
 a.value
@@ -78,7 +78,7 @@ a.value
 
 ### 5.1 自动注入 + 值返回改写
 
-```ruby
+```sl
 # 直接使用注入的 result 变量
 Result useAutoResult()
 {
@@ -102,7 +102,7 @@ Result<int> retValueT()
 
 ### 5.2 部分路径显式返回，其余路径 epilogue 兜底
 
-```ruby
+```sl
 Result mixReturn( bool flag )
 {
     if flag
@@ -119,7 +119,7 @@ Result mixReturn( bool flag )
 
 ### 5.3 返回其他 Result 对象（不做值提取）
 
-```ruby
+```sl
 Result retOther()
 {
     Result r = new()
@@ -129,7 +129,7 @@ Result retOther()
 }
 ```
 
-完整用例见 `test/BaseTest/ResultTest.sl`。
+完整用例见标准库 `Result` 类型与编译流水线。
 
 ---
 
@@ -144,4 +144,4 @@ Result retOther()
 
 ## 7. 命名约束
 
-`error` / `errmsg` 是 Result 机制的保留名（历史字段语义），与 8 个小写容器构造糖名（`map` / `list` / `stack` / `hashset` / `queue` / `tuple` / `array` / `range`）一样，**不允许作为类成员声明名**（MetaCore 层编译报错，LID 11042）。见 [keywords.md](./keywords.md) §3.8。
+`error` / `errmsg` 是 Result 机制的保留名（历史字段语义），与 8 个小写容器构造糖名（`map` / `list` / `stack` / `hashset` / `queue` / `tuple` / `array` / `range`）一样，**不允许作为类成员声明名**（编译报错）。见 [keywords.md](./keywords.md) §3.8。

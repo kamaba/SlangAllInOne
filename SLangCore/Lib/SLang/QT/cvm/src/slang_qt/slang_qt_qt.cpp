@@ -43,6 +43,9 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QMessageBox>
+#include <QTextEdit>
+#include <QListWidget>
+#include <QListWidgetItem>
 
 /* 2026-11-03 扩展面（可选模块，vcxproj 一律 /DELAYLOAD；绑定层预装载后命中） */
 #include <QNetworkAccessManager>
@@ -285,6 +288,8 @@ void slqt_be_widget_set_text(int64_t h, const char* t)
     if (auto* w = qobject_cast<QPushButton*>(o)) { w->setText(QString::fromUtf8(t)); return; }
     if (auto* w = qobject_cast<QLabel*>(o)) { w->setText(QString::fromUtf8(t)); return; }
     if (auto* w = qobject_cast<QLineEdit*>(o)) { w->setText(QString::fromUtf8(t)); return; }
+    /* QTextEdit 在 QWidget 兜底之前命中，否则 setWindowTitle 会吃掉正文 */
+    if (auto* w = qobject_cast<QTextEdit*>(o)) { w->setPlainText(QString::fromUtf8(t)); return; }
     if (auto* w = qobject_cast<QWidget*>(o)) { w->setWindowTitle(QString::fromUtf8(t)); }
 }
 
@@ -295,6 +300,7 @@ const char* slqt_be_widget_text(int64_t h)
     if (auto* w = qobject_cast<QPushButton*>(o)) { QByteArray b = w->text().toUtf8(); snprintf(g_text_buf, sizeof(g_text_buf), "%s", b.constData()); return g_text_buf; }
     if (auto* w = qobject_cast<QLabel*>(o)) { QByteArray b = w->text().toUtf8(); snprintf(g_text_buf, sizeof(g_text_buf), "%s", b.constData()); return g_text_buf; }
     if (auto* w = qobject_cast<QLineEdit*>(o)) { QByteArray b = w->text().toUtf8(); snprintf(g_text_buf, sizeof(g_text_buf), "%s", b.constData()); return g_text_buf; }
+    if (auto* w = qobject_cast<QTextEdit*>(o)) { return slqt_put(g_big_buf, sizeof(g_big_buf), w->toPlainText().toUtf8()); }
     return "";
 }
 
@@ -317,6 +323,37 @@ int64_t slqt_be_edit_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nul
 void slqt_be_edit_set_placeholder(int64_t h, const char* t) { auto* o = qobject_cast<QLineEdit*>((QObject*)slqt_resolve(h)); if (o && t) o->setPlaceholderText(QString::fromUtf8(t)); }
 const char* slqt_be_edit_text(int64_t h) { auto* o = qobject_cast<QLineEdit*>((QObject*)slqt_resolve(h)); if (!o) return ""; QByteArray b = o->text().toUtf8(); snprintf(g_text_buf, sizeof(g_text_buf), "%s", b.constData()); return g_text_buf; }
 void slqt_be_edit_set_readonly(int64_t h, int32_t on) { auto* o = qobject_cast<QLineEdit*>((QObject*)slqt_resolve(h)); if (o) o->setReadOnly(on != 0); }
+
+/* ── 多行文本编辑 / 列表（QTextEdit / QListWidget）────────────────────── */
+int64_t slqt_be_textedit_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QTextEdit(parent)); }
+void slqt_be_textedit_set_text(int64_t h, const char* t) { auto* o = qobject_cast<QTextEdit*>((QObject*)slqt_resolve(h)); if (o) o->setPlainText(QString::fromUtf8(t ? t : "")); }
+const char* slqt_be_textedit_text(int64_t h)
+{
+    auto* o = qobject_cast<QTextEdit*>((QObject*)slqt_resolve(h));
+    if (!o) return "";
+    return slqt_put(g_big_buf, sizeof(g_big_buf), o->toPlainText().toUtf8());
+}
+void slqt_be_textedit_set_readonly(int64_t h, int32_t on) { auto* o = qobject_cast<QTextEdit*>((QObject*)slqt_resolve(h)); if (o) o->setReadOnly(on != 0); }
+void slqt_be_textedit_append(int64_t h, const char* t) { auto* o = qobject_cast<QTextEdit*>((QObject*)slqt_resolve(h)); if (o && t) o->append(QString::fromUtf8(t)); }
+
+int64_t slqt_be_list_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QListWidget(parent)); }
+void slqt_be_list_add_item(int64_t h, const char* t)
+{
+    auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h));
+    if (o) o->addItem(QString::fromUtf8(t ? t : ""));
+}
+void slqt_be_list_clear(int64_t h) { auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h)); if (o) o->clear(); }
+int32_t slqt_be_list_count(int64_t h) { auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h)); return o ? o->count() : 0; }
+int32_t slqt_be_list_current_row(int64_t h) { auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h)); return o ? o->currentRow() : -1; }
+void slqt_be_list_set_current_row(int64_t h, int32_t row) { auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h)); if (o) o->setCurrentRow(row); }
+const char* slqt_be_list_item_text(int64_t h, int32_t row)
+{
+    auto* o = qobject_cast<QListWidget*>((QObject*)slqt_resolve(h));
+    if (!o) return "";
+    QListWidgetItem* it = o->item(row);
+    if (!it) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), it->text().toUtf8());
+}
 
 /* ── 主窗口 / 对话框 ─────────────────────────────────────────────────── */
 int64_t slqt_be_mainwindow_create(void) { return slqt_register(new QMainWindow()); }
@@ -367,6 +404,12 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
             QObject::connect(e, &QLineEdit::textChanged, [=](const QString& s) {
                 QByteArray b = s.toUtf8();
                 ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
+            });
+        break;
+    case SLQT_SIG_CURRENT_ROW_CHANGED:
+        if (auto* l = qobject_cast<QListWidget*>(sender))
+            QObject::connect(l, &QListWidget::currentRowChanged, [=](int row) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)row);
             });
         break;
     default:

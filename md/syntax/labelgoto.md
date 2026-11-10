@@ -1,69 +1,136 @@
-# S 语言的标签与跳转
+# 标签与跳转（label / goto）
 
-## SLang中的label语句
-label语句，是表示在执行流程中，这个标签可以配合像goto,和一些辅助功能的使用。
+`label` 用于给一个位置命名，`goto` 用于跳转到该位置。二者通常成对出现，用来在普通顺序控制流之外做定向跳转（例如跳出深层嵌套、集中收尾、异常兜底）。
 
-### label语法
-```ruby 
-label s1;
-int a = 20;
-label s2;
-int b = 30;
-label s3;
-```
-一般使用label，标签不是全局标签，和命名空间.类.函数.标签的结构使用。但同一函数内，可以直接使用。
+## 1. 基本用法
 
-## SLang中的goto语句
-goto语句，是表示在执行流程中，可以跳到已定义的标签中，改变程序执行流程。
+- `label 名称;` 声明一个标签（不带动任何代码，单独成句）。
+- `goto 名称;` 跳转到同函数内该标签所在位置。
+- 标签名与变量名同名规则一致（字母 / 数字 / 下划线，不以数字开头，不能是关键字）。
 
-### goto语法
-```ruby 
-label s1;
-int a = 20;
-label s2;
-int b = 30;
-label s3;
-if b == 30
+```sl
+function process()
 {
-    b++;
-    goto s1;
-}
-```
-一般使用label，标签不是全局标签，和命名空间.类.函数.标签的结构使用。但同一函数内，可以直接使用。
-
-### lable/go 语句必须遵循下面的规则：
-- label 后边增加的标签不允许在同一函数中有重复，否则编译不通过（LID 12281：`标签[{0}]在同一函数中重复定义!!`）。
-- goto 后边的标签必须在函数中已定义，否则会编译报错（LID 12280：`使用goto跳转，标签[{0}]未在本函数中定义!!`）。
-- goto 后只允许 `goto 标签名;` 的形式（LID 10300）。
-- 除 `label 名字;` 声明式外，label 还支持块形式 `label 名字 { }`（配合 catch/finally 做异常捕获，见 [try.md](./try.md)）；函数内裸块 `{}` 已不支持（LID 12282）。
-
-#### 实例
-```python
-Project
-{
-    _main_()
+    for (int i = 0, i < 10, i = i + 1)
     {
-        label s1;
-        a = 20;
-        label s2;
-        a = 30;
-        label s3;
-        if( a > 35 )
+        for (int j = 0, j < 10, j = j + 1)
         {
-            goto s2;
+            if (i * j > 20)
+            {
+                # 内层条件满足时，直接跳出两层循环
+                goto done
+            }
         }
-        global.println( a );
-        a++;
+    }
+label done;
+    Console.println("done")
+}
 
+process()
+```
+
+> 说明：`goto done` 只能跳到**同名标签所在位置**。因为 `done` 定义在函数末尾，这里实现的是「满足条件就直接结束循环并收尾」的效果。
+
+## 2. 跨函数跳转（限定名）
+
+同一函数内的标签可直接用名字跳转；要跳到**别的全局函数里的标签**，需要写全限定名：`命名空间.类.函数.标签名`。
+
+```sl
+# 在另一个函数里跳回全局函数 MyTool.cleanup 的标签
+function main()
+{
+    # ... 处理过程中遇到致命错误 ...
+    goto MyTool.cleanup
+}
+
+namespace MyTool
+{
+    function cleanup()
+    {
+        # 统一的收尾逻辑
+        Console.println("cleanup")
+    label cleanup;
     }
 }
+
+main()
 ```
 
-执行以上代码，输出结果为（`a = 30`，`a > 35` 不成立，goto 未跳转）:
+> 约定：限定名按 `命名空间.类.函数.标签名` 顺序写。类与命名空间可省略（当函数处在对应作用域时）；标签名永远写在最后。
+
+## 3. 块形式标签（try / finally 捕获）
+
+标签不仅能单独成句，也能包住一段代码块：
+
+```sl
+label exit
+{
+    # 这块代码里的执行路径都可以用 goto exit 提前离开
+    if (arg == null)
+    {
+        goto exit
+    }
+    # ... 正常处理 ...
+}
+# 离开块之后从这里继续
 ```
-30
+
+块形式标签最典型的用途是和 `try / finally` 配合，确保异常发生时也能执行收尾：
+
+```sl
+function load()
+{
+label finallyBlock;
+    try
+    {
+        # 可能抛异常的逻辑
+        openResource()
+    }
+    catch (Exception e)
+    {
+        Console.println(e.message)
+        goto finallyBlock      # 把异常路径也引向同一段收尾
+    }
+    finally
+    {
+finallyBlock:
+        closeResource()        # 正常 / 异常都会执行到
+    }
+}
+
+load()
 ```
 
+## 4. 常见写法与注意点
 
+- **`goto` 只接受标签名**，后面跟 `;`，例如 `goto retry;`。不能写成 `goto(名称)` 或 `goto 表达式`。
+- **标签作用域以函数为界**：同函数内用短名即可；跨函数必须写 `命名空间.类.函数.标签名`。
+- **不要跳进作用域内部**：`goto` 的目标标签必须位于当前函数的合法控制流可达位置（不能从函数外跳入某个局部变量仍未初始化的块里）。
+- **函数内裸块 `{}` 不再支持**：想给一段代码命名收尾，请用 `label 名称 { ... }` 块形式，而不是裸 `{}`。
+- 与 `for` / `while` / `switch` 自带的中断语句不同：`label`/`goto` 是更底层的定向跳转，适合「多层 `break` 做不到」的场景；普通循环请用 `break` / `continue`，可读性更好。
 
+## 5. 完整示例
 
+```sl
+# 读取直到遇到空行或达到上限，两种退出都走同一段收尾
+function readLines(int maxCount)
+{
+    int count = 0
+    for (int i = 0, i < maxCount, i = i + 1)
+    {
+        var line = nextLine()
+        if (line == "")
+        {
+            goto finish
+        }
+        Console.println(line)
+        count = count + 1
+    }
+label finish;
+    Console.println("read " + count + " lines")
+}
+
+readLines(5)
+```
+
+> 库参考：标准库 `System` 命名空间下的异常 / 资源相关类型（如 `Exception`）配合 `try / catch / finally` 使用，详见 [`../lib/Core/`](../lib/Core/) 对应文档。

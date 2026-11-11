@@ -9,15 +9,57 @@
       <UniqueIdentifier>{9e7c2f8b-6f3a-4d15-9b60-2a8e4c1d0002}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx</Extensions>
     </Filter>
+    <Filter Include="Pipeline">
+      <UniqueIdentifier>{7f3a1c8d-2b64-4e09-9d35-1a8c6e2f9b04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RHI">
+      <UniqueIdentifier>{5c8e2f9a-3d41-4f0a-8b62-9e5d1c3a7f12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="sl_render_lib.c">
+    <ClCompile Include="sl_render.c">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline\sl_pipeline.c">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline\sl_object.c">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline\sl_texture.c">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline\sl_camera.c">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="RHI\sl_rhi_gl.c">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHI\sl_rhi_d3d11.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHI\sl_rhi_vk.cpp">
+      <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="RHI\sl_rhi_gles.c">
+      <Filter>RHI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vm_sl_render.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="sl_render_internal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\sl_rhi.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\sl_gl_procs.h">
+      <Filter>RHI</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\sl_rhi_vk_shaders.h">
+      <Filter>RHI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

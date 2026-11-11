@@ -47,10 +47,24 @@ Unity 渲染底层流程；SL 侧 `UnityRenderPipeline` 只做薄 FFI 绑定（�
 - 逐阶段驱动：`runStages( t, pixels )`（SL 侧按 1..13 逐个调，帧循环形态，每帧仍完整 13 阶段）
 - 统计：`stat( id )` —— FRAME / VISIBLE / CULLED / DRAW_CALLS / OPAQUE_DRAWS /
   TRANSPARENT_DRAWS / POST_ENABLED / LAST_STAGE / OBJECT_COUNT / CHUNK_COUNT /
-  LAYERS_MASK / UPLOAD_COUNT / TIME_MS / DT_MS / TEXTURE_COUNT / PROGRAM_SWITCHES
+  LAYERS_MASK / UPLOAD_COUNT / TIME_MS / DT_MS / TEXTURE_COUNT / PROGRAM_SWITCHES /
+  CAMERA_COUNT
 - 队列语义对齐 Unity：**queue < 2500 不透明**（前→后排序、深度写开）；
   **queue >= 2500 透明**（后→前排序、`SRC_ALPHA/ONE_MINUS_SRC_ALPHA` 混合、深度写关）
-- 相机：`setCamera( cullingMask, l, r, b, t )`，mask=-1 全可见，按位 `1<<layer` 控制层
+- 相机（v2.1 多相机）：
+  - 默认相机（槽 0）：`setCamera( cullingMask, l, r, b, t )` 写入，mask=-1 全可见，
+    按位 `1<<layer` 控制层；`setClearColor` 同步槽 0 清屏色（保持 v2 兼容）
+  - 多相机：`addCamera( depth )` 新建 `UnityRenderCamera`（上限 8 槽），每相机独立
+    `setCullMask / setExtents / setViewport / setClearColor / setClearFlags / setDepth /
+    setEnabled / destroy`
+  - 渲染按 **depth 升序**逐相机执行：视口/清屏（`glClear` 只受 scissor 限制，局部
+    清屏内部启用 scissor box）→ 该相机剔除（cullMask + 视域）→ 不透明/透明段绘制；
+    阶段 11-13（后处理/整合/输出）全帧一次
+  - clearFlags：位 1 = 清颜色，位 2 = 清深度；叠加相机可设 0（透写上一相机画面）
+- 图片文件加载（v2.1）：`UnityRenderTexture.loadFile( path )` —— C 层 WIC 解码
+  （PNG/JPEG/BMP/TIFF，零 SDK 依赖，windowscodecs.lib 注入），转 32bppRGBA 后
+  与 createRgba 同路径上传；path 为 UTF-8；坏路径返回 null（错误码 SLR_E_IMAGE -19，
+  细节经 `slr_error_detail()`）
 
 ### 理论映射（RTR 三阶段 → 13 阶段，知乎 p/702640844 汇总）
 
@@ -146,11 +160,26 @@ label.setPixmapRgba( pixels, 256, 256 )   # RGBA8 top-down 块 -> QImage -> QPix
 
 ```
 Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_render_lib.dll
-                                      ──运行期 LoadLibrary("opengl32.dll")──> WGL + GL 3.3 core
+                                      ──RHI 抽象层（slr_rhi vtable）──> 后端驱动：
+                                        "gl"    -> opengl32.dll（WGL + GL 3.3 core，默认）
+                                        "d3d11" -> d3d11.dll + d3dcompiler_47.dll（运行期加载，零 .lib）
+                                        "vk"    -> vulkan-1.dll（纯离屏 instance；SPIR-V 由 glslang
+                                                   一次性预编译固化进 RHI/sl_rhi_vk_shaders.h，零 SDK）
+                                        "gles"  -> libEGL.dll + libGLESv2.dll（EGL + GLES 3.0，
+                                                   surfaceless 上下文；缺失时 init 优雅降级）
 ```
 
-- `sl_render_lib.dll` 是 Windows OpenGL 的扁平 C ABI 包装（`slr_*`）：渲染目标/
-  管线/对象/纹理收敛为 Int64 句柄（静态槽表），多目标并存。
+- 本库是**渲染中间层**：13 阶段管线逻辑平台无关（Pipeline/ 层），经 RHI
+  抽象层（`slr_rhi` 函数表）落到不同驱动后端，**渲染效果跨后端一致**
+  （GLRenderTest Phase D/E/F 用与 GL 完全相同的像素断言集分别验证
+  D3D11 / Vulkan / GLES，实测四后端逐字节一致）。
+- 后端选择：`Render.initialize()` 默认 "gl"（幂等，已初始化时不切后端）；
+  `Render.initializeBackend("d3d11"/"vk"/"gles")` 指定后端（已初始化其他
+  后端时先 uninit 再切换，环境不可用时返回 false 并给出 errorString，
+  测试侧按 SKIP 处理）；`Render.backendList()` / `Render.currentBackend()` 诊断。
+- `sl_render_lib.dll` 是扁平 C ABI 包装（`slr_*`）：渲染目标/管线/对象/
+  纹理收敛为 Int64 句柄（静态槽表），多目标并存；渲染目标/纹理对上层是
+  不透明指针（`slr_rhi_target*` / `void*`），由各后端私有实现。
 - **导出宏 `SLR_API`（vm_sl_render.h）**：公开声明必须带
   `__declspec(dllexport)`（Cuda 库 `SLC_API` 同款）。声明裸写时 DLL **空导出**
   ——LoadLibrary 成功但 GetProcAddress 全 MISS，SL 侧兜底表现即
@@ -180,8 +209,62 @@ Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)�
 jsonc `dllImports` 用平铺 basename 形态（`{ "path": "sl_render_lib.dll",
 "static": "sl_render_lib" }`）：cvm 装载模块即预载该库并注册 FFI 静态绑定表，
 绑定失败回退 SL 函数体兜底（`initialize() == false` 即兜底征兆）。
-`vmDlls` 挂 `cvm_sl_render_lib/cvm_sl_render_lib.vcxproj`，模块编译时 Front
+`vmDlls` 挂 `../cvm_render_lib/cvm_sl_render_lib.vcxproj`（C 源位于
+`SlangAllInOne\SLangCore\Lib\SLang\Render\cvm_render_lib\`），模块编译时 Front
 自动 MSBuild 产出 DLL 并拷入导出目录。
+
+### C 源文件划分（管线层与 SL 一一对应；RHI 层多后端同效果）
+
+```
+cvm_render_lib/
+├── vm_sl_render.h            对外契约头（SLR_API 导出声明 + 后端 API）
+├── sl_render_internal.h      内部共享：结构体（rt_* 不透明目标）、跨文件原型
+│                              （C++ 编译单元经 extern "C" 引用 C 层符号）
+├── sl_render.c               <-> Render.sl                 生命周期/诊断/v1 直连层
+│                                                             + RHI 后端注册表 + 全局资源回收
+├── Pipeline/                 （平台无关管线层，只调 g_rhi->*）
+│   ├── sl_pipeline.c         <-> Pipeline/UnityPipeline.sl  13 阶段管线 + 多相机调度 + 统计
+│   ├── sl_object.c           <-> UnityRenderObject          场景对象属性
+│   ├── sl_texture.c          <-> UnityRenderTexture         纹理注册表 + WIC 图片加载
+│   └── sl_camera.c           <-> UnityRenderCamera          多相机槽表
+└── RHI/                      （驱动后端：同一 vtable，同一像素契约）
+    ├── sl_rhi.h              接口契约（slr_rhi 函数表 + 像素/坐标约定）
+    ├── sl_gl_procs.h         GL 函数指针清单（GLDECL 宏双用；GL/GLES 后端共用，
+    │                          GLES 侧定义带 static 与 GL 单元隔离）
+    ├── sl_rhi_gl.c           "gl"    WGL + GL 3.3（WGL 解析/着色器/网格/UBO/FBO/回读行翻）
+    ├── sl_rhi_d3d11.cpp      "d3d11" D3D11（运行期加载 dll；HLSL 六组 + 清屏 quad
+    │                          模拟局部清屏 + staging 回读天然 top-down；C++ 编译单元）
+    ├── sl_rhi_vk.cpp         "vk"    Vulkan（纯离屏 instance/无 surface；手写零依赖
+    │                          声明 + vkGetInstanceProcAddr 解析；SPIR-V 固化着色器；
+    │                          即时风格分段提交；vkCmdClearAttachments 矩形级局部清屏；
+    │                          CopyImageToBuffer 回读天然 top-down；C++ 编译单元）
+    ├── sl_rhi_vk_shaders.h   VK 九组 SPIR-V 字节数组（glslang 一次性预编译固化；
+    │                          内嵌 VKSL 源码可重生成）
+    └── sl_rhi_gles.c         "gles"  EGL + GLES 3.0（libEGL/libGLESv2 运行期探测，
+                               缺失优雅降级；surfaceless 优先回退 1x1 pbuffer；
+                               GLSL ES 3.00 六组 + 片段 highp + int 跨级精度对齐；
+                               pass 逻辑与 GL 后端逐行同构）
+```
+
+约定：公开导出仍集中在 `vm_sl_render.h`（全部带 `SLR_API`）；管线层经
+`g_rhi->` 调用后端（`rhi_enter/rhi_exit` 统一清错+就绪检查+锁）；
+跨文件内部函数（set_error / tex_from_handle / pipe_from_handle /
+pipeline_release_targets）统一非 static 并在 `sl_render_internal.h` 声明；
+全局表 `s_pipes` / `s_textures` 定义在各自归属 .c。
+
+**跨后端一致效果的关键约定**（sl_rhi.h 顶部注释为准）：
+- 纹理上传：rgba 首行 = 图像底部（sl_texture.c 统一翻行；GL t=0 与
+  D3D11/VK v=0 均指首行，采样语义一致）；
+- 回读输出：top-down RGBA8（GL/GLES glReadPixels 需行翻；D3D11 staging 与
+  VK CopyImageToBuffer 天然 top-down）；
+- 相机视口坐标 GL 左下原点（D3D11/VK 内部换算 TopLeftY = h-(y+h)）；
+- 相机段绘制裁剪到相机视口：GL/GLES 用 scissor 常开模拟 D3D11/VK 的 viewport 裁剪；
+- 局部清屏：D3D11 用"清屏 quad"（clip z=1 + ALWAYS 深度写 1.0）；
+  GL/GLES 用 scissor+glClear；VK 直接 vkCmdClearAttachments（矩形级，天然对齐）；
+- GL/GLES 清屏前先 `DepthMask(TRUE)`（glClear(DEPTH) 受深度写掩码限制）；
+- GL/GLES 后端 draw_item 自绑 glUseProgram（uniform 设置作用于当前绑定程序）；
+- D3D11/VK 全屏三角 V 翻转（RT 行序差异；VK 另在每个 VS 内做 NDC y 翻转，
+  等价于 D3D11 的 y-up clip space + 行 0 = 图像顶部），blend 因子对齐 glBlendFunc。
 
 ## FFI sig 约定（SL 侧手写 sig 与 C 返回值对齐）
 
@@ -200,6 +283,11 @@ jsonc `dllImports` 用平铺 basename 形态（`{ "path": "sl_render_lib.dll",
 ## 测试与集成
 
 - 端到端用例集：`SlangAllInOne\SLangCore\test\Other\GLRenderTest\`
+  - Phase D/E/F（RHI 多后端同效果）：`initializeBackend("d3d11"/"vk"/"gles")`
+    后用**与 GL 完全相同的 A1/A2/A3 断言集**复跑——corner(15,15,25) /
+    tri(255,0,0) / quadtex(147,67,137) / t5(127,255,0) / t10(0,244,244) /
+    postgray(76,76,76) / 左图(235,130,40) / 右清屏(0,64,25) / 蓝quad(51,102,255)
+    全部像素逐字节一致即"不同驱动渲染一样效果"验收通过；后端不可用报 SKIP；
   - Phase A1（v1 兼容回归）：RenderContext 直连 FBO，128x128 红三角中心像素
     (255,0) 断言；
   - Phase A2（13 阶段管线主测，256x256）：清屏色角落 (15,15,25)±6 / 动画三角
@@ -207,19 +295,30 @@ jsonc `dllImports` 用平铺 basename 形态（`{ "path": "sl_render_lib.dll",
     混合像素 / stats 断言（lastStage=13、visible=2、culled=0、opaque=1、
     transp=1、layers=3、chunks=2、uploads=4）/ mask=-3 剔除 layer1 后 quad 消失 /
     饱和度=0 灰度断言（R==G==B）/ runStages 逐阶段驱动与 renderFrame 等价；
-  - Phase B（QT 窗口）：QTimer 16ms → runStages（每帧完整 13 阶段）→
-    QLabel.setPixmapRgba，5s 自动退出，帧数断言。
+  - Phase A3（多相机 + 图片）：相机 depth 升序覆盖 / viewport 右半分割 /
+    cullingMask 分离 / 禁用相机回退 / WIC 图片加载渲染（橙色断言）；
+  - Phase B（QT 窗口 + 后端切换 UI）：窗口顶部 4 按钮
+    （OpenGL/D3D11/Vulkan/WebGL-GLES）点击即切换渲染底层（切换 =
+    uninit 旧后端 + 新后端 init + 场景全量重建，管线/纹理句柄随 uninit
+    失效需重建）；状态栏实时显示当前后端 + 渲染器，当前后端按钮高亮；
+    QTimer 16ms → runStages → QLabel.setPixmapRgba；另有 4s 自动轮播
+    （d3d11 → vk → gles → gl）自动验证四后端在 QT 帧循环下持续渲染
+    （用户点击任一按钮后轮播停止）；30s 退出，帧数 + 后端掩码断言
+    （mask 奇数含 gl 位且 >=3：至少一个其他后端渲染过）。
 - 运行：`dotnet run --project SlangAllInOne\Project\CSimpleVMTest -- SlangAllInOne\SLangCore\test\Other\GLRenderTest\GLRenderTest`
   （Phase B 需先 `QT\cvm\deploy-qt.ps1 -Combo minimal -Targets package` 铺 Qt runtime；
   本机包内已有 QTTest 时期部署的 full 组合存量，直接可用）
-- 实测结果（RTX 2080 / GL 3.3.0 core / 驱动 610.62）：
-  Phase A1 PASS、Phase A2 PASS（全部像素/统计/剔除/后处理/逐阶段断言）、
-  Phase B PASS（renderFrames=312 pixOk=312），`GLRenderTest: PASS` 三绿。
+- 实测结果（RTX 2080 / 驱动 610.62，GL 3.3.0 core + D3D11 FL 11.0 +
+  Vulkan 1.4.341 + ANGLE GLES 3.0.0 四后端）：
+  Phase D/E/F/A1/A2/A3/B 全 PASS（四后端像素逐字节一致；QT 30s 1874 帧
+  pixOk=1874），`GLRenderTest: PASS` 七绿。GLRenderTest 主流程收尾显式
+  `initializeBackend("gl")` 强制切回（幂等陷阱：initialize 不切后端）。
 
 ## 已知取舍（v2）
 
-- 管线固定为"剔除→排序→UBO 上传→不透明分块→透明分段→后处理"单相机单目标
-  流程；多相机 / 多 Pass / 自定义管线编排（SRP 式 RenderGraph）待后续版本。
+- 管线固定为"剔除→排序→UBO 上传→不透明分块→透明分段→后处理"流程；v2.1 已支持
+  多相机逐相机执行（阶段 4-9 内部按 depth 排序循环）；多 Pass / 自定义管线编排
+  （SRP 式 RenderGraph）待后续版本。
 - PerDraw UBO 容量 mat4[64]+vec4[64]：单帧最多 64 个对象全量重传（256x256
   场景 <1ms），Dirty 局部更新与多 UBO 槽轮换待做。
 - 后处理单 pass（亮度/饱和度/暗角）；泛光/ACES/FXAA 等 ImageEffect 待扩。
@@ -229,6 +328,6 @@ jsonc `dllImports` 用平铺 basename 形态（`{ "path": "sl_render_lib.dll",
   SLR_MAX_TEX 64（全局注册表）。
 - 回读走中转缓冲逐行翻转（256x256 一次 memcpy 行 ×2，~0.1ms）；
   大分辨率高频回读可改 PBO 异步。
-- D3D/DX 接入：v1/v2 选 OpenGL（opengl32.dll 系统自带零依赖）；d3d11.dll
-  同样随系统分发，DX 后端可按本模块的绑定层/句柄化/回读三件套模式复制扩展
-  （13 阶段静态函数结构可直接复用，仅替换阶段 7/9/13 的设备层实现）。
+- 多后端已落地（gl / d3d11 / vk / gles 同 vtable 同像素契约）；VK/GLES
+  均为运行期探测、缺失优雅降级（init 返回 false + errorString），后续
+  平台（macOS Metal / Linux X11+GL）按同模式扩展 slr_rhi 表即可。

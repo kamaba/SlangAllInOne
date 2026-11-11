@@ -1,10 +1,13 @@
 /* =========================================================================
- * vm_sl_render.h —— SLangRender 原生渲染库对外契约（v2）
+ * vm_sl_render.h —— SLangRender 原生渲染库对外契约（v3，多后端 RHI）
  *
- * sl_render_lib.dll：隐藏窗口 + WGL 3.3 core 上下文离屏渲染，零工具链依赖
- * （opengl32.dll 运行期解析，构建不需要 OpenGL SDK 头/.lib）。
+ * sl_render_lib.dll：渲染中间层。13 阶段管线逻辑平台无关，经 RHI
+ * 抽象层落到不同操作系统/驱动后端，渲染效果跨后端一致：
+ *   "gl"    Windows WGL + OpenGL 3.3 core（默认，向后兼容）
+ *   "d3d11" Windows Direct3D 11（运行期加载，零 .lib 依赖）
+ *   （后续接入："vk" Vulkan、"gles" EGL/GLES 3.0）
  *
- * v1 低层 API（RenderContext 直连 FBO）保留兼容；v2 新增 Unity 风格
+ * v1 低层 API（RenderContext 直连渲染目标）保留兼容；v2 Unity 风格
  * 13 阶段渲染管线（slr_pipeline_* / slr_object_* / slr_texture_*）。
  *
  * 约定：
@@ -57,7 +60,9 @@ enum
     SLR_E_PIPELINE         = -16,  /* 管线无效/未初始化                 */
     SLR_E_STATE            = -17,  /* 阶段状态机非法（阶段序错误等）      */
     SLR_E_LIMIT            = -18,  /* 资源上限（对象/纹理/管线数量）      */
-    SLR_E_IMAGE            = -19   /* 图片文件解码失败（WIC）            */
+    SLR_E_IMAGE            = -19,  /* 图片文件解码失败（WIC）            */
+    /* v3 新增 */
+    SLR_E_BACKEND          = -20   /* 后端不可用/未知后端名              */
 };
 
 /* ---- 统计项 id（slr_pipeline_stat）---- */
@@ -97,8 +102,11 @@ enum
 };
 
 /* ================= 生命周期 / 诊断 ================= */
-SLR_API int         slr_init(void);
+SLR_API int         slr_init(void);          /* 默认后端 "gl"（向后兼容）*/
+SLR_API int         slr_init_backend(const char* backend_utf8); /* 指定后端初始化 */
 SLR_API int         slr_uninit(void);
+SLR_API const char* slr_backend_list(void);  /* 可用后端（逗号分隔，如 "gl,d3d11"）*/
+SLR_API const char* slr_current_backend(void); /* 当前后端名（未初始化 "none"）*/
 SLR_API int         slr_last_error(void);
 SLR_API const char* slr_error_string(int err);
 SLR_API const char* slr_error_detail(void);

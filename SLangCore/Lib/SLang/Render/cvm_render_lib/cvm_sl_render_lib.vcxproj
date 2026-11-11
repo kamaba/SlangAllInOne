@@ -56,6 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -75,6 +76,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -88,10 +90,22 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sl_render_lib.c" />
+    <ClCompile Include="sl_render.c" />
+    <ClCompile Include="Pipeline\sl_pipeline.c" />
+    <ClCompile Include="Pipeline\sl_object.c" />
+    <ClCompile Include="Pipeline\sl_texture.c" />
+    <ClCompile Include="Pipeline\sl_camera.c" />
+    <ClCompile Include="RHI\sl_rhi_gl.c" />
+    <ClCompile Include="RHI\sl_rhi_d3d11.cpp" />
+    <ClCompile Include="RHI\sl_rhi_vk.cpp" />
+    <ClCompile Include="RHI\sl_rhi_gles.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vm_sl_render.h" />
+    <ClInclude Include="sl_render_internal.h" />
+    <ClInclude Include="RHI\sl_rhi.h" />
+    <ClInclude Include="RHI\sl_gl_procs.h" />
+    <ClInclude Include="RHI\sl_rhi_vk_shaders.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

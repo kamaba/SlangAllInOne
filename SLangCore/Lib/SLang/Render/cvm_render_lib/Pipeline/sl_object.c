@@ -1,0 +1,168 @@
+/* =========================================================================
+ * sl_object.c —— 场景对象（对应 SL 侧 UnityRenderObject）
+ *
+ * 对象属性：网格类型 / 可见性 / layer / 渲染队列 / 位置 / 旋转 / 缩放 /
+ * 颜色 / 纹理绑定 / 动画模式。句柄 1 起始，仅持有管线内下标数据，
+ * GL 绘制消费见 Pipeline/sl_pipeline.c。
+ * ========================================================================= */
+#include "sl_render_internal.h"
+
+static slr_object* obj_from_handle(slr_pipeline* p, int64_t oh, int* idx_out)
+{
+    int i = (int)(oh - 1);
+    if (oh <= 0 || i >= SLR_MAX_OBJECTS || !p->objects[i].used) return NULL;
+    if (idx_out) *idx_out = i;
+    return &p->objects[i];
+}
+
+int64_t slr_object_create(int64_t h, int mesh_kind)
+{
+    slr_pipeline* p;
+    int i;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    if (mesh_kind != SLR_MESH_TRIANGLE && mesh_kind != SLR_MESH_QUAD)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        rhi_exit();
+        return 0;
+    }
+    for (i = 0; i < SLR_MAX_OBJECTS; i++)
+    {
+        slr_object* o;
+        if (p->objects[i].used) continue;
+        o = &p->objects[i];
+        memset(o, 0, sizeof(slr_object));
+        o->used = 1;
+        o->mesh = mesh_kind;
+        o->visible = 1;
+        o->layer = 0;
+        /* 对齐 Unity 渲染队列：三角默认不透明，四边形默认透明 */
+        o->queue = (mesh_kind == SLR_MESH_TRIANGLE) ? 2000 : 3000;
+        o->scale[0] = 1.0f; o->scale[1] = 1.0f;
+        o->color[0] = 1.0f; o->color[1] = 1.0f; o->color[2] = 1.0f; o->color[3] = 1.0f;
+        o->texture = 0;
+        rhi_exit();
+        return (int64_t)(i + 1);
+    }
+    set_error(SLR_E_LIMIT);
+    rhi_exit();
+    return 0;
+}
+
+int slr_object_destroy(int64_t h, int64_t obj)
+{
+    slr_pipeline* p;
+    int idx = 0;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    if (!obj_from_handle(p, obj, &idx)) { set_error(SLR_E_OBJECT); rhi_exit(); return 0; }
+    memset(&p->objects[idx], 0, sizeof(slr_object));
+    rhi_exit();
+    return 1;
+}
+
+static int obj_set_common(int64_t h, int64_t obj, slr_pipeline** pp, slr_object** oo, int* idx)
+{
+    if (!rhi_enter()) return 0;
+    *pp = pipe_from_handle(h);
+    if (!*pp) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    *oo = obj_from_handle(*pp, obj, idx);
+    if (!*oo) { set_error(SLR_E_OBJECT); rhi_exit(); return 0; }
+    return 1;
+}
+
+int slr_object_set_visible(int64_t h, int64_t obj, int visible)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->visible = visible ? 1 : 0;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_layer(int64_t h, int64_t obj, int layer)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (layer < 0 || layer > 31) { set_error(SLR_E_BAD_PARAM); return 0; }
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->layer = layer;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_queue(int64_t h, int64_t obj, int queue)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->queue = queue;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_position(int64_t h, int64_t obj, float x, float y, float z)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->pos[0] = x; o->pos[1] = y; o->pos[2] = z;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_rotation_z(int64_t h, int64_t obj, float rz)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->rot_z = rz;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_scale(int64_t h, int64_t obj, float sx, float sy)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->scale[0] = sx; o->scale[1] = sy;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_color(int64_t h, int64_t obj, float r, float g, float b, float a)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->color[0] = r; o->color[1] = g; o->color[2] = b; o->color[3] = a;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_texture(int64_t h, int64_t obj, int64_t tex)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    if (tex != 0 && !tex_from_handle(tex)) { set_error(SLR_E_TEXTURE); rhi_exit(); return 0; }
+    o->texture = tex;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_set_animated(int64_t h, int64_t obj, int mode, float speed)
+{
+    slr_pipeline* p; slr_object* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->anim_mode = (mode == SLR_ANIM_HUE_CYCLE) ? SLR_ANIM_HUE_CYCLE : SLR_ANIM_NONE;
+    o->anim_speed = speed;
+    rhi_exit();
+    return 1;
+}
+
+int slr_object_count(int64_t h)
+{
+    slr_pipeline* p = pipe_from_handle(h);
+    int i, n = 0;
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    for (i = 0; i < SLR_MAX_OBJECTS; i++) if (p->objects[i].used) n++;
+    return n;
+}

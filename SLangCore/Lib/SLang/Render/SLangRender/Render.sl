@@ -12,13 +12,14 @@
 #   label.setPixmapRgba( pixels, 256, 256 )        # QT 窗口填充（SLangQT）
 #   ctx.destroy()
 #
-# 底层链路：
+# 底层链路（渲染中间层，多驱动同效果）：
 #   Render.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_render_lib.dll
-#               ──运行期解析────────> opengl32.dll（系统自带，
-#                                    WGL + GL 3.3 core）
-# sl_render_lib.dll 把 FBO 渲染目标收敛为 Int64 句柄；像素出口是
-# glReadPixels 回读（行序已翻转为 top-down），与 QImage
-# Format_RGBA8888 布局一致。
+#               ──RHI 抽象层──> 后端驱动：
+#                 "gl"    -> opengl32.dll（WGL + GL 3.3 core，默认）
+#                 "d3d11" -> d3d11.dll + d3dcompiler_47.dll（运行期加载）
+#                 （后续："vk" Vulkan、"gles" EGL/GLES 3.0）
+# sl_render_lib.dll 把渲染目标收敛为 Int64 句柄；像素出口是回读
+# （行序已翻转为 top-down），与 QImage Format_RGBA8888 布局一致。
 #
 # 错误处理以返回值表达（false / 0），原因经 Render.lastError() /
 # Render.errorString() 取得（粘性：每次原生入口调用先清零）。
@@ -53,6 +54,7 @@ namespace SLang
         public static Int32 E_SHADER = -11
         public static Int32 E_MEMORY = -12
         public static Int32 E_CONTEXT_CURRENT = -13
+        public static Int32 E_BACKEND = -20
 
         # ── 低层：错误 / 设备信息 ──────────────────────────────────
 
@@ -77,10 +79,29 @@ namespace SLang
             ret false
         }
 
+        # slr_init_backend —— 指定后端初始化（"gl" / "d3d11" / 后续 "vk" / "gles"）
+        @DllStaticImport( "sl_render_lib", "slr_init_backend", "utf8->bool" )
+        public static bool libInitBackend( string backend )
+        {
+            ret false
+        }
+
         @DllStaticImport( "sl_render_lib", "slr_uninit", "->bool" )
         public static bool libUninit()
         {
             ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_backend_list", "->utf8" )
+        public static string libBackendList()
+        {
+            ret "gl"
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_current_backend", "->utf8" )
+        public static string libCurrentBackend()
+        {
+            ret "none"
         }
 
         @DllStaticImport( "sl_render_lib", "slr_renderer_string", "->utf8" )
@@ -161,11 +182,31 @@ namespace SLang
 
         # ── 门面：初始化 / 设备信息 ────────────────────────────────
 
-        # initialize() —— 隐藏窗口 + WGL 3.3 core 上下文 + 三角形管线，
-        # 幂等，程序入口调用一次；失败时 false（原因见 lastError()）
+        # initialize() —— 默认后端（"gl"）：隐藏窗口 + WGL 3.3 core 上下文 +
+        # 三角形管线，幂等，程序入口调用一次；失败时 false（原因见 lastError()）
         public static bool initialize()
         {
             ret Render.libInit()
+        }
+
+        # initializeBackend(backend) —— 指定 RHI 后端初始化（"gl" / "d3d11"；
+        # 运行期加载对应驱动，渲染效果与默认后端一致）。已初始化时先反初始化
+        # 再切换；已是该后端则幂等成功。
+        public static bool initializeBackend( string backend )
+        {
+            ret Render.libInitBackend( backend )
+        }
+
+        # backendList() —— 可用后端列表（逗号分隔，如 "gl,d3d11"）
+        public static string backendList()
+        {
+            ret Render.libBackendList()
+        }
+
+        # currentBackend() —— 当前后端名（未初始化为 "none"）
+        public static string currentBackend()
+        {
+            ret Render.libCurrentBackend()
         }
 
         # 反初始化（销毁全部渲染目标与 GL 资源；进程退出前可省略）

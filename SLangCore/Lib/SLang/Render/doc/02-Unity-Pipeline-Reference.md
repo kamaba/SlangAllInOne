@@ -6,6 +6,24 @@
 
 ---
 
+## 0. 理论基线：渲染管线三阶段（《Real-Time Rendering》，知乎 p/702640844 汇总）
+
+教科书模型把一帧拆为三个阶段（本模块 v2 的理论参照）：
+
+| 阶段 | 执行者 | 职责 | 关键概念 |
+|---|---|---|---|
+| 应用阶段 | CPU | 剔除（视锥/遮挡/层级）、排序（不透明先近后远）、渲染数据打包送显存、设置渲染状态、发送 DrawCall | DrawCall / SetPassCall / Batch（一个 Batch ≥ 一个 DrawCall） |
+| 几何阶段 | GPU | 顶点着色器（模型空间→齐次裁剪空间 -1..1）、裁剪、屏幕映射 | 可编程：顶点着色器（坐标转换为必须任务） |
+| 光栅化阶段 | GPU | 三角形设置/遍历、片元着色器（纹理采样）、逐片元操作（模板/深度测试、混合） | Early-Z（深度测试提前提性能）；透明物开混合、深度写关 |
+
+**v2 落地映射**（sl_render_lib.dll，13 阶段见 Render.md 表格）：
+
+- **应用阶段** → 阶段 4-6：`cullLayers`（cullingMask 层级剔除 + 正交视域剔除）、`assembleLayerData`（drawItem 装配 + 队列排序：不透明前→后 / 透明后→前）、`uploadRenderData`（PerDraw UBO 打包上显存）；`renderShaderChunks/Segments` 按着色器程序分组绘制（分组即减少 SetPass 切换），组内逐 `glDrawArrays` = DrawCall。
+- **几何阶段** → VS_PSCENE 的 `uMVP[uObjIndex] * vec4(aPos, 0, 1)`（模型→齐次裁剪空间）；图元裁剪、屏幕映射、三角形设置/遍历由 GL 固定功能完成。
+- **光栅化阶段** → FS `texture(uTex, vUv)` 纹理采样（VS 输出 UV 经光栅插值，与理论流程一致）；逐片元操作：不透明深度写开（前→后排序贴合 Early-Z 优化方向），透明段 `SRC_ALPHA/ONE_MINUS_SRC_ALPHA` 混合 + 深度写关。
+
+---
+
 ## 1. Unity 渲染体系的三层结构
 
 ```

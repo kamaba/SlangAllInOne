@@ -1,13 +1,20 @@
 # SLang 跨平台渲染引擎设计 · 01 总体架构
 
-- 版本：v0.4（设计稿，供评审）
-- 日期：2026-10-27
+- 版本：v0.5（设计稿，供评审；v2 核心闭环已落地）
+- 日期：2026-11-11
 - 变更记录：
+  - v0.5：记录 v2 核心闭环落地状态（见 §0.1 状态快照）：Unity 风格 13 阶段管线整体下沉 C 层（sl_render_lib.dll，WGL/GL3.3），SL 侧薄 FFI 门面（UnityRenderPipeline/Object/Texture），GLRenderTest 端到端三绿（Phase A1/A2/B）；管线实现策略由「纯 SL」调整为「T1 原生优先：管线逻辑 C 层实现，SL 侧编排与状态描述」（对齐 04 文档 T1/T2/T3 策略与用户需求）
   - v0.4：新增 06 图像编解码设计（PNG/JPEG/WebP 读写 + SVG 解析/光栅化 + 纹理零拷贝上传路径）；文档集扩为 6 份
   - v0.3：文档集拆分为 5 份；后端调用策略改为「原生 FFI 绑定优先（T1）→ 系统方法兜底（T2）→ 淘汰 `SystemCallExternalFunction` 字符串分发（T3）」，见 D8 与 04 文档
   - v0.2：新增 WebGPU 后端与 H5 Canvas 2D 呈现路径（D7）
   - v0.1：初稿（单文件）
-- 状态：待评审。评审通过后按 05 文档路线图分里程碑实施。
+- 状态：**v2 核心闭环已落地并实测通过**（2026-11-11，RTX 2080 / GL 3.3.0 core：GLRenderTest Phase A1 / A2 / B 全 PASS，含 QT 窗口 312 帧动画）；文档其余部分为设计稿，评审通过后按 05 文档路线图分里程碑推进。
+
+### 0.1 状态快照：v2 已落地部分（2026-11-11）
+
+- **已落地**：`Lib\SLang\Render\SLangRender\` 模块 = SL 薄门面（`Render.sl` / `Pipeline\UnityPipeline.sl`）+ C 全量实现（`cvm_sl_render_lib\`：WGL/GL3.3 隐藏窗口离屏、13 阶段管线、PerDraw std140 UBO 分组批渲染、纹理、后处理、renderTexture 回读）。
+- **渲染流程**（对齐 Unity 渲染底层机制，C 层一符号一阶段）：渲染开始 beginFrame → 准备物料 prepareMaterials → 提前更新 earlyUpdate → 渲染层分层 cullLayers → 层整理数据 assembleLayerData → 向 GPU 传入渲染数据 uploadRenderData → shader 分块渲染 renderShaderChunks → 核心时间更新 updateCoreTime → shader 分段渲染 renderShaderSegments → 整理渲染后图层 assembleRenderedLayers → 后处理 postProcess → 层级逻辑整合 integrateLayers → 输出最终 renderTexture；SL 侧 `renderFrame` 一键 / `runStages` 逐阶段驱动。
+- **与本文档的关系**：§1.1「单语言实现」按落地现实调整为 T1 优先形态（管线逻辑在 C 层，SL 侧薄绑定与编排）；L5 纯 SL 编排层（RenderPipeline.sl 骨架已存在）保留为后续演进方向。理论基线（RTR 渲染三阶段 → 13 阶段映射）见 02 文档 §0；模块层细节见 `SLangRender\Render.md`。
 
 ---
 

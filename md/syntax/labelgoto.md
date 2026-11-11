@@ -22,8 +22,10 @@ function process()
             }
         }
     }
-label done;
-    Console.println("done")
+    label done
+    {
+        Console.println("done")
+    }
 }
 
 process()

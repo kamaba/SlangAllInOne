@@ -1,7 +1,7 @@
 # SL 语言语法与编码规范总表
 
 > **用途**：AI / 开发者编码时的单点引用，免去每次全量扫描 `md/syntax/`。
-> **来源**：`md/code.md` + `md/syntax/` 全部文档（约 48 篇）+ `test/BaseTest` 示例代码，已提炼去重。
+> **来源**：`md/code.md` + `md/syntax/` 全部 37 篇 + `md/project/` 相关篇目，按 2026-11-11 实际实现校准；关键字清单以词法源 `simple_language/source/Parse/LexerParseToToken.cs` 为权威。
 > **效力**：语法声明格式与示例以本文为准（均与源码/用例核对过）；更深的语义细节见文末指向的各单篇文档。
 
 ***
@@ -10,18 +10,18 @@
 
 ### 1.1 命名规范
 
-| 规则  | 内容                                     |
-| --- | -------------------------------------- |
-| 1-1 | 英文单词命名，禁止拼音或无意义字母                      |
-| 1-2 | 直观易懂，能描述功能或有意义                         |
-| 1-3 | 禁止下划线命名法（`car_type` 错误）                |
-| 1-4 | 常量、静态字段、类、结构体、非私有字段、方法 → **大驼峰**（C# 侧） |
-| 1-5 | 私有字段、方法形参、局部变量 → **小驼峰**；私有字段加 `m_` 前缀 |
-| 1-6 | 接口以大写字母 **I** 开头                       |
-| 1-7 | 枚举以大写字母 **E** 开头                       |
-| 1-8 | 函数类命名必须以大写字母                         |
-| 1-9 | 函数命名小驼峰命名，参数命名尽量小驼峰命名               |
-| 1-10 | 变量命名开头以小写字母，后续以小驼峰命名               |
+| 规则   | 内容                                     |
+| ---- | -------------------------------------- |
+| 1-1  | 英文单词命名，禁止拼音或无意义字母                      |
+| 1-2  | 直观易懂，能描述功能或有意义                         |
+| 1-3  | 禁止下划线命名法（`car_type` 错误）                |
+| 1-4  | 常量、静态字段、类、结构体、非私有字段、方法 → **大驼峰**（C# 侧） |
+| 1-5  | 私有字段、方法形参、局部变量 → **小驼峰**；私有字段加 `m_` 前缀 |
+| 1-6  | 接口以大写字母 **I** 开头                       |
+| 1-7  | 枚举以大写字母 **E** 开头                       |
+| 1-8  | 函数类命名必须以大写字母                           |
+| 1-9  | 函数命名小驼峰命名，参数命名尽量小驼峰命名                  |
+| 1-10 | 变量命名开头以小写字母，后续以小驼峰命名                   |
 
 ### 1.2 SL 侧代码风格（依标准库与测试用例提炼）
 
@@ -50,7 +50,7 @@
 | 3-3 | 私有字段注释放代码行尾，Space 隔开：`int baseValue = 10; // 基础值` |
 | 3-4 | 方法内代码块用 `//` 分段注释                                 |
 
-SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
+SL 源码内注释（见 §三）：`#` 行注释、`#! ... !#` 块注释。
 
 ### 1.5 提交规范
 
@@ -59,12 +59,15 @@ SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
 
 ### 1.6 关键字使用硬约束
 
-1. 禁止使用关键字作任何标识符（变量/方法/类/参数名），完整清单见 §2.1。
+1. 禁止使用词法保留关键字作任何标识符（变量/方法/类/参数名），完整清单见 §2.1。
 2. `get` / `set` 是属性访问器关键字，禁作成员名和方法名（词法阶段即报错）。
-3. 小写容器糖名（`map` `list` `stack` `hashset` `queue` `tuple` `array` `range`）与 Result 保留名（`error` `errmsg`）：**可作局部变量/参数名，禁止作类成员声明名**（字段/方法/getter/setter，LID 11042）。`async` 不是保留字，按普通标识符处理。
-4. 循环跳出统一用 `continue` / `break`；`next` 只在 switch case 体内表示显式贯穿，勿在循环内用 `next` 代替 `continue`。
-5. 优先用语法糖保持简洁：`ret`、`a ?? b`、`a?.member`、`$var` / `${expr}` 插值；同一文件内风格一致。
-6. 协程中用 `await` / `spawn` / `yield` 语法糖，不要手写等价的 `Coroutine.awaitTask(...)` / `Coroutine.spawnClosureN(...)` / `Coroutine.yieldNow()`。
+3. `global` / `local` 是作用域体系关键字（`global.xxx` 前缀 / `local { }` 块），禁作标识符。
+4. 小写容器糖名（`map` `list` `stack` `hashset` `queue` `tuple` `array` `range`）与 Result 保留名（`error` `errmsg`）：**可作局部变量/参数名，禁止作类成员声明名**（字段/方法/getter/setter，LID 11042）。`async` 不是保留字，按普通标识符处理。
+5. 循环跳出统一用 `continue` / `break`；`next` 只在 switch case 体内表示显式贯穿，勿在循环内用 `next` 代替 `continue`。
+6. 返回语句统一用 `ret`；写 `return` 词法层直接报错。
+7. 优先用语法糖保持简洁：`ret`、`a ?? b`、`a?.member`、`$var` / `${expr}` 插值；同一文件内风格一致。
+8. 协程中用 `await` / `spawn` / `yield` 语法糖，不要手写等价的 `Coroutine.awaitTask(...)` / `Coroutine.spawnClosureN(...)` / `Coroutine.yieldNow()`。
+9. 成员名需避开**当前文件 `import` 下可索引到的类名/命名空间名**（裸名解析 import 平面先于类成员命中，重名会被遮蔽；如 `import Std;` 后成员名不能用 `Std`）。jsonc 注入成员（`global.data` / `global.macro` / `dllImports`）走限定名访问，不受此约束。
 
 ### 1.7 Core 库使用规范
 
@@ -81,27 +84,49 @@ SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
 
 ### 2.1 词法保留关键字（禁作任何标识符）
 
-**声明与结构**：`typealias`、`import`、`as`、`is`、`isnot`、`namespace`、`class`、`extends`、`interface`、`abstract`、`enum`、`data`、`dynamic`、`void`、`extern`、`bind`、`label`
+**声明与结构**：`typealias`、`import`、`as`、`is`、`isnot`、`namespace`、`class`、`extends`、`interface`、`abstract`、`enum`、`data`、`dynamic`、`void`、`extern`（FFI 外部声明；类级显式导出标记）、`bind`、`label`、`global`、`local`
 
-**修饰符**：`public`、`protected`、`private`、`const`、`mut`、`final`、`static`、`partial`、`override`、`operator`、`params`、`tr`（Transience 保留字，当前无实际用例）
+**修饰符**：`public`、`protected`、`private`、`const`、`mut`、`final`、`static`、`inline`（内联标记）、`partial`、`override`、`operator`、`params`、`tr`（Transience 保留字，当前无实际用例）
 
-**控制流**：`if`、`elif`、`else`、`while`、`dowhile`、`for`、`in`、`out`、`switch`、`case`、`default`、`next`、`continue`、`break`、`goto`、`ret`
+**控制流**：`if`、`elif`、`else`、`while`、`dowhile`、`for`、`in`（遍历；泛型逆变标注）、`out`（泛型协变标注）、`switch`、`case`、`default`、`next`、`continue`、`break`、`goto`、`ret`
 
 **异常**：`try`、`catch`、`finally`、`throw`、`throws`、`checked`、`unchecked`
 
 **对象 / 值 / 协程**：`new`、`var`、`this`、`base`、`null`、`true`、`false`、`get`、`set`、`function`、`await`、`spawn`、`yield`
 
-**类型词（保留，映射类型类）**：`object` `byte` `sbyte` `short` `ushort` `int` `uint` `long` `ulong` `bool` `half` `float` `double` `string`
+**类型词（保留，映射类型类）**：`object`（含 `Object`） `byte` `sbyte` `short` `ushort` `int` `uint` `long` `ulong` `bool` `half` `float` `double` `string`
 
-### 2.2 非词法保留（可作局部变量名，禁作类成员名）
+### 2.2 词法层拦截的外来关键字（写了直接报错 + 改写指引）
 
-| 词                                                              | 说明                                                                   |
-| -------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `map` `list` `stack` `hashset` `queue` `tuple` `array` `range` | 小写容器构造糖。糖只劫持**链首裸调用**，不影响 `obj.map(...)` 与变量引用；但作类成员名声明即报错 LID 11042 |
-| `error` `errmsg`                                               | Result 机制保留名，同上禁作类成员名                                                |
-| `async`                                                        | 已禁用，按普通标识符处理                                                         |
+| 拦截词                 | SL 正确写法                           |
+| ------------------- | --------------------------------- |
+| `return`            | `ret;` / `ret 表达式`                |
+| `foreach`           | `for ( x in collection )`         |
+| `using` / `include` | `import`                          |
+| `elseif`            | `elif`                            |
+| `struct`            | `data` / `class`                  |
+| `let`               | `var` 或显式类型声明                     |
+| `raise`             | `throw`                           |
+| `lambda`            | `function` 表达式或 `x => expr`       |
+| `def`               | 函数直接以名称声明                         |
+| `package`           | `namespace`                       |
+| `impl`              | `class` + `extends` / `interface` |
+| `trait`             | `interface`                       |
+| `pub`               | `public`                          |
+| `unless`            | `if not ( ... )`                  |
+| `until`             | `while not ( ... )`               |
 
-### 2.3 类型词 → 实际类型映射
+> `@csharp(){}` 等内嵌语言块体内的 `using` / `return` 等**不受拦截影响**（块体按原样捕获）。
+
+### 2.3 非词法保留（可作局部变量名，禁作类成员名）
+
+| 词                                                              | 说明                                                                              |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `map` `list` `stack` `hashset` `queue` `tuple` `array` `range` | 小写容器构造糖。词法按普通标识符处理；糖只劫持**链首裸调用**，不影响 `obj.map(...)` 与变量引用；但作类成员声明名即报错 LID 11042 |
+| `error` `errmsg`                                               | Result 机制保留名，同上禁作类成员名                                                           |
+| `async`                                                        | 已禁用，按普通标识符处理                                                                    |
+
+### 2.4 类型词 → 实际类型映射
 
 | 类型词                 | 类型       | 类型词      | 类型        |
 | ------------------- | -------- | -------- | --------- |
@@ -113,7 +138,7 @@ SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
 | `int`               | `Int32`  | `double` | `Float64` |
 | `uint`              | `UInt32` | `string` | `String`  |
 
-### 2.4 运算符与特殊符号
+### 2.5 运算符与特殊符号
 
 | 符号                | 用途                              |
 | ----------------- | ------------------------------- |
@@ -133,22 +158,22 @@ SL 源码内注释（见 §三 3.6）：`#` 行注释、`#! ... !#` 块注释。
 
 ## 三、语法糖总表
 
-| 糖                                                                                                      | 展开为 / 语义                                                                      |
-| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| `ret`                                                                                                  | `return`                                                                      |
-| `next`（switch case 体内）                                                                                 | 显式贯穿到下一个 case（不写则隐式 break）                                                    |
-| `yield;`                                                                                               | `Coroutine.yieldNow()`                                                        |
-| `await expr`                                                                                           | `Coroutine.awaitTask(expr)`                                                   |
-| `spawn f(实参...)`                                                                                       | `Coroutine.spawnClosureN(...)`（挂起当前协程，异步执行 f）                                 |
-| `static if / static elif / static else`                                                              | **已废弃**（LID 21467 报错，退化为普通 `if`）：成员/类裁剪改用 `@Exclude` attribute（PreCompile），整文件剔除用 jsonc `compileFiles.ignore`，详见 `md/project/static-if.md` |
-| `try? expr` / `try! expr`                                                                              | try 的表达式前缀形式                                                                  |
-| `a ?? b` / `a?.member`                                                                                 | 判空合并 / 判空访问                                                                   |
-| `a..b`                                                                                                 | 构造 `Range`                                                                    |
-| `x => expr`                                                                                            | lambda                                                                        |
-| `a === b` / `a !== b`                                                                                  | 值等 / 值不等                                                                      |
-| `$var` / `$obj.member` / `${expr}`                                                                     | 字符串插值；三引号 `f"""x=${expr}"""` 仅支持 `${expr}`                                    |
-| `@Nickname`                                                                                            | Core 内注册短别名：`coro` = `Coroutine`、`Float8_E4M3` = `Float8`                     |
-| `map(...)` `list(...)` `stack(...)` `hashset(...)` `queue(...)` `tuple(...)` `array(...)` `range(...)` | 链首裸调用时展开为对应容器构造（`Map(...)` / `List(...)`…）                                    |
+| 糖                                                                                                      | 展开为 / 语义                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ret`                                                                                                  | `return` 语句（`return` 本身词法拦截）                                                                                                                      |
+| `next`（switch case 体内）                                                                                 | 显式贯穿到下一个 case（不写则隐式 break）                                                                                                                        |
+| `yield;`                                                                                               | `Coroutine.yieldNow()`                                                                                                                            |
+| `await expr`                                                                                           | `Coroutine.awaitTask(expr)`                                                                                                                       |
+| `spawn f(实参...)`                                                                                       | `Coroutine.spawnClosureN(...)`（挂起当前协程，异步执行 f）                                                                                                     |
+| `static if / static elif / static else`                                                                | **编译期条件编译**（基于 `global.macro` 宏数据面）：条件编译期求值，只把选中分支接入语句链，未选中分支不参与语义分析与 IR。语句级构造（函数体内），elif/else 必须同带 `static`；详见 §4.22 与 `md/project/static-if.md` |
+| `try? expr` / `try! expr`                                                                              | try 的表达式前缀形式                                                                                                                                      |
+| `a ?? b` / `a?.member`                                                                                 | 判空合并 / 判空访问                                                                                                                                       |
+| `a..b`                                                                                                 | 构造 `Range`（仅数字字面量；不能 Cast 成数组）                                                                                                                    |
+| `x => expr`                                                                                            | lambda                                                                                                                                            |
+| `a === b` / `a !== b`                                                                                  | 值等 / 值不等                                                                                                                                          |
+| `$var` / `$obj.member` / `${expr}`                                                                     | 字符串插值；三引号 `f"""x=${expr}"""` 仅支持 `${expr}`                                                                                                        |
+| `@Nickname`                                                                                            | Core 内注册短别名：`coro` = `Coroutine`、`Float8_E4M3` = `Float8`                                                                                         |
+| `map(...)` `list(...)` `stack(...)` `hashset(...)` `queue(...)` `tuple(...)` `array(...)` `range(...)` | 链首裸调用时展开为对应容器构造（`Map(...)` / `List(...)`…）                                                                                                        |
 
 ***
 
@@ -182,21 +207,14 @@ Project                      # 工程块：静态成员 + 函数
         ...
     }
 
-    _before_() { }      # 编译前钩子
+    _before_() { }      # 编译前钩子（global.macro 唯一合法修改点）
     _after_()  { }      # 编译后钩子（导出 IR 前）
-}
-
-ProjectEnter                 # 工程级全局函数入口区
-{
-    MyFunc( int[] arr )
-    {
-        ...
-    }
 }
 ```
 
 - `Project{}` 成员通过 **`global.xxx`** 访问（`global.println(...)`、`global.Pi`）。
 - jsonc `global.data` 注入数据：`global.var1`、`global.arrvar1[0]`、`global.vardata2.a`。
+- jsonc `global.macro` 注入宏：`global.macro.<name>`（编译期定稿，运行期只读），见 §4.22。
 
 ### 4.2 作用域体系（四层）
 
@@ -213,6 +231,7 @@ ProjectEnter                 # 工程级全局函数入口区
 - 编译器生成 `<FileName>_Local` 类，变量提升为实例成员，函数成为实例成员函数，初始化语句进 `__local_init__()`。
 - 执行时机：类静态成员与 const 初始化之后、`_main_()` 前部，按 jsonc `compileFiles.files.priority` 顺序（数值小先执行）。
 - 多文件可各自写 `local{}` 且可重名，互不冲突。
+- `local.xxx` 只访问本文件 local 块的成员。
 
 ### 4.3 namespace
 
@@ -271,7 +290,7 @@ ClassDefineChild extends ClassDefineBase          # 继承
 要点：
 
 - 类声明可省略 `class` 关键字（`ForTest { ... }` 即类）；jsonc `compile.isForceUseClassKey` = true 时强制写。
-- 访问修饰符：`public` / `private` / `internal` / `projected`；其他修饰符 `static` `final` `partial` `abstract` `override`。
+- 访问修饰符：`public` / `private` / `internal` / `projected`；其他修饰符 `static` `final` `partial` `abstract` `override` `inline`。
 - setter 手写格式：`set a( int v ) { this.DA2.a = v }`（bind 冲突场景形参可无类型）。
 - 实例化：`ClassDefineChild(11, 22)` 直接构造调用，或 `new()`（带泛型推断，如 `List<InterfaceClass1> listc1 = new()`）。
 - 继承用 `extends`；**实现接口用** **`interface`** **关键字**（不是 implements）：
@@ -279,6 +298,8 @@ ClassDefineChild extends ClassDefineBase          # 继承
 ```sl
 class MultiImpl extends Base interface IA, IB { }
 ```
+
+- `extern class/data/enum`：类级显式导出标记（恒导出，用于库/模块开发）。
 
 ### 4.5 interface
 
@@ -317,6 +338,8 @@ for v in SwitchColor { }      # 枚举遍历；v.index / v.name / v.value 访问
 for b3 in ESeason.values { }   # 值表遍历
 ```
 
+`extends` 底层类型仅允许：内置整型 / `string` / `data` / `Error`。
+
 ### 4.7 data
 
 ```sl
@@ -348,6 +371,7 @@ bc.name = "hahah"                        # get/set 代理：直接访问被绑�
 bc.BookData.name = "bind-name-access"     # 限定名访问（多 bind 消歧）
 ```
 
+- **只有 class / interface 可用 bind**（data / enum 不行）。
 - bind 相当于自动注入 `_+数据名` 成员（`BookC bind BookData` ≈ `BookData _BookData = new()`），并自动生成 `get name()` / `set name(...)` 等代理方法。
 - 同名字段冲突时需手写 get/set：
 
@@ -356,7 +380,7 @@ get int a() { ret this.DA2.a }
 set a( int v ) { this.DA2.a = v }
 ```
 
-- `_init_` 可重载（BindExpandManager 处理）；interface 也可 bind。
+- `_init_` 可重载（BindExpandManager 处理）。
 
 ### 4.9 变量与字面量
 
@@ -370,6 +394,8 @@ Int64 i64 = 900000000000
 Float32 f = 1.0f
 Float64 d = 1.0d
 ```
+
+- 变量**先定义再使用**，**声明即初始化**；`var` 仅限局部变量（不能作类字段/参数/返回类型）。
 
 数值字面量后缀：
 
@@ -526,6 +552,8 @@ r1.step( 1 )                          # 步长写法一：方法调用
 r4.step = 2                           # 步长写法二：属性赋值
 ```
 
+- `..` 左闭右开（`isContain` 控制开区间语义）；`..` 仅接受**数字字面量**两侧；Range 不能 Cast 成数组。
+
 ### 4.14 Result 机制
 
 ```sl
@@ -546,7 +574,7 @@ static Result<int> retValueT() { ret 200 }    # 泛型 Result
 Result r = retValueT()                 # 协变赋值：Result<T> 可赋给 Result
 ```
 
-- `ret 表达式` 在 Result 函数内自动改写为 `result.value = 表达式; ret result`。
+- 返回类型为 `Result` / `Result<T>` 的函数自动注入 `result` 变量；`ret 表达式` 自动改写为 `result.value = 表达式; ret result`。
 - 无 ret 路径时 epilogue 兜底返回 result。
 - `error` / `errmsg` 是 Result 机制保留名（禁作类成员名）。
 
@@ -570,7 +598,7 @@ m._getItem_( 1 )
 **构造（含小写糖）**：
 
 ```sl
-Array<Int32> arr = Array<Int32>.create(10)    # 或 Int32[] 声明
+Array<Int32> arr = Array<Int32>.create(10)    # 或 Int32[] 声明；Array<T> / T[] / ObjectArray 等价
 m = map()                # Map<Object,Object>；m8 = map( 8 )；mi = map<int,string>()
 l = list()               # li = list<int>()
 s = stack()               # st = hashset( 10 )
@@ -585,7 +613,7 @@ r = range(1, 10)
 
 | 容器              | 底层 / 语义要点                                                                                                 |
 | --------------- | --------------------------------------------------------------------------------------------------------- |
-| `Array<T>`      | 连续存储；`fill(v)`、`current`；**不协变**（int\[] 不能赋 object\[]）                                                    |
+| `Array<T>`      | 连续存储；`fill(v)`、`current`；**不协变**（int[] 不能赋 object[]）；多维数组推荐逐维全 `[]` 声明                                    |
 | `List<T>`       | 底层与 Array 同构 **O(n) 非哈希**；add/insert/remove/indexOf/contains/getRange/toArray/capacity；非法下标**静默忽略**；非线程安全 |
 | `Map<T1,T2>`    | 底层 O(n) 线性；**add 是 TryAdd 语义**（key 已存在不覆盖），`map[k]=v` 是 put 语义；getOrDefault/putIfAbsent；key 不存在返回 null    |
 | `HashSet<T>`    | **哈希桶**；union/intersection/difference/symmetricDifference/setEquals；不存 null；顺序不保证                         |
@@ -602,6 +630,7 @@ r = range(1, 10)
 yield;                        # 让出
 await taskHandle              # 等待 Task
 spawn setFlagFn()             # 异步执行（挂起当前协程）
+await spawn work(1, 2)        # 组合：spawn 返回 Task 句柄可直接 await
 
 # Task 句柄：handle / awaitTask / cancel / status / isDead
 # Channel<T>：协程间通道
@@ -631,7 +660,8 @@ if t is string str2 { }                         # is / isnot 类型判断（可�
 dynamic d = ...                                 # 动态类型
 ```
 
-- 浮点家族：`Float8`（别名 `Float8_E4M3`）、`Float8_E5M2`、`Float16`、`Float16_Brain`、`Float32`、`Float64`。
+- `.type` 取类型对象（反射）：`Type` 成员 `eType` / `metaClass` / `typelist` / `toString()`；类型比较、与 is/as 的区别见 `md/syntax/type.md` 与 `md/lib/Core/Type.md`。
+- 浮点家族：`Float8`（别名 `Float8_E4M3`）、`Float8_E5M2`、`Float16`、`Float16_Brain`、`Float32`、`Float64`（详见 `md/syntax/float8_16.md`）。
 - `Num`：通用数值抽象基类，双精度存储，不支持位运算。
 
 ### 4.20 系统方法（systemCalls）
@@ -648,6 +678,52 @@ dynamic d = ...                                 # 动态类型
 | ② FFI                  | `@DllImport` 声明 + native 库符号直调 |
 | ③ systemCalls → 扩展 DLL | 注册进扩展库模块                       |
 | ④ systemCalls → 主工程符号  | 注册进主工程（C VM 内直连）               |
+
+### 4.22 编译期条件 static if（global.macro 宏数据面）
+
+`static if / static elif / static else` 是**编译期条件编译**：条件在 MetaCore 层求值，只把选中分支按原顺序平铺接入语句链，**未选中分支不参与语义分析与 IR**（里面的符号未定义也不报错——这正是"按平台裁剪"的用法）。
+
+```sl
+Project
+{
+    _main_()
+    {
+        static if global.macro.platform == "Win32"
+        {
+            SystemPrintln( "windows branch selected" )
+        }
+        static elif global.macro.platform == "Linux"
+        {
+            SystemPrintln( "linux branch selected" )
+        }
+        static else
+        {
+            SystemPrintln( "other branch selected" )
+        }
+    }
+}
+```
+
+规则与限制：
+
+| 项          | 内容                                                                                                              |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 位置         | **语句级**构造，写在函数体内；**不能**用于类成员层裁剪（成员级隔离用 `@Exclude` attribute，无条件、PreCompile 时点）                                  |
+| 条件操作数      | 仅 `global.macro.X` **裸引用**（不带调用/下标/模板）与**常量**（布尔/数值/字符串）；条件整体必须为布尔（布尔宏可直引：`static if global.macro.useFastMath`） |
+| 运算符        | 比较 `==` `!=` `<` `<=` `>` `>=`（`<` 系仅限数值）；逻辑 `&&` `\|\|` `!`（一元前缀）                                              |
+| follow 一致性 | `static if` 的 `elif` / `else` **必须同带 `static`**；普通 `if` 分支不允许带 `static`（违者 LID 23008）                           |
+| 类型一致       | 比较两侧操作数类型必须一致（LID 23004）；`<` 系用于非数值报 LID 23003                                                                  |
+| 未定义宏       | LID 23001；条件出现宏引用之外的语法（调用/算术等）报 LID 23002                                                                       |
+
+宏值来源与优先级（低 → 高）：
+
+```
+jsonc global.macro 初值 < 环境变量 SL_MACRO_* < CLI --macro / 宿主 SetExternalMacro < _before_() 钩子编译期修改
+```
+
+- 宏唯一合法修改点是 `.sp` 的 `_before_(){}` 内 `global.macro.X = <常量>`；其他位置赋值报 LID 23006。
+- 运行期 `global.macro.<name>` 只读访问编译定稿值。
+- 全量细节（jsonc 配置 / 外部注入 / 编译流程 / 错误码 23000\~23009）：`md/project/static-if.md`。
 
 ***
 
@@ -676,7 +752,7 @@ dynamic d = ...                                 # 动态类型
 | 字节     | `ByteBuffer` `ByteStream`(abstract) `MemoryStream` `LengthPrefix`                                                                                |
 | Stream | `Stream`(abstract) `Stream<T>`(abstract) `StreamIterator<T>` `StreamSubscription` `StreamController<T>` `StreamSink<T>` `StreamTransformer<S,T>` |
 | Codec  | `ChunkedConversionSink` `Converter<S,T>` `Codec<S,T>` `ProtoCodec` `ProtoCodec<T>`                                                               |
-| 其他     | `Attribute` `Nickname` `AOT` `Error` 及 `CoreError` `MathOpError` `BufferError` `StreamIOError` `SeekOrigin` `Lz4Error` 等错误枚举      |
+| 其他     | `Attribute` `Nickname` `AOT` `Error` 及 `CoreError` `MathOpError` `BufferError` `StreamIOError` `SeekOrigin` `Lz4Error` 等错误枚举                     |
 
 > `_` 下划线开头的实现类（如 `_MapStream<T>`）是 Core 内部私有类，禁用。
 
@@ -700,7 +776,7 @@ dynamic d = ...                                 # 动态类型
 | 6  | `waitAll(params Array<Task>)` 与 `waitAny(params Task[])` 参数形式不一致是**历史现状，勿统一**（会破坏 SL 侧调用点）                          |
 | 7  | 容器糖名 / `error` / `errmsg` 禁作类成员声明名（LID 11042）；局部变量与参数不受限                                                            |
 | 8  | `next` 只用于 switch 贯穿；循环内用 `continue` / `break`                                                                      |
-| 9  | `async` 已禁用，按普通标识符处理；`let` / `!if` / `!else` / `!endif` / `float2` 词法已移除                                                  |
+| 9  | `async` 已禁用，按普通标识符处理；`let` / `!if` / `!else` / `!endif` / `float2` 词法已移除                                            |
 | 10 | `LinkedList<T>` 在 **Std 模块**，用前 `import Std;`                                                                       |
 | 11 | `throw` 只能抛 `enum extends Error`，且函数需 `throws` 声明；try 捕获载体是 `label{} catch{}`                                       |
 | 12 | `Tuple` 不支持匿名 `()` 字面量，须用构造                                                                                         |
@@ -708,19 +784,22 @@ dynamic d = ...                                 # 动态类型
 | 14 | `Map` key 不存在返回 `null`（非报错）；`List` 非法下标**静默忽略**                                                                     |
 | 15 | `tr` 是保留字（当前无实际用例），禁作标识符                                                                                            |
 | 16 | 行尾分号默认可选；`i++` / `+=` 需 jsonc `compile.isSupportDoublePlus` 开启                                                      |
+| 17 | `static if` 是**语句级**构造（函数体内），不能裁剪类成员；成员级隔离用 `@Exclude`；elif/else 必须同带 `static`（LID 23008）                           |
+| 18 | `global` / `local` / `inline` 是词法保留关键字，禁作标识符；成员名避开 import 平面可索引到的类名/命名空间名                                           |
+| 19 | `bind` 仅 class / interface 可用（data / enum 不行）；`..` 仅数字字面量，Range 不能 Cast 成数组                                         |
 
 ***
 
 ## 附：本文未覆盖、需查单篇文档的主题
 
-| 主题                       | 文档                                         |
-| ------------------------ | ------------------------------------------ |
-| 深入排障 / 产物结构              | `md/ai/故障排查流程.md`、`md/ai/EXPORT_PATHS.md`  |
-| jsonc 工程配置全量关键字          | `md/project/project-config-jsonc-guide.md` |
-| `.sp` 入口与 global.data 细节 | `md/project/project_sp-guide.md`           |
-| Environment 平台环境全量       | `md/project/environment-guide.md`          |
-| FFI 落地用法                 | `md/project/ffi.md`                        |
-| 协程权威（实现版）                | `md/syntax/coroutine.md`                   |
-| 各语法单篇语义细节                | `md/syntax/<特性>.md`                        |
-| 测试集 ↔ 宿主工程对照             | `md/project/test-guide.md`                 |
-
+| 主题                          | 文档                                         |
+| --------------------------- | ------------------------------------------ |
+| 深入排障 / 产物结构                 | `md/ai/故障排查流程.md`、`md/ai/EXPORT_PATHS.md`  |
+| jsonc 工程配置全量关键字             | `md/project/project-config-jsonc-guide.md` |
+| `.sp` 入口与 global.data 细节    | `md/project/project_sp-guide.md`           |
+| Environment 平台环境全量          | `md/project/environment-guide.md`          |
+| FFI 落地用法                    | `md/project/ffi.md`                        |
+| static if / global.macro 全量 | `md/project/static-if.md`                  |
+| 协程权威（实现版）                   | `md/syntax/coroutine.md`                   |
+| 各语法单篇语义细节                   | `md/syntax/<特性>.md`                        |
+| 测试集 ↔ 宿主工程对照                | `md/project/test-guide.md`                 |

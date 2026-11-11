@@ -7,8 +7,8 @@
 ```sl
 class Point
 {
-    int x
-    int y
+    int x = 0
+    y = 0
 }
 ```
 
@@ -22,8 +22,8 @@ class Point
 ```sl
 class Point
 {
-    int x
-    int y
+    x = 0
+    y = 0
 
     void _init_(int x, int y)
     {
@@ -34,7 +34,7 @@ class Point
 
 function main()
 {
-    Point p = new Point(10, 20)   # 必须写 new
+    Point p = new(10, 20)   # 必须写 new
     Console.println(p.x)
 }
 
@@ -46,11 +46,11 @@ main()
 
 ## 3. 创建对象
 
-- **必须写 `new`**：`new Point(10, 20)` 合法；`Point(10, 20)` 不合法。
+- **必须写 `new`**：`Point(10, 20)` 合法；`Point(10, 20)` 不合法。
 - **字面初始化**：构造后立刻给字段赋值，用 `{ 字段 = 值 }`：
 
 ```sl
-Point p2 = new Point(0, 0){ x = 5 }
+Point p2 = new(0, 0){ x = 5 }
 ```
 
 - **空对象**：`new Object()` 得到一个无字段的基类对象，可后续当字典用。
@@ -64,10 +64,10 @@ class Counter
 {
     int _n = 0
 
-    int get count() { ret _n }
+    int get count() { ret this._n }
     void set count(int v)
     {
-        if (v >= 0) _n = v
+        if (v >= 0) { this._n = v }
     }
 }
 
@@ -105,7 +105,7 @@ class Dog : Animal
 
 function main()
 {
-    Dog d = new Dog()
+    Dog d = new()
     d.speak()            # 输出 woof
 }
 
@@ -126,10 +126,10 @@ class Account
 
     public void deposit(int amount)
     {
-        balance = balance + amount
+        this.balance = this.balance + amount
     }
 
-    public int getBalance() { ret balance }
+    public int getBalance() { ret this.balance }
 }
 ```
 
@@ -138,7 +138,7 @@ class Account
 ## 7. 类型判断与转换（is / as）
 
 ```sl
-Object obj = new Point(1, 2)
+Object obj = new(1, 2)
 
 if (obj is Point)
 {
@@ -159,13 +159,13 @@ namespace Geometry
 {
     class Point
     {
-        int x
-        int y
+        x = 0
+        y = 0
     }
 }
 
 # 使用带命名空间的全名
-Geometry.Point p = new Geometry.Point(1, 2)
+Geometry.Point p = new(1, 2)
 ```
 
 ## 9. 常见写法与注意点
@@ -175,7 +175,7 @@ Geometry.Point p = new Geometry.Point(1, 2)
 - 所有对象都派生自 `Object`，因此 `Object` 上的通用方法（如 `equals`、`toString`、`getTypeName`、`hashCode`）都可调用：
 
 ```sl
-Point p = new Point(1, 2)
+Point p = Point(1, 2)
 Console.println(p.toString())
 Console.println(p.getTypeName())
 ```

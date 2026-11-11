@@ -17,9 +17,6 @@ interface IFly
     {
         ret 100
     }
-
-    # 数据成员只声明类型
-    int version
 }
 ```
 
@@ -31,7 +28,7 @@ interface IFly
 类用 `: 接口名` 声明「实现该接口」，并把接口要求的成员全部补上。
 
 ```sl
-class Bird : IFly
+class Bird extends IFly
 {
     int version = 1
 
@@ -58,7 +55,7 @@ class Bird : IFly
 ```sl
 function main()
 {
-    Bird b = new Bird()
+    Bird b = new()
     IFly f = b as IFly      # 以接口视角看待这个对象
     f.fly()                 # 调用 Bird 的实现
     Console.println(f.maxAltitude())
@@ -79,12 +76,12 @@ interface IAnimal
     void eat()
 }
 
-interface IFly : IAnimal
+interface IFly extends IAnimal
 {
     void fly()
 }
 
-class Bird : IFly
+class Bird extends IFly
 {
     void eat()  { Console.println("bird eating") }
     void fly()  { Console.println("bird flying") }
@@ -99,18 +96,18 @@ interface IShape
     double area()
 }
 
-class Circle : IShape
+class Circle extends IShape
 {
-    double r
+    double r = 0.0d
     void _init_(double r) { this.r = r }
-    double area() { ret 3.14159 * r * r }
+    double area() { ret 3.14159d * r * r }
 }
 
-class Square : IShape
+class Square extends IShape
 {
-    double side
+    double side = 0.0d
     void _init_(double side) { this.side = side }
-    double area() { ret side * side }
+    double area() { ret this.side * this.side }
 }
 
 function printArea(IShape s)
@@ -120,8 +117,8 @@ function printArea(IShape s)
 
 function main()
 {
-    printArea(new Circle(2.0))
-    printArea(new Square(3.0))
+    printArea(Circle(2.0))
+    printArea(Square(3.0))
 }
 
 main()

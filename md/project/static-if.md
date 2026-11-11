@@ -1,13 +1,12 @@
-# global.macro 宏与编译期条件（static if 已废弃）
+# global.macro 宏与编译期条件
 
 > 适用范围：`Front` 工程，`*.sp` / `*.sl` 源码 + `<ProjectName>.jsonc` 工程配置
 >
-> ⚠️ **`static if` / `static elif` / `static else` 编译期条件编译已废弃**（attribute 重构，`csimple_lang/md/design/ATTRIBUTE_DESIGN.md` §7 旧隔离机制收编）：
-> 现在写 `static if` 会报 **LID 21467 Error**，不再做编译期分支裁剪，迁移方式见第 2 节。
+> **`static if` / `static elif` / `static else` 编译期条件编译已恢复**（基于 `global.macro` 宏数据面，仿 D 语言 static if）：条件在编译期求值，只把选中分支接入语句链，未选中分支不参与语义分析与 IR（不进 runtime）。用法见第 2 节。
 >
-> **保留部分**：`global.macro` 宏数据面全套（jsonc 定义 / `_before_()` 钩子编译期修改 / CLI `--macro` / 环境变量 `SL_MACRO_*` / 宿主 API / 运行期只读访问），本文第 3~6 节仍有效。
+> `global.macro` 宏数据面全套（jsonc 定义 / `_before_()` 钩子编译期修改 / CLI `--macro` / 环境变量 `SL_MACRO_*` / 宿主 API / 运行期只读访问）照常可用，本文第 3\~6 节仍有效。
 
----
+***
 
 ## 1. 概述
 
@@ -15,27 +14,60 @@
 
 与 `global.data` 的区别：
 
-| | `global.data` | `global.macro` |
-|---|---|---|
-| 注入形式 | Project 数据成员 `global.<name>` | Project 宏成员 `global.macro.<name>` |
-| 源码内修改入口 | 无（只读） | `.sp` Project 类的 `_before_(){}`（编译期，唯一合法修改点） |
-| 编译前外部注入 | 无 | CLI `--macro` / 环境变量 `SL_MACRO_*` / 宿主 API |
-| 运行期 | 只读 | 只读（值是编译定稿后的最终值） |
+|         | `global.data`                | `global.macro`                               |
+| ------- | ---------------------------- | -------------------------------------------- |
+| 注入形式    | Project 数据成员 `global.<name>` | Project 宏成员 `global.macro.<name>`            |
+| 源码内修改入口 | 无（只读）                        | `.sp` Project 类的 `_before_(){}`（编译期，唯一合法修改点） |
+| 编译前外部注入 | 无                            | CLI `--macro` / 环境变量 `SL_MACRO_*` / 宿主 API   |
+| 运行期     | 只读                           | 只读（值是编译定稿后的最终值）                              |
 
----
+***
 
-## 2. static if 已废弃：迁移指引
+## 2. static if
 
-旧 `static if` 的各用途迁移去向：
+`static if` 是编译期条件编译：条件表达式只允许**宏引用**（`global.macro.X`）与**常量**（布尔/数值/字符串）的比较和逻辑运算，在 MetaCore 层求值，选中的分支子语句按原顺序平铺接入语句链——不引入运行时作用域，未选中分支完全不参与编译。
 
-| 旧用途 | 迁移到 |
-|--------|--------|
-| 按平台/配置裁剪整个成员或类 | `@Exclude` attribute（PreCompile 时点，标注即跳过编译，成员不进 module.json） |
-| 按工程配置剔除整个文件 | jsonc `compileFiles.files[].ignore`（工程级配置，见 `md/project/project-config-jsonc-guide.md`） |
-| 运行期自适应分支 | 普通 `if` + `Environment.current`（见 `md/project/environment-guide.md`） |
-| 读取配置值 | 保留：`global.macro.X` 运行期只读访问 |
+`static if` 是**语句级**构造，写在函数体内（不能用于类成员层的裁剪；成员级无条件隔离用 `@Exclude` attribute）：
 
-`@Exclude` 用法（标准库 `Lib/Core/Exclude.sl`，PreCompile · 全点位）：
+```python
+Project
+{
+    _main_()
+    {
+        static if global.macro.platform == "Win32"
+        {
+            SystemPrintln( "windows branch selected" )
+        }
+        static elif global.macro.platform == "Linux"
+        {
+            SystemPrintln( "linux branch selected" )
+        }
+        static else
+        {
+            SystemPrintln( "other branch selected" )
+        }
+    }
+}
+```
+
+支持的语法：
+
+| 类别   | 形式                                                                                                     |
+| ---- | ------------------------------------------------------------------------------------------------------ |
+| 比较运算 | `==` `!=` `<` `<=` `>` `>=`（`<` 系仅限数值操作数）                                                              |
+| 逻辑运算 | `&&` `\|\|` `!`（`!` 仅一元前缀）                                                                              |
+| 操作数  | `global.macro.X` 宏引用（裸引用，不带调用/下标/模板）、布尔/数值/字符串常量、括号                                                    |
+| 条件整体 | 求值结果必须为布尔；布尔宏可直接作条件：`static if global.macro.useFastMath`                                                |
+
+规则与限制：
+
+- `static if` 的 `elif` / `else` **必须同样带 `static` 修饰**；普通 `if` 的分支不允许带 `static` 修饰（违者报 **LID 23008**）。
+- 比较两侧操作数类型必须一致（布尔对布尔、数值对数值、字符串对字符串），违者报 **LID 23004**；`< <= > >=` 只允许数值比较，违者报 **LID 23003**。
+- 引用未定义宏报 **LID 23001**；条件出现宏引用之外的语法（函数调用、算术运算等）报 **LID 23002**。
+- 求值失败时该 `static if` 整体不接入任何语句（错误已由 MacroManager 记录，编译以 Error 终止）。
+- 未选中分支里的代码**不参与语义分析与 IR**——里面的符号未定义也不会报错，这正是"按平台裁剪"的用法。
+
+`@Exclude` attribute 与 `static if` 的分工：`@Exclude` 是**无条件**的编译前隔离（标注即跳过，PreCompile 时点，标准库 `Lib/Core/Exclude.sl`）；需要**按宏条件**裁剪时用 `static if`。
 
 ```python
 class Foo
@@ -43,15 +75,12 @@ class Foo
     @Exclude
     static winOnlyFun()
     {
-        # 该方法不参与编译，不进 module.json
+        # 无条件隔离：该方法不参与编译，不进 module.json
     }
 }
 ```
 
-- `@Exclude` 当前为 v1 无条件形态（标注即跳过）；条件参数（平台/DEBUG 等常量求值）为后续形态，见 ATTRIBUTE_DESIGN §6.9。
-- 旧代码里的 `static if`：Front 保留 `static` 修饰检测并报 Error（LID 21467），提示改用 `@Exclude` 或 `compileFiles.ignore`；报错后该语句**按普通 `if` 继续解析**（退化为运行期逻辑），不会静默改变语义。
-
----
+***
 
 ## 3. jsonc 配置：global.data 与 global.macro
 
@@ -80,7 +109,7 @@ class Foo
 - `global.data`：注入为 Project 的数据成员，**运行期可读**（`global.greeting`），用于普通数据。
 - `global.macro`：注入为 Project 的宏成员 `global.macro`，**编译期由 `_before_()` 钩子求值消费**（不进 runtime 语句流）；运行期也可以只读访问 `global.macro.platform`（值是编译定稿后的最终值）。
 
----
+***
 
 ## 4. 在 .sp（Project）里修改宏值：_before_() 钩子
 
@@ -119,7 +148,7 @@ Project
   - [HookBeforeExprNegTest](../../test/Other/HookBeforeExprNegTest/HookBeforeExprNegTest.md)：右值表达式 `1 + 2` → 23007，连锁 23006（`-1` 一元负号同根因）；
   - [HookMacroOutsideNegTest](../../test/Other/HookMacroOutsideNegTest/HookMacroOutsideNegTest.md)：`_main_` 内宏赋值 → 23006 单错。
 
----
+***
 
 ## 5. 外部宏注入接口（编译前由外部环境设置）
 
@@ -157,11 +186,11 @@ ProjectManager.Run(spPath, inputArgs);
 
 外部传入的都是字符串，按以下规则推断类型：
 
-| 传入值 | 推断类型 |
-|---|---|
-| `true` / `false` | 布尔（注意：必须小写，`True` 会被当作字符串） |
-| `8` / `2` / `1.5` | 数值 |
-| 其它（如 `Linux`、`x86_64-pc`） | 字符串（原样保留） |
+| 传入值                       | 推断类型                       |
+| ------------------------- | -------------------------- |
+| `true` / `false`          | 布尔（注意：必须小写，`True` 会被当作字符串） |
+| `8` / `2` / `1.5`         | 数值                         |
+| 其它（如 `Linux`、`x86_64-pc`） | 字符串（原样保留）                  |
 
 ### 5.5 优先级链（从低到高）
 
@@ -190,7 +219,7 @@ macro: 外部设置已应用: maxThreads = 2 (cli)
 
 运行期读取定稿值：`global.println(global.macro.platform)` 输出 `Linux`（_before_ 钩子优先级高于外部注入）。
 
----
+***
 
 ## 6. 编译流程（宏在哪一层生效）
 
@@ -210,34 +239,37 @@ jsonc global.macro ───────────────────┼�
 - 语句流中的宏赋值语句被**移除**；其余语句照常编译。
 - 运行期只能通过 `global.macro.<name>` 只读访问定稿值。
 
----
+***
 
 ## 7. 错误码
 
-| LID | 名称 | 含义 |
-|---|---|---|
-| 21467 | FileMetaSyntaxStaticIfDeprecated | `static if` 编译期条件编译已废弃：请改用 `@Exclude` attribute（PreCompile）或工程级 `compileFiles.ignore` |
-| 23001 | ProjectMacroManagerMacroUndefined | `_before_` 钩子引用了未在 `global.macro` 中定义的宏 |
-| 23002 | ProjectMacroManagerNotSupportExpress | `_before_` 钩子宏表达式不支持该语法 |
-| 23005 | ProjectMacroManagerMacroValueInvalid | 宏值不是布尔/数值/字符串 |
-| 23006 | ProjectMacroManagerMacroOnlyModifyInCompileBefore | 在 `_before_()` 之外对 `global.macro` 赋值 |
-| 23007 | ProjectMacroManagerMacroNotConst | 宏赋值右侧不是常量表达式 |
-| 23009 | ProjectMacroManagerExternalMacroApplied | 外部宏注入已应用（Info 日志，标注来源 env/cli，非错误） |
+| LID   | 名称                                                | 含义                                                  |
+| ----- | ------------------------------------------------- | --------------------------------------------------- |
+| 23000 | ProjectMacroManagerIssue                          | MacroManager 内部状态异常                                 |
+| 23001 | ProjectMacroManagerMacroUndefined                 | `static if` / `_before_` 钩子引用了未在 `global.macro` 中定义的宏 |
+| 23002 | ProjectMacroManagerNotSupportExpress              | `static if` / `_before_` 钩子宏表达式不支持该语法               |
+| 23003 | ProjectMacroManagerNotSupportOperate              | `static if` 条件使用了不支持的运算符（`<` 系运算用于非数值等）             |
+| 23004 | ProjectMacroManagerTypeMismatch                   | `static if` 条件操作数类型不一致，或条件整体不是布尔                    |
+| 23005 | ProjectMacroManagerMacroValueInvalid              | 宏值不是布尔/数值/字符串                                       |
+| 23006 | ProjectMacroManagerMacroOnlyModifyInCompileBefore | 在 `_before_()` 之外对 `global.macro` 赋值                |
+| 23007 | ProjectMacroManagerMacroNotConst                  | 宏赋值右侧不是常量表达式                                        |
+| 23008 | FileMetaSyntaxStaticIfFollowKey                   | `static if` 与 `elif`/`else` 的 `static` 修饰不一致        |
+| 23009 | ProjectMacroManagerExternalMacroApplied           | 外部宏注入已应用（Info 日志，标注来源 env/cli，非错误）                  |
 
-（23000 / 23003 / 23004 / 23008 已随 static if 条件求值链一并删除。）
-
----
+***
 
 ## 8. 相关源码位置
 
-| 功能 | 文件 |
-|---|---|
-| jsonc 解析 global.data / global.macro | `source/Front/Project/ProjectJsoncLoader.cs` |
-| 宏值存储、_before_ 钩子赋值求值 | `source/Front/Project/CompileBeforeManager.cs` |
-| 宏成员注入 + _before_ 预扫描 | `source/Front/Project/PorjectClass.cs`（`InjectProjectMacroMember` / `PreScanCompileBeforeMacroAssign`） |
-| `static` 修饰检测（废弃报错 LID 21467） | `source/Front/Parse/StructParseToSyntax.cs` |
-| 非 _before_ 钩子赋值检查 | `source/Front/Core/Statements/MetaAssignStatements.cs` |
-| CLI `--macro` / `-m` 参数解析 | `source/Front/CLI/CommandInputArgs.cs`（`macroDefines` / `TryAddMacroDefine`） |
-| 外部宏接线（CLI → CompileBeforeManager） | `source/Front/Project/ProjectManager.cs`（`Run`） |
-| `@Exclude` 处理器（PreCompile 跳过） | `source/Front/Core/AttributeManager.cs`（`RegisterPreCompileExcludeHandler` / `ShouldExcludeByPreCompileAttribute`）、`Lib/Core/Exclude.sl` |
-| 错误码定义 | `source/Front/Log/LID.cs`、`source/Front/Log/ErrorDefinitions.csv` |
+| 功能                                  | 文件                                                                                                                                       |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| jsonc 解析 global.data / global.macro | `source/Front/Project/ProjectJsoncLoader.cs`                                                                                             |
+| 宏值存储、_before_ 钩子赋值求值、static if 条件求值 | `source/Front/Project/CompileBeforeManager.cs`（`EvaluateStaticCondition` 及其求值链）                                                         |
+| 宏成员注入 + _before_ 预扫描                | `source/Front/Project/PorjectClass.cs`（`InjectProjectMacroMember` / `PreScanCompileBeforeMacroAssign`）                                   |
+| `static if` 解析（Parse 层）             | `source/Front/Parse/StructParseToSyntax.cs`（`isStaticModifier` / follow 一致性校验 LID 23008）                                                 |
+| `static if` 类型定义（FileMeta 层）        | `source/Front/FileMeta/FileMetaSyntax.cs`（`FileMetaKeyStaticIfSyntax`）                                                                   |
+| `static if` 编译期分支接入（MetaCore 层）     | `source/Front/Core/MetaMemberFunction.cs`（`HandleMetaSyntax` 的 `FileMetaKeyStaticIfSyntax` 分支）                                           |
+| 非 _before_ 钩子赋值检查                   | `source/Front/Core/Statements/MetaAssignStatements.cs`                                                                                   |
+| CLI `--macro` / `-m` 参数解析           | `source/Front/CLI/CommandInputArgs.cs`（`macroDefines` / `TryAddMacroDefine`）                                                             |
+| 外部宏接线（CLI → CompileBeforeManager）   | `source/Front/Project/ProjectManager.cs`（`Run`）                                                                                          |
+| `@Exclude` 处理器（PreCompile 跳过）       | `source/Front/Core/AttributeManager.cs`（`RegisterPreCompileExcludeHandler` / `ShouldExcludeByPreCompileAttribute`）、`Lib/Core/Exclude.sl` |
+| 错误码定义                               | `source/Front/Log/LID.cs`、`source/Front/Log/ErrorDefinitions.csv`                                                                        |

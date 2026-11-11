@@ -67,14 +67,14 @@ long l = n.ToInt64()       # 方法形式转换
 
 ```sl
 Num n = readUserInput()     # 来源不确定
-if (n.IsInt())
+if (n is int)
 {
-    int v = n.ToInt32()
+    int v = n.toInt32()
     Console.println("整数：" + v)
 }
 else
 {
-    double v = n.ToDouble()
+    double v = n.toFloat64()
     Console.println("小数：" + v)
 }
 ```

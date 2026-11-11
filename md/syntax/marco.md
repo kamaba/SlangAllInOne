@@ -63,7 +63,7 @@ Console.println("version = " + global.macro.appVersion)
 ```sl
 function log(string msg)
 {
-    if (global.macro.enableLog)
+    static if (global.macro.enableLog == true)
     {
         Console.println("[${global.macro.buildTag}] " + msg)
     }

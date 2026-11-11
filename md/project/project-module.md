@@ -34,9 +34,9 @@ class_name  #这里就是类的定义
 ```javascript
 Class1
 {
-    Class1( p1 )
+    _init_( p1 )
     {
-        m1 = p1;
+        this.m1 = p1;
     }
     m1 = 10;
 }

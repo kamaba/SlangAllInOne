@@ -1,8 +1,8 @@
 {
   "project":
   {
-    "name": "SLang.Render",
-    "desc": "Render library - scene/math helpers, meshes, materials, camera/light, render pipeline (Float32-based, backed by Math lib)",
+    "name": "SLangRender",
+    "desc": "Offscreen GPU render library module - namespace SLang: Render (entry + native bindings) / RenderContext (FBO render target), backed by sl_render_lib.dll (WGL hidden window + OpenGL 3.3 core context, zero toolkit dependency - opengl32.dll resolved at runtime)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -11,11 +11,33 @@
   "source": {
     "root": "."
   },
-  "systemCalls":
+  // FFI 导入表（jsonc "dllImports" 段）。"static" 非空（静态注册名）时 cvm 加载
+  // SL 模块即预载该库并注册进 FFI.StaticLibrary，@DllStaticImport("sl_render_lib",
+  // "slr_init") 静态调用点由 cvm 装配期 attribute 注册表改写为 CallFFIStatic(77)
+  // 直调绑定表。绑定失败（库未注册 / 符号缺失）时回退 SL 函数体兜底（返回
+  // -1/false/0，initialize() == false 即兜底征兆）。"alias" 仍供 @DllImport
+  // 三参形式按别名解析 path（运行时相对进程 CWD 解析）。
+  "dllImports":
   [
-    // Render.sl / Shader.sl / Texture.sl -> SystemCallExternalFunction("Render.xxx", ...)
-    // 由具体渲染后端（OpenGL/Vulkan/D3D11…）注册实现
+    { "path": "sl_render_lib.dll", "name": "sl_render_lib", "alias": "sl_render_lib", "static": "sl_render_lib" }
   ],
+  // vmDlls 构建规则：导出 SL 模块时，Front 用 MSBuild 编译 project 指向的 VS 工程
+  // （路径相对本 jsonc 所在目录），并把产出的 sl_render_lib.dll 拷贝到与
+  // SLangRender.module.json 相同的目录（out/export/SLangRender/），即上方
+  // dllImports 别名指向的位置。
+  // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Render\cvm_sl_render_lib\sl_render_lib.c
+  // （FFI 普通 C ABI：slr_*）。零外部依赖：WGL（wglCreateContextAttribsARB /
+  // wglChoosePixelFormatARB）与 GL 3.3 core 函数（glCreateShader / glDrawArrays /
+  // glReadPixels ...）全部运行期从 opengl32.dll（系统自带）LoadLibrary +
+  // wglGetProcAddress / GetProcAddress 解析，构建与运行均不需要 OpenGL SDK
+  // 头文件或 .lib，产物 DLL 自包含。渲染走隐藏窗口 + FBO 离屏目标，回读
+  // RGBA8 像素到调用方原生块（renderTexture 通道，供 QT QLabel 等窗口填充）。
+  "vmDlls": [
+    { "project": "cvm_sl_render_lib/cvm_sl_render_lib.vcxproj", "name": "sl_render_lib.dll", "configuration": "Debug", "platform": "x64" }
+  ],
+  // systemCalls：本模块全部能力走 @DllStaticImport 静态绑定直调，不下沉 cvm
+  // SystemMethodCall，故留空。
+  "systemCalls": [],
   "compile": {
     "optimize": false,
     "target": "x64",
@@ -27,55 +49,7 @@
   },
   "compileFiles": {
     "files": [
-      // ── 基础数学桥接（依赖 Math 库的 Float32 系列 + Mathf + Quaternion）──
-      { "path": "Vector.sl",         "group": "render", "tag": "math",    "ignore": false, "priority": 0 },
-      { "path": "Matrix.sl",         "group": "render", "tag": "math",    "ignore": false, "priority": 0 },
-      { "path": "Color.sl",          "group": "render", "tag": "core",    "ignore": false, "priority": 0 },
-
-      // ── 几何 / 变换 ───────────────────────────────────
-      { "path": "Transform.sl",      "group": "render", "tag": "core",    "ignore": false, "priority": 0 },
-      { "path": "Bounds.sl",         "group": "render", "tag": "geom",    "ignore": false, "priority": 0 },
-      { "path": "Ray.sl",            "group": "render", "tag": "geom",    "ignore": false, "priority": 0 },
-      { "path": "Plane.sl",          "group": "render", "tag": "geom",    "ignore": false, "priority": 0 },
-
-      // ── 渲染资源 ─────────────────────────────────────
-      { "path": "Vertex.sl",         "group": "render", "tag": "res",     "ignore": false, "priority": 0 },
-      { "path": "Mesh.sl",           "group": "render", "tag": "res",     "ignore": false, "priority": 0 },
-      { "path": "Material.sl",       "group": "render", "tag": "res",     "ignore": false, "priority": 0 },
-      { "path": "Texture.sl",        "group": "render", "tag": "res",     "ignore": false, "priority": 0 },
-      { "path": "Shader.sl",         "group": "render", "tag": "res",     "ignore": false, "priority": 0 },
-
-      // ── 组件 / 系统 ──────────────────────────────────
-      { "path": "Behaviour.sl",      "group": "render", "tag": "comp",    "ignore": false, "priority": 0 },
-      { "path": "UIBehaviour.sl",    "group": "render", "tag": "comp",    "ignore": false, "priority": 0 },
-      { "path": "RectTransform.sl",  "group": "render", "tag": "comp",    "ignore": false, "priority": 0 },
-      { "path": "Renderer.sl",       "group": "render", "tag": "comp",    "ignore": false, "priority": 0 },
-      { "path": "Render.sl",         "group": "render", "tag": "system",  "ignore": false, "priority": 0 },
-      { "path": "Config.sl",         "group": "render", "tag": "system",  "ignore": false, "priority": 0 },
-
-      // ── 相机与光源 ───────────────────────────────────
-      { "path": "Camera/Camera.sl",  "group": "render", "tag": "camera",  "ignore": false, "priority": 0 },
-      { "path": "Camera/Light.sl",   "group": "render", "tag": "camera",  "ignore": false, "priority": 0 },
-
-      // ── 可编程渲染管线（DX12 / Vulkan 风格，HLSL Shader）──
-      // 顺序即依赖顺序：资源 -> Shader -> 状态/绑定 -> 命令/队列 -> 设备/平台 -> 上下文 -> Pass -> 管线
-      { "path": "Pipeline/GpuResource.sl",        "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/GpuTexture.sl",         "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/Hlsl.sl",               "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/HlslLibrary.sl",        "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/PipelineState.sl",      "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/RootSignature.sl",      "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/RenderTarget.sl",       "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/CommandBuffer.sl",      "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/CommandQueue.sl",       "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/GfxBackend.sl",         "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/PlatformWindow.sl",     "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/GfxDevice.sl",          "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/ScriptableRenderContext.sl", "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/RenderPass.sl",         "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/RenderPipeline.sl",     "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/UniversalRenderPipeline.sl", "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/PipelineDemo.sl", "group": "render", "tag": "pipeline", "ignore": false, "priority": 0 }
+      { "path": "Render.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -84,114 +58,30 @@
   },
   "global": {
     "imports": [
-      "Std.Console"
     ],
     "replace": {
       "DEBUG": "true"
-    },
-    "data": {
-      "defaultResolutionWidth": 1280,
-      "defaultResolutionHeight": 720
     }
   },
   "references": [
-    { "path": "../Core", "name": "Core" },
-    { "path": "../Math",  "name": "Math" },
-    { "path": "../Std",   "name": "Std" }
+    // Memory.alloc / readUInt8 / writeF32 等来自 Core（本 jsonc 位于
+    // SLangCore\Lib\SLang\Render\，上 2 级到 SLangCore\Lib\，同层即 Core 包）
+    { "path": "../../Core", "name": "Core" }
   ],
   "struct": [
-    { "namespace": "Render", "children": [
-      { "class": "Vector" },
-      { "class": "MatrixUtil" },
-      { "class": "Color" },
-      { "class": "Transform" },
-      { "class": "Bounds" },
-      { "class": "Ray" },
-      { "class": "Plane" },
-      { "class": "Vertex" },
-      { "class": "Mesh" },
-      { "class": "Material" },
-      { "class": "Texture" },
-      { "class": "Shader" },
-      { "class": "Behaviour" },
-      { "class": "UIBehaviour" },
-      { "class": "RectTransform" },
-      { "class": "Renderer" },
+    { "namespace": "SLang", "children": [
       { "class": "Render" },
-      { "class": "Config" },
-      { "class": "Camera" },
-      { "class": "Light" },
-
-      { "class": "GpuResource" },
-      { "class": "GpuBuffer" },
-      { "class": "VertexBuffer" },
-      { "class": "IndexBuffer" },
-      { "class": "ConstantBuffer" },
-      { "class": "GpuUtil" },
-      { "class": "GpuTexture" },
-      { "class": "SamplerDesc" },
-      { "class": "GpuTextureView" },
-      { "class": "Sampler" },
-      { "class": "HlslShader" },
-      { "class": "ShaderModule" },
-      { "class": "ShaderParameter" },
-      { "class": "HlslLibrary" },
-      { "class": "BlendState" },
-      { "class": "RasterizerState" },
-      { "class": "DepthStencilState" },
-      { "class": "VertexInputLayout" },
-      { "class": "GraphicsPipelineState" },
-      { "class": "ComputePipelineState" },
-      { "class": "RootParameter" },
-      { "class": "RootSignature" },
-      { "class": "DescriptorHeap" },
-      { "class": "DescriptorSet" },
-      { "class": "CommandBuffer" },
-      { "class": "CommandBufferPool" },
-      { "class": "CommandAllocator" },
-      { "class": "CommandList" },
-      { "class": "Fence" },
-      { "class": "CommandQueue" },
-      { "class": "SwapChain" },
-      { "class": "RenderTextureDescriptor" },
-      { "class": "RenderTargetIdentifier" },
-      { "class": "RenderTargetBinding" },
-      { "class": "RenderTargetPool" },
-      { "class": "GfxDeviceDescriptor" },
-      { "class": "GfxCapabilities" },
-      { "class": "GfxBackend" },
-      { "class": "GfxDevice" },
-      { "class": "PlatformWindow" },
-      { "class": "Win32Window" },
-      { "class": "X11Window" },
-      { "class": "MobileWindow" },
-      { "class": "CullingParameters" },
-      { "class": "VisibleRenderer" },
-      { "class": "CullingResults" },
-      { "class": "ScriptableRenderContext" },
-      { "class": "RenderPass" },
-      { "class": "ClearPass" },
-      { "class": "ShadowCasterPass" },
-      { "class": "DepthPrepass" },
-      { "class": "DrawObjectsPass" },
-      { "class": "SkyboxPass" },
-      { "class": "PostProcessPass" },
-      { "class": "RenderPassList" },
-      { "class": "RenderPipeline" },
-      { "class": "RenderPipelineAsset" },
-      { "class": "RenderPipelineManager" },
-      { "class": "UniversalRenderPipelineAsset" },
-      { "class": "UniversalRenderPipeline" },
-      { "class": "PipelineDemo" }
+      { "class": "RenderContext" }
     ]}
   ],
   "export": {
-    "moduleName": "Render",
-    "outputDir": "..\\..\\..\\out\\export",
+    "moduleName": "SLangRender",
+    "outputDir": "..\\..\\..\\..\\out\\export",
     "versionMain": 1,
     "versionSub": 0,
     "versionPatch": 0,
     "includeMetadata": true,
+    // Front 调试文本实际目录：{export.outputDir}/{export.moduleName}/DebugCode/；以下 outputDir 仅兼容旧字段，可为空。
     "debugText": {
       "outputDir": "",
       "code": true,

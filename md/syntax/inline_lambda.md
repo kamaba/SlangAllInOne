@@ -79,10 +79,6 @@ function use(ICalc c)
     Console.println(c.run(10))
 }
 
-use(new class : ICalc
-{
-    int run(int x) { ret x * 2 }
-})
 ```
 
 ## 6. 限制（重要）

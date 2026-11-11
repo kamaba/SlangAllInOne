@@ -50,6 +50,8 @@ typedef int            GLenum;
 typedef int            GLint;
 typedef unsigned int   GLuint;
 typedef char           GLchar;
+typedef unsigned char  GLboolean;
+typedef int            GLsizei;
 typedef float          GLfloat;
 typedef ptrdiff_t      GLsizeiptr;
 typedef void           GLvoid;
@@ -93,7 +95,7 @@ typedef GLenum (WINAPI *PFN_glGetError)(void);
 typedef void   (WINAPI *PFN_glFinish)(void);
 
 /* WGL_ARB 扩展（经 wglGetProcAddress 解析，需 dummy context 在前） */
-typedef BOOL   (WINAPI *PFN_wglCreateContextAttribsARB)(HDC, HGLRC, const int*);
+typedef HGLRC  (WINAPI *PFN_wglCreateContextAttribsARB)(HDC, HGLRC, const int*);
 
 /* GL 1.2+ / 2.0 / 3.0 core（经 wglGetProcAddress 解析） */
 typedef void   (WINAPI *PFN_glClearColor)(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -281,61 +283,75 @@ static int slr_load_opengl32(void)
     return 1;
 }
 
+/* 双通道符号解析（要求当前线程已绑 context）：
+   1) wglGetProcAddress —— ICD 路由，覆盖 GL 1.1+ 全部。按 WGL 文档，
+      命中"不支持"时可能返回 NULL / 1 / 2 / -1，一并视为失败；
+   2) GetProcAddress(opengl32.dll) —— 仅 GL 1.0/1.1 老函数在 opengl32
+      导出表有兜底（glClearColor / glClear / glViewport / glDrawArrays /
+      glGenTextures / glBindTexture / glTexImage2D / glTexParameteri /
+      glDeleteTextures / glGetString ...）；GL 1.2+ 符号此处天然落空，
+      行为不变。此通道防 ICD 对 1.1 老符号返回 NULL 的边角环境
+      （RDP / 软件 GDI Generic 渲染器）。 */
+static void* slr_sym(const char* name)
+{
+    void* p = (void*)(intptr_t)p_wglGetProcAddress(name);
+    if (p == NULL || p == (void*)(intptr_t)1 || p == (void*)(intptr_t)2
+        || p == (void*)(intptr_t)-1)
+    {
+        p = (void*)GetProcAddress(s_opengl32, name);
+    }
+    return p;
+}
+
 /* 扩展符号解析（要求当前线程已绑 context）。
-   WGL_ARB 扩展缺失 -> 0（SLR_E_NO_ARB）；GL core 符号缺失 -> 0（SLR_E_GL_SYMBOL）。 */
+   GL core 符号缺失 -> 0（SLR_E_GL_SYMBOL）。 */
 static int slr_resolve_ext(void)
 {
-    int missing_wgl = 0;
-    p_wglCreateContextAttribsARB =
-        (PFN_wglCreateContextAttribsARB)(void*)p_wglGetProcAddress("wglCreateContextAttribsARB");
-    if (!p_wglCreateContextAttribsARB) missing_wgl = 1;
+    p_glClearColor             = (PFN_glClearColor)slr_sym("glClearColor");
+    p_glClear                  = (PFN_glClear)slr_sym("glClear");
+    p_glViewport               = (PFN_glViewport)slr_sym("glViewport");
+    p_glCreateShader           = (PFN_glCreateShader)slr_sym("glCreateShader");
+    p_glShaderSource           = (PFN_glShaderSource)slr_sym("glShaderSource");
+    p_glCompileShader          = (PFN_glCompileShader)slr_sym("glCompileShader");
+    p_glGetShaderiv            = (PFN_glGetShaderiv)slr_sym("glGetShaderiv");
+    p_glGetShaderInfoLog       = (PFN_glGetShaderInfoLog)slr_sym("glGetShaderInfoLog");
+    p_glDeleteShader           = (PFN_glDeleteShader)slr_sym("glDeleteShader");
+    p_glCreateProgram          = (PFN_glCreateProgram)slr_sym("glCreateProgram");
+    p_glAttachShader           = (PFN_glAttachShader)slr_sym("glAttachShader");
+    p_glLinkProgram            = (PFN_glLinkProgram)slr_sym("glLinkProgram");
+    p_glGetProgramiv           = (PFN_glGetProgramiv)slr_sym("glGetProgramiv");
+    p_glGetProgramInfoLog      = (PFN_glGetProgramInfoLog)slr_sym("glGetProgramInfoLog");
+    p_glDeleteProgram          = (PFN_glDeleteProgram)slr_sym("glDeleteProgram");
+    p_glUseProgram             = (PFN_glUseProgram)slr_sym("glUseProgram");
+    p_glGetUniformLocation     = (PFN_glGetUniformLocation)slr_sym("glGetUniformLocation");
+    p_glUniform3f              = (PFN_glUniform3f)slr_sym("glUniform3f");
+    p_glGenVertexArrays        = (PFN_glGenVertexArrays)slr_sym("glGenVertexArrays");
+    p_glBindVertexArray        = (PFN_glBindVertexArray)slr_sym("glBindVertexArray");
+    p_glDeleteVertexArrays     = (PFN_glDeleteVertexArrays)slr_sym("glDeleteVertexArrays");
+    p_glGenBuffers             = (PFN_glGenBuffers)slr_sym("glGenBuffers");
+    p_glBindBuffer             = (PFN_glBindBuffer)slr_sym("glBindBuffer");
+    p_glBufferData             = (PFN_glBufferData)slr_sym("glBufferData");
+    p_glDeleteBuffers          = (PFN_glDeleteBuffers)slr_sym("glDeleteBuffers");
+    p_glEnableVertexAttribArray = (PFN_glEnableVertexAttribArray)slr_sym("glEnableVertexAttribArray");
+    p_glVertexAttribPointer    = (PFN_glVertexAttribPointer)slr_sym("glVertexAttribPointer");
+    p_glDrawArrays             = (PFN_glDrawArrays)slr_sym("glDrawArrays");
+    p_glGenFramebuffers        = (PFN_glGenFramebuffers)slr_sym("glGenFramebuffers");
+    p_glBindFramebuffer        = (PFN_glBindFramebuffer)slr_sym("glBindFramebuffer");
+    p_glFramebufferTexture2D   = (PFN_glFramebufferTexture2D)slr_sym("glFramebufferTexture2D");
+    p_glCheckFramebufferStatus = (PFN_glCheckFramebufferStatus)slr_sym("glCheckFramebufferStatus");
+    p_glDeleteFramebuffers     = (PFN_glDeleteFramebuffers)slr_sym("glDeleteFramebuffers");
+    p_glGenRenderbuffers       = (PFN_glGenRenderbuffers)slr_sym("glGenRenderbuffers");
+    p_glBindRenderbuffer       = (PFN_glBindRenderbuffer)slr_sym("glBindRenderbuffer");
+    p_glRenderbufferStorage    = (PFN_glRenderbufferStorage)slr_sym("glRenderbufferStorage");
+    p_glFramebufferRenderbuffer= (PFN_glFramebufferRenderbuffer)slr_sym("glFramebufferRenderbuffer");
+    p_glDeleteRenderbuffers    = (PFN_glDeleteRenderbuffers)slr_sym("glDeleteRenderbuffers");
+    p_glGenTextures            = (PFN_glGenTextures)slr_sym("glGenTextures");
+    p_glBindTexture            = (PFN_glBindTexture)slr_sym("glBindTexture");
+    p_glTexImage2D             = (PFN_glTexImage2D)slr_sym("glTexImage2D");
+    p_glTexParameteri          = (PFN_glTexParameteri)slr_sym("glTexParameteri");
+    p_glDeleteTextures         = (PFN_glDeleteTextures)slr_sym("glDeleteTextures");
+    p_glGetString              = (PFN_glGetString)slr_sym("glGetString");
 
-    p_glClearColor             = (PFN_glClearColor)(void*)p_wglGetProcAddress("glClearColor");
-    p_glClear                  = (PFN_glClear)(void*)p_wglGetProcAddress("glClear");
-    p_glViewport               = (PFN_glViewport)(void*)p_wglGetProcAddress("glViewport");
-    p_glCreateShader           = (PFN_glCreateShader)(void*)p_wglGetProcAddress("glCreateShader");
-    p_glShaderSource           = (PFN_glShaderSource)(void*)p_wglGetProcAddress("glShaderSource");
-    p_glCompileShader          = (PFN_glCompileShader)(void*)p_wglGetProcAddress("glCompileShader");
-    p_glGetShaderiv            = (PFN_glGetShaderiv)(void*)p_wglGetProcAddress("glGetShaderiv");
-    p_glGetShaderInfoLog       = (PFN_glGetShaderInfoLog)(void*)p_wglGetProcAddress("glGetShaderInfoLog");
-    p_glDeleteShader           = (PFN_glDeleteShader)(void*)p_wglGetProcAddress("glDeleteShader");
-    p_glCreateProgram          = (PFN_glCreateProgram)(void*)p_wglGetProcAddress("glCreateProgram");
-    p_glAttachShader           = (PFN_glAttachShader)(void*)p_wglGetProcAddress("glAttachShader");
-    p_glLinkProgram            = (PFN_glLinkProgram)(void*)p_wglGetProcAddress("glLinkProgram");
-    p_glGetProgramiv           = (PFN_glGetProgramiv)(void*)p_wglGetProcAddress("glGetProgramiv");
-    p_glGetProgramInfoLog      = (PFN_glGetProgramInfoLog)(void*)p_wglGetProcAddress("glGetProgramInfoLog");
-    p_glDeleteProgram          = (PFN_glDeleteProgram)(void*)p_wglGetProcAddress("glDeleteProgram");
-    p_glUseProgram             = (PFN_glUseProgram)(void*)p_wglGetProcAddress("glUseProgram");
-    p_glGetUniformLocation     = (PFN_glGetUniformLocation)(void*)p_wglGetProcAddress("glGetUniformLocation");
-    p_glUniform3f              = (PFN_glUniform3f)(void*)p_wglGetProcAddress("glUniform3f");
-    p_glGenVertexArrays        = (PFN_glGenVertexArrays)(void*)p_wglGetProcAddress("glGenVertexArrays");
-    p_glBindVertexArray        = (PFN_glBindVertexArray)(void*)p_wglGetProcAddress("glBindVertexArray");
-    p_glDeleteVertexArrays     = (PFN_glDeleteVertexArrays)(void*)p_wglGetProcAddress("glDeleteVertexArrays");
-    p_glGenBuffers             = (PFN_glGenBuffers)(void*)p_wglGetProcAddress("glGenBuffers");
-    p_glBindBuffer             = (PFN_glBindBuffer)(void*)p_wglGetProcAddress("glBindBuffer");
-    p_glBufferData             = (PFN_glBufferData)(void*)p_wglGetProcAddress("glBufferData");
-    p_glDeleteBuffers          = (PFN_glDeleteBuffers)(void*)p_wglGetProcAddress("glDeleteBuffers");
-    p_glEnableVertexAttribArray = (PFN_glEnableVertexAttribArray)(void*)p_wglGetProcAddress("glEnableVertexAttribArray");
-    p_glVertexAttribPointer    = (PFN_glVertexAttribPointer)(void*)p_wglGetProcAddress("glVertexAttribPointer");
-    p_glDrawArrays             = (PFN_glDrawArrays)(void*)p_wglGetProcAddress("glDrawArrays");
-    p_glGenFramebuffers        = (PFN_glGenFramebuffers)(void*)p_wglGetProcAddress("glGenFramebuffers");
-    p_glBindFramebuffer        = (PFN_glBindFramebuffer)(void*)p_wglGetProcAddress("glBindFramebuffer");
-    p_glFramebufferTexture2D   = (PFN_glFramebufferTexture2D)(void*)p_wglGetProcAddress("glFramebufferTexture2D");
-    p_glCheckFramebufferStatus = (PFN_glCheckFramebufferStatus)(void*)p_wglGetProcAddress("glCheckFramebufferStatus");
-    p_glDeleteFramebuffers     = (PFN_glDeleteFramebuffers)(void*)p_wglGetProcAddress("glDeleteFramebuffers");
-    p_glGenRenderbuffers       = (PFN_glGenRenderbuffers)(void*)p_wglGetProcAddress("glGenRenderbuffers");
-    p_glBindRenderbuffer       = (PFN_glBindRenderbuffer)(void*)p_wglGetProcAddress("glBindRenderbuffer");
-    p_glRenderbufferStorage    = (PFN_glRenderbufferStorage)(void*)p_wglGetProcAddress("glRenderbufferStorage");
-    p_glFramebufferRenderbuffer= (PFN_glFramebufferRenderbuffer)(void*)p_wglGetProcAddress("glFramebufferRenderbuffer");
-    p_glDeleteRenderbuffers    = (PFN_glDeleteRenderbuffers)(void*)p_wglGetProcAddress("glDeleteRenderbuffers");
-    p_glGenTextures            = (PFN_glGenTextures)(void*)p_wglGetProcAddress("glGenTextures");
-    p_glBindTexture            = (PFN_glBindTexture)(void*)p_wglGetProcAddress("glBindTexture");
-    p_glTexImage2D             = (PFN_glTexImage2D)(void*)p_wglGetProcAddress("glTexImage2D");
-    p_glTexParameteri          = (PFN_glTexParameteri)(void*)p_wglGetProcAddress("glTexParameteri");
-    p_glDeleteTextures         = (PFN_glDeleteTextures)(void*)p_wglGetProcAddress("glDeleteTextures");
-    p_glGetString              = (PFN_glGetString)(void*)p_wglGetProcAddress("glGetString");
-
-    if (missing_wgl) { slr_set(SLR_E_NO_ARB); return 0; }
     if (!p_glClearColor || !p_glClear || !p_glViewport || !p_glCreateShader ||
         !p_glShaderSource || !p_glCompileShader || !p_glGetShaderiv ||
         !p_glCreateProgram || !p_glAttachShader || !p_glLinkProgram ||
@@ -555,9 +571,9 @@ SLR_API int32_t slr_init(void)
     RegisterClassA(&wc);
     s_hwnd = CreateWindowExA(0, wc.lpszClassName, "slrender", WS_OVERLAPPEDWINDOW,
                              0, 0, 8, 8, NULL, NULL, wc.hInstance, NULL);
-    if (!s_hwnd) { slr_set(SLR_E_WINDOW); slr_unlock(); return 0; }
+    if (!s_hwnd) { slr_set(SLR_E_WINDOW); goto fail_unlock; }
     s_hdc = GetDC(s_hwnd);
-    if (!s_hdc) { slr_set(SLR_E_WINDOW); slr_unlock(); return 0; }
+    if (!s_hdc) { slr_set(SLR_E_WINDOW); goto fail_window; }
 
     memset(&pfd, 0, sizeof(pfd));
     pfd.nSize      = sizeof(pfd);
@@ -570,21 +586,25 @@ SLR_API int32_t slr_init(void)
     if (!pf || !SetPixelFormat(s_hdc, pf, &pfd))
     {
         slr_set(SLR_E_PIXEL_FORMAT);
-        slr_unlock();
-        return 0;
+        goto fail_window;
     }
 
-    /* 2) dummy context -> 解析 WGL_ARB -> 3.3 core 上下文。
+    /* 2) dummy context -> 解析符号表 -> 正式上下文。
        像素格式保持不动（FBO 渲染不依赖默认帧缓冲的能力位）。 */
     dummy = p_wglCreateContext(s_hdc);
-    if (!dummy) { slr_set(SLR_E_CONTEXT); slr_unlock(); return 0; }
-    if (!p_wglMakeCurrent(s_hdc, dummy)) { p_wglDeleteContext(dummy); slr_set(SLR_E_CONTEXT); slr_unlock(); return 0; }
+    if (!dummy) { slr_set(SLR_E_CONTEXT); goto fail_window; }
+    if (!p_wglMakeCurrent(s_hdc, dummy)) { p_wglDeleteContext(dummy); slr_set(SLR_E_CONTEXT); goto fail_window; }
+
+    /* WGL_ARB_create_context（仅 wglGetProcAddress 通道，opengl32 导出表
+       无此符号）；缺失/失败时下方回退传统上下文 */
+    p_wglCreateContextAttribsARB =
+        (PFN_wglCreateContextAttribsARB)(void*)p_wglGetProcAddress("wglCreateContextAttribsARB");
+
     if (!slr_resolve_ext())
     {
         p_wglMakeCurrent(NULL, NULL);
         p_wglDeleteContext(dummy);
-        slr_unlock();
-        return 0;
+        goto fail_window;
     }
     /* 设备信息（dummy context 下即可查询） */
     if (p_glGetString)
@@ -597,30 +617,48 @@ SLR_API int32_t slr_init(void)
     p_wglMakeCurrent(NULL, NULL);
     p_wglDeleteContext(dummy);
 
-    s_hglrc = p_wglCreateContextAttribsARB(s_hdc, NULL, attribs);
-    if (!s_hglrc) { slr_set(SLR_E_CONTEXT); slr_unlock(); return 0; }
+    /* 3.3 core 上下文；失败回退传统上下文（兼容 profile，RDP / 软件 GL
+       等无 WGL_ARB 环境也能跑——FBO/shader 在 GL 3.0+ 照常可用，
+       GL 2.x 以下会在符号表检查处给出明确错误）。 */
+    s_hglrc = p_wglCreateContextAttribsARB
+        ? p_wglCreateContextAttribsARB(s_hdc, NULL, attribs) : NULL;
+    if (s_hglrc == NULL)
+    {
+        s_hglrc = p_wglCreateContext(s_hdc);
+        if (s_hglrc == NULL) { slr_set(SLR_E_CONTEXT); goto fail_window; }
+    }
 
-    /* 3) 装配三角形管线 */
-    if (!slr_begin_gl())
+    /* 3) 装配三角形管线。此处不能走 slr_begin_gl——它以 s_ready 为门槛
+       （未就绪置 SLR_E_NOT_INITIALIZED），而 s_ready 在本函数末尾才置位，
+       鸡生蛋；直接 wglMakeCurrent。 */
+    if (!p_wglMakeCurrent(s_hdc, s_hglrc))
     {
         p_wglDeleteContext(s_hglrc);
         s_hglrc = NULL;
-        slr_unlock();
-        return 0;
+        slr_set(SLR_E_CONTEXT_CURRENT);
+        goto fail_window;
     }
     if (!slr_build_pipeline())
     {
         slr_end_gl();
         p_wglDeleteContext(s_hglrc);
         s_hglrc = NULL;
-        slr_unlock();
-        return 0;
+        goto fail_window;
     }
     slr_end_gl();
 
     s_ready = 1;
     slr_unlock();
     return 1;
+
+fail_window:
+    /* init 失败清理（重试不泄漏：窗口/DC 回收，符号表保留——
+       opengl32.dll 仍装载，下次 init 重新走全流程） */
+    if (s_hdc) { ReleaseDC(s_hwnd, s_hdc); s_hdc = NULL; }
+    if (s_hwnd) { DestroyWindow(s_hwnd); s_hwnd = NULL; }
+fail_unlock:
+    slr_unlock();
+    return 0;
 }
 
 SLR_API int32_t slr_uninit(void)
@@ -786,6 +824,7 @@ SLR_API int32_t slr_clear(int64_t ctx, float r, float g, float b, float a)
     t = slr_target_of(ctx);
     if (!t) { slr_unlock(); return 0; }
     if (!slr_begin_gl()) { slr_unlock(); return 0; }
+    p_glGetError(); /* 冲刷粘性错误（init/pipeline 期可能残留） */
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
     p_glViewport(0, 0, t->w, t->h);
     p_glClearColor(r, g, b, a);
@@ -806,6 +845,7 @@ SLR_API int32_t slr_draw_triangle(int64_t ctx, float r, float g, float b)
     t = slr_target_of(ctx);
     if (!t) { slr_unlock(); return 0; }
     if (!slr_begin_gl()) { slr_unlock(); return 0; }
+    p_glGetError(); /* 冲刷粘性错误 */
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
     p_glViewport(0, 0, t->w, t->h);
     p_glUseProgram(s_prog);
@@ -834,6 +874,7 @@ SLR_API int32_t slr_read_pixels(int64_t ctx, void* dst)
     if (!t) { slr_unlock(); return 0; }
     if (!slr_stage_reserve((size_t)t->w * t->h * 4)) { slr_unlock(); return 0; }
     if (!slr_begin_gl()) { slr_unlock(); return 0; }
+    p_glGetError(); /* 冲刷粘性错误 */
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
     p_glReadPixels(0, 0, t->w, t->h, GL_RGBA, GL_UNSIGNED_BYTE, s_stage);
     p_glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -868,6 +909,7 @@ SLR_API int32_t slr_render_frame(int64_t ctx, float r, float g, float b, void* d
     if (!t) { slr_unlock(); return 0; }
     if (!slr_stage_reserve((size_t)t->w * t->h * 4)) { slr_unlock(); return 0; }
     if (!slr_begin_gl()) { slr_unlock(); return 0; }
+    p_glGetError(); /* 冲刷粘性错误 */
 
     /* clear */
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);

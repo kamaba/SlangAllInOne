@@ -1,0 +1,61 @@
+{
+  "project": {
+    "name": "GLRenderTest",
+    "desc": "SLangRender offscreen GL + SLangQT window fill e2e - color-shifting triangle (Phase A pure GL pixel assertions, Phase B QTimer frame loop -> QLabel.setPixmapRgba)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "GLRenderTest.sl", "group": "render", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "path": "./lib/Math.module.slb" },
+    // SLangQT / SLangRender 文件形态直引 out\export 产物（QTTest 备选形态；
+    // 目录形态会引入 ref 空壳重导出问题，见 QTTest.jsonc 注释）。
+    // 编译期：Front 按 path 直查命中（4 级上溯到 SlangAllInOne\out\export）；
+    // 运行期：包内落空 -> C VM sl_load_references 回退链 <exe>\modules\<name>\
+    // （CSimpleVMTest StageReferencedModules 铺入，native dll 联动拷贝）。
+    { "path": "../../../../out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" },
+    { "path": "../../../../out/export/SLangRender/SLangRender.module.json", "name": "SLangRender" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "GLRenderTest",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true
+  }
+}

@@ -85,6 +85,10 @@ namespace SLang
         public static Int64 ffi_labelCreate( Int64 parent ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_label_set_pixmap_sl" )
         public static Int32 ffi_labelSetPixmap( Int64 h, Int64 ptr, int len ) { ret 0 }
+        # SLangRender renderTexture 通道：ptr = RGBA8 top-down 像素块（w*hh*4），
+        # 布局与 GL glReadPixels 回读 / QImage Format_RGBA8888 一致（含 ptr 手写 sig）。
+        @DllStaticImport( "slang_qt", "slqt_label_set_pixmap_rgba_sl", "i64,ptr,i32,i32->bool" )
+        public static bool ffi_labelSetPixmapRgba( Int64 h, Int64 ptr, int w, int hh ) { ret false }
         @DllStaticImport( "slang_qt", "slqt_edit_create_sl" )
         public static Int64 ffi_editCreate( Int64 parent ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_edit_set_placeholder_sl" )

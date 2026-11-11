@@ -54,6 +54,7 @@ void    slqt_be_widget_update(int64_t h) { (void)h; }
 int64_t slqt_be_button_create(int64_t p) { (void)p; return slqt_register(NULL); }
 int64_t slqt_be_label_create(int64_t p) { (void)p; return slqt_register(NULL); }
 int32_t slqt_be_label_set_pixmap(int64_t h, int64_t ptr, int32_t len) { (void)h;(void)ptr;(void)len; return 0; }
+int32_t slqt_be_label_set_pixmap_rgba(int64_t h, int64_t ptr, int32_t w, int32_t hh) { (void)h;(void)ptr;(void)w;(void)hh; return 0; }
 int64_t slqt_be_edit_create(int64_t p) { (void)p; return slqt_register(NULL); }
 void    slqt_be_edit_set_placeholder(int64_t h, const char* t) { (void)h;(void)t; }
 const char* slqt_be_edit_text(int64_t h) { (void)h; return g_empty; }

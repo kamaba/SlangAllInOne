@@ -66,3 +66,5 @@ MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 l
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 
+
+现在文档导航 貌似还少很多呀，要在Readmd.md里边 都能显示出来。

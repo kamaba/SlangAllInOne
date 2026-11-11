@@ -329,6 +329,19 @@ void slqt_be_widget_update(int64_t h) { QWidget* o = asWidget(h); if (o) o->upda
 int64_t slqt_be_button_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QPushButton(parent)); }
 int64_t slqt_be_label_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QLabel(parent)); }
 int32_t slqt_be_label_set_pixmap(int64_t h, int64_t ptr, int32_t len) { (void)h; (void)ptr; (void)len; return 0; }
+/* SLangRender renderTexture 通道：ptr = RGBA8 top-down 像素块
+ * (w*h*4)。构造 QImage（wrap 不拷贝）-> fromImage（拷贝）-> setPixmap，
+ * scaledContents 让 label 随窗口缩放；qobject_cast 过滤非 QLabel 句柄。 */
+int32_t slqt_be_label_set_pixmap_rgba(int64_t h, int64_t ptr, int32_t w, int32_t hh)
+{
+    auto* o = qobject_cast<QLabel*>((QObject*)slqt_resolve(h));
+    if (!o || !ptr || w <= 0 || hh <= 0) return 0;
+    QImage img((const uchar*)(uintptr_t)ptr, w, hh, (qsizetype)w * 4, QImage::Format_RGBA8888);
+    if (img.isNull()) return 0;
+    o->setPixmap(QPixmap::fromImage(img));
+    o->setScaledContents(true);
+    return 1;
+}
 int64_t slqt_be_edit_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QLineEdit(parent)); }
 void slqt_be_edit_set_placeholder(int64_t h, const char* t) { auto* o = qobject_cast<QLineEdit*>((QObject*)slqt_resolve(h)); if (o && t) o->setPlaceholderText(QString::fromUtf8(t)); }
 const char* slqt_be_edit_text(int64_t h) { auto* o = qobject_cast<QLineEdit*>((QObject*)slqt_resolve(h)); if (!o) return ""; QByteArray b = o->text().toUtf8(); snprintf(g_text_buf, sizeof(g_text_buf), "%s", b.constData()); return g_text_buf; }

@@ -63,6 +63,8 @@ SLQT_API void    slqt_widget_update_sl(int64_t h);
 SLQT_API int64_t slqt_button_create_sl(int64_t parent);
 SLQT_API int64_t slqt_label_create_sl(int64_t parent);
 SLQT_API int32_t slqt_label_set_pixmap_sl(int64_t h, int64_t ptr, int32_t len);
+/* SLangRender renderTexture 通道：RGBA8 top-down 像素块填充 QLabel。 */
+SLQT_API int32_t slqt_label_set_pixmap_rgba_sl(int64_t h, int64_t ptr, int32_t w, int32_t hh);
 SLQT_API int64_t slqt_edit_create_sl(int64_t parent);
 SLQT_API void    slqt_edit_set_placeholder_sl(int64_t h, const char* t);
 SLQT_API const char* slqt_edit_text_sl(int64_t h);

@@ -50,6 +50,10 @@ void    slqt_be_widget_update(int64_t h);
 int64_t slqt_be_button_create(int64_t parent);
 int64_t slqt_be_label_create(int64_t parent);
 int32_t slqt_be_label_set_pixmap(int64_t h, int64_t ptr, int32_t len);
+/* SLangRender renderTexture 通道：ptr 指向 RGBA8 top-down 像素块
+   (w*h*4 字节，GL glReadPixels 回读布局 = QImage Format_RGBA8888)，
+   构造 QImage -> QPixmap 填入 label 并开启 scaledContents。 */
+int32_t slqt_be_label_set_pixmap_rgba(int64_t h, int64_t ptr, int32_t w, int32_t hh);
 int64_t slqt_be_edit_create(int64_t parent);
 void    slqt_be_edit_set_placeholder(int64_t h, const char* t);
 const char* slqt_be_edit_text(int64_t h);

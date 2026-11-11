@@ -279,6 +279,7 @@ SLQT_API void    slqt_widget_update_sl(int64_t h) { slqt_be_widget_update(h); }
 SLQT_API int64_t slqt_button_create_sl(int64_t p) { return slqt_be_button_create(p); }
 SLQT_API int64_t slqt_label_create_sl(int64_t p) { return slqt_be_label_create(p); }
 SLQT_API int32_t slqt_label_set_pixmap_sl(int64_t h, int64_t ptr, int32_t len) { return slqt_be_label_set_pixmap(h, ptr, len); }
+SLQT_API int32_t slqt_label_set_pixmap_rgba_sl(int64_t h, int64_t ptr, int32_t w, int32_t hh) { return slqt_be_label_set_pixmap_rgba(h, ptr, w, hh); }
 SLQT_API int64_t slqt_edit_create_sl(int64_t p) { return slqt_be_edit_create(p); }
 SLQT_API void    slqt_edit_set_placeholder_sl(int64_t h, const char* t) { slqt_be_edit_set_placeholder(h, t); }
 SLQT_API const char* slqt_edit_text_sl(int64_t h) { return slqt_be_edit_text(h); }

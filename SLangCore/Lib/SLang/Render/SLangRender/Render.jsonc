@@ -2,7 +2,7 @@
   "project":
   {
     "name": "SLangRender",
-    "desc": "Offscreen GPU render library module - namespace SLang: Render (entry + native bindings) / RenderContext (FBO render target) / UnityRenderPipeline + UnityRenderObject + UnityRenderTexture (Unity-style 13-stage pipeline facade), backed by sl_render_lib.dll (WGL hidden window + OpenGL 3.3 core context, zero toolkit dependency - opengl32.dll resolved at runtime)",
+    "desc": "Offscreen GPU render library module - namespace SLang: Render (entry + native bindings) / RenderContext (FBO render target) / RenderPipeline + RenderObject + RenderTexture + RenderCamera (13-stage pipeline facade), backed by sl_render_lib.dll (WGL hidden window + OpenGL 3.3 core context, zero toolkit dependency - opengl32.dll resolved at runtime)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -50,7 +50,7 @@
   "compileFiles": {
     "files": [
       { "path": "Render.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/UnityPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 },
+      { "path": "Pipeline/Pipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 },
       { "path": "Mesh.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 2 }
     ]
   },
@@ -81,10 +81,10 @@
     { "namespace": "SLang", "children": [
       { "class": "Render" },
       { "class": "RenderContext" },
-      { "class": "UnityRenderPipeline" },
-      { "class": "UnityRenderObject" },
-      { "class": "UnityRenderTexture" },
-      { "class": "UnityRenderCamera" },
+      { "class": "RenderPipeline" },
+      { "class": "RenderObject" },
+      { "class": "RenderTexture" },
+      { "class": "RenderCamera" },
       { "class": "Mesh" }
     ]}
   ],

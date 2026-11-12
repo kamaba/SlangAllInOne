@@ -5,10 +5,10 @@
  *
  *   sl_render.c            <-> Render.sl            生命周期/诊断/v1 直连层
  *                                                      + RHI 后端注册表
- *   Pipeline/sl_pipeline.c <-> Pipeline/UnityPipeline.sl  13 阶段管线 + 相机调度
- *   Pipeline/sl_object.c   <-> UnityRenderObject         场景对象
- *   Pipeline/sl_texture.c  <-> UnityRenderTexture        纹理注册表 + WIC 加载
- *   Pipeline/sl_camera.c   <-> UnityRenderCamera         多相机槽表
+ *   Pipeline/sl_pipeline.c <-> Pipeline/Pipeline.sl  13 阶段管线 + 相机调度
+ *   Pipeline/sl_object.c   <-> RenderObject         场景对象
+ *   Pipeline/sl_texture.c  <-> RenderTexture        纹理注册表 + WIC 加载
+ *   Pipeline/sl_camera.c   <-> RenderCamera         多相机槽表
  *
  * RHI 层（渲染硬件抽象，一表多后端同效果）：
  *   RHI/sl_rhi.h           接口契约（vtable + 像素/坐标约定）

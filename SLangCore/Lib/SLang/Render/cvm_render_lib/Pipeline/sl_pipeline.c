@@ -1,5 +1,5 @@
 /* =========================================================================
- * sl_pipeline.c —— Unity 风格 13 阶段渲染管线（对应 SL 侧 Pipeline/UnityPipeline.sl）
+ * sl_pipeline.c —— 13 阶段渲染管线（对应 SL 侧 Pipeline/Pipeline.sl）
  *
  * 13 阶段与导出函数对照：
  *   1  beginFrame             slr_pipeline_begin_frame            渲染开始

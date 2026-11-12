@@ -1,5 +1,5 @@
 /* =========================================================================
- * sl_camera.c —— 多相机槽表（对应 SL 侧 UnityRenderCamera）
+ * sl_camera.c —— 多相机槽表（对应 SL 侧 RenderCamera）
  *
  * 每管线 8 个相机槽（SLR_MAX_CAMERAS），槽 0 为默认相机（兼容 v2 的
  * slr_pipeline_set_camera / set_clear_color 写槽 0，不可销毁）。

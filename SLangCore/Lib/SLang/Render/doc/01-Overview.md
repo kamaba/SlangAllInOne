@@ -3,7 +3,7 @@
 - 版本：v0.5（设计稿，供评审；v2 核心闭环已落地）
 - 日期：2026-11-11
 - 变更记录：
-  - v0.5：记录 v2 核心闭环落地状态（见 §0.1 状态快照）：Unity 风格 13 阶段管线整体下沉 C 层（sl_render_lib.dll，WGL/GL3.3），SL 侧薄 FFI 门面（UnityRenderPipeline/Object/Texture），GLRenderTest 端到端三绿（Phase A1/A2/B）；管线实现策略由「纯 SL」调整为「T1 原生优先：管线逻辑 C 层实现，SL 侧编排与状态描述」（对齐 04 文档 T1/T2/T3 策略与用户需求）
+  - v0.5：记录 v2 核心闭环落地状态（见 §0.1 状态快照）：Unity 风格 13 阶段管线整体下沉 C 层（sl_render_lib.dll，WGL/GL3.3），SL 侧薄 FFI 门面（RenderPipeline/Object/Texture/Camera），GLRenderTest 端到端三绿（Phase A1/A2/B）；管线实现策略由「纯 SL」调整为「T1 原生优先：管线逻辑 C 层实现，SL 侧编排与状态描述」（对齐 04 文档 T1/T2/T3 策略与用户需求）
   - v0.4：新增 06 图像编解码设计（PNG/JPEG/WebP 读写 + SVG 解析/光栅化 + 纹理零拷贝上传路径）；文档集扩为 6 份
   - v0.3：文档集拆分为 5 份；后端调用策略改为「原生 FFI 绑定优先（T1）→ 系统方法兜底（T2）→ 淘汰 `SystemCallExternalFunction` 字符串分发（T3）」，见 D8 与 04 文档
   - v0.2：新增 WebGPU 后端与 H5 Canvas 2D 呈现路径（D7）
@@ -12,7 +12,7 @@
 
 ### 0.1 状态快照：v2 已落地部分（2026-11-11）
 
-- **已落地**：`Lib\SLang\Render\SLangRender\` 模块 = SL 薄门面（`Render.sl` / `Pipeline\UnityPipeline.sl`）+ C 全量实现（`cvm_sl_render_lib\`：WGL/GL3.3 隐藏窗口离屏、13 阶段管线、PerDraw std140 UBO 分组批渲染、纹理、后处理、renderTexture 回读）。
+- **已落地**：`Lib\SLang\Render\SLangRender\` 模块 = SL 薄门面（`Render.sl` / `Pipeline\Pipeline.sl`）+ C 全量实现（`cvm_sl_render_lib\`：WGL/GL3.3 隐藏窗口离屏、13 阶段管线、PerDraw std140 UBO 分组批渲染、纹理、后处理、renderTexture 回读）。
 - **渲染流程**（对齐 Unity 渲染底层机制，C 层一符号一阶段）：渲染开始 beginFrame → 准备物料 prepareMaterials → 提前更新 earlyUpdate → 渲染层分层 cullLayers → 层整理数据 assembleLayerData → 向 GPU 传入渲染数据 uploadRenderData → shader 分块渲染 renderShaderChunks → 核心时间更新 updateCoreTime → shader 分段渲染 renderShaderSegments → 整理渲染后图层 assembleRenderedLayers → 后处理 postProcess → 层级逻辑整合 integrateLayers → 输出最终 renderTexture；SL 侧 `renderFrame` 一键 / `runStages` 逐阶段驱动。
 - **与本文档的关系**：§1.1「单语言实现」按落地现实调整为 T1 优先形态（管线逻辑在 C 层，SL 侧薄绑定与编排）；L5 纯 SL 编排层（RenderPipeline.sl 骨架已存在）保留为后续演进方向。理论基线（RTR 渲染三阶段 → 13 阶段映射）见 02 文档 §0；模块层细节见 `SLangRender\Render.md`。
 
@@ -114,7 +114,10 @@ Render/
 ├── doc/                          # 本文档集（01-05 共 5 份）
 ├── Render.jsonc                  # 编译清单 + dllImports 绑定配置（见 04 §2）
 ├── L0（根目录，现有保留）
-│   ├── Vector/Matrix/Bounds/Ray/Plane/Transform                     # 不动
+│   ├── Vector/Bounds/Ray/Plane/Transform                             # 不动
+│   │   # Matrix.sl（MatrixUtil）已迁入 Math 库（Math/MatrixUtil.sl，jsonc 已登记），
+│   │   # 与通用 Matrix 类同处 namespace Math；渲染草稿（Camera/Transform）将来
+│   │   # 并入编译时须 `import Math;` 后经 MatrixUtil.* 访问
 │   │   # Color/ColorUInt8 已合并迁入 Std 根级（Std/Color.sl 浮点版 + Std/ColorInt.sl 8bit 版），
 │   │   # 原 Render/SLangRender/{Color,ColorUInt8}.sl 已删除（两文件此前未入 compileFiles）
 │   ├── Vertex.sl Mesh.sl Material.sl Texture.sl Shader.sl          # 增强（03 §4.11）

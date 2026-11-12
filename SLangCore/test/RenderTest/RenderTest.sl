@@ -17,7 +17,7 @@ import Std;
 #   优雅降级为 SKIP（init 返回 0 -> false），有则要求同像素 PASS
 # Phase A1 v1 兼容（RenderContext 直连渲染目标快速回归）：
 #   renderFrame(红) -> 中心像素 = 红
-# Phase A2 管线主测（SLang.UnityRenderPipeline，逻辑全在 C 层）：
+# Phase A2 管线主测（SLang.RenderPipeline，逻辑全在 C 层）：
 #   场景 = 色相循环动画三角(layer0 不透明) + 渐变贴图 quad(layer1 透明,
 #   叠加在三角右上)；renderFrame(t) 走完整 13 阶段：
 #   像素断言（背景/三角红/贴图像素）+ 管线统计断言（visible/culled/
@@ -25,7 +25,7 @@ import Std;
 #   t=5 绿）+ 分层剔除断言（mask 排除 layer1 后 quad 消失）+ 后处理
 #   灰度断言（saturation=0 -> RGB 相等）+ 逐阶段驱动断言（runStages
 #   依序跑 1..13，与 renderFrame 等价）
-# Phase A3 多相机 + 图片加载渲染（SLang.UnityRenderCamera + loadFile）：
+# Phase A3 多相机 + 图片加载渲染（SLang.RenderCamera + loadFile）：
 #   相机0（默认，全屏）+ 相机1（depth=10，仅 layer2，右半 viewport，
 #   独立清屏色）：depth 升序逐相机渲染 -> 相机1 覆盖右半画面；橙图
 #   quad（layer2）同时出现在两台相机的画面中（cam0 左半 + cam1 右半
@@ -50,7 +50,7 @@ public class RenderTest
 {
     static SLang.QApplication _app = null
     static SLang.QLabel _label = null
-    static SLang.UnityRenderPipeline _pipe = null
+    static SLang.RenderPipeline _pipe = null
     static Int64 _pixels = 0
     static Int32 _texW = 256
     static Int32 _texH = 256
@@ -71,7 +71,7 @@ public class RenderTest
 
     # Phase C：3D 立方体状态（Mesh 库 + 动态网格通道）
     static SLang.Mesh _cubeMesh = null       # Mesh.cube(1.0)：24 顶点 36 索引
-    static SLang.UnityRenderObject _cubeObj = null   # meshKind=4（动态网格槽 0）
+    static SLang.RenderObject _cubeObj = null   # meshKind=4（动态网格槽 0）
     static Int64 _cubeVerts = 0             # 36 顶点 * 16B 显存暂存（帧间复用）
     static Int32 _cubeFirst = 0             # 首帧 uploadMesh 结果打印标志
     # UV 不建表：vi%4 -> (0,0)(1,0)(1,1)(0,1)（updateCube 现场计算）
@@ -289,7 +289,7 @@ public class RenderTest
     # 右半 viewport + 展示用后处理）—— 每次后端切换后调用
     static bool rebuildScene()
     {
-        SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
         if pipe == null
         {
             Console.println( "[ui] FAIL: pipeline create - " + SLang.Render.errorString() )
@@ -309,10 +309,10 @@ public class RenderTest
         }
 
         # 图片贴图（相对路径按运行进程 CWD，失败回退绝对路径）
-        SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+        SLang.RenderTexture imgTex = SLang.RenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
         if imgTex == null
         {
-            imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+            imgTex = SLang.RenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
         }
         if imgTex == null
         {
@@ -321,7 +321,7 @@ public class RenderTest
         }
 
         # 橙图 quad（layer2，左半）
-        SLang.UnityRenderObject imgQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        SLang.RenderObject imgQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if imgQuad == null
         {
             ret false
@@ -334,7 +334,7 @@ public class RenderTest
         imgQuad.setTexture( imgTex )
 
         # 蓝 quad（layer0，右半）
-        SLang.UnityRenderObject blueQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        SLang.RenderObject blueQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if blueQuad == null
         {
             ret false
@@ -346,7 +346,7 @@ public class RenderTest
         blueQuad.setColor( 0.2f, 0.4f, 1.0f, 1.0f )
 
         # 动画三角（layer1，顶部，色相循环）
-        SLang.UnityRenderObject tri = pipe.addObject( SLang.UnityRenderPipeline.MESH_TRIANGLE )
+        SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
         if tri == null
         {
             ret false
@@ -356,10 +356,10 @@ public class RenderTest
         tri.setPosition( 0.0f, 0.6f, 0.0f )
         tri.setScale( 0.3f, 0.3f )
         tri.setColor( 1.0f, 0.0f, 0.0f, 1.0f )
-        tri.setAnimated( SLang.UnityRenderPipeline.ANIM_HUE_CYCLE, 0.25f )
+        tri.setAnimated( SLang.RenderPipeline.ANIM_HUE_CYCLE, 0.25f )
 
         # 相机1：depth=10、mask 仅 layer2、viewport 右半、深绿清屏
-        SLang.UnityRenderCamera cam = pipe.addCamera( 10 )
+        SLang.RenderCamera cam = pipe.addCamera( 10 )
         if cam == null || cam.isValid == false
         {
             ret false
@@ -372,7 +372,7 @@ public class RenderTest
         {
             ret false
         }
-        if cam.setClearFlags( SLang.UnityRenderPipeline.CLEAR_COLOR | SLang.UnityRenderPipeline.CLEAR_DEPTH ) == false
+        if cam.setClearFlags( SLang.RenderPipeline.CLEAR_COLOR | SLang.RenderPipeline.CLEAR_DEPTH ) == false
         {
             ret false
         }
@@ -395,7 +395,7 @@ public class RenderTest
             Console.println( "[ui] FAIL: cube verts alloc" )
             ret false
         }
-        _cubeObj = pipe.addObject( SLang.UnityRenderPipeline.MESH_CUSTOM )
+        _cubeObj = pipe.addObject( SLang.RenderPipeline.MESH_CUSTOM )
         if _cubeObj == null
         {
             Console.println( "[ui] FAIL: cube addObject - " + SLang.Render.errorString() )
@@ -801,7 +801,7 @@ public class RenderTest
     {
         Console.println( "-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --" )
 
-        SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
         if pipe == null
         {
             Console.println( "[pipe] FAIL: create - " + SLang.Render.errorString() )
@@ -823,7 +823,7 @@ public class RenderTest
         }
 
         # 对象 1：动画三角（layer0，Geometry 队列，色相循环）
-        SLang.UnityRenderObject tri = pipe.addObject( SLang.UnityRenderPipeline.MESH_TRIANGLE )
+        SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
         if tri == null
         {
             Console.println( "[pipe] FAIL: add triangle" )
@@ -834,7 +834,7 @@ public class RenderTest
         tri.setPosition( 0.0f, 0.0f, 0.0f )
         tri.setScale( 1.3f, 1.3f )
         tri.setColor( 1.0f, 0.0f, 0.0f, 1.0f )
-        tri.setAnimated( SLang.UnityRenderPipeline.ANIM_HUE_CYCLE, 0.25f )
+        tri.setAnimated( SLang.RenderPipeline.ANIM_HUE_CYCLE, 0.25f )
 
         # 贴图：64x64 绿->品红渐变
         Int64 texPtr = makeGradientTexture()
@@ -843,7 +843,7 @@ public class RenderTest
             Console.println( "[pipe] FAIL: texture pixels alloc" )
             ret false
         }
-        SLang.UnityRenderTexture tex = SLang.UnityRenderTexture.createRgba( texPtr, 64, 64 )
+        SLang.RenderTexture tex = SLang.RenderTexture.createRgba( texPtr, 64, 64 )
         if tex == null
         {
             Console.println( "[pipe] FAIL: texture upload - " + SLang.Render.errorString() )
@@ -851,7 +851,7 @@ public class RenderTest
         }
 
         # 对象 2：贴图 quad（layer1，Transparent 队列，叠在三角右上）
-        SLang.UnityRenderObject quad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        SLang.RenderObject quad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if quad == null
         {
             Console.println( "[pipe] FAIL: add quad" )
@@ -865,8 +865,8 @@ public class RenderTest
         quad.setTexture( tex )
 
         Int32 objCount = pipe.objectCount()
-        Console.println( "[pipe] scene: objects=" + objCount.toString() + " textures=" + pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT ).toString() )
-        if objCount != 2 || pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT ) < 1
+        Console.println( "[pipe] scene: objects=" + objCount.toString() + " textures=" + pipe.stat( SLang.RenderPipeline.STAT_TEXTURE_COUNT ).toString() )
+        if objCount != 2 || pipe.stat( SLang.RenderPipeline.STAT_TEXTURE_COUNT ) < 1
         {
             Console.println( "[pipe] FAIL: scene setup counts" )
             ret false
@@ -935,15 +935,15 @@ public class RenderTest
         }
 
         # 管线统计断言
-        Int32 lastStage = pipe.stat( SLang.UnityRenderPipeline.STAT_LAST_STAGE )
-        Int32 visible   = pipe.stat( SLang.UnityRenderPipeline.STAT_VISIBLE )
-        Int32 culled    = pipe.stat( SLang.UnityRenderPipeline.STAT_CULLED )
-        Int32 opaque    = pipe.stat( SLang.UnityRenderPipeline.STAT_OPAQUE_DRAWS )
-        Int32 transp    = pipe.stat( SLang.UnityRenderPipeline.STAT_TRANSPARENT_DRAWS )
-        Int32 layers    = pipe.stat( SLang.UnityRenderPipeline.STAT_LAYERS_MASK )
-        Int32 chunks    = pipe.stat( SLang.UnityRenderPipeline.STAT_CHUNK_COUNT )
-        Int32 uploads   = pipe.stat( SLang.UnityRenderPipeline.STAT_UPLOAD_COUNT )
-        Int32 timeMs    = pipe.stat( SLang.UnityRenderPipeline.STAT_TIME_MS )
+        Int32 lastStage = pipe.stat( SLang.RenderPipeline.STAT_LAST_STAGE )
+        Int32 visible   = pipe.stat( SLang.RenderPipeline.STAT_VISIBLE )
+        Int32 culled    = pipe.stat( SLang.RenderPipeline.STAT_CULLED )
+        Int32 opaque    = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Int32 transp    = pipe.stat( SLang.RenderPipeline.STAT_TRANSPARENT_DRAWS )
+        Int32 layers    = pipe.stat( SLang.RenderPipeline.STAT_LAYERS_MASK )
+        Int32 chunks    = pipe.stat( SLang.RenderPipeline.STAT_CHUNK_COUNT )
+        Int32 uploads   = pipe.stat( SLang.RenderPipeline.STAT_UPLOAD_COUNT )
+        Int32 timeMs    = pipe.stat( SLang.RenderPipeline.STAT_TIME_MS )
         Console.println( "[pipe] stats: stage=" + lastStage.toString() + " visible=" + visible.toString() + " culled=" + culled.toString() + " opaque=" + opaque.toString() + " transp=" + transp.toString() + " layers=" + layers.toString() + " chunks=" + chunks.toString() + " uploads=" + uploads.toString() )
         if lastStage != 13 || visible != 2
         {
@@ -965,7 +965,7 @@ public class RenderTest
             Console.println( "[pipe] FAIL: pipeline stats after first frame" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_DRAW_CALLS ) < 3 || pipe.stat( SLang.UnityRenderPipeline.STAT_PROGRAM_SWITCHES ) < 3 || timeMs != 0
+        if pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS ) < 3 || pipe.stat( SLang.RenderPipeline.STAT_PROGRAM_SWITCHES ) < 3 || timeMs != 0
         {
             Console.println( "[pipe] FAIL: pipeline stats (draws/switches/time)" )
             ret false
@@ -991,7 +991,7 @@ public class RenderTest
             Console.println( "[pipe] FAIL: triangle should shift to green (color anim broken)" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_TIME_MS ) != 5000 || pipe.stat( SLang.UnityRenderPipeline.STAT_DT_MS ) != 5000
+        if pipe.stat( SLang.RenderPipeline.STAT_TIME_MS ) != 5000 || pipe.stat( SLang.RenderPipeline.STAT_DT_MS ) != 5000
         {
             Console.println( "[pipe] FAIL: core time update (timeMs/dtMs)" )
             ret false
@@ -1022,7 +1022,7 @@ public class RenderTest
             Console.println( "[pipe] FAIL: quad should vanish when layer culled" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_VISIBLE ) != 1 || pipe.stat( SLang.UnityRenderPipeline.STAT_CULLED ) != 1 || pipe.stat( SLang.UnityRenderPipeline.STAT_LAYERS_MASK ) != 1
+        if pipe.stat( SLang.RenderPipeline.STAT_VISIBLE ) != 1 || pipe.stat( SLang.RenderPipeline.STAT_CULLED ) != 1 || pipe.stat( SLang.RenderPipeline.STAT_LAYERS_MASK ) != 1
         {
             Console.println( "[pipe] FAIL: culling stats" )
             ret false
@@ -1048,7 +1048,7 @@ public class RenderTest
         triG = sampleChannel( _pixels, 256, 51, 184, 1 )
         triB = sampleChannel( _pixels, 256, 51, 184, 2 )
         Console.println( "[pipe] post gray tri  RGB=(" + triR.toString() + "," + triG.toString() + "," + triB.toString() + ")" )
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_POST_ENABLED ) != 1
+        if pipe.stat( SLang.RenderPipeline.STAT_POST_ENABLED ) != 1
         {
             Console.println( "[pipe] FAIL: post enabled stat" )
             ret false
@@ -1083,7 +1083,7 @@ public class RenderTest
             Console.println( "[pipe] FAIL: runStages 1..13" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_LAST_STAGE ) != 13
+        if pipe.stat( SLang.RenderPipeline.STAT_LAST_STAGE ) != 13
         {
             Console.println( "[pipe] FAIL: last stage after runStages" )
             ret false
@@ -1102,12 +1102,12 @@ public class RenderTest
             Console.println( "[pipe] FAIL: triangle should be cyan at t=10 (stages walk)" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_TIME_MS ) != 10000 || pipe.stat( SLang.UnityRenderPipeline.STAT_VISIBLE ) != 2
+        if pipe.stat( SLang.RenderPipeline.STAT_TIME_MS ) != 10000 || pipe.stat( SLang.RenderPipeline.STAT_VISIBLE ) != 2
         {
             Console.println( "[pipe] FAIL: stats after stages walk" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_FRAME ) < 5
+        if pipe.stat( SLang.RenderPipeline.STAT_FRAME ) < 5
         {
             Console.println( "[pipe] FAIL: frame stat" )
             ret false
@@ -1129,33 +1129,33 @@ public class RenderTest
         Console.println( "-- Phase A3: multi-camera (depth order + viewport split) + image file load --" )
 
         # 图片加载：坏路径 -> null；好路径 -> 纹理句柄
-        SLang.UnityRenderTexture badTex = SLang.UnityRenderTexture.loadFile( "no_such_image_file.png" )
+        SLang.RenderTexture badTex = SLang.RenderTexture.loadFile( "no_such_image_file.png" )
         if badTex != null
         {
             Console.println( "[cam] FAIL: loadFile should fail for missing file" )
             ret false
         }
 
-        SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
         if pipe == null
         {
             Console.println( "[cam] FAIL: pipeline create - " + SLang.Render.errorString() )
             ret false
         }
 
-        Int32 texBefore = pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT )
+        Int32 texBefore = pipe.stat( SLang.RenderPipeline.STAT_TEXTURE_COUNT )
         # 相对路径依赖运行进程 CWD（package 目录），失败则回退绝对路径
-        SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+        SLang.RenderTexture imgTex = SLang.RenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
         if imgTex == null
         {
-            imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+            imgTex = SLang.RenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
         }
         if imgTex == null || imgTex.isValid == false
         {
             Console.println( "[cam] FAIL: loadFile test_image.png - " + SLang.Render.errorString() )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT ) != texBefore + 1
+        if pipe.stat( SLang.RenderPipeline.STAT_TEXTURE_COUNT ) != texBefore + 1
         {
             Console.println( "[cam] FAIL: texture registry count after loadFile" )
             ret false
@@ -1163,7 +1163,7 @@ public class RenderTest
         Console.println( "[cam] image loaded: " + imgTex.toString() )
 
         # 橙图 quad（layer2，不透明）
-        SLang.UnityRenderObject imgQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        SLang.RenderObject imgQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if imgQuad == null
         {
             Console.println( "[cam] FAIL: add image quad" )
@@ -1177,7 +1177,7 @@ public class RenderTest
         imgQuad.setTexture( imgTex )
 
         # 蓝 quad（layer0，不透明，静态）
-        SLang.UnityRenderObject blueQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        SLang.RenderObject blueQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if blueQuad == null
         {
             Console.println( "[cam] FAIL: add blue quad" )
@@ -1190,7 +1190,7 @@ public class RenderTest
         blueQuad.setColor( 0.2f, 0.4f, 1.0f, 1.0f )
 
         # 动画小三角（layer1，顶部，QT 展示动感；不触碰任何断言采样点）
-        SLang.UnityRenderObject tri = pipe.addObject( SLang.UnityRenderPipeline.MESH_TRIANGLE )
+        SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
         if tri == null
         {
             Console.println( "[cam] FAIL: add anim triangle" )
@@ -1201,10 +1201,10 @@ public class RenderTest
         tri.setPosition( 0.0f, 0.6f, 0.0f )
         tri.setScale( 0.3f, 0.3f )
         tri.setColor( 1.0f, 0.0f, 0.0f, 1.0f )
-        tri.setAnimated( SLang.UnityRenderPipeline.ANIM_HUE_CYCLE, 0.25f )
+        tri.setAnimated( SLang.RenderPipeline.ANIM_HUE_CYCLE, 0.25f )
 
         # 相机1：depth=10（后画）、mask 仅 layer2、viewport 右半、深绿清屏
-        SLang.UnityRenderCamera cam = pipe.addCamera( 10 )
+        SLang.RenderCamera cam = pipe.addCamera( 10 )
         if cam == null || cam.isValid == false
         {
             Console.println( "[cam] FAIL: addCamera - " + SLang.Render.errorString() )
@@ -1220,7 +1220,7 @@ public class RenderTest
             Console.println( "[cam] FAIL: camera viewport/clear" )
             ret false
         }
-        if cam.setClearFlags( SLang.UnityRenderPipeline.CLEAR_COLOR | SLang.UnityRenderPipeline.CLEAR_DEPTH ) == false
+        if cam.setClearFlags( SLang.RenderPipeline.CLEAR_COLOR | SLang.RenderPipeline.CLEAR_DEPTH ) == false
         {
             Console.println( "[cam] FAIL: camera clear flags" )
             ret false
@@ -1239,13 +1239,13 @@ public class RenderTest
             Console.println( "[cam] FAIL: renderFrame dual-cam - " + SLang.Render.errorString() )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_CAMERA_COUNT ) != 2
+        if pipe.stat( SLang.RenderPipeline.STAT_CAMERA_COUNT ) != 2
         {
             Console.println( "[cam] FAIL: STAT_CAMERA_COUNT should be 2" )
             ret false
         }
-        Int32 vis = pipe.stat( SLang.UnityRenderPipeline.STAT_VISIBLE )
-        Console.println( "[cam] dual-cam stats: cameras=" + pipe.stat( SLang.UnityRenderPipeline.STAT_CAMERA_COUNT ).toString() + " visible=" + vis.toString() )
+        Int32 vis = pipe.stat( SLang.RenderPipeline.STAT_VISIBLE )
+        Console.println( "[cam] dual-cam stats: cameras=" + pipe.stat( SLang.RenderPipeline.STAT_CAMERA_COUNT ).toString() + " visible=" + vis.toString() )
         if vis != 3
         {
             Console.println( "[cam] FAIL: visible union should be 3 objects" )
@@ -1304,7 +1304,7 @@ public class RenderTest
             Console.println( "[cam] FAIL: renderFrame single-cam" )
             ret false
         }
-        if pipe.stat( SLang.UnityRenderPipeline.STAT_CAMERA_COUNT ) != 1
+        if pipe.stat( SLang.RenderPipeline.STAT_CAMERA_COUNT ) != 1
         {
             Console.println( "[cam] FAIL: STAT_CAMERA_COUNT should be 1 after disable" )
             ret false

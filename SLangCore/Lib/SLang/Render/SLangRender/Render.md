@@ -9,9 +9,9 @@ Windows OpenGL **离屏渲染**库（WGL + GL 3.3 core，零 SDK 依赖），nam
 
 - `Render`（入口 + 原生绑定 + 错误诊断）
 - `RenderContext`（v1：FBO 离屏渲染目标，直连快速路径）
-- `UnityRenderPipeline`（v2：Unity 风格 13 阶段管线，**逻辑全在 C 层**）
-- `UnityRenderObject`（v2：场景对象——mesh/layer/queue/变换/颜色/纹理/动画）
-- `UnityRenderTexture`（v2：RGBA8 纹理，SL 侧 top-down 像素块直传）
+- `RenderPipeline`（v2：Unity 风格 13 阶段管线，**逻辑全在 C 层**）
+- `RenderObject`（v2：场景对象——mesh/layer/queue/变换/颜色/纹理/动画）
+- `RenderTexture`（v2：RGBA8 纹理，SL 侧 top-down 像素块直传）
 
 错误处理以返回值表达（null / false），原因经 `Render.lastError()` /
 `Render.errorString()` 取得（粘性：每次原生入口调用先清零），与 `SLangCuda` 同风格。
@@ -24,7 +24,7 @@ GL 执行环境，永不显示、永不 SwapBuffers。
 ## 渲染层职责对照（RHI 与上层脚本之间的中间层定位）
 
 职责：**连接 RHI 与上层脚本，处理高性能的渲染逻辑**。SL 侧薄 FFI 门面
-（`Render.sl`/`UnityPipeline.sl`）+ C 侧管线层（`Pipeline/sl_pipeline.c`）+
+（`Render.sl`/`Pipeline.sl`）+ C 侧管线层（`Pipeline/sl_pipeline.c`）+
 RHI 层（`RHI/` 四后端 vtable）三层协同，三大核心功能：
 
 | 核心功能 | 落点 | 机制 |
@@ -34,14 +34,14 @@ RHI 层（`RHI/` 四后端 vtable）三层协同，三大核心功能：
 | **Platform Adaptation** | `sl_render.c` 后端注册表 + `RHI/` 四后端 | `SlrBackendEntry` 静态注册（gl/d3d11/vk/gles）+ 运行期探测（LoadLibrary 后端 dll）+ 缺失优雅降级（init 返回 0 → 测试侧 SKIP）；跨平台差异吸收：D3D11 行序翻转/清屏 quad、GL scissor 局部清、VK 布局跟踪与分段提交、四后端像素/坐标约定逐字节对齐；描述符机制四后端映射（v3.2：DX11 SRV 槽表 / VK descriptor set / GL 纹理单元） |
 
 上层脚本侧数据结构：`Config.sl`（分辨率/同步/MSAA/后端标识/裁剪面/URP 开关）
-+ `UnityRenderPipeline/Object/Texture/Camera`（场景侧）+ `Mesh.sl`（几何侧）；
++ `RenderPipeline/Object/Texture/Camera`（场景侧）+ `Mesh.sl`（几何侧）；
 管线侧外层数据结构：`SlrPipeline`（含 `SlrDescTable` 描述符表、相机槽表、
 绘制项表）、`SlrDrawItem`（含 `tex_desc` 材质键）、`SlrCamera`。
 
 ## v2：Unity 风格 13 阶段管线（sl_render_lib.dll 内实现）
 
 一帧 = 13 个阶段依序执行（C 层静态函数 + `SLR_STAGE_EXPORT` 宏导出），对应
-Unity 渲染底层流程；SL 侧 `UnityRenderPipeline` 只做薄 FFI 绑定（每方法 1:1
+Unity 渲染底层流程；SL 侧 `RenderPipeline` 只做薄 FFI 绑定（每方法 1:1
 转发一个 `slr_*` 符号，参数不超过 FFI 上限 6）：
 
 | # | 阶段 | C 符号 | 职责 |
@@ -71,14 +71,14 @@ Unity 渲染底层流程；SL 侧 `UnityRenderPipeline` 只做薄 FFI 绑定（�
 - 相机（v2.1 多相机）：
   - 默认相机（槽 0）：`setCamera( cullingMask, l, r, b, t )` 写入，mask=-1 全可见，
     按位 `1<<layer` 控制层；`setClearColor` 同步槽 0 清屏色（保持 v2 兼容）
-  - 多相机：`addCamera( depth )` 新建 `UnityRenderCamera`（上限 8 槽），每相机独立
+  - 多相机：`addCamera( depth )` 新建 `RenderCamera`（上限 8 槽），每相机独立
     `setCullMask / setExtents / setViewport / setClearColor / setClearFlags / setDepth /
     setEnabled / destroy`
   - 渲染按 **depth 升序**逐相机执行：视口/清屏（`glClear` 只受 scissor 限制，局部
     清屏内部启用 scissor box）→ 该相机剔除（cullMask + 视域）→ 不透明/透明段绘制；
     阶段 11-13（后处理/整合/输出）全帧一次
   - clearFlags：位 1 = 清颜色，位 2 = 清深度；叠加相机可设 0（透写上一相机画面）
-- 图片文件加载（v2.1）：`UnityRenderTexture.loadFile( path )` —— C 层 WIC 解码
+- 图片文件加载（v2.1）：`RenderTexture.loadFile( path )` —— C 层 WIC 解码
   （PNG/JPEG/BMP/TIFF，零 SDK 依赖，windowscodecs.lib 注入），转 32bppRGBA 后
   与 createRgba 同路径上传；path 为 UTF-8；坏路径返回 null（错误码 SLR_E_IMAGE -19，
   细节经 `slr_error_detail()`）
@@ -98,12 +98,12 @@ import Std;
 import SLangRender;
 import SLangQT;
 
-SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
 pipe.setCamera( -1, -1.0f, 1.0f, -1.0f, 1.0f )          # 全可见 + 正交视域
 pipe.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f )
 
 # 对象 1：色相循环动画三角（layer0，Geometry 队列）
-SLang.UnityRenderObject tri = pipe.addObject( pipe.MESH_TRIANGLE )
+SLang.RenderObject tri = pipe.addObject( pipe.MESH_TRIANGLE )
 tri.setLayer( 0 )
 tri.setQueue( 2000 )
 tri.setScale( 1.3f, 1.3f )
@@ -113,10 +113,10 @@ tri.setAnimated( pipe.ANIM_HUE_CYCLE, 0.25f )           # 0.25 色相/秒：红�
 # 纹理：SL 侧生成 top-down RGBA8 像素块（Memory.alloc w*h*4）
 Int64 texPtr = Memory.alloc( 64 * 64 * 4 )
 # … Memory.writeI8 逐通道填色 …
-SLang.UnityRenderTexture tex = SLang.UnityRenderTexture.createRgba( texPtr, 64, 64 )
+SLang.RenderTexture tex = SLang.RenderTexture.createRgba( texPtr, 64, 64 )
 
 # 对象 2：贴图 quad（layer1，Transparent 队列，叠在三角右上）
-SLang.UnityRenderObject quad = pipe.addObject( pipe.MESH_QUAD )
+SLang.RenderObject quad = pipe.addObject( pipe.MESH_QUAD )
 quad.setLayer( 1 )
 quad.setQueue( 3000 )
 quad.setPosition( 0.45f, 0.35f, 0.5f )
@@ -196,7 +196,7 @@ Memory.writeF32( vertsPtr, off + 8, u ); Memory.writeF32( vertsPtr, off + 12, v 
 
 # 上传 + 挂对象：mesh_kind = 4 + slot（MESH_CUSTOM 路由动态网格槽）
 pipe.uploadMesh( 0, vertsPtr, vertCount )           # 每帧整块重传（VK 持久映射直写）
-SLang.UnityRenderObject obj = pipe.addObject( SLang.UnityRenderPipeline.MESH_CUSTOM )
+SLang.RenderObject obj = pipe.addObject( SLang.RenderPipeline.MESH_CUSTOM )
 ```
 
 原生侧（`slr_mesh_upload` → RHI vtable `mesh_upload` 槽，四后端一致）：
@@ -254,7 +254,7 @@ SL 语言规则（Mesh.sl 落地实证，写库必读）：
 ## 原生链路（FFI 静态绑定 + 运行期双通道解析）
 
 ```
-Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_render_lib.dll
+Render.sl / Pipeline/Pipeline.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_render_lib.dll
                                       ──RHI 抽象层（SlrRhi vtable）──> 后端驱动：
                                         "gl"    -> opengl32.dll（WGL + GL 3.3 core，默认）
                                         "d3d11" -> d3d11.dll + d3dcompiler_47.dll（运行期加载，零 .lib）
@@ -318,10 +318,10 @@ cvm_render_lib/
 ├── sl_render.c               <-> Render.sl                 生命周期/诊断/v1 直连层
 │                                                             + RHI 后端注册表 + 全局资源回收
 ├── Pipeline/                 （平台无关管线层，只调 g_rhi->*）
-│   ├── sl_pipeline.c         <-> Pipeline/UnityPipeline.sl  13 阶段管线 + 多相机调度 + 统计
-│   ├── sl_object.c           <-> UnityRenderObject          场景对象属性
-│   ├── sl_texture.c          <-> UnityRenderTexture         纹理注册表 + WIC 图片加载
-│   └── sl_camera.c           <-> UnityRenderCamera          多相机槽表
+│   ├── sl_pipeline.c         <-> Pipeline/Pipeline.sl  13 阶段管线 + 多相机调度 + 统计
+│   ├── sl_object.c           <-> RenderObject          场景对象属性
+│   ├── sl_texture.c          <-> RenderTexture         纹理注册表 + WIC 图片加载
+│   └── sl_camera.c           <-> RenderCamera          多相机槽表
 └── RHI/                      （驱动后端：同一 vtable，同一像素契约）
     ├── sl_rhi.h              接口契约（SlrRhi 函数表 + 像素/坐标约定）
     ├── sl_gl_procs.h         GL 函数指针清单（GLDECL 宏双用；GL/GLES 后端共用，

@@ -1,5 +1,5 @@
 # =========================================================================
-# UnityPipeline —— Unity 风格渲染管线 SL 门面（薄绑定，逻辑全在 C 层）
+# Pipeline.sl —— 13 阶段渲染管线 SL 门面（薄绑定，逻辑全在 C 层）
 # ----------------------------------------------------------------------------
 # 对应 C 实现：Render/cvm_render_lib/sl_render_lib.c（slr_pipeline_* 导出）。
 # 每个公开方法 1:1 对应一个 slr_* FFI 函数；本层不含渲染逻辑。
@@ -21,8 +21,8 @@
 #
 # 用法（renderTexture 通道，QT QLabel.setPixmapRgba 对接）：
 #   SLang.Render.initialize()
-#   SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
-#   SLang.UnityRenderObject tri = pipe.addObject( pipe.MESH_TRIANGLE )
+#   SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+#   SLang.RenderObject tri = pipe.addObject( pipe.MESH_TRIANGLE )
 #   tri.setAnimated( pipe.ANIM_HUE_CYCLE, 0.05f )
 #   Int64 pixels = Memory.alloc( 256 * 256 * 4 )
 #   pipe.renderFrame( 0.0f, pixels )          # 或 pipe.runStages( t, pixels )
@@ -34,9 +34,9 @@
 namespace SLang
 {
     # ===================================================================
-    # UnityRenderPipeline —— 13 阶段管线门面
+    # RenderPipeline —— 13 阶段管线门面
     # ===================================================================
-    public class UnityRenderPipeline
+    public class RenderPipeline
     {
         # ── 阶段常量（stat STAT_LAST_STAGE 取值）──────────────────
         public static Int32 STAGE_BEGIN_FRAME            = 1
@@ -120,14 +120,14 @@ namespace SLang
 
         # ── 创建 / 释放 ───────────────────────────────────────────
 
-        public static UnityRenderPipeline create( Int32 width, Int32 height )
+        public static RenderPipeline create( Int32 width, Int32 height )
         {
-            Int64 h = UnityRenderPipeline.ffiPipelineCreate( width, height )
+            Int64 h = RenderPipeline.ffiPipelineCreate( width, height )
             if h == 0
             {
                 ret null
             }
-            ret UnityRenderPipeline( h, width, height )
+            ret RenderPipeline( h, width, height )
         }
 
         public bool destroy()
@@ -136,7 +136,7 @@ namespace SLang
             {
                 ret false
             }
-            bool ok = UnityRenderPipeline.ffiPipelineDestroy( this._handle )
+            bool ok = RenderPipeline.ffiPipelineDestroy( this._handle )
             if ok
             {
                 this._handle = 0
@@ -150,7 +150,7 @@ namespace SLang
             {
                 ret false
             }
-            if UnityRenderPipeline.ffiPipelineResize( this._handle, width, height ) == false
+            if RenderPipeline.ffiPipelineResize( this._handle, width, height ) == false
             {
                 ret false
             }
@@ -165,7 +165,7 @@ namespace SLang
             {
                 ret 0
             }
-            ret UnityRenderPipeline.ffiPipelineFrameCount( this._handle )
+            ret RenderPipeline.ffiPipelineFrameCount( this._handle )
         }
 
         # ── 相机 / 清屏 / 后处理 ─────────────────────────────────
@@ -179,33 +179,33 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiSetCamera( this._handle, cullMask, l, r, b, t )
+            ret RenderPipeline.ffiSetCamera( this._handle, cullMask, l, r, b, t )
         }
 
         # ── 多相机（槽 0 为默认相机；渲染按 depth 升序逐相机执行）──
 
-        # addCamera(depth) —— 新建相机槽，返回 UnityRenderCamera
-        public UnityRenderCamera addCamera( Int32 depth )
+        # addCamera(depth) —— 新建相机槽，返回 RenderCamera
+        public RenderCamera addCamera( Int32 depth )
         {
             if this._handle == 0
             {
                 ret null
             }
-            Int64 id = UnityRenderPipeline.ffiCameraCreate( this._handle, depth )
+            Int64 id = RenderPipeline.ffiCameraCreate( this._handle, depth )
             if id == 0
             {
                 ret null
             }
-            ret UnityRenderCamera( this._handle, id )
+            ret RenderCamera( this._handle, id )
         }
 
-        public bool removeCamera( UnityRenderCamera cam )
+        public bool removeCamera( RenderCamera cam )
         {
             if this._handle == 0 || cam == null || cam.isValid == false
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiCameraDestroy( this._handle, cam.handle )
+            ret RenderPipeline.ffiCameraDestroy( this._handle, cam.handle )
         }
 
         public Int32 cameraCount()
@@ -214,7 +214,7 @@ namespace SLang
             {
                 ret 0
             }
-            ret UnityRenderPipeline.ffiCameraCount( this._handle )
+            ret RenderPipeline.ffiCameraCount( this._handle )
         }
 
         public bool setClearColor( Float32 r, Float32 g, Float32 b, Float32 a )
@@ -223,7 +223,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiSetClearColor( this._handle, r, g, b, a )
+            ret RenderPipeline.ffiSetClearColor( this._handle, r, g, b, a )
         }
 
         # setPostEffect(enable, brightness, saturation, vignette)
@@ -234,23 +234,23 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiSetPost( this._handle, enable, brightness, saturation, vignette )
+            ret RenderPipeline.ffiSetPost( this._handle, enable, brightness, saturation, vignette )
         }
 
         # ── 场景对象 ─────────────────────────────────────────────
 
-        public UnityRenderObject addObject( Int32 meshKind )
+        public RenderObject addObject( Int32 meshKind )
         {
             if this._handle == 0
             {
                 ret null
             }
-            Int64 id = UnityRenderPipeline.ffiObjectCreate( this._handle, meshKind )
+            Int64 id = RenderPipeline.ffiObjectCreate( this._handle, meshKind )
             if id == 0
             {
                 ret null
             }
-            ret UnityRenderObject( this._handle, id )
+            ret RenderObject( this._handle, id )
         }
 
         # uploadMesh(slot, vertsPtr, vertCount) —— 上传动态网格（3D/程序化
@@ -259,16 +259,16 @@ namespace SLang
         # 引用该槽；每帧可重复调用实现顶点动画。
         public bool uploadMesh( Int32 slot, Int64 vertsPtr, Int32 vertCount )
         {
-            ret UnityRenderPipeline.ffiMeshUpload( slot, vertsPtr, vertCount )
+            ret RenderPipeline.ffiMeshUpload( slot, vertsPtr, vertCount )
         }
 
-        public bool removeObject( UnityRenderObject obj )
+        public bool removeObject( RenderObject obj )
         {
             if this._handle == 0 || obj == null || obj.isValid == false
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiObjectDestroy( this._handle, obj.handle )
+            ret RenderPipeline.ffiObjectDestroy( this._handle, obj.handle )
         }
 
         public Int32 objectCount()
@@ -277,7 +277,7 @@ namespace SLang
             {
                 ret 0
             }
-            ret UnityRenderPipeline.ffiObjectCount( this._handle )
+            ret RenderPipeline.ffiObjectCount( this._handle )
         }
 
         # ── 13 阶段（逐阶段驱动）────────────────────────────────
@@ -288,7 +288,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiBeginFrame( this._handle, time )
+            ret RenderPipeline.ffiBeginFrame( this._handle, time )
         }
 
         public bool prepareMaterials()
@@ -297,7 +297,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiPrepareMaterials( this._handle )
+            ret RenderPipeline.ffiPrepareMaterials( this._handle )
         }
 
         public bool earlyUpdate()
@@ -306,7 +306,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiEarlyUpdate( this._handle )
+            ret RenderPipeline.ffiEarlyUpdate( this._handle )
         }
 
         public bool cullLayers()
@@ -315,7 +315,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiCullLayers( this._handle )
+            ret RenderPipeline.ffiCullLayers( this._handle )
         }
 
         public bool assembleLayerData()
@@ -324,7 +324,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiAssembleLayerData( this._handle )
+            ret RenderPipeline.ffiAssembleLayerData( this._handle )
         }
 
         public bool uploadRenderData()
@@ -333,7 +333,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiUploadRenderData( this._handle )
+            ret RenderPipeline.ffiUploadRenderData( this._handle )
         }
 
         public bool renderShaderChunks()
@@ -342,7 +342,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiRenderShaderChunks( this._handle )
+            ret RenderPipeline.ffiRenderShaderChunks( this._handle )
         }
 
         public bool updateCoreTime()
@@ -351,7 +351,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiUpdateCoreTime( this._handle )
+            ret RenderPipeline.ffiUpdateCoreTime( this._handle )
         }
 
         public bool renderShaderSegments()
@@ -360,7 +360,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiRenderShaderSegments( this._handle )
+            ret RenderPipeline.ffiRenderShaderSegments( this._handle )
         }
 
         public bool assembleRenderedLayers()
@@ -369,7 +369,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiAssembleRenderedLayers( this._handle )
+            ret RenderPipeline.ffiAssembleRenderedLayers( this._handle )
         }
 
         public bool postProcess()
@@ -378,7 +378,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiPostProcess( this._handle )
+            ret RenderPipeline.ffiPostProcess( this._handle )
         }
 
         public bool integrateLayers()
@@ -387,7 +387,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiIntegrateLayers( this._handle )
+            ret RenderPipeline.ffiIntegrateLayers( this._handle )
         }
 
         public bool outputRenderTexture( Int64 dstPtr )
@@ -396,7 +396,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiOutputRenderTexture( this._handle, dstPtr )
+            ret RenderPipeline.ffiOutputRenderTexture( this._handle, dstPtr )
         }
 
         # renderFrame —— 一键全流程（C 层依序执行 1..13）
@@ -406,7 +406,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderPipeline.ffiRenderFrame( this._handle, time, dstPtr )
+            ret RenderPipeline.ffiRenderFrame( this._handle, time, dstPtr )
         }
 
         # runStages —— SL 侧逐阶段驱动 1..13（与 renderFrame 等价，
@@ -477,12 +477,12 @@ namespace SLang
             {
                 ret 0
             }
-            ret UnityRenderPipeline.ffiStat( this._handle, id )
+            ret RenderPipeline.ffiStat( this._handle, id )
         }
 
         override string toString()
         {
-            ret "UnityRenderPipeline(" + this._width.toString() + "x" + this._height.toString() + ")"
+            ret "RenderPipeline(" + this._width.toString() + "x" + this._height.toString() + ")"
         }
 
         # ── FFI 绑定（sl_render_lib.dll，函数体为兜底返回）─────────
@@ -665,9 +665,9 @@ namespace SLang
     }
 
     # ===================================================================
-    # UnityRenderObject —— 场景对象门面（网格/材质参数/变换/层级）
+    # RenderObject —— 场景对象门面（网格/材质参数/变换/层级）
     # ===================================================================
-    public class UnityRenderObject
+    public class RenderObject
     {
         Int64 _pipe = 0
         Int64 _id = 0
@@ -694,7 +694,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetVisible( this._pipe, this._id, visible )
+            ret RenderObject.ffiSetVisible( this._pipe, this._id, visible )
         }
 
         public bool setLayer( Int32 layer )
@@ -703,7 +703,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetLayer( this._pipe, this._id, layer )
+            ret RenderObject.ffiSetLayer( this._pipe, this._id, layer )
         }
 
         # setQueue —— 渲染队列（<2500 不透明，>=2500 透明）
@@ -713,7 +713,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetQueue( this._pipe, this._id, queue )
+            ret RenderObject.ffiSetQueue( this._pipe, this._id, queue )
         }
 
         public bool setPosition( Float32 x, Float32 y, Float32 z )
@@ -722,7 +722,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetPosition( this._pipe, this._id, x, y, z )
+            ret RenderObject.ffiSetPosition( this._pipe, this._id, x, y, z )
         }
 
         public bool setRotationZ( Float32 rz )
@@ -731,7 +731,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetRotationZ( this._pipe, this._id, rz )
+            ret RenderObject.ffiSetRotationZ( this._pipe, this._id, rz )
         }
 
         public bool setScale( Float32 sx, Float32 sy )
@@ -740,7 +740,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetScale( this._pipe, this._id, sx, sy )
+            ret RenderObject.ffiSetScale( this._pipe, this._id, sx, sy )
         }
 
         public bool setColor( Float32 r, Float32 g, Float32 b, Float32 a )
@@ -749,10 +749,10 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetColor( this._pipe, this._id, r, g, b, a )
+            ret RenderObject.ffiSetColor( this._pipe, this._id, r, g, b, a )
         }
 
-        public bool setTexture( UnityRenderTexture tex )
+        public bool setTexture( RenderTexture tex )
         {
             if this._pipe == 0 || this._id == 0
             {
@@ -763,7 +763,7 @@ namespace SLang
             {
                 h = tex.handle
             }
-            ret UnityRenderObject.ffiSetTexture( this._pipe, this._id, h )
+            ret RenderObject.ffiSetTexture( this._pipe, this._id, h )
         }
 
         public bool setAnimated( Int32 mode, Float32 speed )
@@ -772,7 +772,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderObject.ffiSetAnimated( this._pipe, this._id, mode, speed )
+            ret RenderObject.ffiSetAnimated( this._pipe, this._id, mode, speed )
         }
 
         public bool destroy()
@@ -781,7 +781,7 @@ namespace SLang
             {
                 ret false
             }
-            bool ok = UnityRenderObject.ffiObjectDestroy( this._pipe, this._id )
+            bool ok = RenderObject.ffiObjectDestroy( this._pipe, this._id )
             if ok
             {
                 this._id = 0
@@ -853,9 +853,9 @@ namespace SLang
     }
 
     # ===================================================================
-    # UnityRenderTexture —— 贴图门面（top-down RGBA8 上传）
+    # RenderTexture —— 贴图门面（top-down RGBA8 上传）
     # ===================================================================
-    public class UnityRenderTexture
+    public class RenderTexture
     {
         Int64 _handle = 0
         Int32 _width = 0
@@ -890,35 +890,35 @@ namespace SLang
 
         # createRgba(ptr, w, h) —— ptr 为 Memory.alloc 的 RGBA8 像素块
         #（行主序、顶行在前；C 层内部翻行为 GL bottom-up）
-        public static UnityRenderTexture createRgba( Int64 ptr, Int32 width, Int32 height )
+        public static RenderTexture createRgba( Int64 ptr, Int32 width, Int32 height )
         {
             if ptr == 0 || width <= 0 || height <= 0
             {
                 ret null
             }
-            Int64 h = UnityRenderTexture.ffiTextureCreateRgba( width, height, ptr )
+            Int64 h = RenderTexture.ffiTextureCreateRgba( width, height, ptr )
             if h == 0
             {
                 ret null
             }
-            ret UnityRenderTexture( h, width, height )
+            ret RenderTexture( h, width, height )
         }
 
         # loadFile(path) —— 从图片文件创建纹理（C 层 WIC 解码，
         # 支持 PNG/JPEG/BMP/TIFF 等；path 为 UTF-8）
-        public static UnityRenderTexture loadFile( string path )
+        public static RenderTexture loadFile( string path )
         {
             if path == null || path.length() == 0
             {
                 ret null
             }
-            Int64 h = UnityRenderTexture.ffiTextureLoadFile( path )
+            Int64 h = RenderTexture.ffiTextureLoadFile( path )
             if h == 0
             {
                 ret null
             }
             # 尺寸由 C 层注册表管理；门面仅记录句柄，宽高留 0
-            ret UnityRenderTexture( h, 0, 0 )
+            ret RenderTexture( h, 0, 0 )
         }
 
         public bool destroy()
@@ -927,7 +927,7 @@ namespace SLang
             {
                 ret false
             }
-            bool ok = UnityRenderTexture.ffiTextureDestroy( this._handle )
+            bool ok = RenderTexture.ffiTextureDestroy( this._handle )
             if ok
             {
                 this._handle = 0
@@ -937,7 +937,7 @@ namespace SLang
 
         override string toString()
         {
-            ret "UnityRenderTexture(" + this._width.toString() + "x" + this._height.toString() + ")"
+            ret "RenderTexture(" + this._width.toString() + "x" + this._height.toString() + ")"
         }
 
         # ── FFI 绑定 ──────────────────────────────────────────────
@@ -962,10 +962,10 @@ namespace SLang
     }
 
     # ===================================================================
-    # UnityRenderCamera —— 管线相机门面（多相机渲染）
+    # RenderCamera —— 管线相机门面（多相机渲染）
     # ----------------------------------------------------------------------------
-    # 槽 0 为默认相机（UnityRenderPipeline.setCamera 写入，不经过本类）。
-    # 新建相机经 UnityRenderPipeline.addCamera(depth)：depth 升序决定
+    # 槽 0 为默认相机（RenderPipeline.setCamera 写入，不经过本类）。
+    # 新建相机经 RenderPipeline.addCamera(depth)：depth 升序决定
     # 绘制次序（小 depth 先画）。每相机独立：
     #   cullingMask  —— 按位对应 layer 0..31（-1 = 全部）
     #   extents      —— 正交视域（NDC 前的世界系包围盒）
@@ -973,7 +973,7 @@ namespace SLang
     #   clearColor   —— 本相机清屏色
     #   clearFlags   —— 位 1 = 清颜色、位 2 = 清深度（叠加相机可清 0）
     # ===================================================================
-    public class UnityRenderCamera
+    public class RenderCamera
     {
         Int64 _pipe = 0
         Int64 _id = 0
@@ -1000,7 +1000,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetEnabled( this._pipe, this._id, enabled ? 1 : 0 )
+            ret RenderCamera.ffiCameraSetEnabled( this._pipe, this._id, enabled ? 1 : 0 )
         }
 
         public bool setDepth( Int32 depth )
@@ -1009,7 +1009,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetDepth( this._pipe, this._id, depth )
+            ret RenderCamera.ffiCameraSetDepth( this._pipe, this._id, depth )
         }
 
         public bool setCullMask( Int32 mask )
@@ -1018,7 +1018,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetCullMask( this._pipe, this._id, mask )
+            ret RenderCamera.ffiCameraSetCullMask( this._pipe, this._id, mask )
         }
 
         # setExtents(l, r, b, t) —— 正交视域
@@ -1028,7 +1028,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetExtents( this._pipe, this._id, l, r, b, t )
+            ret RenderCamera.ffiCameraSetExtents( this._pipe, this._id, l, r, b, t )
         }
 
         # setViewport(x, y, w, h) —— 输出目标内像素视口
@@ -1038,7 +1038,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetViewport( this._pipe, this._id, x, y, w, h )
+            ret RenderCamera.ffiCameraSetViewport( this._pipe, this._id, x, y, w, h )
         }
 
         public bool setClearColor( Float32 r, Float32 g, Float32 b, Float32 a )
@@ -1047,7 +1047,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetClearColor( this._pipe, this._id, r, g, b, a )
+            ret RenderCamera.ffiCameraSetClearColor( this._pipe, this._id, r, g, b, a )
         }
 
         # setClearFlags(flags) —— 位 1 = 清颜色，位 2 = 清深度
@@ -1057,7 +1057,7 @@ namespace SLang
             {
                 ret false
             }
-            ret UnityRenderCamera.ffiCameraSetClearFlags( this._pipe, this._id, flags )
+            ret RenderCamera.ffiCameraSetClearFlags( this._pipe, this._id, flags )
         }
 
         public bool destroy()
@@ -1066,7 +1066,7 @@ namespace SLang
             {
                 ret false
             }
-            bool ok = UnityRenderCamera.ffiCameraDestroy( this._pipe, this._id )
+            bool ok = RenderCamera.ffiCameraDestroy( this._pipe, this._id )
             if ok
             {
                 this._id = 0

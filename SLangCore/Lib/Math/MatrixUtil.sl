@@ -1,7 +1,14 @@
-# Render 层矩阵工具（类名 MatrixUtil，避免与 Math 库的通用 Matrix 冲突）。
+# =========================================================================
+# MatrixUtil.sl —— Float32 矩阵静态工具门面（自 SLangRender\Matrix.sl 迁入）
 #
-# 约定：Render 库统一使用 Math 库的 **Float32** 系列类型
+# 约定：统一使用 Float32 系列类型
 #   矩阵 -> Float32_3x3 / Float32_4x4，函数 -> Mathf.*
+# 与通用稠密矩阵 Matrix（Matrix.sl）互补：Matrix 面向任意行列的通用运算，
+# MatrixUtil 面向渲染常用的 3x3/4x4 快捷构造、TRS 组合与视图/投影。
+# 自有实现的方法：fromEuler / trs(Quaternion) / inverseRigid /
+# perspectiveDegrees，其余为 Float32_3x3 / Float32_4x4 静态方法的转发门面。
+# =========================================================================
+
 public class MatrixUtil
 {
     # ── 3x3 ──────────────────────────────────────────────
@@ -86,32 +93,23 @@ public class MatrixUtil
         ret Float32_4x4.rotationAxis( axis, radians )
     }
 
-    # 由四元数构造旋转矩阵
-    public static Float32_4x4 fromQuaternion( Quaternion q )
-    {
-        ret q.toFloat32_4x4()
-    }
+    # 注：原 Render 版另有 fromQuaternion(Quaternion) / trs(., Quaternion, .) 两个
+    # 方法，因 Math.jsonc 当前 Quaternion.sl 处于 ignore（未编译）暂不迁入；
+    # Quaternion 启用后可恢复（依赖 q.toFloat32_4x4()）。
 
     # 由欧拉角（弧度）构造旋转矩阵
     public static Float32_4x4 fromEuler( Float32_3 eulerRadians )
     {
-        ret Float32_4x4.rotationY( eulerRadians.y )
-            .multiply( Float32_4x4.rotationX( eulerRadians.x ) )
-            .multiply( Float32_4x4.rotationZ( eulerRadians.z ) )
+        Float32_4x4 ry = Float32_4x4.rotationY( eulerRadians.y )
+        Float32_4x4 rx = Float32_4x4.rotationX( eulerRadians.x )
+        Float32_4x4 rz = Float32_4x4.rotationZ( eulerRadians.z )
+        ret ry.multiply( rx ).multiply( rz )
     }
 
     # 组合：translation * rotation * scale
     public static Float32_4x4 trs( Float32_3 translation, Float32_3 rotationEuler, Float32_3 scale )
     {
         ret Float32_4x4.trs( translation, rotationEuler, scale )
-    }
-
-    public static Float32_4x4 trs( Float32_3 translation, Quaternion rotation, Float32_3 scale )
-    {
-        Float32_4x4 t = Float32_4x4.translation( translation )
-        Float32_4x4 r = rotation.toFloat32_4x4()
-        Float32_4x4 s = Float32_4x4.scale( scale )
-        ret t.multiply( r ).multiply( s )
     }
 
     # ── 4x4 运算 ─────────────────────────────────────────
@@ -142,23 +140,23 @@ public class MatrixUtil
         Float32 ty = m.get( 1, 3 )
         Float32 tz = m.get( 2, 3 )
 
-        Float32_4x4 r = Float32_4x4()
+        Float32_4x4 rm = Float32_4x4()
         # 转置旋转部分（R^T）
-        r.set( 0, 0, m00 )
-        r.set( 0, 1, m10 )
-        r.set( 0, 2, m20 )
-        r.set( 1, 0, m01 )
-        r.set( 1, 1, m11 )
-        r.set( 1, 2, m21 )
-        r.set( 2, 0, m02 )
-        r.set( 2, 1, m12 )
-        r.set( 2, 2, m22 )
+        rm.set( 0, 0, m00 )
+        rm.set( 0, 1, m10 )
+        rm.set( 0, 2, m20 )
+        rm.set( 1, 0, m01 )
+        rm.set( 1, 1, m11 )
+        rm.set( 1, 2, m21 )
+        rm.set( 2, 0, m02 )
+        rm.set( 2, 1, m12 )
+        rm.set( 2, 2, m22 )
         # 平移部分 = -R^T * t
-        r.set( 0, 3, 0.0f - ( m00 * tx + m10 * ty + m20 * tz ) )
-        r.set( 1, 3, 0.0f - ( m01 * tx + m11 * ty + m21 * tz ) )
-        r.set( 2, 3, 0.0f - ( m02 * tx + m12 * ty + m22 * tz ) )
-        r.set( 3, 3, 1.0f )
-        ret r
+        rm.set( 0, 3, 0.0f - ( m00 * tx + m10 * ty + m20 * tz ) )
+        rm.set( 1, 3, 0.0f - ( m01 * tx + m11 * ty + m21 * tz ) )
+        rm.set( 2, 3, 0.0f - ( m02 * tx + m12 * ty + m22 * tz ) )
+        rm.set( 3, 3, 1.0f )
+        ret rm
     }
 
     # ── 视图 / 投影 ──────────────────────────────────────

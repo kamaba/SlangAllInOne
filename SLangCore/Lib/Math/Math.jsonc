@@ -201,6 +201,9 @@
       // ── 其他 ─────────────────────────────────────────
       { "path": "Quaternion.sl", "group": "math", "tag": "quat", "ignore": true, "priority": 0 },
       { "path": "Matrix.sl",     "group": "math", "tag": "mat",  "ignore": false, "priority": 0 },
+      // MatrixUtil（Float32 3x3/4x4 静态工具门面 + TRS/视图/投影）自
+      // SLangRender\Matrix.sl 迁入（原为未编译草稿，类名避开通用 Matrix）
+      { "path": "MatrixUtil.sl", "group": "math", "tag": "mat",  "ignore": false, "priority": 0 },
       { "path": "Rect.sl",       "group": "math", "tag": "rect", "ignore": true, "priority": 0 }
     ]
   },
@@ -248,6 +251,7 @@
       { "class": "Float64_4x4" },
       { "class": "Quaternion" },
       { "class": "Matrix" },
+      { "class": "MatrixUtil" },
       { "class": "Rect" }
     ]}
   ],

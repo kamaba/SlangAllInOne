@@ -9,10 +9,10 @@
  *   - 资源全局表回收（管线目标 / 纹理 / v1 ctx，经 RHI）。
  *
  * 渲染逻辑全部在：
- *   Pipeline/sl_pipeline.c <-> Pipeline/UnityPipeline.sl（13 阶段管线）
- *   Pipeline/sl_object.c   <-> UnityRenderObject
- *   Pipeline/sl_texture.c  <-> UnityRenderTexture
- *   Pipeline/sl_camera.c   <-> UnityRenderCamera
+ *   Pipeline/sl_pipeline.c <-> Pipeline/Pipeline.sl（13 阶段管线）
+ *   Pipeline/sl_object.c   <-> RenderObject
+ *   Pipeline/sl_texture.c  <-> RenderTexture
+ *   Pipeline/sl_camera.c   <-> RenderCamera
  *   RHI/sl_rhi_*.c         <-> 平台驱动后端（GL / D3D11 / VK / GLES）
  * ========================================================================= */
 #include "sl_render_internal.h"

@@ -1,5 +1,5 @@
 /* =========================================================================
- * sl_texture.c —— 纹理注册表（对应 SL 侧 UnityRenderTexture）
+ * sl_texture.c —— 纹理注册表（对应 SL 侧 RenderTexture）
  *
  * 全局纹理槽表 s_textures：句柄 1 起始，RGBA8 top-down 像素契约
  * （上传前统一翻行为 bottom-up 行序，交由 RHI 后端原样入显存——

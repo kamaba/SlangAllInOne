@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace Spm;
@@ -226,7 +225,7 @@ internal static class SyncCommands
         byte[] zipBytes;
         bool downloaded = false;
         if (File.Exists(zipPath) && r.Md5.Length > 0
-            && Md5File(zipPath).Equals(r.Md5, StringComparison.OrdinalIgnoreCase))
+            && ZipInstall.Md5File(zipPath).Equals(r.Md5, StringComparison.OrdinalIgnoreCase))
         {
             try
             {
@@ -255,9 +254,9 @@ internal static class SyncCommands
             zipBytes = bytes;
             downloaded = true;
             // ② 下载后 md5 二次校验（§3.4）：不一致判损坏，删缓存报错退出
-            if (r.Md5.Length > 0 && !Md5Bytes(zipBytes).Equals(r.Md5, StringComparison.OrdinalIgnoreCase))
+            if (r.Md5.Length > 0 && !ZipInstall.Md5Bytes(zipBytes).Equals(r.Md5, StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine($"[FAIL] {name}: md5 校验失败（服务器 {r.Md5} != 下载 {Md5Bytes(zipBytes)}），已放弃安装");
+                Console.WriteLine($"[FAIL] {name}: md5 校验失败（服务器 {r.Md5} != 下载 {ZipInstall.Md5Bytes(zipBytes)}），已放弃安装");
                 try { File.Delete(zipPath); } catch { }
                 st.Failed++;
                 return;
@@ -307,7 +306,9 @@ internal static class SyncCommands
             }
             case "package":
             {
-                var pr = ZipInstall.InstallPackageZip(zipBytes, SpmContext.LangModulesDir, name, r.Version, hitServer, replaceExisting: true);
+                // md5 / zip 路径随包清单 spm.json 记录（2026-11-12 与本地 zip 装包统一）
+                var pr = ZipInstall.InstallPackageZip(zipBytes, SpmContext.LangModulesDir, name, r.Version, hitServer,
+                    replaceExisting: true, md5: r.Md5, zipPath: zipPath);
                 if (pr != null && pr.AlreadyInstalled)
                 {
                     Console.WriteLine($"[FAIL] {name}: 无法替换已安装包目录（文件被占用？）");
@@ -763,14 +764,6 @@ internal static class SyncCommands
     }
 
     // ==== 工具 ====
-
-    static string Md5Bytes(byte[] bytes) => Convert.ToHexString(MD5.HashData(bytes)).ToLowerInvariant();
-
-    static string Md5File(string path)
-    {
-        using var s = File.OpenRead(path);
-        return Convert.ToHexString(MD5.HashData(s)).ToLowerInvariant();
-    }
 
     static string AbsoluteUrl(string server, string url)
     {

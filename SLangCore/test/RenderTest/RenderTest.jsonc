@@ -40,13 +40,13 @@
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
     { "path": "./lib/Math.module.slb" },
-    // SLangQT / SLangRender 文件形态直引 out\export 产物（QTTest 备选形态；
-    // 目录形态会引入 ref 空壳重导出问题，见 QTTest.jsonc 注释）。
-    // 编译期：Front 按 path 直查命中（4 级上溯到 SlangAllInOne\out\export）；
-    // 运行期：包内落空 -> C VM sl_load_references 回退链 <exe>\modules\<name>\
-    // （CSimpleVMTest StageReferencedModules 铺入，native dll 联动拷贝）。
-    { "path": "../../../out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" },
-    { "path": "../../../out/export/SLangRender/SLangRender.module.json", "name": "SLangRender" }
+    // spm 模式（2026-11-12，§4.9 module 检查机制）：装载前检查工程
+    // modules\<名>\ 是否正确（清单 version 与声明一致 + 本地 zip md5 一致），
+    // 不正确/未装 → <lang>\modules\<名>.zip（md5 校验）强制重装纠正；
+    // zip 缺失走 official 渠道 registry 检索。模块版本取自各模块 jsonc
+    // export 段（SLangQT 0.1.0 / SLangRender 1.0.0）。
+    { "type": "module", "name": "SLangQT", "channel": "official", "version": "0.1.0" },
+    { "type": "module", "name": "SLangRender", "channel": "official", "version": "1.0.0" }
   ],
   "struct": [
   ],

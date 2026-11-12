@@ -46,8 +46,10 @@ internal static class ZipInstall
         return InstallPackageZip(zipBytes, modulesDir, expectedName, version, source);
     }
 
-    /// <summary>已下载的 zip 字节按包布局归一装进 modulesDir（spm sync 用，免二次下载）。</summary>
-    public static InstallResult? InstallPackageZip(byte[] zipBytes, string modulesDir, string? expectedName, string version, string source, bool replaceExisting = false)
+    /// <summary>已下载的 zip 字节按包布局归一装进 modulesDir（spm sync 用，免二次下载）。
+    /// md5 / zipPath 随本地清单 spm.json 记录（2026-11-12：本地 zip 装包与
+    /// sync 装包统一记 md5，供 spm install 重复安装时比对 zip 是否已更新）。</summary>
+    public static InstallResult? InstallPackageZip(byte[] zipBytes, string modulesDir, string? expectedName, string version, string source, bool replaceExisting = false, string md5 = "", string zipPath = "")
     {
         return InstallCore(zipBytes, dir => DetectPackageLayout(dir, expectedName, ""), layout =>
         {
@@ -55,7 +57,7 @@ internal static class ZipInstall
             bool placed = Place(layout, modulesDir, dest, replaceExisting);
             if (placed)
             {
-                WriteLocalManifest(dest, layout.Name, version, source, replaceExisting);
+                WriteLocalManifest(dest, layout.Name, version, source, replaceExisting, md5, zipPath);
             }
             return new InstallResult { Name = layout.Name, DestDir = dest, AlreadyInstalled = !placed };
         });
@@ -169,6 +171,16 @@ internal static class ZipInstall
             return new Layout { Name = Path.GetFileName(dirs[0]), SrcDir = dirs[0] };
         }
 
+        // ①' 期望名根直查（2026-11-12 优先级最高）：根含 <期望名>.module.slb|json
+        // → 根即该包内容。多模块混排 zip（发布形态 SLangRender.zip 根部同时躺
+        // SLangImage.module.slb）按文件序取首个会拿错包名，期望名直查规避。
+        if (!string.IsNullOrWhiteSpace(expectedName)
+            && (File.Exists(Path.Combine(extractRoot, expectedName + ".module.slb"))
+                || File.Exists(Path.Combine(extractRoot, expectedName + ".module.json"))))
+        {
+            return new Layout { Name = expectedName, SrcDir = extractRoot };
+        }
+
         // ② 根含模块产物 → 根即包内容
         var mod = files.FirstOrDefault(f => f.EndsWith(".module.slb", StringComparison.OrdinalIgnoreCase))
                   ?? files.FirstOrDefault(f => f.EndsWith(".module.json", StringComparison.OrdinalIgnoreCase));
@@ -177,7 +189,17 @@ internal static class ZipInstall
             return new Layout { Name = ModuleNameFromFile(Path.GetFileName(mod)), SrcDir = extractRoot };
         }
 
-        // ③ 多目录：找 <目录>\<目录名>.module.slb|json 命中者
+        // ③ 多目录：<期望名>\<期望名>.module.slb|json 优先，再扫任一命中者
+        if (!string.IsNullOrWhiteSpace(expectedName))
+        {
+            var d = Path.Combine(extractRoot, expectedName);
+            if (Directory.Exists(d)
+                && (File.Exists(Path.Combine(d, expectedName + ".module.slb"))
+                    || File.Exists(Path.Combine(d, expectedName + ".module.json"))))
+            {
+                return new Layout { Name = expectedName, SrcDir = d };
+            }
+        }
         foreach (var d in dirs)
         {
             var dn = Path.GetFileName(d);
@@ -268,6 +290,10 @@ internal static class ZipInstall
         public string Version { get; set; } = "";
         public string Source { get; set; } = "";
         public string InstalledAt { get; set; } = "";
+        /// <summary>来源 zip 的 md5（本地 zip 装包 / sync 装包记录；旧清单无此字段为 null）。</summary>
+        public string? Md5 { get; set; }
+        /// <summary>来源 zip 路径（本地 zip 装包记录）。</summary>
+        public string? Zip { get; set; }
     }
 
     /// <summary>读包目录的本地清单；无清单返回 null（版本视为未知）。</summary>
@@ -285,7 +311,7 @@ internal static class ZipInstall
         return null;
     }
 
-    static void WriteLocalManifest(string packageDir, string name, string version, string source, bool overwrite = false)
+    static void WriteLocalManifest(string packageDir, string name, string version, string source, bool overwrite = false, string md5 = "", string zipPath = "")
     {
         try
         {
@@ -300,6 +326,8 @@ internal static class ZipInstall
                 Version = version,
                 Source = source,
                 InstalledAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                Md5 = md5,
+                Zip = zipPath,
             };
             File.WriteAllText(path, JsonSerializer.Serialize(manifest, new JsonSerializerOptions { WriteIndented = true }));
         }
@@ -310,6 +338,17 @@ internal static class ZipInstall
     }
 
     // ==== 通用 ====
+
+    /// <summary>字节数组 md5（32 位小写十六进制）。spm sync / 本地 zip 装包共用。</summary>
+    public static string Md5Bytes(byte[] bytes)
+        => Convert.ToHexString(System.Security.Cryptography.MD5.HashData(bytes)).ToLowerInvariant();
+
+    /// <summary>文件 md5（32 位小写十六进制）；读取失败抛出由调用方处理。</summary>
+    public static string Md5File(string path)
+    {
+        using var s = File.OpenRead(path);
+        return Convert.ToHexString(System.Security.Cryptography.MD5.HashData(s)).ToLowerInvariant();
+    }
 
     /// <summary>移动目录；跨卷 IO 失败时回落 拷贝+删源。</summary>
     public static void TryMoveOrCopy(string srcDir, string destDir)

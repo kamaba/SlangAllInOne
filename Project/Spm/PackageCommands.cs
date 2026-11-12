@@ -67,17 +67,55 @@ internal static class PackageCommands
             if (Directory.Exists(Path.Combine(langModules, target)))
             {
                 Console.WriteLine($"[OK]  {target} 已全局安装: {Path.Combine(langModules, target)}");
+                ReportLocalZipMd5(target, Path.Combine(langModules, target));
                 return 0;
             }
         }
         else if (Directory.Exists(Path.Combine(modulesDir, target)))
         {
             Console.WriteLine($"[OK]  {target} 已安装于工程 modules\\: {Path.Combine(modulesDir, target)}");
+            ReportLocalZipMd5(target, Path.Combine(modulesDir, target));
             PromptAddReference(target);
             return 0;
         }
 
-        // ② 语言目录命中 → 移动到工程（仅项目模式；全局模式落空走服务器）
+        // ② 本地 zip 直装（2026-11-12）：<lang>\modules\<名>.zip 在即 md5 校验
+        // + 解压进目标 modules\（离线装包，无需 registry/服务器）。zip 是带
+        // md5 指纹的权威分发件，优先于 <lang>\modules\<名>\ 散拷贝目录移动；
+        // md5 打印并记入包清单 spm.json（重复安装时与已装清单比对提示升级）。
+        string langZip = Path.Combine(langModules, target + ".zip");
+        if (File.Exists(langZip))
+        {
+            byte[] zipBytes;
+            string zipMd5;
+            try
+            {
+                zipBytes = File.ReadAllBytes(langZip);
+                zipMd5 = ZipInstall.Md5Bytes(zipBytes);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[FAIL] 读取本地 zip 失败: {langZip} ({ex.Message})");
+                return 1;
+            }
+            Console.WriteLine($"zip:   {langZip}");
+            Console.WriteLine($"md5:   {zipMd5}  ({zipBytes.Length / 1024} KB)");
+            var rz = ZipInstall.InstallPackageZip(zipBytes, modulesDir, expectedName: target, version: "",
+                source: "local-zip:" + langZip, md5: zipMd5, zipPath: langZip);
+            if (rz == null)
+            {
+                return 1;
+            }
+            if (!rz.AlreadyInstalled)
+            {
+                Console.WriteLine($"[OK]   {rz.Name}: installed -> {rz.DestDir}");
+                Console.WriteLine($"      md5 已记入 {Path.Combine(rz.DestDir, "spm.json")}");
+            }
+            PromptAddReference(rz.Name);
+            return 0;
+        }
+
+        // ③ 语言目录命中 → 移动到工程（仅项目模式；全局模式落空走服务器）
         if (!global && Directory.Exists(Path.Combine(langModules, target)))
         {
             Directory.CreateDirectory(modulesDir);
@@ -493,10 +531,45 @@ internal static class PackageCommands
 
     // ==== helpers ====
 
-    /// <summary>装完提示：把包加进 jsonc references（不自动改写工程文件）。</summary>
+    /// <summary>已装包与 &lt;lang&gt;\modules\&lt;名&gt;.zip 的 md5 比对提示（2026-11-12）：
+    /// 清单 md5 == zip md5 → 与分发件一致已是最新；不等 → zip 已更新，提示
+    /// remove + install 升级；清单无 md5（旧版安装）只报 zip 指纹不比对。</summary>
+    static void ReportLocalZipMd5(string target, string installedDir)
+    {
+        string langZip = Path.Combine(SpmContext.LangModulesDir, target + ".zip");
+        if (!File.Exists(langZip))
+        {
+            return;
+        }
+        try
+        {
+            string zipMd5 = ZipInstall.Md5File(langZip);
+            var manifest = ZipInstall.ReadLocalManifest(installedDir);
+            if (manifest == null || string.IsNullOrWhiteSpace(manifest.Md5))
+            {
+                Console.WriteLine($"      md5:  本地 zip {zipMd5}（已装包清单未记录 md5，无法比对）");
+            }
+            else if (manifest.Md5.Equals(zipMd5, StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"      md5:  已安装 == 本地 zip（{zipMd5[..8]}..）已是最新");
+            }
+            else
+            {
+                Console.WriteLine($"      md5:  已安装 {manifest.Md5[..8]}.. != 本地 zip {zipMd5[..8]}..（zip 已更新）");
+                Console.WriteLine($"            升级方式: spm remove {target} 后重新 spm install {target}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"      md5:  本地 zip 读取失败: {ex.Message}");
+        }
+    }
+
+    /// <summary>装完提示：把包加进 jsonc references（不自动改写工程文件）。
+    /// 推荐文件形态直指包内 slb（QTTest 验证形态；目录形态有 ref 空壳重导出问题）。</summary>
     static void PromptAddReference(string pkgName)
     {
         Console.WriteLine($"      提示: 在工程 jsonc 的 references 里登记后即可 import {pkgName}: 使用，");
-        Console.WriteLine($"            \"references\": [ {{ \"path\": \"./modules/{pkgName}\" }} ]");
+        Console.WriteLine($"            \"references\": [ {{ \"path\": \"./modules/{pkgName}/{pkgName}.module.slb\", \"name\": \"{pkgName}\" }} ]");
     }
 }

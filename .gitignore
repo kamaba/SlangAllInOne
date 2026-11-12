@@ -106,3 +106,5 @@
 /SLangCore/Lib/SLang/Image/cvm_image_lib/cvm_sl_image_lib
 /SLangCore/Lib/SLang/Image/SLImage/publish
 /SLangCore/Lib/SLang/Render/SLangRender/publish
+/SLangCore/test/RenderTest/modules
+/SLangCore/test/RenderTest/publish

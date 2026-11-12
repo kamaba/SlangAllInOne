@@ -303,7 +303,7 @@
 | `type` | string | `""` | `module` 时该条目启用 **module 检查机制**（装载前版本对比 + 按渠道下载，见下方专段）；不写或其它值 = 普通引用条目（现有行为不变） |
 | `channel` | string | `""` | type=module 时的下载渠道三选一：`official`（官网 registry 按 name+version 检索）/ `git`（仓库 tag 归档）/ `url`（直链下载） |
 | `url` | string | `""` | type=module 时的地址：official 渠道可空（registry 检索）；git 渠道填仓库地址（version=tag，自动推导归档 zip；已是 .zip 直链则直用）；url 渠道填包 zip 直链（必填） |
-| `version` | string | `""` | type=module 时声明版本（**只下载这个版本**）：official/git 必填（name+version 检索依据）；url 可空（= 本地已有即跳过下载）。与本地清单 `spm.json` 的 version 语义化比较（`a.b.c` 逐段） |
+| `version` | string | `""` | type=module 时声明版本（**只下载这个版本**）：official/git 必填（name+version 检索依据）；url 可空（= 本地已有即跳过下载）。与本地清单 `spm.json` 的 version 语义化比较（`a.b.c` 逐段）；本地分发 zip（`<exe>\modules\<名>.zip`）存在时另校验清单 `Md5` 与 zip 实际 md5 一致（见下方流程步骤 1-2） |
 
 引用插件（plugin.jsonc）时，其 `refModule` 段声明的模块与 systemCalls 会在 RefModule 阶段自动加载，无需在本工程重复声明。
 
@@ -333,10 +333,11 @@
 
 RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDependency.cs`，Front 自包含复刻 spm 约定——Front 不能引用下游 Spm 工程）：
 
-1. **工程位检查**：工程 `modules\<名>\` 已存在该模块——清单 `spm.json` 的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）一致，url 渠道未声明 version 时目录存在即满足——**不执行后续操作**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。
-2. **解析目标下载地址**：按渠道推导（official = registry 按 name+version 检索 / git = tag 归档推导 / url 直给，协议见步骤 4）；解析失败走步骤 5 降级。
-3. **全局位复用**：全局 `<exe>\modules\<名>\` 清单与目标**地址 + 版本均一致**（清单含 `url` 时须与目标地址相同；旧清单缺 `url` 字段退化为仅版本对比）→ **复制全局模块到工程 `modules\<名>\`** 再继续（不下载，Info LID 20050）；复制失败（目录占用/磁盘满）走步骤 4 下载。
-4. **全局未命中 → 按渠道下载并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，写 `spm.json` 清单（name/version/source/url/installedAt，`url` 记录下载地址供后续全局复用对比）：
+1. **工程位检查（是否"正确"）**：工程 `modules\<名>\` 已存在该模块且**正确**——清单 `spm.json` 的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）一致；本地分发 zip（`<exe>\modules\<名>.zip`，见步骤 2）存在时清单 `Md5` 亦须与 zip 实际 md5 一致——**不执行后续操作**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。版本不符 / md5 不符 / zip 在而清单无 md5（旧格式装包）= **不正确** → 进入步骤 2 纠正。
+2. **本地 zip 纠正源（2026-11-12，与 spm CLI install 本地源同约定）**：`<exe>\modules\<名>.zip` 在即计算 md5 → 临时解压 → 布局探测（期望名优先）→ **版本门**（official/git 渠道 zip 内实际版本——读 `<名>.module.json` 的 versionMain/Sub/Patch——须与声明一致；url 渠道不设门）→ 删工程位旧目录强制重装到工程 `modules\<名>\`，写 `spm.json` 清单（PascalCase：Name/Version/Source/Url/InstalledAt/Md5/Zip，version 取 zip 内实际版本，md5/zip 指纹一并记录）。zip 缺失 / 版本门不过 → 继续步骤 3。
+3. **解析目标下载地址**：按渠道推导（official = registry 按 name+version 检索 / git = tag 归档推导 / url 直给，协议见步骤 5）；解析失败走步骤 6 降级。
+4. **全局位复用**：全局 `<exe>\modules\<名>\` 清单与目标**地址 + 版本均一致**（清单含 `url` 时须与目标地址相同；旧清单缺 `url` 字段退化为仅版本对比）→ **复制全局模块到工程 `modules\<名>\`** 再继续（不下载，Info LID 20050）；复制失败（目录占用/磁盘满）走步骤 5 下载。
+5. **全局未命中 → 按渠道下载并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，写 `spm.json` 清单（name/version/source/url/installedAt，`url` 记录下载地址供后续全局复用对比）：
    - **official**：registry 协议按 name+version 检索——`GET <reg>/api/packages/resolve?name=&version=`（P3 预留端点，先试）→ `GET <reg>/api/packages/<名>`（versions[] 数组取语义匹配版本的 download/file）→ 静态回落 `GET <reg>/<名>.json`（平铺形态 version 须精确匹配）；包体 URL 相对 registry 解析，缺省 `<reg>/<名>.zip`。registry 来源：工程 jsonc `spm.registry`（§4.17）> 全局 `<exe>\spm.json`；均空 = Warning（LID 20049）走降级。
    - **git**：version = tag；url 以 `.zip` 结尾直用，否则按 host 推导归档（GitHub `<repo>/archive/refs/tags/<tag>.zip` / Gitee `<repo>/repository/archive/<tag>.zip` / GitLab `<repo>/-/archive/<tag>/...`）；未知 host 失败。
    - **url**：url 字段直接下载。

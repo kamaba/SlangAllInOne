@@ -43,7 +43,7 @@
          本体（Front VersionString / C VM SLVM_VERSION_* / 本 csproj）独立演进，
          与 VSCode / 插件 / 包 分开；改写经后管 admin-server。
          中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），末位 = 随时递增的小版本。 -->
-    <Version>0.0.68</Version>
+    <Version>0.0.69</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>
@@ -97,11 +97,13 @@
     <Compile Remove="SLangCore\**" />
     <Compile Remove="examples\**" />
     <Compile Remove="md\**" />
+    <Compile Remove="unity\**" />
     <EmbeddedResource Remove="Project\**" />
     <EmbeddedResource Remove="tools\**" />
     <EmbeddedResource Remove="SLangCore\**" />
     <EmbeddedResource Remove="examples\**" />
     <EmbeddedResource Remove="md\**" />
+    <EmbeddedResource Remove="unity\**" />
     <None Remove="Project\**" />
     <None Remove="tools\**" />
     <None Remove="SLangCore\**" />

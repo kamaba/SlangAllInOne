@@ -118,6 +118,10 @@ internal static class Program
         // Front 编译期官方库直查需要宿主 bin\lib\（显式后缀 references 严格装载的
         // 回退链终点），先把发布包 lib\ 镜像进来（与 RunCVM 同款包目录选择）
         StagePackageLibForFrontCompile(repoRoot);
+        // Front 进程内编译的 type=module 引用检查机制（ProjectModuleDependency
+        // 本地 zip 纠正源 <exe>\modules\<名>.zip）需要宿主 bin\modules\ 有分发
+        // zip——把发布包 modules\*.zip 镜像进来（exe 目录 = 宿主 bin）
+        StagePackageModuleZipsForFrontCompile(repoRoot);
 
         // Step 1: Compile with Front (in-process or via dotnet run)
         var dotnetFrontArgs = new List<string>
@@ -308,6 +312,33 @@ internal static class Program
         catch (Exception ex)
         {
             Console.WriteLine($"Warn: stage package lib for Front compile failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>把发布包 modules\ 的 spm 分发 zip（&lt;名&gt;.zip）镜像进宿主
+    /// bin\modules\，供 Front 进程内编译的 type=module 引用检查机制
+    /// （ProjectModuleDependency 本地 zip 纠正源 &lt;exe&gt;\modules\&lt;名&gt;.zip，
+    /// 与 StagePackageLibForFrontCompile 同理；包不存在/无 zip 静默跳过）。</summary>
+    static void StagePackageModuleZipsForFrontCompile(string repoRoot)
+    {
+#if DEBUG
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-debug");
+#else
+        string pkgDir = Path.Combine(repoRoot, "package", "win32-release");
+#endif
+        string srcModules = Path.Combine(pkgDir, "modules");
+        if (!Directory.Exists(srcModules))
+            return;
+        try
+        {
+            string dstModules = Path.Combine(AppContext.BaseDirectory, "modules");
+            Directory.CreateDirectory(dstModules);
+            foreach (string f in Directory.GetFiles(srcModules, "*.zip"))
+                File.Copy(f, Path.Combine(dstModules, Path.GetFileName(f)), overwrite: true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warn: stage package module zips failed: {ex.Message}");
         }
     }
 

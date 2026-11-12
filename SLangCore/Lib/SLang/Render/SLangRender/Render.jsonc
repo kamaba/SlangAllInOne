@@ -75,6 +75,7 @@
       { "path": "Pipeline/CommandBuffer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 20 },
       { "path": "Pipeline/CommandQueue.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 21 },
       { "path": "Pipeline/RenderTarget.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 22 },
+      { "path": "Pipeline/RenderTexture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 22 },
       { "path": "Pipeline/PlatformWindow.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 23 },
       { "path": "Pipeline/Hlsl.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 24 },
       { "path": "Pipeline/HlslLibrary.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 25 },
@@ -110,7 +111,11 @@
     // ImageInfo/Png/Jpeg/Webp/Svg，后端 sl_image_lib.dll）。原 SLangRender\
     // Image\ 目录 8 个 .sl 副本已删除，纹理数据源（doc/06 数据流）统一走本
     // 模块引用；用方文件需 `import SLangImage;` 后以 Image.xxx 限定访问。
-    { "path": "../../../SLang/Image/SLImage", "name": "SLangImage" }
+    // spm 模式（2026-11-12，§4.9 module 检查机制）：装载前检查工程
+    // modules\SLangImage\ 是否正确（清单 version==1.0.0 且本地 zip md5
+    // 一致），不正确/未装 → <lang>\modules\SLangImage.zip（md5 校验）
+    // 强制重装纠正；zip 缺失走 official 渠道 registry 检索。
+    { "type": "module", "name": "SLangImage", "channel": "official", "version": "1.0.0" }
   ],
   "struct": [
     { "namespace": "SLang", "children": [

@@ -21,7 +21,9 @@
 //   <lang>\spm.json 全局（spm config registry 写入）。
 //
 // 本地版本记录：装包时写 modules\<名>\spm.json（name/version/source/
-// installedAt）供 spm outdated 与服务器版本对比；插件版本以
+// installedAt/md5，md5 为来源 zip 指纹——本地 zip 装包与 spm sync 装包
+// 均记录，重复 spm install 时与 <lang>\modules\<名>.zip 比对提示升级）
+// 供 spm outdated 与服务器版本对比；插件版本以
 // plugin\<id>\plugin.jsonc 的 plugin.version 为准。
 
 return Spm.Program.Run(args);
@@ -69,9 +71,12 @@ spm - SLang package & plugin manager
 Packages (module artifacts -> modules\<name>\):
   spm install <url|package> [--registry <url>] [-g]
       url      : download a .zip and extract into modules\<package>\
-      package  : 1) already in project modules\ -> skip
-                 2) found in <lang>\modules\     -> moved into project modules\
-                 3) query server GET /api/packages/<name> (fallback <reg>/<name>.json),
+      package  : 1) already in project modules\ -> skip (md5 compared with
+                    local zip when available)
+                 2) <lang>\modules\<name>.zip found -> md5 verify + extract
+                    (offline local-zip install, md5 recorded in spm.json)
+                 3) found in <lang>\modules\     -> moved into project modules\
+                 4) query server GET /api/packages/<name> (fallback <reg>/<name>.json),
                     download meta link or <registry>/<name>.zip
       -g       : install into <lang>\modules\ (global, shared by all projects)
   spm search <keyword>

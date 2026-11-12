@@ -1,3 +1,4 @@
+import Math;
 # UI 矩形变换：在 Transform 之上提供锚点 / 轴心 / 尺寸等 2D 布局能力。
 # 2D 量统一使用 Math 库的 Float32_2。
 public class RectTransform extends Transform
@@ -88,8 +89,10 @@ public class RectTransform extends Transform
     public bool containsPoint( Float32_2 point )
     {
         Float32_2 tl = this.topLeft()
-        ret point.x >= tl.x && point.x <= tl.x + this.sizeDelta.x &&
-            point.y >= tl.y && point.y <= tl.y + this.sizeDelta.y
+        # && 链最多 2 个运算符，拆成 X/Y 两段再合并
+        bool inX = point.x >= tl.x && point.x <= tl.x + this.sizeDelta.x
+        bool inY = point.y >= tl.y && point.y <= tl.y + this.sizeDelta.y
+        ret inX && inY
     }
 
     public RectTransform cloneRect()

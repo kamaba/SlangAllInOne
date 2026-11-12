@@ -1,7 +1,9 @@
+import Std;
+import Math;
 # 渲染器组件：持有网格与材质，负责把自身提交给渲染管线。
 public class Renderer extends Component
 {
-    public Mesh mesh = null
+    public SLang.Mesh mesh = null
     public Material material = null
 
     public bool isVisible = true
@@ -18,12 +20,12 @@ public class Renderer extends Component
         this.layer = 0
     }
     # ── 设置 ─────────────────────────────────────────────
-    public void setMesh( Mesh m )
+    public void setMesh( SLang.Mesh m )
     {
         this.mesh = m
     }
 
-    public Mesh getMesh()
+    public SLang.Mesh getMesh()
     {
         ret this.mesh
     }
@@ -45,13 +47,16 @@ public class Renderer extends Component
 
     # ── 提交绘制 ─────────────────────────────────────────
     # model 为本地 -> 世界矩阵，viewProjection 由相机提供
+    # 说明：旧全局 Render.drawMesh 已随 13 阶段管线改造移除（Render.sl 现为
+    # 生命周期/诊断门面）；绘制提交统一走 CommandBuffer.drawMesh /
+    # ScriptableRenderContext 通道。保留兼容签名，返回 false 表示未接入管线。
     public bool render( Float32_4x4 model, Float32_4x4 viewProjection )
     {
         if !this.isVisible || this.mesh == null || this.material == null
         {
             ret false
         }
-        ret Render.drawMesh( this.mesh, this.material, model, viewProjection )
+        ret false
     }
 
     # 便捷重载：直接传入 Transform

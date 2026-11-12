@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 纹理：CPU 侧像素缓冲（RGBA，每通道 Float32，值域 [0,1]）。
 # 采样使用 Math 库的 Float32_2 作为 UV。
 public class Texture

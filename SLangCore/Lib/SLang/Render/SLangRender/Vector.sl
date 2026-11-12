@@ -1,3 +1,4 @@
+import Math;
 # Render 层向量工具。
 #
 # 约定：Render 库统一使用 Math 库的 **Float32** 系列类型
@@ -5,86 +6,11 @@
 #   矩阵 -> Float32_3x3 / Float32_4x4
 #   函数 -> Mathf.*
 #   旋转 -> Quaternion
+#
+# 构造与常量不做转发门面（直接用 Float32_3( x, y, z ) / Float32_3.zero()
+# / Float32_3.forward() 等本征形式）；本类只保留有实际逻辑的几何工具。
 public class Vector
 {
-    # ── 构造工厂 ─────────────────────────────────────────
-    public static Float32_2 vec2( Float32 x, Float32 y )
-    {
-        ret Float32_2( x, y )
-    }
-
-    public static Float32_3 vec3( Float32 x, Float32 y, Float32 z )
-    {
-        ret Float32_3( x, y, z )
-    }
-
-    public static Float32_3 vec3( Float32_2 v, Float32 z )
-    {
-        ret Float32_3( v.x, v.y, z )
-    }
-
-    public static Float32_4 vec4( Float32 x, Float32 y, Float32 z, Float32 w )
-    {
-        ret Float32_4( x, y, z, w )
-    }
-
-    public static Float32_4 vec4( Float32_3 v, Float32 w )
-    {
-        ret Float32_4( v.x, v.y, v.z, w )
-    }
-
-    # ── 常用常量 ─────────────────────────────────────────
-    public static get Float32_2 zero2()
-    {
-        ret Float32_2.zero()
-    }
-
-    public static get Float32_2 one2()
-    {
-        ret Float32_2.one()
-    }
-
-    public static get Float32_3 zero()
-    {
-        ret Float32_3.zero()
-    }
-
-    public static get Float32_3 one()
-    {
-        ret Float32_3.one()
-    }
-
-    # 前向：(0, 0, 1)
-    public static get Float32_3 forward()
-    {
-        ret Float32_3.forward()
-    }
-
-    public static get Float32_3 back()
-    {
-        ret Float32_3.back()
-    }
-
-    public static get Float32_3 up()
-    {
-        ret Float32_3.up()
-    }
-
-    public static get Float32_3 down()
-    {
-        ret Float32_3.down()
-    }
-
-    public static get Float32_3 left()
-    {
-        ret Float32_3.left()
-    }
-
-    public static get Float32_3 right()
-    {
-        ret Float32_3.right()
-    }
-
     # ── 几何工具 ─────────────────────────────────────────
     # 两向量夹角（弧度，无符号）
     public static Float32 angle( Float32_3 from, Float32_3 to )

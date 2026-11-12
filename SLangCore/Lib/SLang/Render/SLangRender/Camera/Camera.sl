@@ -1,5 +1,38 @@
+import Std;
+import Math;
 # 相机组件：视场角 / 近远裁剪面 / 宽高比 + 视图 / 投影矩阵。
 # 数学类型使用 Math 库的 Float32 系列：位置 -> Float32_3，矩阵 -> Float32_4x4。
+
+# 射线（屏幕拾取用；Mesh.sl 明确不引入 Ray，这里就近定义）
+public class Ray
+{
+    public Float32_3 origin = Float32_3.zero()
+    public Float32_3 direction = Float32_3.forward()
+
+    public void _init_()
+    {
+        this.origin = Float32_3.zero()
+        this.direction = Float32_3.forward()
+    }
+
+    public void _init_( Float32_3 _origin, Float32_3 _direction )
+    {
+        this.origin = _origin.clone()
+        this.direction = _direction.normalize()
+    }
+
+    # 射线上 t 处的点
+    public Float32_3 getPoint( Float32 t )
+    {
+        ret this.origin._add_( this.direction.scale( t ) ) as Float32_3
+    }
+
+    override string toString()
+    {
+        ret "Ray(origin=" + this.origin.toString() + ", dir=" + this.direction.toString() + ")"
+    }
+}
+
 public class Camera extends Component
 {
     # 透视 / 正交
@@ -65,19 +98,23 @@ public class Camera extends Component
 
     # ── 屏幕空间 ─────────────────────────────────────────
     # 世界坐标 -> 归一化设备坐标（-1..1）；超出裁剪体返回 null
+    # 说明：Float32_4x4.transformPoint 不做透视除（返回的是 w=1 展开），这里手工
+    # 计算四分量 clip 再除 w。
     public Float32_3 worldToViewportPoint( Float32_3 worldPoint )
     {
         Float32_4x4 vp = this.viewProjectionMatrix()
-        Float32_4 clip = vp.transformPoint( Float32_4( worldPoint.x, worldPoint.y, worldPoint.z, 1.0f ) )
-        if clip.w <= 0.0f
+        Float32 cx = vp.getValue( 0, 0 ) * worldPoint.x + vp.getValue( 0, 1 ) * worldPoint.y + vp.getValue( 0, 2 ) * worldPoint.z + vp.getValue( 0, 3 )
+        Float32 cy = vp.getValue( 1, 0 ) * worldPoint.x + vp.getValue( 1, 1 ) * worldPoint.y + vp.getValue( 1, 2 ) * worldPoint.z + vp.getValue( 1, 3 )
+        Float32 cw = vp.getValue( 3, 0 ) * worldPoint.x + vp.getValue( 3, 1 ) * worldPoint.y + vp.getValue( 3, 2 ) * worldPoint.z + vp.getValue( 3, 3 )
+        if cw <= 0.0f
         {
             ret null
         }
-        ret Float32_3( clip.x / clip.w, clip.y / clip.w, clip.z / clip.w )
+        ret Float32_3( cx / cw, cy / cw, 0.0f )
     }
 
     # 由屏幕像素坐标反投影到世界射线（屏幕原点左上）
-    public Ray screenPointToRay( Float32 x, Float32 y, Int32 screenWidth, Int32 screenHeight )
+    public Ray screenPointToRay( Float32 x, Float32 y, Float32 screenWidth, Float32 screenHeight )
     {
         Float32 ndcX = ( x / screenWidth ) * 2.0f - 1.0f
         Float32 ndcY = 1.0f - ( y / screenHeight ) * 2.0f
@@ -92,14 +129,13 @@ public class Camera extends Component
         }
 
         Float32_3 target = origin._add_( forwardDir ) as Float32_3
-        Float32_3 right = this.up().cross( forwardDir ).normalize()
-        Float32_3 up = forwardDir.cross( right ).normalize()
+        Float32_3 rightVec = this.up().cross( forwardDir ).normalize()
+        Float32_3 upDir = forwardDir.cross( rightVec ).normalize()
 
-        # 由视场角推出近平面上射线方向
+        # 由视场角推出近平面上射线方向（表达式不支持跨行续行，逐段落变量）
         Float32 tanFov = Mathf.tan( Mathf.radians( this.fieldOfView ) * 0.5f )
-        Float32_3 dir = forwardDir
-            ._add_( right.scale( ndcX * tanFov * this.aspect ) )
-            ._add_( up.scale( ndcY * tanFov ) ) as Float32_3
+        Float32_3 dir = forwardDir._add_( rightVec.scale( ndcX * tanFov * this.aspect ) ) as Float32_3
+        dir = dir._add_( upDir.scale( ndcY * tanFov ) ) as Float32_3
         ret Ray( origin, dir.normalize() )
     }
 
@@ -126,7 +162,7 @@ public class Camera extends Component
 
     Transform getTransform()
     {
-        Component c = this.GetComponent<Transform>()
+        Component c = this.getComponent<Transform>()
         if c is Transform t
         {
             ret t

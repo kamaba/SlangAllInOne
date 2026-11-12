@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 变换组件：位置 / 旋转 / 缩放 + 父子层级 + 空间变换。
 #
 # 数学类型使用 Math 库的 Float32 系列：
@@ -8,7 +10,7 @@ public class Transform extends Component
     public Float32_3 localScale = Float32_3.one()
     public Quaternion rotation = Quaternion.identity()
 
-    public Transform parent = null
+    public Transform parentNode = null
 
     # ── 方向（局部前向经旋转到世界空间）────────────────────
     # 说明：Quaternion 的运算符重载返回 Object，此处用带静态类型的 rotate() 避免转型
@@ -47,9 +49,9 @@ public class Transform extends Component
     public get Float32_4x4 localToWorldMatrix()
     {
         Float32_4x4 local1 = MatrixUtil.trs( this.position, this.rotation, this.localScale )
-        if this.parent != null
+        if this.parentNode != null
         {
-            ret this.parent.localToWorldMatrix().multiply( local1 )
+            ret this.parentNode.localToWorldMatrix().multiply( local1 )
         }
         ret local1
     }
@@ -63,30 +65,30 @@ public class Transform extends Component
     # ── 世界坐标 ─────────────────────────────────────────
     public get Float32_3 worldPosition()
     {
-        if this.parent == null
+        if this.parentNode == null
         {
             ret this.position.clone()
         }
-        ret this.parent.transformPoint( this.position )
+        ret this.parentNode.transformPoint( this.position )
     }
 
     public void setWorldPosition( Float32_3 p )
     {
-        if this.parent == null
+        if this.parentNode == null
         {
             this.position = p.clone()
             ret
         }
-        this.position = this.parent.inverseTransformPoint( p )
+        this.position = this.parentNode.inverseTransformPoint( p )
     }
 
     public get Quaternion worldRotation()
     {
-        if this.parent == null
+        if this.parentNode == null
         {
             ret this.rotation.clone()
         }
-        ret this.parent.worldRotation.multiply( this.rotation ).normalize()
+        ret this.parentNode.worldRotation.multiply( this.rotation ).normalize()
     }
 
     # ── 移动 / 旋转 ──────────────────────────────────────

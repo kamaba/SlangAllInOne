@@ -22,87 +22,11 @@ Unity的机制
 
 让其它人测下 我的功能点，提建议
 
+1. 增加Light 光照 然后插入到 渲染管线中，  并且增加 一个直射光，再增加一个 spot光
+
 Environment.要支持注册表的内容查询
 Render里边 增加一个RenderTexture的概念 在渲染的时候 都要通过他去切换 
 现在的Spm的功能，再增加一个在slang的目录下查找modules对应的名称，然后复制到当前编辑的目录下 
-
-   public static Float32_2 vec2( Float32 x, Float32 y )
-    {
-        ret Float32_2( x, y )
-    }
-
-    public static Float32_3 vec3( Float32 x, Float32 y, Float32 z )
-    {
-        ret Float32_3( x, y, z )
-    }
-
-    public static Float32_3 vec3( Float32_2 v, Float32 z )
-    {
-        ret Float32_3( v.x, v.y, z )
-    }
-
-    public static Float32_4 vec4( Float32 x, Float32 y, Float32 z, Float32 w )
-    {
-        ret Float32_4( x, y, z, w )
-    }
-
-    public static Float32_4 vec4( Float32_3 v, Float32 w )
-    {
-        ret Float32_4( v.x, v.y, v.z, w )
-    } 
-public static get Float32_2 zero2()
-    {
-        ret Float32_2.zero()
-    }
-
-    public static get Float32_2 one2()
-    {
-        ret Float32_2.one()
-    }
-
-    public static get Float32_3 zero()
-    {
-        ret Float32_3.zero()
-    }
-
-    public static get Float32_3 one()
-    {
-        ret Float32_3.one()
-    }
-
-    # 前向：(0, 0, 1)
-    public static get Float32_3 forward()
-    {
-        ret Float32_3.forward()
-    }
-
-    public static get Float32_3 back()
-    {
-        ret Float32_3.back()
-    }
-
-    public static get Float32_3 up()
-    {
-        ret Float32_3.up()
-    }
-
-    public static get Float32_3 down()
-    {
-        ret Float32_3.down()
-    }
-
-    public static get Float32_3 left()
-    {
-        ret Float32_3.left()
-    }
-
-    public static get Float32_3 right()
-    {
-        ret Float32_3.right()
-    }
-
-
-把这些才敢删除掉吧，没必要
 
 
 

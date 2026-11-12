@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 光源组件：方向光 / 点光 / 聚光 + 颜色 / 强度 / 范围。
 # 数学类型使用 Math 库的 Float32 系列。
 public class Light extends Component
@@ -57,7 +59,7 @@ public class Light extends Component
     # 方向光：从 Transform 旋转推出光照方向（默认沿 +Z 照射）
     public get Float32_3 direction()
     {
-        Component c = this.GetComponent<Transform>()
+        Component c = this.getComponent<Transform>()
         if c is Transform t
         {
             ret t.forward()
@@ -67,7 +69,7 @@ public class Light extends Component
 
     public get Float32_3 worldPosition()
     {
-        Component c = this.GetComponent<Transform>()
+        Component c = this.getComponent<Transform>()
         if c is Transform t
         {
             ret t.worldPosition()

@@ -1,3 +1,4 @@
+import Math;
 # GpuResource —— GPU 资源基类与缓冲
 #
 # 对齐 DX12 / Vulkan 的概念：
@@ -128,14 +129,14 @@ public class GpuBuffer extends GpuResource
     }
 
     # 从 CPU 数据上传（数据先落到 Upload 堆，再由后端做拷贝）
-    public bool upload( Array<Float32> data )
+    public bool upload( Array<Float32> srcData )
     {
         if !this.isCreated
         {
             ret false
         }
         this.transitionTo( EResourceState.CopyDest )
-        object result = SystemCallExternalFunction( "Render.uploadBuffer", this.handle, data )
+        object result = SystemCallExternalFunction( "Render.uploadBuffer", this.handle, srcData )
         this.transitionTo( EResourceState.ShaderResource )
         ret GpuUtil.asBool( result )
     }
@@ -156,7 +157,7 @@ public class VertexBuffer extends GpuBuffer
         this.vertexLayoutId = 0
     }
 
-    public static VertexBuffer fromMesh( Mesh mesh )
+    public static VertexBuffer fromMesh( SLang.Mesh mesh )
     {
         # 位置(3) + 法线(3) + UV(2) = 8 float
         VertexBuffer vb = VertexBuffer( 32, mesh.vertexCount() )
@@ -187,7 +188,7 @@ public class IndexBuffer extends GpuBuffer
         this.state = EResourceState.IndexBuffer
     }
 
-    public static IndexBuffer fromMesh( Mesh mesh )
+    public static IndexBuffer fromMesh( SLang.Mesh mesh )
     {
         Array<Int32> tris = mesh.getTriangles()
         IndexBuffer ib = IndexBuffer( tris.length, true )
@@ -238,12 +239,13 @@ public class ConstantBuffer extends GpuBuffer
     }
 
     # 4x4 矩阵按行主序写入 16 个 float
+    # 说明：Float32_4x4 元素访问器是 getValue(row, col)，无 _mat4x4 数组字段
     public void setMatrix( Int32 offsetInFloats, Float32_4x4 m )
     {
         int k = 0
         while k < 16
         {
-            this._staging[ offsetInFloats + k ] = m._mat4x4[k]
+            this._staging[ offsetInFloats + k ] = m.getValue( k / 4, k % 4 )
             k++
         }
     }

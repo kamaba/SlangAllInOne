@@ -286,20 +286,22 @@ public class VertexInputLayout
 
     public void add( EVertexAttribute attribute, EVertexAttributeFormat format, Int32 offset )
     {
-        Array<Int32> na = Array<Int32>( this._attributes.length + 1 )
-        Array<Int32> nf = Array<Int32>( this._formats.length + 1 )
-        Array<Int32> no = Array<Int32>( this._offsets.length + 1 )
+        # 下标长度先落局部变量（this.xxx.length 形式下标解析器不支持）
+        Int32 oldLen = this._attributes.length
+        Array<Int32> na = Array<Int32>( oldLen + 1 )
+        Array<Int32> nf = Array<Int32>( oldLen + 1 )
+        Array<Int32> no = Array<Int32>( oldLen + 1 )
         int i = 0
-        while i < this._attributes.length
+        while i < oldLen
         {
             na[i] = this._attributes[i]
             nf[i] = this._formats[i]
             no[i] = this._offsets[i]
             i++
         }
-        na[ this._attributes.length ] = attribute
-        nf[ this._formats.length ] = format
-        no[ this._offsets.length ] = offset
+        na[ oldLen ] = attribute
+        nf[ oldLen ] = format
+        no[ oldLen ] = offset
         this._attributes = na
         this._formats = nf
         this._offsets = no

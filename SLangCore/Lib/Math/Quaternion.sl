@@ -26,16 +26,16 @@ public class Quaternion
     # 由轴角构造（axis 需已归一化）
     public void _init_( Float32_3 axis, Float32 radians )
     {
-        Float32 half = radians * 0.5f
-        Float32 s = Mathf.sin( half )
+        Float32 halfAngle = radians * 0.5f
+        Float32 s = Mathf.sin( halfAngle )
         this.x = axis.x * s
         this.y = axis.y * s
         this.z = axis.z * s
-        this.w = Mathf.cos( half )
+        this.w = Mathf.cos( halfAngle )
     }
 
     # ── 索引访问 ─────────────────────────────────────────
-    Float32 _getItem_( int index )
+    override Float32 _getItem_( int index )
     {
         if index == 0
         {
@@ -52,7 +52,7 @@ public class Quaternion
         ret this.w
     }
 
-    void _setItem_( int index, Float32 value )
+    override void _setItem_( int index, Float32 value )
     {
         if index == 0
         {
@@ -73,20 +73,15 @@ public class Quaternion
     }
 
     # ── 运算符重载 ───────────────────────────────────────
-    # 说明：Quaternion * Quaternion 返回 Quaternion；Quaternion * Float32_3 返回 Float32_3。
-    # 运算符重载是动态分派，返回类型统一声明为 Object；
-    # 需要静态类型的场景请直接使用 multiply() / rotate()。
-    override Object _mul_( Object obj1 )
+    # 说明：Quaternion * Quaternion 返回 Quaternion（系统内部方法 _mul_ 返回类型
+    # 必须为本类）；Quaternion * Float32_3 请直接用带静态类型的 rotate()。
+    override Quaternion _mul_( Object obj1 )
     {
         if obj1 is Quaternion q
         {
             ret this.multiply( q )
         }
-        if obj1 is Float32_3 v
-        {
-            ret this.rotate( v )
-        }
-        ret this
+        ret Quaternion.identity()
     }
 
     override bool _eq_( Quaternion q )
@@ -198,7 +193,8 @@ public class Quaternion
                         this.w * w1 + target.w * w2 ).normalize()
     }
 
-    Quaternion set( Float32 _x, Float32 _y, Float32 _z, Float32 _w )
+    # 方法名不能用 set（setter 关键字），同 Float32_4x4.setValue 命名先例
+    Quaternion setValues( Float32 _x, Float32 _y, Float32 _z, Float32 _w )
     {
         this.x = _x
         this.y = _y
@@ -235,16 +231,16 @@ public class Quaternion
         Float32 wz = this.w * this.z
 
         Float32_4x4 r = Float32_4x4()
-        r.set( 0, 0, 1.0f - 2.0f * ( yy + zz ) )
-        r.set( 0, 1, 2.0f * ( xy - wz ) )
-        r.set( 0, 2, 2.0f * ( xz + wy ) )
-        r.set( 1, 0, 2.0f * ( xy + wz ) )
-        r.set( 1, 1, 1.0f - 2.0f * ( xx + zz ) )
-        r.set( 1, 2, 2.0f * ( yz - wx ) )
-        r.set( 2, 0, 2.0f * ( xz - wy ) )
-        r.set( 2, 1, 2.0f * ( yz + wx ) )
-        r.set( 2, 2, 1.0f - 2.0f * ( xx + yy ) )
-        r.set( 3, 3, 1.0f )
+        r.setValue( 0, 0, 1.0f - 2.0f * ( yy + zz ) )
+        r.setValue( 0, 1, 2.0f * ( xy - wz ) )
+        r.setValue( 0, 2, 2.0f * ( xz + wy ) )
+        r.setValue( 1, 0, 2.0f * ( xy + wz ) )
+        r.setValue( 1, 1, 1.0f - 2.0f * ( xx + zz ) )
+        r.setValue( 1, 2, 2.0f * ( yz - wx ) )
+        r.setValue( 2, 0, 2.0f * ( xz - wy ) )
+        r.setValue( 2, 1, 2.0f * ( yz + wx ) )
+        r.setValue( 2, 2, 1.0f - 2.0f * ( xx + yy ) )
+        r.setValue( 3, 3, 1.0f )
         ret r
     }
 
@@ -270,9 +266,9 @@ public class Quaternion
     public static Quaternion axisAngle( Float32_3 axis, Float32 radians )
     {
         Float32_3 a = axis.normalize()
-        Float32 half = radians * 0.5f
-        Float32 s = Mathf.sin( half )
-        ret Quaternion( a.x * s, a.y * s, a.z * s, Mathf.cos( half ) )
+        Float32 halfAngle = radians * 0.5f
+        Float32 s = Mathf.sin( halfAngle )
+        ret Quaternion( a.x * s, a.y * s, a.z * s, Mathf.cos( halfAngle ) )
     }
 
     # 欧拉角（弧度）转四元数，YXZ 顺序

@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 材质：着色器 + 基础颜色 + 主纹理 + 常用 PBR 参数。
 public class Material
 {

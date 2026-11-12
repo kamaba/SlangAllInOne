@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # CommandBuffer —— GPU 命令录制
 #
 # 与 Unity CommandBuffer / DX12 GraphicsCommandList 同思路：
@@ -76,10 +78,15 @@ public class CommandBuffer
         this.setRenderTarget( b )
     }
 
-    public void clearRenderTarget( bool clearColor, bool clearDepth, Color c )
+    public void clearRenderTarget( bool clearColor, bool clearDepth, Color col )
     {
-        SystemCallExternalFunction( "Render.cmdClear",
-            clearColor, clearDepth, c.r, c.g, c.b, c.a )
+        # 说明：SystemCallExternalFunction 参数里直接写跨模块类成员（col.r）会
+        # 触发 GetFinalMetaType 为空的解析缺陷，先落局部变量再传
+        Float32 cr = col.r
+        Float32 cg = col.g
+        Float32 cb = col.b
+        Float32 ca = col.a
+        SystemCallExternalFunction( "Render.cmdClear", clearColor, clearDepth, cr, cg, cb, ca )
         this.push()
     }
 
@@ -114,13 +121,13 @@ public class CommandBuffer
         this.push()
     }
 
-    public void setDescriptorSet( DescriptorSet set )
+    public void setDescriptorSet( DescriptorSet descSet )
     {
-        if set == null
+        if descSet == null
         {
             ret
         }
-        SystemCallExternalFunction( "Render.cmdSetDescriptorSet", set )
+        SystemCallExternalFunction( "Render.cmdSetDescriptorSet", descSet )
         this.push()
     }
 
@@ -176,7 +183,7 @@ public class CommandBuffer
     }
 
     # 便捷接口：把 Mesh / Material / 变换直接交给后端（与旧 Render.drawMesh 对齐）
-    public void drawMesh( Mesh mesh, Material material, Float32_4x4 model, Float32_4x4 viewProjection )
+    public void drawMesh( SLang.Mesh mesh, Material material, Float32_4x4 model, Float32_4x4 viewProjection )
     {
         if mesh == null || material == null
         {
@@ -217,9 +224,9 @@ public class CommandBuffer
     }
 
     # ── 调试标记（RenderDoc / PIX 会显示）──────────────────
-    public void beginEvent( string label )
+    public void beginEvent( string marker )
     {
-        SystemCallExternalFunction( "Render.cmdBeginEvent", label )
+        SystemCallExternalFunction( "Render.cmdBeginEvent", marker )
     }
 
     public void endEvent()
@@ -251,25 +258,32 @@ public class CommandBufferPool
         this._used = 0
     }
 
-    public CommandBuffer get( string name )
+    # 说明：方法名不能用 get（getter 关键字，会导致解析器递归栈溢出）
+    public CommandBuffer getBuffer( string name )
     {
         if this._used < this._pool.length
         {
-            CommandBuffer cb = this._pool[ this._used ]
+            # 注：下标不能用成员访问（this._used 会触发 HandleVisit 断言），先落局部变量
+            Int32 usedIdx = this._used
+            CommandBuffer cb = this._pool[ usedIdx ]
             this._used = this._used + 1
             cb.name = name
             cb.clear()
             ret cb
         }
-        CommandBuffer ncb = CommandBuffer( name )
-        Array<CommandBuffer> np = Array<CommandBuffer>( this._pool.length + 1 )
+        # 说明：跨类带参构造调用会触发解析器合成异常函数并崩溃，
+        # 改为无参构造 + 字段赋值（下同，RenderTarget/GpuTexture 处已同样处理）
+        CommandBuffer ncb = CommandBuffer()
+        ncb.name = name
+        Int32 oldLen = this._pool.length
+        Array<CommandBuffer> np = Array<CommandBuffer>( oldLen + 1 )
         int i = 0
-        while i < this._pool.length
+        while i < oldLen
         {
             np[i] = this._pool[i]
             i++
         }
-        np[ this._pool.length ] = ncb
+        np[ oldLen ] = ncb
         this._pool = np
         this._used = this._used + 1
         ret ncb

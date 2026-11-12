@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # UniversalRenderPipeline —— Unity URP 风格的可编程管线
 #
 # 单次相机渲染流程（与 URP 对齐）：
@@ -47,20 +49,20 @@ public class UniversalRenderPipelineAsset extends RenderPipelineAsset
         this.hdr = true
     }
 
-    override RenderPipeline createPipeline()
+    override ScriptableRenderPipeline createPipeline()
     {
         ret UniversalRenderPipeline()
     }
 
     override string toString()
     {
-        ret "UniversalRenderPipelineAsset(shadow=" + this.shadowQuality.toString() +
-            ", cascades=" + this.shadowCascades.toString() + ")"
+        # 字符串拼接不支持跨行续行，单行完成
+        ret "UniversalRenderPipelineAsset(shadow=" + this.shadowQuality.toString() + ", cascades=" + this.shadowCascades.toString() + ")"
     }
 }
 
 # ── 管线实现 ───────────────────────────────────────────
-public class UniversalRenderPipeline extends RenderPipeline
+public class UniversalRenderPipeline extends ScriptableRenderPipeline
 {
     # ── Shader / PSO / Material ─────────────────────────
     HlslShader _litShader = null
@@ -121,7 +123,7 @@ public class UniversalRenderPipeline extends RenderPipeline
 
     override bool initialize( GfxDevice dev, Config cfg )
     {
-        if !super.initialize( dev, cfg )
+        if !base.initialize( dev, cfg )
         {
             ret false
         }
@@ -200,18 +202,19 @@ public class UniversalRenderPipeline extends RenderPipeline
         }
 
         RenderTextureDescriptor colorDesc = RenderTextureDescriptor.hdr( w, h )
-        this._colorId = this._rtPool.get( colorDesc )
+        this._colorId = this._rtPool.getTexture( colorDesc )
         this._colorTarget = this._colorId.texture
 
         RenderTextureDescriptor depthDesc = RenderTextureDescriptor.screen( w, h )
         depthDesc.colorFormat = ETextureFormat.Unknown
         depthDesc.depthFormat = ETextureFormat.Depth24Stencil8
-        this._depthId = this._rtPool.get( depthDesc )
+        this._depthId = this._rtPool.getTexture( depthDesc )
         this._depthTarget = this._depthId.texture
 
         # 阴影贴图（深度格式，无颜色）
+        Int32 usageDS = ETextureUsage.DepthStencil
         GpuTexture shadow = GpuTexture( "MainShadow", this.shadowMapSize(), this.shadowMapSize(),
-            ETextureFormat.Depth32F, ETextureUsage.DepthStencil )
+            ETextureFormat.Depth32F, usageDS )
         shadow.create()
         this._shadowMap = shadow
         this._shadowId = RenderTargetIdentifier.fromTexture( shadow )
@@ -406,6 +409,6 @@ public class UniversalRenderPipeline extends RenderPipeline
         {
             this._shadowMap.destroy()
         }
-        super.dispose()
+        base.dispose()
     }
 }

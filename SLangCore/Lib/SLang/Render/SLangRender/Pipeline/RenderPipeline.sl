@@ -1,13 +1,13 @@
-# RenderPipeline —— 渲染管线基类 / 资产 / 管理器
+# ScriptableRenderPipeline —— 渲染管线基类 / 资产 / 管理器
 #
 # 对齐 Unity：
-#   RenderPipeline            抽象基类，render(ctx, camera) 由子类实现
+#   ScriptableRenderPipeline            抽象基类，render(ctx, camera) 由子类实现
 #   RenderPipelineAsset       配置 + 工厂（创建具体管线实例）
 #   RenderPipelineManager     框架入口：持有 device + 当前管线，驱动每帧 begin/渲染/present
 
-public class RenderPipeline
+public class ScriptableRenderPipeline
 {
-    public string name = "RenderPipeline"
+    public string name = "ScriptableRenderPipeline"
     public Config config = null
     public GfxDevice device = null
     public ScriptableRenderContext context = null
@@ -15,7 +15,7 @@ public class RenderPipeline
 
     public void _init_()
     {
-        this.name = "RenderPipeline"
+        this.name = "ScriptableRenderPipeline"
         this.config = null
         this.device = null
         this.context = ScriptableRenderContext()
@@ -68,7 +68,7 @@ public class RenderPipeline
 
     override string toString()
     {
-        ret "RenderPipeline(" + this.name + ", init=" + this.isInitialized.toString() + ")"
+        ret "ScriptableRenderPipeline(" + this.name + ", init=" + this.isInitialized.toString() + ")"
     }
 }
 
@@ -98,15 +98,15 @@ public class RenderPipelineAsset
     }
 
     # 由子类（URP asset）创建具体管线
-    public virtual RenderPipeline createPipeline()
+    public virtual ScriptableRenderPipeline createPipeline()
     {
-        ret RenderPipeline()
+        ret ScriptableRenderPipeline()
     }
 
     # 包装：实例化 + 初始化（在 GfxDevice 建好后调用）
-    public RenderPipeline instantiate( GfxDevice device )
+    public ScriptableRenderPipeline instantiate( GfxDevice device )
     {
-        RenderPipeline pipeline = this.createPipeline()
+        ScriptableRenderPipeline pipeline = this.createPipeline()
         Config cfg = Config()
         cfg.msaaSamples = this.msaaSamples
         cfg.renderScale = this.renderScale
@@ -126,7 +126,7 @@ public class RenderPipelineManager
 {
     public static RenderPipelineManager _instance = null
 
-    public RenderPipeline activePipeline = null
+    public ScriptableRenderPipeline activePipeline = null
     public GfxDevice device = null
     public ScriptableRenderContext context = null
     public RenderPipelineAsset asset = null

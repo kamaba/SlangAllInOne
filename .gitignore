@@ -104,3 +104,5 @@
 /SLangCore/test/RenderTest/run_desc.log
 /SLangCore/Lib/SLang/Image/cvm_image_lib/x64
 /SLangCore/Lib/SLang/Image/cvm_image_lib/cvm_sl_image_lib
+/SLangCore/Lib/SLang/Image/SLImage/publish
+/SLangCore/Lib/SLang/Render/SLangRender/publish

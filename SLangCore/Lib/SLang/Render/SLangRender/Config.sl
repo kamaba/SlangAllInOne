@@ -1,3 +1,4 @@
+import Std;
 # 渲染配置：分辨率 / 同步 / 抗锯齿 / 后端 / 裁剪面等。
 public class Config
 {

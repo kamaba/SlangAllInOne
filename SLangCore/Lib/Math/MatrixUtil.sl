@@ -93,9 +93,21 @@ public class MatrixUtil
         ret Float32_4x4.rotationAxis( axis, radians )
     }
 
-    # 注：原 Render 版另有 fromQuaternion(Quaternion) / trs(., Quaternion, .) 两个
-    # 方法，因 Math.jsonc 当前 Quaternion.sl 处于 ignore（未编译）暂不迁入；
-    # Quaternion 启用后可恢复（依赖 q.toFloat32_4x4()）。
+    # 注：fromQuaternion / trs(., Quaternion, .) 随 Quaternion 启用（2026-11-12）
+    # 恢复迁入，依赖 q.toFloat32_4x4()。
+
+    # 由四元数构造旋转矩阵
+    public static Float32_4x4 fromQuaternion( Quaternion q )
+    {
+        ret q.toFloat32_4x4()
+    }
+
+    # 组合：translation * rotation * scale（四元数旋转版）
+    public static Float32_4x4 trs( Float32_3 translation, Quaternion rotation, Float32_3 scale )
+    {
+        Float32_4x4 r = fromQuaternion( rotation )
+        ret Float32_4x4.translation( translation ).multiply( r ).multiply( Float32_4x4.scale( scale ) )
+    }
 
     # 由欧拉角（弧度）构造旋转矩阵
     public static Float32_4x4 fromEuler( Float32_3 eulerRadians )
@@ -127,35 +139,35 @@ public class MatrixUtil
     public static Float32_4x4 inverseRigid( Float32_4x4 m )
     {
         # 取 3x3 旋转部分与平移列
-        Float32 m00 = m.get( 0, 0 )
-        Float32 m01 = m.get( 0, 1 )
-        Float32 m02 = m.get( 0, 2 )
-        Float32 m10 = m.get( 1, 0 )
-        Float32 m11 = m.get( 1, 1 )
-        Float32 m12 = m.get( 1, 2 )
-        Float32 m20 = m.get( 2, 0 )
-        Float32 m21 = m.get( 2, 1 )
-        Float32 m22 = m.get( 2, 2 )
-        Float32 tx = m.get( 0, 3 )
-        Float32 ty = m.get( 1, 3 )
-        Float32 tz = m.get( 2, 3 )
+        Float32 m00 = m.getValue( 0, 0 )
+        Float32 m01 = m.getValue( 0, 1 )
+        Float32 m02 = m.getValue( 0, 2 )
+        Float32 m10 = m.getValue( 1, 0 )
+        Float32 m11 = m.getValue( 1, 1 )
+        Float32 m12 = m.getValue( 1, 2 )
+        Float32 m20 = m.getValue( 2, 0 )
+        Float32 m21 = m.getValue( 2, 1 )
+        Float32 m22 = m.getValue( 2, 2 )
+        Float32 tx = m.getValue( 0, 3 )
+        Float32 ty = m.getValue( 1, 3 )
+        Float32 tz = m.getValue( 2, 3 )
 
         Float32_4x4 rm = Float32_4x4()
         # 转置旋转部分（R^T）
-        rm.set( 0, 0, m00 )
-        rm.set( 0, 1, m10 )
-        rm.set( 0, 2, m20 )
-        rm.set( 1, 0, m01 )
-        rm.set( 1, 1, m11 )
-        rm.set( 1, 2, m21 )
-        rm.set( 2, 0, m02 )
-        rm.set( 2, 1, m12 )
-        rm.set( 2, 2, m22 )
+        rm.setValue( 0, 0, m00 )
+        rm.setValue( 0, 1, m10 )
+        rm.setValue( 0, 2, m20 )
+        rm.setValue( 1, 0, m01 )
+        rm.setValue( 1, 1, m11 )
+        rm.setValue( 1, 2, m21 )
+        rm.setValue( 2, 0, m02 )
+        rm.setValue( 2, 1, m12 )
+        rm.setValue( 2, 2, m22 )
         # 平移部分 = -R^T * t
-        rm.set( 0, 3, 0.0f - ( m00 * tx + m10 * ty + m20 * tz ) )
-        rm.set( 1, 3, 0.0f - ( m01 * tx + m11 * ty + m21 * tz ) )
-        rm.set( 2, 3, 0.0f - ( m02 * tx + m12 * ty + m22 * tz ) )
-        rm.set( 3, 3, 1.0f )
+        rm.setValue( 0, 3, 0.0f - ( m00 * tx + m10 * ty + m20 * tz ) )
+        rm.setValue( 1, 3, 0.0f - ( m01 * tx + m11 * ty + m21 * tz ) )
+        rm.setValue( 2, 3, 0.0f - ( m02 * tx + m12 * ty + m22 * tz ) )
+        rm.setValue( 3, 3, 1.0f )
         ret rm
     }
 

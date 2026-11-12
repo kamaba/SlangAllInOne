@@ -1,3 +1,4 @@
+import Math;
 # ScriptableRenderContext —— 剔除 + 绘制执行上下文
 #
 # 对应 Unity SRP：
@@ -39,7 +40,14 @@ public class CullingParameters
     public Array<Float32_4> extractPlanes()
     {
         Float32_4x4 m = this.cullingMatrix
-        Array<Float32> e = m._mat4x4
+        # Float32_4x4 无内部数组字段，用 getValue(row, col) 展开 16 个元素
+        Array<Float32> e = Array<Float32>( 16 )
+        int k = 0
+        while k < 16
+        {
+            e[k] = m.getValue( k / 4, k % 4 )
+            k++
+        }
         Array<Float32_4> planes = Array<Float32_4>( 6 )
 
         # 行主序：m[row*4 + col]
@@ -77,10 +85,12 @@ public class CullingParameters
 # ── 可见物体 ───────────────────────────────────────────
 public class VisibleRenderer
 {
-    public Mesh mesh = null
+    public SLang.Mesh mesh = null
     public Material material = null
     public Float32_4x4 localToWorld = null
-    public Bounds bounds = null
+    # Bounds 类不存在（Mesh.sl 明确不引入 Bounds），用 center/extents 两向量占位
+    public Float32_3 boundsCenter = Float32_3.zero()
+    public Float32_3 boundsExtents = Float32_3.one()
     public Int32 renderQueue = 2000
     public Int32 layer = 0
     public Float32 distanceToCamera = 0.0f
@@ -91,22 +101,25 @@ public class VisibleRenderer
         this.mesh = null
         this.material = null
         this.localToWorld = Float32_4x4.identity()
-        this.bounds = Bounds()
+        this.boundsCenter = Float32_3.zero()
+        this.boundsExtents = Float32_3.one()
         this.renderQueue = 2000
         this.layer = 0
         this.distanceToCamera = 0.0f
         this.rendererId = 0
     }
 
-    public void _init_( Mesh _mesh, Material _material, Float32_4x4 _localToWorld )
+    public void _init_( SLang.Mesh _mesh, Material _material, Float32_4x4 _localToWorld )
     {
         this._init_()
         this.mesh = _mesh
         this.material = _material
         this.localToWorld = _localToWorld
+        # Mesh 当前不提供 bounds()（Mesh.sl 明确不引入 Bounds），单位包围球占位
         if _mesh != null
         {
-            this.bounds = _mesh.bounds()
+            this.boundsCenter = Float32_3.zero()
+            this.boundsExtents = Float32_3.one()
         }
         if _material != null && _material.isTransparent
         {
@@ -138,27 +151,29 @@ public class CullingResults
 
     public void add( VisibleRenderer r )
     {
-        Array<VisibleRenderer> nr = Array<VisibleRenderer>( this._renderers.length + 1 )
+        Int32 oldLen = this._renderers.length
+        Array<VisibleRenderer> nr = Array<VisibleRenderer>( oldLen + 1 )
         int i = 0
-        while i < this._renderers.length
+        while i < oldLen
         {
             nr[i] = this._renderers[i]
             i++
         }
-        nr[ this._renderers.length ] = r
+        nr[ oldLen ] = r
         this._renderers = nr
     }
 
     public void addLight( Light l )
     {
-        Array<Light> nl = Array<Light>( this._lights.length + 1 )
+        Int32 oldLen = this._lights.length
+        Array<Light> nl = Array<Light>( oldLen + 1 )
         int i = 0
-        while i < this._lights.length
+        while i < oldLen
         {
             nl[i] = this._lights[i]
             i++
         }
-        nl[ this._lights.length ] = l
+        nl[ oldLen ] = l
         this._lights = nl
     }
 
@@ -332,7 +347,7 @@ public class ScriptableRenderContext
             if this.isVisible( planes, r, parameters )
             {
                 # 记录到相机的距离，供排序使用
-                r.distanceToCamera = ScriptableRenderContext.distance( r.bounds.center, parameters.cameraPosition )
+                r.distanceToCamera = ScriptableRenderContext.distance( r.boundsCenter, parameters.cameraPosition )
                 results.add( r )
             }
             i++
@@ -344,12 +359,12 @@ public class ScriptableRenderContext
     # 包围球 vs 6 平面：任一面完全在外即剔除
     bool isVisible( Array<Float32_4> planes, VisibleRenderer r, CullingParameters parameters )
     {
-        if r == null || r.bounds == null
+        if r == null
         {
             ret false
         }
-        Float32_3 center = r.bounds.center
-        Float32 radius = r.bounds.extents.length()
+        Float32_3 center = r.boundsCenter
+        Float32 radius = r.boundsExtents.length()
         int i = 0
         while i < planes.length
         {

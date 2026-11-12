@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # RenderPass —— 一次具体的渲染步骤（Unity SRP Pass）
 #
 # Unity 的 RenderPass 模型：
@@ -301,14 +303,15 @@ public class RenderPassList
 
     public void add( RenderPass pass )
     {
-        Array<RenderPass> np = Array<RenderPass>( this._passes.length + 1 )
+        Int32 oldLen = this._passes.length
+        Array<RenderPass> np = Array<RenderPass>( oldLen + 1 )
         int i = 0
-        while i < this._passes.length
+        while i < oldLen
         {
             np[i] = this._passes[i]
             i++
         }
-        np[ this._passes.length ] = pass
+        np[ oldLen ] = pass
         this._passes = np
     }
 

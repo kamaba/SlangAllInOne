@@ -147,14 +147,15 @@ public class RenderTargetBinding
 
     public void addColor( RenderTargetIdentifier color )
     {
-        Array<RenderTargetIdentifier> nc = Array<RenderTargetIdentifier>( this._colors.length + 1 )
+        Int32 oldLen = this._colors.length
+        Array<RenderTargetIdentifier> nc = Array<RenderTargetIdentifier>( oldLen + 1 )
         int i = 0
-        while i < this._colors.length
+        while i < oldLen
         {
             nc[i] = this._colors[i]
             i++
         }
-        nc[ this._colors.length ] = color
+        nc[ oldLen ] = color
         this._colors = nc
     }
 
@@ -187,7 +188,8 @@ public class RenderTargetPool
     }
 
     # 命中缓存直接复用，否则新建
-    public RenderTargetIdentifier get( RenderTextureDescriptor desc )
+    # 说明：方法名不能用 get（getter 关键字，会导致解析器递归栈溢出）
+    public RenderTargetIdentifier getTexture( RenderTextureDescriptor desc )
     {
         int i = 0
         while i < this._freeTextures.length
@@ -202,7 +204,10 @@ public class RenderTargetPool
             i++
         }
 
-        GpuTexture nt = GpuTexture( desc.name, desc.width, desc.height, desc.colorFormat, ETextureUsage.RenderTarget | ETextureUsage.ShaderResource )
+        # enum 只允许 == / !=：位组合先落 Int32 再相加
+        Int32 usageRT = ETextureUsage.RenderTarget
+        Int32 usageSR = ETextureUsage.ShaderResource
+        GpuTexture nt = GpuTexture( desc.name, desc.width, desc.height, desc.colorFormat, usageRT + usageSR )
         nt.create()
         this._usedTextures = RenderTargetPool.append( this._usedTextures, nt )
         ret RenderTargetIdentifier.fromTexture( nt )
@@ -210,7 +215,8 @@ public class RenderTargetPool
 
     public GpuTexture getDepth( RenderTextureDescriptor desc )
     {
-        GpuTexture dt = GpuTexture( desc.name + "_Depth", desc.width, desc.height, desc.depthFormat, ETextureUsage.DepthStencil )
+        Int32 usageDS = ETextureUsage.DepthStencil
+        GpuTexture dt = GpuTexture( desc.name + "_Depth", desc.width, desc.height, desc.depthFormat, usageDS )
         dt.create()
         ret dt
     }
@@ -248,14 +254,15 @@ public class RenderTargetPool
 
     static Array<GpuTexture> append( Array<GpuTexture> src, GpuTexture item )
     {
-        Array<GpuTexture> dst = Array<GpuTexture>( src.length + 1 )
+        Int32 oldLen = src.length
+        Array<GpuTexture> dst = Array<GpuTexture>( oldLen + 1 )
         int i = 0
-        while i < src.length
+        while i < oldLen
         {
             dst[i] = src[i]
             i++
         }
-        dst[ src.length ] = item
+        dst[ oldLen ] = item
         ret dst
     }
 

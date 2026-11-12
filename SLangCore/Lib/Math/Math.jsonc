@@ -199,7 +199,10 @@
       { "path": "Float64_4x4.sl", "group": "math", "tag": "mat", "ignore": false, "priority": 0 },
 
       // ── 其他 ─────────────────────────────────────────
-      { "path": "Quaternion.sl", "group": "math", "tag": "quat", "ignore": true, "priority": 0 },
+      // Quaternion 已启用（2026-11-12 SLangRender 草稿 Transform/Camera 并入编译集，
+      // 依赖 Quaternion.identity/euler/axisAngle/lookRotation；MatrixUtil 后续可恢复
+      // fromQuaternion/trs(Quaternion) 两方法）
+      { "path": "Quaternion.sl", "group": "math", "tag": "quat", "ignore": false, "priority": 0 },
       { "path": "Matrix.sl",     "group": "math", "tag": "mat",  "ignore": false, "priority": 0 },
       // MatrixUtil（Float32 3x3/4x4 静态工具门面 + TRS/视图/投影）自
       // SLangRender\Matrix.sl 迁入（原为未编译草稿，类名避开通用 Matrix）

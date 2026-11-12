@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 着色器：源码 + 编译状态 + uniform 设置。
 # 底层操作通过 SystemCallExternalFunction("Render.xxx", ...) 转交渲染后端实现。
 public class Shader
@@ -76,7 +78,8 @@ public class Shader
 
     public bool setUniformColor( string uniformName, Color value )
     {
-        ret this.setUniformVector( uniformName, value.toFloat32_4() )
+        # Std.Color 不提供向量互转（避免 Std->Math 反向依赖），此处自行组装
+        ret this.setUniformVector( uniformName, Float32_4( value.r, value.g, value.b, value.a ) )
     }
 
     # 3 分量向量（Float32_3）

@@ -21,6 +21,8 @@ enum EDescriptorType
     SRV
     UAV
     Sampler
+    RTV
+    DSV
 }
 
 enum ERootParameterType
@@ -123,14 +125,16 @@ public class RootSignature
 
     void push( RootParameter p )
     {
-        Array<RootParameter> np = Array<RootParameter>( this._parameters.length + 1 )
+        # 下标长度先落局部变量（this.xxx.length 形式下标解析器不支持）
+        Int32 oldLen = this._parameters.length
+        Array<RootParameter> np = Array<RootParameter>( oldLen + 1 )
         int i = 0
-        while i < this._parameters.length
+        while i < oldLen
         {
             np[i] = this._parameters[i]
             i++
         }
-        np[ this._parameters.length ] = p
+        np[ oldLen ] = p
         this._parameters = np
     }
 
@@ -163,14 +167,15 @@ public class RootSignature
 
     public void addStaticSampler( SamplerDesc desc )
     {
-        Array<SamplerDesc> ns = Array<SamplerDesc>( this._staticSamplers.length + 1 )
+        Int32 oldLen = this._staticSamplers.length
+        Array<SamplerDesc> ns = Array<SamplerDesc>( oldLen + 1 )
         int i = 0
-        while i < this._staticSamplers.length
+        while i < oldLen
         {
             ns[i] = this._staticSamplers[i]
             i++
         }
-        ns[ this._staticSamplers.length ] = desc
+        ns[ oldLen ] = desc
         this._staticSamplers = ns
     }
 

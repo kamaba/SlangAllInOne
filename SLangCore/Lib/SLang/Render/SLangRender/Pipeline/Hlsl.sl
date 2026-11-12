@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # Hlsl —— HLSL 着色器对象模型
 #
 # 着色器统一用 HLSL 编写（与 Unity 一致）：
@@ -220,14 +222,16 @@ public class HlslShader
     # ── 参数反射 ─────────────────────────────────────────
     public void addParameter( string pname, EShaderParamType ptype, Int32 bindPoint )
     {
-        Array<ShaderParameter> np = Array<ShaderParameter>( this.parameters.length + 1 )
+        # 下标长度先落局部变量（this.xxx.length 形式下标解析器不支持）
+        Int32 oldLen = this.parameters.length
+        Array<ShaderParameter> np = Array<ShaderParameter>( oldLen + 1 )
         int i = 0
-        while i < this.parameters.length
+        while i < oldLen
         {
             np[i] = this.parameters[i]
             i++
         }
-        np[ this.parameters.length ] = ShaderParameter( pname, ptype, bindPoint )
+        np[ oldLen ] = ShaderParameter( pname, ptype, bindPoint )
         this.parameters = np
     }
 
@@ -249,7 +253,8 @@ public class HlslShader
 
     public bool setColor( string pname, Color value )
     {
-        ret this.setVector4( pname, value.toFloat32_4() )
+        # Std.Color 无 toFloat32_4（避免 Std->Math 反向依赖），此处自行组装
+        ret this.setVector4( pname, Float32_4( value.r, value.g, value.b, value.a ) )
     }
 
     public bool setMatrix( string pname, Float32_4x4 value )

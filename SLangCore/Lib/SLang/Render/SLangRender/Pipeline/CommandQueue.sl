@@ -275,11 +275,12 @@ public class SwapChain
             ret false
         }
         this._backBuffers = Array<GpuTexture>( this.bufferCount )
+        Int32 usageRT = ETextureUsage.RenderTarget
         int i = 0
         while i < this.bufferCount
         {
             GpuTexture t = GpuTexture( "BackBuffer" + i.toString(), this.width, this.height,
-                this.format, ETextureUsage.RenderTarget )
+                this.format, usageRT )
             t.create()
             this._backBuffers[i] = t
             i++
@@ -289,7 +290,9 @@ public class SwapChain
 
     public GpuTexture currentBackBuffer()
     {
-        ret this._backBuffers[ this.currentIndex ]
+        # 注：下标不能用成员访问（this.currentIndex 会触发 HandleVisit 断言），先落局部变量
+        Int32 idx = this.currentIndex
+        ret this._backBuffers[ idx ]
     }
 
     public RenderTargetIdentifier currentBackBufferId()

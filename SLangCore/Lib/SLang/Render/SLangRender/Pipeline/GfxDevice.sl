@@ -366,7 +366,7 @@ public class GfxDevice
     # ── 命令缓冲 ─────────────────────────────────────────
     public CommandBuffer createCommandBuffer( string name )
     {
-        ret this.cmdPool.get( name )
+        ret this.cmdPool.getBuffer( name )
     }
 
     public void execute( CommandBuffer cb )

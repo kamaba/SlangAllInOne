@@ -1,3 +1,4 @@
+import Std;
 # GpuTexture —— GPU 纹理 / 渲染目标 / 视图 / 采样器
 #
 # 对齐 DX12 / Vulkan：
@@ -317,12 +318,15 @@ public class GpuTexture extends GpuResource
 
     public get bool isRenderTarget()
     {
-        ret ( this.usageFlags & ETextureUsage.RenderTarget ) != 0
+        # enum 只允许 == / != 参与运算；位运算先落 Int32（ColorInt.sl 先例）
+        Int32 flag = ETextureUsage.RenderTarget
+        ret ( this.usageFlags & flag ) != 0
     }
 
     public get bool isDepthStencil()
     {
-        ret ( this.usageFlags & ETextureUsage.DepthStencil ) != 0
+        Int32 flag = ETextureUsage.DepthStencil
+        ret ( this.usageFlags & flag ) != 0
     }
 
     override string toString()

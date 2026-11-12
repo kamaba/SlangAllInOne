@@ -1,3 +1,5 @@
+import Std;
+import Math;
 # 顶点：位置 / 法线 / UV / 颜色 / 切线。
 # 使用 Math 库的 Float32_3 / Float32_2 与 Render 的 Color。
 public class Vertex
@@ -78,7 +80,7 @@ public class Vertex
     }
 
     # ── 索引访问（分量级）─────────────────────────────────
-    Float32 _getItem_( int index )
+    override Float32 _getItem_( int index )
     {
         if index == 0
         {

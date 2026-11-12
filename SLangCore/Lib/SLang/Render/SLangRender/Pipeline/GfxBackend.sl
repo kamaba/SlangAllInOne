@@ -94,27 +94,31 @@ public class GfxDeviceDescriptor
 
     public void addFallback( EGraphicsBackend b )
     {
-        Array<Int32> nb = Array<Int32>( this.fallbackBackends.length + 1 )
+        # 注：数组下标不支持 this.xxx.length 表达式（解析器会递归卡死），
+        # 长度先落局部变量（下同）
+        Int32 oldLen = this.fallbackBackends.length
+        Array<Int32> nb = Array<Int32>( oldLen + 1 )
         int i = 0
-        while i < this.fallbackBackends.length
+        while i < oldLen
         {
             nb[i] = this.fallbackBackends[i]
             i++
         }
-        nb[ this.fallbackBackends.length ] = b
+        nb[ oldLen ] = b
         this.fallbackBackends = nb
     }
 
     public void requireExtension( string name )
     {
-        Array<string> ne = Array<string>( this.requiredExtensions.length + 1 )
+        Int32 oldLen = this.requiredExtensions.length
+        Array<string> ne = Array<string>( oldLen + 1 )
         int i = 0
-        while i < this.requiredExtensions.length
+        while i < oldLen
         {
             ne[i] = this.requiredExtensions[i]
             i++
         }
-        ne[ this.requiredExtensions.length ] = name
+        ne[ oldLen ] = name
         this.requiredExtensions = ne
     }
 
@@ -367,17 +371,91 @@ public class GfxBackend
 
     public static bool isBackendAvailable( EGraphicsBackend b )
     {
+        # enum -> Int32 落变量后再比对（Int32 与枚举之间 == 可用）
+        Int32 id = b
         Array<Int32> backends = GfxBackend.availableBackends()
         int i = 0
         while i < backends.length
         {
-            if backends[i] == b
+            if backends[i] == id
             {
                 ret true
             }
             i++
         }
         ret false
+    }
+
+    # Int32 -> 枚举转换（SLang 不允许 Int32 直接 ret 成枚举类型，逐成员比对）
+    public static EGraphicsBackend backendFromInt( Int32 id )
+    {
+        if id == EGraphicsBackend.D3D12
+        {
+            ret EGraphicsBackend.D3D12
+        }
+        if id == EGraphicsBackend.D3D11
+        {
+            ret EGraphicsBackend.D3D11
+        }
+        if id == EGraphicsBackend.Vulkan
+        {
+            ret EGraphicsBackend.Vulkan
+        }
+        if id == EGraphicsBackend.Metal
+        {
+            ret EGraphicsBackend.Metal
+        }
+        if id == EGraphicsBackend.OpenGL
+        {
+            ret EGraphicsBackend.OpenGL
+        }
+        if id == EGraphicsBackend.OpenGLES
+        {
+            ret EGraphicsBackend.OpenGLES
+        }
+        if id == EGraphicsBackend.WebGL
+        {
+            ret EGraphicsBackend.WebGL
+        }
+        if id == EGraphicsBackend.Software
+        {
+            ret EGraphicsBackend.Software
+        }
+        ret EGraphicsBackend.Unknown
+    }
+
+    # Int32 -> 枚举转换（窗口系统）
+    public static EWindowSystem windowSystemFromInt( Int32 id )
+    {
+        if id == EWindowSystem.Win32
+        {
+            ret EWindowSystem.Win32
+        }
+        if id == EWindowSystem.X11
+        {
+            ret EWindowSystem.X11
+        }
+        if id == EWindowSystem.Wayland
+        {
+            ret EWindowSystem.Wayland
+        }
+        if id == EWindowSystem.Cocoa
+        {
+            ret EWindowSystem.Cocoa
+        }
+        if id == EWindowSystem.Android
+        {
+            ret EWindowSystem.Android
+        }
+        if id == EWindowSystem.IOS
+        {
+            ret EWindowSystem.IOS
+        }
+        if id == EWindowSystem.Web
+        {
+            ret EWindowSystem.Web
+        }
+        ret EWindowSystem.Headless
     }
 
     # 首选 + 降级链，返回第一个可用的
@@ -390,9 +468,9 @@ public class GfxBackend
         int i = 0
         while i < fallbacks.length
         {
-            if GfxBackend.isBackendAvailable( fallbacks[i] )
+            if GfxBackend.isBackendAvailable( GfxBackend.backendFromInt( fallbacks[i] ) )
             {
-                ret fallbacks[i]
+                ret GfxBackend.backendFromInt( fallbacks[i] )
             }
             i++
         }
@@ -405,7 +483,7 @@ public class GfxBackend
         object result = SystemCallExternalFunction( "Render.getCurrentWindowSystem" )
         if result is Int32 v
         {
-            ret v
+            ret GfxBackend.windowSystemFromInt( v )
         }
         ret EWindowSystem.Headless
     }

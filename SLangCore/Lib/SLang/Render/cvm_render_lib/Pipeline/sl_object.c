@@ -46,6 +46,8 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
         o->scale[0] = 1.0f; o->scale[1] = 1.0f;
         o->color[0] = 1.0f; o->color[1] = 1.0f; o->color[2] = 1.0f; o->color[3] = 1.0f;
         o->texture = 0;
+        o->material = 0; o->cast_shadow = 0;   /* 默认 Lambert / 不投影 */
+        o->spec_str = 0.0f; o->spec_shin = 32.0f;   /* Phong 默认光泽度 */
         rhi_exit();
         return (int64_t)(i + 1);
     }
@@ -177,6 +179,41 @@ int slr_object_set_animated(int64_t h, int64_t obj, int mode, float speed)
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->anim_mode = (mode == SLR_ANIM_HUE_CYCLE) ? SLR_ANIM_HUE_CYCLE : SLR_ANIM_NONE;
     o->anim_speed = speed;
+    rhi_exit();
+    return 1;
+}
+
+/* v3.4：材质模型（0 = Lambert，1 = Phong；阶段 5 据此选程序槽）*/
+int slr_object_set_material(int64_t h, int64_t obj, int material)
+{
+    SlrPipeline* p; SlrObject* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->material = material ? 1 : 0;
+    rhi_exit();
+    return 1;
+}
+
+/* v3.4：Phong 高光参数（strength 0..8 / shininess 1..256 夹取）*/
+int slr_object_set_specular(int64_t h, int64_t obj, float strength, float shininess)
+{
+    SlrPipeline* p; SlrObject* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    if (strength < 0.0f) strength = 0.0f;
+    if (strength > 8.0f) strength = 8.0f;
+    if (shininess < 1.0f) shininess = 1.0f;
+    if (shininess > 256.0f) shininess = 256.0f;
+    o->spec_str = strength;
+    o->spec_shin = shininess;
+    rhi_exit();
+    return 1;
+}
+
+/* v3.4：投影阴影开关（阶段 5 生成阴影绘制项）*/
+int slr_object_set_shadow(int64_t h, int64_t obj, int cast_shadow)
+{
+    SlrPipeline* p; SlrObject* o; int idx;
+    if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
+    o->cast_shadow = cast_shadow ? 1 : 0;
     rhi_exit();
     return 1;
 }

@@ -22,6 +22,14 @@ public class Light extends Component
     public bool castShadow = false
     public Float32 shadowStrength = 1.0f
 
+    # ── 显式光照参数（applyTo 写管线槽用；无 Transform 时的方向/位置）──
+    # dirX/dirY：平行光 = 表面 -> 光源方向；聚光 = 光轴方向（光源 -> 外）
+    # posX/posY：聚光世界位置
+    public Float32 dirX = 1.0f
+    public Float32 dirY = 0.0f
+    public Float32 posX = 0.0f
+    public Float32 posY = 0.0f
+
     # ── 构造 / 预设 ──────────────────────────────────────
     public void _init_()
     {
@@ -32,6 +40,10 @@ public class Light extends Component
         this.spotAngle = 30.0f
         this.castShadow = false
         this.shadowStrength = 1.0f
+        this.dirX = 1.0f
+        this.dirY = 0.0f
+        this.posX = 0.0f
+        this.posY = 0.0f
     }
 
     # ── 类型判定 ─────────────────────────────────────────
@@ -158,6 +170,59 @@ public class Light extends Component
         l.lightRange = lightRange
         l.spotAngle = spotAngleDegrees
         ret l
+    }
+
+    # ── 管线接入 ─────────────────────────────────────────
+    # applyTo(pipe, slot) —— 把本光源写入管线光照槽（经 Memory 参数块 ->
+    # RenderPipeline.setLightParams FFI；布局见 vm_sl_render.h v3.3：
+    # 平行光 6 项 / 聚光 10 项）。参数块为类级静态暂存（单线程 VM 复用）。
+    static Int64 _applyPtr = 0
+
+    public bool applyTo( SLang.RenderPipeline pipe, Int32 slot )
+    {
+        if pipe == null || pipe.isValid == false
+        {
+            ret false
+        }
+        if Light._applyPtr == 0
+        {
+            Light._applyPtr = Memory.alloc( 40 )
+            if Light._applyPtr == 0
+            {
+                ret false
+            }
+        }
+        Int64 p = Light._applyPtr
+        # 跨模块成员先落局部变量（着色器路径同款规避）
+        Float32 cr = this.color.r
+        Float32 cg = this.color.g
+        Float32 cb = this.color.b
+        Int32 ty = this.type
+        if ty == 2
+        {
+            # 聚光：[posX, posY, dirX, dirY, angleDeg, range, r, g, b, intensity]
+            Memory.writeF32( p, 0, this.posX )
+            Memory.writeF32( p, 4, this.posY )
+            Memory.writeF32( p, 8, this.dirX )
+            Memory.writeF32( p, 12, this.dirY )
+            Memory.writeF32( p, 16, this.spotAngle )
+            Memory.writeF32( p, 20, this.lightRange )
+            Memory.writeF32( p, 24, cr )
+            Memory.writeF32( p, 28, cg )
+            Memory.writeF32( p, 32, cb )
+            Memory.writeF32( p, 36, this.intensity )
+        }
+        else
+        {
+            # 平行光：[dirX, dirY, r, g, b, intensity]
+            Memory.writeF32( p, 0, this.dirX )
+            Memory.writeF32( p, 4, this.dirY )
+            Memory.writeF32( p, 8, cr )
+            Memory.writeF32( p, 12, cg )
+            Memory.writeF32( p, 16, cb )
+            Memory.writeF32( p, 20, this.intensity )
+        }
+        ret pipe.setLightParams( slot, ty, p )
     }
 
     override string toString()

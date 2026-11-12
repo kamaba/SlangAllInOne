@@ -280,6 +280,58 @@ namespace SLang
             ret RenderPipeline.ffiObjectCount( this._handle )
         }
 
+        # ── 光照（管线光照槽表；高层入口见 Light.applyTo）────────
+        # 每管线 MAX_LIGHTS 个光照槽，着色器消费首个启用的平行光 +
+        # 首个聚光（2D 世界系逐像素：直射光按物体朝向 ndl、聚光按
+        # 世界坐标锥角 + 距离衰减）。默认无光照 + ambient=1.0 时
+        # 输出与无光照版逐字节一致（向后兼容）。
+        public static Int32 LIGHT_DIRECTIONAL = 0
+        public static Int32 LIGHT_POINT       = 1
+        public static Int32 LIGHT_SPOT        = 2
+        public static Int32 MAX_LIGHTS        = 8
+
+        # setLightParams(slot, type, paramsPtr) —— 低层 FFI 直通：
+        # paramsPtr 指向 float 参数块（Memory.writeF32 填充，
+        # 布局见 vm_sl_render.h v3.3 注释；Light.applyTo 封装）
+        public bool setLightParams( Int32 slot, Int32 type, Int64 paramsPtr )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiLightSet( this._handle, slot, type, paramsPtr )
+        }
+
+        # clearLight(slot) —— 清除光照槽
+        public bool clearLight( Int32 slot )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiLightClear( this._handle, slot )
+        }
+
+        # lightCount() —— 已启用的光照槽数
+        public Int32 lightCount()
+        {
+            if this._handle == 0
+            {
+                ret 0
+            }
+            ret RenderPipeline.ffiLightCount( this._handle )
+        }
+
+        # setAmbient(intensity) —— 环境光强度 [0,1]（默认 1.0 = 无光照效果）
+        public bool setAmbient( Float32 intensity )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiLightSetAmbient( this._handle, intensity )
+        }
+
         # ── 13 阶段（逐阶段驱动）────────────────────────────────
 
         public bool beginFrame( Float32 time )
@@ -573,6 +625,32 @@ namespace SLang
             ret 0
         }
 
+        # ── 光照 FFI ────────────────────────────────────────────
+
+        @DllStaticImport( "sl_render_lib", "slr_light_set", "i64,i32,i32,ptr->bool" )
+        static bool ffiLightSet( Int64 p, Int32 slot, Int32 type, Int64 paramsPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_light_clear", "i64,i32->bool" )
+        static bool ffiLightClear( Int64 p, Int32 slot )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_light_count", "i64->i32" )
+        static Int32 ffiLightCount( Int64 p )
+        {
+            ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_light_set_ambient", "i64,f32->bool" )
+        static bool ffiLightSetAmbient( Int64 p, Float32 ambient )
+        {
+            ret false
+        }
+
         @DllStaticImport( "sl_render_lib", "slr_pipeline_begin_frame", "i64,f32->bool" )
         static bool ffiBeginFrame( Int64 p, Float32 time )
         {
@@ -775,6 +853,39 @@ namespace SLang
             ret RenderObject.ffiSetAnimated( this._pipe, this._id, mode, speed )
         }
 
+        # v3.4：材质模型 —— MATERIAL_LAMBERT(0)=v3.3 光照，MATERIAL_PHONG(1)=
+        # 追加伪 3D 高光（ambient+diffuse+specular），阶段 5 自动选程序槽。
+        public bool setMaterial( Int32 material )
+        {
+            if this._pipe == 0 || this._id == 0
+            {
+                ret false
+            }
+            ret RenderObject.ffiSetMaterial( this._pipe, this._id, material )
+        }
+
+        # v3.4：Phong 高光参数（strength 高光强度 0..8，shininess 光泽度 1..256）。
+        public bool setSpecular( Float32 strength, Float32 shininess )
+        {
+            if this._pipe == 0 || this._id == 0
+            {
+                ret false
+            }
+            ret RenderObject.ffiSetSpecular( this._pipe, this._id, strength, shininess )
+        }
+
+        # v3.4：投影阴影开关 —— 1 = 生成 2D 投影阴影绘制项（透明段黑 0.35，
+        # 沿背离光源方向偏移；直射光方向优先，否则按聚光位置逐物体定向，
+        # 聚光摇晃时阴影跟随）。无光源时不生成。
+        public bool setShadow( Int32 castShadow )
+        {
+            if this._pipe == 0 || this._id == 0
+            {
+                ret false
+            }
+            ret RenderObject.ffiSetShadow( this._pipe, this._id, castShadow )
+        }
+
         public bool destroy()
         {
             if this._pipe == 0 || this._id == 0
@@ -841,6 +952,24 @@ namespace SLang
 
         @DllStaticImport( "sl_render_lib", "slr_object_set_animated", "i64,i64,i32,f32->bool" )
         static bool ffiSetAnimated( Int64 p, Int64 obj, Int32 mode, Float32 speed )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_object_set_material", "i64,i64,i32->bool" )
+        static bool ffiSetMaterial( Int64 p, Int64 obj, Int32 material )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_object_set_specular", "i64,i64,f32,f32->bool" )
+        static bool ffiSetSpecular( Int64 p, Int64 obj, Float32 strength, Float32 shininess )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_object_set_shadow", "i64,i64,i32->bool" )
+        static bool ffiSetShadow( Int64 p, Int64 obj, Int32 castShadow )
         {
             ret false
         }

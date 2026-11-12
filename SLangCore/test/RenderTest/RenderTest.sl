@@ -59,6 +59,10 @@ public class RenderTest
     static Int32 _renderFrames = 0
     static Int32 _pixOk = 0
 
+    # v3.4：QT 演示聚光灯（暖色，slot 0）—— onTick 每帧摇晃位置 +
+    # 强度脉动后 applyTo 重写光照槽（阴影/锥光随灯实时跟随）
+    static Light _lamp = null
+
     # Phase B 后端切换 UI 状态
     static SLang.QPushButton _btnGl = null
     static SLang.QPushButton _btnDx = null
@@ -77,6 +81,8 @@ public class RenderTest
     # UV 不建表：vi%4 -> (0,0)(1,0)(1,1)(0,1)（updateCube 现场计算）
 
     # 帧循环 tick：t 推进 -> SL 侧逐阶段驱动 1..13（完整流程）-> 填 QT 窗口
+    # v3.4：每帧先摇晃聚光灯（位置 ±0.08 sin + 高度 ±0.05 sin、强度
+    # 1.6±0.5 sin 脉动）再 applyTo —— 灯光/阴影/高光实时跟随摆动
     public static void onTick()
     {
         if _pipe == null
@@ -84,6 +90,17 @@ public class RenderTest
             ret
         }
         _t = _t + 0.033f
+        if _lamp != null
+        {
+            _lamp.posX = 0.08f * Mathf.sin( _t * 2.1f )
+            _lamp.posY = 0.8f + 0.05f * Mathf.sin( _t * 3.3f )
+            _lamp.intensity = 1.6f + 0.5f * Mathf.sin( _t * 4.7f )
+            if _lamp.intensity < 0.4f
+            {
+                _lamp.intensity = 0.4f
+            }
+            _lamp.applyTo( _pipe, 0 )
+        }
         if RenderTest.updateCube( _t )
         {
             if _cubeFirst == 0
@@ -287,9 +304,12 @@ public class RenderTest
 
     # 场景全量重建（A3 同款：橙图 quad + 蓝 quad + 动画三角 + 相机1
     # 右半 viewport + 展示用后处理）—— 每次后端切换后调用
+    # v3.4：聚光灯 _lamp（暖色，onTick 每帧摇晃位置 + 强度脉动）+
+    # 三个物体 castShadow 投影阴影（聚光点源 -> 阴影随灯摇晃跟随）+
+    # 蓝 quad/cube Phong 材质高光。
     static bool rebuildScene()
     {
-        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 1250, 720 )
         if pipe == null
         {
             Console.println( "[ui] FAIL: pipeline create - " + SLang.Render.errorString() )
@@ -307,6 +327,29 @@ public class RenderTest
         {
             ret false
         }
+        # v3.4 演示光照：环境光 + 暖色聚光（位置/强度由 onTick 摇晃驱动）
+        if pipe.setAmbient( 0.45f ) == false
+        {
+            ret false
+        }
+        if RenderTest._lamp == null
+        {
+            RenderTest._lamp = Light.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.6f, 2.4f, 38.0f )
+            if RenderTest._lamp == null
+            {
+                Console.println( "[ui] FAIL: Light.spot" )
+                ret false
+            }
+        }
+        RenderTest._lamp.posX = 0.0f
+        RenderTest._lamp.posY = 0.8f
+        RenderTest._lamp.dirX = 0.0f
+        RenderTest._lamp.dirY = -1.0f
+        if RenderTest._lamp.applyTo( pipe, 0 ) == false
+        {
+            Console.println( "[ui] FAIL: lamp applyTo - " + SLang.Render.errorString() )
+            ret false
+        }
 
         # 图片贴图（相对路径按运行进程 CWD，失败回退绝对路径）
         SLang.RenderTexture imgTex = SLang.RenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
@@ -320,7 +363,7 @@ public class RenderTest
             ret false
         }
 
-        # 橙图 quad（layer2，左半）
+        # 橙图 quad（layer2，左半；投影阴影 + Phong 贴图高光）
         SLang.RenderObject imgQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if imgQuad == null
         {
@@ -332,8 +375,11 @@ public class RenderTest
         imgQuad.setScale( 0.7f, 0.7f )
         imgQuad.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
         imgQuad.setTexture( imgTex )
+        imgQuad.setMaterial( 1 )
+        imgQuad.setSpecular( 1.0f, 12.0f )
+        imgQuad.setShadow( 1 )
 
-        # 蓝 quad（layer0，右半）
+        # 蓝 quad（layer0，右半；投影阴影 + Phong 纯色高光）
         SLang.RenderObject blueQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if blueQuad == null
         {
@@ -344,6 +390,9 @@ public class RenderTest
         blueQuad.setPosition( 0.5f, 0.0f, 0.0f )
         blueQuad.setScale( 0.6f, 0.6f )
         blueQuad.setColor( 0.2f, 0.4f, 1.0f, 1.0f )
+        blueQuad.setMaterial( 1 )
+        blueQuad.setSpecular( 1.5f, 16.0f )
+        blueQuad.setShadow( 1 )
 
         # 动画三角（layer1，顶部，色相循环）
         SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
@@ -368,7 +417,7 @@ public class RenderTest
         {
             ret false
         }
-        if cam.setViewport( 128, 0, 128, 256 ) == false || cam.setClearColor( 0.0f, 0.25f, 0.1f, 1.0f ) == false
+        if cam.setViewport( 625, 0, 625, 720 ) == false || cam.setClearColor( 0.0f, 0.25f, 0.1f, 1.0f ) == false
         {
             ret false
         }
@@ -402,20 +451,24 @@ public class RenderTest
             ret false
         }
         # 顶点已烘焙 NDC：位置/缩放保持单位，贴图走 imgTex，
-        # 透明队列（3000 默认）后画叠加在两个 quad 之上
+        # 透明队列（3000 默认）后画叠加在两个 quad 之上；
+        # v3.4：Phong 贴图高光 + 投影阴影（聚光点源 -> 阴影随灯摇晃）
         _cubeObj.setTexture( imgTex )
         _cubeObj.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        _cubeObj.setMaterial( 1 )
+        _cubeObj.setSpecular( 1.2f, 10.0f )
+        _cubeObj.setShadow( 1 )
         RenderTest.updateCube( _t )
 
-        Int64 px = Memory.alloc( 256 * 256 * 4 )
+        Int64 px = Memory.alloc( 1250 * 720 * 4 )
         if px == 0
         {
             ret false
         }
         _pipe = pipe
         _pixels = px
-        _texW = 256
-        _texH = 256
+        _texW = 1250
+        _texH = 720
         ret true
     }
 
@@ -565,6 +618,9 @@ public class RenderTest
         bool a3 = runMultiCameraImage()
         bool phaseA = a1 && a2 && a3
 
+        # Phase L：光照（直射 + 聚光 + 无光回归；当前 GL 后端）
+        bool phaseL = runLightScene()
+
         Int32 phaseB = runQtWindow()
 
         string dText = "FAIL"
@@ -610,9 +666,14 @@ public class RenderTest
         Console.println( "phase A1 (v1 compat)         : " + ( a1 ? "PASS" : "FAIL" ) )
         Console.println( "phase A2 (13-stage pipe)     : " + ( a2 ? "PASS" : "FAIL" ) )
         Console.println( "phase A3 (multi-cam+img)     : " + ( a3 ? "PASS" : "FAIL" ) )
+        Console.println( "phase L  (dir+spot light)    : " + ( phaseL ? "PASS" : "FAIL" ) )
         Console.println( "phase B  (QT window)         : " + bText )
         # 终判：主流程全绿 + D3D11/VK 可用即 PASS，GLES 允许 SKIP（环境无 GLES 库）
         bool allOk = phaseA
+        if !phaseL
+        {
+            allOk = false
+        }
         if phaseB == 0
         {
             allOk = false
@@ -655,12 +716,14 @@ public class RenderTest
         bool d1 = runV1Compat()
         bool d2 = runPipeline()
         bool d3 = runMultiCameraImage()
+        # 光照跨后端同效果复检（D3D11 与 GL 同公式逐像素一致）
+        bool d4 = runLightScene()
         # 本阶段管线句柄在切回 GL 后失效：清空 QT 移交（GL 主流程会重设）
         _pipe = null
         _pixels = 0
-        if d1 && d2 && d3
+        if d1 && d2 && d3 && d4
         {
-            Console.println( "[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            Console.println( "[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image + lighting, pixels identical to GL)" )
             ret 2
         }
         Console.println( "[d3d11] Phase D: FAIL" )
@@ -683,6 +746,9 @@ public class RenderTest
         bool d1 = runV1Compat()
         bool d2 = runPipeline()
         bool d3 = runMultiCameraImage()
+        # VK：SPIR-V 固化暂未消费光照（upload_lights 空实现），
+        # 光照相位跳过（默认无光照路径已由 d1..d3 覆盖）
+        Console.println( "[vk] lighting phase skipped (SPIR-V frozen shaders do not consume lights yet)" )
         # 切回 GL 前先清空管线句柄移交（GL 主流程会重设）
         _pipe = null
         _pixels = 0
@@ -711,11 +777,13 @@ public class RenderTest
         bool d1 = runV1Compat()
         bool d2 = runPipeline()
         bool d3 = runMultiCameraImage()
+        # 光照跨后端同效果复检（GLES 与 GL 同公式逐像素一致）
+        bool d4 = runLightScene()
         _pipe = null
         _pixels = 0
-        if d1 && d2 && d3
+        if d1 && d2 && d3 && d4
         {
-            Console.println( "[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            Console.println( "[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image + lighting, pixels identical to GL)" )
             ret 2
         }
         Console.println( "[gles] Phase F: FAIL" )
@@ -1136,7 +1204,7 @@ public class RenderTest
             ret false
         }
 
-        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 1280, 720 )
         if pipe == null
         {
             Console.println( "[cam] FAIL: pipeline create - " + SLang.Render.errorString() )
@@ -1215,7 +1283,7 @@ public class RenderTest
             Console.println( "[cam] FAIL: camera setup" )
             ret false
         }
-        if cam.setViewport( 128, 0, 128, 256 ) == false || cam.setClearColor( 0.0f, 0.25f, 0.1f, 1.0f ) == false
+        if cam.setViewport( 640, 0, 640, 720 ) == false || cam.setClearColor( 0.0f, 0.25f, 0.1f, 1.0f ) == false
         {
             Console.println( "[cam] FAIL: camera viewport/clear" )
             ret false
@@ -1226,7 +1294,7 @@ public class RenderTest
             ret false
         }
 
-        Int64 px = Memory.alloc( 256 * 256 * 4 )
+        Int64 px = Memory.alloc( 1280 * 720 * 4 )
         if px == 0
         {
             Console.println( "[cam] FAIL: pixel alloc" )
@@ -1252,41 +1320,42 @@ public class RenderTest
             ret false
         }
 
-        # (64,128)  左半：cam0 的橙图 quad 中心（图片橙色）
-        Int32 r1 = sampleChannel( px, 256, 64, 128, 0 )
-        Int32 g1 = sampleChannel( px, 256, 64, 128, 1 )
-        Int32 b1 = sampleChannel( px, 256, 64, 128, 2 )
-        Console.println( "[cam] left img    RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (64,128)" )
+        # (320,360) 左半：cam0 的橙图 quad 中心（图片橙色；世界 (-0.5,0)）
+        Int32 r1 = sampleChannel( px, 1280, 320, 360, 0 )
+        Int32 g1 = sampleChannel( px, 1280, 320, 360, 1 )
+        Int32 b1 = sampleChannel( px, 1280, 320, 360, 2 )
+        Console.println( "[cam] left img    RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (320,360)" )
         if r1 < 200 || g1 < 100 || g1 > 160 || b1 > 70
         {
             Console.println( "[cam] FAIL: image quad pixel should be orange in cam0 view" )
             ret false
         }
-        # (160,128) 右半：cam1 重画同一橙图 quad（depth=10 后画）
-        r1 = sampleChannel( px, 256, 160, 128, 0 )
-        g1 = sampleChannel( px, 256, 160, 128, 1 )
-        b1 = sampleChannel( px, 256, 160, 128, 2 )
-        Console.println( "[cam] right img   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (160,128)" )
+        # (800,360) 右半：cam1 重画同一橙图 quad（depth=10 后画；
+        # 右半 viewport 内世界 (-0.5,0)）
+        r1 = sampleChannel( px, 1280, 800, 360, 0 )
+        g1 = sampleChannel( px, 1280, 800, 360, 1 )
+        b1 = sampleChannel( px, 1280, 800, 360, 2 )
+        Console.println( "[cam] right img   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (800,360)" )
         if r1 < 200 || g1 < 100 || g1 > 160 || b1 > 70
         {
             Console.println( "[cam] FAIL: cam1 should redraw layer2 image quad in right viewport" )
             ret false
         }
-        # (240,40)  右半：cam1 独立清屏色（深绿）；cam0 深蓝背景被覆盖
-        r1 = sampleChannel( px, 256, 240, 40, 0 )
-        g1 = sampleChannel( px, 256, 240, 40, 1 )
-        b1 = sampleChannel( px, 256, 240, 40, 2 )
-        Console.println( "[cam] right clear RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (240,40)" )
+        # (1200,113) 右半：cam1 独立清屏色（深绿）；cam0 深蓝背景被覆盖
+        r1 = sampleChannel( px, 1280, 1200, 113, 0 )
+        g1 = sampleChannel( px, 1280, 1200, 113, 1 )
+        b1 = sampleChannel( px, 1280, 1200, 113, 2 )
+        Console.println( "[cam] right clear RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (1200,113)" )
         if r1 > 15 || g1 < 55 || g1 > 75 || b1 < 15 || b1 > 35
         {
             Console.println( "[cam] FAIL: cam1 clear color should cover right viewport" )
             ret false
         }
-        # (64,40)   左半：cam0 深蓝背景清屏色
-        r1 = sampleChannel( px, 256, 64, 40, 0 )
-        g1 = sampleChannel( px, 256, 64, 40, 1 )
-        b1 = sampleChannel( px, 256, 64, 40, 2 )
-        Console.println( "[cam] left bg     RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (64,40)" )
+        # (320,113) 左半：cam0 深蓝背景清屏色
+        r1 = sampleChannel( px, 1280, 320, 113, 0 )
+        g1 = sampleChannel( px, 1280, 320, 113, 1 )
+        b1 = sampleChannel( px, 1280, 320, 113, 2 )
+        Console.println( "[cam] left bg     RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (320,113)" )
         if r1 < 9 || r1 > 21 || g1 < 9 || g1 > 21 || b1 < 19 || b1 > 33
         {
             Console.println( "[cam] FAIL: left half should keep cam0 clear color" )
@@ -1309,19 +1378,19 @@ public class RenderTest
             Console.println( "[cam] FAIL: STAT_CAMERA_COUNT should be 1 after disable" )
             ret false
         }
-        r1 = sampleChannel( px, 256, 160, 128, 0 )
-        g1 = sampleChannel( px, 256, 160, 128, 1 )
-        b1 = sampleChannel( px, 256, 160, 128, 2 )
-        Console.println( "[cam] blue quad   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (160,128)" )
+        r1 = sampleChannel( px, 1280, 800, 360, 0 )
+        g1 = sampleChannel( px, 1280, 800, 360, 1 )
+        b1 = sampleChannel( px, 1280, 800, 360, 2 )
+        Console.println( "[cam] blue quad   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (800,360)" )
         if r1 < 40 || r1 > 65 || g1 < 90 || g1 > 115 || b1 < 240
         {
             Console.println( "[cam] FAIL: cam0 blue quad should show after disabling cam1" )
             ret false
         }
-        r1 = sampleChannel( px, 256, 192, 128, 0 )
-        g1 = sampleChannel( px, 256, 192, 128, 1 )
-        b1 = sampleChannel( px, 256, 192, 128, 2 )
-        Console.println( "[cam] blue quad   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (192,128)" )
+        r1 = sampleChannel( px, 1280, 960, 360, 0 )
+        g1 = sampleChannel( px, 1280, 960, 360, 1 )
+        b1 = sampleChannel( px, 1280, 960, 360, 2 )
+        Console.println( "[cam] blue quad   RGB=(" + r1.toString() + "," + g1.toString() + "," + b1.toString() + ") @ (960,360)" )
         if r1 < 40 || r1 > 65 || g1 < 90 || g1 > 115 || b1 < 240
         {
             Console.println( "[cam] FAIL: blue quad should appear in cam0-only frame" )
@@ -1336,10 +1405,365 @@ public class RenderTest
         }
         _pipe = pipe
         _pixels = px
-        _texW = 256
-        _texH = 256
+        _texW = 1280
+        _texH = 720
 
         Console.println( "[cam] Phase A3: PASS (multi-camera depth order + viewport split + cullingMask + image file render)" )
+        ret true
+    }
+
+    # ── Phase L：光照（一个直射光 + 一个 spot 光 + 无光回归）────────
+    # 场景（1280x720，ortho [-1,1]²，ambient 0.25）：
+    #   直射光 slot 0：方向 (1,0)、白色、强度 0.9 —— 顶部两个白 quad
+    #     （rot 0 朝光 vs rot π 背光）验证 ndl 按物体朝向着色；
+    #   聚光 slot 1：位置 (0,0.35)、光轴 (0,-1)、锥半角 30°、范围 1.3、
+    #     暖色 (1.0,0.85,0.55)、强度 1.2 —— 底部大背光 quad（rot π，
+    #     ndl=0 只剩环境光）上验证锥内/锥外亮度差（锥内 + 距离衰减）。
+    # v3.4 增补：
+    #   阴影 —— 白 box(0.45,-0.2) castShadow（不透明 z=0、地板接收面
+    #     z=-0.1）：直射光沿 -x 投出阴影 quad（偏移 0.136、放大 1.15、
+    #     黑 0.35、深度夹层 -0.01），S_in(阴影内地板) 显著暗于
+    #     S_out(锥内普通地板)；无光回归帧无光源 -> 阴影不生成 ->
+    #     纯白基线不受影响；
+    #   灯光摇晃 —— 帧 2 摆动聚光（posX=0.08*sin(2.1)、强度
+    #     1.2+0.35*sin(3.7)）-> P1 亮度随灯动变化（Δ≥4）；
+    #   Phong —— 独立 256 管线子场景：同光照下 Lambert quad vs Phong
+    #     quad（spec 2.0/4.0）中心亮度差 = 伪 3D 高光贡献（Δ≥35）。
+    # 末帧回归：clearLight(0/1) + setAmbient(1.0) -> 采样点全部回到
+    # 纯白（无光照默认态与旧版逐字节一致）。
+    static bool runLightScene()
+    {
+        Console.println( "-- Phase L: lighting + sway + Phong + shadow (1 directional + 1 spot, ambient 0.25) --" )
+
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 1280, 720 )
+        if pipe == null
+        {
+            Console.println( "[light] FAIL: create - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.setCamera( -1, -1.0f, 1.0f, -1.0f, 1.0f ) == false
+        {
+            Console.println( "[light] FAIL: setCamera" )
+            ret false
+        }
+        if pipe.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f ) == false
+        {
+            Console.println( "[light] FAIL: setClearColor" )
+            ret false
+        }
+
+        # 光照：环境光 + 直射光 + 聚光（Light.applyTo 写管线槽）
+        if pipe.setAmbient( 0.25f ) == false
+        {
+            Console.println( "[light] FAIL: setAmbient" )
+            ret false
+        }
+        Light sun = Light.directional( Color.white(), 0.9f )
+        if sun == null
+        {
+            Console.println( "[light] FAIL: Light.directional" )
+            ret false
+        }
+        sun.dirX = 1.0f
+        sun.dirY = 0.0f
+        if sun.applyTo( pipe, 0 ) == false
+        {
+            Console.println( "[light] FAIL: directional applyTo - " + SLang.Render.errorString() )
+            ret false
+        }
+        Light lamp = Light.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.2f, 1.3f, 30.0f )
+        if lamp == null
+        {
+            Console.println( "[light] FAIL: Light.spot" )
+            ret false
+        }
+        lamp.posX = 0.0f
+        lamp.posY = 0.35f
+        lamp.dirX = 0.0f
+        lamp.dirY = -1.0f
+        if lamp.applyTo( pipe, 1 ) == false
+        {
+            Console.println( "[light] FAIL: spot applyTo - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.lightCount() != 2
+        {
+            Console.println( "[light] FAIL: lightCount should be 2" )
+            ret false
+        }
+
+        # 顶部两个白 quad：rot 0（法线 (1,0)，朝直射光 -> 全亮）
+        # vs rot π（法线 (-1,0)，背光 -> 仅环境光）
+        SLang.RenderObject quadA = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        SLang.RenderObject quadB = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if quadA == null || quadB == null
+        {
+            Console.println( "[light] FAIL: add quads" )
+            ret false
+        }
+        quadA.setPosition( -0.55f, 0.6f, 0.0f )
+        quadA.setScale( 0.42f, 0.42f )
+        quadA.setRotationZ( 0.0f )
+        quadA.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        quadB.setPosition( 0.55f, 0.6f, 0.0f )
+        quadB.setScale( 0.42f, 0.42f )
+        quadB.setRotationZ( 3.14159f )
+        quadB.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+
+        # 底部大背光 quad（rot π -> ndl=0，只剩环境光 + 聚光贡献）。
+        # 不透明队列（2000）+ z=-0.1（比 box 远）—— 阴影接收面须先于
+        # 阴影绘制且深度比阴影远；z<=0 保证 D3D11 NDC [0,1] 有效域
+        SLang.RenderObject floor = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if floor == null
+        {
+            Console.println( "[light] FAIL: add floor" )
+            ret false
+        }
+        floor.setPosition( 0.0f, -0.45f, -0.1f )
+        floor.setScale( 1.9f, 1.0f )
+        floor.setRotationZ( 3.14159f )
+        floor.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        floor.setQueue( 2000 )
+
+        # v3.4 阴影投射 box：朝光白方块（不透明、z=0 比地板近），
+        # 直射光 (1,0) 沿 -x 投出阴影 quad（阴影中心 (0.314,-0.2)、尺寸
+        # 0.345、z=-0.01 深度夹层：地板 -0.1 < 阴影 -0.01 < box 0），
+        # 阴影落在地板上，与 box 重叠区被本体深度剔除
+        SLang.RenderObject box = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if box == null
+        {
+            Console.println( "[light] FAIL: add shadow box" )
+            ret false
+        }
+        box.setPosition( 0.45f, -0.2f, 0.0f )
+        box.setScale( 0.3f, 0.3f )
+        box.setRotationZ( 0.0f )
+        box.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        box.setQueue( 2000 )
+        if box.setShadow( 1 ) == false
+        {
+            Console.println( "[light] FAIL: box.setShadow - " + SLang.Render.errorString() )
+            ret false
+        }
+
+        Int64 px = Memory.alloc( 1280 * 720 * 4 )
+        if px == 0
+        {
+            Console.println( "[light] FAIL: pixel alloc" )
+            ret false
+        }
+
+        # ── 帧 1：光照开 —— 采样六点（世界坐标 -> 1280x720 像素：
+        #    x=(wx+1)/2*1280, y=(1-(wy+1)/2)*720）────────────────────
+        #    A(288,144)=quadA 中心 B(992,144)=quadB 中心
+        #    P1(640,492)=锥内地板 P2(1200,492)=锥外地板
+        #    S_in(768,432)=box 阴影内地板 S_out(512,432)=锥内无阴影地板
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[light] FAIL: renderFrame lit - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 aR = sampleChannel( px, 1280, 288, 144, 0 )
+        Int32 bR = sampleChannel( px, 1280, 992, 144, 0 )
+        Int32 p1R = sampleChannel( px, 1280, 640, 492, 0 )
+        Int32 p2R = sampleChannel( px, 1280, 1200, 492, 0 )
+        Int32 sInR = sampleChannel( px, 1280, 768, 432, 0 )
+        Int32 sOutR = sampleChannel( px, 1280, 512, 432, 0 )
+        Console.println( "[light] lit   A=" + aR.toString() + " B=" + bR.toString() + " P1=" + p1R.toString() + " P2=" + p2R.toString() + " S_in=" + sInR.toString() + " S_out=" + sOutR.toString() )
+        # 直射光：A 朝光全亮（0.25+0.9 -> 255），B 背光仅环境光（~64）
+        if aR < 245
+        {
+            Console.println( "[light] FAIL: facing quad should be fully lit" )
+            ret false
+        }
+        if bR < 45 || bR > 90
+        {
+            Console.println( "[light] FAIL: back-facing quad should be ambient-only" )
+            ret false
+        }
+        if aR - bR < 120
+        {
+            Console.println( "[light] FAIL: directional ndl difference missing" )
+            ret false
+        }
+        # 聚光：P1 锥内（环境光 + 衰减贡献 ~125），P2 锥外仅环境光（~64）
+        if p1R < 100 || p1R > 165
+        {
+            Console.println( "[light] FAIL: in-cone pixel brightness out of range" )
+            ret false
+        }
+        if p2R < 45 || p2R > 90
+        {
+            Console.println( "[light] FAIL: out-of-cone pixel should be ambient-only" )
+            ret false
+        }
+        if p1R - p2R < 30
+        {
+            Console.println( "[light] FAIL: spot cone difference missing" )
+            ret false
+        }
+        # 阴影：S_in = 阴影内地板（地板亮度 * 0.65），S_out = 锥内无阴影地板
+        # 同聚光下两地板点光照一致 -> 亮度差即阴影 alpha 0.35 的贡献
+        if sInR < 80 || sInR > 140
+        {
+            Console.println( "[light] FAIL: shadowed floor brightness out of range" )
+            ret false
+        }
+        if sOutR - sInR < 25
+        {
+            Console.println( "[light] FAIL: shadow darkening missing (S_out - S_in < 25)" )
+            ret false
+        }
+
+        # ── 帧 2：灯光摇晃 —— 聚光位置/强度小幅摆动 -> P1 亮度变化 ──
+        # （QT 演示同款动画的确定性快照：posX ±0.08 摇晃 + 强度 ±0.35 脉动）
+        lamp.posX = 0.08f * Mathf.sin( 2.1f )
+        lamp.intensity = 1.2f + 0.35f * Mathf.sin( 3.7f )
+        if lamp.applyTo( pipe, 1 ) == false
+        {
+            Console.println( "[light] FAIL: sway applyTo - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.renderFrame( 1.0f, px ) == false
+        {
+            Console.println( "[light] FAIL: renderFrame sway - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 p1sR = sampleChannel( px, 1280, 640, 492, 0 )
+        Console.println( "[light] sway  P1=" + p1sR.toString() + " (lamp px=" + ( 0.08f * Mathf.sin( 2.1f ) ).toString() + " I=" + ( 1.2f + 0.35f * Mathf.sin( 3.7f ) ).toString() + ")" )
+        if p1sR < 95 || p1sR > 175
+        {
+            Console.println( "[light] FAIL: swayed in-cone brightness out of range" )
+            ret false
+        }
+        if p1R - p1sR < 4 && p1sR - p1R < 4
+        {
+            Console.println( "[light] FAIL: lamp sway should change pixel brightness" )
+            ret false
+        }
+
+        # ── 帧 3：Phong 子场景（独立 256 管线）──────────────────────
+        # 同一光照（直射光 0.5 + ambient 0.1）：Lambert quad 中心 =
+        # (0.1+0.5)*255 ≈ 153；Phong quad（spec 2.0/4.0）中心 =
+        # (0.1+0.5+0.5*0.213*2)*255 ≈ 207 —— 差值即伪 3D 高光贡献
+        SLang.RenderPipeline pipe2 = SLang.RenderPipeline.create( 256, 256 )
+        if pipe2 == null
+        {
+            Console.println( "[light] FAIL: phong pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe2.setCamera( -1, -1.0f, 1.0f, -1.0f, 1.0f ) == false
+        {
+            Console.println( "[light] FAIL: phong setCamera" )
+            ret false
+        }
+        if pipe2.setAmbient( 0.1f ) == false
+        {
+            Console.println( "[light] FAIL: phong setAmbient" )
+            ret false
+        }
+        Light sun2 = Light.directional( Color.white(), 0.5f )
+        if sun2 == null
+        {
+            Console.println( "[light] FAIL: phong Light.directional" )
+            ret false
+        }
+        sun2.dirX = 1.0f
+        sun2.dirY = 0.0f
+        if sun2.applyTo( pipe2, 0 ) == false
+        {
+            Console.println( "[light] FAIL: phong applyTo" )
+            ret false
+        }
+        SLang.RenderObject quadL = pipe2.addObject( SLang.RenderPipeline.MESH_QUAD )
+        SLang.RenderObject quadP = pipe2.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if quadL == null || quadP == null
+        {
+            Console.println( "[light] FAIL: phong add quads" )
+            ret false
+        }
+        quadL.setPosition( -0.55f, 0.6f, 0.0f )
+        quadL.setScale( 0.42f, 0.42f )
+        quadL.setRotationZ( 0.0f )
+        quadL.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        quadP.setPosition( 0.55f, 0.6f, 0.0f )
+        quadP.setScale( 0.42f, 0.42f )
+        quadP.setRotationZ( 0.0f )
+        quadP.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        if quadP.setMaterial( 1 ) == false || quadP.setSpecular( 2.0f, 4.0f ) == false
+        {
+            Console.println( "[light] FAIL: phong material/specular - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int64 px2 = Memory.alloc( 256 * 256 * 4 )
+        if px2 == 0
+        {
+            Console.println( "[light] FAIL: phong pixel alloc" )
+            ret false
+        }
+        if pipe2.renderFrame( 0.0f, px2 ) == false
+        {
+            Console.println( "[light] FAIL: phong renderFrame - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 lR = sampleChannel( px2, 256, 58, 51, 0 )
+        Int32 pR = sampleChannel( px2, 256, 198, 51, 0 )
+        Console.println( "[light] phong L=" + lR.toString() + " P=" + pR.toString() )
+        if lR < 135 || lR > 170
+        {
+            Console.println( "[light] FAIL: lambert quad brightness out of range" )
+            ret false
+        }
+        if pR < 190 || pR > 225
+        {
+            Console.println( "[light] FAIL: phong quad brightness out of range" )
+            ret false
+        }
+        if pR - lR < 35
+        {
+            Console.println( "[light] FAIL: phong specular highlight missing (P - L < 35)" )
+            ret false
+        }
+        if pipe2.destroy() == false
+        {
+            Console.println( "[light] FAIL: phong pipeline destroy" )
+            ret false
+        }
+
+        # ── 帧 4：回归 —— 清光 + ambient=1 -> 无光照基线（纯白）──
+        if pipe.clearLight( 0 ) == false || pipe.clearLight( 1 ) == false
+        {
+            Console.println( "[light] FAIL: clearLight" )
+            ret false
+        }
+        if pipe.setAmbient( 1.0f ) == false
+        {
+            Console.println( "[light] FAIL: setAmbient restore" )
+            ret false
+        }
+        if pipe.lightCount() != 0
+        {
+            Console.println( "[light] FAIL: lightCount should be 0 after clear" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[light] FAIL: renderFrame unlit - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 uA = sampleChannel( px, 1280, 288, 144, 0 )
+        Int32 uB = sampleChannel( px, 1280, 992, 144, 0 )
+        Int32 uP1 = sampleChannel( px, 1280, 640, 492, 0 )
+        Int32 uP2 = sampleChannel( px, 1280, 1200, 492, 0 )
+        Int32 uS = sampleChannel( px, 1280, 768, 432, 0 )
+        Console.println( "[light] unlit A=" + uA.toString() + " B=" + uB.toString() + " P1=" + uP1.toString() + " P2=" + uP2.toString() + " S=" + uS.toString() )
+        if uA < 250 || uB < 250 || uP1 < 250 || uP2 < 250 || uS < 250
+        {
+            Console.println( "[light] FAIL: no-light baseline should be pure white (shadow off without lights)" )
+            ret false
+        }
+
+        Console.println( "[light] Phase L: PASS (directional ndl + spot cone/attenuation + lamp sway + Phong specular + shadow + no-light regression)" )
         ret true
     }
 

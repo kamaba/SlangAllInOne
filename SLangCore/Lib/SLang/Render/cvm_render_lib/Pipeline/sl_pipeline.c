@@ -56,14 +56,22 @@ static void mat4_mul(float* out, const float* a, const float* b)
     memcpy(out, tmp, sizeof(tmp));
 }
 
-/* 2D 模型矩阵：平移 + 绕 Z 旋转 + 缩放（列主序）*/
-static void mat4_model2d(float* m, float x, float y, float rz, float sx, float sy)
+/* 2D 模型矩阵：平移(x,y,z) + 绕 Z 旋转 + 缩放（列主序）。
+ * v3.4 深度语义（兼顾 v3.3 排序键兼容 + 四后端深度域）：
+ *   - z <= 0：真实深度（ndc.z = -z ∈ [0,1]，GL/GLES/D3D11 三方一致，
+ *     D3D SV_Position.z 无 [-1,1] 映射必须非负）；
+ *   - z > 0：v3.3 语义 z 仅为透明排序键（如 A2 quad z=0.5 表示"最上"），
+ *     钳 0 保持 ndc 0 平局行为（后画同深 LESS 剔除）逐字节兼容；
+ *   - 投影阴影经 zdepth = 钳(caster z - 0.01) 落在"接收面(z<0)与
+ *     本体(z=0)"之间的深度夹层（接收面须 z < 阴影深度才被投影）。 */
+static void mat4_model2d(float* m, float x, float y, float z, float rz, float sx, float sy)
 {
     float c = cosf(rz), s = sinf(rz);
+    if (z > 0.0f) z = 0.0f;
     m[0] = c * sx;  m[1] = s * sx;  m[2] = 0.0f; m[3] = 0.0f;
     m[4] = -s * sy; m[5] = c * sy;  m[6] = 0.0f; m[7] = 0.0f;
     m[8] = 0.0f;    m[9] = 0.0f;    m[10] = 1.0f; m[11] = 0.0f;
-    m[12] = x;      m[13] = y;      m[14] = 0.0f; m[15] = 1.0f;
+    m[12] = x;      m[13] = y;      m[14] = z;   m[15] = 1.0f;
 }
 
 static void hsv_to_rgb(float h, float* r, float* g, float* b)
@@ -144,6 +152,9 @@ int64_t slr_pipeline_create(int w, int h)
             p->cameras[0].vp_x = 0; p->cameras[0].vp_y = 0;
             p->cameras[0].vp_w = w; p->cameras[0].vp_h = h;
             p->camera_count = 1;
+            /* 光照默认态：无光源 + 环境光 1.0（memset 归零会让全屏变黑，
+             * 必须显式置 1——输出与无光照版逐字节一致，向后兼容）*/
+            p->ambient = 1.0f;
             p->clear_color[0] = 0.06f; p->clear_color[1] = 0.06f;
             p->clear_color[2] = 0.10f; p->clear_color[3] = 1.0f;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
@@ -390,15 +401,22 @@ static void sort_items(SlrDrawItem* items, int count, int transparent)
 /* 5 渲染层整理数据（真正实现，多相机）：
  *   逐活动相机（depth 升序）收集可见对象：每相机先不透明（queue 升序、
  *   z 升序：近→远，z 同按材质键 prog+tex_desc——同材质相邻成批），
- *   再透明（queue 升序、z 降序：远→近，序敏感不加材质键）。
- *   items 布局：[cam0 不透明|cam0 透明|cam1 不透明|cam1 透明|...]
+ *   再透明（queue 升序、z 降序：远→近，序敏感不加材质键）；
+ *   透明段后追加深影绘制项（castShadow 对象 + 有光源时生成，2D 投影：
+ *   背离光源偏移 0.10、放大 1.15、黑 0.35 alpha、z = 物体 z + 0.01
+ *   排序在物体之前绘制）。items 布局：
+ *   [cam0 不透明|cam0 透明|cam1 不透明|cam1 透明|...]
  *   区间记录于 cam_ranges[bit]；slot = 数组下标 = PerDraw UBO 槽位 */
 static int stage_assemble_impl(SlrPipeline* p)
 {
     int ci, i, slot;
+    float sh_dir[2], sh_pos[2];
+    int sh_has = 0, sh_has_pos = 0;
     p->last_stage = 5;
     p->item_count = 0;
     p->opaque_count = 0;
+    /* 阴影光源（帧级一次）：平行光方向优先，否则聚光位置 */
+    sh_has = light_pick_shadow(p, sh_dir, &sh_has_pos, sh_pos);
     for (ci = 0; ci < p->active_cam_count; ci++)
     {
         int bit = p->active_cams[ci];
@@ -421,8 +439,10 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
                 it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
-                it->prog = (o->texture != 0) ? SLR_PROG_PTEX : SLR_PROG_PFLAT;
-                mat4_model2d(model, o->pos[0], o->pos[1], o->rot_z, o->scale[0], o->scale[1]);
+                it->prog = (o->texture != 0)
+                    ? (o->material ? SLR_PROG_PHONG_TEX : SLR_PROG_PTEX)
+                    : (o->material ? SLR_PROG_PHONG_FLAT : SLR_PROG_PFLAT);
+                mat4_model2d(model, o->pos[0], o->pos[1], o->pos[2], o->rot_z, o->scale[0], o->scale[1]);
                 mat4_mul(it->mvp, proj, model);
                 p->item_count++;
             }
@@ -444,8 +464,58 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
                 it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
-                it->prog = (o->texture != 0) ? SLR_PROG_PTEX : SLR_PROG_PFLAT;
-                mat4_model2d(model, o->pos[0], o->pos[1], o->rot_z, o->scale[0], o->scale[1]);
+                it->prog = (o->texture != 0)
+                    ? (o->material ? SLR_PROG_PHONG_TEX : SLR_PROG_PTEX)
+                    : (o->material ? SLR_PROG_PHONG_FLAT : SLR_PROG_PFLAT);
+                mat4_model2d(model, o->pos[0], o->pos[1], o->pos[2], o->rot_z, o->scale[0], o->scale[1]);
+                mat4_mul(it->mvp, proj, model);
+                p->item_count++;
+            }
+        }
+        /* 投影阴影项（v3.4）：castShadow 对象的 2D 投影 quad —— 沿
+         * "背离光源"方向偏移 0.10、放大 1.15、黑色 alpha 0.35。
+         * z = 物体 z - 0.01（深度夹层）：阴影比本体略远（透明段远→近
+         * + queue 2500 都保证先于本体绘制），比 z 更小的接收面（地面）
+         * 近（深度测试 LESS 通过）；本体遮挡自己的阴影（阴影深度大于
+         * 本体写入深度 -> 在本体像素上被剔除）。聚光（点源）时方向逐
+         * 物体归一化（灯摇晃 -> 阴影跟随）；无光源不生成。 */
+        if (sh_has)
+        {
+            for (i = 0; i < SLR_MAX_OBJECTS && p->item_count < SLR_MAX_OBJECTS; i++)
+            {
+                SlrObject* o = &p->objects[i];
+                SlrDrawItem* it;
+                float dx, dy, len, off, cx, cy, zdepth;
+                if (!o->used || !o->visible || !o->cast_shadow) continue;
+                if (!(o->cull_cams & (1 << bit))) continue;
+                dx = sh_dir[0]; dy = sh_dir[1];
+                if (sh_has_pos)
+                {
+                    dx = o->pos[0] - sh_pos[0];
+                    dy = o->pos[1] - sh_pos[1];
+                    len = sqrtf(dx * dx + dy * dy);
+                    if (len < 1e-5f) continue;   /* 与光源重合：无明确投影方向 */
+                    dx /= len; dy /= len;
+                }
+                off = 0.10f + 0.12f * (o->scale[0] > o->scale[1] ? o->scale[0] : o->scale[1]);
+                cx = o->pos[0] + dx * off;
+                cy = o->pos[1] + dy * off;
+                it = &p->items[p->item_count];
+                memset(it, 0, sizeof(SlrDrawItem));
+                it->obj = i;
+                it->queue = 2500; it->layer = o->layer;
+                it->z = o->pos[2] - 0.01f;   /* 透明排序键：略"远"于本体 */
+                it->cam = bit;
+                it->tex_desc = -1;
+                it->is_shadow = 1;
+                it->prog = SLR_PROG_PFLAT;   /* 阴影为纯色黑 quad（光照下仍黑）*/
+                /* 深度夹层钳取 [-0.99, -0.01]：恒在 z=0 本体之下、
+                 * z<-0.01 接收面之上、且 ndc ∈ [0, 0.99] 四后端有效 */
+                zdepth = it->z;
+                if (zdepth > -0.01f) zdepth = -0.01f;
+                if (zdepth < -0.99f) zdepth = -0.99f;
+                mat4_model2d(model, cx, cy, zdepth, 0.0f,
+                             o->scale[0] * 1.15f, o->scale[1] * 1.15f);
                 mat4_mul(it->mvp, proj, model);
                 p->item_count++;
             }
@@ -458,7 +528,7 @@ static int stage_assemble_impl(SlrPipeline* p)
     return 1;
 }
 
-/* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传 + 纹理描述符表写入） */
+/* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传 + 光照块 + 纹理描述符表写入） */
 static int stage_upload_render_data(SlrPipeline* p)
 {
     int i;
@@ -467,19 +537,48 @@ static int stage_upload_render_data(SlrPipeline* p)
     for (i = 0; i < p->item_count; i++)
     {
         SlrObject* o = &p->objects[p->items[i].obj];
+        float c, s, *w;
         memcpy(s_perdraw.mvp[i], p->items[i].mvp, sizeof(p->items[i].mvp));
+        if (p->items[i].is_shadow)
+        {
+            /* 阴影项：固定黑色 alpha 0.35（本体色/高光/wmat 不参与）*/
+            s_perdraw.color[i][0] = 0.0f;
+            s_perdraw.color[i][1] = 0.0f;
+            s_perdraw.color[i][2] = 0.0f;
+            s_perdraw.color[i][3] = 0.35f;
+            continue;
+        }
         memcpy(s_perdraw.color[i], o->color, sizeof(o->color));
         p->upload_count += 2;   /* MVP + 颜色 */
+        /* 光照用 2D 世界仿射（与 mat4_model2d 同源）：
+         * 2x2 旋转缩放 + 平移 + 物体朝向法线 (cos, sin) */
+        c = cosf(o->rot_z);
+        s = sinf(o->rot_z);
+        w = s_perdraw.wmat[i];
+        w[0] = c * o->scale[0]; w[1] = -s * o->scale[1];
+        w[2] = s * o->scale[0]; w[3] =  c * o->scale[1];
+        w[4] = o->pos[0];       w[5] = o->pos[1];
+        w[6] = c;               w[7] = s;
+        /* Phong 高光参数（v3.4；不计 upload_count —— 整块 PerDraw 一次上传，
+         * 保持 A2 uploads 断言字节级兼容）*/
+        s_perdraw.spec[i][0] = o->spec_str;
+        s_perdraw.spec[i][1] = o->spec_shin;
     }
     g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
-    /* 纹理描述符表：PTEX 绘制项的纹理写入描述符槽（同纹理查重复用），
-     * 绘制项记录槽号——draw_item 不再携带资源指针 */
+    /* 帧级光照块：环境光 + 首个平行光 + 首个聚光（PFLAT/PTEX 消费）*/
+    {
+        SlrLightBlock lb;
+        light_build_block(p, &lb);
+        g_rhi->upload_lights(&lb, (int)sizeof(lb));
+    }
+    /* 纹理描述符表：PTEX/PHONG_TEX 绘制项的纹理写入描述符槽（同纹理查重
+     * 复用），绘制项记录槽号——draw_item 不再携带资源指针 */
     memset(&p->descs, 0, sizeof(p->descs));
     for (i = 0; i < p->item_count; i++)
     {
         SlrDrawItem* it = &p->items[i];
         it->tex_desc = -1;
-        if (it->prog == SLR_PROG_PTEX)
+        if (it->prog == SLR_PROG_PTEX || it->prog == SLR_PROG_PHONG_TEX)
         {
             SlrTexRes* t = tex_from_handle(p->objects[it->obj].texture);
             void* res = t ? t->rhi_tex : NULL;

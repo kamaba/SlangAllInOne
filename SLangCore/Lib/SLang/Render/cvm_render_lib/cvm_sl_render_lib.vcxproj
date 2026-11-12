@@ -95,6 +95,7 @@
     <ClCompile Include="Pipeline\sl_object.c" />
     <ClCompile Include="Pipeline\sl_texture.c" />
     <ClCompile Include="Pipeline\sl_camera.c" />
+    <ClCompile Include="Pipeline\sl_light.c" />
     <ClCompile Include="RHI\sl_rhi_gl.c" />
     <ClCompile Include="RHI\sl_rhi_d3d11.cpp" />
     <ClCompile Include="RHI\sl_rhi_vk.cpp" />

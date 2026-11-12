@@ -121,6 +121,12 @@ typedef struct SlrRhi
      * slot = -1 表示清绑定（绑 NULL / 0 纹理）。 */
     int  (*desc_write_tex)(int slot, void* tex);   /* 写：纹理资源 -> 描述符槽 */
     void (*desc_bind_tex)(int slot);               /* 绑：槽 -> 像素着色器 */
+
+    /* ---- 帧级光照块（SlrLightBlock，96B；PFLAT/PTEX 着色器消费）----
+     * GL/GLES：LightBlock UBO 绑定点 1；D3D11：PerLight 寄存器 b4；
+     * VK：SPIR-V 着色器固化暂未消费光照（空实现，设置光照无效果——
+     * 不影响默认路径：无光照时输出与旧版逐字节一致）。 */
+    void (*upload_lights)(const void* data, int bytes);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

@@ -62,6 +62,7 @@
       { "path": "Transform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 9 },
       { "path": "RectTransform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 10 },
       { "path": "Renderer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 11 },
+      { "path": "Ray.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
       { "path": "Camera/Camera.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
       { "path": "Camera/Light.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 13 },
       // ---- RHI 层草稿（依赖序：资源 -> 设备 -> 命令 -> 管线状态）----

@@ -101,6 +101,14 @@ enum
     SLR_ANIM_HUE_CYCLE = 1   /* 颜色随时间色相循环        */
 };
 
+/* ---- 光照类型（slr_light_set）---- */
+enum
+{
+    SLR_LIGHT_DIRECTIONAL = 0,   /* 平行光：2D 方向 + 颜色/强度          */
+    SLR_LIGHT_POINT       = 1,   /* 点光（预留：着色器暂未消费）          */
+    SLR_LIGHT_SPOT        = 2    /* 聚光：位置 + 光轴 + 锥角 + 范围      */
+};
+
 /* ================= 生命周期 / 诊断 ================= */
 SLR_API int         slr_init(void);          /* 默认后端 "gl"（向后兼容）*/
 SLR_API int         slr_init_backend(const char* backend_utf8); /* 指定后端初始化 */
@@ -185,6 +193,39 @@ SLR_API int     slr_object_set_color(int64_t p, int64_t obj, float r, float g, f
 SLR_API int     slr_object_set_texture(int64_t p, int64_t obj, int64_t tex);
 SLR_API int     slr_object_set_animated(int64_t p, int64_t obj, int mode, float speed);
 SLR_API int     slr_object_count(int64_t p);
+
+/* ================= v3.3：光照（管线光照槽表 + 着色器光照块） =================
+ * 每管线 8 个光照槽（SLR_MAX_LIGHTS），着色器消费首个启用的平行光 +
+ * 首个启用的聚光（2D 世界系逐像素着色：平行光按物体朝向 ndl、聚光按
+ * 世界坐标锥角 + 距离衰减）。环境光经 slr_light_set_ambient 全局调节
+ * （默认 1.0 = 无光照效果，输出与旧版逐字节一致）。
+ * params_ptr 指向 float 数组（SL 侧 Memory.writeF32 填充），布局：
+ *   平行光 type=0：[dirX, dirY, r, g, b, intensity]                      6 项
+ *     dirX/dirY = 表面 -> 光源方向（任意长度，内部归一化）
+ *   聚光   type=2：[posX, posY, dirX, dirY, angleDeg, range, r, g, b, intensity] 10 项
+ *     dirX/dirY = 光轴方向（光源 -> 外）；angleDeg 锥半角 [1,89]；
+ *     range 有效半径（>0，距离平方衰减 + 截断）
+ * 注意：VK 后端 SPIR-V 固化暂未消费光照（设置无效果，不报错）。 */
+SLR_API int slr_light_set(int64_t p, int slot, int type, int64_t params_ptr);
+SLR_API int slr_light_clear(int64_t p, int slot);
+SLR_API int slr_light_count(int64_t p);
+SLR_API int slr_light_set_ambient(int64_t p, float ambient);
+
+/* ================= v3.4：Phong 材质 + 投影阴影 =================
+ * Phong 光照模型：v3.3 光照（环境 + 直射 ndl + 聚光锥角/衰减）之上叠加
+ * 伪 3D 高光 —— N = normalize(vec3(朝向法线, 0.75))，V = (0,0,1)，
+ * R = reflect(-L, N)，spec = pow(max(dot(R,V),0), shininess) * strength。
+ * 着色器槽：SLR_PROG_PHONG_FLAT / SLR_PROG_PHONG_TEX（material=1 时
+ * 阶段 5 自动选用；GL/GLES/D3D11 三方公式逐字一致）。
+ * 投影阴影：castShadow=1 的对象在阶段 5 生成 2D 投影阴影绘制项
+ * （透明段 queue 2500，黑色 alpha 0.35，沿"背离光源"方向偏移 0.10、
+ * 放大 1.15；直射光方向优先，否则聚光位置逐物体定向）。
+ * 注意：VK 后端 SPIR-V 固化未含 Phong 高光（新槽降级映射到
+ * PFLAT/PTEX，绘制不报错仅无高光）；无光源时不生成阴影。 */
+SLR_API int slr_object_set_material(int64_t p, int64_t obj, int material);       /* 0=Lambert 1=Phong */
+SLR_API int slr_object_set_specular(int64_t p, int64_t obj,
+                                     float strength, float shininess);           /* Phong 高光参数 */
+SLR_API int slr_object_set_shadow(int64_t p, int64_t obj, int cast_shadow);      /* 1=投影阴影 */
 
 /* ---- 13 阶段（见 sl_render_lib.c 顶部注释的阶段表） ---- */
 SLR_API int slr_pipeline_begin_frame(int64_t p, float time);          /* 1 渲染开始   */

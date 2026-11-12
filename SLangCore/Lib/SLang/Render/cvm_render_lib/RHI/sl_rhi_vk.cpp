@@ -1990,6 +1990,16 @@ static void vk_upload_perdraw(const void* data, int bytes)
     vk_flush_mem(s_ubo_draw_mem, 0, (VkDeviceSize)bytes, s_ubo_coherent);
 }
 
+/* 帧级光照块：VK 后端暂不消费（SPIR-V 固化于 sl_rhi_vk_shaders.h，
+ * 未包含光照消费逻辑；接入需重生成 SPIR-V + descriptor set 布局扩展）。
+ * 空实现保持 vtable 对齐：设置光照在 VK 上无效果但不报错；默认路径
+ * （无光照 + ambient=1）输出与旧版逐字节一致，同效果测试不受影响。 */
+static void vk_upload_lights(const void* data, int bytes)
+{
+    (void)data;
+    (void)bytes;
+}
+
 /* ── 描述符表（descriptor set 槽表，VK 原生形态）──────────────────────
  * desc_write_tex 写槽（槽内容 = VkTexture 的 PTEX descriptor set，
  * 管线层帧级填充），desc_bind_tex 选当前绑定的 set——绑定与绘制分离，
@@ -2023,12 +2033,14 @@ static void vk_draw_item(int prog, int slot, int mesh)
         set_error(SLR_E_STATE);
         return;
     }
-    if (prog == SLR_PROG_PFLAT)
+    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PHONG_FLAT)
     {
+        /* Phong 新槽降级映射到 PFLAT 管线：VK SPIR-V 固化未含光照/高光，
+         * 绘制不报错仅无 Phong 效果（管线侧 C 层/阴影仍一致工作）*/
         idx = s_trans ? VKP_PFLAT_T : VKP_PFLAT_O;
         set = s_set_perdraw;
     }
-    else if (prog == SLR_PROG_PTEX)
+    else if (prog == SLR_PROG_PTEX || prog == SLR_PROG_PHONG_TEX)
     {
         if (!s_cur_tex_set) { set_error(SLR_E_TEXTURE); return; }
         idx = s_trans ? VKP_PTEX_T : VKP_PTEX_O;
@@ -2462,6 +2474,7 @@ static const SlrRhi s_rhi_vk =
     vk_v1_draw,
     vk_desc_write_tex,
     vk_desc_bind_tex,
+    vk_upload_lights,
 };
 
 const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

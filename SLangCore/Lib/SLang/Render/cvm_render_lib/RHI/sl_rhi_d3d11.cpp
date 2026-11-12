@@ -83,11 +83,12 @@ static UINT          s_vb_custom_cap[SLR_CUSTOM_MESHES];
 /* 描述符槽表（SRV；管线层帧级写槽，free_shared 前向引用故声明于此）*/
 static ID3D11ShaderResourceView* s_desc_srv[SLR_DESC_TEX_SLOTS];
 
-/* 常量缓冲：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx */
-static ID3D11Buffer* s_cb_draw = NULL;   /* 5120B：mat4[64] + vec4[64]     */
+/* 常量缓冲：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx / b4 PerLight */
+static ID3D11Buffer* s_cb_draw = NULL;   /* 7168B：mat4[64] + vec4[64] + wmat[128] */
 static ID3D11Buffer* s_cb_obj = NULL;    /* 16B  : int uObjIndex + pad     */
 static ID3D11Buffer* s_cb_v1 = NULL;     /* 80B  : float4x4 + float4       */
 static ID3D11Buffer* s_cb_fx = NULL;     /* 16B  : 后处理参数 / 清屏色     */
+static ID3D11Buffer* s_cb_light = NULL;  /* 96B  : LightBlock（光照块）    */
 
 /* 管线状态对象 */
 static ID3D11InputLayout*       s_layout = NULL;
@@ -131,25 +132,135 @@ static const char* HLSL_PS_TEX =
     "float4 psTex(PSIn i) : SV_Target { return uColor * tex0.Sample(samp0, i.uv); }\n";
 
 static const char* HLSL_VS_PIPE =
-    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; };\n"
+    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
     "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
     "struct VSIn { float2 pos : POSITION; float2 uv : TEXCOORD0; };\n"
-    "struct VSOut { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
+    "struct VSOut { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
     "VSOut vsPipe(VSIn i) { VSOut o; o.uv = i.uv;\n"
+    "  int k = uObjIndex * 2;\n"
+    "  o.world = float2(dot(i.pos, uWMat[k].xy), dot(i.pos, uWMat[k].zw)) + uWMat[k + 1].xy;\n"
+    "  o.nrm = uWMat[k + 1].zw;\n"
     "  o.sv = mul(uMVP[uObjIndex], float4(i.pos, 0.0, 1.0)); return o; }\n";
 
+/* 管线片元光照（与 GL/GLES 后端公式逐字一致，跨后端同效果）*/
 static const char* HLSL_PS_PIPE_FLAT =
-    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; };\n"
+    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
     "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
-    "float4 psPipeFlat(PSIn i) : SV_Target { return uColor[uObjIndex]; }\n";
+    "cbuffer PerLight : register(b4) {\n"
+    "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
+    "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "float4 psPipeFlat(PSIn i) : SV_Target {\n"
+    "  float4 base = uColor[uObjIndex];\n"
+    "  float3 light = uAmbient.xxx;\n"
+    "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    float2 toF = i.world - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    light += uSpotColor.rgb * att * smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "  }\n"
+    "  return float4(base.rgb * light, base.a); }\n";
 
 static const char* HLSL_PS_PIPE_TEX =
-    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; };\n"
+    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
     "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
+    "cbuffer PerLight : register(b4) {\n"
+    "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
+    "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
     "Texture2D tex0 : register(t0); SamplerState samp0 : register(s0);\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
-    "float4 psPipeTex(PSIn i) : SV_Target { return uColor[uObjIndex] * tex0.Sample(samp0, i.uv); }\n";
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "float4 psPipeTex(PSIn i) : SV_Target {\n"
+    "  float4 base = uColor[uObjIndex] * tex0.Sample(samp0, i.uv);\n"
+    "  float3 light = uAmbient.xxx;\n"
+    "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    float2 toF = i.world - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    light += uSpotColor.rgb * att * smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "  }\n"
+    "  return float4(base.rgb * light, base.a); }\n";
+
+/* v3.4 Phong 光照模型（与 GL/GLES 后端公式逐字一致）：
+ * v3.3 光照 + 伪 3D 高光（N=normalize(float3(nrm,0.75))，V=(0,0,1)，
+ * R=reflect(-L,N)，spec=pow(max(dot(R,V),0),shin)*strength）*/
+static const char* HLSL_PS_PHONG_FLAT =
+    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
+    "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
+    "cbuffer PerLight : register(b4) {\n"
+    "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
+    "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "float4 psPhongFlat(PSIn i) : SV_Target {\n"
+    "  float4 base = uColor[uObjIndex];\n"
+    "  float3 light = uAmbient.xxx;\n"
+    "  float3 N = normalize(float3(i.nrm, 0.75));\n"
+    "  float3 V = float3(0.0, 0.0, 1.0);\n"
+    "  float2 sp = uSpec[uObjIndex].xy;\n"
+    "  float shin = max(sp.y, 0.001);\n"
+    "  if (uDirColor.a > 0.5) {\n"
+    "    light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
+    "    float3 L = normalize(float3(uDirDir.xy, 0.6));\n"
+    "    float3 R = reflect(-L, N);\n"
+    "    light += uDirColor.rgb * pow(max(dot(R, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    float2 toF = i.world - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    float cone = smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "    light += uSpotColor.rgb * att * cone;\n"
+    "    float3 L2 = normalize(float3(-toF / max(d, 1e-4), 0.6));\n"
+    "    float3 R2 = reflect(-L2, N);\n"
+    "    light += uSpotColor.rgb * att * cone * pow(max(dot(R2, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  return float4(base.rgb * light, base.a); }\n";
+
+static const char* HLSL_PS_PHONG_TEX =
+    "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
+    "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
+    "cbuffer PerLight : register(b4) {\n"
+    "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
+    "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
+    "Texture2D tex0 : register(t0); SamplerState samp0 : register(s0);\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "float4 psPhongTex(PSIn i) : SV_Target {\n"
+    "  float4 base = uColor[uObjIndex] * tex0.Sample(samp0, i.uv);\n"
+    "  float3 light = uAmbient.xxx;\n"
+    "  float3 N = normalize(float3(i.nrm, 0.75));\n"
+    "  float3 V = float3(0.0, 0.0, 1.0);\n"
+    "  float2 sp = uSpec[uObjIndex].xy;\n"
+    "  float shin = max(sp.y, 0.001);\n"
+    "  if (uDirColor.a > 0.5) {\n"
+    "    light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
+    "    float3 L = normalize(float3(uDirDir.xy, 0.6));\n"
+    "    float3 R = reflect(-L, N);\n"
+    "    light += uDirColor.rgb * pow(max(dot(R, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    float2 toF = i.world - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    float cone = smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "    light += uSpotColor.rgb * att * cone;\n"
+    "    float3 L2 = normalize(float3(-toF / max(d, 1e-4), 0.6));\n"
+    "    float3 R2 = reflect(-L2, N);\n"
+    "    light += uSpotColor.rgb * att * cone * pow(max(dot(R2, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  return float4(base.rgb * light, base.a); }\n";
 
 static const char* HLSL_VS_FULL =
     "struct VSIn { float2 pos : POSITION; float2 uv : TEXCOORD0; };\n"
@@ -299,6 +410,8 @@ static int d3d_make_shared(void)
     if (!(s_vs[SLR_PROG_PFLAT] = d3d_make_vs(HLSL_VS_PIPE, "vsPipe"))) return 0;
     if (!(s_ps[SLR_PROG_PFLAT] = d3d_make_ps(HLSL_PS_PIPE_FLAT, "psPipeFlat"))) return 0;
     if (!(s_ps[SLR_PROG_PTEX]  = d3d_make_ps(HLSL_PS_PIPE_TEX, "psPipeTex"))) return 0;
+    if (!(s_ps[SLR_PROG_PHONG_FLAT] = d3d_make_ps(HLSL_PS_PHONG_FLAT, "psPhongFlat"))) return 0;
+    if (!(s_ps[SLR_PROG_PHONG_TEX]  = d3d_make_ps(HLSL_PS_PHONG_TEX, "psPhongTex"))) return 0;
     if (!(s_vs[SLR_PROG_BLIT] = d3d_make_vs(HLSL_VS_FULL, "vsFull"))) return 0;
     if (!(s_ps[SLR_PROG_BLIT] = d3d_make_ps(HLSL_PS_BLIT, "psBlit"))) return 0;
     if (!(s_ps[SLR_PROG_POST] = d3d_make_ps(HLSL_PS_POST, "psPost"))) return 0;
@@ -306,6 +419,8 @@ static int d3d_make_shared(void)
     if (!(s_ps_clear = d3d_make_ps(HLSL_PS_CLEAR, "psClear"))) return 0;
     s_vs[SLR_PROG_TEX]  = s_vs[SLR_PROG_FLAT];    /* 同一 VS 复用 */
     s_vs[SLR_PROG_PTEX] = s_vs[SLR_PROG_PFLAT];
+    s_vs[SLR_PROG_PHONG_FLAT] = s_vs[SLR_PROG_PFLAT];   /* Phong 复用管线 VS（world/nrm 输出已够用）*/
+    s_vs[SLR_PROG_PHONG_TEX]  = s_vs[SLR_PROG_PFLAT];
     s_vs[SLR_PROG_POST] = s_vs[SLR_PROG_BLIT];
 
     /* ---- 输入布局（pos2 + uv2，stride 16B，与 GL 一致）---- */
@@ -347,19 +462,24 @@ static int d3d_make_shared(void)
     bd.Usage = D3D11_USAGE_DYNAMIC;
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    bd.ByteWidth = 5120;                       /* PerDraw：mat4[64]+vec4[64] */
+    bd.ByteWidth = sizeof(SlrPerDraw);        /* PerDraw：mat4[64]+vec4[64]+wmat[128] */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_draw))) goto fail_cb;
     bd.ByteWidth = 16;                         /* PerObj / PerFx             */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_obj))) goto fail_cb;
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_fx))) goto fail_cb;
     bd.ByteWidth = 80;                         /* PerV1：mat4 + vec4         */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_v1))) goto fail_cb;
+    bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：6 vec4 光照块    */
+    if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_light))) goto fail_cb;
 
-    /* 槽位常驻绑定：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx
+    /* 槽位常驻绑定：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx / b4 PerLight
      *（VS 与 PS 两阶段同名寄存器都用到 PerDraw/PerObj）*/
     cbs[0] = s_cb_draw; cbs[1] = s_cb_obj; cbs[2] = s_cb_v1; cbs[3] = s_cb_fx;
     s_ctx->VSSetConstantBuffers(0, 4, cbs);
     s_ctx->PSSetConstantBuffers(0, 4, cbs);
+    cbs[0] = s_cb_light;
+    s_ctx->VSSetConstantBuffers(4, 1, cbs);
+    s_ctx->PSSetConstantBuffers(4, 1, cbs);
 
     /* ---- 采样器：线性 + CLAMP（与 GL 纹理参数一致）---- */
     memset(&samp, 0, sizeof(samp));
@@ -445,6 +565,7 @@ static void d3d_free_shared(void)
         s_vb_custom_cap[i] = 0;
     }
     if (s_cb_draw) { s_cb_draw->Release(); s_cb_draw = NULL; }
+    if (s_cb_light) { s_cb_light->Release(); s_cb_light = NULL; }
     if (s_cb_obj) { s_cb_obj->Release(); s_cb_obj = NULL; }
     if (s_cb_v1) { s_cb_v1->Release(); s_cb_v1 = NULL; }
     if (s_cb_fx) { s_cb_fx->Release(); s_cb_fx = NULL; }
@@ -671,6 +792,12 @@ static void d3d_upload_perdraw(const void* data, int bytes)
     d3d_cb_update(s_cb_draw, data, (UINT)bytes);
 }
 
+/* 帧级光照块上传（PerLight，寄存器 b4；PFLAT/PTEX 消费）*/
+static void d3d_upload_lights(const void* data, int bytes)
+{
+    d3d_cb_update(s_cb_light, data, (UINT)bytes);
+}
+
 /* ── 描述符表（SRV 槽表，DX11 原生形态）──────────────────────────────
  * desc_write_tex 写槽（管线层帧级填充），desc_bind_tex 绑定到像素
  * 着色器 t0——PSSetShaderResources 即 DX11 的描述符表绑定机制。
@@ -710,7 +837,8 @@ static void d3d_draw_item(int prog, int slot, int mesh)
         vb = s_vb[mesh];
         vcount = s_vb_count[mesh];
     }
-    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX)
+    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
+        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX)
     {
         obj.obj = slot;
         obj.pad[0] = obj.pad[1] = obj.pad[2] = 0.0f;
@@ -1002,6 +1130,7 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_v1_draw,
     d3d_desc_write_tex,
     d3d_desc_bind_tex,
+    d3d_upload_lights,
 };
 
 const SlrRhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }

@@ -3,36 +3,6 @@ import Math;
 # 相机组件：视场角 / 近远裁剪面 / 宽高比 + 视图 / 投影矩阵。
 # 数学类型使用 Math 库的 Float32 系列：位置 -> Float32_3，矩阵 -> Float32_4x4。
 
-# 射线（屏幕拾取用；Mesh.sl 明确不引入 Ray，这里就近定义）
-public class Ray
-{
-    public Float32_3 origin = Float32_3.zero()
-    public Float32_3 direction = Float32_3.forward()
-
-    public void _init_()
-    {
-        this.origin = Float32_3.zero()
-        this.direction = Float32_3.forward()
-    }
-
-    public void _init_( Float32_3 _origin, Float32_3 _direction )
-    {
-        this.origin = _origin.clone()
-        this.direction = _direction.normalize()
-    }
-
-    # 射线上 t 处的点
-    public Float32_3 getPoint( Float32 t )
-    {
-        ret this.origin._add_( this.direction.scale( t ) ) as Float32_3
-    }
-
-    override string toString()
-    {
-        ret "Ray(origin=" + this.origin.toString() + ", dir=" + this.direction.toString() + ")"
-    }
-}
-
 public class Camera extends Component
 {
     # 透视 / 正交

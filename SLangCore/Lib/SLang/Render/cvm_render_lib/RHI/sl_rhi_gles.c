@@ -179,6 +179,7 @@ typedef struct { GLuint vao, vbo; int count; } GlMesh;
 static GLuint       s_progs[SLR_PROG_COUNT];
 static GlProgUni  s_uni[SLR_PROG_COUNT];
 static GLuint       s_ubo = 0;
+static GLuint       s_ubo_light = 0;   /* LightBlock UBO（绑定点 1）*/
 static GlMesh      s_meshes[4];
 static GlMesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
 static GLuint       s_desc_tex[SLR_DESC_TEX_SLOTS];   /* 描述符槽表（free_shared 前向引用）*/
@@ -222,28 +223,155 @@ static const char* VS_PSCENE =
     "#version 300 es\n"
     "layout(location=0) in vec2 aPos;\n"
     "layout(location=1) in vec2 aUv;\n"
-    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; };\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
     "uniform highp int uObjIndex;\n"
     "out vec2 vUv;\n"
-    "void main(){ vUv = aUv; gl_Position = uMVP[uObjIndex] * vec4(aPos, 0.0, 1.0); }\n";
+    "out vec2 vWorld;\n"
+    "out vec2 vNrm;\n"
+    "void main(){\n"
+    "  vUv = aUv;\n"
+    "  int k = uObjIndex * 2;\n"
+    "  vWorld = vec2(dot(aPos, uWMat[k].xy), dot(aPos, uWMat[k].zw)) + uWMat[k + 1].xy;\n"
+    "  vNrm = uWMat[k + 1].zw;\n"
+    "  gl_Position = uMVP[uObjIndex] * vec4(aPos, 0.0, 1.0); }\n";
 
+/* 管线片元光照（与 GL/D3D11 后端公式逐字一致，跨后端同效果）*/
 static const char* FS_PFLAT =
     "#version 300 es\n"
     "precision highp float;\n"
-    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; };\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
+    "layout(std140) uniform LightBlock {\n"
+    "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
+    "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
     "uniform highp int uObjIndex;\n"
+    "in vec2 vWorld;\n"
+    "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
-    "void main(){ oCol = uColor[uObjIndex]; }\n";
+    "void main(){\n"
+    "  vec4 base = uColor[uObjIndex];\n"
+    "  vec3 light = vec3(uAmbient.x);\n"
+    "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    vec2 toF = vWorld - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    light += uSpotColor.rgb * att * smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "  }\n"
+    "  oCol = vec4(base.rgb * light, base.a); }\n";
 
 static const char* FS_PTEX =
     "#version 300 es\n"
     "precision highp float;\n"
-    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; };\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
+    "layout(std140) uniform LightBlock {\n"
+    "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
+    "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
     "uniform highp int uObjIndex;\n"
     "uniform sampler2D uTex;\n"
     "in vec2 vUv;\n"
+    "in vec2 vWorld;\n"
+    "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
-    "void main(){ oCol = uColor[uObjIndex] * texture(uTex, vUv); }\n";
+    "void main(){\n"
+    "  vec4 base = uColor[uObjIndex] * texture(uTex, vUv);\n"
+    "  vec3 light = vec3(uAmbient.x);\n"
+    "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    vec2 toF = vWorld - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    light += uSpotColor.rgb * att * smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "  }\n"
+    "  oCol = vec4(base.rgb * light, base.a); }\n";
+
+/* v3.4 Phong 光照模型（与 GL/D3D11 后端公式逐字一致）：
+ * v3.3 光照 + 伪 3D 高光（N=normalize(vec3(vNrm,0.75))，V=(0,0,1)，
+ * R=reflect(-L,N)，spec=pow(max(dot(R,V),0),shin)*strength）*/
+static const char* FS_PHONG_FLAT =
+    "#version 300 es\n"
+    "precision highp float;\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
+    "layout(std140) uniform LightBlock {\n"
+    "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
+    "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
+    "uniform highp int uObjIndex;\n"
+    "in vec2 vWorld;\n"
+    "in vec2 vNrm;\n"
+    "out vec4 oCol;\n"
+    "void main(){\n"
+    "  vec4 base = uColor[uObjIndex];\n"
+    "  vec3 light = vec3(uAmbient.x);\n"
+    "  vec3 N = normalize(vec3(vNrm, 0.75));\n"
+    "  vec3 V = vec3(0.0, 0.0, 1.0);\n"
+    "  vec2 sp = uSpec[uObjIndex].xy;\n"
+    "  float shin = max(sp.y, 0.001);\n"
+    "  if (uDirColor.a > 0.5) {\n"
+    "    light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
+    "    vec3 L = normalize(vec3(uDirDir.xy, 0.6));\n"
+    "    vec3 R = reflect(-L, N);\n"
+    "    light += uDirColor.rgb * pow(max(dot(R, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    vec2 toF = vWorld - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    float cone = smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "    light += uSpotColor.rgb * att * cone;\n"
+    "    vec3 L2 = normalize(vec3(-toF / max(d, 1e-4), 0.6));\n"
+    "    vec3 R2 = reflect(-L2, N);\n"
+    "    light += uSpotColor.rgb * att * cone * pow(max(dot(R2, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  oCol = vec4(base.rgb * light, base.a); }\n";
+
+static const char* FS_PHONG_TEX =
+    "#version 300 es\n"
+    "precision highp float;\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
+    "layout(std140) uniform LightBlock {\n"
+    "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
+    "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
+    "uniform highp int uObjIndex;\n"
+    "uniform sampler2D uTex;\n"
+    "in vec2 vUv;\n"
+    "in vec2 vWorld;\n"
+    "in vec2 vNrm;\n"
+    "out vec4 oCol;\n"
+    "void main(){\n"
+    "  vec4 base = uColor[uObjIndex] * texture(uTex, vUv);\n"
+    "  vec3 light = vec3(uAmbient.x);\n"
+    "  vec3 N = normalize(vec3(vNrm, 0.75));\n"
+    "  vec3 V = vec3(0.0, 0.0, 1.0);\n"
+    "  vec2 sp = uSpec[uObjIndex].xy;\n"
+    "  float shin = max(sp.y, 0.001);\n"
+    "  if (uDirColor.a > 0.5) {\n"
+    "    light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
+    "    vec3 L = normalize(vec3(uDirDir.xy, 0.6));\n"
+    "    vec3 R = reflect(-L, N);\n"
+    "    light += uDirColor.rgb * pow(max(dot(R, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  if (uSpotColor.a > 0.5) {\n"
+    "    vec2 toF = vWorld - uSpotPosRange.xy;\n"
+    "    float d = length(toF);\n"
+    "    float att = clamp(1.0 - d / max(uSpotPosRange.z, 1e-4), 0.0, 1.0);\n"
+    "    att *= att;\n"
+    "    float ca = dot(toF, uSpotDirCos.xy) / max(d, 1e-4);\n"
+    "    float ce = uSpotDirCos.z;\n"
+    "    float cone = smoothstep(ce, ce + (1.0 - ce) * 0.5, ca);\n"
+    "    light += uSpotColor.rgb * att * cone;\n"
+    "    vec3 L2 = normalize(vec3(-toF / max(d, 1e-4), 0.6));\n"
+    "    vec3 R2 = reflect(-L2, N);\n"
+    "    light += uSpotColor.rgb * att * cone * pow(max(dot(R2, V), 0.0), shin) * sp.x;\n"
+    "  }\n"
+    "  oCol = vec4(base.rgb * light, base.a); }\n";
 
 static const char* VS_FULL =
     "#version 300 es\n"
@@ -338,6 +466,8 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_TEX,  VS_SCENE, FS_TEX))  return 0;
     if (!make_program(SLR_PROG_PFLAT, VS_PSCENE, FS_PFLAT)) return 0;
     if (!make_program(SLR_PROG_PTEX,  VS_PSCENE, FS_PTEX))  return 0;
+    if (!make_program(SLR_PROG_PHONG_FLAT, VS_PSCENE, FS_PHONG_FLAT)) return 0;
+    if (!make_program(SLR_PROG_PHONG_TEX,  VS_PSCENE, FS_PHONG_TEX))  return 0;
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
 
@@ -351,6 +481,9 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_PFLAT].obj_index = p_glGetUniformLocation(s_progs[SLR_PROG_PFLAT], "uObjIndex");
     s_uni[SLR_PROG_PTEX].obj_index  = p_glGetUniformLocation(s_progs[SLR_PROG_PTEX], "uObjIndex");
     s_uni[SLR_PROG_PTEX].tex        = p_glGetUniformLocation(s_progs[SLR_PROG_PTEX], "uTex");
+    s_uni[SLR_PROG_PHONG_FLAT].obj_index = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_FLAT], "uObjIndex");
+    s_uni[SLR_PROG_PHONG_TEX].obj_index  = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uObjIndex");
+    s_uni[SLR_PROG_PHONG_TEX].tex        = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uTex");
 
     s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
     s_uni[SLR_PROG_POST].src  = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSrc");
@@ -363,6 +496,8 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_TEX].tex, 1);
     p_glUseProgram(s_progs[SLR_PROG_PTEX]);
     p_glUniform1i(s_uni[SLR_PROG_PTEX].tex, 1);
+    p_glUseProgram(s_progs[SLR_PROG_PHONG_TEX]);
+    p_glUniform1i(s_uni[SLR_PROG_PHONG_TEX].tex, 1);
     p_glUseProgram(s_progs[SLR_PROG_BLIT]);
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
     p_glUseProgram(s_progs[SLR_PROG_POST]);
@@ -376,10 +511,32 @@ static int gl_make_shared(void)
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PFLAT], blk, 0);
         blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PTEX], "PerDraw");
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PTEX], blk, 0);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PHONG_FLAT], "PerDraw");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_FLAT], blk, 0);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PHONG_TEX], "PerDraw");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_TEX], blk, 0);
         p_glGenBuffers(1, &s_ubo);
         p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo);
         p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrPerDraw), &s_perdraw, GL_DYNAMIC_DRAW);
         p_glBindBufferBase(GL_UNIFORM_BUFFER, 0, s_ubo);
+        p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    /* LightBlock UBO：块绑定 1（PFLAT/PTEX/PHONG_* 消费；帧级 upload_lights 更新）*/
+    {
+        GLuint blk;
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PFLAT], "LightBlock");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PFLAT], blk, 1);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PTEX], "LightBlock");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PTEX], blk, 1);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PHONG_FLAT], "LightBlock");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_FLAT], blk, 1);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PHONG_TEX], "LightBlock");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_TEX], blk, 1);
+        p_glGenBuffers(1, &s_ubo_light);
+        p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo_light);
+        p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrLightBlock), NULL, GL_DYNAMIC_DRAW);
+        p_glBindBufferBase(GL_UNIFORM_BUFFER, 1, s_ubo_light);
         p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
@@ -450,6 +607,8 @@ static void gl_free_shared(void)
     memset(s_desc_tex, 0, sizeof(s_desc_tex));
     if (s_ubo) p_glDeleteBuffers(1, &s_ubo);
     s_ubo = 0;
+    if (s_ubo_light) p_glDeleteBuffers(1, &s_ubo_light);
+    s_ubo_light = 0;
 }
 
 /* ===================================================================== */
@@ -587,6 +746,14 @@ static void gl_upload_perdraw(const void* data, int bytes)
     p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+/* 帧级光照块上传（LightBlock，绑定点 1；PFLAT/PTEX 消费）*/
+static void gl_upload_lights(const void* data, int bytes)
+{
+    p_glBindBufferBase(GL_UNIFORM_BUFFER, 1, s_ubo_light);
+    p_glBufferSubData(GL_UNIFORM_BUFFER, 0, (GLsizeiptr)bytes, data);
+    p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
 /* ── 描述符表（纹理名槽表；GLES 采样单元 t1 固定的镜像形态）────────────
  * 绑定与绘制分离，与 DX11 PSSetShaderResources / VK vkCmdBindDescriptorSets
  * 的描述符机制语义对齐（详细注释见 sl_rhi_gl.c 同名段；
@@ -620,7 +787,8 @@ static void gl_draw_item(int prog, int slot, int mesh)
         return;
     }
     p_glUseProgram(s_progs[prog]);
-    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX)
+    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
+        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX)
         p_glUniform1i(s_uni[prog].obj_index, slot);
     /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源 */
     p_glBindVertexArray(m->vao);
@@ -1062,6 +1230,7 @@ static const SlrRhi s_rhi_gles =
     gl_v1_draw,
     gl_desc_write_tex,
     gl_desc_bind_tex,
+    gl_upload_lights,
 };
 
 const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

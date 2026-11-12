@@ -9,6 +9,7 @@
  *   Pipeline/sl_object.c   <-> RenderObject         场景对象
  *   Pipeline/sl_texture.c  <-> RenderTexture        纹理注册表 + WIC 加载
  *   Pipeline/sl_camera.c   <-> RenderCamera         多相机槽表
+ *   Pipeline/sl_light.c    <-> Camera/Light.sl      光照槽表 + 帧级光照块
  *
  * RHI 层（渲染硬件抽象，一表多后端同效果）：
  *   RHI/sl_rhi.h           接口契约（vtable + 像素/坐标约定）
@@ -49,6 +50,7 @@ extern "C" {
 #define SLR_MAX_PIPES   32
 #define SLR_MAX_TEX     64
 #define SLR_MAX_CAMERAS 8
+#define SLR_MAX_LIGHTS  8    /* 管线光照槽（着色器消费首个平行光 + 首个聚光）*/
 #define SLR_CUSTOM_MESHES 4   /* 动态网格槽（对象 mesh = 4 + slot 路由）*/
 #define SLR_CUSTOM_MAX_VERTS 4096
 
@@ -71,15 +73,59 @@ enum
     SLR_PROG_PTEX,       /* 管线：PerDraw 缓冲 + 纹理          */
     SLR_PROG_BLIT,       /* 全屏拷贝                          */
     SLR_PROG_POST,       /* 后处理                            */
+    /* v3.4 Phong：v3.3 光照 + Blinn-Phong 伪 3D 高光（uSpec[64] 消费）。
+     * 尾部追加不动既有槽序（VK 固化表依赖顺序；VK 将新槽降级映射到
+     * PFLAT/PTEX —— SPIR-V 未含光照/高光，绘制不报错仅无 Phong 效果）*/
+    SLR_PROG_PHONG_FLAT,
+    SLR_PROG_PHONG_TEX,
     SLR_PROG_COUNT
 };
 
-/* PerDraw 常量缓冲 CPU 暂存（列主序，与 GL std140 / HLSL cbuffer 布局一致）*/
+/* PerDraw 常量缓冲 CPU 暂存（列主序，与 GL std140 / HLSL cbuffer 布局一致）：
+ *   mvp   —— 顶点变换矩阵（proj * model2d）
+ *   color —— 逐项颜色（rgba）
+ *   wmat  —— 2D 世界仿射（光照用，每项 2 个 vec4 打包）：
+ *     [0]=c*sx  [1]=-s*sy  [2]=s*sx  [3]=c*sy  （2x2 旋转缩放，c/s=cos/sin rot_z）
+ *     [4]=tx    [5]=ty     [6]=c     [7]=s     （平移 + 物体朝向法线 (c,s)）
+ *     着色器：world = vec2(dot(pos,w0.xy), dot(pos,w0.zw)) + w1.xy; nrm = w1.zw
+ *   spec  —— Phong 高光参数（v3.4，每项 1 个 vec4）：
+ *     [0]=高光强度 strength  [1]=shininess 光泽度  [2..3] 预留 */
 typedef struct
 {
     float mvp[SLR_MAX_OBJECTS][16];
     float color[SLR_MAX_OBJECTS][4];
+    float wmat[SLR_MAX_OBJECTS][8];
+    float spec[SLR_MAX_OBJECTS][4];
 } SlrPerDraw;
+
+/* ── 光照槽（管线级，SL 侧 Light.applyTo 经 slr_light_set 写入）──
+ * 直射光存归一化方向；聚光存位置 + 归一化光轴 + cos(锥半角) + 范围。 */
+typedef struct
+{
+    int used;             /* 1 = 启用（参与帧级光照块组装）*/
+    int type;             /* SLR_LIGHT_DIRECTIONAL / SLR_LIGHT_SPOT */
+    float dir[2];         /* 平行光：表面 -> 光源方向（归一化）
+                             聚光：光轴方向 光源 -> 外（归一化）*/
+    float pos[2];         /* 聚光：世界位置 */
+    float range;          /* 聚光：有效半径 */
+    float cos_angle;      /* 聚光：cos(锥半角) */
+    float color[3];
+    float intensity;
+} SlrLight;
+
+/* 帧级光照块（std140，6 vec4 = 96B；GL/GLES 绑定点 1，D3D11 寄存器 b4）
+ * 组装规则：环境光 + 首个启用的平行光 + 首个启用的聚光（light_build_block）；
+ * 颜色均为 颜色*强度 预乘；a 分量 1.0=启用。全零 + ambient=1 时输出与
+ * 无光照版逐字节一致（向后兼容：跨后端同效果测试不受影响）。 */
+typedef struct
+{
+    float ambient[4];      /* x = 环境光强度（管线默认 1.0 = 无光照效果）*/
+    float dir_color[4];    /* rgb = 颜色*强度, a = 启用 */
+    float dir_dir[4];      /* xy = 平行光方向（表面 -> 光源）*/
+    float spot_color[4];   /* rgb = 颜色*强度, a = 启用 */
+    float spot_pos_range[4]; /* xy = 聚光位置, z = 有效半径 */
+    float spot_dir_cos[4]; /* xy = 光轴方向（光源 -> 外）, z = cos(锥半角)*/
+} SlrLightBlock;
 
 /* ===================================================================== */
 /* 资源结构                                                                */
@@ -91,16 +137,24 @@ typedef struct
     int used, mesh, layer, queue, visible, anim_mode, cull_cams;
     float pos[3], rot_z, scale[2], color[4], anim_speed;
     int64_t texture;
+    /* v3.4 材质/阴影（阶段 5 消费）：
+     * material    0 = Lambert（PFLAT/PTEX），1 = Phong（PHONG_FLAT/PHONG_TEX）
+     * spec_str    Phong 高光强度（0 = 无高光）
+     * spec_shin   Phong 光泽度（pow 指数）
+     * cast_shadow 1 = 生成 2D 投影阴影绘制项（透明段，黑 0.35 alpha）*/
+    int material, cast_shadow;
+    float spec_str, spec_shin;
 } SlrObject;
 
 typedef struct
 {
     int obj;        /* objects 下标          */
     int slot;       /* PerDraw 槽位      */
-    int prog;        /* SLR_PROG_PFLAT/PTEX   */
+    int prog;        /* SLR_PROG_PFLAT/PTEX/PHONG_* */
     int queue, layer;
     int cam;        /* 所属相机位号（0..SLR_MAX_CAMERAS-1）*/
     int tex_desc;   /* 纹理描述符槽号（-1 = 无纹理；阶段 6 分配）*/
+    int is_shadow;  /* 1 = 投影阴影项（阶段 6 写阴影色/变换）*/
     float z;
     float mvp[16];
 } SlrDrawItem;
@@ -163,6 +217,9 @@ typedef struct
 
     SlrDescTable descs;                /* 帧级描述符表（阶段 6 写入/绘制绑定）*/
 
+    SlrLight lights[SLR_MAX_LIGHTS];   /* 光照槽表（SL 侧 Light.applyTo 写入）*/
+    float ambient;                     /* 环境光强度（默认 1.0 = 无光照效果）*/
+
     float clear_color[4];
     int post_enabled;
     float post_brightness, post_saturation, post_vignette;
@@ -196,6 +253,16 @@ SlrTexRes* tex_from_handle(int64_t h);
 /* sl_pipeline.c：管线句柄解析与渲染目标回收（slr_uninit 也调用） */
 SlrPipeline* pipe_from_handle(int64_t h);
 void pipeline_release_targets(SlrPipeline* p);
+
+/* sl_light.c：帧级光照块组装（阶段 6 调用；环境光 + 首个平行光 + 首个聚光）*/
+void light_build_block(SlrPipeline* p, SlrLightBlock* out);
+
+/* sl_light.c：阴影投射光源查询（阶段 5 调用）：首个启用的平行光方向优先
+ * （dir_out = 阴影偏移方向，已含"背离光源"语义），否则首个聚光
+ * （返回其槽位；has_pos_out=1 表示带位置，方向需逐物体归一化）。
+ * 返回 0 = 无可用光源 -> 不生成阴影。 */
+int light_pick_shadow(SlrPipeline* p, float* dir_out, int* has_pos_out,
+                      float* pos_out);
 
 #ifdef __cplusplus
 }

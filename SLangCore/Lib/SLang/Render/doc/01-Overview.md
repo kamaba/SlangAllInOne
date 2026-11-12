@@ -114,14 +114,15 @@ Render/
 ├── doc/                          # 本文档集（01-05 共 5 份）
 ├── Render.jsonc                  # 编译清单 + dllImports 绑定配置（见 04 §2）
 ├── L0（根目录，现有保留）
-│   ├── Vector/Matrix/Color/ColorUInt8/Bounds/Ray/Plane/Transform   # 不动
+│   ├── Vector/Matrix/Bounds/Ray/Plane/Transform                     # 不动
+│   │   # Color/ColorUInt8 已合并迁入 Std 根级（Std/Color.sl 浮点版 + Std/ColorInt.sl 8bit 版），
+│   │   # 原 Render/SLangRender/{Color,ColorUInt8}.sl 已删除（两文件此前未入 compileFiles）
 │   ├── Vertex.sl Mesh.sl Material.sl Texture.sl Shader.sl          # 增强（03 §4.11）
 │   ├── Renderer.sl Camera/ Camera.sl Light.sl Config.sl            # 增强
 │   ├── Behaviour.sl UIBehaviour.sl RectTransform.sl                 # 标注宿主适配层
 │   └── Render.sl                 # 兼容层：内部转发到 RenderPipelineManager（03 §4.12）
-├── Image/                        # 图像编解码（PNG/JPEG/Webp/Svg 等 8 个 .sl）：探测/容器模型纯 SL，
-│   │                            #  编解码走 T1/T2 绑定；完整设计见 06（M2 登记 compileFiles）
-│   └── (待新增) ImageCodec.sl    # 06 §6.1：ImageCodec 工具类（toTextureFormat 等）并入现有文件或独立
+├── Image/                        # （已删除）图像编解码独立为 SLangImage 模块（SLang\Image\SLImage\），
+│                                 #  Render.jsonc 经 references 引入；纹理数据流见 06 §1.1/§6
 ├── Pipeline/
 │   ├── RenderFFI.sl             # 新增：唯一原生绑定面（@DllStaticImport 集中声明，04 §2；
 │   │                            #  含图像编解码 slr_image_*/slr_svg_*/slr_blob_*，见 06 §5）

@@ -1,3 +1,5 @@
+import Std;
+
 # =========================================================================
 # Image/ImageBuffer.sl —— CPU 侧像素缓冲（本目录的核心）
 #
@@ -10,6 +12,9 @@
 #
 # 数值转换统一走 SystemConvertInt32 / SystemConvertUInt8（Core 已实现），
 # 不使用隐式截断，避免不同后端行为不一致。
+#
+# 像素颜色类 ColorInt（8bit RGBA，Int32 存储 0..255）迁至 Std 根级
+# （Std/ColorInt.sl），本模块经 references 引用 Std。
 # =========================================================================
 
 namespace Image
@@ -103,13 +108,27 @@ namespace Image
             {
                 ret 1
             }
-            if fmt == EPixelFormat.Rgb8 || fmt == EPixelFormat.Bgr8 ||
-               fmt == EPixelFormat.Rgb16 || fmt == EPixelFormat.Rgb32F
+            if fmt == EPixelFormat.Rgb8 || fmt == EPixelFormat.Bgr8
             {
                 ret 3
             }
-            if fmt == EPixelFormat.Rgba8 || fmt == EPixelFormat.Bgra8 ||
-               fmt == EPixelFormat.Rgba16 || fmt == EPixelFormat.Rgba32F
+            if fmt == EPixelFormat.Rgb16
+            {
+                ret 3
+            }
+            if fmt == EPixelFormat.Rgb32F
+            {
+                ret 3
+            }
+            if fmt == EPixelFormat.Rgba8 || fmt == EPixelFormat.Bgra8
+            {
+                ret 4
+            }
+            if fmt == EPixelFormat.Rgba16
+            {
+                ret 4
+            }
+            if fmt == EPixelFormat.Rgba32F
             {
                 ret 4
             }
@@ -144,9 +163,25 @@ namespace Image
 
         public get bool isValid()
         {
-            ret this.width > 0 && this.height > 0 &&
-                this.bytesPerPixel() > 0 &&
-                this._data.length >= this.width * this.height * this.bytesPerPixel()
+            if this.width <= 0
+            {
+                ret false
+            }
+            if this.height <= 0
+            {
+                ret false
+            }
+            if this.bytesPerPixel() <= 0
+            {
+                ret false
+            }
+            Int32 need = this.width * this.height
+            need = need * this.bytesPerPixel()
+            if this._data.length >= need
+            {
+                ret true
+            }
+            ret false
         }
 
         public get bool hasAlpha()
@@ -154,7 +189,7 @@ namespace Image
             ret this.channelCount() == 4
         }
 
-        public Array<UInt8> data()
+        public Array<UInt8> pixelBytes()
         {
             ret this._data
         }
@@ -181,54 +216,54 @@ namespace Image
         }
 
         # ── 像素读写 ─────────────────────────────────────────
-        public Color getPixel( Int32 x, Int32 y )
+        public ColorInt getPixel( Int32 x, Int32 y )
         {
             if !this.inBounds( x, y )
             {
-                ret Color.transparent()
+                ret ColorInt.transparent()
             }
             Int32 o = this.offsetOf( x, y )
 
             if this.pixelFormat == EPixelFormat.Gray8
             {
                 Int32 v = this.byteAt( o )
-                ret Color( v, v, v, 255 )
+                ret ColorInt(v, v, v, 255 )
             }
             if this.pixelFormat == EPixelFormat.Gray16
             {
                 # 取高字节近似为 8 位
                 Int32 v = this.byteAt( o + 1 )
-                ret Color( v, v, v, 255 )
+                ret ColorInt(v, v, v, 255 )
             }
             if this.pixelFormat == EPixelFormat.Rgb8
             {
-                ret Color( this.byteAt( o ), this.byteAt( o + 1 ), this.byteAt( o + 2 ), 255 )
+                ret ColorInt(this.byteAt( o ), this.byteAt( o + 1 ), this.byteAt( o + 2 ), 255 )
             }
             if this.pixelFormat == EPixelFormat.Rgba8
             {
-                ret Color( this.byteAt( o ), this.byteAt( o + 1 ),
+                ret ColorInt(this.byteAt( o ), this.byteAt( o + 1 ),
                            this.byteAt( o + 2 ), this.byteAt( o + 3 ) )
             }
             if this.pixelFormat == EPixelFormat.Bgr8
             {
-                ret Color( this.byteAt( o + 2 ), this.byteAt( o + 1 ), this.byteAt( o ), 255 )
+                ret ColorInt(this.byteAt( o + 2 ), this.byteAt( o + 1 ), this.byteAt( o ), 255 )
             }
             if this.pixelFormat == EPixelFormat.Bgra8
             {
-                ret Color( this.byteAt( o + 2 ), this.byteAt( o + 1 ),
+                ret ColorInt(this.byteAt( o + 2 ), this.byteAt( o + 1 ),
                            this.byteAt( o ), this.byteAt( o + 3 ) )
             }
             if this.pixelFormat == EPixelFormat.Rgb16 ||
                this.pixelFormat == EPixelFormat.Rgba16
             {
                 # 每通道 2 字节，取高字节
-                ret Color( this.byteAt( o + 1 ), this.byteAt( o + 3 ),
+                ret ColorInt(this.byteAt( o + 1 ), this.byteAt( o + 3 ),
                            this.byteAt( o + 5 ), 255 )
             }
-            ret Color.transparent()
+            ret ColorInt.transparent()
         }
 
-        public void setPixel( Int32 x, Int32 y, Color c )
+        public void setPixel( Int32 x, Int32 y, ColorInt c )
         {
             if !this.inBounds( x, y ) || c == null
             {
@@ -276,7 +311,7 @@ namespace Image
         }
 
         # ── 整块操作 ─────────────────────────────────────────
-        public void fill( Color c )
+        public void fill( ColorInt c )
         {
             if c == null || !this.isValid
             {
@@ -474,25 +509,25 @@ namespace Image
                     if x0 >= this.width { x0 = this.width - 1 }
                     if x1 >= this.width { x1 = this.width - 1 }
 
-                    Color c00 = this.getPixel( x0, y0 )
-                    Color c10 = this.getPixel( x1, y0 )
-                    Color c01 = this.getPixel( x0, y1 )
-                    Color c11 = this.getPixel( x1, y1 )
+                    ColorInt c00 = this.getPixel( x0, y0 )
+                    ColorInt c10 = this.getPixel( x1, y0 )
+                    ColorInt c01 = this.getPixel( x0, y1 )
+                    ColorInt c11 = this.getPixel( x1, y1 )
 
                     Float32 w00 = ( 1.0f - wx ) * ( 1.0f - wy )
                     Float32 w10 = wx * ( 1.0f - wy )
                     Float32 w01 = ( 1.0f - wx ) * wy
                     Float32 w11 = wx * wy
 
-                    Int32 rr = Color.toInt( 1.0f * c00.r * w00 + 1.0f * c10.r * w10 +
+                    Int32 rr = ColorInt.toInt( 1.0f * c00.r * w00 + 1.0f * c10.r * w10 +
                                             1.0f * c01.r * w01 + 1.0f * c11.r * w11 )
-                    Int32 gg = Color.toInt( 1.0f * c00.g * w00 + 1.0f * c10.g * w10 +
+                    Int32 gg = ColorInt.toInt( 1.0f * c00.g * w00 + 1.0f * c10.g * w10 +
                                             1.0f * c01.g * w01 + 1.0f * c11.g * w11 )
-                    Int32 bb = Color.toInt( 1.0f * c00.b * w00 + 1.0f * c10.b * w10 +
+                    Int32 bb = ColorInt.toInt( 1.0f * c00.b * w00 + 1.0f * c10.b * w10 +
                                             1.0f * c01.b * w01 + 1.0f * c11.b * w11 )
-                    Int32 aa = Color.toInt( 1.0f * c00.a * w00 + 1.0f * c10.a * w10 +
+                    Int32 aa = ColorInt.toInt( 1.0f * c00.a * w00 + 1.0f * c10.a * w10 +
                                             1.0f * c01.a * w01 + 1.0f * c11.a * w11 )
-                    dst.setPixel( x, y, Color( rr, gg, bb, aa ) )
+                    dst.setPixel( x, y, ColorInt( rr, gg, bb, aa ) )
                     x = x + 1
                 }
                 y = y + 1
@@ -592,32 +627,36 @@ namespace Image
             ret b
         }
 
-        # ── 后端编解码 ───────────────────────────────────────
-        # 转交图像后端（libpng / libjpeg-turbo / libwebp …）。
-        # 返回压缩后的字节；失败返回 null。
+        # ── C 层编解码（ImageFfi -> sl_image_lib）─────────────
+        # stb_image_write 编码（PNG/JPEG/BMP/TGA/PPM/TIFF）；
+        # C 层契约：入参恒 RGBA8。返回压缩字节；失败返回 null
         public Array<UInt8> encode( EImageFormat format, Int32 quality )
         {
-            object result = SystemCallExternalFunction( "Image.encode",
-                this.width, this.height, this.pixelFormat,
-                this._data, format, quality )
-            ret result as Array<UInt8>
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( this )
+            if rgba == null
+            {
+                ret null
+            }
+            ret ImageFfi.encodeMem( format, quality, this.width, this.height, rgba )
         }
 
-        # 从压缩字节解码；失败返回 null
+        # 从压缩字节解码（恒输出 RGBA8）；失败返回 null
         public static ImageBuffer decode( Array<UInt8> bytes )
         {
             if bytes == null
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.decode", bytes )
-            ret result as ImageBuffer
+            ret ImageFfi.decodeMem( bytes )
         }
 
         override string toString()
         {
-            ret "ImageBuffer(" + this.width.toString() + "x" + this.height.toString() +
-                ", fmt=" + this.pixelFormat.toString() + ")"
+            string s = "ImageBuffer("
+            s = s + this.width.toString() + "x" + this.height.toString()
+            s = s + ", fmt=" + this.pixelFormat.toString()
+            s = s + ")"
+            ret s
         }
     }
 }

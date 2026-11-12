@@ -70,7 +70,12 @@
     // SLangCore\Lib\SLang\Render\SLangRender\，上 3 级到 SLangCore\Lib\，
     // 同层即 Core 包）
     { "path": "../../../Core", "name": "Core" },
-    { "path": "../../../Math", "name": "Math" }
+    { "path": "../../../Math", "name": "Math" },
+    // 图像编解码独立模块 SLangImage（namespace Image：ImageBuffer/ImageIO/
+    // ImageInfo/Png/Jpeg/Webp/Svg，后端 sl_image_lib.dll）。原 SLangRender\
+    // Image\ 目录 8 个 .sl 副本已删除，纹理数据源（doc/06 数据流）统一走本
+    // 模块引用；用方文件需 `import SLangImage;` 后以 Image.xxx 限定访问。
+    { "path": "../../../SLang/Image/SLImage", "name": "SLangImage" }
   ],
   "struct": [
     { "namespace": "SLang", "children": [

@@ -1,5 +1,12 @@
-# 颜色（RGBA，各分量 Float32，范围 [0,1]）。
-# 与 Math 库的 Float32_3 / Float32_4 互转，便于直接送入着色器 / 顶点缓冲。
+# =========================================================================
+# Std/Color.sl —— RGBA 颜色（各分量 Float32，范围 [0,1]）
+#
+# 自 SLangRender 迁入 Std（Render 侧原文件未入编译清单）。
+# 注意：Std 不可依赖 Math（Math 已引用 Std，反向引用成环），故：
+#   - 剥离 Float32_3 / Float32_4 构造与互转（由 Math 侧使用方自行组装）；
+#   - Mathf.clamp / truncate / max / min 以类内静态实现替代。
+# =========================================================================
+
 public class Color
 {
     public Float32 r = 0.0f
@@ -32,32 +39,8 @@ public class Color
         this.a = _a
     }
 
-    public void _init_( Float32_3 rgb )
-    {
-        this.r = rgb.x
-        this.g = rgb.y
-        this.b = rgb.z
-        this.a = 1.0f
-    }
-
-    public void _init_( Float32_3 rgb, Float32 _a )
-    {
-        this.r = rgb.x
-        this.g = rgb.y
-        this.b = rgb.z
-        this.a = _a
-    }
-
-    public void _init_( Float32_4 rgba )
-    {
-        this.r = rgba.x
-        this.g = rgba.y
-        this.b = rgba.z
-        this.a = rgba.w
-    }
-
     # ── 索引访问 ─────────────────────────────────────────
-    Float32 _getItem_( int index )
+    override Float32 _getItem_( int index )
     {
         if index == 0
         {
@@ -74,7 +57,7 @@ public class Color
         ret this.a
     }
 
-    void _setItem_( int index, Float32 value )
+    override void _setItem_( int index, Float32 value )
     {
         if index == 0
         {
@@ -121,18 +104,18 @@ public class Color
 
     override bool _eq_( Color obj1 )
     {
-        ret this.r == c.r && this.g == c.g && this.b == c.b && this.a == c.a
+        ret this.r == obj1.r && this.g == obj1.g && this.b == obj1.b && this.a == obj1.a
     }
 
-    override bool _ne_( Object obj1 )
+    override bool _ne_( Color c )
     {
-        ret !this._eq_( obj1 )
+        ret !this._eq_( c )
     }
 
     # ── 实例方法 ─────────────────────────────────────────
     Color lerp( Color other, Float32 t )
     {
-        Float32 k = Mathf.clamp( t, 0.0f, 1.0f )
+        Float32 k = Color.clampF( t, 0.0f, 1.0f )
         ret Color( this.r + ( other.r - this.r ) * k,
                    this.g + ( other.g - this.g ) * k,
                    this.b + ( other.b - this.b ) * k,
@@ -148,10 +131,10 @@ public class Color
     # 各分量限制到 [0,1]
     Color clamp01()
     {
-        ret Color( Mathf.clamp( this.r, 0.0f, 1.0f ),
-                   Mathf.clamp( this.g, 0.0f, 1.0f ),
-                   Mathf.clamp( this.b, 0.0f, 1.0f ),
-                   Mathf.clamp( this.a, 0.0f, 1.0f ) )
+        ret Color( Color.clampF( this.r, 0.0f, 1.0f ),
+                   Color.clampF( this.g, 0.0f, 1.0f ),
+                   Color.clampF( this.b, 0.0f, 1.0f ),
+                   Color.clampF( this.a, 0.0f, 1.0f ) )
     }
 
     # 灰度亮度（Rec.709）
@@ -160,17 +143,7 @@ public class Color
         ret 0.2126f * this.r + 0.7152f * this.g + 0.0722f * this.b
     }
 
-    Float32_3 toFloat32_3()
-    {
-        ret Float32_3( this.r, this.g, this.b )
-    }
-
-    Float32_4 toFloat32_4()
-    {
-        ret Float32_4( this.r, this.g, this.b, this.a )
-    }
-
-    Color set( Float32 _r, Float32 _g, Float32 _b, Float32 _a )
+    Color setColor( Float32 _r, Float32 _g, Float32 _b, Float32 _a )
     {
         this.r = _r
         this.g = _g
@@ -264,7 +237,7 @@ public class Color
             hh = hh - 1.0f
         }
         Float32 sector = hh * 6.0f
-        Int32 i = Mathf.truncate( sector )
+        Int32 i = SystemConvertInt32( sector )
         Float32 f = sector - i
         Float32 p = v * ( 1.0f - s )
         Float32 q = v * ( 1.0f - s * f )
@@ -293,11 +266,12 @@ public class Color
         ret Color( v, p, q, alpha )
     }
 
-    # RGB -> HSV，返回 Float32_3(h, s, v)
-    public static Float32_3 toHSV( Color c )
+    # RGB -> HSV，返回 [h, s, v]
+    public static Array<Float32> toHSV( Color c )
     {
-        Float32 maxV = Mathf.max( c.r, Mathf.max( c.g, c.b ) )
-        Float32 minV = Mathf.min( c.r, Mathf.min( c.g, c.b ) )
+        Array<Float32> res = Array<Float32>( 3 )
+        Float32 maxV = Color.maxF( c.r, Color.maxF( c.g, c.b ) )
+        Float32 minV = Color.minF( c.r, Color.minF( c.g, c.b ) )
         Float32 delta = maxV - minV
 
         Float32 h = 0.0f
@@ -327,26 +301,61 @@ public class Color
         {
             s = delta / maxV
         }
-        ret Float32_3( h, s, maxV )
+        res[0] = h
+        res[1] = s
+        res[2] = maxV
+        ret res
     }
 
     # 0xRRGGBB 整数 -> Color
     public static Color fromHexRGB( Int32 hex )
     {
-        Float32 r = ( ( hex & 0xFF0000 ) / 0x010000 ) / 255.0f
-        Float32 g = ( ( hex & 0x00FF00 ) / 0x000100 ) / 255.0f
-        Float32 b = ( hex & 0x0000FF ) / 255.0f
-        ret Color( r, g, b, 1.0f )
+        Float32 rr = ( ( hex & 0xFF0000 ) / 0x010000 ) / 255.0f
+        Float32 gg = ( ( hex & 0x00FF00 ) / 0x000100 ) / 255.0f
+        Float32 bb = ( hex & 0x0000FF ) / 255.0f
+        ret Color( rr, gg, bb, 1.0f )
     }
 
     # 0xAARRGGBB 整数 -> Color
     public static Color fromHexARGB( Int32 hex )
     {
-        Float32 a = ( ( hex & 0xFF000000 ) / 0x01000000 ) / 255.0f
-        Float32 r = ( ( hex & 0x00FF0000 ) / 0x00010000 ) / 255.0f
-        Float32 g = ( ( hex & 0x0000FF00 ) / 0x00000100 ) / 255.0f
-        Float32 b = ( hex & 0x000000FF ) / 255.0f
-        ret Color( r, g, b, a )
+        Float32 aa = ( ( hex & 0xFF000000 ) / 0x01000000 ) / 255.0f
+        Float32 rr = ( ( hex & 0x00FF0000 ) / 0x00010000 ) / 255.0f
+        Float32 gg = ( ( hex & 0x0000FF00 ) / 0x00000100 ) / 255.0f
+        Float32 bb = ( hex & 0x000000FF ) / 255.0f
+        ret Color( rr, gg, bb, aa )
+    }
+
+    # ── 数值工具（替代 Mathf，避免 Std -> Math 反向依赖）──
+    static Float32 clampF( Float32 v, Float32 lo, Float32 hi )
+    {
+        if v < lo
+        {
+            ret lo
+        }
+        if v > hi
+        {
+            ret hi
+        }
+        ret v
+    }
+
+    static Float32 maxF( Float32 a, Float32 b )
+    {
+        if a > b
+        {
+            ret a
+        }
+        ret b
+    }
+
+    static Float32 minF( Float32 a, Float32 b )
+    {
+        if a < b
+        {
+            ret a
+        }
+        ret b
     }
 
     override string toString()

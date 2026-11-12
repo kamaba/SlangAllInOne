@@ -1,3 +1,5 @@
+import Std;
+
 # =========================================================================
 # Image/Svg.sl —— SVG 矢量图文档模型
 #
@@ -10,6 +12,7 @@
 #   - rasterize()    ：路径光栅化（填充规则、描边、渐变、裁剪）
 #
 # 说明：所有类型都是 namespace 下的顶级类型（DB/Sqlite.sl 的硬约束）。
+#       颜色字段用 Std 根级 ColorInt（8bit RGBA）。
 # =========================================================================
 
 namespace Image
@@ -70,8 +73,11 @@ namespace Image
 
         override string toString()
         {
-            ret "SvgViewBox(" + this.x.toString() + " " + this.y.toString() + " " +
-                this.width.toString() + " " + this.height.toString() + ")"
+            string s = "SvgViewBox("
+            s = s + this.x.toString() + " " + this.y.toString()
+            s = s + " " + this.width.toString() + " " + this.height.toString()
+            s = s + ")"
+            ret s
         }
     }
 
@@ -161,9 +167,10 @@ namespace Image
 
         override string toString()
         {
-            ret "SvgPathCommand(code=" + this.code.toString() +
-                ", relative=" + this.isRelative.toString() +
-                ", args=" + this.argCount().toString() + ")"
+            string s = "SvgPathCommand(code=" + this.code.toString()
+            s = s + ", relative=" + this.isRelative.toString()
+            s = s + ", args=" + this.argCount().toString() + ")"
+            ret s
         }
     }
 
@@ -314,7 +321,7 @@ namespace Image
                 ret path
             }
             SvgPathCursor c = SvgPathCursor( d )
-            List<SvgPathCommand> commands = List<SvgPathCommand>( 16 )
+            List<SvgPathCommand> cmds = List<SvgPathCommand>( 16 )
             Int32 lastCmd = 0
 
             while !c.atEnd()
@@ -364,18 +371,11 @@ namespace Image
                         args[ i ] = SvgPath.readNumber( c )
                         i = i + 1
                     }
-                    commands.add( SvgPathCommand( lastCmd, args ) )
+                    cmds.add( SvgPathCommand( lastCmd, args ) )
                 }
             }
 
-            Int32 n = commands.length()
-            path.commands = Array<SvgPathCommand>( n )
-            Int32 k = 0
-            while k < n
-            {
-                path.commands[ k ] = commands.at( k )
-                k = k + 1
-            }
+            path.commands = cmds.toArray()
             ret path
         }
 
@@ -390,8 +390,8 @@ namespace Image
     {
         public string id = ""
         public string tag = ""
-        public Color fill = null
-        public Color stroke = null
+        public ColorInt fill = null
+        public ColorInt stroke = null
         public Float32 strokeWidth = 1.0f
         public Float32 opacity = 1.0f
         public bool visible = true
@@ -633,8 +633,9 @@ namespace Image
 
         override string toString()
         {
-            ret "SvgDocument(" + this.effectiveWidth().toString() + "x" +
-                this.effectiveHeight().toString() + ")"
+            string s = "SvgDocument(" + this.effectiveWidth().toString()
+            s = s + "x" + this.effectiveHeight().toString() + ")"
+            ret s
         }
     }
 
@@ -651,27 +652,19 @@ namespace Image
             ret text.slice( 0, 5 ) == "<?xml" || text.slice( 0, 4 ) == "<svg"
         }
 
-        # XML -> 文档树（后端）
+        # XML -> 文档树
+        # v1 缺口：C 层（stb/WIC）无 XML 解析，返回 null；
+        # 纯 SL 的路径级解析可用 SvgPath.parse（本文件上方）
         public static SvgDocument parse( string xml )
         {
-            if xml == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Image.svgParse", xml )
-            ret result as SvgDocument
+            ret null
         }
 
-        # 光栅化成位图（后端）
+        # 光栅化成位图
+        # v1 缺口：C 层无矢量光栅化（填充/描边/渐变/裁剪），返回 null
         public static ImageBuffer rasterize( SvgDocument doc, Int32 width, Int32 height )
         {
-            if doc == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Image.svgRasterize",
-                doc, width, height )
-            ret result as ImageBuffer
+            ret null
         }
 
         # 便捷：XML 文本直接光栅化

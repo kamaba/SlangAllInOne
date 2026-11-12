@@ -5,8 +5,8 @@
 #   - 所有类型必须是 namespace 下的顶级类型，**不能嵌套在类内**
 #     （嵌套类型会让导出端把父类全名写进 namespaceList，加载端随即创建
 #       同名命名空间节点遮蔽类节点，导致调用链解析失败）
-#   - 编解码本体由图像后端通过 SystemCallExternalFunction("Image.xxx", ...)
-#     实现；本目录负责：数据模型 + 能用纯 SL 算出来的部分
+#   - 编解码本体由 ImageFfi（sl_image_lib.dll：stb/WIC，@DllStaticImport
+#     静态绑定）实现；本目录负责：数据模型 + 能用纯 SL 算出来的部分
 #     （magic 嗅探、PNG/BMP 头解析、像素运算、缩放、色彩转换…）
 # =========================================================================
 
@@ -18,36 +18,38 @@ namespace Image
     public enum EImageFormat
     {
         Unknown = 0
-        Bmp
-        Png
-        Jpeg
-        Gif
-        Webp
-        Svg
-        Tiff
-        Ico
-        Tga
-        Ppm
-        Avif
-        Heic
+        Bmp = 1
+        Png = 2
+        Jpeg = 3
+        Gif = 4
+        Webp = 5
+        Svg = 6
+        Tiff = 7
+        Ico = 8
+        Tga = 9
+        Ppm = 10
+        Avif = 11
+        Heic = 12
     }
 
     # ---------------------------------------------------------------
     # 像素排布（ImageBuffer 的内存布局）
+    #   Gray8/Gray16: 1 通道 8/16 位；Rgb8/Rgba8: 3/4 通道 8 位（Rgba8 默认）
+    #   Bgr8/Bgra8: 蓝在前；Rgb16/Rgba16: 16 位；Rgb32F/Rgba32F: Float32（HDR）
     # ---------------------------------------------------------------
     public enum EPixelFormat
     {
         Unknown = 0
-        Gray8         # 1 通道 8 位
-        Gray16        # 1 通道 16 位
-        Rgb8          # 3 通道 8 位
-        Rgba8         # 4 通道 8 位（默认）
-        Bgr8          # 3 通道 8 位，蓝在前
-        Bgra8         # 4 通道 8 位，蓝在前
-        Rgb16         # 3 通道 16 位
-        Rgba16        # 4 通道 16 位
-        Rgb32F        # 3 通道 Float32（HDR 中间结果）
-        Rgba32F       # 4 通道 Float32
+        Gray8 = 1
+        Gray16 = 2
+        Rgb8 = 3
+        Rgba8 = 4
+        Bgr8 = 5
+        Bgra8 = 6
+        Rgb16 = 7
+        Rgba16 = 8
+        Rgb32F = 9
+        Rgba32F = 10
     }
 
     # ---------------------------------------------------------------
@@ -56,11 +58,11 @@ namespace Image
     public enum EColorSpace
     {
         Unknown = 0
-        SRGB
-        Linear
-        DisplayP3
-        Rec709
-        AdobeRgb
+        SRGB = 1
+        Linear = 2
+        DisplayP3 = 3
+        Rec709 = 4
+        AdobeRgb = 5
     }
 
     # ---------------------------------------------------------------
@@ -69,9 +71,9 @@ namespace Image
     public enum EInterpolation
     {
         Nearest = 0
-        Bilinear
-        Bicubic
-        Lanczos
+        Bilinear = 1
+        Bicubic = 2
+        Lanczos = 3
     }
 
     # ---------------------------------------------------------------

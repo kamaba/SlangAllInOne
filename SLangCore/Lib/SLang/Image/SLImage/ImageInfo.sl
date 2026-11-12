@@ -5,7 +5,7 @@
 #   - sniff()          ：按 magic bytes 判定容器格式
 #   - fromExtension()  ：按文件扩展名判定格式
 #   - probe()          ：对 PNG / BMP / GIF 直接解析头部取宽高；
-#                        其余格式交给后端 SystemCallExternalFunction("Image.probe")
+#                        其余格式交给 ImageFfi.probeMem（C 层探测）
 #
 # 用途典型场景：只想知道尺寸 / 格式时不必把整张图解进内存。
 # =========================================================================
@@ -75,15 +75,21 @@ namespace Image
         # 大端 32 位（PNG / JPEG 长度字段）
         public static Int32 readBe32( Array<UInt8> b, Int32 i )
         {
-            ret ( ImageInfo.readU8( b, i ) << 24 ) | ( ImageInfo.readU8( b, i + 1 ) << 16 ) |
-                ( ImageInfo.readU8( b, i + 2 ) << 8 ) | ImageInfo.readU8( b, i + 3 )
+            Int32 v0 = ImageInfo.readU8( b, i ) << 24
+            Int32 v1 = ImageInfo.readU8( b, i + 1 ) << 16
+            Int32 v2 = ImageInfo.readU8( b, i + 2 ) << 8
+            Int32 v3 = ImageInfo.readU8( b, i + 3 )
+            ret ( v0 | v1 ) | ( v2 | v3 )
         }
 
         # 小端 32 位（BMP / RIFF）
         public static Int32 readLe32( Array<UInt8> b, Int32 i )
         {
-            ret ImageInfo.readU8( b, i ) | ( ImageInfo.readU8( b, i + 1 ) << 8 ) |
-                ( ImageInfo.readU8( b, i + 2 ) << 16 ) | ( ImageInfo.readU8( b, i + 3 ) << 24 )
+            Int32 v0 = ImageInfo.readU8( b, i )
+            Int32 v1 = ImageInfo.readU8( b, i + 1 ) << 8
+            Int32 v2 = ImageInfo.readU8( b, i + 2 ) << 16
+            Int32 v3 = ImageInfo.readU8( b, i + 3 ) << 24
+            ret ( v0 | v1 ) | ( v2 | v3 )
         }
 
         # 小端 16 位（BMP / GIF）
@@ -353,10 +359,9 @@ namespace Image
                 ret info
             }
 
-            # 其余格式（JPEG / TIFF / AVIF …）交给后端
-            object result = SystemCallExternalFunction( "Image.probe", bytes, info.format )
-            ImageInfo remote = result as ImageInfo
-            if remote != null
+            # 其余格式（JPEG / TIFF / AVIF …）交给 C 层探测
+            ImageInfo remote = ImageFfi.probeMem( bytes )
+            if remote.format != EImageFormat.Unknown
             {
                 ret remote
             }
@@ -365,10 +370,11 @@ namespace Image
 
         override string toString()
         {
-            ret "ImageInfo(fmt=" + this.format.toString() + ", " +
-                this.width.toString() + "x" + this.height.toString() +
-                ", depth=" + this.bitDepth.toString() +
-                ", alpha=" + this.hasAlpha.toString() + ")"
+            string s = "ImageInfo(fmt=" + this.format.toString()
+            s = s + ", " + this.width.toString() + "x" + this.height.toString()
+            s = s + ", depth=" + this.bitDepth.toString()
+            s = s + ", alpha=" + this.hasAlpha.toString() + ")"
+            ret s
         }
     }
 }

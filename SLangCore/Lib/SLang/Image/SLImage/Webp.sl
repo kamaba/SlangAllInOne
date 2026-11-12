@@ -22,20 +22,20 @@ namespace Image
     public enum EWebpFormat
     {
         Unknown = 0
-        Lossy = 1        # VP8
-        Lossless = 2     # VP8L
-        Extended = 3     # VP8X：动画 / alpha / 元数据
+        Lossy = 1
+        Lossless = 2
+        Extended = 3
     }
 
     # 图像类型预设（libwebp 的 WebPPreset）
     public enum EWebpPreset
     {
         Default = 0
-        Picture
-        Photo
-        Chart
-        Icon
-        Text
+        Picture = 1
+        Photo = 2
+        Chart = 3
+        Icon = 4
+        Text = 5
     }
 
     # ── 编码参数 ───────────────────────────────────────────
@@ -134,8 +134,10 @@ namespace Image
 
         override string toString()
         {
-            ret "WebpFrame(" + this.width.toString() + "x" + this.height.toString() +
-                ", " + this.durationMs.toString() + "ms)"
+            string s = "WebpFrame("
+            s = s + this.width.toString() + "x" + this.height.toString()
+            s = s + ", " + this.durationMs.toString() + "ms)"
+            ret s
         }
     }
 
@@ -239,9 +241,11 @@ namespace Image
             {
                 ret 0
             }
-            Int32 v = ImageInfo.readU8( bytes, 24 ) |
-                      ( ImageInfo.readU8( bytes, 25 ) << 8 ) |
-                      ( ImageInfo.readU8( bytes, 26 ) << 16 )
+            Int32 v0 = ImageInfo.readU8( bytes, 24 )
+            Int32 v1 = ImageInfo.readU8( bytes, 25 ) << 8
+            Int32 v2 = ImageInfo.readU8( bytes, 26 ) << 16
+            Int32 v = v0 | v1
+            v = v | v2
             ret v + 1
         }
 
@@ -251,10 +255,12 @@ namespace Image
             {
                 ret 0
             }
-            Int32 v = ImageInfo.readU8( bytes, 27 ) |
-                      ( ImageInfo.readU8( bytes, 28 ) << 8 ) |
-                      ( ImageInfo.readU8( bytes, 29 ) << 16 )
-            ret v + 1
+            Int32 w0 = ImageInfo.readU8( bytes, 27 )
+            Int32 w1 = ImageInfo.readU8( bytes, 28 ) << 8
+            Int32 w2 = ImageInfo.readU8( bytes, 29 ) << 16
+            Int32 w = w0 | w1
+            w = w | w2
+            ret w + 1
         }
 
         # ── 后端编解码 ──────────────────────────────────────
@@ -269,8 +275,9 @@ namespace Image
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.webpDecode", bytes, options )
-            ret result as ImageBuffer
+            # C 层经 WIC 解码（依赖系统 WebP 编解码器，未安装则失败返回 null）；
+            # options 在 v1 C 层无对应项，暂忽略
+            ret ImageFfi.decodeMem( bytes )
         }
 
         public static Array<UInt8> encode( ImageBuffer buffer )
@@ -280,24 +287,16 @@ namespace Image
 
         public static Array<UInt8> encode( ImageBuffer buffer, WebpEncodeOptions options )
         {
-            if buffer == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Image.webpEncode",
-                buffer, buffer.width, buffer.height, buffer.pixelFormat, options )
-            ret result as Array<UInt8>
+            # v1 缺口：stb_image_write / WIC 均不提供 WebP 编码，返回 null；
+            # 后续可引入 libwebp（BSD）或 WIC 第三方编码器补齐
+            ret null
         }
 
-        # 动画帧表（后端）
+        # 动画帧表
+        # v1 缺口：C 层无动画解码（stb 仅首帧、WIC 同样），返回 null
         public static Array<WebpFrameInfo> frameTable( Array<UInt8> bytes )
         {
-            if bytes == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Image.webpFrames", bytes )
-            ret result as Array<WebpFrameInfo>
+            ret null
         }
 
         override string toString()

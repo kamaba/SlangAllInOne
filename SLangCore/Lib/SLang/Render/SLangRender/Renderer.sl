@@ -17,18 +17,6 @@ public class Renderer extends Component
         this.sortingOrder = 0
         this.layer = 0
     }
-
-    # ── 包围盒 ───────────────────────────────────────────
-    # 网格本地包围盒（无网格时返回空盒）
-    public get Bounds localBounds()
-    {
-        if this.mesh == null
-        {
-            ret Bounds()
-        }
-        ret this.mesh.bounds()
-    }
-
     # ── 设置 ─────────────────────────────────────────────
     public void setMesh( Mesh m )
     {

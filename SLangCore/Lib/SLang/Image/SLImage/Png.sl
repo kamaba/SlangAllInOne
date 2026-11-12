@@ -1,3 +1,5 @@
+import Std;
+
 # =========================================================================
 # Image/Png.sl —— PNG 容器模型
 #
@@ -11,18 +13,20 @@
 #   - 每像素通道数
 # 依赖后端：
 #   - decode / encode（zlib inflate + 5 种行滤波器反演）
+#
+# 说明：backgroundColor 用 Std 根级 ColorInt（8bit RGBA）。
 # =========================================================================
 
 namespace Image
 {
-    # PNG 颜色类型（IHDR 第 10 字节）
+    # PNG 颜色类型（IHDR 第 10 字节）：0=灰度 2=真彩 3=索引色 4=灰度+alpha 6=真彩+alpha
     public enum EPngColorType
     {
-        Gray = 0        # 灰度
-        Rgb = 2         # 真彩
-        Palette = 3     # 索引色
-        GrayAlpha = 4   # 灰度 + alpha
-        Rgba = 6        # 真彩 + alpha
+        Gray = 0
+        Rgb = 2
+        Palette = 3
+        GrayAlpha = 4
+        Rgba = 6
     }
 
     public enum EPngInterlace
@@ -36,21 +40,21 @@ namespace Image
     {
         public Int32 length = 0
         public string type = ""
-        public Array<UInt8> data = null
+        public Array<UInt8> bytes = null
         public Int32 crc = 0
 
         _init_()
         {
             this.length = 0
             this.type = ""
-            this.data = Array<UInt8>( 0 )
+            this.bytes = Array<UInt8>( 0 )
             this.crc = 0
         }
 
         _init_( string _type, Array<UInt8> _data )
         {
             this.type = _type
-            this.data = _data
+            this.bytes = _data
             if _data == null
             {
                 this.length = 0
@@ -156,8 +160,15 @@ namespace Image
 
         public get bool hasAlpha()
         {
-            ret this.colorType == EPngColorType.GrayAlpha ||
-                this.colorType == EPngColorType.Rgba
+            if this.colorType == EPngColorType.GrayAlpha
+            {
+                ret true
+            }
+            if this.colorType == EPngColorType.Rgba
+            {
+                ret true
+            }
+            ret false
         }
 
         # 未压缩的一行字节数（不含滤波器类型字节）
@@ -169,9 +180,11 @@ namespace Image
 
         override string toString()
         {
-            ret "PngHeader(" + this.width.toString() + "x" + this.height.toString() +
-                ", depth=" + this.bitDepth.toString() +
-                ", color=" + this.colorType.toString() + ")"
+            string s = "PngHeader("
+            s = s + this.width.toString() + "x" + this.height.toString()
+            s = s + ", depth=" + this.bitDepth.toString()
+            s = s + ", color=" + this.colorType.toString() + ")"
+            ret s
         }
     }
 
@@ -235,7 +248,7 @@ namespace Image
         public bool forceRgba = true
         # 忽略 alpha（合成到黑底或按背景色）
         public bool ignoreAlpha = false
-        public Color backgroundColor = null
+        public ColorInt backgroundColor = null
 
         _init_()
         {
@@ -258,8 +271,16 @@ namespace Image
         {
             if colorType == EPngColorType.Gray
             {
-                ret bitDepth == 1 || bitDepth == 2 || bitDepth == 4 ||
-                    bitDepth == 8 || bitDepth == 16
+                bool ok = bitDepth == 1 || bitDepth == 2
+                if !ok
+                {
+                    ok = bitDepth == 4 || bitDepth == 8
+                }
+                if !ok
+                {
+                    ok = bitDepth == 16
+                }
+                ret ok
             }
             if colorType == EPngColorType.Rgb
             {
@@ -267,7 +288,12 @@ namespace Image
             }
             if colorType == EPngColorType.Palette
             {
-                ret bitDepth == 1 || bitDepth == 2 || bitDepth == 4 || bitDepth == 8
+                bool ok = bitDepth == 1 || bitDepth == 2
+                if !ok
+                {
+                    ok = bitDepth == 4 || bitDepth == 8
+                }
+                ret ok
             }
             if colorType == EPngColorType.GrayAlpha
             {
@@ -312,14 +338,39 @@ namespace Image
             {
                 ret false
             }
-            ret ImageInfo.readU8( bytes, 0 ) == 0x89 &&
-                ImageInfo.readU8( bytes, 1 ) == 0x50 &&
-                ImageInfo.readU8( bytes, 2 ) == 0x4E &&
-                ImageInfo.readU8( bytes, 3 ) == 0x47 &&
-                ImageInfo.readU8( bytes, 4 ) == 0x0D &&
-                ImageInfo.readU8( bytes, 5 ) == 0x0A &&
-                ImageInfo.readU8( bytes, 6 ) == 0x1A &&
-                ImageInfo.readU8( bytes, 7 ) == 0x0A
+            if ImageInfo.readU8( bytes, 0 ) != 0x89
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 1 ) != 0x50
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 2 ) != 0x4E
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 3 ) != 0x47
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 4 ) != 0x0D
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 5 ) != 0x0A
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 6 ) != 0x1A
+            {
+                ret false
+            }
+            if ImageInfo.readU8( bytes, 7 ) != 0x0A
+            {
+                ret false
+            }
+            ret true
         }
 
         # 解析 IHDR（纯 SL）
@@ -362,8 +413,9 @@ namespace Image
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.pngDecode", bytes, options )
-            ret result as ImageBuffer
+            # C 层 stb_image 解码（恒输出 RGBA8）；
+            # options（背景色合成等）在 v1 C 层无对应项，暂忽略
+            ret ImageFfi.decodeMem( bytes )
         }
 
         public static Array<UInt8> encode( ImageBuffer buffer )
@@ -377,9 +429,13 @@ namespace Image
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.pngEncode",
-                buffer, buffer.width, buffer.height, buffer.pixelFormat, options )
-            ret result as Array<UInt8>
+            # PNG 无损（quality 无意义）；C 层 stb_image_write 输出 RGBA8 PNG
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( buffer )
+            if rgba == null
+            {
+                ret null
+            }
+            ret ImageFfi.encodeMem( EImageFormat.Png, 100, buffer.width, buffer.height, rgba )
         }
 
         override string toString()

@@ -21,6 +21,23 @@ Windows OpenGL **离屏渲染**库（WGL + GL 3.3 core，零 SDK 依赖），nam
 （QT `QLabel.setPixmapRgba` 即为此通道的显示端）。隐藏窗口 + WGL 上下文只提供
 GL 执行环境，永不显示、永不 SwapBuffers。
 
+## 渲染层职责对照（RHI 与上层脚本之间的中间层定位）
+
+职责：**连接 RHI 与上层脚本，处理高性能的渲染逻辑**。SL 侧薄 FFI 门面
+（`Render.sl`/`UnityPipeline.sl`）+ C 侧管线层（`Pipeline/sl_pipeline.c`）+
+RHI 层（`RHI/` 四后端 vtable）三层协同，三大核心功能：
+
+| 核心功能 | 落点 | 机制 |
+|---|---|---|
+| **Batching & Sorting** | 阶段 5 `sort_items` + 阶段 7/9 `batch_end` | 不透明排序键 = queue → z（近→远，Early-Z 方向）→ **材质键（prog + tex_desc）**——同材质项自然相邻成批；一个批 = 一次 `desc_bind_tex` 纹理绑定（SetPass 级合批），批内逐项 `draw_item`（PerDraw UBO 槽寻址）。透明段后→前深度序保持不变（合批不得改变混合次序），材质分块只最小化绑定次数 |
+| **Culling** | 阶段 4 `stage_cull_layers` | 多相机独立剔除：每相机 cullingMask 按位 layer 0..31 + 正交视域 AABB 剔除（`cull_cams` 位掩码记录对象对各相机的可见性）；统计可见/剔除数（stat VISIBLE/CULLED） |
+| **Platform Adaptation** | `sl_render.c` 后端注册表 + `RHI/` 四后端 | `SlrBackendEntry` 静态注册（gl/d3d11/vk/gles）+ 运行期探测（LoadLibrary 后端 dll）+ 缺失优雅降级（init 返回 0 → 测试侧 SKIP）；跨平台差异吸收：D3D11 行序翻转/清屏 quad、GL scissor 局部清、VK 布局跟踪与分段提交、四后端像素/坐标约定逐字节对齐；描述符机制四后端映射（v3.2：DX11 SRV 槽表 / VK descriptor set / GL 纹理单元） |
+
+上层脚本侧数据结构：`Config.sl`（分辨率/同步/MSAA/后端标识/裁剪面/URP 开关）
++ `UnityRenderPipeline/Object/Texture/Camera`（场景侧）+ `Mesh.sl`（几何侧）；
+管线侧外层数据结构：`SlrPipeline`（含 `SlrDescTable` 描述符表、相机槽表、
+绘制项表）、`SlrDrawItem`（含 `tex_desc` 材质键）、`SlrCamera`。
+
 ## v2：Unity 风格 13 阶段管线（sl_render_lib.dll 内实现）
 
 一帧 = 13 个阶段依序执行（C 层静态函数 + `SLR_STAGE_EXPORT` 宏导出），对应
@@ -34,7 +51,7 @@ Unity 渲染底层流程；SL 侧 `UnityRenderPipeline` 只做薄 FFI 绑定（�
 | 3 | 提前更新 | `slr_pipeline_early_update` | 动画参数预计算（色相循环相位） |
 | 4 | 渲染层分层 | `slr_pipeline_cull_layers` | cullingMask 按位 layer 0..31 + 正交视域剔除 |
 | 5 | 层整理数据 | `slr_pipeline_assemble_layer_data` | 生成 drawItem，按队列排序（不透明前→后 / 透明后→前） |
-| 6 | 传入渲染数据 | `slr_pipeline_upload_render_data` | PerDraw std140 UBO 批量上传 MVP/颜色（简化 SRP Batcher） |
+| 6 | 传入渲染数据 | `slr_pipeline_upload_render_data` | PerDraw std140 UBO 批量上传 MVP/颜色 + **纹理描述符表写入**（同纹理查重复用槽，见 v3.2） |
 | 7 | shader 分块渲染 | `slr_pipeline_render_shader_chunks` | 按着色器程序分组绘制不透明（分组=少切状态/少 SetPass） |
 | 8 | 核心时间更新 | `slr_pipeline_update_core_time` | 帧时间 / 帧间隔统计 |
 | 9 | shader 分段渲染 | `slr_pipeline_render_shader_segments` | 透明段绘制（混合开、深度写关） |
@@ -199,6 +216,40 @@ SL 语言规则（Mesh.sl 落地实证，写库必读）：
 3. **实例成员必须 `this.` 前缀**：`this._positions` / `this.vertexCount()`
    （MetaCallNode 裸名解析仅 static 分支放行）；构造器跨实例字段写不可用，
    用多参构造重载代替。
+
+## v3.2：描述符表机制（DX11 SRV 槽表 / VK descriptor set 的统一抽象）
+
+对齐 DX11/Vulkan 的**"绑定与绘制分离"**：资源先写入描述符槽，绘制前绑定槽，
+`draw_item` 只携带整数索引（prog / PerDraw 槽 / mesh），不再传资源指针。
+
+```
+管线层（外层数据结构，sl_render_internal.h）          RHI 层（四后端各自映射）
+┌─ SlrDescTable（帧级，挂在 SlrPipeline）─┐           desc_write_tex / desc_bind_tex
+│  SlrTexDesc tex[16]                     │  写槽/绑槽  ├─ D3D11: SRV 数组 + PSSetShaderResources
+│  tex_count（本帧槽数）                  │──────>────├─ VK   : VkTexture 的 set_pipe_tex 表
+└─ SlrDrawItem.tex_desc（槽号，-1=无纹理）┘            │          + vkCmdBindDescriptorSets
+                                                        ├─ GL/GLES: 纹理名数组 + 纹理单元 t1
+```
+
+- **帧级生命周期**：阶段 6（uploadRenderData）遍历绘制项——PTEX 项的纹理
+  写入描述符槽（同纹理查重复用，`res` 指针比对），`SlrDrawItem.tex_desc`
+  记录槽号；阶段 7/9 绘制时 `desc_bind_tex(tex_desc)` 先绑定再 `draw_item`。
+  槽满（>16 张不同纹理）时该项降级为纯色绘制。
+- **后端映射**（同一 vtable 槽位 `desc_write_tex`/`desc_bind_tex`）：
+  - D3D11：槽表 = `ID3D11ShaderResourceView` 数组，绑定 = `PSSetShaderResources(0,1,...)`
+    ——DX11 的 SRV 槽表机制原生形态；
+  - VK：槽表 = `VkTexture::set_pipe_tex`（PTEX descriptor set）数组，绑定 =
+    记录当前 set，`vkCmdBindDescriptorSets` 绘制时提交——VK descriptor set
+    机制原生形态；
+  - GL/GLES：槽表 = 纹理名数组，绑定 = 纹理单元 t1（GL 3.3 采样单元固定的
+    镜像形态，多采样器扩展时按槽启用多单元）。
+- **防悬空**：`free_shared` 清空槽表（slr_uninit 中纹理先于共享资源销毁）；
+  `desc_bind_tex(-1)` 绑 NULL（纯色项），阶段 5 组装项默认 `tex_desc=-1`
+  （手动逐阶段驱动跳过阶段 6 时不误绑槽 0）。
+- v1 直连层（`RenderContext.renderFrame`）不经过描述符表——v1 自带纹理参数，
+  各后端 v1 内直绑（DX11 直设 SRV / GL 直绑 t1 / VK 用 v1 专用 set）。
+- 四后端像素契约不变：RenderTest 回归实测 quadtex(147,67,137) /
+  左图(235,130,40) 等 9 组纹理像素四后端逐字节一致。
 
 ## 原生链路（FFI 静态绑定 + 运行期双通道解析）
 

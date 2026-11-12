@@ -1,0 +1,164 @@
+{
+  "project":
+  {
+    "name": "SLangImage",
+    "desc": "CPU image decode/encode library module - namespace Image: ImageFfi (FFI static bindings + memory marshalling) / ImageIO (facade load/save/probe/convert) / ImageBuffer (tight pixel buffer, pure-SL pixel ops) / ImageInfo (header probe), pixel color class ColorInt now lives in Std root (Std/ColorInt.sl), backed by sl_image_lib.dll (stb_image/stb_image_write public-domain OR MIT-0 + WIC system codec; always RGBA8 top-down, handles are 1-based, 0 = invalid)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  // FFI 导入表（jsonc "dllImports" 段）。"static" 非空（静态注册名）时 cvm 加载
+  // SL 模块即预载该库并注册进 FFI.StaticLibrary，@DllStaticImport("sl_image_lib",
+  // "sli_xxx") 静态调用点由 cvm 装配期 attribute 注册表改写为 CallFFIStatic(n)
+  // 直调绑定表。绑定失败（库未注册 / 符号缺失）时回退 SL 函数体兜底（返回
+  // false/0/""，ImageFfi.ensureReady() == false 即兜底征兆）。"alias" 仍供
+  // @DllImport 三参形式按别名解析 path（运行时相对进程 CWD 解析）。
+  "dllImports":
+  [
+    { "path": "sl_image_lib.dll", "name": "sl_image_lib", "alias": "sl_image_lib", "static": "sl_image_lib" }
+  ],
+  // vmDlls 构建规则：导出 SL 模块时，Front 用 MSBuild 编译 project 指向的 VS 工程
+  // （路径相对本 jsonc 所在目录），并把产出的 sl_image_lib.dll 拷贝到与
+  // SLangImage.module.json 相同的目录（out/export/SLangImage/），即上方
+  // dllImports 别名指向的位置。
+  // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Image\cvm_image_lib\：
+  //   vm_sl_image.h     - 公开契约（22 个 sli_* 导出，普通 C ABI）
+  //   sl_image.c        - 槽表/粘性错误/格式嗅探/解码编码主路
+  //   Codec\sl_image_stb.c  - stb_image v2.31 + stb_image_write v1.17 唯一
+  //                           IMPLEMENTATION 编译点（third_party\stb\，公有领域
+  //                           OR MIT-0 双许可）
+  //   Codec\sl_image_wic.c  - WIC 兜底（TIFF/ICO/WebP 解码 + TIFF 编码，纯 C
+  //                           lpVtbl 调用，系统组件零外部依赖）
+  // 像素契约：恒 RGBA8、4 字节/像素、top-down；图像/blob 句柄 1 起始，0 无效。
+  // 上限：16384×16384 / 256M 像素 / 单文件 512MB（详见 vm_sl_image.h）。
+  "vmDlls": [
+    { "project": "../cvm_image_lib/cvm_sl_image_lib.vcxproj", "name": "sl_image_lib.dll", "configuration": "Release", "platform": "x64" }
+  ],
+  // systemCalls：本模块全部能力走 @DllStaticImport 静态绑定直调，不下沉 cvm
+  // SystemMethodCall，故留空。
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "ImageFormat.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 0 },
+      // Color.sl 已删除：8bit 颜色类合并为 Std 根级 ColorInt（Std/ColorInt.sl），
+      // 经下方 references 的 Std 引用，ImageBuffer/Svg/Png 裸名使用。
+      { "path": "ImageBuffer.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 2 },
+      { "path": "ImageInfo.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 3 },
+      { "path": "ImageFfi.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 4 },
+      { "path": "ImageIO.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 5 },
+      { "path": "Png.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 6 },
+      { "path": "Jpeg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 7 },
+      { "path": "Webp.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 8 },
+      { "path": "Svg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 9 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    // SystemConvertInt32/UInt8、Memory.alloc/free/writeI8/readUInt8/readInt32
+    // 等来自 Core（本 jsonc 位于 SLangCore\Lib\SLang\Image\SLImage\，上 3 级到
+    // SLangCore\Lib\，同层即 Core 包）。本模块不依赖 Math。
+    { "path": "../../../Core", "name": "Core" },
+    // ColorInt（8bit RGBA 颜色，原本模块 Image.Color + Render 侧 ColorUInt8
+    // 合并迁入 Std 根级）：ImageBuffer/Svg/Png 裸名引用。
+    { "path": "../../../Std", "name": "Std" }
+  ],
+  // struct 段：namespace Image 下全部顶级类型（ImageFormat.sl 的警告——所有
+  // 类型必须是 namespace 下的顶级类型，嵌套类型会让导出端把父类全名写进
+  // namespaceList，加载端随即创建同名命名空间节点遮蔽类节点）。
+  "struct": [
+    { "namespace": "Image", "children": [
+      { "enum": "EImageFormat" },
+      { "enum": "EPixelFormat" },
+      { "enum": "EColorSpace" },
+      { "enum": "EInterpolation" },
+      { "enum": "EOrientation" },
+      { "enum": "ImageErrorCode" },
+      // Color 类已迁出：合并为 Std 根级 ColorInt（struct 不再登记）
+      { "class": "ImageBuffer" },
+      { "class": "ImageInfo" },
+      { "class": "ImageFfi" },
+      { "class": "ImageIO" },
+      { "enum": "EPngColorType" },
+      { "enum": "EPngInterlace" },
+      { "class": "PngChunk" },
+      { "class": "PngHeader" },
+      { "class": "PngEncodeOptions" },
+      { "class": "PngDecodeOptions" },
+      { "class": "Png" },
+      { "enum": "EMpegVersion" },
+      { "enum": "EMpegLayer" },
+      { "enum": "EMpegChannelMode" },
+      { "enum": "EChromaSubsampling" },
+      { "enum": "EJpegMode" },
+      { "class": "JpegFrameHeader" },
+      { "class": "JpegExif" },
+      { "class": "JpegEncodeOptions" },
+      { "class": "JpegDecodeOptions" },
+      { "class": "Jpeg" },
+      { "enum": "EWebpFormat" },
+      { "enum": "EWebpPreset" },
+      { "class": "WebpEncodeOptions" },
+      { "class": "WebpFrameInfo" },
+      { "class": "WebpDecodeOptions" },
+      { "class": "Webp" },
+      { "class": "SvgViewBox" },
+      { "class": "SvgPathCursor" },
+      { "class": "SvgPathCommand" },
+      { "class": "SvgPath" },
+      { "class": "SvgElement" },
+      { "class": "SvgRect" },
+      { "class": "SvgCircle" },
+      { "class": "SvgEllipse" },
+      { "class": "SvgLine" },
+      { "class": "SvgPolygon" },
+      { "class": "SvgText" },
+      { "class": "SvgPathElement" },
+      { "class": "SvgGroup" },
+      { "class": "SvgDocument" },
+      { "class": "Svg" }
+    ]}
+  ],
+  "export": {
+    "moduleName": "SLangImage",
+    // jsonc 位于 SLangCore\Lib\SLang\Image\SLImage\，上 5 级到
+    // SlangAllInOne\out\export（ImageTest 引用 ../../../../out/export/SLangImage）
+    "outputDir": "..\\..\\..\\..\\..\\out\\export",
+    "versionMain": 1,
+    "versionSub": 0,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    // Front 调试文本实际目录：{export.outputDir}/{export.moduleName}/DebugCode/；以下 outputDir 仅兼容旧字段，可为空。
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  }
+}

@@ -36,12 +36,12 @@ namespace Image
         Mono = 3
     }
 
-    # 色度下采样（JPEG 编码选项）
+    # 色度下采样（JPEG 编码选项）：0=不采样 1=水平1/2 2=水平垂直各1/2（常用）
     public enum EChromaSubsampling
     {
-        S444 = 0     # 不下采样，质量最高
-        S422 = 1     # 水平 1/2
-        S420 = 2     # 水平垂直各 1/2，最常用
+        S444 = 0
+        S422 = 1
+        S420 = 2
         S440 = 3
         S411 = 4
     }
@@ -93,8 +93,11 @@ namespace Image
 
         override string toString()
         {
-            ret "MpegFrame(" + this.bitrateKbps.toString() + "kbps, " +
-                this.sampleRate.toString() + "Hz, len=" + this.frameLength.toString() + ")"
+            string s = "MpegFrame("
+            s = s + this.bitrateKbps.toString() + "kbps"
+            s = s + ", " + this.sampleRate.toString() + "Hz"
+            s = s + ", len=" + this.frameLength.toString() + ")"
+            ret s
         }
     }
 
@@ -129,8 +132,9 @@ namespace Image
 
         override string toString()
         {
-            ret "JpegExif(orient=" + this.orientation.toString() +
-                ", " + this.make + " " + this.model + ")"
+            string s = "JpegExif(orient=" + this.orientation.toString()
+            s = s + ", " + this.make + " " + this.model + ")"
+            ret s
         }
     }
 
@@ -429,9 +433,22 @@ namespace Image
             {
                 ret false
             }
-            ret ImageInfo.readU8( bytes, 0 ) == 0x49 &&
-                ImageInfo.readU8( bytes, 1 ) == 0x44 &&
-                ImageInfo.readU8( bytes, 2 ) == 0x33
+            Int32 v0 = ImageInfo.readU8( bytes, 0 )
+            Int32 v1 = ImageInfo.readU8( bytes, 1 )
+            Int32 v2 = ImageInfo.readU8( bytes, 2 )
+            if v0 != 0x49
+            {
+                ret false
+            }
+            if v1 != 0x44
+            {
+                ret false
+            }
+            if v2 != 0x33
+            {
+                ret false
+            }
+            ret true
         }
 
         public static Int32 id3v2Size( Array<UInt8> bytes )
@@ -463,9 +480,22 @@ namespace Image
             {
                 ret false
             }
-            ret ImageInfo.readU8( bytes, 0 ) == 0xFF &&
-                ImageInfo.readU8( bytes, 1 ) == 0xD8 &&
-                ImageInfo.readU8( bytes, 2 ) == 0xFF
+            Int32 v0 = ImageInfo.readU8( bytes, 0 )
+            Int32 v1 = ImageInfo.readU8( bytes, 1 )
+            Int32 v2 = ImageInfo.readU8( bytes, 2 )
+            if v0 != 0xFF
+            {
+                ret false
+            }
+            if v1 != 0xD8
+            {
+                ret false
+            }
+            if v2 != 0xFF
+            {
+                ret false
+            }
+            ret true
         }
 
         public static bool isValidQuality( Int32 q )
@@ -485,8 +515,9 @@ namespace Image
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.jpegDecode", bytes, options )
-            ret result as ImageBuffer
+            # C 层 stb_image 解码（恒输出 RGBA8）；
+            # options（快速上采样 / 块平滑）在 v1 C 层无对应项，暂忽略
+            ret ImageFfi.decodeMem( bytes )
         }
 
         public static Array<UInt8> encode( ImageBuffer buffer )
@@ -500,20 +531,31 @@ namespace Image
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.jpegEncode",
-                buffer, buffer.width, buffer.height, buffer.pixelFormat, options )
-            ret result as Array<UInt8>
-        }
-
-        # EXIF 读取（后端遍历 APP1 段）
-        public static JpegExif readExif( Array<UInt8> bytes )
-        {
-            if bytes == null
+            # C 层 stb_image_write：仅 quality 生效；
+            # 子采样 / 算术编码 / restart 间隔在 v1 C 层无对应项，暂忽略
+            Int32 q = options.quality
+            if q < 1
+            {
+                q = 1
+            }
+            if q > 100
+            {
+                q = 100
+            }
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( buffer )
+            if rgba == null
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Image.jpegExif", bytes )
-            ret result as JpegExif
+            ret ImageFfi.encodeMem( EImageFormat.Jpeg, q, buffer.width, buffer.height, rgba )
+        }
+
+        # EXIF 读取（遍历 APP1 段）
+        # v1 缺口：C 层（stb/WIC）不提供 EXIF 解析，返回 null；
+        # 后续可由纯 SL 解析器补齐（TIFF IFD 结构见 Webp/Jpeg 头注释）
+        public static JpegExif readExif( Array<UInt8> bytes )
+        {
+            ret null
         }
 
         override string toString()

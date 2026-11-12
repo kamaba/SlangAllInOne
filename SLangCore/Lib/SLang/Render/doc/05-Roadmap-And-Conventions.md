@@ -20,7 +20,7 @@
 
 ### M2 资源系统 + 图像编解码
 - 写：ResourceRegistry；Mesh.interleave + VertexBuffer.fromMesh 真上传（描述符打包 + `slr_buffer_upload`）；Texture.gpu 懒上传；ConstantBuffer 对齐工具 + `slr_cb_update` 刷新；HlslLibrary 去掉非法 include、ShaderModule 句柄化；ShaderCache。
-- **图像编解码（06 全量）**：`Render.jsonc` 登记 `Image/` 8 文件 + Image namespace struct；T1 `slr_image_*/slr_svg_*/slr_blob_*` 与 T2 `RenderImage*` 四接口铺设（RenderFFI.sl + cvm_render_lib）；Texture.uploadToGpu 接 A 路径（零拷贝）；SVG 文档句柄 + SvgCache（v1.1）；截图编码链路（readback → PNG blob → 落盘）。
+- **图像编解码（06 全量）**：已实装为独立模块 **SLangImage**（`SLangCore\Lib\SLang\Image\SLImage\`，后端 `sl_image_lib.dll`，Render.jsonc 经 references 引入，原 `Image/` 目录 8 个 .sl 副本已删除）；渲染侧剩余工作 = Texture.uploadToGpu 接 A 路径（零拷贝，经 Image 模块探测/解码）；SVG 文档句柄 + SvgCache（v1.1）；截图编码链路（readback → PNG blob → 落盘）。
 - **前置任务（06 §3.3）**：VM 侧 `SystemPtrWriteByteArray / SystemPtrReadByteArray` 批量互转（大图字节过 FFI 的前提）。
 - 迁移：资源/着色器/状态族 + `Image.*` 18 个调用点 T3 清零（04 §5 批次二 + 06 §5.6）。
 - 验收：Mesh.cube() + 棋盘纹理 + Unlit 材质渲染正确；二次运行 shader 命中缓存；修改 mesh 顶点后画面更新；**06 §9 的 5 条图像验收全过（PNG roundtrip 逐字节相等、JPEG PSNR ≥ 40dB、A 路径零拷贝、SVG 四档尺寸光栅化、无 DLL 降级不崩）**。
@@ -78,7 +78,7 @@ RenderGraph 资源图自动屏障、GPU driven culling（indirect draw + compute
 - CullingParameters.cullingMask 定义了但 isVisible 未使用（03 §4.8）。
 - RenderPipelineManager.initialize 在 device 为 null 时 instantiate 会失败且未报错（顺序耦合）→ 文档化调用序或自动 createDevice（03 §4.10）。
 - **全部 `SystemCallExternalFunction("Render.xxx")` 调用（约 18 个文件、百余处）需按 04 §5 映射迁移到 RenderFFI.sl 的 T1/T2 绑定**，M3 末清零删除。
-- **`Image/` 8 个 .sl 未登记 `Render.jsonc` 的 `compileFiles` 与 `struct` 段**（当前实际不参与编译）——M2 bring-up：登记文件 + 新增 `{ "namespace": "Image", "children": [...] }`（06 §2）。
+- **`Image/` 已整体移除**（2026-11-12）：图像编解码独立为 SLangImage 模块（Render.jsonc references 引入），原「登记 8 文件 + Image namespace struct」的 M2 bring-up 任务取消（06 §2 实装注记）。
 - **`Image.*` 18 个 T3 调用点**（探测/编解码/SVG）按 06 §5.6 迁移：`jpegExif` 并入 `autoOrient` 选项、`webpFrames` 并入探测出参，其余映射 T1/T2。
 
 ---

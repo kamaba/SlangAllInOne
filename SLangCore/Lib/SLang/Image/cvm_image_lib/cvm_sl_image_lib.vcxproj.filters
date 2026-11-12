@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{5d1a7c3f-9e2b-4f60-8a71-6b8f2d4a0001}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx</Extensions>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{8b4e6d2c-1f7a-4c39-9d52-3e9c7f5b0002}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx</Extensions>
+    </Filter>
+    <Filter Include="Codec">
+      <UniqueIdentifier>{a7c5e9d1-3b68-42d7-b063-5f1e8a9c0003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{c9d6f2b8-4a71-4e58-a174-7b2d9c1e0004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\stb">
+      <UniqueIdentifier>{e3f8a6d4-5c92-46f3-9285-8c4e0b2f0005}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="sl_image.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Codec\sl_image_stb.c">
+      <Filter>Codec</Filter>
+    </ClCompile>
+    <ClCompile Include="Codec\sl_image_wic.c">
+      <Filter>Codec</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="vm_sl_image.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="sl_image_internal.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\stb\stb_image.h">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\stb\stb_image_write.h">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\stb\LICENSE.md">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

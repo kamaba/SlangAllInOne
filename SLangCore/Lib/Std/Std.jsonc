@@ -48,6 +48,9 @@
       { "path": "Net/Mqtt.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
       { "path": "Component.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "InstanceAttr.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      // ---- 颜色类（自 SLangImage/Color.sl + SLangRender/{Color,ColorUInt8}.sl 三处合并迁入）----
+      { "path": "Color.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "ColorInt.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Debug/Log.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Profiling.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Trace.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
@@ -196,6 +199,10 @@
       { "class": "Component" },
       { "class": "InstanceAttr" },
       { "class": "Node" },
+      // ---- Std 根级颜色类：Color（Float32 [0,1]）/ ColorInt（8bit 0..255，Int32 存储）----
+      // 无 namespace 声明、注册到模块根，引用方裸名可见（同 Component/Base64 先例）
+      { "class": "Color" },
+      { "class": "ColorInt" },
       // ---- Std/Debug：SLang 命名空间（Log/Profiling/Trace.sl 均有 namespace SLang 声明）----
       { "namespace": "SLang", "children":
          [

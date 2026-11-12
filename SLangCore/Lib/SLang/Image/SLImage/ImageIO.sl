@@ -7,7 +7,7 @@
 #   ImageBuffer thumb = Image.ImageIO.thumbnail( img, 256, 256 )
 #
 # 纯 SL：thumbnail（等比缩放到框内）、格式能力表、MIME / 扩展名映射
-# 后端：  load / save / decode / encode
+# 后端：  ImageFfi（sl_image_lib.dll：stb_image / stb_image_write + WIC）
 # =========================================================================
 
 namespace Image
@@ -33,20 +33,10 @@ namespace Image
             ret ImageInfo.probe( bytes )
         }
 
-        # 按路径探测（后端读取文件头）
+        # 按路径探测（C 层读文件头，零搬运；失败返回空 ImageInfo）
         public static ImageInfo probeFile( string path )
         {
-            if path == null
-            {
-                ret ImageInfo()
-            }
-            object result = SystemCallExternalFunction( "Image.probeFile", path )
-            ImageInfo info = result as ImageInfo
-            if info != null
-            {
-                ret info
-            }
-            ret ImageInfo()
+            ret ImageFfi.probeFile( path )
         }
 
         # ── 解码 / 编码 ─────────────────────────────────────
@@ -74,8 +64,8 @@ namespace Image
             {
                 ret Webp.decode( bytes )
             }
-            object result = SystemCallExternalFunction( "Image.decodeAs", bytes, format )
-            ret result as ImageBuffer
+            # C 层按内容自动嗅探（format 仅为提示，stb/WIC 不需要它）
+            ret ImageFfi.decodeMem( bytes )
         }
 
         # quality 仅对有损格式（JPEG / WebP / AVIF / HEIC）有意义
@@ -101,20 +91,19 @@ namespace Image
                 o.clamp()
                 ret Webp.encode( buffer, o )
             }
-            object result = SystemCallExternalFunction( "Image.encodeAs",
-                buffer, buffer.width, buffer.height, buffer.pixelFormat, format, quality )
-            ret result as Array<UInt8>
+            # 兜底格式（BMP/TGA/PPM/TIFF 等）走 C 层 stb/WIC 编码
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( buffer )
+            if rgba == null
+            {
+                ret null
+            }
+            ret ImageFfi.encodeMem( format, quality, buffer.width, buffer.height, rgba )
         }
 
         # ── 文件 ─────────────────────────────────────────────
         public static ImageBuffer load( string path )
         {
-            if path == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Image.load", path )
-            ret result as ImageBuffer
+            ret ImageFfi.decodeFile( path )
         }
 
         public static bool save( ImageBuffer buffer, string path, EImageFormat format, Int32 quality )
@@ -123,13 +112,13 @@ namespace Image
             {
                 ret false
             }
-            object result = SystemCallExternalFunction( "Image.save",
-                buffer, buffer.width, buffer.height, buffer.pixelFormat, path, format, quality )
-            if result is bool b
+            # blob 直写文件（无回读搬运，不受 4 MiB 上限限制）
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( buffer )
+            if rgba == null
             {
-                ret b
+                ret false
             }
-            ret false
+            ret ImageFfi.saveMem( format, quality, buffer.width, buffer.height, rgba, path )
         }
 
         # 按扩展名推断保存格式
@@ -185,14 +174,44 @@ namespace Image
 
         public static bool isAnimated( EImageFormat format )
         {
-            ret format == EImageFormat.Gif || format == EImageFormat.Webp ||
-                format == EImageFormat.Avif || format == EImageFormat.Heic
+            if format == EImageFormat.Gif
+            {
+                ret true
+            }
+            if format == EImageFormat.Webp
+            {
+                ret true
+            }
+            if format == EImageFormat.Avif
+            {
+                ret true
+            }
+            if format == EImageFormat.Heic
+            {
+                ret true
+            }
+            ret false
         }
 
         public static bool isLossy( EImageFormat format )
         {
-            ret format == EImageFormat.Jpeg || format == EImageFormat.Webp ||
-                format == EImageFormat.Avif || format == EImageFormat.Heic
+            if format == EImageFormat.Jpeg
+            {
+                ret true
+            }
+            if format == EImageFormat.Webp
+            {
+                ret true
+            }
+            if format == EImageFormat.Avif
+            {
+                ret true
+            }
+            if format == EImageFormat.Heic
+            {
+                ret true
+            }
+            ret false
         }
 
         # 矢量格式：需要光栅化才能拿到位图

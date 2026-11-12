@@ -1,0 +1,63 @@
+{
+  "project":
+  {
+    "name": "ProjectTest",
+    "desc": "ImageTest - SLangImage module end-to-end test (probe / roundtrip PNG/JPEG/BMP/TGA / file IO / error paths / pure-SL pixel ops)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "ImageTest.sl", "group": "default", "tag": "test", "ignore": false, "priority": 0 },
+      { "path": "ProjectTest.sp", "group": "default", "tag": "test", "ignore": false, "priority": 1 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {}
+  },
+  "references": [
+    // 显式 .slb 后缀：工程内 path 落空时由宿主 bin\lib\ 官方库直查命中
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    // SLangImage 模块（out/export/SLangImage：module.json + slb + sl_image_lib.dll）
+    { "path": "../../../../out/export/SLangImage/SLangImage.module.json" }
+  ],
+  "export": {
+    "moduleName": "ImageTest",
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 1,
+    "versionSub": 0,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  }
+}

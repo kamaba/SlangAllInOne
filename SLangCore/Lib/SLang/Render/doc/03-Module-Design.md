@@ -511,7 +511,7 @@ public static void endFrame() / present() = manager.endFrame() / manager.present
 
 | 项 | 处置 |
 |---|---|
-| `Image/`（Png/Jpeg/Webp/Svg 等 8 个 .sl） | 保留并增强。定位为「纹理数据源 + 图像读写子系统」：探测/容器模型纯 SL，编解码走 T1/T2 绑定（`slr_image_*`/`slr_svg_*`/`slr_blob_*`），纹理加载零拷贝直传 GPU。**完整独立设计见 06**（含 Render.jsonc 登记任务、存量 18 个 `Image.*` T3 调用迁移表、SVG 光栅化与图标缓存、截图编码链路） |
+| `Image/`（原 8 个 .sl，已删除） | **已独立为 SLangImage 模块**（`SLangCore\Lib\SLang\Image\SLImage\`，后端 `sl_image_lib.dll`，Render.jsonc 经 references 引入）。定位为「纹理数据源 + 图像读写子系统」：探测/容器模型纯 SL，编解码走 FFI 静态绑定（`sli_*` 22 导出）。纹理加载零拷贝直传 GPU 的集成设计见 06 §6 |
 | `Audio/` | **建议迁出**至 `SLang/Audio` 库。渲染引擎不发声；留在 Render 里会让依赖图变脏（Render.jsonc 也无需编译它们，当前未列入 compileFiles，保持） |
 | `Behaviour/UIBehaviour/RectTransform` | 标注为「宿主引擎组件适配层」：渲染引擎不解释它们；v1.1 的 2D/Canvas 渲染路径只读取 RectTransform 的矩形数据 |
 | `cvm_render_lib/*.c` | 定位调整（04 §3.5）：**T2 兼容注册 + 对象→描述符打包器**——迁移期承载 `Render.cmdDrawMesh` 等对象直传的 T2 系统方法；终态仅保留描述符打包辅助 |

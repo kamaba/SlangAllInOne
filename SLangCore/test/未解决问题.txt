@@ -23,6 +23,8 @@ Unity的机制
 让其它人测下 我的功能点，提建议
 
 Environment.要支持注册表的内容查询
+Render里边 增加一个RenderTexture的概念 在渲染的时候 都要通过他去切换 
+现在的Spm的功能，再增加一个在slang的目录下查找modules对应的名称，然后复制到当前编辑的目录下 
 
 
 

@@ -1,5 +1,11 @@
 # SLang 跨平台渲染引擎设计 · 06 图像编解码（PNG / JPEG / WebP / SVG）
 
+> **实装注记（2026-11）**：本章为早期设计稿（`slr_image_*` 前缀、计划并入 Render.jsonc）。
+> 图像编解码已按独立模块路线实装为 **SLangImage**（namespace `Image`，后端
+> `sl_image_lib.dll` = stb_image/stb_image_write + WIC，`@DllStaticImport` 静态绑定，
+> 22 个 `sli_*` 导出），详见 `SLangCore\Lib\SLang\Image\doc\README.md`。本章保留作
+> 设计背景与数据流参考；符号表（§5）与迁移计划（§5.4）以实装文档为准。
+
 - 所属文档集：`Render/doc/`（01 总览 · 02 Unity 参考 · 03 模块详设 · 04 原生绑定与跨平台 · 05 路线图与规范 · **06 图像编解码**）
 - 版本：v0.4
 - 本章定义图像**读取与写入**的完整设计：容器探测、像素解码/编码、SVG 解析与光栅化，以及与渲染管线（纹理上传）的集成。
@@ -43,7 +49,11 @@ SVG 文档（矢量）──► [parse 一次] ──► [rasterize 任意尺寸
 
 ---
 
-## 2. 现状盘点（`Image/` 目录，8 个 .sl）
+## 2. 现状盘点（原 `Image/` 目录 8 个 .sl，已删除）
+
+> 该目录 8 个 .sl 副本已随 SLangImage 模块化删除：实装产物在
+> `SLangCore\Lib\SLang\Image\SLImage\`（Render.jsonc 经 references 引入），
+> 下表保留作数据模型分层的设计参考。
 
 | 文件 | 纯 SL 已实现 | 依赖后端（T3 存量） |
 |---|---|---|

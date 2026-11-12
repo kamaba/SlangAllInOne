@@ -358,17 +358,26 @@ static void sort_items(SlrDrawItem* items, int count, int transparent)
             int swap;
             if (transparent)
             {
-                /* 队列升序，同队列 z 降序（远→近）*/
+                /* 队列升序，同队列 z 降序（远→近）——透明顺序敏感，
+                 * 不加材质键（合批不得改变混合次序）*/
                 if (items[j].queue > key.queue) swap = 1;
                 else if (items[j].queue < key.queue) swap = 0;
                 else swap = items[j].z < key.z;
             }
             else
             {
-                /* 队列升序，同队列 z 升序（近→远）*/
+                /* Batching & Sorting（材质排序）：
+                 * 队列升序，同队列 z 升序（近→远，Early-Z 方向）；z 同则
+                 * 按材质键（prog + 纹理描述符槽）升序——同材质项自然
+                 * 相邻成批，阶段 7 一个批 = 一次纹理绑定（深度测试保证
+                 * 同深度不透明绘制次序不影响输出，材质排序零像素回归）*/
                 if (items[j].queue > key.queue) swap = 1;
                 else if (items[j].queue < key.queue) swap = 0;
-                else swap = items[j].z > key.z;
+                else if (items[j].z > key.z) swap = 1;
+                else if (items[j].z < key.z) swap = 0;
+                else if (items[j].prog > key.prog) swap = 1;
+                else if (items[j].prog < key.prog) swap = 0;
+                else swap = items[j].tex_desc > key.tex_desc;
             }
             if (!swap) break;
             items[j + 1] = items[j];
@@ -380,7 +389,8 @@ static void sort_items(SlrDrawItem* items, int count, int transparent)
 
 /* 5 渲染层整理数据（真正实现，多相机）：
  *   逐活动相机（depth 升序）收集可见对象：每相机先不透明（queue 升序、
- *   z 升序：近→远），再透明（queue 升序、z 降序：远→近）。
+ *   z 升序：近→远，z 同按材质键 prog+tex_desc——同材质相邻成批），
+ *   再透明（queue 升序、z 降序：远→近，序敏感不加材质键）。
  *   items 布局：[cam0 不透明|cam0 透明|cam1 不透明|cam1 透明|...]
  *   区间记录于 cam_ranges[bit]；slot = 数组下标 = PerDraw UBO 槽位 */
 static int stage_assemble_impl(SlrPipeline* p)
@@ -493,14 +503,23 @@ static int stage_upload_render_data(SlrPipeline* p)
 static void draw_one_item(SlrPipeline* p, SlrDrawItem* it)
 {
     SlrObject* o = &p->objects[it->obj];
-    /* 纹理经描述符槽绑定（绑定与绘制分离）；纯色绘制项绑 NULL */
-    g_rhi->desc_bind_tex(it->tex_desc);
+    /* 纹理绑定在批头（desc_bind_tex，见阶段 7/9 分块循环）——
+     * 绑定与绘制分离：批内所有项共享一次纹理绑定 */
     g_rhi->draw_item(it->prog, it->slot, o->mesh);
     p->draw_calls++;
     p->layers_mask |= (1 << it->layer);
 }
 
-/* 7 shader 分块渲染（不透明段，多相机：逐相机 视口/清屏 -> 分组合批绘制） */
+/* 批分块辅助：从 i 到 end 找出与 items[i] 同材质（prog + 纹理描述符槽）
+ * 的连续区间——一个批 = 一次纹理绑定（Batching：状态级合批）。 */
+static int batch_end(SlrDrawItem* items, int i, int end)
+{
+    int prog = items[i].prog, tex = items[i].tex_desc, j = i;
+    while (j < end && items[j].prog == prog && items[j].tex_desc == tex) j++;
+    return j;
+}
+
+/* 7 shader 分块渲染（不透明段，多相机：逐相机 视口/清屏 -> 材质分批绘制） */
 static int stage_render_shader_chunks(SlrPipeline* p)
 {
     int ci;
@@ -517,16 +536,16 @@ static int stage_render_shader_chunks(SlrPipeline* p)
         g_rhi->set_state(0);
         while (i < end)
         {
-            int prog = p->items[i].prog, j = i;
+            int j = batch_end(p->items, i, end);
             p->program_switches++;
-            while (j < end && p->items[j].prog == prog)
+            /* 批头绑定一次纹理描述符（批内同材质共享，SetPass 级合批）*/
+            g_rhi->desc_bind_tex(p->items[i].tex_desc);
+            for (; i < j; i++)
             {
-                draw_one_item(p, &p->items[j]);
+                draw_one_item(p, &p->items[i]);
                 p->opaque_draws++;
-                j++;
             }
-            p->chunk_count++;
-            i = j;
+            p->chunk_count++;    /* 批计数（= 状态切换次数）*/
         }
     }
     return 1;
@@ -550,7 +569,9 @@ static int stage_update_core_time(SlrPipeline* p)
     return 1;
 }
 
-/* 9 shader 分段渲染（透明段：混合开、深度写关、后→前；多相机逐相机执行） */
+/* 9 shader 分段渲染（透明段：混合开、深度写关、后→前；多相机逐相机执行；
+ * 绘制次序按深度排序不变（合批不得改变混合次序），材质分块只最小化
+ * 绑定次数——块内纹理绑定一次，逐项仍按序绘制） */
 static int stage_render_shader_segments(SlrPipeline* p)
 {
     int ci;
@@ -566,16 +587,16 @@ static int stage_render_shader_segments(SlrPipeline* p)
         g_rhi->set_state(1);
         while (i < end)
         {
-            int prog = p->items[i].prog, j = i;
+            int j = batch_end(p->items, i, end);
             p->program_switches++;
-            while (j < end && p->items[j].prog == prog)
+            /* 批头绑定一次纹理描述符（绘制次序仍逐项按深度序）*/
+            g_rhi->desc_bind_tex(p->items[i].tex_desc);
+            for (; i < j; i++)
             {
-                draw_one_item(p, &p->items[j]);
+                draw_one_item(p, &p->items[i]);
                 p->transparent_draws++;
-                j++;
             }
-            p->chunk_count++;
-            i = j;
+            p->chunk_count++;    /* 批计数（= 状态切换次数）*/
         }
     }
     return 1;

@@ -50,7 +50,8 @@
   "compileFiles": {
     "files": [
       { "path": "Render.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/UnityPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 }
+      { "path": "Pipeline/UnityPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 },
+      { "path": "Mesh.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 2 }
     ]
   },
   "compileFilter": {
@@ -68,7 +69,8 @@
     // Memory.alloc / readUInt8 / writeF32 等来自 Core（本 jsonc 位于
     // SLangCore\Lib\SLang\Render\SLangRender\，上 3 级到 SLangCore\Lib\，
     // 同层即 Core 包）
-    { "path": "../../../Core", "name": "Core" }
+    { "path": "../../../Core", "name": "Core" },
+    { "path": "../../../Math", "name": "Math" }
   ],
   "struct": [
     { "namespace": "SLang", "children": [
@@ -77,7 +79,8 @@
       { "class": "UnityRenderPipeline" },
       { "class": "UnityRenderObject" },
       { "class": "UnityRenderTexture" },
-      { "class": "UnityRenderCamera" }
+      { "class": "UnityRenderCamera" },
+      { "class": "Mesh" }
     ]}
   ],
   "export": {

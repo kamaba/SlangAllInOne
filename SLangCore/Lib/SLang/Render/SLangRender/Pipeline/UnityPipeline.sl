@@ -79,6 +79,11 @@ namespace SLang
         # ── 网格 / 动画常量 ────────────────────────────────────────
         public static Int32 MESH_TRIANGLE    = 0
         public static Int32 MESH_QUAD        = 1
+        # 动态网格槽（4..7）：meshKind = MESH_CUSTOM + slot，
+        # 顶点由 uploadMesh(slot, ptr, count) 上传（每帧可重传）
+        public static Int32 MESH_CUSTOM      = 4
+        public static Int32 MESH_CUSTOM_MAX  = 4
+        public static Int32 CUSTOM_MAX_VERTS = 4096
         public static Int32 ANIM_NONE        = 0
         public static Int32 ANIM_HUE_CYCLE   = 1
 
@@ -246,6 +251,15 @@ namespace SLang
                 ret null
             }
             ret UnityRenderObject( this._handle, id )
+        }
+
+        # uploadMesh(slot, vertsPtr, vertCount) —— 上传动态网格（3D/程序化
+        # 几何通道）：vertsPtr 指向三角形列表（pos2+uv2 交错，stride 16B，
+        # SL 侧 Memory.writeF32 填充）。对象 meshKind = MESH_CUSTOM + slot
+        # 引用该槽；每帧可重复调用实现顶点动画。
+        public bool uploadMesh( Int32 slot, Int64 vertsPtr, Int32 vertCount )
+        {
+            ret UnityRenderPipeline.ffiMeshUpload( slot, vertsPtr, vertCount )
         }
 
         public bool removeObject( UnityRenderObject obj )
@@ -543,6 +557,12 @@ namespace SLang
 
         @DllStaticImport( "sl_render_lib", "slr_object_destroy", "i64,i64->bool" )
         static bool ffiObjectDestroy( Int64 p, Int64 obj )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_mesh_upload", "i32,ptr,i32->bool" )
+        static bool ffiMeshUpload( Int32 slot, Int64 vertsPtr, Int32 vertCount )
         {
             ret false
         }

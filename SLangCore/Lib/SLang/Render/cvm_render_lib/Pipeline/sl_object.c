@@ -22,7 +22,10 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
-    if (mesh_kind != SLR_MESH_TRIANGLE && mesh_kind != SLR_MESH_QUAD)
+    /* mesh_kind：0 三角 / 1 四边（静态网格）；4..4+SLR_CUSTOM_MESHES-1
+     * 动态网格槽（slr_mesh_upload 上传的三角形列表）*/
+    if ((mesh_kind != SLR_MESH_TRIANGLE && mesh_kind != SLR_MESH_QUAD)
+        && (mesh_kind < 4 || mesh_kind >= 4 + SLR_CUSTOM_MESHES))
     {
         set_error(SLR_E_BAD_PARAM);
         rhi_exit();
@@ -38,7 +41,7 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
         o->mesh = mesh_kind;
         o->visible = 1;
         o->layer = 0;
-        /* 对齐 Unity 渲染队列：三角默认不透明，四边形默认透明 */
+        /* 对齐 Unity 渲染队列：三角默认不透明，四边形/动态网格默认透明 */
         o->queue = (mesh_kind == SLR_MESH_TRIANGLE) ? 2000 : 3000;
         o->scale[0] = 1.0f; o->scale[1] = 1.0f;
         o->color[0] = 1.0f; o->color[1] = 1.0f; o->color[2] = 1.0f; o->color[3] = 1.0f;
@@ -49,6 +52,26 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
     set_error(SLR_E_LIMIT);
     rhi_exit();
     return 0;
+}
+
+/* 动态网格上传（全局资源通道，与纹理同级）：verts_ptr 指向三角形
+ * 列表（pos2+uv2 交错，stride 16B，顶行 GL 语义 NDC），对象 mesh_kind
+ * = 4 + slot 引用该槽。可每帧重复调用（GL/GLES/D3D11 重传整块，
+ * VK 持久映射直写）。返回 1 成功 / 0 失败。 */
+int slr_mesh_upload(int slot, int64_t verts_ptr, int vert_count)
+{
+    int ok;
+    if (!rhi_enter()) return 0;
+    if (slot < 0 || slot >= SLR_CUSTOM_MESHES || !verts_ptr ||
+        vert_count <= 0 || vert_count > SLR_CUSTOM_MAX_VERTS)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        rhi_exit();
+        return 0;
+    }
+    ok = g_rhi->mesh_upload(slot, (const float*)(intptr_t)verts_ptr, vert_count);
+    rhi_exit();
+    return ok;
 }
 
 int slr_object_destroy(int64_t h, int64_t obj)

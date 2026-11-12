@@ -76,6 +76,10 @@ static ID3D11PixelShader*    s_ps_clear = NULL;
 /* 网格（0 三角 1 四边形 2 全屏三角[D3D V翻转] 3 v1 大三角）*/
 static ID3D11Buffer* s_vb[4];
 static UINT          s_vb_count[4];
+/* 动态网格（mesh id = 4+slot；DYNAMIC 缓冲按需重建，Map 整块重传）*/
+static ID3D11Buffer* s_vb_custom[SLR_CUSTOM_MESHES];
+static UINT          s_vb_custom_count[SLR_CUSTOM_MESHES];
+static UINT          s_vb_custom_cap[SLR_CUSTOM_MESHES];
 
 /* 常量缓冲：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx */
 static ID3D11Buffer* s_cb_draw = NULL;   /* 5120B：mat4[64] + vec4[64]     */
@@ -432,6 +436,12 @@ static void d3d_free_shared(void)
         if (s_vb[i]) { s_vb[i]->Release(); s_vb[i] = NULL; }
         s_vb_count[i] = 0;
     }
+    for (i = 0; i < SLR_CUSTOM_MESHES; i++)
+    {
+        if (s_vb_custom[i]) { s_vb_custom[i]->Release(); s_vb_custom[i] = NULL; }
+        s_vb_custom_count[i] = 0;
+        s_vb_custom_cap[i] = 0;
+    }
     if (s_cb_draw) { s_cb_draw->Release(); s_cb_draw = NULL; }
     if (s_cb_obj) { s_cb_obj->Release(); s_cb_obj = NULL; }
     if (s_cb_v1) { s_cb_v1->Release(); s_cb_v1 = NULL; }
@@ -661,8 +671,24 @@ static void d3d_draw_item(int prog, int slot, int mesh, void* tex)
 {
     d3d_perobj obj;
     UINT stride = 16, offset = 0;
+    ID3D11Buffer* vb;
+    UINT vcount;
     ID3D11ShaderResourceView* srv = tex ? ((d3d_texture*)tex)->srv : NULL;
 
+    /* mesh 0..3 静态网格；4..4+SLR_CUSTOM_MESHES-1 动态网格（mesh_upload 上传）*/
+    if (mesh >= 4)
+    {
+        int c = mesh - 4;
+        if (c >= SLR_CUSTOM_MESHES || !s_vb_custom[c]) return; /* 未上传/越界跳过 */
+        vb = s_vb_custom[c];
+        vcount = s_vb_custom_count[c];
+    }
+    else
+    {
+        if (mesh < 0 || mesh > 3) return;
+        vb = s_vb[mesh];
+        vcount = s_vb_count[mesh];
+    }
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX)
     {
         obj.obj = slot;
@@ -672,8 +698,49 @@ static void d3d_draw_item(int prog, int slot, int mesh, void* tex)
     s_ctx->PSSetShaderResources(0, 1, &srv);
     s_ctx->VSSetShader(s_vs[prog], NULL, 0);
     s_ctx->PSSetShader(s_ps[prog], NULL, 0);
-    s_ctx->IASetVertexBuffers(0, 1, &s_vb[mesh], &stride, &offset);
-    s_ctx->Draw(s_vb_count[mesh], 0);
+    s_ctx->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
+    s_ctx->Draw(vcount, 0);
+}
+
+/* 动态网格上传（三角形列表 pos2+uv2，stride 16B）：容量不足时重建
+ * DYNAMIC 顶点缓冲，之后 Map(WRITE_DISCARD) 整块重传 */
+static int d3d_mesh_upload(int slot, const float* verts, int vert_count)
+{
+    D3D11_BUFFER_DESC bd;
+    D3D11_MAPPED_SUBRESOURCE ms;
+    UINT bytes;
+
+    if (slot < 0 || slot >= SLR_CUSTOM_MESHES || !verts ||
+        vert_count <= 0 || vert_count > SLR_CUSTOM_MAX_VERTS)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        return 0;
+    }
+    bytes = (UINT)(vert_count * 16);
+    if (!s_vb_custom[slot] || s_vb_custom_cap[slot] < bytes)
+    {
+        if (s_vb_custom[slot]) { s_vb_custom[slot]->Release(); s_vb_custom[slot] = NULL; }
+        memset(&bd, 0, sizeof(bd));
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        bd.ByteWidth = (bytes + 0xFF) & ~0xFFu;   /* 256B 对齐减少重建次数 */
+        if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_vb_custom[slot])))
+        {
+            set_error_detail(SLR_E_MEMORY, "custom vertex buffer");
+            return 0;
+        }
+        s_vb_custom_cap[slot] = bd.ByteWidth;
+    }
+    if (FAILED(s_ctx->Map(s_vb_custom[slot], 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)))
+    {
+        set_error_detail(SLR_E_MEMORY, "custom vb Map");
+        return 0;
+    }
+    memcpy(ms.pData, verts, bytes);
+    s_ctx->Unmap(s_vb_custom[slot], 0);
+    s_vb_custom_count[slot] = (UINT)vert_count;
+    return 1;
 }
 
 /* 阶段 11：scene -> post（enabled=0 纯拷贝）*/
@@ -896,6 +963,7 @@ static const slr_rhi s_rhi_d3d11 =
     d3d_target_destroy,
     d3d_texture_create,
     d3d_texture_destroy,
+    d3d_mesh_upload,
     d3d_begin_scene,
     d3d_camera_begin,
     d3d_set_state,

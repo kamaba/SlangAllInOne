@@ -103,6 +103,7 @@ static GLuint       s_progs[SLR_PROG_COUNT];
 static gl_prog_uni  s_uni[SLR_PROG_COUNT];
 static GLuint       s_ubo = 0;
 static gl_mesh      s_meshes[4];
+static gl_mesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
 
 static HMODULE  s_hgl = NULL;
 static HWND     s_hwnd = NULL;
@@ -367,6 +368,12 @@ static void gl_free_shared(void)
         if (s_meshes[i].vbo) p_glDeleteBuffers(1, &s_meshes[i].vbo);
     }
     memset(s_meshes, 0, sizeof(s_meshes));
+    for (i = 0; i < SLR_CUSTOM_MESHES; i++)
+    {
+        if (s_custom[i].vao) p_glDeleteVertexArrays(1, &s_custom[i].vao);
+        if (s_custom[i].vbo) p_glDeleteBuffers(1, &s_custom[i].vbo);
+    }
+    memset(s_custom, 0, sizeof(s_custom));
     if (s_ubo) p_glDeleteBuffers(1, &s_ubo);
     s_ubo = 0;
 }
@@ -513,6 +520,18 @@ static void gl_draw_item(int prog, int slot, int mesh, void* tex)
 {
     /* 程序绑定是本 pass 的职责（管线层只发 prog 槽位；
      * uniform 设置作用于当前绑定的程序，必须先 UseProgram）*/
+    gl_mesh* m;
+    if (mesh >= 4 + SLR_CUSTOM_MESHES)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        return;
+    }
+    m = (mesh >= 4) ? &s_custom[mesh - 4] : &s_meshes[mesh];
+    if (!m->vao || m->count <= 0)
+    {
+        set_error_detail(SLR_E_BAD_PARAM, "mesh not uploaded");
+        return;
+    }
     p_glUseProgram(s_progs[prog]);
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX)
         p_glUniform1i(s_uni[prog].obj_index, slot);
@@ -521,9 +540,40 @@ static void gl_draw_item(int prog, int slot, int mesh, void* tex)
         p_glActiveTexture(GL_TEXTURE1);
         p_glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)tex);
     }
-    p_glBindVertexArray(s_meshes[mesh].vao);
-    p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[mesh].count);
+    p_glBindVertexArray(m->vao);
+    p_glDrawArrays(GL_TRIANGLES, 0, m->count);
     p_glBindVertexArray(0);
+}
+
+/* 动态网格上传（三角形列表 pos2+uv2，stride 16B）：首传建 VAO/VBO，
+ * 之后 glBufferData 整块重传（DYNAMIC_DRAW） */
+static int gl_mesh_upload(int slot, const float* verts, int vert_count)
+{
+    gl_mesh* m;
+    if (slot < 0 || slot >= SLR_CUSTOM_MESHES || !verts ||
+        vert_count <= 0 || vert_count > SLR_CUSTOM_MAX_VERTS)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        return 0;
+    }
+    m = &s_custom[slot];
+    if (!m->vao)
+    {
+        p_glGenVertexArrays(1, &m->vao);
+        p_glGenBuffers(1, &m->vbo);
+        p_glBindVertexArray(m->vao);
+        p_glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
+        p_glEnableVertexAttribArray(0);
+        p_glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 16, (const void*)0);
+        p_glEnableVertexAttribArray(1);
+        p_glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 16, (const void*)8);
+        p_glBindVertexArray(0);
+    }
+    p_glBindBuffer(GL_ARRAY_BUFFER, m->vbo);
+    p_glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)(vert_count * 16), verts, GL_DYNAMIC_DRAW);
+    p_glBindBuffer(GL_ARRAY_BUFFER, 0);
+    m->count = vert_count;
+    return 1;
 }
 
 static void gl_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
@@ -912,6 +962,7 @@ static const slr_rhi s_rhi_gl =
     gl_target_destroy,
     gl_texture_create,
     gl_texture_destroy,
+    gl_mesh_upload,
     gl_begin_scene,
     gl_camera_begin,
     gl_set_state,

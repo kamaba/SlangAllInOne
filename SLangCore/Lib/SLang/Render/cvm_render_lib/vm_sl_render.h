@@ -133,6 +133,13 @@ SLR_API int64_t slr_texture_load_file(const char* path_utf8);
 SLR_API int     slr_texture_destroy(int64_t tex);
 SLR_API int     slr_texture_count(void);
 
+/* ================= v3.1：动态网格（3D/程序化几何通道） =================
+ * verts_ptr 指向三角形列表（pos2+uv2 交错，stride 16B；SL 侧经
+ * Memory.writeF32 填充，ptr sig 传 Int64）。对象 mesh_kind = 4+slot
+ * 引用该槽（slr_object_create 允许 4..4+SLR_CUSTOM_MESHES-1）。
+ * 可每帧重复上传（GL/GLES/D3D11 整块重传；VK 持久映射直写）。 */
+SLR_API int     slr_mesh_upload(int slot, int64_t verts_ptr, int vert_count);
+
 /* ================= v2.1：多相机（管线内相机槽表） =================
  * 槽 0 为默认相机（slr_pipeline_set_camera 继续写槽 0，保持兼容）。
  * 渲染时按 depth 升序逐相机执行：视口/清屏 -> 剔除 -> 绘制。

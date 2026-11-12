@@ -799,6 +799,14 @@ static VkPipelineLayout    s_pl_layouts[8];
 static VkPipeline          s_vk_pipes[8];
 static VkBuffer            s_vb[4];
 static VkDeviceMemory      s_vb_mem[4];
+/* 动态网格（mesh id = 4+slot）：HOST_VISIBLE 持久映射顶点缓冲，
+ * mesh_upload 直接 memcpy（免中转 copy / 免队列提交，帧间安全）*/
+static VkBuffer            s_vb_custom[SLR_CUSTOM_MESHES];
+static VkDeviceMemory      s_vb_custom_mem[SLR_CUSTOM_MESHES];
+static void*               s_vb_custom_ptr[SLR_CUSTOM_MESHES];
+static VkDeviceSize        s_vb_custom_cap[SLR_CUSTOM_MESHES];
+static uint32_t            s_vb_custom_count[SLR_CUSTOM_MESHES];
+static int                 s_vb_custom_coh[SLR_CUSTOM_MESHES];
 static VkBuffer            s_upload_buf = NULL;   /* 纹理上传中转（按需增长） */
 static VkDeviceMemory      s_upload_mem = NULL;
 static void*               s_upload_ptr = NULL;
@@ -1513,6 +1521,11 @@ static int vk_make_shared(void)
     memset(s_vk_pipes, 0, sizeof(s_vk_pipes));
     memset(s_vb, 0, sizeof(s_vb));
     memset(s_vb_mem, 0, sizeof(s_vb_mem));
+    memset(s_vb_custom, 0, sizeof(s_vb_custom));
+    memset(s_vb_custom_mem, 0, sizeof(s_vb_custom_mem));
+    memset(s_vb_custom_ptr, 0, sizeof(s_vb_custom_ptr));
+    memset(s_vb_custom_cap, 0, sizeof(s_vb_custom_cap));
+    memset(s_vb_custom_count, 0, sizeof(s_vb_custom_count));
 
     /* ---- render pass（管线与 framebuffer 依赖）----
      * style 0 = 全幅清（begin_scene / v1_clear）
@@ -1721,6 +1734,12 @@ static void vk_free_shared(void)
     {
         if (s_vb[i]) { p_vkDestroyBuffer(s_dev, s_vb[i], NULL); s_vb[i] = NULL; }
         if (s_vb_mem[i]) { p_vkFreeMemory(s_dev, s_vb_mem[i], NULL); s_vb_mem[i] = NULL; }
+    }
+    for (i = 0; i < SLR_CUSTOM_MESHES; i++)
+    {
+        vk_destroy_buffer(&s_vb_custom[i], &s_vb_custom_mem[i], &s_vb_custom_ptr[i]);
+        s_vb_custom_cap[i] = 0;
+        s_vb_custom_count[i] = 0;
     }
     if (s_set_perdraw) { p_vkFreeDescriptorSets(s_dev, s_descpool, 1, &s_set_perdraw); s_set_perdraw = NULL; }
     if (s_ubo_draw) vk_destroy_buffer(&s_ubo_draw, &s_ubo_draw_mem, &s_ubo_draw_ptr);
@@ -1969,6 +1988,7 @@ static void vk_draw_item(int prog, int slot, int mesh, void* tex)
     int idx;
     VkDescriptorSet set;
     VkDeviceSize off = 0;
+    VkBuffer vb;
     uint32_t count;
     uint32_t obj = (uint32_t)slot;
 
@@ -1993,15 +2013,62 @@ static void vk_draw_item(int prog, int slot, int mesh, void* tex)
         set_error(SLR_E_STATE);
         return;
     }
-    count = (mesh == 1) ? 6 : 3;
+    /* mesh 0..3 静态网格；4..4+SLR_CUSTOM_MESHES-1 动态网格 */
+    if (mesh >= 4)
+    {
+        int c = mesh - 4;
+        if (c >= SLR_CUSTOM_MESHES || !s_vb_custom[c]) return; /* 未上传/越界跳过 */
+        vb = s_vb_custom[c];
+        count = s_vb_custom_count[c];
+    }
+    else
+    {
+        if (mesh < 0 || mesh > 3) return;
+        vb = s_vb[mesh];
+        count = (mesh == 1) ? 6 : 3;
+    }
     p_vkCmdBindPipeline(s_cmd, (VkPipelineBindPoint)VK_PIPELINE_BIND_POINT_GRAPHICS, s_vk_pipes[idx]);
     p_vkCmdPushConstants(s_cmd, s_pl_layouts[idx],
                         (VkShaderStageFlagBits)(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
                         0, 4, &obj);
     p_vkCmdBindDescriptorSets(s_cmd, (VkPipelineBindPoint)VK_PIPELINE_BIND_POINT_GRAPHICS,
                               s_pl_layouts[idx], 0, 1, &set, 0, NULL);
-    p_vkCmdBindVertexBuffers(s_cmd, 0, 1, &s_vb[mesh], &off);
+    p_vkCmdBindVertexBuffers(s_cmd, 0, 1, &vb, &off);
     p_vkCmdDraw(s_cmd, count, 1, 0, 0);
+}
+
+/* 动态网格上传（三角形列表 pos2+uv2，stride 16B）：容量不足时重建
+ * HOST_VISIBLE 顶点缓冲，之后持久映射指针直接 memcpy（非 COHERENT
+ * 时手动 flush）。上帧提交已 QueueWaitIdle，此处无需同步队列。 */
+static int vk_mesh_upload(int slot, const float* verts, int vert_count)
+{
+    VkDeviceSize bytes, cap;
+
+    if (slot < 0 || slot >= SLR_CUSTOM_MESHES || !verts ||
+        vert_count <= 0 || vert_count > SLR_CUSTOM_MAX_VERTS)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        return 0;
+    }
+    bytes = (VkDeviceSize)vert_count * 16;
+    cap = (bytes + 0xFF) & ~(VkDeviceSize)0xFF;   /* 256B 对齐减少重建次数 */
+    if (!s_vb_custom[slot] || s_vb_custom_cap[slot] < bytes)
+    {
+        vk_destroy_buffer(&s_vb_custom[slot], &s_vb_custom_mem[slot],
+                          &s_vb_custom_ptr[slot]);
+        s_vb_custom_cap[slot] = 0;
+        if (!vk_make_buffer(&s_vb_custom[slot], &s_vb_custom_mem[slot], cap,
+                            0x80, /* VK_BUFFER_USAGE_VERTEX_BUFFER_BIT */
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                            &s_vb_custom_ptr[slot], &s_vb_custom_coh[slot]))
+            return 0;
+        s_vb_custom_cap[slot] = cap;
+    }
+    memcpy(s_vb_custom_ptr[slot], verts, (size_t)bytes);
+    if (!s_vb_custom_coh[slot])
+        vk_flush_mem(s_vb_custom_mem[slot], 0, bytes, 0);
+    s_vb_custom_count[slot] = (uint32_t)vert_count;
+    return 1;
 }
 
 /* 全屏 pass（post / blit 共用）：flush 前段 -> 采样屏障 -> 自含 pass */
@@ -2356,6 +2423,7 @@ static const slr_rhi s_rhi_vk =
     vk_target_destroy,
     vk_texture_create,
     vk_texture_destroy,
+    vk_mesh_upload,
     vk_begin_scene,
     vk_camera_begin,
     vk_set_state,

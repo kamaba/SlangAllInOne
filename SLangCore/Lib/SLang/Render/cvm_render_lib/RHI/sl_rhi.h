@@ -73,6 +73,12 @@ typedef struct slr_rhi
     void (*texture_destroy)(void* tex);
 
     /* ---- 管线 pass（调用方已 enter）---- */
+    /* 动态网格上传（3D/程序化几何通道）：slot 0..SLR_CUSTOM_MESHES-1，
+     * verts = 三角形列表（pos2+uv2，stride 16B，与静态网格同格式），
+     * 顶点数 vert_count；对象 mesh = 4 + slot 路由到动态网格。
+     * 典型用法：CPU 侧变换（旋转/透视投影）后的三角形列表每帧重传。 */
+    int  (*mesh_upload)(int slot, const float* verts, int vert_count);
+
     /* 阶段 1：绑定场景目标 + 全视口 + 整幅清（色 + 深）+ 不透明初始状态 */
     void (*begin_scene)(slr_rhi_target* t, int w, int h, const float* clear_rgba);
     /* 阶段 7/9 逐相机：重新绑定场景目标 + 相机视口 + 可选局部清屏

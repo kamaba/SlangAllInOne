@@ -49,6 +49,8 @@ extern "C" {
 #define SLR_MAX_PIPES   32
 #define SLR_MAX_TEX     64
 #define SLR_MAX_CAMERAS 8
+#define SLR_CUSTOM_MESHES 4   /* 动态网格槽（对象 mesh = 4 + slot 路由）*/
+#define SLR_CUSTOM_MAX_VERTS 4096
 
 /* clear_flags 位定义（相机清屏选项） */
 #define SLR_CLEAR_COLOR 1

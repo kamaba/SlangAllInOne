@@ -79,6 +79,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_javascript_quickjs_front
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_javascript_quickjs", "..\plugin\javascript_quickjs\cvm\cvm_javascript_quickjs.vcxproj", "{B7D94E6F-2C3A-5F41-9D8E-4A0B7C5D2E16}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_sl_render_lib", "SLangCore\Lib\SLang\Render\cvm_sl_render_lib\cvm_sl_render_lib.vcxproj", "{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -365,6 +367,18 @@ Global
 		{B7D94E6F-2C3A-5F41-9D8E-4A0B7C5D2E16}.Release|x64.Build.0 = Release|x64
 		{B7D94E6F-2C3A-5F41-9D8E-4A0B7C5D2E16}.Release|x86.ActiveCfg = Release|x64
 		{B7D94E6F-2C3A-5F41-9D8E-4A0B7C5D2E16}.Release|x86.Build.0 = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|Any CPU.Build.0 = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|x64.ActiveCfg = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|x64.Build.0 = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|x86.ActiveCfg = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Debug|x86.Build.0 = Debug|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|Any CPU.ActiveCfg = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|Any CPU.Build.0 = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|x64.ActiveCfg = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|x64.Build.0 = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|x86.ActiveCfg = Release|x64
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -398,6 +412,7 @@ Global
 		{CB52ADB4-F36A-4C74-9FAA-5BD082F15BAE} = {60C2FD81-7E9F-4A0B-9B1D-5E6F708192A3}
 		{C8E0F7A1-3D4B-6E52-8F9C-5B7A8D6E3F27} = {CB52ADB4-F36A-4C74-9FAA-5BD082F15BAE}
 		{B7D94E6F-2C3A-5F41-9D8E-4A0B7C5D2E16} = {CB52ADB4-F36A-4C74-9FAA-5BD082F15BAE}
+		{3F8C2D47-A6B1-4E59-9C2D-7A10B85F6E33} = {960AABCC-273F-4640-9671-4E9874F0B526}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7E1A0F4-9D52-4A3B-8E64-7F1B5A2C9D30}

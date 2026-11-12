@@ -1,7 +1,7 @@
 {
   "project": {
-    "name": "GLRenderTest",
-    "desc": "SLangRender offscreen GL + SLangQT window fill e2e - color-shifting triangle (Phase A pure GL pixel assertions, Phase B QTimer frame loop -> QLabel.setPixmapRgba)",
+    "name": "RenderTest",
+    "desc": "angRender offscreen GL + SLangQT window fill e2e - color-shifting triangle (Phase A pure GL pixel assertions, Phase B QTimer frame loop -> QLabel.setPixmapRgba)",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 1,
@@ -21,7 +21,7 @@
   },
   "compileFiles": {
     "files": [
-      { "path": "GLRenderTest.sl", "group": "render", "tag": "base", "ignore": false, "priority": 0 }
+      { "path": "RenderTest.sl", "group": "render", "tag": "base", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -45,13 +45,13 @@
     // 编译期：Front 按 path 直查命中（4 级上溯到 SlangAllInOne\out\export）；
     // 运行期：包内落空 -> C VM sl_load_references 回退链 <exe>\modules\<name>\
     // （CSimpleVMTest StageReferencedModules 铺入，native dll 联动拷贝）。
-    { "path": "../../../../out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" },
-    { "path": "../../../../out/export/SLangRender/SLangRender.module.json", "name": "SLangRender" }
+    { "path": "../../../out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" },
+    { "path": "../../../out/export/SLangRender/SLangRender.module.json", "name": "SLangRender" }
   ],
   "struct": [
   ],
   "export": {
-    "moduleName": "GLRenderTest",
+    "moduleName": "RenderTest",
     "outputDir": "export",
     "versionMain": 0,
     "versionSub": 0,

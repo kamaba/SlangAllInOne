@@ -11,7 +11,7 @@ Project
     #          填充（renderTexture 通道）
     _main_()
     {
-        GLRenderTest.main()
+        RenderTest.main()
     }
 
     _before_()

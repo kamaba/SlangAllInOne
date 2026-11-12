@@ -4,9 +4,18 @@ import Math;
 import Std;
 
 # ============================================================================
-# GLRenderTest —— SLangRender Unity 风格 13 阶段渲染管线端到端
+# GLRenderTest —— SLangRender RHI 多后端 + Unity 13 阶段管线端到端
 # ----------------------------------------------------------------------------
-# Phase A1 v1 兼容（RenderContext 直连 FBO 快速回归）：
+# Phase D D3D11 后端同效果验证（initializeBackend("d3d11")）：
+#   与 GL 完全相同的 A1/A2/A3 断言集在 D3D11 后端重跑——像素值、
+#   多相机合成、图片渲染全部一致（"不同驱动渲染一样效果"验收标准）
+# Phase E Vulkan 后端同效果验证（initializeBackend("vk")）：
+#   SPIR-V 固化着色器 + 纯离屏 instance，同断言集重跑（vulkan-1.dll
+#   运行期探测，缺失则 SKIP）
+# Phase F EGL/GLES 后端验证（initializeBackend("gles")）：
+#   libEGL/libGLESv2 运行期探测，同断言集重跑；本机无 GLES 运行库时
+#   优雅降级为 SKIP（init 返回 0 -> false），有则要求同像素 PASS
+# Phase A1 v1 兼容（RenderContext 直连渲染目标快速回归）：
 #   renderFrame(红) -> 中心像素 = 红
 # Phase A2 管线主测（SLang.UnityRenderPipeline，逻辑全在 C 层）：
 #   场景 = 色相循环动画三角(layer0 不透明) + 渐变贴图 quad(layer1 透明,
@@ -22,11 +31,22 @@ import Std;
 #   quad（layer2）同时出现在两台相机的画面中（cam0 左半 + cam1 右半
 #   重画），禁用相机1 后右半回到相机0 画面；test_image.png 经 WIC
 #   解码上传纹理并渲染（像素断言橙色）；QT 窗口展示多相机合成画面
-# Phase B QT 窗口（真实 Qt 后端；stub SKIP）：
-#   QTimer 16ms 帧循环 -> runStages（每帧完整 13 阶段）->
-#   QLabel.setPixmapRgba 填充（renderTexture 通道）-> 30s 退出 -> 帧数断言
+# Phase B QT 窗口（真实 Qt 后端；stub SKIP）—— 后端可选的交互渲染面板：
+#   顶部 4 个按钮（OpenGL / D3D11 / Vulkan / WebGL-GLES）点击即切换渲染
+#   底层（initializeBackend + 场景全量重建，管线句柄/纹理随 uninit 失效），
+#   状态栏实时显示当前后端 + 渲染器；QTimer 16ms 帧循环 ->
+#   runStages（每帧完整 13 阶段）-> QLabel.setPixmapRgba 填充；
+#   另有 4s 自动轮播（d3d11 -> vk -> gles -> gl）自动验证四后端在
+#   QT 帧循环下都能持续渲染（用户点击任一按钮后轮播停止，尊重选择）；
+#   30s 退出 -> 帧数断言 + 后端掩码断言（gl + 至少一个其他后端渲染过）
+# Phase C 3D 旋转立方体（Mesh 数学层 + RHI 动态网格通道）：
+#   Mesh.cube(1.0) 24 顶点 36 索引 -> Float32_4x4.rotationY/X(t) CPU 旋转
+#   -> 相机 -Z 朝 +Z（dist = z + 2.6）-> 手工透视除法（f=1.7）-> NDC
+#   三角形列表（painter 平均深度降序，远先画保遮挡）-> Memory.writeF32
+#   填 pos2+uv2 -> pipe.uploadMesh(slot 0)；对象 meshKind = MESH_CUSTOM(4)
+#   每帧重传，onTick 驱动自转（正方体绕 X/Y 双轴旋转，QT 16ms 帧循环）
 # ============================================================================
-public class GLRenderTest
+public class RenderTest
 {
     static SLang.QApplication _app = null
     static SLang.QLabel _label = null
@@ -39,10 +59,31 @@ public class GLRenderTest
     static Int32 _renderFrames = 0
     static Int32 _pixOk = 0
 
+    # Phase B 后端切换 UI 状态
+    static SLang.QPushButton _btnGl = null
+    static SLang.QPushButton _btnDx = null
+    static SLang.QPushButton _btnVk = null
+    static SLang.QPushButton _btnWeb = null
+    static SLang.QLabel _status = null
+    static Int32 _backendMask = 0      # gl=1 d3d11=2 vk=4 gles=8（QT 循环内渲染记账）
+    static Int32 _cycleStep = 0        # 自动轮播步进（0..3：d3d11/vk/gles/gl）
+    static bool _userPicked = false    # 用户点过按钮后停止自动轮播
+
+    # Phase C：3D 立方体状态（Mesh 库 + 动态网格通道）
+    static SLang.Mesh _cubeMesh = null       # Mesh.cube(1.0)：24 顶点 36 索引
+    static SLang.UnityRenderObject _cubeObj = null   # meshKind=4（动态网格槽 0）
+    static Int64 _cubeVerts = 0             # 36 顶点 * 16B 显存暂存（帧间复用）
+    # UV 不建表：vi%4 -> (0,0)(1,0)(1,1)(0,1)（updateCube 现场计算）
+
     # 帧循环 tick：t 推进 -> SL 侧逐阶段驱动 1..13（完整流程）-> 填 QT 窗口
     public static void onTick()
     {
+        if _pipe == null
+        {
+            ret
+        }
         _t = _t + 0.033f
+        RenderTest.updateCube( _t )
         if _pipe.runStages( _t, _pixels )
         {
             _renderFrames = _renderFrames + 1
@@ -50,7 +91,431 @@ public class GLRenderTest
             {
                 _pixOk = _pixOk + 1
             }
+            markBackendRendered()
         }
+    }
+
+    # ── Phase C：立方体每帧更新（CPU 变换 + 动态网格上传）─────────
+    # 流水线：Mesh.cube 顶点 -> rotationY/X(t) 旋转 -> 手工透视除法
+    # （相机 -Z 朝 +Z：dist = z + 2.6，焦距 f = 1.7）-> NDC 顶点 ->
+    # 12 三角形按平均深度降序排（远先画保遮挡）-> 三角形列表展开为
+    # pos2+uv2 交错（stride 16B）-> Memory.writeF32 填 _cubeVerts ->
+    # pipe.uploadMesh(0) 整块重传（GL/GLES/D3D11 重传 / VK 直写）。
+    static bool updateCube( Float32 t )
+    {
+        if _pipe == null
+        {
+            ret false
+        }
+        if _cubeMesh == null
+        {
+            ret false
+        }
+        if _cubeVerts == 0
+        {
+            ret false
+        }
+        # 模型矩阵：先绕 Y（t*0.9）再绕 X（t*0.5 + 0.4 起始倾角）
+        Float32_4x4 ry = Float32_4x4.rotationY( t * 0.9f )
+        Float32_4x4 rx = Float32_4x4.rotationX( t * 0.5f + 0.4f )
+        Float32_4x4 m = rx.multiply( ry )
+
+        Int32 nv = _cubeMesh.vertexCount
+        Array<Int32> tris = _cubeMesh.getTriangles()
+        Int32 nt = tris.length / 3
+
+        # 顶点级投影（NDC：+y 上、+x 右，与 2D 对象世界系一致）
+        Array<Float32> px = Array<Float32>( nv )
+        Array<Float32> py = Array<Float32>( nv )
+        Array<Float32> pd = Array<Float32>( nv )
+        Float32 f = 1.7f
+        Float32 camZ = 2.6f
+        Int32 i = 0
+        while i < nv
+        {
+            Float32_3 p = m.transformPoint( _cubeMesh.getVertex( i ) )
+            Float32 d = p.z + camZ
+            if d < 0.3f
+            {
+                d = 0.3f
+            }
+            px[ i ] = p.x * f / d
+            py[ i ] = p.y * f / d
+            pd[ i ] = d
+            i = i + 1
+        }
+
+        # 三角形平均深度（选择排序降序：最远在前，先画）
+        Array<Float32> tdep = Array<Float32>( nt )
+        Array<Int32> order = Array<Int32>( nt )
+        Int32 k = 0
+        while k < nt
+        {
+            Int32 i0 = tris[ k * 3 ]
+            Int32 i1 = tris[ k * 3 + 1 ]
+            Int32 i2 = tris[ k * 3 + 2 ]
+            tdep[ k ] = ( pd[ i0 ] + pd[ i1 ] + pd[ i2 ] ) / 3.0f
+            order[ k ] = k
+            k = k + 1
+        }
+        Int32 a = 0
+        while a < nt
+        {
+            Int32 best = a
+            Int32 b = a + 1
+            while b < nt
+            {
+                if tdep[ b ] > tdep[ best ]
+                {
+                    best = b
+                }
+                b = b + 1
+            }
+            if best != a
+            {
+                Float32 td = tdep[ a ]
+                tdep[ a ] = tdep[ best ]
+                tdep[ best ] = td
+                Int32 oi = order[ a ]
+                order[ a ] = order[ best ]
+                order[ best ] = oi
+            }
+            a = a + 1
+        }
+
+        # 按绘制序展开三角形列表：每顶点 16B（x, y, u, v）
+        Int32 vout = 0
+        Int32 c = 0
+        while c < nt
+        {
+            Int32 tri = order[ c ]
+            Int32 j = 0
+            while j < 3
+            {
+                Int32 vi = tris[ tri * 3 + j ]
+                # UV：面内角序 vi%4 -> 00,10,11,01
+                Int32 ci = vi % 4
+                Float32 u = 0.0f
+                Float32 v = 0.0f
+                if ci == 1
+                {
+                    u = 1.0f
+                }
+                if ci == 2
+                {
+                    u = 1.0f
+                    v = 1.0f
+                }
+                if ci == 3
+                {
+                    v = 1.0f
+                }
+                Memory.writeF32( _cubeVerts, vout * 16, px[ vi ] )
+                Memory.writeF32( _cubeVerts, vout * 16 + 4, py[ vi ] )
+                Memory.writeF32( _cubeVerts, vout * 16 + 8, u )
+                Memory.writeF32( _cubeVerts, vout * 16 + 12, v )
+                vout = vout + 1
+                j = j + 1
+            }
+            c = c + 1
+        }
+        ret _pipe.uploadMesh( 0, _cubeVerts, vout )
+    }
+
+    # QT 循环内按当前后端记账（每帧调，位或幂等）
+    static void markBackendRendered()
+    {
+        string b = SLang.Render.currentBackend()
+        if b == "gl"
+        {
+            _backendMask = _backendMask | 1
+        }
+        if b == "d3d11"
+        {
+            _backendMask = _backendMask | 2
+        }
+        if b == "vk"
+        {
+            _backendMask = _backendMask | 4
+        }
+        if b == "gles"
+        {
+            _backendMask = _backendMask | 8
+        }
+    }
+
+    # ── Phase B 后端切换核心 ──────────────────────────────────────
+    # 切换 = uninit 当前后端（管线/纹理/v1 ctx 全部释放，句柄失效）->
+    # 新后端 init + make_shared -> 场景全量重建。先置 _pipe=null 防
+    # onTick 在重建窗口期踩已释放句柄。
+    static void switchBackend( string name )
+    {
+        _pipe = null
+        _pixels = 0
+        if SLang.Render.initializeBackend( name ) == false
+        {
+            Console.println( "[ui] backend '" + name + "' unavailable - " + SLang.Render.errorString() )
+            # 请求的后端不可用：恢复默认 gl 兜底（失败则保持空场景，onTick 判空跳过）
+            if SLang.Render.initializeBackend( "gl" ) == false
+            {
+                updateStatus()
+                ret
+            }
+        }
+        else
+        {
+            Console.println( "[ui] switch -> " + name + " (" + SLang.Render.rendererInfo() + ")" )
+        }
+        if rebuildScene() == false
+        {
+            Console.println( "[ui] scene rebuild failed on '" + SLang.Render.currentBackend() + "'" )
+            updateStatus()
+            ret
+        }
+        _t = 0.0f
+        updateStatus()
+    }
+
+    # 场景全量重建（A3 同款：橙图 quad + 蓝 quad + 动画三角 + 相机1
+    # 右半 viewport + 展示用后处理）—— 每次后端切换后调用
+    static bool rebuildScene()
+    {
+        SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[ui] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.setCamera( -1, -1.0f, 1.0f, -1.0f, 1.0f ) == false
+        {
+            ret false
+        }
+        if pipe.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f ) == false
+        {
+            ret false
+        }
+        if pipe.setPostEffect( 1, 1.05f, 1.15f, 0.35f ) == false
+        {
+            ret false
+        }
+
+        # 图片贴图（相对路径按运行进程 CWD，失败回退绝对路径）
+        SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+        if imgTex == null
+        {
+            imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+        }
+        if imgTex == null
+        {
+            Console.println( "[ui] FAIL: loadFile test_image.png - " + SLang.Render.errorString() )
+            ret false
+        }
+
+        # 橙图 quad（layer2，左半）
+        SLang.UnityRenderObject imgQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        if imgQuad == null
+        {
+            ret false
+        }
+        imgQuad.setLayer( 2 )
+        imgQuad.setQueue( 2000 )
+        imgQuad.setPosition( -0.5f, 0.0f, 0.0f )
+        imgQuad.setScale( 0.7f, 0.7f )
+        imgQuad.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        imgQuad.setTexture( imgTex )
+
+        # 蓝 quad（layer0，右半）
+        SLang.UnityRenderObject blueQuad = pipe.addObject( SLang.UnityRenderPipeline.MESH_QUAD )
+        if blueQuad == null
+        {
+            ret false
+        }
+        blueQuad.setLayer( 0 )
+        blueQuad.setQueue( 2000 )
+        blueQuad.setPosition( 0.5f, 0.0f, 0.0f )
+        blueQuad.setScale( 0.6f, 0.6f )
+        blueQuad.setColor( 0.2f, 0.4f, 1.0f, 1.0f )
+
+        # 动画三角（layer1，顶部，色相循环）
+        SLang.UnityRenderObject tri = pipe.addObject( SLang.UnityRenderPipeline.MESH_TRIANGLE )
+        if tri == null
+        {
+            ret false
+        }
+        tri.setLayer( 1 )
+        tri.setQueue( 2000 )
+        tri.setPosition( 0.0f, 0.6f, 0.0f )
+        tri.setScale( 0.3f, 0.3f )
+        tri.setColor( 1.0f, 0.0f, 0.0f, 1.0f )
+        tri.setAnimated( SLang.UnityRenderPipeline.ANIM_HUE_CYCLE, 0.25f )
+
+        # 相机1：depth=10、mask 仅 layer2、viewport 右半、深绿清屏
+        SLang.UnityRenderCamera cam = pipe.addCamera( 10 )
+        if cam == null || cam.isValid == false
+        {
+            ret false
+        }
+        if cam.setCullMask( 4 ) == false || cam.setExtents( -1.0f, 1.0f, -1.0f, 1.0f ) == false
+        {
+            ret false
+        }
+        if cam.setViewport( 128, 0, 128, 256 ) == false || cam.setClearColor( 0.0f, 0.25f, 0.1f, 1.0f ) == false
+        {
+            ret false
+        }
+        if cam.setClearFlags( SLang.UnityRenderPipeline.CLEAR_COLOR | SLang.UnityRenderPipeline.CLEAR_DEPTH ) == false
+        {
+            ret false
+        }
+
+        # ── Phase C：3D 旋转立方体（Mesh.cube + 动态网格槽 0）─────
+        _cubeMesh = SLang.Mesh.cube( 1.0f )
+        if _cubeMesh == null
+        {
+            Console.println( "[ui] FAIL: Mesh.cube" )
+            ret false
+        }
+        # cube() 不带 UV：vi%4 现场计算（见 updateCube），无需建表
+        if _cubeVerts == 0
+        {
+            _cubeVerts = Memory.alloc( 36 * 16 )
+        }
+        if _cubeVerts == 0
+        {
+            Console.println( "[ui] FAIL: cube verts alloc" )
+            ret false
+        }
+        _cubeObj = pipe.addObject( SLang.UnityRenderPipeline.MESH_CUSTOM )
+        if _cubeObj == null
+        {
+            Console.println( "[ui] FAIL: cube addObject - " + SLang.Render.errorString() )
+            ret false
+        }
+        # 顶点已烘焙 NDC：位置/缩放保持单位，贴图走 imgTex，
+        # 透明队列（3000 默认）后画叠加在两个 quad 之上
+        _cubeObj.setTexture( imgTex )
+        _cubeObj.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
+        RenderTest.updateCube( _t )
+
+        Int64 px = Memory.alloc( 256 * 256 * 4 )
+        if px == 0
+        {
+            ret false
+        }
+        _pipe = pipe
+        _pixels = px
+        _texW = 256
+        _texH = 256
+        ret true
+    }
+
+    # 状态栏 + 按钮高亮（当前后端绿色）
+    static void updateStatus()
+    {
+        if _status != null
+        {
+            _status.setText( "backend: " + SLang.Render.currentBackend() + " | " + SLang.Render.rendererInfo() )
+        }
+        if _btnGl == null
+        {
+            ret
+        }
+        if _btnDx == null
+        {
+            ret
+        }
+        if _btnVk == null
+        {
+            ret
+        }
+        if _btnWeb == null
+        {
+            ret
+        }
+        string b = SLang.Render.currentBackend()
+        if b == "gl"
+        {
+            _btnGl.setStyleSheet( "background-color:#2d8f4e;color:white;font-weight:bold;" )
+        }
+        else
+        {
+            _btnGl.setStyleSheet( "" )
+        }
+        if b == "d3d11"
+        {
+            _btnDx.setStyleSheet( "background-color:#2d8f4e;color:white;font-weight:bold;" )
+        }
+        else
+        {
+            _btnDx.setStyleSheet( "" )
+        }
+        if b == "vk"
+        {
+            _btnVk.setStyleSheet( "background-color:#2d8f4e;color:white;font-weight:bold;" )
+        }
+        else
+        {
+            _btnVk.setStyleSheet( "" )
+        }
+        if b == "gles"
+        {
+            _btnWeb.setStyleSheet( "background-color:#2d8f4e;color:white;font-weight:bold;" )
+        }
+        else
+        {
+            _btnWeb.setStyleSheet( "" )
+        }
+    }
+
+    # 4 个按钮回调（无参 static，经 clicked(Function) 桥接）
+    public static void onBtnGl()
+    {
+        _userPicked = true
+        switchBackend( "gl" )
+    }
+
+    public static void onBtnDx()
+    {
+        _userPicked = true
+        switchBackend( "d3d11" )
+    }
+
+    public static void onBtnVk()
+    {
+        _userPicked = true
+        switchBackend( "vk" )
+    }
+
+    public static void onBtnWeb()
+    {
+        _userPicked = true
+        switchBackend( "gles" )
+    }
+
+    # 自动轮播（4s 一拍）：d3d11 -> vk -> gles -> gl，用户点过按钮即停
+    public static void onAutoCycle()
+    {
+        if _userPicked
+        {
+            ret
+        }
+        if _cycleStep == 0
+        {
+            switchBackend( "d3d11" )
+        }
+        elif _cycleStep == 1
+        {
+            switchBackend( "vk" )
+        }
+        elif _cycleStep == 2
+        {
+            switchBackend( "gles" )
+        }
+        elif _cycleStep == 3
+        {
+            switchBackend( "gl" )
+        }
+        _cycleStep = _cycleStep + 1
     }
 
     public static void onQuit()
@@ -63,14 +528,26 @@ public class GLRenderTest
 
     public static void main()
     {
-        Console.println( "========== GLRenderTest (SLangRender Unity-style pipeline + QT window) ==========" )
+        Console.println( "========== GLRenderTest (SLangRender RHI multi-backend + QT window) ==========" )
+        Console.println( "backends: " + SLang.Render.backendList() )
 
-        if SLang.Render.initialize() == false
+        # ── Phase D：D3D11 后端同效果（先跑，跑完切回 GL 走主流程）──
+        Int32 phaseD = runD3D11Smoke()
+
+        # ── Phase E：Vulkan 后端同效果（本机有 vulkan-1.dll 时必须全绿）──
+        Int32 phaseVk = runVkSmoke()
+
+        # ── Phase F：EGL/GLES 后端（无 GLES 运行库时优雅降级 SKIP）──
+        Int32 phaseGles = runGlesSmoke()
+
+        # 主流程：显式切回 GL 默认后端（initialize 对已初始化态幂等，
+        # 不切后端 —— 因此这里用 initializeBackend("gl") 强制切换）
+        if SLang.Render.initializeBackend( "gl" ) == false
         {
-            Console.println( "FAIL: initialize - " + SLang.Render.errorString() )
+            Console.println( "FAIL: initialize gl - " + SLang.Render.errorString() )
             ret
         }
-        Console.println( "renderer: " + SLang.Render.rendererInfo() )
+        Console.println( "backend : " + SLang.Render.currentBackend() + "  renderer: " + SLang.Render.rendererInfo() )
         Console.println( "version : " + SLang.Render.versionInfo() )
 
         bool a1 = runV1Compat()
@@ -80,6 +557,33 @@ public class GLRenderTest
 
         Int32 phaseB = runQtWindow()
 
+        string dText = "FAIL"
+        if phaseD == 2
+        {
+            dText = "PASS"
+        }
+        elif phaseD == 1
+        {
+            dText = "SKIP"
+        }
+        string vText = "FAIL"
+        if phaseVk == 2
+        {
+            vText = "PASS"
+        }
+        elif phaseVk == 1
+        {
+            vText = "SKIP"
+        }
+        string gText = "FAIL"
+        if phaseGles == 2
+        {
+            gText = "PASS"
+        }
+        elif phaseGles == 1
+        {
+            gText = "SKIP"
+        }
         string bText = "FAIL"
         if phaseB == 2
         {
@@ -90,11 +594,32 @@ public class GLRenderTest
             bText = "SKIP"
         }
         Console.println( "========== GLRenderTest summary ==========" )
-        Console.println( "phase A1 (v1 compat)     : " + ( a1 ? "PASS" : "FAIL" ) )
-        Console.println( "phase A2 (13-stage pipe) : " + ( a2 ? "PASS" : "FAIL" ) )
-        Console.println( "phase A3 (multi-cam+img) : " + ( a3 ? "PASS" : "FAIL" ) )
-        Console.println( "phase B (QT window)      : " + bText )
-        if phaseA && phaseB != 0
+        Console.println( "phase D  (d3d11 same-effect) : " + dText )
+        Console.println( "phase E  (vk same-effect)    : " + vText )
+        Console.println( "phase F  (gles graceful)     : " + gText )
+        Console.println( "phase A1 (v1 compat)         : " + ( a1 ? "PASS" : "FAIL" ) )
+        Console.println( "phase A2 (13-stage pipe)     : " + ( a2 ? "PASS" : "FAIL" ) )
+        Console.println( "phase A3 (multi-cam+img)     : " + ( a3 ? "PASS" : "FAIL" ) )
+        Console.println( "phase B  (QT window)         : " + bText )
+        # 终判：主流程全绿 + D3D11/VK 可用即 PASS，GLES 允许 SKIP（环境无 GLES 库）
+        bool allOk = phaseA
+        if phaseB == 0
+        {
+            allOk = false
+        }
+        if phaseD == 0
+        {
+            allOk = false
+        }
+        if phaseVk != 2
+        {
+            allOk = false
+        }
+        if phaseGles == 0
+        {
+            allOk = false
+        }
+        if allOk
         {
             Console.println( "GLRenderTest: PASS" )
         }
@@ -102,6 +627,89 @@ public class GLRenderTest
         {
             Console.println( "GLRenderTest: FAIL" )
         }
+    }
+
+    # ── Phase D：D3D11 后端同效果验证（返回 2=PASS 1=SKIP 0=FAIL）────
+    # 与 GL 主流程共用 A1/A2/A3 三套断言函数（完全相同的像素断言），
+    # 差异仅在后端名 —— 这就是"不同操作系统/驱动渲染一样效果"的验收。
+    static Int32 runD3D11Smoke()
+    {
+        Console.println( "-- Phase D: D3D11 backend (same-effect pixel assertions) --" )
+        if SLang.Render.initializeBackend( "d3d11" ) == false
+        {
+            Console.println( "[d3d11] SKIP: backend unavailable - " + SLang.Render.errorString() )
+            ret 1
+        }
+        Console.println( "[d3d11] renderer: " + SLang.Render.rendererInfo() )
+        Console.println( "[d3d11] version : " + SLang.Render.versionInfo() )
+        bool d1 = runV1Compat()
+        bool d2 = runPipeline()
+        bool d3 = runMultiCameraImage()
+        # 本阶段管线句柄在切回 GL 后失效：清空 QT 移交（GL 主流程会重设）
+        _pipe = null
+        _pixels = 0
+        if d1 && d2 && d3
+        {
+            Console.println( "[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            ret 2
+        }
+        Console.println( "[d3d11] Phase D: FAIL" )
+        ret 0
+    }
+
+    # ── Phase E：Vulkan 后端同效果验证（返回 2=PASS 1=SKIP 0=FAIL）────
+    # 与 Phase D 完全同构：SPIR-V 固化六组着色器 + 纯离屏 instance，
+    # v1 / 13 阶段 / 多相机三套断言全部按 GL 基准像素复检。
+    static Int32 runVkSmoke()
+    {
+        Console.println( "-- Phase E: Vulkan backend (same-effect pixel assertions) --" )
+        if SLang.Render.initializeBackend( "vk" ) == false
+        {
+            Console.println( "[vk] SKIP: backend unavailable - " + SLang.Render.errorString() )
+            ret 1
+        }
+        Console.println( "[vk] renderer: " + SLang.Render.rendererInfo() )
+        Console.println( "[vk] version : " + SLang.Render.versionInfo() )
+        bool d1 = runV1Compat()
+        bool d2 = runPipeline()
+        bool d3 = runMultiCameraImage()
+        # 切回 GL 前先清空管线句柄移交（GL 主流程会重设）
+        _pipe = null
+        _pixels = 0
+        if d1 && d2 && d3
+        {
+            Console.println( "[vk] Phase E: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            ret 2
+        }
+        Console.println( "[vk] Phase E: FAIL" )
+        ret 0
+    }
+
+    # ── Phase F：EGL/GLES 后端验证（返回 2=PASS 1=SKIP 0=FAIL）────────
+    # libEGL/libGLESv2 运行期探测：缺失时 init 优雅降级 -> SKIP；
+    # 有 GLES 运行库的机器则同断言集要求同像素 PASS。
+    static Int32 runGlesSmoke()
+    {
+        Console.println( "-- Phase F: EGL/GLES3 backend (graceful degrade when absent) --" )
+        if SLang.Render.initializeBackend( "gles" ) == false
+        {
+            Console.println( "[gles] SKIP: backend unavailable - " + SLang.Render.errorString() )
+            ret 1
+        }
+        Console.println( "[gles] renderer: " + SLang.Render.rendererInfo() )
+        Console.println( "[gles] version : " + SLang.Render.versionInfo() )
+        bool d1 = runV1Compat()
+        bool d2 = runPipeline()
+        bool d3 = runMultiCameraImage()
+        _pipe = null
+        _pixels = 0
+        if d1 && d2 && d3
+        {
+            Console.println( "[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            ret 2
+        }
+        Console.println( "[gles] Phase F: FAIL" )
+        ret 0
     }
 
     # 采样像素通道：pixels 块内 (x,y) 像素的 c 通道（0=R 1=G 2=B 3=A）
@@ -511,26 +1119,34 @@ public class GLRenderTest
         Console.println( "-- Phase A3: multi-camera (depth order + viewport split) + image file load --" )
 
         # 图片加载：坏路径 -> null；好路径 -> 纹理句柄
+        Console.println( "[dbg] A3 s1: badpath loadFile" )
         SLang.UnityRenderTexture badTex = SLang.UnityRenderTexture.loadFile( "no_such_image_file.png" )
+        Console.println( "[dbg] A3 s2: badpath ret" )
         if badTex != null
         {
             Console.println( "[cam] FAIL: loadFile should fail for missing file" )
             ret false
         }
 
+        Console.println( "[dbg] A3 s3: pipe create" )
         SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
+        Console.println( "[dbg] A3 s4: pipe create ret" )
         if pipe == null
         {
             Console.println( "[cam] FAIL: pipeline create - " + SLang.Render.errorString() )
             ret false
         }
 
+        Console.println( "[dbg] A3 s5: stat" )
         Int32 texBefore = pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT )
+        Console.println( "[dbg] A3 s6: stat ret" )
         # 相对路径依赖运行进程 CWD（package 目录），失败则回退绝对路径
-        SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/Other/GLRenderTest/test_image.png" )
+        Console.println( "[dbg] A3 s7: img loadFile" )
+        SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
+        Console.println( "[dbg] A3 s8: img loadFile ret" )
         if imgTex == null
         {
-            imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/Other/GLRenderTest/test_image.png" )
+            imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
         }
         if imgTex == null || imgTex.isValid == false
         {
@@ -725,7 +1341,10 @@ public class GLRenderTest
         ret true
     }
 
-    # ── Phase B：QT 窗口（返回 2=PASS 1=SKIP 0=FAIL）──────────────
+    # ── Phase B：QT 窗口 + 后端切换 UI（返回 2=PASS 1=SKIP 0=FAIL）──
+    # 顶部按钮行（OpenGL/D3D11/Vulkan/WebGL-GLES）点击切换渲染底层；
+    # 4s 自动轮播自动验证四后端在 QT 帧循环下持续渲染（用户点击后停）；
+    # 终判 = 帧数 + gl 位 + 至少一个其他后端位。
     static Int32 runQtWindow()
     {
         string kind = SLang.QT.backendKind()
@@ -740,24 +1359,68 @@ public class GLRenderTest
             ret 1
         }
 
-        Console.println( "-- Phase B: QT window fill (QTimer 16ms -> runStages -> QLabel.setPixmapRgba) --" )
+        Console.println( "-- Phase B: QT window + backend switcher (buttons: OpenGL/D3D11/Vulkan/WebGL-GLES; 4s auto-cycle) --" )
 
         _app = SLang.QT.newApp()
         SLang.QWidget host = SLang.QT.newWidget( 0 )
-        host.setTitle( "SLangRender UnityPipeline (anim triangle + textured quad + post)" )
-        host.resize( 296, 316 )
+        host.setTitle( "SLangRender multi-backend (click: OpenGL / D3D11 / Vulkan / WebGL)" )
+        host.resize( 296, 372 )
+
+        # 按钮行（点击即切换渲染底层）
+        _btnGl = SLang.QT.newButton( host.handle, "OpenGL" )
+        _btnGl.setGeometry( 10, 10, 64, 24 )
+        _btnDx = SLang.QT.newButton( host.handle, "D3D11" )
+        _btnDx.setGeometry( 78, 10, 64, 24 )
+        _btnVk = SLang.QT.newButton( host.handle, "Vulkan" )
+        _btnVk.setGeometry( 146, 10, 64, 24 )
+        _btnWeb = SLang.QT.newButton( host.handle, "WebGL" )
+        _btnWeb.setGeometry( 214, 10, 72, 24 )
+        _btnGl.setToolTip( "switch render backend to WGL + OpenGL 3.3" )
+        _btnDx.setToolTip( "switch render backend to Direct3D 11" )
+        _btnVk.setToolTip( "switch render backend to Vulkan (offscreen)" )
+        _btnWeb.setToolTip( "switch render backend to EGL + GLES 3.0 (WebGL stack)" )
+
+        # 状态栏（当前后端 + 渲染器）
+        _status = SLang.QT.newLabel( host.handle, "" )
+        _status.setGeometry( 10, 38, 276, 18 )
+
+        # 渲染画面
         _label = SLang.QT.newLabel( host.handle, "" )
-        _label.setGeometry( 10, 10, 276, 296 )
+        _label.setGeometry( 10, 58, 276, 296 )
         host.show()
 
+        # 信号连接（clicked -> 无参 static 回调经 Function 桥；
+        # SL 的 || 链上限 2 个运算符，逐个检查）
+        Int64 bGl = _btnGl.clicked( RenderTest.onBtnGl )
+        Int64 bDx = _btnDx.clicked( RenderTest.onBtnDx )
+        Int64 bVk = _btnVk.clicked( RenderTest.onBtnVk )
+        Int64 bWeb = _btnWeb.clicked( RenderTest.onBtnWeb )
+        if bGl == 0 || bDx == 0
+        {
+            Console.println( "[QT] FAIL: backend button signal connect (gl=" + bGl.toString() + " dx=" + bDx.toString() + ")" )
+            ret 0
+        }
+        if bVk == 0 || bWeb == 0
+        {
+            Console.println( "[QT] FAIL: backend button signal connect (vk=" + bVk.toString() + " web=" + bWeb.toString() + ")" )
+            ret 0
+        }
+
+        updateStatus()
+
         _t = 0.0f
-        SLang.QTimer quitT = SLang.QT.newTimer( 30000, true, GLRenderTest.onQuit )
-        SLang.QTimer animT = SLang.QT.newTimer( 16, false, GLRenderTest.onTick )
+        _backendMask = 0
+        _cycleStep = 0
+        _userPicked = false
+        SLang.QTimer quitT = SLang.QT.newTimer( 30000, true, RenderTest.onQuit )
+        SLang.QTimer animT = SLang.QT.newTimer( 16, false, RenderTest.onTick )
+        SLang.QTimer cycleT = SLang.QT.newTimer( 4000, false, RenderTest.onAutoCycle )
         _app.exec()
 
-        Console.println( "[QT] renderFrames=" + _renderFrames.toString() + " pixOk=" + _pixOk.toString() )
+        Console.println( "[QT] renderFrames=" + _renderFrames.toString() + " pixOk=" + _pixOk.toString() + " backendMask=" + _backendMask.toString() )
 
         animT.delete()
+        cycleT.delete()
         quitT.delete()
         host.delete()
 
@@ -766,7 +1429,13 @@ public class GLRenderTest
             Console.println( "[QT] FAIL: frame loop too slow (need >= 60 rendered + 60 filled)" )
             ret 0
         }
-        Console.println( "[QT] Phase B: PASS (13-stage renderTexture filled into QT window each frame)" )
+        # 后端掩码：gl 位必在（奇数）+ 至少一个其他后端在 QT 循环里渲染过
+        if ( _backendMask % 2 ) == 0 || _backendMask < 3
+        {
+            Console.println( "[QT] FAIL: backend switching did not render (mask=" + _backendMask.toString() + ", expect >= 3 with gl bit)" )
+            ret 0
+        }
+        Console.println( "[QT] Phase B: PASS (backend-switchable render: mask=" + _backendMask.toString() + " [gl/d3d11/vk/gles bits 1/2/4/8]; 13-stage renderTexture each frame)" )
         ret 2
     }
 }

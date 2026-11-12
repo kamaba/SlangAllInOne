@@ -1,355 +1,217 @@
-# 网格：顶点缓冲 + 索引缓冲 + 包围盒。
-# 使用 Math 库的 Float32_3 / Float32_2 与 Render 的 Color / Bounds。
-public class Mesh
+import Math;
+
+# ============================================================================
+# Mesh：三角网格数学层（顶点 / 三角形索引 / 法线，平铺存储）
+# ----------------------------------------------------------------------------
+# 顶点与法线以 Array<Float32> 平铺存储（x,y,z 交错，长度 3N），三角形索
+# 引为 Array<Int32>（长度 3T，每 3 个一组）。不引入 Color/Bounds/Ray，
+# 保持对 Core + Math 的最小依赖。
+# cube(size)：6 面 24 顶点 36 索引。每面 4 顶点按角序 (0,0)(1,0)(1,1)(0,1)
+# 排布（从面外侧看逆时针），使用方可按 vi%4 现场推导 UV；三角形为
+# (4f,4f+1,4f+2) + (4f,4f+2,4f+3)。
+# ============================================================================
+namespace SLang
 {
-    Array<Float32_3> _vertices = null
-    Array<Float32_3> _normals = null
-    Array<Float32_2> _uvs = null
-    Array<Color> _colors = null
-    Array<Int32> _triangles = null
-
-    Bounds _bounds = null
-    bool _boundsDirty = true
-
-    # ── 构造 ─────────────────────────────────────────────
-    public void _init_()
+    public class Mesh
     {
-        this._vertices = Array<Float32_3>( 0 )
-        this._normals = Array<Float32_3>( 0 )
-        this._uvs = Array<Float32_2>( 0 )
-        this._colors = Array<Color>( 0 )
-        this._triangles = Array<Int32>( 0 )
-        this._bounds = Bounds()
-        this._boundsDirty = true
-    }
+        Array<Float32> _positions = null
+        Array<Int32> _triangles = null
+        Array<Float32> _normals = null
 
-    public void _init_( Array<Float32_3> vertices, Array<Int32> triangles )
-    {
-        this._init_()
-        this.setVertices( vertices )
-        this.setTriangles( triangles )
-    }
-
-    # ── 数量 ─────────────────────────────────────────────
-    public get int vertexCount()
-    {
-        ret this._vertices.length
-    }
-
-    public get int triangleCount()
-    {
-        ret this._triangles.length / 3
-    }
-
-    public get Bounds bounds()
-    {
-        if this._boundsDirty
+        # positions：3N 平铺顶点；triangles：3T 三角形索引；法线全 0（可 recalculate）
+        public void _init_( Array<Float32> positions, Array<Int32> triangles )
         {
-            this.recalculateBounds()
-        }
-        ret this._bounds.clone()
-    }
-
-    # ── 读写 ─────────────────────────────────────────────
-    public void setVertices( Array<Float32_3> vertices )
-    {
-        this._vertices = vertices
-        this._boundsDirty = true
-    }
-
-    public Array<Float32_3> getVertices()
-    {
-        ret this._vertices
-    }
-
-    public Float32_3 getVertex( int index )
-    {
-        ret this._vertices[index]
-    }
-
-    public void setNormals( Array<Float32_3> normals )
-    {
-        this._normals = normals
-    }
-
-    public Array<Float32_3> getNormals()
-    {
-        ret this._normals
-    }
-
-    public void setUVs( Array<Float32_2> uvs )
-    {
-        this._uvs = uvs
-    }
-
-    public Array<Float32_2> getUVs()
-    {
-        ret this._uvs
-    }
-
-    public void setColors( Array<Color> colors )
-    {
-        this._colors = colors
-    }
-
-    public Array<Color> getColors()
-    {
-        ret this._colors
-    }
-
-    public void setTriangles( Array<Int32> triangles )
-    {
-        this._triangles = triangles
-        this._boundsDirty = true
-    }
-
-    public Array<Int32> getTriangles()
-    {
-        ret this._triangles
-    }
-
-    # ── 计算 ─────────────────────────────────────────────
-    # 由三角面累加法线（面积加权）
-    public void recalculateNormals()
-    {
-        int vcount = this._vertices.length
-        if vcount == 0
-        {
-            ret
+            this._positions = positions
+            this._triangles = triangles
+            this._normals = Array<Float32>( positions.length )
         }
 
-        Array<Float32_3> normals = Array<Float32_3>( vcount )
-        int i = 0
-        while i < vcount
+        # positions / triangles / normals 三参形式（normals 长度须为 3N）
+        public void _init_( Array<Float32> positions, Array<Int32> triangles, Array<Float32> normals )
         {
-            normals[i] = Float32_3.zero()
-            i++
+            this._positions = positions
+            this._triangles = triangles
+            this._normals = normals
         }
 
-        int t = 0
-        while t + 2 < this._triangles.length
+        # ── 基本属性 ─────────────────────────────────────────────
+        get int vertexCount()
         {
-            Int32 i0 = this._triangles[t]
-            Int32 i1 = this._triangles[t + 1]
-            Int32 i2 = this._triangles[t + 2]
-            Float32_3 a = this._vertices[i0]
-            Float32_3 b = this._vertices[i1]
-            Float32_3 c = this._vertices[i2]
-            Float32_3 ab = b._sub_( a )
-            Float32_3 ac = c._sub_( a )
-            Float32_3 faceNormal = ab.cross( ac )
-
-            normals[i0] = normals[i0]._add_( faceNormal )
-            normals[i1] = normals[i1]._add_( faceNormal )
-            normals[i2] = normals[i2]._add_( faceNormal ) 
-            t = t + 3
-        }
-
-        i = 0
-        while i < vcount
-        {
-            Float32 len = normals[i].length()
-            if len > 0.0f
+            if this._positions == null
             {
-                normals[i] = normals[i].normalize()
+                ret 0
             }
-            else
+            ret this._positions.length / 3
+        }
+
+        get int triangleCount()
+        {
+            if this._triangles == null
             {
-                normals[i] = Float32_3.up()
+                ret 0
             }
-            i++
+            ret this._triangles.length / 3
         }
 
-        this._normals = normals
-    }
-
-    public void recalculateBounds()
-    {
-        int vcount = this._vertices.length
-        if vcount == 0
+        # ── 顶点访问 ─────────────────────────────────────────────
+        # 越界返回零向量
+        public Float32_3 getVertex( int index )
         {
-            this._bounds = Bounds()
-            this._boundsDirty = false
-            ret
-        }
-
-        Float32_3 lo = this._vertices[0].clone()
-        Float32_3 hi = this._vertices[0].clone()
-        int i = 1
-        while i < vcount
-        {
-            lo = Vector.min3( lo, this._vertices[i] )
-            hi = Vector.max3( hi, this._vertices[i] )
-            i++
-        }
-        this._bounds = Bounds( lo, hi )
-        this._boundsDirty = false
-    }
-
-    # 对所有顶点应用矩阵变换（含法线）
-    public void transform( Float32_4x4 m )
-    {
-        int i = 0
-        while i < this._vertices.length
-        {
-            this._vertices[i] = m.transformPoint( this._vertices[i] )
-            i++
-        }
-        if this._normals != null && this._normals.length == this._vertices.length
-        {
-            i = 0
-            while i < this._normals.length
+            if index < 0 || index >= this.vertexCount()
             {
-                this._normals[i] = m.transformDirection( this._normals[i] ).normalize()
-                i++
+                ret Float32_3( 0.0f, 0.0f, 0.0f )
+            }
+            ret Float32_3( this._positions[ index * 3 ], this._positions[ index * 3 + 1 ], this._positions[ index * 3 + 2 ] )
+        }
+
+        # 越界忽略
+        public void setVertex( int index, Float32_3 v )
+        {
+            if index < 0 || index >= this.vertexCount()
+            {
+                ret
+            }
+            this._positions[ index * 3 ] = v.x
+            this._positions[ index * 3 + 1 ] = v.y
+            this._positions[ index * 3 + 2 ] = v.z
+        }
+
+        public Array<Int32> getTriangles()
+        {
+            ret this._triangles
+        }
+
+        # tri：第几个三角形（0 起）；corner：0/1/2；越界返回 -1
+        public int getTriangleIndex( int tri, int corner )
+        {
+            if tri < 0 || tri >= this.triangleCount() || corner < 0 || corner > 2
+            {
+                ret -1
+            }
+            ret this._triangles[ tri * 3 + corner ]
+        }
+
+        public Float32_3 getNormal( int index )
+        {
+            if index < 0 || index >= this.vertexCount()
+            {
+                ret Float32_3( 0.0f, 0.0f, 0.0f )
+            }
+            ret Float32_3( this._normals[ index * 3 ], this._normals[ index * 3 + 1 ], this._normals[ index * 3 + 2 ] )
+        }
+
+        public void setNormal( int index, Float32_3 n )
+        {
+            if index < 0 || index >= this.vertexCount()
+            {
+                ret
+            }
+            this._normals[ index * 3 ] = n.x
+            this._normals[ index * 3 + 1 ] = n.y
+            this._normals[ index * 3 + 2 ] = n.z
+        }
+
+        # 面法线累加到顶点后归一化（面积加权）
+        public void recalculateNormals()
+        {
+            int nv = this.vertexCount()
+            int nt = this.triangleCount()
+            int i = 0
+            while i < nv * 3
+            {
+                this._normals[ i ] = 0.0f
+                i = i + 1
+            }
+            int t = 0
+            while t < nt
+            {
+                int ia = this._triangles[ t * 3 ]
+                int ib = this._triangles[ t * 3 + 1 ]
+                int ic = this._triangles[ t * 3 + 2 ]
+                Float32_3 a = this.getVertex( ia )
+                Float32_3 b = this.getVertex( ib )
+                Float32_3 c = this.getVertex( ic )
+                Float32_3 fn = b._sub_( a ).cross( c._sub_( a ) )
+                this._normals[ ia * 3 ] = this._normals[ ia * 3 ] + fn.x
+                this._normals[ ia * 3 + 1 ] = this._normals[ ia * 3 + 1 ] + fn.y
+                this._normals[ ia * 3 + 2 ] = this._normals[ ia * 3 + 2 ] + fn.z
+                this._normals[ ib * 3 ] = this._normals[ ib * 3 ] + fn.x
+                this._normals[ ib * 3 + 1 ] = this._normals[ ib * 3 + 1 ] + fn.y
+                this._normals[ ib * 3 + 2 ] = this._normals[ ib * 3 + 2 ] + fn.z
+                this._normals[ ic * 3 ] = this._normals[ ic * 3 ] + fn.x
+                this._normals[ ic * 3 + 1 ] = this._normals[ ic * 3 + 1 ] + fn.y
+                this._normals[ ic * 3 + 2 ] = this._normals[ ic * 3 + 2 ] + fn.z
+                t = t + 1
+            }
+            int v = 0
+            while v < nv
+            {
+                Float32_3 n = this.getNormal( v ).normalize()
+                this.setNormal( v, n )
+                v = v + 1
             }
         }
-        this.recalculateBounds()
-    }
 
-    public void clear()
-    {
-        this._vertices = Array<Float32_3>( 0 )
-        this._normals = Array<Float32_3>( 0 )
-        this._uvs = Array<Float32_2>( 0 )
-        this._colors = Array<Color>( 0 )
-        this._triangles = Array<Int32>( 0 )
-        this._bounds = Bounds()
-        this._boundsDirty = true
-    }
-
-    # ── 静态工厂 ─────────────────────────────────────────
-    public static Mesh fromVerticesAndTriangles( Array<Float32_3> vertices, Array<Int32> triangles )
-    {
-        Mesh m = Mesh( vertices, triangles )
-        m.recalculateNormals()
-        m.recalculateBounds()
-        ret m
-    }
-
-    # XZ 平面上的四边形（法线 +Y），中心在原点
-    public static Mesh quad( Float32 width, Float32 height )
-    {
-        Float32 hw = width * 0.5f
-        Float32 hh = height * 0.5f
-
-        Array<Float32_3> verts = Array<Float32_3>( 4 )
-        verts[0] = Float32_3( -hw, 0.0f, -hh )
-        verts[1] = Float32_3( hw, 0.0f, -hh )
-        verts[2] = Float32_3( hw, 0.0f, hh )
-        verts[3] = Float32_3( -hw, 0.0f, hh )
-
-        Array<Float32_2> uvs = Array<Float32_2>( 4 )
-        uvs[0] = Float32_2( 0.0f, 0.0f )
-        uvs[1] = Float32_2( 1.0f, 0.0f )
-        uvs[2] = Float32_2( 1.0f, 1.0f )
-        uvs[3] = Float32_2( 0.0f, 1.0f )
-
-        Array<Int32> tris = Array<Int32>( 6 )
-        tris[0] = 0
-        tris[1] = 3
-        tris[2] = 1
-        tris[3] = 1
-        tris[4] = 3
-        tris[5] = 2
-
-        Mesh m = Mesh()
-        m.setVertices( verts )
-        m.setUVs( uvs )
-        m.setTriangles( tris )
-        m.recalculateNormals()
-        m.recalculateBounds()
-        ret m
-    }
-
-    # 立方体（每面独立顶点，便于硬边法线）
-    public static Mesh cube( Float32 size )
-    {
-        Float32 h = size * 0.5f
-        Array<Float32_3> verts = Array<Float32_3>( 24 )
-        Array<Float32_3> norms = Array<Float32_3>( 24 )
-        Array<Int32> tris = Array<Int32>( 36 )
-
-        # 6 个面：+X, -X, +Y, -Y, +Z, -Z
-        int v = 0
-        int t = 0
-        int face = 0
-        while face < 6
+        # ── 立方体工厂 ───────────────────────────────────────────
+        # 每面 4 顶点角序 (0,0)(1,0)(1,1)(0,1)（从面外看逆时针），
+        # 三角形 (4f,4f+1,4f+2) + (4f,4f+2,4f+3)；法线为面法线。
+        public static Mesh cube( Float32 size )
         {
-            Float32_3 n = Float32_3.zero()
-            Float32_3 u = Float32_3.zero()
-            Float32_3 w = Float32_3.zero()
-            if face == 0
+            Float32 hs = size * 0.5f
+            # 8 角点（编号按 x,y,z 符号位：0=(-,-,-) .. 7=(+,+,+)）
+            Array<Float32> cp = Array<Float32>( 24 )
+            cp[0] = -hs; cp[1] = -hs; cp[2] = -hs
+            cp[3] = -hs; cp[4] = -hs; cp[5] = hs
+            cp[6] = -hs; cp[7] = hs; cp[8] = -hs
+            cp[9] = -hs; cp[10] = hs; cp[11] = hs
+            cp[12] = hs; cp[13] = -hs; cp[14] = -hs
+            cp[15] = hs; cp[16] = -hs; cp[17] = hs
+            cp[18] = hs; cp[19] = hs; cp[20] = -hs
+            cp[21] = hs; cp[22] = hs; cp[23] = hs
+            # 6 面 × 4 角点索引（+Z/-Z/+X/-X/+Y/-Y）
+            Array<Int32> face = Array<Int32>( 24 )
+            face[0] = 1; face[1] = 5; face[2] = 7; face[3] = 3
+            face[4] = 4; face[5] = 0; face[6] = 2; face[7] = 6
+            face[8] = 5; face[9] = 4; face[10] = 6; face[11] = 7
+            face[12] = 0; face[13] = 1; face[14] = 3; face[15] = 2
+            face[16] = 3; face[17] = 7; face[18] = 6; face[19] = 2
+            face[20] = 0; face[21] = 4; face[22] = 5; face[23] = 1
+            # 6 面法线（+Z/-Z/+X/-X/+Y/-Y）
+            Array<Float32> fn = Array<Float32>( 18 )
+            fn[0] = 0.0f; fn[1] = 0.0f; fn[2] = 1.0f
+            fn[3] = 0.0f; fn[4] = 0.0f; fn[5] = -1.0f
+            fn[6] = 1.0f; fn[7] = 0.0f; fn[8] = 0.0f
+            fn[9] = -1.0f; fn[10] = 0.0f; fn[11] = 0.0f
+            fn[12] = 0.0f; fn[13] = 1.0f; fn[14] = 0.0f
+            fn[15] = 0.0f; fn[16] = -1.0f; fn[17] = 0.0f
+            Array<Float32> pos = Array<Float32>( 72 )
+            Array<Float32> nrm = Array<Float32>( 72 )
+            Array<Int32> tri = Array<Int32>( 36 )
+            int f = 0
+            while f < 6
             {
-                n = Float32_3( 1.0f, 0.0f, 0.0f )
-                u = Float32_3( 0.0f, 0.0f, -1.0f )
-                w = Float32_3( 0.0f, 1.0f, 0.0f )
+                int k = 0
+                while k < 4
+                {
+                    int vo = f * 4 + k
+                    int ci = face[ vo ]
+                    pos[ vo * 3 ] = cp[ ci * 3 ]
+                    pos[ vo * 3 + 1 ] = cp[ ci * 3 + 1 ]
+                    pos[ vo * 3 + 2 ] = cp[ ci * 3 + 2 ]
+                    nrm[ vo * 3 ] = fn[ f * 3 ]
+                    nrm[ vo * 3 + 1 ] = fn[ f * 3 + 1 ]
+                    nrm[ vo * 3 + 2 ] = fn[ f * 3 + 2 ]
+                    k = k + 1
+                }
+                tri[ f * 6 ] = f * 4
+                tri[ f * 6 + 1 ] = f * 4 + 1
+                tri[ f * 6 + 2 ] = f * 4 + 2
+                tri[ f * 6 + 3 ] = f * 4
+                tri[ f * 6 + 4 ] = f * 4 + 2
+                tri[ f * 6 + 5 ] = f * 4 + 3
+                f = f + 1
             }
-            elif face == 1
-            {
-                n = Float32_3( -1.0f, 0.0f, 0.0f )
-                u = Float32_3( 0.0f, 0.0f, 1.0f )
-                w = Float32_3( 0.0f, 1.0f, 0.0f )
-            }
-            elif face == 2
-            {
-                n = Float32_3( 0.0f, 1.0f, 0.0f )
-                u = Float32_3( 1.0f, 0.0f, 0.0f )
-                w = Float32_3( 0.0f, 0.0f, 1.0f )
-            }
-            elif face == 3
-            {
-                n = Float32_3( 0.0f, -1.0f, 0.0f )
-                u = Float32_3( 1.0f, 0.0f, 0.0f )
-                w = Float32_3( 0.0f, 0.0f, -1.0f )
-            }
-            elif face == 4
-            {
-                n = Float32_3( 0.0f, 0.0f, 1.0f )
-                u = Float32_3( 1.0f, 0.0f, 0.0f )
-                w = Float32_3( 0.0f, 1.0f, 0.0f )
-            }
-            else
-            {
-                n = Float32_3( 0.0f, 0.0f, -1.0f )
-                u = Float32_3( -1.0f, 0.0f, 0.0f )
-                w = Float32_3( 0.0f, 1.0f, 0.0f )
-            }
-
-            Float32_3 center = n.scale( h )
-            verts[v] = center._add_( u.scale( -h )._add_( w.scale( -h ) ) ) as Float32_3
-            verts[v + 1] = center._add_( u.scale( h )._add_( w.scale( -h ) ) ) as Float32_3
-            verts[v + 2] = center._add_( u.scale( h )._add_( w.scale( h ) ) ) as Float32_3
-            verts[v + 3] = center._add_( u.scale( -h )._add_( w.scale( h ) ) ) as Float32_3
-
-            norms[v] = n
-            norms[v + 1] = n
-            norms[v + 2] = n
-            norms[v + 3] = n
-
-            tris[t] = v
-            tris[t + 1] = v + 1
-            tris[t + 2] = v + 2
-            tris[t + 3] = v
-            tris[t + 4] = v + 2
-            tris[t + 5] = v + 3
-
-            v = v + 4
-            t = t + 6
-            face = face + 1
+            ret Mesh( pos, tri, nrm )
         }
-
-        Mesh m = Mesh()
-        m.setVertices( verts )
-        m.setNormals( norms )
-        m.setTriangles( tris )
-        m.recalculateBounds()
-        ret m
-    }
-
-    override string toString()
-    {
-        ret String.toFormat( "Mesh(verts={0}, tris={1})",
-            this._vertices.length.toString(), this._triangles.length.toString() )
     }
 }

@@ -44,7 +44,7 @@ static HMODULE s_hfxc = NULL;
 /* ===================================================================== */
 /* 后端私有状态                                                           */
 /* ===================================================================== */
-struct slr_rhi_target           /* D3D11 渲染目标 = 颜色纹理 + RTV/SRV + 可选深度 */
+struct SlrRhiTarget           /* D3D11 渲染目标 = 颜色纹理 + RTV/SRV + 可选深度 */
 {
     int w, h;
     ID3D11Texture2D* tex;                 /* 颜色纹理（回读 CopyResource 源）*/
@@ -58,7 +58,7 @@ typedef struct                  /* D3D11 纹理 = 纹理 + SRV */
 {
     ID3D11Texture2D* tex;
     ID3D11ShaderResourceView* srv;
-} d3d_texture;
+} D3dTexture;
 
 static ID3D11Device*        s_dev = NULL;
 static ID3D11DeviceContext* s_ctx = NULL;
@@ -104,8 +104,8 @@ static ID3D11Texture2D* s_stage = NULL;
 static int s_stage_w = 0, s_stage_h = 0;
 
 /* 常量缓冲上传辅助结构 */
-typedef struct { int obj; float pad[3]; } d3d_perobj;               /* 16B  */
-typedef struct { float mvp[16]; float color[4]; } d3d_perv1;        /* 80B  */
+typedef struct { int obj; float pad[3]; } D3dPerObj;               /* 16B  */
+typedef struct { float mvp[16]; float color[4]; } D3dPerV1;        /* 80B  */
 
 /* ===================================================================== */
 /* HLSL 着色器（SM5；cbuffer 布局与 GLSL std140 逐字节一致，列主序）       */
@@ -462,12 +462,12 @@ static void d3d_free_shared(void)
 /* ===================================================================== */
 /* 渲染目标 / 纹理                                                         */
 /* ===================================================================== */
-static slr_rhi_target* d3d_target_create(int w, int h, int with_depth)
+static SlrRhiTarget* d3d_target_create(int w, int h, int with_depth)
 {
     D3D11_TEXTURE2D_DESC td;
     D3D11_SHADER_RESOURCE_VIEW_DESC sv;
     D3D11_DEPTH_STENCIL_VIEW_DESC dv;
-    slr_rhi_target* t = (slr_rhi_target*)malloc(sizeof(slr_rhi_target));
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
     memset(t, 0, sizeof(*t));
     t->w = w; t->h = h;
@@ -514,7 +514,7 @@ fail:
     return NULL;
 }
 
-static void d3d_target_destroy(slr_rhi_target* t)
+static void d3d_target_destroy(SlrRhiTarget* t)
 {
     if (!t) return;
     if (t->dsv) t->dsv->Release();
@@ -532,7 +532,7 @@ static void* d3d_texture_create(int w, int h, const unsigned char* rgba)
     D3D11_TEXTURE2D_DESC td;
     D3D11_SUBRESOURCE_DATA sd;
     D3D11_SHADER_RESOURCE_VIEW_DESC sv;
-    d3d_texture* t = (d3d_texture*)malloc(sizeof(d3d_texture));
+    D3dTexture* t = (D3dTexture*)malloc(sizeof(D3dTexture));
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
     memset(t, 0, sizeof(*t));
 
@@ -571,7 +571,7 @@ static void* d3d_texture_create(int w, int h, const unsigned char* rgba)
 
 static void d3d_texture_destroy(void* tex)
 {
-    d3d_texture* t = (d3d_texture*)tex;
+    D3dTexture* t = (D3dTexture*)tex;
     if (!t) return;
     if (t->srv) t->srv->Release();
     if (t->tex) t->tex->Release();
@@ -617,7 +617,7 @@ static void d3d_set_state(int transparent)
 }
 
 /* 阶段 1：整幅清 + 不透明初始状态 */
-static void d3d_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
+static void d3d_begin_scene(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     d3d_unbind_srv();
     s_ctx->OMSetRenderTargets(1, &t->rtv, t->dsv);
@@ -630,7 +630,7 @@ static void d3d_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
 /* 阶段 7/9 逐相机：视口（GL 左下原点 -> D3D 顶部原点换算）+ 局部清屏。
  * Clear* 只能整目标清 -> 用"清屏 quad"模拟：视口即相机矩形，画 clip z=1
  * 的全屏三角，深度 ALWAYS 写 1.0（= 远平面），颜色按需写屏蔽。 */
-static void d3d_camera_begin(slr_rhi_target* t, int x, int y, int w, int h,
+static void d3d_camera_begin(SlrRhiTarget* t, int x, int y, int w, int h,
                              int target_h, int clear_flags, const float* clear)
 {
     D3D11_VIEWPORT vp;
@@ -669,11 +669,11 @@ static void d3d_upload_perdraw(const void* data, int bytes)
 
 static void d3d_draw_item(int prog, int slot, int mesh, void* tex)
 {
-    d3d_perobj obj;
+    D3dPerObj obj;
     UINT stride = 16, offset = 0;
     ID3D11Buffer* vb;
     UINT vcount;
-    ID3D11ShaderResourceView* srv = tex ? ((d3d_texture*)tex)->srv : NULL;
+    ID3D11ShaderResourceView* srv = tex ? ((D3dTexture*)tex)->srv : NULL;
 
     /* mesh 0..3 静态网格；4..4+SLR_CUSTOM_MESHES-1 动态网格（mesh_upload 上传）*/
     if (mesh >= 4)
@@ -744,7 +744,7 @@ static int d3d_mesh_upload(int slot, const float* verts, int vert_count)
 }
 
 /* 阶段 11：scene -> post（enabled=0 纯拷贝）*/
-static void d3d_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
+static void d3d_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                              int enabled, float bright, float sat, float vig)
 {
     UINT stride = 16, offset = 0;
@@ -775,7 +775,7 @@ static void d3d_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, in
 }
 
 /* 阶段 12：post -> final 全屏拷贝 */
-static void d3d_blit(slr_rhi_target* dst, slr_rhi_target* src, int w, int h)
+static void d3d_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
 {
     UINT stride = 16, offset = 0;
     d3d_unbind_srv();
@@ -794,7 +794,7 @@ static void d3d_blit(slr_rhi_target* dst, slr_rhi_target* src, int w, int h)
 }
 
 /* 阶段 13：回读（staging 天然 top-down，直接逐行拷）*/
-static void d3d_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
+static void d3d_readback(SlrRhiTarget* t, int w, int h, int64_t dst_ptr)
 {
     unsigned char* buf = (unsigned char*)(intptr_t)dst_ptr;
     D3D11_TEXTURE2D_DESC td;
@@ -836,7 +836,7 @@ static void d3d_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
 /* ===================================================================== */
 /* v1 直连 pass                                                           */
 /* ===================================================================== */
-static void d3d_v1_clear(slr_rhi_target* t, int w, int h, const float* clear)
+static void d3d_v1_clear(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     d3d_unbind_srv();
     s_ctx->OMSetRenderTargets(1, &t->rtv, t->dsv);
@@ -845,10 +845,10 @@ static void d3d_v1_clear(slr_rhi_target* t, int w, int h, const float* clear)
     if (t->dsv) s_ctx->ClearDepthStencilView(t->dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-static void d3d_v1_draw(slr_rhi_target* t, int w, int h,
+static void d3d_v1_draw(SlrRhiTarget* t, int w, int h,
                         int prog, const float* mvp, const float* color, void* tex)
 {
-    d3d_perv1 v1;
+    D3dPerV1 v1;
     memcpy(v1.mvp, mvp, sizeof(v1.mvp));
     memcpy(v1.color, color, sizeof(v1.color));
     d3d_cb_update(s_cb_v1, &v1, sizeof(v1));
@@ -949,7 +949,7 @@ static void d3d_exit(void) { LeaveCriticalSection(&s_lock); }
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
-static const slr_rhi s_rhi_d3d11 =
+static const SlrRhi s_rhi_d3d11 =
 {
     "d3d11",
     d3d_init,
@@ -976,5 +976,5 @@ static const slr_rhi s_rhi_d3d11 =
     d3d_v1_draw,
 };
 
-const slr_rhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }
+const SlrRhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }
 

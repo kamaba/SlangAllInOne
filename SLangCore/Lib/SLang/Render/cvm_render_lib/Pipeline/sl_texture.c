@@ -12,9 +12,9 @@
 #pragma comment(lib, "uuid.lib")
 #include "sl_render_internal.h"
 
-slr_texres s_textures[SLR_MAX_TEX];
+SlrTexRes s_textures[SLR_MAX_TEX];
 
-slr_texres* tex_from_handle(int64_t h)
+SlrTexRes* tex_from_handle(int64_t h)
 {
     int i = (int)(h - 1);
     if (h <= 0 || i >= SLR_MAX_TEX || !s_textures[i].used) return NULL;
@@ -41,7 +41,7 @@ static int64_t texture_register(int w, int h, const unsigned char* topdown)
     for (i = 0; i < SLR_MAX_TEX; i++)
     {
         if (s_textures[i].used) continue;
-        memset(&s_textures[i], 0, sizeof(slr_texres));
+        memset(&s_textures[i], 0, sizeof(SlrTexRes));
         s_textures[i].used = 1; s_textures[i].w = w; s_textures[i].h = h;
         s_textures[i].rhi_tex = rhi_tex;
         return (int64_t)(i + 1);
@@ -135,12 +135,12 @@ done:
 
 int slr_texture_destroy(int64_t tex)
 {
-    slr_texres* t;
+    SlrTexRes* t;
     if (!rhi_enter()) return 0;
     t = tex_from_handle(tex);
     if (!t) { set_error(SLR_E_TEXTURE); rhi_exit(); return 0; }
     g_rhi->texture_destroy(t->rhi_tex);
-    memset(t, 0, sizeof(slr_texres));
+    memset(t, 0, sizeof(SlrTexRes));
     rhi_exit();
     return 1;
 }

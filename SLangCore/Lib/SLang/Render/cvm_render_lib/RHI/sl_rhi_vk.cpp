@@ -750,7 +750,7 @@ static PFN_vkGetInstanceProcAddr pfnEntry = NULL;
 /* ===================================================================== */
 /* 后端私有状态                                                           */
 /* ===================================================================== */
-struct slr_rhi_target
+struct SlrRhiTarget
 {
     int w, h, has_depth;
     VkImage color;      VkDeviceMemory color_mem;  VkImageView color_view;
@@ -765,7 +765,7 @@ typedef struct
     VkImage img; VkDeviceMemory mem; VkImageView view;
     VkDescriptorSet set_sampler;          /* DSL_SAMPLER（v1 TEX/blit/post）*/
     VkDescriptorSet set_pipe_tex;         /* DSL_PIPE_TEX（PTEX）           */
-} vk_texture;
+} VkTexture;
 
 static VkInstance       s_inst = NULL;
 static VkPhysicalDevice s_phys = NULL;
@@ -827,7 +827,7 @@ enum
 /* 记录状态（即时风格分段提交）*/
 static int              s_recording = 0;
 static int              s_pass_open = 0;
-static slr_rhi_target* s_pass_t = NULL;
+static SlrRhiTarget* s_pass_t = NULL;
 static int              s_trans = 0;
 
 static CRITICAL_SECTION s_lock;
@@ -1050,7 +1050,7 @@ static void vk_write_perdraw_set(VkDescriptorSet set)
     memset(&bi, 0, sizeof(bi));
     bi.buffer = s_ubo_draw;
     bi.offset = 0;
-    bi.range = sizeof(slr_perdraw);
+    bi.range = sizeof(SlrPerDraw);
     memset(&w, 0, sizeof(w));
     w.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     w.dstSet = set;
@@ -1070,7 +1070,7 @@ static void vk_write_pipe_tex_set(VkDescriptorSet set, VkImageView view)
     memset(&bi, 0, sizeof(bi));
     bi.buffer = s_ubo_draw;
     bi.offset = 0;
-    bi.range = sizeof(slr_perdraw);
+    bi.range = sizeof(SlrPerDraw);
     memset(&ii, 0, sizeof(ii));
     ii.sampler = s_sampler;
     ii.imageView = view;
@@ -1161,7 +1161,7 @@ static void vk_barrier_image(VkImage img, uint32_t old_layout, uint32_t new_layo
 }
 
 /* 渲染目标颜色布局转换 + 记账 */
-static void vk_transition_target(slr_rhi_target* t, uint32_t new_layout)
+static void vk_transition_target(SlrRhiTarget* t, uint32_t new_layout)
 {
     if (t->layout == new_layout) return;
     if (t->layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL ||
@@ -1205,7 +1205,7 @@ static void vk_full_vp_scissor(int w, int h)
 /* clear != NULL：rp_depth 全幅清（颜色 + 深度 1.0）
  * clear == NULL：带深度目标走 rp_depth_nc（LOAD 续画，等价 GL 重绑 FBO），
  *                 无深度目标走 rp_color；回读态先转回 COLOR_ATTACHMENT。 */
-static void vk_open_pass(slr_rhi_target* t, int w, int h, const float* clear)
+static void vk_open_pass(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     VkRenderPassBeginInfo bi;
     VkClearValue cv[2];
@@ -1595,7 +1595,7 @@ static int vk_make_shared(void)
         return 0;
 
     /* ---- PerDraw UBO（持久映射，0x10 = UNIFORM_BUFFER usage）+ PFLAT 描述符集 ---- */
-    if (!vk_make_buffer(&s_ubo_draw, &s_ubo_draw_mem, sizeof(slr_perdraw), 0x10,
+    if (!vk_make_buffer(&s_ubo_draw, &s_ubo_draw_mem, sizeof(SlrPerDraw), 0x10,
                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
                         &s_ubo_draw_ptr, &s_ubo_coherent))
         return 0;
@@ -1756,14 +1756,14 @@ static void vk_free_shared(void)
 /* ===================================================================== */
 /* 渲染目标 / 纹理                                                         */
 /* ===================================================================== */
-static slr_rhi_target* vk_target_create(int w, int h, int with_depth)
+static SlrRhiTarget* vk_target_create(int w, int h, int with_depth)
 {
-    slr_rhi_target* t;
+    SlrRhiTarget* t;
     VkFramebufferCreateInfo fi;
     VkImageView views[2];
 
     vk_flush_pending();
-    t = (slr_rhi_target*)malloc(sizeof(slr_rhi_target));
+    t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
     memset(t, 0, sizeof(*t));
     t->w = w; t->h = h;
@@ -1820,7 +1820,7 @@ fail:
     return NULL;
 }
 
-static void vk_target_destroy(slr_rhi_target* t)
+static void vk_target_destroy(SlrRhiTarget* t)
 {
     if (!t) return;
     vk_flush_pending();
@@ -1835,12 +1835,12 @@ static void vk_target_destroy(slr_rhi_target* t)
  * VK 纹理行 0 = 首数据行，采样 v=0 -> 首行，与 GL t=0 / D3D v=0 语义一致 */
 static void* vk_texture_create(int w, int h, const unsigned char* rgba)
 {
-    vk_texture* t;
+    VkTexture* t;
     VkDeviceSize need = (VkDeviceSize)w * h * 4;
     VkBufferImageCopy cp;
 
     vk_flush_pending();
-    t = (vk_texture*)malloc(sizeof(vk_texture));
+    t = (VkTexture*)malloc(sizeof(VkTexture));
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
     memset(t, 0, sizeof(*t));
 
@@ -1888,7 +1888,7 @@ fail:
 
 static void vk_texture_destroy(void* tex)
 {
-    vk_texture* t = (vk_texture*)tex;
+    VkTexture* t = (VkTexture*)tex;
     if (!t) return;
     vk_flush_pending();
     if (t->set_sampler) p_vkFreeDescriptorSets(s_dev, s_descpool, 1, &t->set_sampler);
@@ -1901,7 +1901,7 @@ static void vk_texture_destroy(void* tex)
 /* 管线 pass                                                              */
 /* ===================================================================== */
 /* 阶段 1：整幅清（render pass 载入清）+ 不透明初始状态 */
-static void vk_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
+static void vk_begin_scene(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     vk_flush_pending();
     if (!vk_ensure_recording()) return;
@@ -1911,7 +1911,7 @@ static void vk_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
 
 /* 阶段 7/9 逐相机：视口（GL 左下原点 -> VK 顶部原点换算，同 D3D11）+
  * 矩形级局部清（vkCmdClearAttachments 不受 scissor 限制，正合相机清屏）*/
-static void vk_camera_begin(slr_rhi_target* t, int x, int y, int w, int h,
+static void vk_camera_begin(SlrRhiTarget* t, int x, int y, int w, int h,
                             int target_h, int clear_flags, const float* clear)
 {
     VkViewport vp;
@@ -2006,7 +2006,7 @@ static void vk_draw_item(int prog, int slot, int mesh, void* tex)
     {
         if (!tex) { set_error(SLR_E_TEXTURE); return; }
         idx = s_trans ? VKP_PTEX_T : VKP_PTEX_O;
-        set = ((vk_texture*)tex)->set_pipe_tex;
+        set = ((VkTexture*)tex)->set_pipe_tex;
     }
     else
     {
@@ -2072,7 +2072,7 @@ static int vk_mesh_upload(int slot, const float* verts, int vert_count)
 }
 
 /* 全屏 pass（post / blit 共用）：flush 前段 -> 采样屏障 -> 自含 pass */
-static void vk_full_pass(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
+static void vk_full_pass(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                          int enabled, float bright, float sat, float vig)
 {
     int idx = enabled ? VKP_POST : VKP_BLIT;
@@ -2102,19 +2102,19 @@ static void vk_full_pass(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
     dst->layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }
 
-static void vk_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
+static void vk_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                             int enabled, float bright, float sat, float vig)
 {
     vk_full_pass(dst, src, w, h, enabled, bright, sat, vig);
 }
 
-static void vk_blit(slr_rhi_target* dst, slr_rhi_target* src, int w, int h)
+static void vk_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
 {
     vk_full_pass(dst, src, w, h, 0, 0.0f, 0.0f, 0.0f);
 }
 
 /* 阶段 13：回读（行 0 = 图像顶部，紧密行距，直接 memcpy）*/
-static void vk_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
+static void vk_readback(SlrRhiTarget* t, int w, int h, int64_t dst_ptr)
 {
     unsigned char* buf = (unsigned char*)(intptr_t)dst_ptr;
     VkDeviceSize need = (VkDeviceSize)w * h * 4;
@@ -2149,14 +2149,14 @@ static void vk_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
 /* ===================================================================== */
 /* v1 直连 pass                                                           */
 /* ===================================================================== */
-static void vk_v1_clear(slr_rhi_target* t, int w, int h, const float* clear)
+static void vk_v1_clear(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     vk_flush_pending();
     if (!vk_ensure_recording()) return;
     vk_open_pass(t, w, h, clear);
 }
 
-static void vk_v1_draw(slr_rhi_target* t, int w, int h,
+static void vk_v1_draw(SlrRhiTarget* t, int w, int h,
                        int prog, const float* mvp, const float* color, void* tex)
 {
     int idx;
@@ -2184,7 +2184,7 @@ static void vk_v1_draw(slr_rhi_target* t, int w, int h,
                          0, sizeof(pc), &pc);
     if (idx == VKP_V1_TEX)
     {
-        set = ((vk_texture*)tex)->set_sampler;
+        set = ((VkTexture*)tex)->set_sampler;
         p_vkCmdBindDescriptorSets(s_cmd, (VkPipelineBindPoint)VK_PIPELINE_BIND_POINT_GRAPHICS,
                                   s_pl_layouts[idx], 0, 1, &set, 0, NULL);
     }
@@ -2409,7 +2409,7 @@ static void vk_exit(void) { LeaveCriticalSection(&s_lock); }
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
-static const slr_rhi s_rhi_vk =
+static const SlrRhi s_rhi_vk =
 {
     "vk",
     vk_init,
@@ -2436,4 +2436,4 @@ static const slr_rhi s_rhi_vk =
     vk_v1_draw,
 };
 
-const slr_rhi* slr_rhi_vk(void) { return &s_rhi_vk; }
+const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

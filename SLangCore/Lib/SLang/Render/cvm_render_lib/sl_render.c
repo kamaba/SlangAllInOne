@@ -21,7 +21,7 @@
 /* 全局状态                                                               */
 /* ===================================================================== */
 int         s_ready = 0;
-slr_perdraw s_perdraw;
+SlrPerDraw s_perdraw;
 
 static int  s_last_error = SLR_OK;
 static char s_err_detail[256] = { 0 };
@@ -33,10 +33,10 @@ static char s_backend_str[32] = "none";
 typedef struct
 {
     int used, w, h;
-    slr_rhi_target* rt;
+    SlrRhiTarget* rt;
     int64_t frame_count;
-} slr_ctx;
-static slr_ctx s_ctxs[SLR_MAX_CTX];
+} SlrCtx;
+static SlrCtx s_ctxs[SLR_MAX_CTX];
 
 /* ===================================================================== */
 /* 错误处理（粘性）                                                       */
@@ -88,11 +88,11 @@ static void mat4_identity(float* m)
 typedef struct
 {
     const char* name;
-    const slr_rhi* (*get)(void);
-} slr_backend_entry;
+    const SlrRhi* (*get)(void);
+} SlrBackendEntry;
 
 /* 全部后端静态注册（初始化失败 = 当前环境不可用，init 返回 0 降级）*/
-static const slr_backend_entry s_backends[] =
+static const SlrBackendEntry s_backends[] =
 {
     { "gl",    slr_rhi_gl    },
     { "d3d11", slr_rhi_d3d11 },
@@ -102,9 +102,9 @@ static const slr_backend_entry s_backends[] =
 
 #define SLR_BACKEND_COUNT (sizeof(s_backends) / sizeof(s_backends[0]))
 
-const slr_rhi* g_rhi = NULL;
+const SlrRhi* g_rhi = NULL;
 
-static const slr_backend_entry* backend_find(const char* name)
+static const SlrBackendEntry* backend_find(const char* name)
 {
     size_t i;
     if (!name || !name[0]) return NULL;
@@ -114,7 +114,7 @@ static const slr_backend_entry* backend_find(const char* name)
 }
 
 /* 统一初始化路径：设备就绪 -> 共享资源 -> 状态置位 */
-static int backend_startup(const slr_backend_entry* e)
+static int backend_startup(const SlrBackendEntry* e)
 {
     if (!e->get())
     {
@@ -150,7 +150,7 @@ int slr_init(void)
 
 int slr_init_backend(const char* backend_utf8)
 {
-    const slr_backend_entry* e;
+    const SlrBackendEntry* e;
     s_last_error = SLR_OK;
     e = backend_find(backend_utf8);
     if (!e)
@@ -219,7 +219,7 @@ const char* slr_backend_list(void)
 /* v1：RenderContext（直连渲染目标，对应 Render.sl 的 RenderContext 门面）  */
 /* ===================================================================== */
 
-static slr_ctx* ctx_from_handle(int64_t h)
+static SlrCtx* ctx_from_handle(int64_t h)
 {
     int i = (int)(h - 1);
     if (h <= 0 || i >= SLR_MAX_CTX || !s_ctxs[i].used) return NULL;
@@ -235,9 +235,9 @@ int64_t slr_context_create(int w, int h)
     {
         if (!s_ctxs[i].used)
         {
-            slr_rhi_target* rt = g_rhi->target_create(w, h, 1);
+            SlrRhiTarget* rt = g_rhi->target_create(w, h, 1);
             if (!rt) { rhi_exit(); return 0; }
-            memset(&s_ctxs[i], 0, sizeof(slr_ctx));
+            memset(&s_ctxs[i], 0, sizeof(SlrCtx));
             s_ctxs[i].used = 1; s_ctxs[i].w = w; s_ctxs[i].h = h;
             s_ctxs[i].rt = rt;
             rhi_exit();
@@ -251,20 +251,20 @@ int64_t slr_context_create(int w, int h)
 
 int slr_context_destroy(int64_t ctx)
 {
-    slr_ctx* c;
+    SlrCtx* c;
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); rhi_exit(); return 0; }
     g_rhi->target_destroy(c->rt);
-    memset(c, 0, sizeof(slr_ctx));
+    memset(c, 0, sizeof(SlrCtx));
     rhi_exit();
     return 1;
 }
 
 int slr_context_resize(int64_t ctx, int w, int h)
 {
-    slr_ctx* c;
-    slr_rhi_target* rt;
+    SlrCtx* c;
+    SlrRhiTarget* rt;
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); rhi_exit(); return 0; }
@@ -279,28 +279,28 @@ int slr_context_resize(int64_t ctx, int w, int h)
 
 int slr_context_width(int64_t ctx)
 {
-    slr_ctx* c = ctx_from_handle(ctx);
+    SlrCtx* c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); return 0; }
     return c->w;
 }
 
 int slr_context_height(int64_t ctx)
 {
-    slr_ctx* c = ctx_from_handle(ctx);
+    SlrCtx* c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); return 0; }
     return c->h;
 }
 
 int64_t slr_frame_count(int64_t ctx)
 {
-    slr_ctx* c = ctx_from_handle(ctx);
+    SlrCtx* c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); return 0; }
     return c->frame_count;
 }
 
 int slr_clear(int64_t ctx, float r, float g, float b, float a)
 {
-    slr_ctx* c;
+    SlrCtx* c;
     float clear[4];
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);
@@ -313,7 +313,7 @@ int slr_clear(int64_t ctx, float r, float g, float b, float a)
 
 int slr_draw_triangle(int64_t ctx, float r, float g, float b)
 {
-    slr_ctx* c;
+    SlrCtx* c;
     float ident[16], color[4];
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);
@@ -327,7 +327,7 @@ int slr_draw_triangle(int64_t ctx, float r, float g, float b)
 
 int slr_read_pixels(int64_t ctx, int64_t dst_ptr)
 {
-    slr_ctx* c;
+    SlrCtx* c;
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);
     if (!c) { set_error(SLR_E_BAD_HANDLE); rhi_exit(); return 0; }
@@ -339,7 +339,7 @@ int slr_read_pixels(int64_t ctx, int64_t dst_ptr)
 
 int slr_render_frame(int64_t ctx, float r, float g, float b, int64_t dst_ptr)
 {
-    slr_ctx* c;
+    SlrCtx* c;
     float ident[16], color[4], clear[4];
     if (!rhi_enter()) return 0;
     c = ctx_from_handle(ctx);

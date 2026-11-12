@@ -7,7 +7,7 @@
  * ========================================================================= */
 #include "sl_render_internal.h"
 
-static slr_camera* cam_from_handle(slr_pipeline* p, int64_t ch)
+static SlrCamera* cam_from_handle(SlrPipeline* p, int64_t ch)
 {
     int i = (int)(ch - 1);
     if (ch <= 0 || i >= SLR_MAX_CAMERAS || !p->cameras[i].used) return NULL;
@@ -16,16 +16,16 @@ static slr_camera* cam_from_handle(slr_pipeline* p, int64_t ch)
 
 int64_t slr_camera_create(int64_t h, int depth)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int i;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     for (i = 0; i < SLR_MAX_CAMERAS; i++)
     {
-        slr_camera* c;
+        SlrCamera* c;
         if (p->cameras[i].used) continue;
         c = &p->cameras[i];
-        memset(c, 0, sizeof(slr_camera));
+        memset(c, 0, sizeof(SlrCamera));
         c->used = 1;
         c->enabled = 1;
         c->depth = depth;
@@ -44,19 +44,19 @@ int64_t slr_camera_create(int64_t h, int depth)
 
 int slr_camera_destroy(int64_t h, int64_t ch)
 {
-    slr_pipeline* p;
-    slr_camera* c;
+    SlrPipeline* p;
+    SlrCamera* c;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     if (ch == 1) { set_error(SLR_E_BAD_PARAM); return 0; }  /* 默认相机不可销毁 */
     c = cam_from_handle(p, ch);
     if (!c) { set_error(SLR_E_BAD_HANDLE); return 0; }
-    memset(c, 0, sizeof(slr_camera));
+    memset(c, 0, sizeof(SlrCamera));
     p->camera_count--;
     return 1;
 }
 
-static int cam_set_common(int64_t h, int64_t ch, slr_pipeline** pp, slr_camera** cc)
+static int cam_set_common(int64_t h, int64_t ch, SlrPipeline** pp, SlrCamera** cc)
 {
     *pp = pipe_from_handle(h);
     if (!*pp) { set_error(SLR_E_PIPELINE); return 0; }
@@ -67,7 +67,7 @@ static int cam_set_common(int64_t h, int64_t ch, slr_pipeline** pp, slr_camera**
 
 int slr_camera_set_enabled(int64_t h, int64_t ch, int enabled)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->enabled = enabled ? 1 : 0;
     return 1;
@@ -75,7 +75,7 @@ int slr_camera_set_enabled(int64_t h, int64_t ch, int enabled)
 
 int slr_camera_set_depth(int64_t h, int64_t ch, int depth)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->depth = depth;
     return 1;
@@ -83,7 +83,7 @@ int slr_camera_set_depth(int64_t h, int64_t ch, int depth)
 
 int slr_camera_set_cull_mask(int64_t h, int64_t ch, int mask)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->cull_mask = mask;
     return 1;
@@ -91,7 +91,7 @@ int slr_camera_set_cull_mask(int64_t h, int64_t ch, int mask)
 
 int slr_camera_set_extents(int64_t h, int64_t ch, float l, float r, float b, float t)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->cam_l = l; c->cam_r = r; c->cam_b = b; c->cam_t = t;
     return 1;
@@ -99,7 +99,7 @@ int slr_camera_set_extents(int64_t h, int64_t ch, float l, float r, float b, flo
 
 int slr_camera_set_viewport(int64_t h, int64_t ch, int x, int y, int w, int hh)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     if (x < 0 || y < 0 || w <= 0 || hh <= 0) { set_error(SLR_E_BAD_PARAM); return 0; }
     c->vp_x = x; c->vp_y = y; c->vp_w = w; c->vp_h = hh;
@@ -108,7 +108,7 @@ int slr_camera_set_viewport(int64_t h, int64_t ch, int x, int y, int w, int hh)
 
 int slr_camera_set_clear_color(int64_t h, int64_t ch, float r, float g, float b, float a)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->clear_color[0] = r; c->clear_color[1] = g;
     c->clear_color[2] = b; c->clear_color[3] = a;
@@ -117,7 +117,7 @@ int slr_camera_set_clear_color(int64_t h, int64_t ch, float r, float g, float b,
 
 int slr_camera_set_clear_flags(int64_t h, int64_t ch, int flags)
 {
-    slr_pipeline* p; slr_camera* c;
+    SlrPipeline* p; SlrCamera* c;
     if (!cam_set_common(h, ch, &p, &c)) return 0;
     c->clear_flags = flags & (SLR_CLEAR_COLOR | SLR_CLEAR_DEPTH);
     return 1;
@@ -125,7 +125,7 @@ int slr_camera_set_clear_flags(int64_t h, int64_t ch, int flags)
 
 int slr_camera_count(int64_t h)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     return p->camera_count;
 }

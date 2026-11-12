@@ -156,11 +156,55 @@ label.setPixmapRgba( pixels, 256, 256 )   # RGBA8 top-down 块 -> QImage -> QPix
 **顶行在前**（top-down；glReadPixels 的 bottom-up 行序已在 C 库内逐行翻转），
 块大小 `w * h * 4`，与 QImage `Format_RGBA8888` 直接对接。
 
+## v3.1：Mesh 数学层 + 动态网格通道（3D/程序化几何）
+
+`Mesh.sl`（namespace `SLang`）提供 CPU 侧网格容器：`Array<Float32>` 顶点/法线 +
+`Array<Int32>` 三角索引，`Mesh.cube(size)` 工厂产出 24 顶点 36 索引的立方体
+（每面独立 4 角点 + 面法线，无 UV——UV 在绘制端按 `vi % 4` 现场计算）。
+
+```csharp
+import SLangRender;   # Mesh 在 SLang 命名空间，import SLangRender 后 SLang.Mesh 可见
+import Math;          # Float32_3 / Float32_4x4 在 Math 命名空间，必须显式 import
+
+SLang.Mesh mesh = SLang.Mesh.cube( 1.0f )          # 24 顶点 / 36 索引
+Int32 nv = mesh.vertexCount                         # getter：属性访问（无括号读）
+Array<Int32> tris = mesh.getTriangles()
+Float32_3 p0 = mesh.getVertex( 0 )                  # 越界返零向量
+
+# CPU 变换：rotationY/X -> transformPoint -> 手工透视除法 -> NDC 三角形列表
+Float32_4x4 m = Float32_4x4.rotationX( t * 0.5f ).multiply( Float32_4x4.rotationY( t * 0.9f ) )
+# 顶点写 pos2+uv2 交错块（stride 16B）：
+Memory.writeF32( vertsPtr, off + 0, x ); Memory.writeF32( vertsPtr, off + 4, y )
+Memory.writeF32( vertsPtr, off + 8, u ); Memory.writeF32( vertsPtr, off + 12, v )
+
+# 上传 + 挂对象：mesh_kind = 4 + slot（MESH_CUSTOM 路由动态网格槽）
+pipe.uploadMesh( 0, vertsPtr, vertCount )           # 每帧整块重传（VK 持久映射直写）
+SLang.UnityRenderObject obj = pipe.addObject( SLang.UnityRenderPipeline.MESH_CUSTOM )
+```
+
+原生侧（`slr_mesh_upload` → RHI vtable `mesh_upload` 槽，四后端一致）：
+- GL/GLES：首传建 VAO/VBO，之后 `glBufferData` DYNAMIC_DRAW 整块重传；
+- D3D11：容量不足时重建 DYNAMIC 顶点缓冲（256B 对齐），`Map(WRITE_DISCARD)` 重传；
+- VK：持久映射显存直写（容量不足重建）。
+- 深度遮挡由 CPU 侧排序保证（painter 算法：三角形按平均深度降序，远先画），
+  动态网格不参与深度缓冲分块（透明队列 3000）。
+- 上限：`SLR_CUSTOM_MESHES` 4 槽 × `SLR_CUSTOM_MAX_VERTS` 4096 顶点/槽。
+
+SL 语言规则（Mesh.sl 落地实证，写库必读）：
+1. **getter 声明必须带括号**：`get int vertexCount() { ... }`（先例
+   Render.sl `get Int64 handle()`）；无括号写法解析器把属性名当类型名报
+   "有其它未知类型在class中"。
+2. **跨命名空间类型必须 import**：`Float32_3` 在 namespace Math 下，使用方
+   文件头必须 `import Math;`；无 namespace 的全局类（Memory/Array）裸名可见。
+3. **实例成员必须 `this.` 前缀**：`this._positions` / `this.vertexCount()`
+   （MetaCallNode 裸名解析仅 static 分支放行）；构造器跨实例字段写不可用，
+   用多参构造重载代替。
+
 ## 原生链路（FFI 静态绑定 + 运行期双通道解析）
 
 ```
 Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)──> sl_render_lib.dll
-                                      ──RHI 抽象层（slr_rhi vtable）──> 后端驱动：
+                                      ──RHI 抽象层（SlrRhi vtable）──> 后端驱动：
                                         "gl"    -> opengl32.dll（WGL + GL 3.3 core，默认）
                                         "d3d11" -> d3d11.dll + d3dcompiler_47.dll（运行期加载，零 .lib）
                                         "vk"    -> vulkan-1.dll（纯离屏 instance；SPIR-V 由 glslang
@@ -170,7 +214,7 @@ Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)�
 ```
 
 - 本库是**渲染中间层**：13 阶段管线逻辑平台无关（Pipeline/ 层），经 RHI
-  抽象层（`slr_rhi` 函数表）落到不同驱动后端，**渲染效果跨后端一致**
+  抽象层（`SlrRhi` 函数表）落到不同驱动后端，**渲染效果跨后端一致**
   （GLRenderTest Phase D/E/F 用与 GL 完全相同的像素断言集分别验证
   D3D11 / Vulkan / GLES，实测四后端逐字节一致）。
 - 后端选择：`Render.initialize()` 默认 "gl"（幂等，已初始化时不切后端）；
@@ -179,7 +223,7 @@ Render.sl / Pipeline/UnityPipeline.sl ──@DllStaticImport(CallFFIStatic 77)�
   测试侧按 SKIP 处理）；`Render.backendList()` / `Render.currentBackend()` 诊断。
 - `sl_render_lib.dll` 是扁平 C ABI 包装（`slr_*`）：渲染目标/管线/对象/
   纹理收敛为 Int64 句柄（静态槽表），多目标并存；渲染目标/纹理对上层是
-  不透明指针（`slr_rhi_target*` / `void*`），由各后端私有实现。
+  不透明指针（`SlrRhiTarget*` / `void*`），由各后端私有实现。
 - **导出宏 `SLR_API`（vm_sl_render.h）**：公开声明必须带
   `__declspec(dllexport)`（Cuda 库 `SLC_API` 同款）。声明裸写时 DLL **空导出**
   ——LoadLibrary 成功但 GetProcAddress 全 MISS，SL 侧兜底表现即
@@ -228,7 +272,7 @@ cvm_render_lib/
 │   ├── sl_texture.c          <-> UnityRenderTexture         纹理注册表 + WIC 图片加载
 │   └── sl_camera.c           <-> UnityRenderCamera          多相机槽表
 └── RHI/                      （驱动后端：同一 vtable，同一像素契约）
-    ├── sl_rhi.h              接口契约（slr_rhi 函数表 + 像素/坐标约定）
+    ├── sl_rhi.h              接口契约（SlrRhi 函数表 + 像素/坐标约定）
     ├── sl_gl_procs.h         GL 函数指针清单（GLDECL 宏双用；GL/GLES 后端共用，
     │                          GLES 侧定义带 static 与 GL 单元隔离）
     ├── sl_rhi_gl.c           "gl"    WGL + GL 3.3（WGL 解析/着色器/网格/UBO/FBO/回读行翻）
@@ -282,7 +326,8 @@ pipeline_release_targets）统一非 static 并在 `sl_render_internal.h` 声明
 
 ## 测试与集成
 
-- 端到端用例集：`SlangAllInOne\SLangCore\test\Other\GLRenderTest\`
+- 端到端用例集：`SlangAllInOne\SLangCore\test\RenderTest\`（自 GLRenderTest
+  迁移并扩展 Phase C 3D 立方体）
   - Phase D/E/F（RHI 多后端同效果）：`initializeBackend("d3d11"/"vk"/"gles")`
     后用**与 GL 完全相同的 A1/A2/A3 断言集**复跑——corner(15,15,25) /
     tri(255,0,0) / quadtex(147,67,137) / t5(127,255,0) / t10(0,244,244) /
@@ -305,16 +350,37 @@ pipeline_release_targets）统一非 static 并在 `sl_render_internal.h` 声明
     （d3d11 → vk → gles → gl）自动验证四后端在 QT 帧循环下持续渲染
     （用户点击任一按钮后轮播停止）；30s 退出，帧数 + 后端掩码断言
     （mask 奇数含 gl 位且 >=3：至少一个其他后端渲染过）。
-- 运行：`dotnet run --project SlangAllInOne\Project\CSimpleVMTest -- SlangAllInOne\SLangCore\test\Other\GLRenderTest\GLRenderTest`
+  - Phase C（3D 旋转立方体，Phase B 场景内常驻）：`Mesh.cube(1.0f)`
+    24 顶点 36 索引 → `Float32_4x4.rotationY/X(t)` CPU 变换 → 相机 -Z
+    朝 +Z 手工透视除法（f=1.7，camZ=2.6）→ 12 三角形 painter 深度降序 →
+    `Memory.writeF32` 填 pos2+uv2 → `uploadMesh(0)` 每帧重传 → 对象
+    `MESH_CUSTOM`（透明队列叠加在 2D 场景之上）；onTick 驱动绕 X/Y 双轴
+    自转，每次后端切换后首帧打印 `[cube] spinning` 验证，Phase B 终判
+    加立方体上传断言（`_cubeFirst == 1`）。
+- 运行（编译/运行必须同一套 package 工具链，混批会跨模块 methodId 错位
+  原生崩溃——开发版 Front 编译产物配旧 VM 运行是已知陷阱）：
+  ```
+  slang.exe compile SlangAllInOne\SLangCore\test\RenderTest\RenderTest.sp
+  slang.exe run    SlangAllInOne\SLangCore\test\RenderTest\export\RenderTest\RenderTest.module.slb
+  ```
   （Phase B 需先 `QT\cvm\deploy-qt.ps1 -Combo minimal -Targets package` 铺 Qt runtime；
-  本机包内已有 QTTest 时期部署的 full 组合存量，直接可用）
+  本机包内已有 QTTest 时期部署的 full 组合存量，直接可用；重编 SLangRender
+  模块后需同步 `out\export\SLangRender` 三件套到 `package\win32-debug\modules\SLangRender`）
 - 实测结果（RTX 2080 / 驱动 610.62，GL 3.3.0 core + D3D11 FL 11.0 +
   Vulkan 1.4.341 + ANGLE GLES 3.0.0 四后端）：
-  Phase D/E/F/A1/A2/A3/B 全 PASS（四后端像素逐字节一致；QT 30s 1874 帧
-  pixOk=1874），`GLRenderTest: PASS` 七绿。GLRenderTest 主流程收尾显式
-  `initializeBackend("gl")` 强制切回（幂等陷阱：initialize 不切后端）。
+  Phase D/E/F/A1/A2/A3/B 全 PASS（四后端像素逐字节一致；QT 30s 1844 帧
+  pixOk=1844 mask=15 四后端全渲染；立方体四后端各打 `[cube] spinning` +
+  `[cube] Mesh.cube verts=24 indices=36`），`RenderTest: PASS` 七绿，
+  exit=0。RenderTest 主流程收尾显式 `initializeBackend("gl")` 强制切回
+  （幂等陷阱：initialize 不切后端）。
 
-## 已知取舍（v2）
+## 已知取舍（v2 / v3.1）
+
+- 动态网格无深度缓冲参与：MESH_CUSTOM 走透明队列 + CPU painter 排序
+  （三角形平均深度降序），复杂互遮挡场景需引入深度写通道；上限 4 槽 ×
+  4096 顶点，超出报 SLR_E_BAD_PARAM。
+- Mesh 无 UV/切线/骨骼通道：v3.1 定位 CPU 数学容器 + 手工投影；GPU 侧
+  MVP 变换（矩阵进 PerDraw UBO）待 v3.2。
 
 - 管线固定为"剔除→排序→UBO 上传→不透明分块→透明分段→后处理"流程；v2.1 已支持
   多相机逐相机执行（阶段 4-9 内部按 depth 排序循环）；多 Pass / 自定义管线编排
@@ -330,4 +396,4 @@ pipeline_release_targets）统一非 static 并在 `sl_render_internal.h` 声明
   大分辨率高频回读可改 PBO 异步。
 - 多后端已落地（gl / d3d11 / vk / gles 同 vtable 同像素契约）；VK/GLES
   均为运行期探测、缺失优雅降级（init 返回 false + errorString），后续
-  平台（macOS Metal / Linux X11+GL）按同模式扩展 slr_rhi 表即可。
+  平台（macOS Metal / Linux X11+GL）按同模式扩展 SlrRhi 表即可。

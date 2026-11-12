@@ -167,20 +167,20 @@ static PFN_eglQueryString          p_eglQueryString;
 /* ===================================================================== */
 /* 后端私有状态                                                           */
 /* ===================================================================== */
-struct slr_rhi_target            /* GLES 渲染目标 = FBO + 颜色纹理 + 可选深度 RB */
+struct SlrRhiTarget            /* GLES 渲染目标 = FBO + 颜色纹理 + 可选深度 RB */
 {
     int w, h;
     GLuint fbo, tex, rb;
 };
 
-typedef struct { int mvp, color, tex; int obj_index; int src, bright, sat, vig; } gl_prog_uni;
-typedef struct { GLuint vao, vbo; int count; } gl_mesh;
+typedef struct { int mvp, color, tex; int obj_index; int src, bright, sat, vig; } GlProgUni;
+typedef struct { GLuint vao, vbo; int count; } GlMesh;
 
 static GLuint       s_progs[SLR_PROG_COUNT];
-static gl_prog_uni  s_uni[SLR_PROG_COUNT];
+static GlProgUni  s_uni[SLR_PROG_COUNT];
 static GLuint       s_ubo = 0;
-static gl_mesh      s_meshes[4];
-static gl_mesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
+static GlMesh      s_meshes[4];
+static GlMesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
 
 static HMODULE  s_hegl = NULL;
 static HMODULE  s_hgles = NULL;
@@ -377,7 +377,7 @@ static int gl_make_shared(void)
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PTEX], blk, 0);
         p_glGenBuffers(1, &s_ubo);
         p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo);
-        p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(slr_perdraw), &s_perdraw, GL_DYNAMIC_DRAW);
+        p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrPerDraw), &s_perdraw, GL_DYNAMIC_DRAW);
         p_glBindBufferBase(GL_UNIFORM_BUFFER, 0, s_ubo);
         p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
@@ -452,9 +452,9 @@ static void gl_free_shared(void)
 /* ===================================================================== */
 /* 渲染目标 / 纹理（与 GL 后端同构）                                        */
 /* ===================================================================== */
-static slr_rhi_target* gl_target_create(int w, int h, int with_depth)
+static SlrRhiTarget* gl_target_create(int w, int h, int with_depth)
 {
-    slr_rhi_target* t = (slr_rhi_target*)malloc(sizeof(slr_rhi_target));
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
     GLenum st;
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
     t->w = w; t->h = h; t->fbo = 0; t->tex = 0; t->rb = 0;
@@ -490,7 +490,7 @@ static slr_rhi_target* gl_target_create(int w, int h, int with_depth)
     return t;
 }
 
-static void gl_target_destroy(slr_rhi_target* t)
+static void gl_target_destroy(SlrRhiTarget* t)
 {
     if (!t) return;
     p_glDeleteFramebuffers(1, &t->fbo);
@@ -523,7 +523,7 @@ static void gl_texture_destroy(void* tex)
 /* ===================================================================== */
 /* 管线 pass（与 GL 后端逐行同构：GL 语义即 GLES 语义）                     */
 /* ===================================================================== */
-static void gl_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
+static void gl_begin_scene(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
     p_glViewport(0, 0, w, h);
@@ -537,7 +537,7 @@ static void gl_begin_scene(slr_rhi_target* t, int w, int h, const float* clear)
     p_glDisable(GL_SCISSOR_TEST);
 }
 
-static void gl_camera_begin(slr_rhi_target* t, int x, int y, int w, int h,
+static void gl_camera_begin(SlrRhiTarget* t, int x, int y, int w, int h,
                             int target_h, int clear_flags, const float* clear)
 {
     (void)target_h;   /* GLES 视口原点即左下，与 GL 一致 */
@@ -586,7 +586,7 @@ static void gl_upload_perdraw(const void* data, int bytes)
 
 static void gl_draw_item(int prog, int slot, int mesh, void* tex)
 {
-    gl_mesh* m;
+    GlMesh* m;
     if (mesh >= 4 + SLR_CUSTOM_MESHES)
     {
         set_error(SLR_E_BAD_PARAM);
@@ -614,7 +614,7 @@ static void gl_draw_item(int prog, int slot, int mesh, void* tex)
 /* 动态网格上传（三角形列表 pos2+uv2，stride 16B）*/
 static int gl_mesh_upload(int slot, const float* verts, int vert_count)
 {
-    gl_mesh* m;
+    GlMesh* m;
     if (slot < 0 || slot >= SLR_CUSTOM_MESHES || !verts ||
         vert_count <= 0 || vert_count > SLR_CUSTOM_MAX_VERTS)
     {
@@ -641,7 +641,7 @@ static int gl_mesh_upload(int slot, const float* verts, int vert_count)
     return 1;
 }
 
-static void gl_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, int h,
+static void gl_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                             int enabled, float bright, float sat, float vig)
 {
     p_glDisable(GL_SCISSOR_TEST);   /* 全屏 pass 不受相机 scissor 限制 */
@@ -668,7 +668,7 @@ static void gl_post_process(slr_rhi_target* dst, slr_rhi_target* src, int w, int
     p_glUseProgram(0);
 }
 
-static void gl_blit(slr_rhi_target* dst, slr_rhi_target* src, int w, int h)
+static void gl_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
 {
     p_glDisable(GL_SCISSOR_TEST);
     p_glDisable(GL_DEPTH_TEST);
@@ -685,7 +685,7 @@ static void gl_blit(slr_rhi_target* dst, slr_rhi_target* src, int w, int h)
 }
 
 /* 回读 + 行翻 top-down（glReadPixels 产出 bottom-up，原地交换行序）*/
-static void gl_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
+static void gl_readback(SlrRhiTarget* t, int w, int h, int64_t dst_ptr)
 {
     unsigned char* buf = (unsigned char*)(intptr_t)dst_ptr;
     int stride = w * 4, rows = h / 2, y;
@@ -709,7 +709,7 @@ static void gl_readback(slr_rhi_target* t, int w, int h, int64_t dst_ptr)
 /* ===================================================================== */
 /* v1 直连 pass（与 GL 后端同构）                                          */
 /* ===================================================================== */
-static void gl_v1_clear(slr_rhi_target* t, int w, int h, const float* clear)
+static void gl_v1_clear(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     p_glDisable(GL_SCISSOR_TEST);
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
@@ -718,7 +718,7 @@ static void gl_v1_clear(slr_rhi_target* t, int w, int h, const float* clear)
     p_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-static void gl_v1_draw(slr_rhi_target* t, int w, int h,
+static void gl_v1_draw(SlrRhiTarget* t, int w, int h,
                        int prog, const float* mvp, const float* color, void* tex)
 {
     p_glDisable(GL_SCISSOR_TEST);
@@ -1018,7 +1018,7 @@ static void gl_exit(void) { LeaveCriticalSection(&s_lock); }
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
-static const slr_rhi s_rhi_gles =
+static const SlrRhi s_rhi_gles =
 {
     "gles",
     gl_init,
@@ -1045,4 +1045,4 @@ static const slr_rhi s_rhi_gles =
     gl_v1_draw,
 };
 
-const slr_rhi* slr_rhi_gles(void) { return &s_rhi_gles; }
+const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

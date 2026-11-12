@@ -18,7 +18,7 @@
  *   RHI/sl_rhi_gles.c      EGL + GLES 3.0 后端（缺失运行库时优雅降级）
  *
  * 共享约定：
- *   - 渲染目标为后端私有 slr_rhi_target*，管线层只持有与传递；
+ *   - 渲染目标为后端私有 SlrRhiTarget*，管线层只持有与传递；
  *   - 纹理为后端私有 void*（存于 s_textures 注册表）；
  *   - 全局资源表：s_pipes（pipeline）/ s_textures（texture）定义在
  *     各自归属 .c，s_perdraw（PerDraw CPU 暂存）定义在 sl_render.c；
@@ -75,19 +75,19 @@ typedef struct
 {
     float mvp[SLR_MAX_OBJECTS][16];
     float color[SLR_MAX_OBJECTS][4];
-} slr_perdraw;
+} SlrPerDraw;
 
 /* ===================================================================== */
 /* 资源结构                                                                */
 /* ===================================================================== */
-typedef struct { int used, w, h; void* rhi_tex; } slr_texres;
+typedef struct { int used, w, h; void* rhi_tex; } SlrTexRes;
 
 typedef struct
 {
     int used, mesh, layer, queue, visible, anim_mode, cull_cams;
     float pos[3], rot_z, scale[2], color[4], anim_speed;
     int64_t texture;
-} slr_object;
+} SlrObject;
 
 typedef struct
 {
@@ -98,7 +98,7 @@ typedef struct
     int cam;        /* 所属相机位号（0..SLR_MAX_CAMERAS-1）*/
     float z;
     float mvp[16];
-} slr_draw_item;
+} SlrDrawItem;
 
 /* 相机：独立剔除掩码/正交视域/视口/清屏参数，depth 决定绘制次序 */
 typedef struct
@@ -107,31 +107,31 @@ typedef struct
     float cam_l, cam_r, cam_b, cam_t;
     float clear_color[4];
     int vp_x, vp_y, vp_w, vp_h;
-} slr_camera;
+} SlrCamera;
 
 /* 每帧逐相机绘制项区间（items 内 [start, start+n_opaque+n_trans) ）*/
 typedef struct
 {
     int start, n_opaque, n_trans;
-} slr_cam_range;
+} SlrCamRange;
 
 typedef struct
 {
     int used, w, h;
-    slr_rhi_target* rt_scene;    /* 场景渲染目标（带深度）    */
-    slr_rhi_target* rt_post;     /* 后处理中间目标           */
-    slr_rhi_target* rt_final;    /* 最终输出目标（回读源）    */
+    SlrRhiTarget* rt_scene;    /* 场景渲染目标（带深度）    */
+    SlrRhiTarget* rt_post;     /* 后处理中间目标           */
+    SlrRhiTarget* rt_final;    /* 最终输出目标（回读源）    */
 
-    slr_object objects[SLR_MAX_OBJECTS];
+    SlrObject objects[SLR_MAX_OBJECTS];
     int object_count;
 
-    slr_draw_item items[SLR_MAX_OBJECTS];
+    SlrDrawItem items[SLR_MAX_OBJECTS];
     int item_count, opaque_count;
 
-    slr_camera   cameras[SLR_MAX_CAMERAS];
+    SlrCamera   cameras[SLR_MAX_CAMERAS];
     int          active_cams[SLR_MAX_CAMERAS];   /* 本帧相机位号（depth 升序）*/
     int          active_cam_count;
-    slr_cam_range cam_ranges[SLR_MAX_CAMERAS];
+    SlrCamRange cam_ranges[SLR_MAX_CAMERAS];
     int camera_count;                            /* 已启用相机数（stat）*/
 
     int visible_count, culled_count;
@@ -145,16 +145,16 @@ typedef struct
 
     float time, last_time, dt, total_time;
     int64_t frame_count;
-} slr_pipeline;
+} SlrPipeline;
 
 /* ===================================================================== */
 /* 共享全局（定义归属：s_pipes -> sl_pipeline.c，s_textures -> sl_texture.c，
  * s_ready/s_perdraw -> sl_render.c）                                       */
 /* ===================================================================== */
 extern int          s_ready;
-extern slr_perdraw  s_perdraw;
-extern slr_pipeline s_pipes[SLR_MAX_PIPES];
-extern slr_texres   s_textures[SLR_MAX_TEX];
+extern SlrPerDraw  s_perdraw;
+extern SlrPipeline s_pipes[SLR_MAX_PIPES];
+extern SlrTexRes   s_textures[SLR_MAX_TEX];
 
 /* ===================================================================== */
 /* 跨文件内部函数原型（统一非 static）                                      */
@@ -167,11 +167,11 @@ int  rhi_enter(void);
 void rhi_exit(void);
 
 /* sl_texture.c：纹理注册表（管线/对象跨文件取用） */
-slr_texres* tex_from_handle(int64_t h);
+SlrTexRes* tex_from_handle(int64_t h);
 
 /* sl_pipeline.c：管线句柄解析与渲染目标回收（slr_uninit 也调用） */
-slr_pipeline* pipe_from_handle(int64_t h);
-void pipeline_release_targets(slr_pipeline* p);
+SlrPipeline* pipe_from_handle(int64_t h);
+void pipeline_release_targets(SlrPipeline* p);
 
 #ifdef __cplusplus
 }

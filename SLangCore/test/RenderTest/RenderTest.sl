@@ -73,6 +73,7 @@ public class RenderTest
     static SLang.Mesh _cubeMesh = null       # Mesh.cube(1.0)：24 顶点 36 索引
     static SLang.UnityRenderObject _cubeObj = null   # meshKind=4（动态网格槽 0）
     static Int64 _cubeVerts = 0             # 36 顶点 * 16B 显存暂存（帧间复用）
+    static Int32 _cubeFirst = 0             # 首帧 uploadMesh 结果打印标志
     # UV 不建表：vi%4 -> (0,0)(1,0)(1,1)(0,1)（updateCube 现场计算）
 
     # 帧循环 tick：t 推进 -> SL 侧逐阶段驱动 1..13（完整流程）-> 填 QT 窗口
@@ -83,7 +84,14 @@ public class RenderTest
             ret
         }
         _t = _t + 0.033f
-        RenderTest.updateCube( _t )
+        if RenderTest.updateCube( _t )
+        {
+            if _cubeFirst == 0
+            {
+                Console.println( "[cube] spinning: CPU transform + uploadMesh(slot 0) OK on backend " + SLang.Render.currentBackend() )
+                _cubeFirst = 1
+            }
+        }
         if _pipe.runStages( _t, _pixels )
         {
             _renderFrames = _renderFrames + 1
@@ -252,6 +260,7 @@ public class RenderTest
     {
         _pipe = null
         _pixels = 0
+        _cubeFirst = 0
         if SLang.Render.initializeBackend( name ) == false
         {
             Console.println( "[ui] backend '" + name + "' unavailable - " + SLang.Render.errorString() )
@@ -375,6 +384,7 @@ public class RenderTest
             Console.println( "[ui] FAIL: Mesh.cube" )
             ret false
         }
+        Console.println( "[cube] Mesh.cube verts=" + _cubeMesh.vertexCount.toString() + " indices=" + _cubeMesh.getTriangles().length.toString() )
         # cube() 不带 UV：vi%4 现场计算（见 updateCube），无需建表
         if _cubeVerts == 0
         {
@@ -1119,31 +1129,23 @@ public class RenderTest
         Console.println( "-- Phase A3: multi-camera (depth order + viewport split) + image file load --" )
 
         # 图片加载：坏路径 -> null；好路径 -> 纹理句柄
-        Console.println( "[dbg] A3 s1: badpath loadFile" )
         SLang.UnityRenderTexture badTex = SLang.UnityRenderTexture.loadFile( "no_such_image_file.png" )
-        Console.println( "[dbg] A3 s2: badpath ret" )
         if badTex != null
         {
             Console.println( "[cam] FAIL: loadFile should fail for missing file" )
             ret false
         }
 
-        Console.println( "[dbg] A3 s3: pipe create" )
         SLang.UnityRenderPipeline pipe = SLang.UnityRenderPipeline.create( 256, 256 )
-        Console.println( "[dbg] A3 s4: pipe create ret" )
         if pipe == null
         {
             Console.println( "[cam] FAIL: pipeline create - " + SLang.Render.errorString() )
             ret false
         }
 
-        Console.println( "[dbg] A3 s5: stat" )
         Int32 texBefore = pipe.stat( SLang.UnityRenderPipeline.STAT_TEXTURE_COUNT )
-        Console.println( "[dbg] A3 s6: stat ret" )
         # 相对路径依赖运行进程 CWD（package 目录），失败则回退绝对路径
-        Console.println( "[dbg] A3 s7: img loadFile" )
         SLang.UnityRenderTexture imgTex = SLang.UnityRenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
-        Console.println( "[dbg] A3 s8: img loadFile ret" )
         if imgTex == null
         {
             imgTex = SLang.UnityRenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
@@ -1435,7 +1437,13 @@ public class RenderTest
             Console.println( "[QT] FAIL: backend switching did not render (mask=" + _backendMask.toString() + ", expect >= 3 with gl bit)" )
             ret 0
         }
-        Console.println( "[QT] Phase B: PASS (backend-switchable render: mask=" + _backendMask.toString() + " [gl/d3d11/vk/gles bits 1/2/4/8]; 13-stage renderTexture each frame)" )
+        # Phase C 断言：立方体动态网格在（最后轮换的）当前后端上传成功过
+        if _cubeFirst != 1
+        {
+            Console.println( "[QT] FAIL: cube mesh upload never succeeded (Mesh + MESH_CUSTOM channel broken)" )
+            ret 0
+        }
+        Console.println( "[QT] Phase B: PASS (backend-switchable render: mask=" + _backendMask.toString() + " [gl/d3d11/vk/gles bits 1/2/4/8]; 13-stage renderTexture each frame + spinning cube)" )
         ret 2
     }
 }

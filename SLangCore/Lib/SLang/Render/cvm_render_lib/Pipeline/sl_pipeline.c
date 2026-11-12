@@ -21,7 +21,7 @@
  * ========================================================================= */
 #include "sl_render_internal.h"
 
-slr_pipeline s_pipes[SLR_MAX_PIPES];
+SlrPipeline s_pipes[SLR_MAX_PIPES];
 
 /* ===================================================================== */
 /* 数学辅助（管线专用）                                                    */
@@ -93,14 +93,14 @@ static void hsv_to_rgb(float h, float* r, float* g, float* b)
 /* ===================================================================== */
 /* 管线句柄 / 渲染目标                                                     */
 /* ===================================================================== */
-slr_pipeline* pipe_from_handle(int64_t h)
+SlrPipeline* pipe_from_handle(int64_t h)
 {
     int i = (int)(h - 1);
     if (h <= 0 || i >= SLR_MAX_PIPES || !s_pipes[i].used) return NULL;
     return &s_pipes[i];
 }
 
-void pipeline_release_targets(slr_pipeline* p)
+void pipeline_release_targets(SlrPipeline* p)
 {
     if (g_rhi)
     {
@@ -113,7 +113,7 @@ void pipeline_release_targets(slr_pipeline* p)
     p->rt_final = NULL;
 }
 
-static int pipeline_make_targets(slr_pipeline* p, int w, int h)
+static int pipeline_make_targets(SlrPipeline* p, int w, int h)
 {
     return (p->rt_scene = g_rhi->target_create(w, h, 1)) != NULL
         && (p->rt_post = g_rhi->target_create(w, h, 0)) != NULL
@@ -129,8 +129,8 @@ int64_t slr_pipeline_create(int w, int h)
     {
         if (!s_pipes[i].used)
         {
-            slr_pipeline* p = &s_pipes[i];
-            memset(p, 0, sizeof(slr_pipeline));
+            SlrPipeline* p = &s_pipes[i];
+            memset(p, 0, sizeof(SlrPipeline));
             p->used = 1; p->w = w; p->h = h;
             /* 默认相机（槽 0）：正交 [-1,1]²，全 layer 可见，全视口清屏 */
             p->cameras[0].used = 1;
@@ -150,7 +150,7 @@ int64_t slr_pipeline_create(int w, int h)
             if (!pipeline_make_targets(p, w, h))
             {
                 pipeline_release_targets(p);
-                memset(p, 0, sizeof(slr_pipeline));
+                memset(p, 0, sizeof(SlrPipeline));
                 rhi_exit();
                 return 0;
             }
@@ -165,19 +165,19 @@ int64_t slr_pipeline_create(int w, int h)
 
 int slr_pipeline_destroy(int64_t h)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
     pipeline_release_targets(p);
-    memset(p, 0, sizeof(slr_pipeline));
+    memset(p, 0, sizeof(SlrPipeline));
     rhi_exit();
     return 1;
 }
 
 int slr_pipeline_resize(int64_t h, int w, int hh)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
@@ -197,15 +197,15 @@ int slr_pipeline_resize(int64_t h, int w, int hh)
 
 int64_t slr_pipeline_frame_count(int64_t h)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     return p->frame_count;
 }
 
 int slr_pipeline_set_camera(int64_t h, int cull_mask, float l, float r, float b, float t)
 {
-    slr_pipeline* p = pipe_from_handle(h);
-    slr_camera* c;
+    SlrPipeline* p = pipe_from_handle(h);
+    SlrCamera* c;
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     /* 兼容 v2：写默认相机（槽 0） */
     c = &p->cameras[0];
@@ -216,7 +216,7 @@ int slr_pipeline_set_camera(int64_t h, int cull_mask, float l, float r, float b,
 
 int slr_pipeline_set_clear_color(int64_t h, float r, float g, float b, float a)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     p->clear_color[0] = r; p->clear_color[1] = g; p->clear_color[2] = b; p->clear_color[3] = a;
     /* 同步默认相机清屏色（槽 0 清屏色 = 管线清屏色） */
@@ -229,7 +229,7 @@ int slr_pipeline_set_clear_color(int64_t h, float r, float g, float b, float a)
 
 int slr_pipeline_set_post(int64_t h, int enable, float brightness, float saturation, float vignette)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     p->post_enabled = enable ? 1 : 0;
     p->post_brightness = brightness;
@@ -243,7 +243,7 @@ int slr_pipeline_set_post(int64_t h, int enable, float brightness, float saturat
 /* ===================================================================== */
 
 /* 1 渲染开始 */
-static int stage_begin_frame(slr_pipeline* p, float time)
+static int stage_begin_frame(SlrPipeline* p, float time)
 {
     p->time = time;
     p->frame_count++;
@@ -258,7 +258,7 @@ static int stage_begin_frame(slr_pipeline* p, float time)
 }
 
 /* 2 准备物料 */
-static int stage_prepare_materials(slr_pipeline* p)
+static int stage_prepare_materials(SlrPipeline* p)
 {
     p->last_stage = 2;
     /* 着色器程序/UBO 在 slr_init 已就绪；此处确保场景纹理参数合法 */
@@ -266,13 +266,13 @@ static int stage_prepare_materials(slr_pipeline* p)
 }
 
 /* 3 提前更新（动画） */
-static int stage_early_update(slr_pipeline* p)
+static int stage_early_update(SlrPipeline* p)
 {
     int i;
     p->last_stage = 3;
     for (i = 0; i < SLR_MAX_OBJECTS; i++)
     {
-        slr_object* o = &p->objects[i];
+        SlrObject* o = &p->objects[i];
         if (!o->used || !o->visible) continue;
         if (o->anim_mode == SLR_ANIM_HUE_CYCLE)
         {
@@ -284,7 +284,7 @@ static int stage_early_update(slr_pipeline* p)
 }
 
 /* 按深度升序收集本帧活动相机（稳定插入排序：depth 相同按槽位序） */
-static int pipeline_order_cameras(slr_pipeline* p, int* order)
+static int pipeline_order_cameras(SlrPipeline* p, int* order)
 {
     int i, j, n = 0;
     for (i = 0; i < SLR_MAX_CAMERAS; i++)
@@ -307,7 +307,7 @@ static int pipeline_order_cameras(slr_pipeline* p, int* order)
 }
 
 /* 4 渲染层分层（剔除）：逐相机独立剔除，对象记录可见相机位掩码 */
-static int stage_cull_layers(slr_pipeline* p)
+static int stage_cull_layers(SlrPipeline* p)
 {
     int i, ci, cam_count;
     int order[SLR_MAX_CAMERAS];
@@ -318,7 +318,7 @@ static int stage_cull_layers(slr_pipeline* p)
     p->active_cam_count = cam_count;
     for (i = 0; i < SLR_MAX_OBJECTS; i++)
     {
-        slr_object* o = &p->objects[i];
+        SlrObject* o = &p->objects[i];
         int vis_mask = 0;
         if (!o->used) { o->cull_cams = 0; continue; }
         if (o->visible)
@@ -329,7 +329,7 @@ static int stage_cull_layers(slr_pipeline* p)
             float b = o->pos[1] - hy, t = o->pos[1] + hy;
             for (ci = 0; ci < cam_count; ci++)
             {
-                slr_camera* c = &p->cameras[order[ci]];
+                SlrCamera* c = &p->cameras[order[ci]];
                 if (!(c->cull_mask & (1 << o->layer))) continue;
                 if ((r >= c->cam_l) && (l <= c->cam_r) &&
                     (t >= c->cam_b) && (b <= c->cam_t))
@@ -346,12 +346,12 @@ static int stage_cull_layers(slr_pipeline* p)
 }
 
 /* 绘制项排序辅助：不透明 (queue,z) 升序；透明 (queue,z) 降序 */
-static void sort_items(slr_draw_item* items, int count, int transparent)
+static void sort_items(SlrDrawItem* items, int count, int transparent)
 {
     int i, j;
     for (i = 1; i < count; i++)
     {
-        slr_draw_item key = items[i];
+        SlrDrawItem key = items[i];
         j = i - 1;
         while (j >= 0)
         {
@@ -383,7 +383,7 @@ static void sort_items(slr_draw_item* items, int count, int transparent)
  *   z 升序：近→远），再透明（queue 升序、z 降序：远→近）。
  *   items 布局：[cam0 不透明|cam0 透明|cam1 不透明|cam1 透明|...]
  *   区间记录于 cam_ranges[bit]；slot = 数组下标 = PerDraw UBO 槽位 */
-static int stage_assemble_impl(slr_pipeline* p)
+static int stage_assemble_impl(SlrPipeline* p)
 {
     int ci, i, slot;
     p->last_stage = 5;
@@ -392,8 +392,8 @@ static int stage_assemble_impl(slr_pipeline* p)
     for (ci = 0; ci < p->active_cam_count; ci++)
     {
         int bit = p->active_cams[ci];
-        slr_camera* c = &p->cameras[bit];
-        slr_cam_range* rg = &p->cam_ranges[bit];
+        SlrCamera* c = &p->cameras[bit];
+        SlrCamRange* rg = &p->cam_ranges[bit];
         float proj[16], model[16];
         int start, start_t;
         mat4_ortho(proj, c->cam_l, c->cam_r, c->cam_b, c->cam_t, -1.0f, 1.0f);
@@ -401,12 +401,12 @@ static int stage_assemble_impl(slr_pipeline* p)
         start = p->item_count;
         for (i = 0; i < SLR_MAX_OBJECTS && p->item_count < SLR_MAX_OBJECTS; i++)
         {
-            slr_object* o = &p->objects[i];
+            SlrObject* o = &p->objects[i];
             if (!o->used || o->queue >= 2500) continue;
             if (!(o->cull_cams & (1 << bit))) continue;
             {
-                slr_draw_item* it = &p->items[p->item_count];
-                memset(it, 0, sizeof(slr_draw_item));
+                SlrDrawItem* it = &p->items[p->item_count];
+                memset(it, 0, sizeof(SlrDrawItem));
                 it->obj = i;
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
@@ -423,12 +423,12 @@ static int stage_assemble_impl(slr_pipeline* p)
         start_t = p->item_count;
         for (i = 0; i < SLR_MAX_OBJECTS && p->item_count < SLR_MAX_OBJECTS; i++)
         {
-            slr_object* o = &p->objects[i];
+            SlrObject* o = &p->objects[i];
             if (!o->used || o->queue < 2500) continue;
             if (!(o->cull_cams & (1 << bit))) continue;
             {
-                slr_draw_item* it = &p->items[p->item_count];
-                memset(it, 0, sizeof(slr_draw_item));
+                SlrDrawItem* it = &p->items[p->item_count];
+                memset(it, 0, sizeof(SlrDrawItem));
                 it->obj = i;
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
@@ -447,29 +447,29 @@ static int stage_assemble_impl(slr_pipeline* p)
 }
 
 /* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传） */
-static int stage_upload_render_data(slr_pipeline* p)
+static int stage_upload_render_data(SlrPipeline* p)
 {
     int i;
     p->last_stage = 6;
     memset(&s_perdraw, 0, sizeof(s_perdraw));
     for (i = 0; i < p->item_count; i++)
     {
-        slr_object* o = &p->objects[p->items[i].obj];
+        SlrObject* o = &p->objects[p->items[i].obj];
         memcpy(s_perdraw.mvp[i], p->items[i].mvp, sizeof(p->items[i].mvp));
         memcpy(s_perdraw.color[i], o->color, sizeof(o->color));
         p->upload_count += 2;   /* MVP + 颜色 */
     }
-    g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(slr_perdraw));
+    g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
     return 1;
 }
 
-static void draw_one_item(slr_pipeline* p, slr_draw_item* it)
+static void draw_one_item(SlrPipeline* p, SlrDrawItem* it)
 {
-    slr_object* o = &p->objects[it->obj];
+    SlrObject* o = &p->objects[it->obj];
     void* tex = NULL;
     if (it->prog == SLR_PROG_PTEX)
     {
-        slr_texres* t = tex_from_handle(o->texture);
+        SlrTexRes* t = tex_from_handle(o->texture);
         tex = t ? t->rhi_tex : NULL;
     }
     g_rhi->draw_item(it->prog, it->slot, o->mesh, tex);
@@ -478,15 +478,15 @@ static void draw_one_item(slr_pipeline* p, slr_draw_item* it)
 }
 
 /* 7 shader 分块渲染（不透明段，多相机：逐相机 视口/清屏 -> 分组合批绘制） */
-static int stage_render_shader_chunks(slr_pipeline* p)
+static int stage_render_shader_chunks(SlrPipeline* p)
 {
     int ci;
     p->last_stage = 7;
     for (ci = 0; ci < p->active_cam_count; ci++)
     {
         int bit = p->active_cams[ci];
-        slr_camera* c = &p->cameras[bit];
-        slr_cam_range* rg = &p->cam_ranges[bit];
+        SlrCamera* c = &p->cameras[bit];
+        SlrCamRange* rg = &p->cam_ranges[bit];
         int i = rg->start, end = rg->start + rg->n_opaque;
         /* RHI：相机视口 + 可选局部清屏（GL: scissor / D3D11: 清屏 quad）*/
         g_rhi->camera_begin(p->rt_scene, c->vp_x, c->vp_y, c->vp_w, c->vp_h,
@@ -510,7 +510,7 @@ static int stage_render_shader_chunks(slr_pipeline* p)
 }
 
 /* 8 核心更新时间 */
-static int stage_update_core_time(slr_pipeline* p)
+static int stage_update_core_time(SlrPipeline* p)
 {
     p->last_stage = 8;
     if (p->frame_count <= 1)
@@ -528,15 +528,15 @@ static int stage_update_core_time(slr_pipeline* p)
 }
 
 /* 9 shader 分段渲染（透明段：混合开、深度写关、后→前；多相机逐相机执行） */
-static int stage_render_shader_segments(slr_pipeline* p)
+static int stage_render_shader_segments(SlrPipeline* p)
 {
     int ci;
     p->last_stage = 9;
     for (ci = 0; ci < p->active_cam_count; ci++)
     {
         int bit = p->active_cams[ci];
-        slr_camera* c = &p->cameras[bit];
-        slr_cam_range* rg = &p->cam_ranges[bit];
+        SlrCamera* c = &p->cameras[bit];
+        SlrCamRange* rg = &p->cam_ranges[bit];
         int i = rg->start + rg->n_opaque, end = rg->start + rg->n_opaque + rg->n_trans;
         g_rhi->camera_begin(p->rt_scene, c->vp_x, c->vp_y, c->vp_w, c->vp_h,
                             p->h, 0, c->clear_color);   /* 透明段不清屏 */
@@ -559,14 +559,14 @@ static int stage_render_shader_segments(slr_pipeline* p)
 }
 
 /* 10 整理渲染后的图层（簿记；渲染状态由后续 pass 自行设定） */
-static int stage_assemble_rendered_layers(slr_pipeline* p)
+static int stage_assemble_rendered_layers(SlrPipeline* p)
 {
     p->last_stage = 10;
     return 1;
 }
 
 /* 11 后处理（RHI：scene -> post，enabled=0 纯拷贝） */
-static int stage_post_process(slr_pipeline* p)
+static int stage_post_process(SlrPipeline* p)
 {
     p->last_stage = 11;
     g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h,
@@ -578,7 +578,7 @@ static int stage_post_process(slr_pipeline* p)
 }
 
 /* 12 层级的逻辑整合（RHI 全屏拷贝：post -> 最终 renderTexture） */
-static int stage_integrate_layers(slr_pipeline* p)
+static int stage_integrate_layers(SlrPipeline* p)
 {
     p->last_stage = 12;
     g_rhi->blit(p->rt_final, p->rt_post, p->w, p->h);
@@ -588,7 +588,7 @@ static int stage_integrate_layers(slr_pipeline* p)
 }
 
 /* 13 输出最终渲染 renderTexture（RHI 回读：top-down RGBA8） */
-static int stage_output_render_texture(slr_pipeline* p, int64_t dst_ptr)
+static int stage_output_render_texture(SlrPipeline* p, int64_t dst_ptr)
 {
     if (!dst_ptr) { set_error(SLR_E_BAD_PARAM); return 0; }
     p->last_stage = 13;
@@ -600,7 +600,7 @@ static int stage_output_render_texture(slr_pipeline* p, int64_t dst_ptr)
 #define SLR_STAGE_EXPORT(fname, stager)                      \
     SLR_API int fname(int64_t h)                                \
     {                                                          \
-        slr_pipeline* p;                                       \
+        SlrPipeline* p;                                       \
         int ok;                                                \
         if (!rhi_enter()) return 0;                             \
         p = pipe_from_handle(h);                               \
@@ -624,7 +624,7 @@ SLR_STAGE_EXPORT(slr_pipeline_integrate_layers,        stage_integrate_layers)
 
 int slr_pipeline_begin_frame(int64_t h, float time)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int ok;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
@@ -636,7 +636,7 @@ int slr_pipeline_begin_frame(int64_t h, float time)
 
 int slr_pipeline_output_render_texture(int64_t h, int64_t dst_ptr)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int ok;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
@@ -648,7 +648,7 @@ int slr_pipeline_output_render_texture(int64_t h, int64_t dst_ptr)
 
 int slr_pipeline_render_frame(int64_t h, float time, int64_t dst_ptr)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int ok;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
@@ -673,7 +673,7 @@ int slr_pipeline_render_frame(int64_t h, float time, int64_t dst_ptr)
 
 int slr_pipeline_stat(int64_t h, int stat_id)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     switch (stat_id)
     {

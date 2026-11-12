@@ -7,7 +7,7 @@
  * ========================================================================= */
 #include "sl_render_internal.h"
 
-static slr_object* obj_from_handle(slr_pipeline* p, int64_t oh, int* idx_out)
+static SlrObject* obj_from_handle(SlrPipeline* p, int64_t oh, int* idx_out)
 {
     int i = (int)(oh - 1);
     if (oh <= 0 || i >= SLR_MAX_OBJECTS || !p->objects[i].used) return NULL;
@@ -17,7 +17,7 @@ static slr_object* obj_from_handle(slr_pipeline* p, int64_t oh, int* idx_out)
 
 int64_t slr_object_create(int64_t h, int mesh_kind)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int i;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
@@ -33,10 +33,10 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
     }
     for (i = 0; i < SLR_MAX_OBJECTS; i++)
     {
-        slr_object* o;
+        SlrObject* o;
         if (p->objects[i].used) continue;
         o = &p->objects[i];
-        memset(o, 0, sizeof(slr_object));
+        memset(o, 0, sizeof(SlrObject));
         o->used = 1;
         o->mesh = mesh_kind;
         o->visible = 1;
@@ -76,18 +76,18 @@ int slr_mesh_upload(int slot, int64_t verts_ptr, int vert_count)
 
 int slr_object_destroy(int64_t h, int64_t obj)
 {
-    slr_pipeline* p;
+    SlrPipeline* p;
     int idx = 0;
     if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
     if (!obj_from_handle(p, obj, &idx)) { set_error(SLR_E_OBJECT); rhi_exit(); return 0; }
-    memset(&p->objects[idx], 0, sizeof(slr_object));
+    memset(&p->objects[idx], 0, sizeof(SlrObject));
     rhi_exit();
     return 1;
 }
 
-static int obj_set_common(int64_t h, int64_t obj, slr_pipeline** pp, slr_object** oo, int* idx)
+static int obj_set_common(int64_t h, int64_t obj, SlrPipeline** pp, SlrObject** oo, int* idx)
 {
     if (!rhi_enter()) return 0;
     *pp = pipe_from_handle(h);
@@ -99,7 +99,7 @@ static int obj_set_common(int64_t h, int64_t obj, slr_pipeline** pp, slr_object*
 
 int slr_object_set_visible(int64_t h, int64_t obj, int visible)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->visible = visible ? 1 : 0;
     rhi_exit();
@@ -108,7 +108,7 @@ int slr_object_set_visible(int64_t h, int64_t obj, int visible)
 
 int slr_object_set_layer(int64_t h, int64_t obj, int layer)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (layer < 0 || layer > 31) { set_error(SLR_E_BAD_PARAM); return 0; }
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->layer = layer;
@@ -118,7 +118,7 @@ int slr_object_set_layer(int64_t h, int64_t obj, int layer)
 
 int slr_object_set_queue(int64_t h, int64_t obj, int queue)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->queue = queue;
     rhi_exit();
@@ -127,7 +127,7 @@ int slr_object_set_queue(int64_t h, int64_t obj, int queue)
 
 int slr_object_set_position(int64_t h, int64_t obj, float x, float y, float z)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->pos[0] = x; o->pos[1] = y; o->pos[2] = z;
     rhi_exit();
@@ -136,7 +136,7 @@ int slr_object_set_position(int64_t h, int64_t obj, float x, float y, float z)
 
 int slr_object_set_rotation_z(int64_t h, int64_t obj, float rz)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->rot_z = rz;
     rhi_exit();
@@ -145,7 +145,7 @@ int slr_object_set_rotation_z(int64_t h, int64_t obj, float rz)
 
 int slr_object_set_scale(int64_t h, int64_t obj, float sx, float sy)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->scale[0] = sx; o->scale[1] = sy;
     rhi_exit();
@@ -154,7 +154,7 @@ int slr_object_set_scale(int64_t h, int64_t obj, float sx, float sy)
 
 int slr_object_set_color(int64_t h, int64_t obj, float r, float g, float b, float a)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->color[0] = r; o->color[1] = g; o->color[2] = b; o->color[3] = a;
     rhi_exit();
@@ -163,7 +163,7 @@ int slr_object_set_color(int64_t h, int64_t obj, float r, float g, float b, floa
 
 int slr_object_set_texture(int64_t h, int64_t obj, int64_t tex)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     if (tex != 0 && !tex_from_handle(tex)) { set_error(SLR_E_TEXTURE); rhi_exit(); return 0; }
     o->texture = tex;
@@ -173,7 +173,7 @@ int slr_object_set_texture(int64_t h, int64_t obj, int64_t tex)
 
 int slr_object_set_animated(int64_t h, int64_t obj, int mode, float speed)
 {
-    slr_pipeline* p; slr_object* o; int idx;
+    SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
     o->anim_mode = (mode == SLR_ANIM_HUE_CYCLE) ? SLR_ANIM_HUE_CYCLE : SLR_ANIM_NONE;
     o->anim_speed = speed;
@@ -183,7 +183,7 @@ int slr_object_set_animated(int64_t h, int64_t obj, int mode, float speed)
 
 int slr_object_count(int64_t h)
 {
-    slr_pipeline* p = pipe_from_handle(h);
+    SlrPipeline* p = pipe_from_handle(h);
     int i, n = 0;
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     for (i = 0; i < SLR_MAX_OBJECTS; i++) if (p->objects[i].used) n++;

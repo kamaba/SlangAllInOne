@@ -90,9 +90,10 @@ typedef struct SlrRhi
     void (*set_state)(int transparent);
     /* 阶段 6：PerDraw 常量缓冲整块上传（mat4[64] + vec4[64]）*/
     void (*upload_perdraw)(const void* data, int bytes);
-    /* 单绘制项：prog = SLR_PROG_PFLAT/PTEX（v1 为 FLAT/TEX），slot =
-     * PerDraw 槽位，mesh = 0..3 静态网格，tex = NULL 表示纯色 */
-    void (*draw_item)(int prog, int slot, int mesh, void* tex);
+    /* 单绘制项：纯整数索引（prog = SLR_PROG_PFLAT/PTEX，slot = PerDraw
+     * 槽位，mesh = 0..3 静态网格 / 4..4+SLR_CUSTOM_MESHES-1 动态网格）。
+     * 纹理不在此传——绘制前经 desc_bind_tex 绑描述符槽（见下）*/
+    void (*draw_item)(int prog, int slot, int mesh);
 
     /* 阶段 11：后处理（enabled=0 走纯拷贝）scene -> post */
     void (*post_process)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
@@ -108,6 +109,18 @@ typedef struct SlrRhi
     /* 居中大三角：prog = SLR_PROG_FLAT/TEX，单位矩阵 MVP + 纯色/纹理 */
     void (*v1_draw)(SlrRhiTarget* t, int w, int h,
                     int prog, const float* mvp, const float* color_rgba, void* tex);
+
+    /* ---- 描述符表（DX11 SRV 槽表 / VK descriptor set / GL 纹理单元统一抽象）----
+     * 机制对齐 DX11/Vulkan 的"绑定与绘制分离"：资源先写入描述符槽
+     * （desc_write_tex，管线层帧级），绘制前绑定槽（desc_bind_tex），
+     * draw_item 只携带整数索引不碰资源指针。
+     *   D3D11: 槽表 = SRV 数组，bind = PSSetShaderResources
+     *   VK   : 槽表 = descriptor set 数组，bind = vkCmdBindDescriptorSets
+     *   GL/GLES: 槽表 = 纹理名数组，bind = 纹理单元绑定（GL 3.3 采样
+     *          单元固定 t1，槽 >0 由多采样器着色器扩展时启用）
+     * slot = -1 表示清绑定（绑 NULL / 0 纹理）。 */
+    int  (*desc_write_tex)(int slot, void* tex);   /* 写：纹理资源 -> 描述符槽 */
+    void (*desc_bind_tex)(int slot);               /* 绑：槽 -> 像素着色器 */
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

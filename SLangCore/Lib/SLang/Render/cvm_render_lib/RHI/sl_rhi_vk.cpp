@@ -830,6 +830,10 @@ static int              s_pass_open = 0;
 static SlrRhiTarget* s_pass_t = NULL;
 static int              s_trans = 0;
 
+/* 描述符槽表（VkTexture 的 PTEX set；管线层帧级写槽/选当前绑定）*/
+static VkDescriptorSet s_desc_set[SLR_DESC_TEX_SLOTS];
+static VkDescriptorSet s_cur_tex_set = NULL;
+
 static CRITICAL_SECTION s_lock;
 static int              s_lock_init = 0;
 
@@ -1742,6 +1746,9 @@ static void vk_free_shared(void)
         s_vb_custom_count[i] = 0;
     }
     if (s_set_perdraw) { p_vkFreeDescriptorSets(s_dev, s_descpool, 1, &s_set_perdraw); s_set_perdraw = NULL; }
+    /* 描述符槽表清空（纹理 set 已随纹理销毁释放，防悬空句柄）*/
+    memset(s_desc_set, 0, sizeof(s_desc_set));
+    s_cur_tex_set = NULL;
     if (s_ubo_draw) vk_destroy_buffer(&s_ubo_draw, &s_ubo_draw_mem, &s_ubo_draw_ptr);
     if (s_dsl_pipe_flat) { p_vkDestroyDescriptorSetLayout(s_dev, s_dsl_pipe_flat, NULL); s_dsl_pipe_flat = NULL; }
     if (s_dsl_pipe_tex) { p_vkDestroyDescriptorSetLayout(s_dev, s_dsl_pipe_tex, NULL); s_dsl_pipe_tex = NULL; }
@@ -1983,7 +1990,26 @@ static void vk_upload_perdraw(const void* data, int bytes)
     vk_flush_mem(s_ubo_draw_mem, 0, (VkDeviceSize)bytes, s_ubo_coherent);
 }
 
-static void vk_draw_item(int prog, int slot, int mesh, void* tex)
+/* ── 描述符表（descriptor set 槽表，VK 原生形态）──────────────────────
+ * desc_write_tex 写槽（槽内容 = VkTexture 的 PTEX descriptor set，
+ * 管线层帧级填充），desc_bind_tex 选当前绑定的 set——绑定与绘制分离，
+ * draw_item 只携带整数索引不碰资源指针，与 DX11 PSSetShaderResources
+ * 机制对齐（VK 的 vkCmdBindDescriptorSets 本身就是该语义）。
+ * 槽表/当前绑定声明于后端私有状态区（vk_free_shared 前向引用）。 */
+static int vk_desc_write_tex(int slot, void* tex)
+{
+    if (slot < 0 || slot >= SLR_DESC_TEX_SLOTS) return 0;
+    s_desc_set[slot] = tex ? ((VkTexture*)tex)->set_pipe_tex : NULL;
+    return 1;
+}
+
+static void vk_desc_bind_tex(int slot)
+{
+    s_cur_tex_set = (slot >= 0 && slot < SLR_DESC_TEX_SLOTS)
+                  ? s_desc_set[slot] : NULL;
+}
+
+static void vk_draw_item(int prog, int slot, int mesh)
 {
     int idx;
     VkDescriptorSet set;
@@ -2004,9 +2030,9 @@ static void vk_draw_item(int prog, int slot, int mesh, void* tex)
     }
     else if (prog == SLR_PROG_PTEX)
     {
-        if (!tex) { set_error(SLR_E_TEXTURE); return; }
+        if (!s_cur_tex_set) { set_error(SLR_E_TEXTURE); return; }
         idx = s_trans ? VKP_PTEX_T : VKP_PTEX_O;
-        set = ((VkTexture*)tex)->set_pipe_tex;
+        set = s_cur_tex_set;
     }
     else
     {
@@ -2434,6 +2460,8 @@ static const SlrRhi s_rhi_vk =
     vk_readback,
     vk_v1_clear,
     vk_v1_draw,
+    vk_desc_write_tex,
+    vk_desc_bind_tex,
 };
 
 const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

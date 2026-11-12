@@ -56,6 +56,10 @@ extern "C" {
 #define SLR_CLEAR_COLOR 1
 #define SLR_CLEAR_DEPTH 2
 
+/* 纹理描述符槽容量（帧级描述符表；DX11 SRV 槽表 / VK descriptor set 池的
+ * 管线侧镜像，四后端经 RHI desc_write_tex / desc_bind_tex 统一消费）*/
+#define SLR_DESC_TEX_SLOTS 16
+
 /* ===================================================================== */
 /* 着色器程序槽位（各 RHI 后端按同一槽位实现六组程序）                      */
 /* ===================================================================== */
@@ -96,9 +100,27 @@ typedef struct
     int prog;        /* SLR_PROG_PFLAT/PTEX   */
     int queue, layer;
     int cam;        /* 所属相机位号（0..SLR_MAX_CAMERAS-1）*/
+    int tex_desc;   /* 纹理描述符槽号（-1 = 无纹理；阶段 6 分配）*/
     float z;
     float mvp[16];
 } SlrDrawItem;
+
+/* ── 描述符表（DX11 SRV 槽表 / VK descriptor set 的管线侧数据结构）──
+ * 帧级生命周期：阶段 6 写入（纹理资源 -> 槽，同纹理查重复用），阶段
+ * 7/9 绘制项按 tex_desc 槽号绑定（desc_bind_tex），draw_item 只携带
+ * 整数索引不碰资源指针——"绑定与绘制分离"，与 DX11
+ * PSSetShaderResources / VK vkCmdBindDescriptorSets 机制对齐。 */
+typedef struct
+{
+    void* res;      /* 源资源指针（查重复用用，不参与绑定）*/
+    int   used;
+} SlrTexDesc;
+
+typedef struct
+{
+    SlrTexDesc tex[SLR_DESC_TEX_SLOTS];
+    int tex_count;              /* 本帧已写入的纹理描述符槽数 */
+} SlrDescTable;
 
 /* 相机：独立剔除掩码/正交视域/视口/清屏参数，depth 决定绘制次序 */
 typedef struct
@@ -138,6 +160,8 @@ typedef struct
     int draw_calls, opaque_draws, transparent_draws;
     int chunk_count, program_switches, upload_count;
     int layers_mask, last_stage;
+
+    SlrDescTable descs;                /* 帧级描述符表（阶段 6 写入/绘制绑定）*/
 
     float clear_color[4];
     int post_enabled;

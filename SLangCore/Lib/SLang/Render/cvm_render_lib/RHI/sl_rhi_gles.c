@@ -181,6 +181,7 @@ static GlProgUni  s_uni[SLR_PROG_COUNT];
 static GLuint       s_ubo = 0;
 static GlMesh      s_meshes[4];
 static GlMesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
+static GLuint       s_desc_tex[SLR_DESC_TEX_SLOTS];   /* 描述符槽表（free_shared 前向引用）*/
 
 static HMODULE  s_hegl = NULL;
 static HMODULE  s_hgles = NULL;
@@ -445,6 +446,8 @@ static void gl_free_shared(void)
         if (s_custom[i].vbo) p_glDeleteBuffers(1, &s_custom[i].vbo);
     }
     memset(s_custom, 0, sizeof(s_custom));
+    /* 描述符槽表清空（纹理已先销毁，防悬空纹理名）*/
+    memset(s_desc_tex, 0, sizeof(s_desc_tex));
     if (s_ubo) p_glDeleteBuffers(1, &s_ubo);
     s_ubo = 0;
 }
@@ -584,7 +587,25 @@ static void gl_upload_perdraw(const void* data, int bytes)
     p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-static void gl_draw_item(int prog, int slot, int mesh, void* tex)
+/* ── 描述符表（纹理名槽表；GLES 采样单元 t1 固定的镜像形态）────────────
+ * 绑定与绘制分离，与 DX11 PSSetShaderResources / VK vkCmdBindDescriptorSets
+ * 的描述符机制语义对齐（详细注释见 sl_rhi_gl.c 同名段；
+ * 槽表声明于静态状态区——free_shared 前向引用）。 */
+static int gl_desc_write_tex(int slot, void* tex)
+{
+    if (slot < 0 || slot >= SLR_DESC_TEX_SLOTS) return 0;
+    s_desc_tex[slot] = (GLuint)(intptr_t)tex;
+    return 1;
+}
+
+static void gl_desc_bind_tex(int slot)
+{
+    GLuint name = (slot >= 0 && slot < SLR_DESC_TEX_SLOTS) ? s_desc_tex[slot] : 0;
+    p_glActiveTexture(GL_TEXTURE1);
+    p_glBindTexture(GL_TEXTURE_2D, name);
+}
+
+static void gl_draw_item(int prog, int slot, int mesh)
 {
     GlMesh* m;
     if (mesh >= 4 + SLR_CUSTOM_MESHES)
@@ -601,11 +622,7 @@ static void gl_draw_item(int prog, int slot, int mesh, void* tex)
     p_glUseProgram(s_progs[prog]);
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX)
         p_glUniform1i(s_uni[prog].obj_index, slot);
-    if ((prog == SLR_PROG_PTEX || prog == SLR_PROG_TEX) && tex)
-    {
-        p_glActiveTexture(GL_TEXTURE1);
-        p_glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)tex);
-    }
+    /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源 */
     p_glBindVertexArray(m->vao);
     p_glDrawArrays(GL_TRIANGLES, 0, m->count);
     p_glBindVertexArray(0);
@@ -1043,6 +1060,8 @@ static const SlrRhi s_rhi_gles =
     gl_readback,
     gl_v1_clear,
     gl_v1_draw,
+    gl_desc_write_tex,
+    gl_desc_bind_tex,
 };
 
 const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

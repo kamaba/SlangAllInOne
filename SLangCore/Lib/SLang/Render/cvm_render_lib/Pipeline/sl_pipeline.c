@@ -410,6 +410,7 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->obj = i;
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
+                it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
                 it->prog = (o->texture != 0) ? SLR_PROG_PTEX : SLR_PROG_PFLAT;
                 mat4_model2d(model, o->pos[0], o->pos[1], o->rot_z, o->scale[0], o->scale[1]);
                 mat4_mul(it->mvp, proj, model);
@@ -432,6 +433,7 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->obj = i;
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
+                it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
                 it->prog = (o->texture != 0) ? SLR_PROG_PTEX : SLR_PROG_PFLAT;
                 mat4_model2d(model, o->pos[0], o->pos[1], o->rot_z, o->scale[0], o->scale[1]);
                 mat4_mul(it->mvp, proj, model);
@@ -446,7 +448,7 @@ static int stage_assemble_impl(SlrPipeline* p)
     return 1;
 }
 
-/* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传） */
+/* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传 + 纹理描述符表写入） */
 static int stage_upload_render_data(SlrPipeline* p)
 {
     int i;
@@ -460,19 +462,40 @@ static int stage_upload_render_data(SlrPipeline* p)
         p->upload_count += 2;   /* MVP + 颜色 */
     }
     g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
+    /* 纹理描述符表：PTEX 绘制项的纹理写入描述符槽（同纹理查重复用），
+     * 绘制项记录槽号——draw_item 不再携带资源指针 */
+    memset(&p->descs, 0, sizeof(p->descs));
+    for (i = 0; i < p->item_count; i++)
+    {
+        SlrDrawItem* it = &p->items[i];
+        it->tex_desc = -1;
+        if (it->prog == SLR_PROG_PTEX)
+        {
+            SlrTexRes* t = tex_from_handle(p->objects[it->obj].texture);
+            void* res = t ? t->rhi_tex : NULL;
+            int d;
+            for (d = 0; d < p->descs.tex_count; d++)
+                if (p->descs.tex[d].res == res) break;    /* 同纹理复用槽 */
+            if (d == p->descs.tex_count)
+            {
+                if (d >= SLR_DESC_TEX_SLOTS) continue;    /* 槽满：该绘制项降级纯色 */
+                p->descs.tex[d].res = res;
+                p->descs.tex[d].used = 1;
+                p->descs.tex_count++;
+                g_rhi->desc_write_tex(d, res);
+            }
+            it->tex_desc = d;
+        }
+    }
     return 1;
 }
 
 static void draw_one_item(SlrPipeline* p, SlrDrawItem* it)
 {
     SlrObject* o = &p->objects[it->obj];
-    void* tex = NULL;
-    if (it->prog == SLR_PROG_PTEX)
-    {
-        SlrTexRes* t = tex_from_handle(o->texture);
-        tex = t ? t->rhi_tex : NULL;
-    }
-    g_rhi->draw_item(it->prog, it->slot, o->mesh, tex);
+    /* 纹理经描述符槽绑定（绑定与绘制分离）；纯色绘制项绑 NULL */
+    g_rhi->desc_bind_tex(it->tex_desc);
+    g_rhi->draw_item(it->prog, it->slot, o->mesh);
     p->draw_calls++;
     p->layers_mask |= (1 << it->layer);
 }

@@ -80,6 +80,8 @@ static UINT          s_vb_count[4];
 static ID3D11Buffer* s_vb_custom[SLR_CUSTOM_MESHES];
 static UINT          s_vb_custom_count[SLR_CUSTOM_MESHES];
 static UINT          s_vb_custom_cap[SLR_CUSTOM_MESHES];
+/* 描述符槽表（SRV；管线层帧级写槽，free_shared 前向引用故声明于此）*/
+static ID3D11ShaderResourceView* s_desc_srv[SLR_DESC_TEX_SLOTS];
 
 /* 常量缓冲：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx */
 static ID3D11Buffer* s_cb_draw = NULL;   /* 5120B：mat4[64] + vec4[64]     */
@@ -457,6 +459,8 @@ static void d3d_free_shared(void)
     if (s_bs_nowrite) { s_bs_nowrite->Release(); s_bs_nowrite = NULL; }
     if (s_stage) { s_stage->Release(); s_stage = NULL; }
     s_stage_w = s_stage_h = 0;
+    /* 描述符槽表清空（纹理已先销毁，防悬空 SRV 指针）*/
+    memset(s_desc_srv, 0, sizeof(s_desc_srv));
 }
 
 /* ===================================================================== */
@@ -667,13 +671,30 @@ static void d3d_upload_perdraw(const void* data, int bytes)
     d3d_cb_update(s_cb_draw, data, (UINT)bytes);
 }
 
-static void d3d_draw_item(int prog, int slot, int mesh, void* tex)
+/* ── 描述符表（SRV 槽表，DX11 原生形态）──────────────────────────────
+ * desc_write_tex 写槽（管线层帧级填充），desc_bind_tex 绑定到像素
+ * 着色器 t0——PSSetShaderResources 即 DX11 的描述符表绑定机制。
+ * 槽表声明于静态状态区（free_shared 前向引用）。 */
+static int d3d_desc_write_tex(int slot, void* tex)
+{
+    if (slot < 0 || slot >= SLR_DESC_TEX_SLOTS) return 0;
+    s_desc_srv[slot] = tex ? ((D3dTexture*)tex)->srv : NULL;
+    return 1;
+}
+
+static void d3d_desc_bind_tex(int slot)
+{
+    ID3D11ShaderResourceView* srv = (slot >= 0 && slot < SLR_DESC_TEX_SLOTS)
+                                  ? s_desc_srv[slot] : NULL;
+    s_ctx->PSSetShaderResources(0, 1, &srv);
+}
+
+static void d3d_draw_item(int prog, int slot, int mesh)
 {
     D3dPerObj obj;
     UINT stride = 16, offset = 0;
     ID3D11Buffer* vb;
     UINT vcount;
-    ID3D11ShaderResourceView* srv = tex ? ((D3dTexture*)tex)->srv : NULL;
 
     /* mesh 0..3 静态网格；4..4+SLR_CUSTOM_MESHES-1 动态网格（mesh_upload 上传）*/
     if (mesh >= 4)
@@ -695,7 +716,7 @@ static void d3d_draw_item(int prog, int slot, int mesh, void* tex)
         obj.pad[0] = obj.pad[1] = obj.pad[2] = 0.0f;
         d3d_cb_update(s_cb_obj, &obj, sizeof(obj));
     }
-    s_ctx->PSSetShaderResources(0, 1, &srv);
+    /* 纹理已由 desc_bind_tex 绑定到 t0（SRV 描述符槽），此处不碰资源 */
     s_ctx->VSSetShader(s_vs[prog], NULL, 0);
     s_ctx->PSSetShader(s_ps[prog], NULL, 0);
     s_ctx->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
@@ -862,7 +883,12 @@ static void d3d_v1_draw(SlrRhiTarget* t, int w, int h,
     s_ctx->IASetInputLayout(s_layout);
     s_ctx->OMSetBlendState(s_bs_none, NULL, 0xFFFFFFFF);
     s_ctx->OMSetDepthStencilState(NULL, 0);
-    d3d_draw_item(prog, 0, 3, tex);   /* 网格 3 = v1 居中大三角 */
+    /* v1 直连纹理不走帧级描述符表（自带 tex 参数），此处直绑 t0 SRV */
+    {
+        ID3D11ShaderResourceView* srv = tex ? ((D3dTexture*)tex)->srv : NULL;
+        s_ctx->PSSetShaderResources(0, 1, &srv);
+    }
+    d3d_draw_item(prog, 0, 3);   /* 网格 3 = v1 居中大三角 */
 }
 
 /* ===================================================================== */
@@ -974,6 +1000,8 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_readback,
     d3d_v1_clear,
     d3d_v1_draw,
+    d3d_desc_write_tex,
+    d3d_desc_bind_tex,
 };
 
 const SlrRhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }

@@ -120,20 +120,105 @@ Project
 
 ## 文档导航
 
-全仓 md 总索引：**[md/INDEX.md](md/INDEX.md)**。常用入口：
+全仓 md 文档最完整的总索引是 **[md/INDEX.md](md/INDEX.md)**（逐篇列出全部文档），本导航按类别汇总，便于快速定位。
+
+### 入门与总览
 
 | 文档 | 内容 |
 |------|------|
-| [md/syntax/introduction.md](md/syntax/introduction.md) | 语法入门（37 篇逐篇详解的总入口） |
-| [md/SL语法与编码规范总表.md](md/SL语法与编码规范总表.md) | 语法与编码规范单点引用总表 |
-| [md/CLI.md](md/CLI.md) | CLI 全集（slang / spm / csimple_lang） |
-| [md/code.md](md/code.md) | 编码规范 |
-| [md/project/project-config-jsonc-guide.md](md/project/project-config-jsonc-guide.md) | `.jsonc` 工程配置权威说明 |
-| [md/project/project_sp-guide.md](md/project/project_sp-guide.md) | `.sp` 工程文件指南 |
-| [md/project/test-guide.md](md/project/test-guide.md) | 测试指南（用例集 ↔ 宿主对照） |
-| [md/log/log-system-guide.md](md/log/log-system-guide.md) | 日志系统 |
-| [md/lib/Core/README.md](md/lib/Core/README.md)（及 Math / Std / HttpServer / WebUI） | 标准库 API 文档入口 |
-| [PROJECTS.md](PROJECTS.md) / [RELEASE.md](RELEASE.md) | 工程清单 / 发布策略 |
+| [README.md](README.md) / [README_EN.md](README_EN.md) | 语言与生态总览（中 / 英） |
+| [PROJECTS.md](PROJECTS.md) | 工程构成 / 版本联动 / 仓库布局 |
+| [RELEASE.md](RELEASE.md) | 发版与分发包流程 |
+| [code.md](md/code.md) | 编码规范 |
+| [CLI.md](md/CLI.md) | CLI 全集（slang / spm / csimple_lang） |
+| [SL语法与编码规范总表.md](md/SL语法与编码规范总表.md) | 语法逐篇详解单点引用总表 |
+
+### 工程与生态（md/project，17 篇）
+
+| 文档 | 内容 |
+|------|------|
+| [project.md](md/project/project.md) | 工程总览 |
+| [project-config-jsonc-guide.md](md/project/project-config-jsonc-guide.md) | jsonc 配置全解（project / source / compile / references / macro 等） |
+| [project_sp-guide.md](md/project/project_sp-guide.md) | `.sp` 工程文件指南 |
+| [project-module.md](md/project/project-module.md) | 工程 / 模块结构 |
+| [project_arguments.md](md/project/project_arguments.md) | 程序参数（`--` 透传与 `_inputArgs`） |
+| [project-system-method-call-guide.md](md/project/project-system-method-call-guide.md) | System 方法调用指南 |
+| [static-if.md](md/project/static-if.md) | `global.macro` 宏 + `static if` 条件编译 + `_before_` 钩子 |
+| [environment-guide.md](md/project/environment-guide.md) | Environment 运行环境 / 平台分支 |
+| [exporter.md](md/project/exporter.md) | 导出器（module.json / SLB） |
+| [publish-guide.md](md/project/publish-guide.md) | `slang publish` 发布指南 |
+| [package-layout.md](md/project/package-layout.md) | 发行包目录布局 |
+| [spm-registry.md](md/project/spm-registry.md) | spm 包/插件管理器与 registry |
+| [ffi.md](md/project/ffi.md) | FFI 契约（`.slffi.json` / `ffi-check`） |
+| [lsp-code-index.md](md/project/lsp-code-index.md) | LSP 代码索引 |
+| [docs-web.md](md/project/docs-web.md) | 文档站（官网文档部署） |
+| [optimization.md](md/project/optimization.md) | 优化指南 |
+| [test-guide.md](md/project/test-guide.md) | 测试指南（用例集 ↔ 宿主对照） |
+
+### 语言语法（md/syntax，37 篇）
+
+入门与词法：[introduction](md/syntax/introduction.md) · [keywords](md/syntax/keywords.md) · [marco](md/syntax/marco.md) · [attribute](md/syntax/attribute.md) · [namespace](md/syntax/namespace.md)
+
+变量与作用域：[variable](md/syntax/variable.md) · [local](md/syntax/local.md) · [global](md/syntax/global.md) · [typealias](md/syntax/typealias.md) · [float8_16](md/syntax/float8_16.md)
+
+类型：[type](md/syntax/type.md) · [number](md/syntax/number.md) · [string](md/syntax/string.md) · [object](md/syntax/object.md) · [array](md/syntax/array.md) · [range](md/syntax/range.md) · [data](md/syntax/data.md) · [class](md/syntax/class.md) · [interface](md/syntax/interface.md) · [enum](md/syntax/enum.md) · [cast](md/syntax/cast.md)
+
+表达式与运算：[express](md/syntax/express.md) · [operator](md/syntax/operator.md) · [bind](md/syntax/bind.md)
+
+流程控制：[if](md/syntax/if.md) · [switch](md/syntax/switch.md) · [try](md/syntax/try.md) · [forwhiledowhile](md/syntax/forwhiledowhile.md) · [labelgoto](md/syntax/labelgoto.md)
+
+函数与高级特性：[function](md/syntax/function.md) · [template](md/syntax/template.md) · [inline_lambda](md/syntax/inline_lambda.md) · [coroutine](md/syntax/coroutine.md) · [isolate](md/syntax/isolate.md) · [extend](md/syntax/extend.md) · [result](md/syntax/result.md) · [system_method](md/syntax/system_method.md)
+
+### 标准库 API（md/lib）
+
+每个模块先读 `README.md`（职责边界与依赖顺序）；逐 API 文档见 **[md/INDEX.md](md/INDEX.md) §3.3**。
+
+- **[lib/Core](md/lib/Core/README.md)** —— 内建与核心运行库（数值 / String / Array / 容器 / IO / 文本 / Data / Coroutine 等，79 篇）
+- **[lib/Math](md/lib/Math/README.md)** —— 数学库（标量 / 大数 / 向量矩阵 / Rect，27 篇）
+- **[lib/Std](md/lib/Std/README.md)** —— 系统与生态库（IO / 文本 / 网络 / DB / 缓存 / GPU / Isolate / OS，53 篇）
+- **[lib/HttpServer](md/lib/HttpServer/README.md)** —— 内置 HTTP 服务端框架（18 篇）
+- **[lib/WebUI](md/lib/WebUI/README.md)** —— SLangWebUI 界面包（独立 module）
+
+### 日志系统（md/log）
+
+| 文档 | 内容 |
+|------|------|
+| [log-system-guide.md](md/log/log-system-guide.md) | 日志系统指南 |
+| [log-debug-usage.md](md/log/log-debug-usage.md) | 日志调试用法 |
+
+### AI 协作（内部，md/ai）
+
+| 文档 | 内容 |
+|------|------|
+| [AI_GUIDE.md](md/ai/AI_GUIDE.md) | AI 协作总入口 |
+| [INDEX.md](md/ai/INDEX.md) | AI 文档索引 |
+| [PROJECT_MAP.md](md/ai/PROJECT_MAP.md) | 代码地图 |
+| [EXPORT_PATHS.md](md/ai/EXPORT_PATHS.md) | 导出路径说明 |
+| [DEBUG_WORKFLOW.md](md/ai/DEBUG_WORKFLOW.md) | 调试工作流 |
+| [故障排查流程.md](md/ai/故障排查流程.md) | 故障排查 SOP |
+| [CONTRIBUTING_GUIDE.md](md/ai/CONTRIBUTING_GUIDE.md) | 贡献指南 |
+| [troubleshooting/](md/ai/troubleshooting/)（8 篇） | 分场景排查手册（编译 / 崩溃 / 运行时 / 并发 / 插件 FFI / 构建 / 标准库 / 方法论） |
+
+### Unity3D 生态（md/unity3d + unity/）
+
+| 文档 | 内容 |
+|------|------|
+| [unity/README.md](../unity/README.md) | U3D 落地实例（HelloCube） |
+| [00-INDEX.md](md/unity3d/00-INDEX.md) | 系列总索引 |
+| [01-架构总览.md](md/unity3d/01-架构总览.md) ~ [14-实例落地记录.md](md/unity3d/14-实例落地记录.md) | 架构 / 本地编译 / C# 桥接 / 模块装载热更 / Unity API 映射 / 生命周期 / 调试 / JIT·IL2CPP / 构建管线 / 跨平台部署 / 安全沙箱 / 示例 / 已知问题 |
+
+### 外部工程文档（csimple_lang / simple_language）
+
+| 文档 | 内容 |
+|------|------|
+| [SLB_DESIGN.md](../csimple_lang/md/design/SLB_DESIGN.md) | SLB 模块包格式设计 |
+| [ATTRIBUTE_DESIGN.md](../csimple_lang/md/design/ATTRIBUTE_DESIGN.md) | attribute 系统设计 |
+| [PROCESS_DESIGN.md](../csimple_lang/md/design/PROCESS_DESIGN.md) | 编译流程设计 |
+| [NET_DESIGN.md](../csimple_lang/md/design/NET_DESIGN.md) | C VM 网络栈设计 |
+| [DEBUG_PROTOCOL_DESIGN.md](../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md) | SLDP 调试协议设计 |
+| [X86_ASM_FASTPATH_DESIGN.md](../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md) | x86 ASM 快路径设计 |
+| [MONO_DESIGN.md](../csimple_lang/md/design/MONO_DESIGN.md) | Mono 互操作设计 |
+| [MLIR_AOT_实现与待办.md](../simple_language/source/Export/MLIR/MLIR_AOT_实现与待办.md) | MLIR AOT 后端 |
 
 ## 许可证
 

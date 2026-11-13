@@ -93,6 +93,8 @@
        排除模式）。 -->
   <ItemGroup>
     <Compile Remove="Project\**" />
+    <!-- 例外：slang project 命令组是宿主 CLI 自身代码（其余 Project\ 子树各有工程） -->
+    <Compile Include="Project\ProjectCommand.cs" />
     <Compile Remove="tools\**" />
     <Compile Remove="SLangCore\**" />
     <Compile Remove="examples\**" />

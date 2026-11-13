@@ -23,6 +23,12 @@
  * ========================================================================= */
 #include "sl_render_internal.h"
 #include <d3d11.h>
+#include "sl_rhi_shaders_gen.h"   /* v3.5 固化着色器（fxc SM5 预编译 DXBC blob + HLSL 源）*/
+
+/* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
+ * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
+typedef char slr_gen_slot_check[
+    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* 运行期解析符号（零 .lib 依赖）                                          */
@@ -359,6 +365,26 @@ static ID3D11PixelShader* d3d_make_ps(const char* src, const char* entry)
     return ps;
 }
 
+/* v3.5 固化 DXBC blob 直建（fxc SM5 预编译，运行期零编译）；空 blob /
+ * Create 失败返回 NULL，由调用方回退 d3d_make_vs/ps 编固化 HLSL 源 */
+static ID3D11VertexShader* d3d_make_vs_gen(const unsigned char* blob, int size)
+{
+    ID3D11VertexShader* vs = NULL;
+    if (blob && size > 0 &&
+        SUCCEEDED(s_dev->CreateVertexShader(blob, (SIZE_T)size, NULL, &vs)))
+        return vs;
+    return NULL;
+}
+
+static ID3D11PixelShader* d3d_make_ps_gen(const unsigned char* blob, int size)
+{
+    ID3D11PixelShader* ps = NULL;
+    if (blob && size > 0 &&
+        SUCCEEDED(s_dev->CreatePixelShader(blob, (SIZE_T)size, NULL, &ps)))
+        return ps;
+    return NULL;
+}
+
 /* ===================================================================== */
 /* 共享资源构建（设备成功后一次）                                          */
 /* ===================================================================== */
@@ -422,6 +448,22 @@ static int d3d_make_shared(void)
     s_vs[SLR_PROG_PHONG_FLAT] = s_vs[SLR_PROG_PFLAT];   /* Phong 复用管线 VS（world/nrm 输出已够用）*/
     s_vs[SLR_PROG_PHONG_TEX]  = s_vs[SLR_PROG_PFLAT];
     s_vs[SLR_PROG_POST] = s_vs[SLR_PROG_BLIT];
+
+    /* v3.5 固化槽：DXBC blob 直建（运行期零编译），空 blob/失败回退
+     * 固化 HLSL 源编译。每槽独立 Create（无别名，释放循环安全）；
+     * 常量槽 b0/b1/b4 常驻绑定与 gen 约定一致，IA 布局 POSITION/TEXCOORD
+     * 与 gen VS 签名兼容直接复用 s_layout。*/
+    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
+    {
+        const SlrGenShaderSet* gs = &SLR_GEN_SETS[i];
+        int gslot = SLR_PROG_GEN_BASE + i;
+        s_vs[gslot] = d3d_make_vs_gen(gs->dxbc_vs, gs->dxbc_vs_size);
+        if (!s_vs[gslot])
+            if (!(s_vs[gslot] = d3d_make_vs(gs->hlsl, "vert"))) return 0;
+        s_ps[gslot] = d3d_make_ps_gen(gs->dxbc_fs, gs->dxbc_fs_size);
+        if (!s_ps[gslot])
+            if (!(s_ps[gslot] = d3d_make_ps(gs->hlsl, "frag"))) return 0;
+    }
 
     /* ---- 输入布局（pos2 + uv2，stride 16B，与 GL 一致）---- */
     memset(layout, 0, sizeof(layout));
@@ -541,9 +583,13 @@ fail_cb:
 static void d3d_free_shared(void)
 {
     int i;
-    /* s_vs[TEX]/[PTEX]/[POST] 为别名指针，先清空防重复 Release */
+    /* s_vs[TEX]/[PTEX]/[PHONG_*]/[POST] 为别名指针，先清空防重复 Release
+     *（v3.5 顺手补 PHONG_FLAT/PHONG_TEX 两别名：旧版漏清致 PFLAT 同
+     * 指针在循环内双 Release 悬垂）*/
     s_vs[SLR_PROG_TEX] = NULL;
     s_vs[SLR_PROG_PTEX] = NULL;
+    s_vs[SLR_PROG_PHONG_FLAT] = NULL;
+    s_vs[SLR_PROG_PHONG_TEX] = NULL;
     s_vs[SLR_PROG_POST] = NULL;
     for (i = 0; i < SLR_PROG_COUNT; i++)
     {
@@ -838,7 +884,8 @@ static void d3d_draw_item(int prog, int slot, int mesh)
         vcount = s_vb_count[mesh];
     }
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
-        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX)
+        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
+        prog >= SLR_PROG_GEN_BASE)
     {
         obj.obj = slot;
         obj.pad[0] = obj.pad[1] = obj.pad[2] = 0.0f;

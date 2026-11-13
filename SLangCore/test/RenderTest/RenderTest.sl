@@ -39,12 +39,21 @@ import Std;
 #   另有 4s 自动轮播（d3d11 -> vk -> gles -> gl）自动验证四后端在
 #   QT 帧循环下都能持续渲染（用户点击任一按钮后轮播停止，尊重选择）；
 #   30s 退出 -> 帧数断言 + 后端掩码断言（gl + 至少一个其他后端渲染过）
-# Phase C 3D 旋转立方体（Mesh 数学层 + RHI 动态网格通道）：
-#   Mesh.cube(1.0) 24 顶点 36 索引 -> Float32_4x4.rotationY/X(t) CPU 旋转
-#   -> 相机 -Z 朝 +Z（dist = z + 2.6）-> 手工透视除法（f=1.7）-> NDC
-#   三角形列表（painter 平均深度降序，远先画保遮挡）-> Memory.writeF32
-#   填 pos2+uv2 -> pipe.uploadMesh(slot 0)；对象 meshKind = MESH_CUSTOM(4)
-#   每帧重传，onTick 驱动自转（正方体绕 X/Y 双轴旋转，QT 16ms 帧循环）
+# Phase C 3D 旋转细分立方体（Mesh 数学层 + RHI 动态网格 + 材质门面）：
+#   makeComplexCubeMesh 复用 Mesh.cube 面表双线性插值出每面 2x2 子块
+#   （5 实体面 80 顶点 120 索引，f/-Y 底面留空可透视内部，e/+Y 顶面
+#   alpha 0.45 半透）-> Float32_4x4.rotationY/X(t) CPU 旋转 -> 相机 -Z
+#   朝 +Z（dist = z + 2.6）-> 手工透视除法（f=1.7）-> NDC 三角形列表
+#   （painter 平均深度降序，远先画保遮挡）-> Memory.writeF32 填
+#   pos2+uv2（UV 按面/子块/角点现场推导进六面图集 cell）->
+#   pipe.uploadMesh(slot 0)，对象 meshKind = MESH_CUSTOM(4) 每帧重传；
+#   材质门面类 Shader/Texture/Material 全程串联：单一 SlPhong shader
+#   + 192x128 六面图集 + 每面一份 Material，对象贴图/颜色/队列/材质
+#   路由均从门面字段派生下发；onTick 驱动自转（QT 16ms 帧循环）
+# Phase G 固化 shader（gen 效果，material 0..4 全路由固化槽）：
+#   5 效果（Lambert/Phong/BlinnPhong/NormalMap/Toon）× flat/tex 变体
+#   正面断言 —— 退化等价（uSpec=0）、Blinn/Phong 高光手算值、Toon
+#   阶梯手算值、NormalMap 零扰动等价；VK 降级 builtin 一致性复检
 # ============================================================================
 public class RenderTest
 {
@@ -74,11 +83,11 @@ public class RenderTest
     static bool _userPicked = false    # 用户点过按钮后停止自动轮播
 
     # Phase C：3D 立方体状态（Mesh 库 + 动态网格通道）
-    static SLang.Mesh _cubeMesh = null       # Mesh.cube(1.0)：24 顶点 36 索引
+    static SLang.Mesh _cubeMesh = null       # 细分立方体：5 面各 2x2 = 80 顶点 120 索引
     static SLang.RenderObject _cubeObj = null   # meshKind=4（动态网格槽 0）
-    static Int64 _cubeVerts = 0             # 36 顶点 * 16B 显存暂存（帧间复用）
+    static Int64 _cubeVerts = 0             # 120 顶点 * 16B 显存暂存（帧间复用）
     static Int32 _cubeFirst = 0             # 首帧 uploadMesh 结果打印标志
-    # UV 不建表：vi%4 -> (0,0)(1,0)(1,1)(0,1)（updateCube 现场计算）
+    # UV 不建表：vi/16=面、(vi%16)/4=子块、vi%4=角点 -> 图集 cell（updateCube 现场计算）
 
     # 帧循环 tick：t 推进 -> SL 侧逐阶段驱动 1..13（完整流程）-> 填 QT 窗口
     # v3.4：每帧先摇晃聚光灯（位置 ±0.08 sin + 高度 ±0.05 sin、强度
@@ -218,22 +227,34 @@ public class RenderTest
             while j < 3
             {
                 Int32 vi = tris[ tri * 3 + j ]
-                # UV：面内角序 vi%4 -> 00,10,11,01
-                Int32 ci = vi % 4
-                Float32 u = 0.0f
-                Float32 v = 0.0f
-                if ci == 1
+                # UV：face-major 布局 vi/16=面 -> 图集 cell、
+                # (vi%16)/4=子块、vi%4=角点；半纹素内缩防渗色
+                Int32 face = vi / 16
+                Int32 sub = ( vi % 16 ) / 4
+                Int32 corner = vi % 4
+                Int32 col = face % 3
+                Int32 row = face / 3
+                Float32 u0 = ( col * 64 + 0.5f ) / 192.0f
+                Float32 u1 = ( ( col + 1 ) * 64 - 0.5f ) / 192.0f
+                Float32 v0 = ( row * 64 + 0.5f ) / 128.0f
+                Float32 v1 = ( ( row + 1 ) * 64 - 0.5f ) / 128.0f
+                Float32 u = u0
+                Float32 v = v0
+                if sub == 1 || sub == 3
                 {
-                    u = 1.0f
+                    u = u0 + ( u1 - u0 ) * 0.5f
                 }
-                if ci == 2
+                if sub >= 2
                 {
-                    u = 1.0f
-                    v = 1.0f
+                    v = v0 + ( v1 - v0 ) * 0.5f
                 }
-                if ci == 3
+                if corner == 1 || corner == 2
                 {
-                    v = 1.0f
+                    u = u + ( u1 - u0 ) * 0.5f
+                }
+                if corner == 2 || corner == 3
+                {
+                    v = v + ( v1 - v0 ) * 0.5f
                 }
                 Memory.writeF32( _cubeVerts, vout * 16, px[ vi ] )
                 Memory.writeF32( _cubeVerts, vout * 16 + 4, py[ vi ] )
@@ -245,6 +266,250 @@ public class RenderTest
             c = c + 1
         }
         ret _pipe.uploadMesh( 0, _cubeVerts, vout )
+    }
+
+    # ── Phase C：细分立方体网格（每面 2x2 子块，f 底面留空）──────────
+    # 复用 Mesh.cube 的面表角序：a..f = +Z/-Z/+X/-X/+Y/-Y，每面 4 角点
+    # 双线性插值出 2x2 子方块（4 子块 x 4 角点）；f 面（face 5，-Y 底面）
+    # 跳过几何 —— 旋转时透过空面可见立方体内部。顶点布局 face-major：
+    # face = vi/16、sub = (vi%16)/4、corner = vi%4（updateCube 据此推 UV）。
+    # 产出：5 面 x 20 子块角点 = 80 顶点、40 三角形 120 索引、面法线。
+    static SLang.Mesh makeComplexCubeMesh( Float32 size )
+    {
+        SLang.Mesh src = SLang.Mesh.cube( size )
+        if src == null
+        {
+            ret null
+        }
+        Array<Float32> pos = Array<Float32>( 5 * 16 * 3 )
+        Array<Float32> nrm = Array<Float32>( 5 * 16 * 3 )
+        Array<Int32> tri = Array<Int32>( 5 * 4 * 6 )
+        Int32 vi = 0
+        Int32 ti = 0
+        Int32 face = 0
+        while face < 6
+        {
+            if face != 5
+            {
+                # 面四角点（角序 (0,0)(1,0)(1,1)(0,1)，从面外看逆时针）+ 面法线
+                Float32_3 c0 = src.getVertex( face * 4 )
+                Float32_3 c1 = src.getVertex( face * 4 + 1 )
+                Float32_3 c2 = src.getVertex( face * 4 + 2 )
+                Float32_3 c3 = src.getVertex( face * 4 + 3 )
+                Float32_3 n = src.getNormal( face * 4 )
+                Int32 qy = 0
+                while qy < 2
+                {
+                    Int32 qx = 0
+                    while qx < 2
+                    {
+                        # 子块四角（角序 00,10,11,01）：
+                        # P(s,t) = c0(1-s)(1-t) + c1 s(1-t) + c2 s t + c3(1-s)t
+                        Int32 k = 0
+                        while k < 4
+                        {
+                            Float32 s = qx * 0.5f
+                            Float32 tt = qy * 0.5f
+                            if k == 1 || k == 2
+                            {
+                                s = s + 0.5f
+                            }
+                            if k == 2 || k == 3
+                            {
+                                tt = tt + 0.5f
+                            }
+                            Float32 ws = 1.0f - s
+                            Float32 wt = 1.0f - tt
+                            Float32 w0 = ws * wt
+                            Float32 w1 = s * wt
+                            Float32 w2 = s * tt
+                            Float32 w3 = ws * tt
+                            pos[ vi * 3 ] = c0.x * w0 + c1.x * w1 + c2.x * w2 + c3.x * w3
+                            pos[ vi * 3 + 1 ] = c0.y * w0 + c1.y * w1 + c2.y * w2 + c3.y * w3
+                            pos[ vi * 3 + 2 ] = c0.z * w0 + c1.z * w1 + c2.z * w2 + c3.z * w3
+                            nrm[ vi * 3 ] = n.x
+                            nrm[ vi * 3 + 1 ] = n.y
+                            nrm[ vi * 3 + 2 ] = n.z
+                            vi = vi + 1
+                            k = k + 1
+                        }
+                        # 子块双三角形：00,10,11 + 00,11,01
+                        Int32 b0 = vi - 4
+                        tri[ ti ] = b0
+                        tri[ ti + 1 ] = b0 + 1
+                        tri[ ti + 2 ] = b0 + 2
+                        tri[ ti + 3 ] = b0
+                        tri[ ti + 4 ] = b0 + 2
+                        tri[ ti + 5 ] = b0 + 3
+                        ti = ti + 6
+                        qx = qx + 1
+                    }
+                    qy = qy + 1
+                }
+            }
+            face = face + 1
+        }
+        ret SLang.Mesh( pos, tri, nrm )
+    }
+
+    # 字母位图取位：5bit 行值，x=0 取最高位（最左列）
+    static Int32 glyphBit( Int32 rowBits, Int32 x )
+    {
+        Int32 v = rowBits
+        Int32 k = 4 - x
+        while k > 0
+        {
+            v = v / 2
+            k = k - 1
+        }
+        ret v % 2
+    }
+
+    # ── Phase C：六面图集（Texture 门面类逐像素构建）──────────────────
+    # 192x128 = 3x2 cell（每 cell 64x64），face -> col=face%3、row=face/3：
+    # a 红 / b 绿 / c 蓝 / d 琥珀 不透明；e 白青 alpha 0.45（透明面）；
+    # f 暗色 alpha 0（空面，无几何引用）。每 cell：2x2 象限明暗棋盘
+    # （与几何子块对应）+ 中心 1px 十字暗线 + 居中 5x5 位图字母（x6
+    # 缩放）。字母按渲染方向垂直翻转写入（v=0 <-> 像素 y=0 <-> 面底部）。
+    static Texture makeCubeAtlas()
+    {
+        Texture tex = Texture( 192, 128 )
+        Array<Float32> fr = Array<Float32>( 6 )
+        Array<Float32> fg = Array<Float32>( 6 )
+        Array<Float32> fb = Array<Float32>( 6 )
+        Array<Float32> fa = Array<Float32>( 6 )
+        fr[0] = 0.92f; fg[0] = 0.28f; fb[0] = 0.22f; fa[0] = 1.0f
+        fr[1] = 0.24f; fg[1] = 0.72f; fb[1] = 0.34f; fa[1] = 1.0f
+        fr[2] = 0.25f; fg[2] = 0.45f; fb[2] = 0.92f; fa[2] = 1.0f
+        fr[3] = 0.98f; fg[3] = 0.75f; fb[3] = 0.18f; fa[3] = 1.0f
+        fr[4] = 0.85f; fg[4] = 0.95f; fb[4] = 1.0f; fa[4] = 0.45f
+        fr[5] = 0.10f; fg[5] = 0.10f; fb[5] = 0.12f; fa[5] = 0.0f
+        # 5x5 字母位图（a..f，行值高位在左）
+        Array<Int32> gl = Array<Int32>( 30 )
+        gl[0] = 14; gl[1] = 17; gl[2] = 31; gl[3] = 17; gl[4] = 17
+        gl[5] = 30; gl[6] = 17; gl[7] = 30; gl[8] = 17; gl[9] = 30
+        gl[10] = 15; gl[11] = 16; gl[12] = 16; gl[13] = 16; gl[14] = 15
+        gl[15] = 30; gl[16] = 17; gl[17] = 17; gl[18] = 17; gl[19] = 30
+        gl[20] = 31; gl[21] = 16; gl[22] = 30; gl[23] = 16; gl[24] = 31
+        gl[25] = 31; gl[26] = 16; gl[27] = 30; gl[28] = 16; gl[29] = 16
+        Int32 face = 0
+        while face < 6
+        {
+            Int32 x0 = ( face % 3 ) * 64
+            Int32 y0 = ( face / 3 ) * 64
+            Int32 y = 0
+            while y < 64
+            {
+                Int32 x = 0
+                while x < 64
+                {
+                    Float32 shade = 0.82f
+                    if ( x / 32 + y / 32 ) % 2 == 1
+                    {
+                        shade = 1.0f
+                    }
+                    if x == 32 || y == 32
+                    {
+                        shade = shade * 0.55f
+                    }
+                    Color c = Color( fr[face] * shade, fg[face] * shade, fb[face] * shade, fa[face] )
+                    tex.setPixel( x0 + x, y0 + y, c )
+                    x = x + 1
+                }
+                y = y + 1
+            }
+            # 居中字母：5x5 位图 x6 缩放（30x30，边距 17），字形行 gy
+            # 垂直翻转写到 (4-gy)*6（上屏才正立）；alpha 乘面透明度
+            Int32 gy = 0
+            while gy < 5
+            {
+                Int32 gx = 0
+                while gx < 5
+                {
+                    if RenderTest.glyphBit( gl[ face * 5 + gy ], gx ) == 1
+                    {
+                        Color lc = Color( 0.97f, 0.97f, 0.95f, fa[face] )
+                        Int32 px = x0 + 17 + gx * 6
+                        Int32 py = y0 + 17 + ( 4 - gy ) * 6
+                        Int32 dy = 0
+                        while dy < 6
+                        {
+                            Int32 dx = 0
+                            while dx < 6
+                            {
+                                tex.setPixel( px + dx, py + dy, lc )
+                                dx = dx + 1
+                            }
+                            dy = dy + 1
+                        }
+                    }
+                    gx = gx + 1
+                }
+                gy = gy + 1
+            }
+            face = face + 1
+        }
+        ret tex
+    }
+
+    # 单面材质门面：颜色取图集 cell 中心采样，e 面（face 4）透明化
+    static Material makeFaceMaterial( Shader sh, Texture atlas, Int32 face, string name )
+    {
+        Color c = atlas.getPixel( ( face % 3 ) * 64 + 32, ( face / 3 ) * 64 + 32 )
+        Material m = Material( sh, c )
+        m.name = name
+        m.setTexture( atlas )
+        m.clampParameters()
+        if face == 4
+        {
+            m.setTransparent( true )
+        }
+        ret m
+    }
+
+    # Texture（门面 Float32 RGBA）-> RGBA8 显存块 -> RenderTexture 上屏
+    static SLang.RenderTexture textureToRenderTexture( Texture tex )
+    {
+        if tex == null || tex.isValid == false
+        {
+            ret null
+        }
+        Int64 ptr = Memory.alloc( tex.width * tex.height * 4 )
+        if ptr == 0
+        {
+            ret null
+        }
+        Int32 y = 0
+        while y < tex.height
+        {
+            Int32 x = 0
+            while x < tex.width
+            {
+                Color c = tex.getPixel( x, y )
+                Int32 o = ( y * tex.width + x ) * 4
+                Memory.writeI8( ptr, o, RenderTest.f2b( c.r ) )
+                Memory.writeI8( ptr, o + 1, RenderTest.f2b( c.g ) )
+                Memory.writeI8( ptr, o + 2, RenderTest.f2b( c.b ) )
+                Memory.writeI8( ptr, o + 3, RenderTest.f2b( c.a ) )
+                x = x + 1
+            }
+            y = y + 1
+        }
+        ret SLang.RenderTexture.createRgba( ptr, tex.width, tex.height )
+    }
+
+    # [0,1] 浮点 -> 0..255 字节（钳制 + 四舍五入）
+    static Int32 f2b( Float32 f )
+    {
+        if f < 0.0f
+        {
+            f = 0.0f
+        }
+        if f > 1.0f
+        {
+            f = 1.0f
+        }
+        ret Mathf.truncate( f * 255.0f + 0.5f )
     }
 
     # QT 循环内按当前后端记账（每帧调，位或幂等）
@@ -275,6 +540,15 @@ public class RenderTest
     # onTick 在重建窗口期踩已释放句柄。
     static void switchBackend( string name )
     {
+        # 2026-11-13 修复：先释放旧帧缓冲再清引用 —— 原直接 _pixels = 0
+        # 抢跑指针，每轮 rebuildScene 新 alloc 3.6MB（1250*720*4）全部泄漏，
+        # 4 轮后 SL 堆耗尽，rebuildScene 在 px 分配静默 ret false（唯一无
+        # FAIL 打印的中止点）-> _pipe 悬空 -> 立方体上传断言必失败。
+        # 旧块无原生侧所有权（仅回写目的地），uninit 前后释放皆安全。
+        if _pixels != 0
+        {
+            Memory.free( _pixels )
+        }
         _pipe = null
         _pixels = 0
         _cubeFirst = 0
@@ -379,7 +653,7 @@ public class RenderTest
         imgQuad.setSpecular( 1.0f, 12.0f )
         imgQuad.setShadow( 1 )
 
-        # 蓝 quad（layer0，右半；投影阴影 + Phong 纯色高光）
+        # 蓝 quad（layer0，右半；投影阴影 + Toon 卡通阶梯[3 档]）
         SLang.RenderObject blueQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
         if blueQuad == null
         {
@@ -390,9 +664,39 @@ public class RenderTest
         blueQuad.setPosition( 0.5f, 0.0f, 0.0f )
         blueQuad.setScale( 0.6f, 0.6f )
         blueQuad.setColor( 0.2f, 0.4f, 1.0f, 1.0f )
-        blueQuad.setMaterial( 1 )
-        blueQuad.setSpecular( 1.5f, 16.0f )
+        blueQuad.setMaterial( 4 )
+        blueQuad.setSpecular( 3.0f, 0.5f )
         blueQuad.setShadow( 1 )
+
+        # v3.5 固化效果展示：BlinnPhong 高光 quad（底部左）+ NormalMap
+        # 贴图高光 quad（底部右）—— 5 效果全上屏（Lambert=三角/立方体、
+        # Phong=橙图、Toon=蓝 quad、BlinnPhong/NormalMap=本组）
+        SLang.RenderObject bpQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if bpQuad == null
+        {
+            ret false
+        }
+        bpQuad.setLayer( 0 )
+        bpQuad.setQueue( 2000 )
+        bpQuad.setPosition( -0.55f, -0.58f, 0.0f )
+        bpQuad.setScale( 0.28f, 0.28f )
+        bpQuad.setColor( 0.95f, 0.55f, 0.15f, 1.0f )
+        bpQuad.setMaterial( 2 )
+        bpQuad.setSpecular( 2.5f, 32.0f )
+
+        SLang.RenderObject nmQuad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if nmQuad == null
+        {
+            ret false
+        }
+        nmQuad.setLayer( 0 )
+        nmQuad.setQueue( 2000 )
+        nmQuad.setPosition( 0.55f, -0.58f, 0.0f )
+        nmQuad.setScale( 0.28f, 0.28f )
+        nmQuad.setColor( 0.55f, 0.85f, 0.40f, 1.0f )
+        nmQuad.setTexture( imgTex )
+        nmQuad.setMaterial( 3 )
+        nmQuad.setSpecular( 1.5f, 48.0f )
 
         # 动画三角（layer1，顶部，色相循环）
         SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
@@ -426,22 +730,56 @@ public class RenderTest
             ret false
         }
 
-        # ── Phase C：3D 旋转立方体（Mesh.cube + 动态网格槽 0）─────
-        _cubeMesh = SLang.Mesh.cube( 1.0f )
+        # ── Phase C：细分立方体（每面 2x2 子块，f 面留空，e 面透明）──
+        # 材质门面串联（SLangRender 纯 SL 类）：Shader(SlPhong 单一
+        # shader) -> Texture(192x128 六面图集逐像素构建) -> Material
+        # (a..f 每面一份 + 主材质 clone 白色)——对象贴图/颜色/队列/
+        # 材质路由全部从门面 Material/Shader 字段派生后下发。
+        _cubeMesh = RenderTest.makeComplexCubeMesh( 1.0f )
         if _cubeMesh == null
         {
-            Console.println( "[ui] FAIL: Mesh.cube" )
+            Console.println( "[ui] FAIL: makeComplexCubeMesh" )
             ret false
         }
-        Console.println( "[cube] Mesh.cube verts=" + _cubeMesh.vertexCount.toString() + " indices=" + _cubeMesh.getTriangles().length.toString() )
-        # cube() 不带 UV：vi%4 现场计算（见 updateCube），无需建表
+        Console.println( "[cube] subdivided mesh verts=" + _cubeMesh.vertexCount.toString() + " indices=" + _cubeMesh.getTriangles().length.toString() )
+        Shader phongShader = Shader( "SlPhong", "// vertex: reuse builtin VS_COMMON_POS_UV", "// fragment: reuse builtin FS_PHONG_TEX" )
+        Texture atlas = RenderTest.makeCubeAtlas()
+        if atlas == null || atlas.isValid == false
+        {
+            Console.println( "[ui] FAIL: makeCubeAtlas" )
+            ret false
+        }
+        Material matA = RenderTest.makeFaceMaterial( phongShader, atlas, 0, "CubeFaceA" )
+        Material matB = RenderTest.makeFaceMaterial( phongShader, atlas, 1, "CubeFaceB" )
+        Material matC = RenderTest.makeFaceMaterial( phongShader, atlas, 2, "CubeFaceC" )
+        Material matD = RenderTest.makeFaceMaterial( phongShader, atlas, 3, "CubeFaceD" )
+        Material matE = RenderTest.makeFaceMaterial( phongShader, atlas, 4, "CubeFaceE" )
+        Material matF = RenderTest.makeFaceMaterial( phongShader, atlas, 5, "CubeFaceF" )
+        Material matMain = matA.clone()
+        matMain.name = "CubeMain"
+        matMain.setColor( Color.white() )
+        Console.println( "[mat] main: " + matMain.toString() + " shader=" + matMain.shader.name + " " + matMain.getTexture().toString() )
+        Console.println( "[mat] faces: " + matB.toString() + " | " + matC.toString() + " | " + matD.toString() )
+        string eflag = "false"
+        if matE.isTransparent
+        {
+            eflag = "true"
+        }
+        Console.println( "[mat] e(transparent)=" + eflag + " f(EMPTY)=" + matF.toString() )
         if _cubeVerts == 0
         {
-            _cubeVerts = Memory.alloc( 36 * 16 )
+            _cubeVerts = Memory.alloc( 120 * 16 )
         }
         if _cubeVerts == 0
         {
             Console.println( "[ui] FAIL: cube verts alloc" )
+            ret false
+        }
+        # 门面 Texture(Float32 RGBA) -> RGBA8 显存块 -> RenderTexture
+        SLang.RenderTexture atlasRt = RenderTest.textureToRenderTexture( matMain.getTexture() )
+        if atlasRt == null
+        {
+            Console.println( "[ui] FAIL: atlas upload - " + SLang.Render.errorString() )
             ret false
         }
         _cubeObj = pipe.addObject( SLang.RenderPipeline.MESH_CUSTOM )
@@ -450,19 +788,34 @@ public class RenderTest
             Console.println( "[ui] FAIL: cube addObject - " + SLang.Render.errorString() )
             ret false
         }
-        # 顶点已烘焙 NDC：位置/缩放保持单位，贴图走 imgTex，
-        # 透明队列（3000 默认）后画叠加在两个 quad 之上；
-        # v3.4：Phong 贴图高光 + 投影阴影（聚光点源 -> 阴影随灯摇晃）
-        _cubeObj.setTexture( imgTex )
-        _cubeObj.setColor( 1.0f, 1.0f, 1.0f, 1.0f )
-        _cubeObj.setMaterial( 1 )
+        # 顶点已烘焙 NDC：位置/缩放保持单位；贴图/颜色取自门面 matMain
+        # （图集 atlasRt + 白色调制，六面同槽共用一张纹理）；e 面
+        # alpha 0.45 -> 由 isTransparent 派生透明队列 3000 后画叠加；
+        # 材质路由由 shader 名派生（SlPhong -> 1）+ 贴图高光 + 投影
+        # 阴影（聚光点源 -> 阴影随灯摇晃）
+        _cubeObj.setTexture( atlasRt )
+        Color mc = matMain.getColor()
+        _cubeObj.setColor( mc.r, mc.g, mc.b, mc.a )
+        Int32 matRoute = 0
+        if matMain.shader.name == "SlPhong"
+        {
+            matRoute = 1
+        }
+        _cubeObj.setMaterial( matRoute )
         _cubeObj.setSpecular( 1.2f, 10.0f )
         _cubeObj.setShadow( 1 )
+        if matE.isTransparent
+        {
+            _cubeObj.setQueue( 3000 )
+        }
         RenderTest.updateCube( _t )
 
         Int64 px = Memory.alloc( 1250 * 720 * 4 )
         if px == 0
         {
+            # 可诊断性：px 分配失败原先静默 ret false（堆耗尽时 _pipe 悬空
+            # 全部 tick 无声跳过，极难定位）
+            Console.println( "[ui] FAIL: frame buffer alloc (SL heap exhausted?)" )
             ret false
         }
         _pipe = pipe
@@ -583,6 +936,7 @@ public class RenderTest
 
     public static void onQuit()
     {
+        Console.println( "[QT] quit timer fired (normal 30s exit)" )
         if _app != null
         {
             _app.quit()
@@ -620,6 +974,21 @@ public class RenderTest
 
         # Phase L：光照（直射 + 聚光 + 无光回归；当前 GL 后端）
         bool phaseL = runLightScene()
+
+        # Phase G：固化 shader（gen 效果 material>=2）正面断言（当前 GL 后端）
+        bool phaseG = runGenShaders()
+
+        # Phase CB：CommandBuffer 真录制（录制 -> 整理 -> 提交渲染，当前 GL 后端）
+        bool phaseCB = runCommandBuffer()
+
+        # Phase PASS：Pass 序列提交（Opaque/Transparent/Post/Blit 四 Pass 单流）
+        bool phasePass = runPassSubmit()
+
+        # Phase ENV：渲染环境查询（支持情况 / 当前选择 / 硬件 / 资源 / 配置）
+        bool phaseEnv = runEnvironmentQuery()
+
+        # Phase DATA：数据层快照（CullingData / FrameData / PassData）
+        bool phaseData = runDataSnapshot()
 
         Int32 phaseB = runQtWindow()
 
@@ -667,10 +1036,35 @@ public class RenderTest
         Console.println( "phase A2 (13-stage pipe)     : " + ( a2 ? "PASS" : "FAIL" ) )
         Console.println( "phase A3 (multi-cam+img)     : " + ( a3 ? "PASS" : "FAIL" ) )
         Console.println( "phase L  (dir+spot light)    : " + ( phaseL ? "PASS" : "FAIL" ) )
+        Console.println( "phase G  (frozen shaders)   : " + ( phaseG ? "PASS" : "FAIL" ) )
+        Console.println( "phase CB (command buffer)   : " + ( phaseCB ? "PASS" : "FAIL" ) )
+        Console.println( "phase PASS(pass sequence)   : " + ( phasePass ? "PASS" : "FAIL" ) )
+        Console.println( "phase ENV(render env)       : " + ( phaseEnv ? "PASS" : "FAIL" ) )
+        Console.println( "phase DATA(data layer)     : " + ( phaseData ? "PASS" : "FAIL" ) )
         Console.println( "phase B  (QT window)         : " + bText )
         # 终判：主流程全绿 + D3D11/VK 可用即 PASS，GLES 允许 SKIP（环境无 GLES 库）
         bool allOk = phaseA
         if !phaseL
+        {
+            allOk = false
+        }
+        if !phaseG
+        {
+            allOk = false
+        }
+        if !phaseCB
+        {
+            allOk = false
+        }
+        if !phasePass
+        {
+            allOk = false
+        }
+        if !phaseEnv
+        {
+            allOk = false
+        }
+        if !phaseData
         {
             allOk = false
         }
@@ -718,12 +1112,14 @@ public class RenderTest
         bool d3 = runMultiCameraImage()
         # 光照跨后端同效果复检（D3D11 与 GL 同公式逐像素一致）
         bool d4 = runLightScene()
+        # 固化 shader gen 效果（DXBC blob 直读）同像素复检
+        bool d5 = runGenShaders()
         # 本阶段管线句柄在切回 GL 后失效：清空 QT 移交（GL 主流程会重设）
         _pipe = null
         _pixels = 0
-        if d1 && d2 && d3 && d4
+        if d1 && d2 && d3 && d4 && d5
         {
-            Console.println( "[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image + lighting, pixels identical to GL)" )
+            Console.println( "[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image + lighting + frozen-gen, pixels identical to GL)" )
             ret 2
         }
         Console.println( "[d3d11] Phase D: FAIL" )
@@ -749,12 +1145,14 @@ public class RenderTest
         # VK：SPIR-V 固化暂未消费光照（upload_lights 空实现），
         # 光照相位跳过（默认无光照路径已由 d1..d3 覆盖）
         Console.println( "[vk] lighting phase skipped (SPIR-V frozen shaders do not consume lights yet)" )
+        # 固化 shader gen 效果：VK 降级 builtin 槽（像素=内建）一致性复检
+        bool d5 = runGenShaders()
         # 切回 GL 前先清空管线句柄移交（GL 主流程会重设）
         _pipe = null
         _pixels = 0
-        if d1 && d2 && d3
+        if d1 && d2 && d3 && d5
         {
-            Console.println( "[vk] Phase E: PASS (v1 + 13-stage + multi-cam + image, pixels identical to GL)" )
+            Console.println( "[vk] Phase E: PASS (v1 + 13-stage + multi-cam + image + frozen-gen, pixels identical to GL)" )
             ret 2
         }
         Console.println( "[vk] Phase E: FAIL" )
@@ -779,15 +1177,535 @@ public class RenderTest
         bool d3 = runMultiCameraImage()
         # 光照跨后端同效果复检（GLES 与 GL 同公式逐像素一致）
         bool d4 = runLightScene()
+        # 固化 shader gen 效果（ESSL300 运行期编固化源）同像素复检
+        bool d5 = runGenShaders()
         _pipe = null
         _pixels = 0
-        if d1 && d2 && d3 && d4
+        if d1 && d2 && d3 && d4 && d5
         {
-            Console.println( "[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image + lighting, pixels identical to GL)" )
+            Console.println( "[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image + lighting + frozen-gen, pixels identical to GL)" )
             ret 2
         }
         Console.println( "[gles] Phase F: FAIL" )
         ret 0
+    }
+
+    # ── Phase G：固化 shader（gen 效果，material 0..4 全路由）端到端 ──
+    # 「通用固化编译」产物正面断言（GL/D3D11/GLES 用真实 gen 源码，
+    # 全部 5 效果 × flat/tex 变体；VK 降级 builtin 槽）。同一 quad 切
+    # material 对比法：
+    #   断言 1：uSpec.x 默认 0 时 gen BlinnPhong-flat 与 gen Lambert-flat
+    #     公式逐字一致 -> 两帧中心像素逐通道差 <= 2（末位浮点容差）；
+    #   断言 2a：setSpecular(2,8)+直射光 -> Blinn 高光真实执行（手算
+    #     NdotH~0.916、pow8~0.50 -> 中心像素大幅增亮）；
+    #   断言 2b：gen Phong 经典高光 R=reflect(-L,N)、pow(R·V,8)*2 ->
+    #     手算 (63,126,251)±3（比 Blinn 暗，两族公式可区分）；
+    #   断言 3：gen NormalMap-flat —— uSpec.z（凹凸强度）无 API 写入
+    #     恒 0 -> 扰动/边缘光全零，退化为 BlinnPhong 基座 -> == 基准 1；
+    #   断言 4：gen Toon-flat setSpecular(3,0.5)（3 阶梯 + 阈值夹取 1
+    #     压制硬边高光）-> 手算阶梯 tint (48,97,207)±3 且暗于 Lambert；
+    #   断言 5：gen BlinnPhong-tex == gen Lambert-tex（tex 变体）；
+    #   断言 6：gen NormalMap-tex == 基准 5（tex 变体槽位）；
+    #   断言 7：gen Toon-tex 阶梯 tint 全通道严格暗于 Lambert-tex。
+    #   VK：全部效果降级 PFLAT/PTEX（uSpec 不消费）-> 一致性断言改
+    #     比对应基准，specular/阶梯手算断言跳过。
+    static bool runGenShaders()
+    {
+        Console.println( "-- Phase G: frozen shaders (gen effects, material>=2) --" )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 128, 128 )
+        if pipe == null
+        {
+            Console.println( "[gen] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f ) == false
+        {
+            Console.println( "[gen] FAIL: setClearColor" )
+            ret false
+        }
+        # 低环境光 + 直射光（漫反射 + Blinn 高光两条路径都活跃）
+        if pipe.setAmbient( 0.25f ) == false
+        {
+            Console.println( "[gen] FAIL: setAmbient" )
+            ret false
+        }
+        Light sun = Light.directional( Color.white(), 0.9f )
+        sun.dirX = 1.0f
+        sun.dirY = 0.0f
+        if sun.applyTo( pipe, 0 ) == false
+        {
+            Console.println( "[gen] FAIL: apply directional light" )
+            ret false
+        }
+        # 居中 quad：rot=0 法线 (1,0) 正对直射光 -> 全亮基准
+        SLang.RenderObject quad = pipe.addObject( SLang.RenderPipeline.MESH_QUAD )
+        if quad == null
+        {
+            Console.println( "[gen] FAIL: addObject - " + SLang.Render.errorString() )
+            ret false
+        }
+        quad.setPosition( 0.0f, 0.0f, 0.0f )
+        quad.setScale( 0.8f, 0.8f )
+        quad.setColor( 0.2f, 0.4f, 0.8f, 1.0f )
+        Int64 px = Memory.alloc( 128 * 128 * 4 )
+        if px == 0
+        {
+            Console.println( "[gen] FAIL: alloc pixels" )
+            ret false
+        }
+
+        # 断言 1：material 2（gen BlinnPhong flat，uSpec.x 默认 0 无高光）
+        #   vs material 0（gen Lambert flat，uSpec.x=0 时同漫反射核心）
+        #   —— 两帧中心像素逐通道差 <= 2
+        if quad.setMaterial( 2 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(2)" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen flat - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 g1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 g1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 g1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen BlinnPhong-flat (uSpec=0)  : (" + g1r + "," + g1g + "," + g1b + ")" )
+        if quad.setMaterial( 0 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(0)" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render builtin flat - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 b1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 b1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 b1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen Lambert-flat (uSpec=0) : (" + b1r + "," + b1g + "," + b1b + ")" )
+        Int32 dr = g1r - b1r
+        if dr < 0
+        {
+            dr = -dr
+        }
+        Int32 dg = g1g - b1g
+        if dg < 0
+        {
+            dg = -dg
+        }
+        Int32 db = g1b - b1b
+        if db < 0
+        {
+            db = -db
+        }
+        if dr > 2 || dg > 2 || db > 2
+        {
+            Console.println( "[gen] FAIL: gen flat != Lambert flat (diff " + dr + "," + dg + "," + db + ")" )
+            ret false
+        }
+
+        # 断言 2a：高光活跃（非平凡证明）—— setSpecular(2,8) 后像素必变
+        bool isVk = SLang.Render.currentBackend() == "vk"
+        if quad.setMaterial( 2 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(2) for specular" )
+            ret false
+        }
+        if quad.setSpecular( 2.0f, 8.0f ) == false
+        {
+            Console.println( "[gen] FAIL: setSpecular" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen specular - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 s1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 s1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 s1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen BlinnPhong specular(2,8): (" + s1r + "," + s1g + "," + s1b + ")" )
+        Int32 sr = s1r - g1r
+        if sr < 0
+        {
+            sr = -sr
+        }
+        Int32 sg = s1g - g1g
+        if sg < 0
+        {
+            sg = -sg
+        }
+        Int32 sb = s1b - g1b
+        if sb < 0
+        {
+            sb = -sb
+        }
+        if isVk
+        {
+            Console.println( "[gen] vk fallback slot: gen effects degrade to builtin PFLAT/PTEX (uSpec not consumed) - specular assertion skipped" )
+        }
+        else
+        {
+            # 手算：NdotH~0.916、pow8~0.50 -> 高光 ~0.9 -> 中心像素
+            # 大幅增亮（R 差 ~196）。全部 <3 说明 gen 高光没执行。
+            if sr < 3 && sg < 3 && sb < 3
+            {
+                Console.println( "[gen] FAIL: specular did not change pixels (diff " + sr + "," + sg + "," + sb + ")" )
+                ret false
+            }
+        }
+
+        # 断言 2b：gen Phong（material 1）经典高光 —— R=reflect(-L,N)、
+        #   pow(R·V,8)*2 手算 light=1.15+0.081 -> (63,126,251)±3；
+        #   与 Blinn（104,208,255）可区分（半角向量更亮）。VK 降级
+        #   PFLAT 不消费 uSpec -> 应等于基准 1。
+        if quad.setMaterial( 1 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(1) phong" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen phong - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 p1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 p1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 p1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen Phong specular(2,8)    : (" + p1r + "," + p1g + "," + p1b + ")" )
+        if isVk
+        {
+            Int32 vr = p1r - g1r
+            if vr < 0
+            {
+                vr = -vr
+            }
+            Int32 vg = p1g - g1g
+            if vg < 0
+            {
+                vg = -vg
+            }
+            Int32 vb = p1b - g1b
+            if vb < 0
+            {
+                vb = -vb
+            }
+            if vr > 2 || vg > 2 || vb > 2
+            {
+                Console.println( "[gen] FAIL: vk phong != degraded flat (diff " + vr + "," + vg + "," + vb + ")" )
+                ret false
+            }
+        }
+        else
+        {
+            Int32 pr = p1r - 63
+            if pr < 0
+            {
+                pr = -pr
+            }
+            Int32 pg = p1g - 126
+            if pg < 0
+            {
+                pg = -pg
+            }
+            Int32 pb = p1b - 251
+            if pb < 0
+            {
+                pb = -pb
+            }
+            if pr > 3 || pg > 3 || pb > 3
+            {
+                Console.println( "[gen] FAIL: gen phong specular off (got " + p1r + "," + p1g + "," + p1b + " expect ~63,126,251)" )
+                ret false
+            }
+        }
+
+        # 断言 3：gen NormalMap-flat（material 3）—— uSpec.z（凹凸强度）
+        #   无 API 写入恒 0 -> 扰动/边缘光全零，公式退化为 BlinnPhong
+        #   基座 -> 与基准 1 逐字节一致（VK 同降级一致）。先重置高光。
+        if quad.setSpecular( 0.0f, 0.0f ) == false
+        {
+            Console.println( "[gen] FAIL: reset specular nm-flat" )
+            ret false
+        }
+        if quad.setMaterial( 3 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(3) normalmap" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen normalmap - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 n1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 n1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 n1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen NormalMap-flat (bump=0) : (" + n1r + "," + n1g + "," + n1b + ")" )
+        Int32 nr = n1r - g1r
+        if nr < 0
+        {
+            nr = -nr
+        }
+        Int32 ng = n1g - g1g
+        if ng < 0
+        {
+            ng = -ng
+        }
+        Int32 nb = n1b - g1b
+        if nb < 0
+        {
+            nb = -nb
+        }
+        if nr > 2 || ng > 2 || nb > 2
+        {
+            Console.println( "[gen] FAIL: gen normalmap flat != blinnphong base (diff " + nr + "," + ng + "," + nb + ")" )
+            ret false
+        }
+
+        # 断言 4：gen Toon-flat（material 4，setSpecular(3,0.5) = 3 阶梯
+        #   + 高光阈值夹取 1 压制硬边高光）—— 手算阶梯 tint
+        #   (0.775,0.775,0.85) -> (48,97,207)±3 且至少一通道严格暗于
+        #   Lambert 基准；VK 降级 PFLAT -> == 基准 1。
+        if quad.setMaterial( 4 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(4) toon" )
+            ret false
+        }
+        if quad.setSpecular( 3.0f, 0.5f ) == false
+        {
+            Console.println( "[gen] FAIL: setSpecular toon" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen toon - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 t1r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 t1g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 t1b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen Toon-flat (steps=3)     : (" + t1r + "," + t1g + "," + t1b + ")" )
+        if isVk
+        {
+            Int32 kr = t1r - g1r
+            if kr < 0
+            {
+                kr = -kr
+            }
+            Int32 kg = t1g - g1g
+            if kg < 0
+            {
+                kg = -kg
+            }
+            Int32 kb = t1b - g1b
+            if kb < 0
+            {
+                kb = -kb
+            }
+            if kr > 2 || kg > 2 || kb > 2
+            {
+                Console.println( "[gen] FAIL: vk toon != degraded flat (diff " + kr + "," + kg + "," + kb + ")" )
+                ret false
+            }
+        }
+        else
+        {
+            Int32 qr = t1r - 48
+            if qr < 0
+            {
+                qr = -qr
+            }
+            Int32 qg = t1g - 97
+            if qg < 0
+            {
+                qg = -qg
+            }
+            Int32 qb = t1b - 207
+            if qb < 0
+            {
+                qb = -qb
+            }
+            if qr > 3 || qg > 3 || qb > 3
+            {
+                Console.println( "[gen] FAIL: gen toon steps off (got " + t1r + "," + t1g + "," + t1b + " expect ~48,97,207)" )
+                ret false
+            }
+            if t1r >= g1r && t1g >= g1g && t1b >= g1b
+            {
+                Console.println( "[gen] FAIL: gen toon == lambert (no band tint)" )
+                ret false
+            }
+        }
+
+        # 断言 5：gen BlinnPhong-tex == gen Lambert-tex（tex 变体，先重置高光）
+        if quad.setSpecular( 0.0f, 0.0f ) == false
+        {
+            Console.println( "[gen] FAIL: reset specular" )
+            ret false
+        }
+        Int64 texPtr = makeGradientTexture()
+        if texPtr == 0
+        {
+            Console.println( "[gen] FAIL: gradient texture" )
+            ret false
+        }
+        SLang.RenderTexture tex = SLang.RenderTexture.createRgba( texPtr, 64, 64 )
+        if tex == null
+        {
+            Console.println( "[gen] FAIL: createRgba - " + SLang.Render.errorString() )
+            ret false
+        }
+        if quad.setTexture( tex ) == false
+        {
+            Console.println( "[gen] FAIL: setTexture" )
+            ret false
+        }
+        # material 2 + texture -> gen BlinnPhong TEX 变体
+        if quad.setMaterial( 2 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(2) tex" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen tex - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 g2r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 g2g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 g2b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen BlinnPhong-tex          : (" + g2r + "," + g2g + "," + g2b + ")" )
+        if quad.setMaterial( 0 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(0) tex" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render builtin tex - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 b2r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 b2g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 b2b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen Lambert-tex            : (" + b2r + "," + b2g + "," + b2b + ")" )
+        Int32 xtr = g2r - b2r
+        if xtr < 0
+        {
+            xtr = -xtr
+        }
+        Int32 xtg = g2g - b2g
+        if xtg < 0
+        {
+            xtg = -xtg
+        }
+        Int32 xtb = g2b - b2b
+        if xtb < 0
+        {
+            xtb = -xtb
+        }
+        if xtr > 2 || xtg > 2 || xtb > 2
+        {
+            Console.println( "[gen] FAIL: gen tex != Lambert tex (diff " + xtr + "," + xtg + "," + xtb + ")" )
+            ret false
+        }
+
+        # 断言 6：gen NormalMap-tex（material 3 + 纹理）—— 同断言 3
+        #   （tex 变体槽位）：bump=0 -> == 基准 5（gen Lambert-tex）。
+        if quad.setMaterial( 3 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(3) nm-tex" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen nm-tex - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 n2r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 n2g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 n2b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen NormalMap-tex (bump=0)  : (" + n2r + "," + n2g + "," + n2b + ")" )
+        Int32 mr = n2r - g2r
+        if mr < 0
+        {
+            mr = -mr
+        }
+        Int32 mg = n2g - g2g
+        if mg < 0
+        {
+            mg = -mg
+        }
+        Int32 mb = n2b - g2b
+        if mb < 0
+        {
+            mb = -mb
+        }
+        if mr > 2 || mg > 2 || mb > 2
+        {
+            Console.println( "[gen] FAIL: gen nm-tex != lambert-tex (diff " + mr + "," + mg + "," + mb + ")" )
+            ret false
+        }
+
+        # 断言 7：gen Toon-tex（material 4 + 纹理 + setSpecular(3,0.5)）
+        #   —— 阶梯 tint 光照 (0.9475,0.9475,1.015) < Lambert 1.15
+        #   -> 全通道严格暗于基准 5；VK 降级 PTEX -> == 基准 5。
+        if quad.setMaterial( 4 ) == false
+        {
+            Console.println( "[gen] FAIL: setMaterial(4) toon-tex" )
+            ret false
+        }
+        if quad.setSpecular( 3.0f, 0.5f ) == false
+        {
+            Console.println( "[gen] FAIL: setSpecular toon-tex" )
+            ret false
+        }
+        if pipe.renderFrame( 0.0f, px ) == false
+        {
+            Console.println( "[gen] FAIL: render gen toon-tex - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int32 t2r = sampleChannel( px, 128, 64, 64, 0 )
+        Int32 t2g = sampleChannel( px, 128, 64, 64, 1 )
+        Int32 t2b = sampleChannel( px, 128, 64, 64, 2 )
+        Console.println( "[gen] gen Toon-tex (steps=3)      : (" + t2r + "," + t2g + "," + t2b + ")" )
+        if isVk
+        {
+            Int32 wr = t2r - g2r
+            if wr < 0
+            {
+                wr = -wr
+            }
+            Int32 wg = t2g - g2g
+            if wg < 0
+            {
+                wg = -wg
+            }
+            Int32 wb = t2b - g2b
+            if wb < 0
+            {
+                wb = -wb
+            }
+            if wr > 2 || wg > 2 || wb > 2
+            {
+                Console.println( "[gen] FAIL: vk toon-tex != degraded tex (diff " + wr + "," + wg + "," + wb + ")" )
+                ret false
+            }
+        }
+        else
+        {
+            if t2r >= g2r || t2g >= g2g || t2b >= g2b
+            {
+                Console.println( "[gen] FAIL: gen toon-tex not darker than lambert-tex (" + t2r + "," + t2g + "," + t2b + " vs " + g2r + "," + g2g + "," + g2b + ")" )
+                ret false
+            }
+        }
+
+        Console.println( "[gen] Phase G: PASS (5 frozen effects live: Lambert/Phong/BlinnPhong/NormalMap/Toon x flat+tex, backend " + SLang.Render.currentBackend() + ")" )
+        ret true
     }
 
     # 采样像素通道：pixels 块内 (x,y) 像素的 c 通道（0=R 1=G 2=B 3=A）
@@ -869,6 +1787,9 @@ public class RenderTest
     {
         Console.println( "-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --" )
 
+        # 2026-11-13 修复：原误写 1280x720 —— renderFrame 按管线 w/h 回写，
+        # 1280x720 会写爆 256x256 的 _pixels 缓冲（3.5MB 堆越界，几何错位
+        # 采样必失败，且堆破坏污染后续阶段）。与本阶段 256x256 采样断言一致。
         SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
         if pipe == null
         {
@@ -1646,6 +2567,8 @@ public class RenderTest
         # 同一光照（直射光 0.5 + ambient 0.1）：Lambert quad 中心 =
         # (0.1+0.5)*255 ≈ 153；Phong quad（spec 2.0/4.0）中心 =
         # (0.1+0.5+0.5*0.213*2)*255 ≈ 207 —— 差值即伪 3D 高光贡献
+        # 2026-11-13 修复：原误写 1280x720（注释即"独立 256 管线"；
+        # px2 为 256x256 缓冲，1280x720 回写 3.5MB 堆越界）
         SLang.RenderPipeline pipe2 = SLang.RenderPipeline.create( 256, 256 )
         if pipe2 == null
         {
@@ -1767,6 +2690,744 @@ public class RenderTest
         ret true
     }
 
+    # ── Phase CB：CommandBuffer 真录制（录制 → 整理 → 提交渲染）──
+    # Unity 式三段式端到端验收（doc/04 §3.6 SLMC 命令流全链路）：
+    #   1 录制：cb.begin() 后零后端调用，仅参数组织与顺序记账 ——
+    #     setRenderTargets / setTexture / setPerDraw / drawItem /
+    #     postProcess / blitFinal / readback，共 11 条命令；
+    #   2 整理：cb.sortDrawItems() 对 DrawItem 段排序（drawItem 乱序
+    #     录入：蓝 z0.3 -> 贴图 z0.5 -> 三角 z0.0；正确序 = 三角
+    #     (queue2000 不透明先画) -> 贴图(z0.5 远) -> 蓝(z0.3 近)，
+    #     透明 z 降序远->近保混合）；
+    #   3 提交渲染：pipe.executeCommandBuffer(cb) 按 SLMC 布局打包
+    #     整包提交，C 侧逐 opcode 回放（命令流走 RHI vtable ->
+    #     GL/D3D11/VK/GLES 四后端同效果，Phase D/E/F 各复检一次）。
+    # 场景（自建自毁 256x256 管线，不触碰 _pipe/_pixels）：
+    #   perdraw 槽 0 红三角（不透明 queue2000）；槽 1 白贴图 quad
+    #   (中心 0.45,0.35 scale0.55, 透明 z0.5, 64x64 渐变贴图)；槽 2
+    #   蓝 quad（中心 0.55,0.35 scale0.25, 透明 z0.3, 与贴图 quad
+    #   重叠 —— 重叠点是排序方向验证点：正确序蓝后画 -> 蓝分量高）。
+    static bool runCommandBuffer()
+    {
+        Console.println( "-- Phase CB: CommandBuffer record -> sort -> execute (SLMC stream, 256x256) --" )
+        # 2026-11-13 修复：原误写 1280x720 —— readback/blit 按管线 w/h 回写，
+        # 1280x720 会写爆 256x256 的 pixels 缓冲（堆越界、黑角、异常退出码）。
+        # 与本阶段 256x256 采样断言/64x64 贴图一致。
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[cb] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int64 pixels = Memory.alloc( 256 * 256 * 4 )
+        if pixels == 0
+        {
+            Console.println( "[cb] FAIL: pixel alloc" )
+            pipe.destroy()
+            ret false
+        }
+        Int64 texPtr = makeGradientTexture()
+        if texPtr == 0
+        {
+            Console.println( "[cb] FAIL: texture pixels alloc" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        SLang.RenderTexture tex = SLang.RenderTexture.createRgba( texPtr, 64, 64 )
+        if tex == null
+        {
+            Console.println( "[cb] FAIL: texture upload - " + SLang.Render.errorString() )
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # MVP（ortho(-1,1,-1,1) 投影≈单位阵 -> MVP≈model2d）
+        # 2026-11-13 修复：Float32_4x4 为列向量约定（Math 模块 translation
+        # 工厂/toFloat32_3x3 实证：平移在末列 m03/m13），pushMat 写 std140
+        # 列主序 [col*4+row]=M[row][col] 与 GLSL uMVP*v 匹配。原矩阵把
+        # 平移写在底行（m30/m31）-> GLSL 收到转置矩阵（无平移 + w 被污染）
+        # -> quad 几何畸变，采样点全落 quad 外。平移移到每行第 4 参：
+        # m03=tx m13=ty。
+        Float32_4x4 triMvp = Float32_4x4( 1.3f, 0.0f, 0.0f, 0.0f,
+                                          0.0f, 1.3f, 0.0f, 0.0f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f )
+        Float32_4x4 texMvp = Float32_4x4( 0.55f, 0.0f, 0.0f, 0.45f,
+                                          0.0f, 0.55f, 0.0f, 0.35f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f )
+        Float32_4x4 blueMvp = Float32_4x4( 0.25f, 0.0f, 0.0f, 0.55f,
+                                           0.0f, 0.25f, 0.0f, 0.35f,
+                                           0.0f, 0.0f, 1.0f, 0.0f,
+                                           0.0f, 0.0f, 0.0f, 1.0f )
+
+        # ── 1 录制：11 条命令，drawItem 故意乱序（蓝 z0.3 -> 贴图
+        #    z0.5 -> 三角 z0.0），排序必须重排为正确绘制序 ──────────
+        CommandBuffer cb = CommandBuffer()
+        cb.name = "cb-main"
+        cb.begin()
+        cb.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, 0, 0, 256, 256,
+                             3, Color( 0.06f, 0.06f, 0.10f, 1.0f ) )
+        cb.setTexture( 0, tex.handle )
+        cb.setPerDraw( 0, triMvp, Color( 1.0f, 0.0f, 0.0f, 1.0f ) )
+        cb.setPerDraw( 1, texMvp, Color( 1.0f, 1.0f, 1.0f, 0.85f ) )
+        cb.setPerDraw( 2, blueMvp, Color( 0.3f, 0.4f, 1.0f, 0.5f ) )
+        cb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 2, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.3f )
+        cb.drawItem( SLang.RenderPipeline.PROG_PTEX, 1, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.5f )
+        cb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_TRIANGLE, 0, 0, 2000, 0.0f )
+        cb.postProcess( 0, 1.0f, 1.0f, 1.0f )
+        cb.blitFinal()
+        cb.readback( pixels )
+        cb.end()
+        Console.println( "[cb] recorded " + cb.commandCount.toString() + " commands (overflow=" + cb.overflowCount.toString() + ")" )
+        if cb.commandCount != 11 || cb.overflowCount != 0
+        {
+            Console.println( "[cb] FAIL: commandCount expect 11, overflow expect 0" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 2 整理：DrawItem 段排序（3 项；透明远->近）──────────────
+        Int32 sorted = cb.sortDrawItems()
+        Console.println( "[cb] sortDrawItems -> " + sorted.toString() + " draw items sorted" )
+        if sorted != 3
+        {
+            Console.println( "[cb] FAIL: sortDrawItems expect 3" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 3 提交渲染：SLMC 打包整包提交，C 侧逐 opcode 回放 ───────
+        if !pipe.executeCommandBuffer( cb )
+        {
+            Console.println( "[cb] FAIL: executeCommandBuffer - " + SLang.Render.errorString() )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 统计断言：3 DrawItem + PostProcess + Blit 各计一次 draw call
+        Int32 statDraws = pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS )
+        Int32 statOpaque = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Int32 statTransp = pipe.stat( SLang.RenderPipeline.STAT_TRANSPARENT_DRAWS )
+        Console.println( "[cb] stats: draws=" + statDraws.toString() + " opaque=" + statOpaque.toString() + " transp=" + statTransp.toString() )
+        if statDraws != 5 || statOpaque != 1 || statTransp != 2
+        {
+            Console.println( "[cb] FAIL: stats expect draws=5 opaque=1 transp=2" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 像素断言（回读 top-left 坐标，与 A2 同源采样/阈值）
+        # 背景（左上角，远离三角与 quad）
+        Int32 kr = sampleChannel( pixels, 256, 4, 4, 0 )
+        Int32 kg = sampleChannel( pixels, 256, 4, 4, 1 )
+        Int32 kb = sampleChannel( pixels, 256, 4, 4, 2 )
+        Console.println( "[cb] corner  RGB=(" + kr.toString() + "," + kg.toString() + "," + kb.toString() + ")" )
+        if kr < 9 || kr > 21 || kg < 9 || kg > 21 || kb < 19 || kb > 33
+        {
+            Console.println( "[cb] FAIL: corner should be clear color" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 三角内部（左下区域，不受 quad 影响）
+        Int32 triR = sampleChannel( pixels, 256, 51, 184, 0 )
+        Int32 triG = sampleChannel( pixels, 256, 51, 184, 1 )
+        Int32 triB = sampleChannel( pixels, 256, 51, 184, 2 )
+        Console.println( "[cb] tri     RGB=(" + triR.toString() + "," + triG.toString() + "," + triB.toString() + ")" )
+        if triR < 240 || triG > 15 || triB > 15
+        {
+            Console.println( "[cb] FAIL: triangle should be red" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 贴图独占点（quad 右下带：NDC(0.70,0.15) 在贴图 quad
+        # [0.175..0.725]x[0.075..0.625] 内、蓝 quad 与三角外；
+        # u≈0.955 -> 期望 RGB≈(181,42,154)）
+        Int32 qr = sampleChannel( pixels, 256, 217, 108, 0 )
+        Int32 qg = sampleChannel( pixels, 256, 217, 108, 1 )
+        Int32 qb = sampleChannel( pixels, 256, 217, 108, 2 )
+        Console.println( "[cb] quadtex RGB=(" + qr.toString() + "," + qg.toString() + "," + qb.toString() + ")" )
+        if qr < 110 || qb < 110 || qg < 35 || qg > 90
+        {
+            Console.println( "[cb] FAIL: textured quad pixel missing" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 重叠点（两 quad 交叠区：NDC(0.55,0.40) 同在贴图 quad
+        # [0.175..0.725]x[0.075..0.625] 与蓝 quad [0.425..0.675]x[0.225..0.475]
+        # 内、三角外；正确序 = 贴图(z0.5 远)先画 -> 蓝(z0.3 近)后画 ->
+        # 蓝分量主导，期望 RGB≈(103,91,192)；错误序蓝先画被贴图盖 -> b≈130 判别失败）
+        Int32 br = sampleChannel( pixels, 256, 198, 76, 0 )
+        Int32 bg = sampleChannel( pixels, 256, 198, 76, 1 )
+        Int32 bb = sampleChannel( pixels, 256, 198, 76, 2 )
+        Console.println( "[cb] overlap RGB=(" + br.toString() + "," + bg.toString() + "," + bb.toString() + ")" )
+        if bb < 150 || ( bb - br ) < 40
+        {
+            Console.println( "[cb] FAIL: overlap should be blue-dominant (sort direction wrong)" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        tex.destroy()
+        Memory.free( texPtr )
+        Memory.free( pixels )
+        pipe.destroy()
+        Console.println( "[cb] Phase CB: PASS (record 11 -> sort 3 -> execute: pixels + stats + overlap all ok)" )
+        ret true
+    }
+
+    # ── Phase PASS：Pass 序列提交（Opaque/Transparent/Post/Blit 单流）──
+    # P1 端到端验收（AIPrompt.md P1：renderCameraScene 硬编码流程拆成
+    # 显式 Pass 序列，C 侧零改动）：
+    #   1 组装：CullingData 快照（P0 数据层）乱序灌 3 物体（蓝 z0.3 ->
+    #     贴图 z0.5 -> 三角 z0.0，同 Phase CB 录制序）+ 四个 Pass 依次
+    #     addPass 进 ScriptableRenderContext（OpaquePass 清屏+不透明段 /
+    #     TransparentPass 透明段 / PostProcessPass 全屏后处理 / BlitPass
+    #     整合+回读）；
+    #   2 预录：beginPassRecording 后经 passCommandBuffer() 预录帧级共享
+    #     状态（setTexture + setPerDraw×3）——C 侧 slr_cmd_execute_stream
+    #     每次调用都重置 PerDraw 槽与描述符表，一帧全部命令必须同流；
+    #   3 提交：ctx.submitPasses() 逐 Pass execute 录制 -> sortDrawItems
+    #     整理（DrawItem 连续段）-> 单流 executeCommandBuffer 整包提交。
+    # 验收 = 行为零变化：11 条命令 / draws=5 opaque=1 transp=2 / 四像素
+    # 断言与 Phase CB 完全相同（同坐标同阈值）。
+    static bool runPassSubmit()
+    {
+        Console.println( "-- Phase PASS: Opaque/Transparent/Post/Blit pass sequence (single stream, 256x256) --" )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[pass] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int64 pixels = Memory.alloc( 256 * 256 * 4 )
+        if pixels == 0
+        {
+            Console.println( "[pass] FAIL: pixel alloc" )
+            pipe.destroy()
+            ret false
+        }
+        Int64 texPtr = makeGradientTexture()
+        if texPtr == 0
+        {
+            Console.println( "[pass] FAIL: texture pixels alloc" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        SLang.RenderTexture tex = SLang.RenderTexture.createRgba( texPtr, 64, 64 )
+        if tex == null
+        {
+            Console.println( "[pass] FAIL: texture upload - " + SLang.Render.errorString() )
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # MVP（与 Phase CB 同值；列向量约定：平移在 m03/m13）
+        Float32_4x4 triMvp = Float32_4x4( 1.3f, 0.0f, 0.0f, 0.0f,
+                                          0.0f, 1.3f, 0.0f, 0.0f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f )
+        Float32_4x4 texMvp = Float32_4x4( 0.55f, 0.0f, 0.0f, 0.45f,
+                                          0.0f, 0.55f, 0.0f, 0.35f,
+                                          0.0f, 0.0f, 1.0f, 0.0f,
+                                          0.0f, 0.0f, 0.0f, 1.0f )
+        Float32_4x4 blueMvp = Float32_4x4( 0.25f, 0.0f, 0.0f, 0.55f,
+                                           0.0f, 0.25f, 0.0f, 0.35f,
+                                           0.0f, 0.0f, 1.0f, 0.0f,
+                                           0.0f, 0.0f, 0.0f, 1.0f )
+
+        # ── 1 组装：CullingData 快照（乱序：蓝 -> 贴图 -> 三角）────
+        CullingData cull = CullingData()
+        cull.addItem( SLang.RenderPipeline.PROG_PFLAT, 2, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.3f )
+        cull.addItem( SLang.RenderPipeline.PROG_PTEX, 1, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.5f )
+        cull.addItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_TRIANGLE, 0, 0, 2000, 0.0f )
+        if cull.count() != 3 || cull.opaqueCount() != 1 || cull.transparentCount() != 2
+        {
+            Console.println( "[pass] FAIL: culling snapshot expect count=3 opaque=1 transparent=2" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 四 Pass（无参构造 + 字段赋值，场景参数同 Phase CB）────
+        OpaquePass op = OpaquePass()
+        op.culling = cull
+        op.viewportX = 0
+        op.viewportY = 0
+        op.viewportWidth = 256
+        op.viewportHeight = 256
+        op.clearTargetColor = true
+        op.clearTargetDepth = true
+        op.clearColor = Color( 0.06f, 0.06f, 0.10f, 1.0f )
+
+        TransparentPass tp = TransparentPass()
+        tp.culling = cull
+
+        PostProcessPass pp = PostProcessPass()
+        pp.postEnabled = false
+        pp.postBrightness = 1.0f
+        pp.postSaturation = 1.0f
+        pp.postVignette = 1.0f
+
+        BlitPass bp = BlitPass()
+        bp.blitReadbackPtr = pixels
+
+        ScriptableRenderContext ctx = ScriptableRenderContext()
+        ctx.pipeline = pipe
+        if ctx.addPass( op ) == false || ctx.addPass( tp ) == false || ctx.addPass( pp ) == false || ctx.addPass( bp ) == false
+        {
+            Console.println( "[pass] FAIL: addPass x4" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        Int32 queued = ctx.passCount()
+        Console.println( "[pass] " + queued.toString() + " passes queued: Opaque -> Transparent -> Post -> Blit" )
+        if queued != 4
+        {
+            Console.println( "[pass] FAIL: passCount expect 4" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 2 预录帧级共享状态（同一条流：setTexture + setPerDraw×3）──
+        ctx.beginPassRecording()
+        CommandBuffer shared = ctx.passCommandBuffer()
+        shared.setTexture( 0, tex.handle )
+        shared.setPerDraw( 0, triMvp, Color( 1.0f, 0.0f, 0.0f, 1.0f ) )
+        shared.setPerDraw( 1, texMvp, Color( 1.0f, 1.0f, 1.0f, 0.85f ) )
+        shared.setPerDraw( 2, blueMvp, Color( 0.3f, 0.4f, 1.0f, 0.5f ) )
+
+        # ── 3 提交：Pass 序列录制 -> 排序 -> 单流整包执行 ───────
+        if ctx.submitPasses() == false
+        {
+            Console.println( "[pass] FAIL: submitPasses - " + SLang.Render.errorString() )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 命令数断言：4 预录 + setRT + 3 draw + post + blit + readback = 11
+        Int32 sortedN = shared.culling.count()
+        Console.println( "[pass] recorded " + shared.commandCount.toString() + " commands (overflow=" + shared.overflowCount.toString() + ", sorted=" + sortedN.toString() + ")" )
+        if shared.commandCount != 11 || shared.overflowCount != 0
+        {
+            Console.println( "[pass] FAIL: commandCount expect 11, overflow expect 0" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # sortDrawItems 排序后写回快照：3 条（序 = 三角 -> 贴图 -> 蓝）
+        if sortedN != 3
+        {
+            Console.println( "[pass] FAIL: sorted culling expect 3" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 统计断言（单流回放口径，与 Phase CB 完全一致）
+        Int32 statDraws = pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS )
+        Int32 statOpaque = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Int32 statTransp = pipe.stat( SLang.RenderPipeline.STAT_TRANSPARENT_DRAWS )
+        Console.println( "[pass] stats: draws=" + statDraws.toString() + " opaque=" + statOpaque.toString() + " transp=" + statTransp.toString() )
+        if statDraws != 5 || statOpaque != 1 || statTransp != 2
+        {
+            Console.println( "[pass] FAIL: stats expect draws=5 opaque=1 transp=2" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 像素断言（四点与 Phase CB 完全相同：同坐标同阈值）
+        # 背景（左上角，远离三角与 quad）
+        Int32 kr = sampleChannel( pixels, 256, 4, 4, 0 )
+        Int32 kg = sampleChannel( pixels, 256, 4, 4, 1 )
+        Int32 kb = sampleChannel( pixels, 256, 4, 4, 2 )
+        Console.println( "[pass] corner  RGB=(" + kr.toString() + "," + kg.toString() + "," + kb.toString() + ")" )
+        if kr < 9 || kr > 21 || kg < 9 || kg > 21 || kb < 19 || kb > 33
+        {
+            Console.println( "[pass] FAIL: corner should be clear color" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 三角内部（左下区域，不受 quad 影响）
+        Int32 triR = sampleChannel( pixels, 256, 51, 184, 0 )
+        Int32 triG = sampleChannel( pixels, 256, 51, 184, 1 )
+        Int32 triB = sampleChannel( pixels, 256, 51, 184, 2 )
+        Console.println( "[pass] tri     RGB=(" + triR.toString() + "," + triG.toString() + "," + triB.toString() + ")" )
+        if triR < 240 || triG > 15 || triB > 15
+        {
+            Console.println( "[pass] FAIL: triangle should be red" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 贴图独占点（quad 右下带：NDC(0.70,0.15) 在贴图 quad 内、蓝 quad
+        # 与三角外；u≈0.955 -> 期望 RGB≈(181,42,154)）
+        Int32 qr = sampleChannel( pixels, 256, 217, 108, 0 )
+        Int32 qg = sampleChannel( pixels, 256, 217, 108, 1 )
+        Int32 qb = sampleChannel( pixels, 256, 217, 108, 2 )
+        Console.println( "[pass] quadtex RGB=(" + qr.toString() + "," + qg.toString() + "," + qb.toString() + ")" )
+        if qr < 110 || qb < 110 || qg < 35 || qg > 90
+        {
+            Console.println( "[pass] FAIL: textured quad pixel missing" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        # 重叠点（两 quad 交叠区：贴图 z0.5 远先画 -> 蓝 z0.3 近后画 ->
+        # 蓝分量主导；错误序蓝先画被贴图盖 -> b≈130 判别失败）
+        Int32 br = sampleChannel( pixels, 256, 198, 76, 0 )
+        Int32 bg = sampleChannel( pixels, 256, 198, 76, 1 )
+        Int32 bb = sampleChannel( pixels, 256, 198, 76, 2 )
+        Console.println( "[pass] overlap RGB=(" + br.toString() + "," + bg.toString() + "," + bb.toString() + ")" )
+        if bb < 150 || ( bb - br ) < 40
+        {
+            Console.println( "[pass] FAIL: overlap should be blue-dominant (sort direction wrong)" )
+            tex.destroy()
+            Memory.free( texPtr )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        tex.destroy()
+        Memory.free( texPtr )
+        Memory.free( pixels )
+        pipe.destroy()
+        Console.println( "[pass] Phase PASS: PASS (4 passes -> single stream: pixels + stats + overlap all ok)" )
+        ret true
+    }
+
+    # ── Phase ENV：渲染环境查询（RenderEnvironment：支持情况 / 当前选择 /
+    #    硬件条件 / 资源占用 / 当前渲染配置，快照 + 汇总显示 + 断言）──
+    public static bool runEnvironmentQuery()
+    {
+        Console.println( "-- Phase ENV: RenderEnvironment query (support / current / hardware / resources / config) --" )
+        RenderEnvironment env = RenderEnvironment.query()
+        Console.println( env.toString() )
+        if env.available == false
+        {
+            Console.println( "[env] FAIL: render library not available" )
+            ret false
+        }
+        if env.initialized == false || env.backend != "gl"
+        {
+            Console.println( "[env] FAIL: expected initialized gl backend, got '" + env.backend + "'" )
+            ret false
+        }
+        if RenderEnvironment.isBackendSupported( "gl" ) == false
+        {
+            Console.println( "[env] FAIL: gl not in supported backends" )
+            ret false
+        }
+        if env.gpuRenderer == "unknown"
+        {
+            Console.println( "[env] FAIL: gpu renderer string missing" )
+            ret false
+        }
+        Console.println( "[env] Phase ENV: PASS (available + gl current + hardware + resources + config displayed)" )
+        ret true
+    }
+
+    # ── Phase DATA：数据层三类端到端（CullingData / FrameData / PassData）──
+    # P0「数据与流程分离」验收：① CullingData —— CommandBuffer 排序后产出
+    # 可视物体快照（乱序录制 -> 排序 -> 列内容/分桶计数断言）；② FrameData
+    # —— buildFrameData 采集一帧上下文（目标/环境），setViewProj/setViewport/
+    # setClearColor/setTarget 写入后读回，renderCameraScene(fd) 转发 runStages
+    # 实渲染并做像素断言（行为与 A2 runStages 路径一致）；③ PassData ——
+    # 单 Pass 数据描述（输入/输出 RT 引用 + float 参数槽读写回）。
+    static bool runDataSnapshot()
+    {
+        Console.println( "-- Phase DATA: CullingData + FrameData + PassData (data layer, 256x256) --" )
+
+        # ── ① CullingData：乱序录制 3 条 drawItem -> 排序 -> 快照断言 ──
+        #     与 Phase CB 相同三条（蓝 z0.3 -> 贴图 z0.5 -> 三角 z0.0）；
+        #     排序键 queue 升序 + 透明 z 降序 -> 快照序 = 三角/贴图/蓝
+        CommandBuffer cb = CommandBuffer()
+        cb.name = "cb-data"
+        cb.begin()
+        cb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 2, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.3f )
+        cb.drawItem( SLang.RenderPipeline.PROG_PTEX, 1, SLang.RenderPipeline.MESH_QUAD, 0, 1, 3000, 0.5f )
+        cb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_TRIANGLE, 0, 0, 2000, 0.0f )
+        cb.end()
+        Int32 sorted = cb.sortDrawItems()
+        if sorted != 3
+        {
+            Console.println( "[data] FAIL: sortDrawItems expect 3, got " + sorted.toString() )
+            ret false
+        }
+        CullingData cull = cb.culling
+        if cull == null
+        {
+            Console.println( "[data] FAIL: culling snapshot missing" )
+            ret false
+        }
+        if cull.count() != 3
+        {
+            Console.println( "[data] FAIL: culling count expect 3, got " + cull.count().toString() )
+            ret false
+        }
+        Int32 q0 = cull.getQueue( 0 )
+        if q0 != 2000
+        {
+            Console.println( "[data] FAIL: item0 queue expect 2000 (opaque first), got " + q0.toString() )
+            ret false
+        }
+        Int32 t0 = cull.getTransp( 0 )
+        Int32 t1 = cull.getTransp( 1 )
+        Int32 t2 = cull.getTransp( 2 )
+        if t0 != 0 || t1 != 1 || t2 != 1
+        {
+            Console.println( "[data] FAIL: transparent flags expect 0/1/1, got " + t0.toString() + "/" + t1.toString() + "/" + t2.toString() )
+            ret false
+        }
+        if cull.getZ( 1 ) <= cull.getZ( 2 )
+        {
+            Console.println( "[data] FAIL: transparent z not descending (far-to-near)" )
+            ret false
+        }
+        if cull.opaqueCount() != 1 || cull.transparentCount() != 2
+        {
+            Console.println( "[data] FAIL: bucket counts expect opaque=1 transparent=2" )
+            ret false
+        }
+        Console.println( "[data] culling: 3 items sorted (opaque=" + cull.opaqueCount().toString() + " transparent=" + cull.transparentCount().toString() + ")" )
+
+        # ── ② FrameData：采集 -> 写入读回 -> renderCameraScene 实渲染 ──
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[data] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        if pipe.setCamera( -1, -1.0f, 1.0f, -1.0f, 1.0f ) == false
+        {
+            Console.println( "[data] FAIL: setCamera - " + SLang.Render.errorString() )
+            pipe.destroy()
+            ret false
+        }
+        if pipe.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f ) == false
+        {
+            Console.println( "[data] FAIL: setClearColor - " + SLang.Render.errorString() )
+            pipe.destroy()
+            ret false
+        }
+        SLang.RenderObject tri = pipe.addObject( SLang.RenderPipeline.MESH_TRIANGLE )
+        if tri == null
+        {
+            Console.println( "[data] FAIL: addObject - " + SLang.Render.errorString() )
+            pipe.destroy()
+            ret false
+        }
+        tri.setLayer( 0 )
+        tri.setQueue( 2000 )
+        tri.setPosition( 0.0f, 0.0f, 0.0f )
+        tri.setScale( 1.3f, 1.3f )
+        tri.setColor( 1.0f, 0.0f, 0.0f, 1.0f )
+        tri.setAnimated( SLang.RenderPipeline.ANIM_HUE_CYCLE, 0.25f )
+        Int64 pixels = Memory.alloc( 256 * 256 * 4 )
+        if pixels == 0
+        {
+            Console.println( "[data] FAIL: pixel alloc" )
+            pipe.destroy()
+            ret false
+        }
+        FrameData fd = pipe.buildFrameData( 0.0f, pixels )
+        if fd == null
+        {
+            Console.println( "[data] FAIL: buildFrameData" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if fd.targetW != 256 || fd.targetH != 256 || fd.targetHandle != SLang.RenderPipeline.TARGET_SCENE
+        {
+            Console.println( "[data] FAIL: frame target expect 256x256 scene" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if fd.envBackend != "gl" || fd.envRenderer == "unknown"
+        {
+            Console.println( "[data] FAIL: env snapshot expect gl renderer" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        Array<Float32> vp = Array<Float32>( 16 )
+        Int32 vi = 0
+        while vi < 16
+        {
+            vp[ vi ] = 0.0f
+            vi = vi + 1
+        }
+        vp[ 0 ] = 1.5f
+        vp[ 5 ] = 1.5f
+        vp[ 10 ] = -1.2f
+        vp[ 15 ] = 1.0f
+        if fd.setViewProj( vp ) == false || fd.hasViewProj == false
+        {
+            Console.println( "[data] FAIL: setViewProj" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if fd.viewProj[ 0 ] < 1.49f || fd.viewProj[ 0 ] > 1.51f
+        {
+            Console.println( "[data] FAIL: viewProj readback" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        fd.setViewport( 0, 0, 256, 256 )
+        fd.setClearColor( 0.06f, 0.06f, 0.10f, 1.0f )
+        fd.setTarget( SLang.RenderPipeline.TARGET_SCENE, 256, 256 )
+        if fd.viewportW != 256 || fd.viewportH != 256
+        {
+            Console.println( "[data] FAIL: viewport readback" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if fd.clearA < 0.99f || fd.clearA > 1.01f
+        {
+            Console.println( "[data] FAIL: clearColor readback" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if pipe.renderCameraScene( fd ) == false
+        {
+            Console.println( "[data] FAIL: renderCameraScene - " + SLang.Render.errorString() )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        Int32 triR = sampleChannel( pixels, 256, 51, 184, 0 )
+        Int32 triG = sampleChannel( pixels, 256, 51, 184, 1 )
+        Int32 triB = sampleChannel( pixels, 256, 51, 184, 2 )
+        Int32 kr = sampleChannel( pixels, 256, 4, 4, 0 )
+        Int32 kg = sampleChannel( pixels, 256, 4, 4, 1 )
+        Int32 kb = sampleChannel( pixels, 256, 4, 4, 2 )
+        if triR < 240 || triG > 15 || triB > 15
+        {
+            Console.println( "[data] FAIL: triangle pixel expect red, got r=" + triR.toString() + " g=" + triG.toString() + " b=" + triB.toString() )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if kr < 9 || kr > 21 || kg < 9 || kg > 21 || kb < 19 || kb > 33
+        {
+            Console.println( "[data] FAIL: corner pixel expect dark blue, got r=" + kr.toString() + " g=" + kg.toString() + " b=" + kb.toString() )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        Console.println( "[data] frame: target/env/viewProj/viewport ok, renderCameraScene pixels ok" )
+
+        # ── ③ PassData：单 Pass 数据描述（输入/输出 RT + 参数槽读写回）──
+        PassData pd = PassData()
+        pd.begin( "opaque", 0 )
+        pd.setInput( "scene", SLang.RenderPipeline.TARGET_SCENE )
+        pd.setOutput( "post", SLang.RenderPipeline.TARGET_POST )
+        pd.setParamFloat( "brightness", 1.25f )
+        pd.setParamFloat( "vignette", 0.5f )
+        if pd.name != "opaque" || pd.inputName != "scene" || pd.outputName != "post"
+        {
+            Console.println( "[data] FAIL: pass names" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if pd.inputHandle != SLang.RenderPipeline.TARGET_SCENE || pd.outputHandle != SLang.RenderPipeline.TARGET_POST || pd.passEvent != 0
+        {
+            Console.println( "[data] FAIL: pass handles" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if pd.paramCount != 2
+        {
+            Console.println( "[data] FAIL: param count expect 2, got " + pd.paramCount.toString() )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if pd.getParamValue( "brightness" ) < 1.24f || pd.getParamValue( "brightness" ) > 1.26f
+        {
+            Console.println( "[data] FAIL: brightness param readback" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if pd.getParamValue( "missing" ) != 0.0f
+        {
+            Console.println( "[data] FAIL: missing param expect 0.0" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        Console.println( "[data] pass: in/out + " + pd.paramCount.toString() + " params ok" )
+        Memory.free( pixels )
+        pipe.destroy()
+        Console.println( "[data] Phase DATA: PASS (culling snapshot + frame data + pass data)" )
+        ret true
+    }
+
     # ── Phase B：QT 窗口 + 后端切换 UI（返回 2=PASS 1=SKIP 0=FAIL）──
     # 顶部按钮行（OpenGL/D3D11/Vulkan/WebGL-GLES）点击切换渲染底层；
     # 4s 自动轮播自动验证四后端在 QT 帧循环下持续渲染（用户点击后停）；
@@ -1814,6 +3475,7 @@ public class RenderTest
         _label = SLang.QT.newLabel( host.handle, "" )
         _label.setGeometry( 10, 58, 276, 296 )
         host.show()
+        Console.println( "[QT] window shown (296x372, auto-quit after 30s) -- if not visible, check taskbar / secondary display" )
 
         # 信号连接（clicked -> 无参 static 回调经 Function 桥；
         # SL 的 || 链上限 2 个运算符，逐个检查）

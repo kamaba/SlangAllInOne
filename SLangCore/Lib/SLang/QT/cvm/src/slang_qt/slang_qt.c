@@ -421,10 +421,13 @@ SLQT_API const char* slqt_dbus_base_service_sl(void) { return slqt_be_dbus_base_
 SLQT_API int64_t slqt_menubar_create_sl(void) { return slqt_be_menubar_create(); }
 SLQT_API void    slqt_mainwindow_set_menubar_sl(int64_t win, int64_t mb) { slqt_be_mainwindow_set_menubar(win, mb); }
 SLQT_API int64_t slqt_menu_create_sl(int64_t parent, const char* t) { return slqt_be_menu_create(parent, t); }
+SLQT_API int64_t slqt_menu_create_popup_sl(const char* t) { return slqt_be_menu_create_popup(t); }
 SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* t) { return slqt_be_menu_add_action(menu, t); }
 SLQT_API void    slqt_menu_add_separator_sl(int64_t menu) { slqt_be_menu_add_separator(menu); }
+SLQT_API int64_t slqt_menu_popup_exec_sl(int64_t menu, int64_t anchor, int32_t x, int32_t y) { return slqt_be_menu_popup_exec(menu, anchor, x, y); }
 SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t) { slqt_be_action_set_text(a, t); }
-SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int32_t on) { slqt_be_action_set_enabled(a, on); }
+SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int64_t on) { slqt_be_action_set_enabled(a, on); }
+SLQT_API int64_t slqt_action_enabled_sl(int64_t a) { return (int64_t)slqt_be_action_enabled(a); }
 
 SLQT_API int64_t slqt_toolbar_create_sl(int64_t p, const char* t) { return slqt_be_toolbar_create(p, t); }
 SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb) { slqt_be_mainwindow_add_toolbar(win, tb); }
@@ -455,3 +458,63 @@ SLQT_API void    slqt_dialog_reject_sl(int64_t d) { slqt_be_dialog_reject(d); }
 
 SLQT_API void    slqt_widget_set_min_size_sl(int64_t h, int32_t w, int32_t hh) { slqt_be_widget_set_min_size(h, w, hh); }
 SLQT_API void    slqt_widget_set_max_size_sl(int64_t h, int32_t w, int32_t hh) { slqt_be_widget_set_max_size(h, w, hh); }
+
+/* ==== 2026-11-12 P2 能力扩展转发（D-01~D-05）==== */
+
+SLQT_API const char* slqt_filedialog_open_sl(const char* d, const char* f) { return slqt_be_filedialog_open(d, f); }
+SLQT_API const char* slqt_filedialog_save_sl(const char* d, const char* f) { return slqt_be_filedialog_save(d, f); }
+SLQT_API const char* slqt_filedialog_dir_sl(const char* d) { return slqt_be_filedialog_dir(d); }
+
+SLQT_API int64_t slqt_statusbar_create_sl(int64_t p) { return slqt_be_statusbar_create(p); }
+SLQT_API void    slqt_mainwindow_set_statusbar_sl(int64_t win, int64_t sb) { slqt_be_mainwindow_set_statusbar(win, sb); }
+SLQT_API void    slqt_statusbar_show_message_sl(int64_t sb, const char* t) { slqt_be_statusbar_show_message(sb, t); }
+SLQT_API void    slqt_statusbar_add_widget_sl(int64_t sb, int64_t w) { slqt_be_statusbar_add_widget(sb, w); }
+
+SLQT_API int64_t     slqt_tree_create_sl(int64_t p) { return slqt_be_tree_create(p); }
+SLQT_API void        slqt_tree_set_header_sl(int64_t h, const char* t) { slqt_be_tree_set_header(h, t); }
+SLQT_API void        slqt_tree_clear_sl(int64_t h) { slqt_be_tree_clear(h); }
+SLQT_API void        slqt_tree_add_path_sl(int64_t h, const char* path) { slqt_be_tree_add_path(h, path); }
+SLQT_API int32_t     slqt_tree_count_sl(int64_t h) { return slqt_be_tree_count(h); }
+SLQT_API const char* slqt_tree_selected_path_sl(int64_t h) { return slqt_be_tree_selected_path(h); }
+
+SLQT_API int64_t slqt_splitter_create_sl(int64_t p, int32_t v) { return slqt_be_splitter_create(p, v); }
+SLQT_API void    slqt_splitter_add_widget_sl(int64_t sp, int64_t w) { slqt_be_splitter_add_widget(sp, w); }
+SLQT_API void    slqt_splitter_set_sizes_sl(int64_t sp, int32_t a, int32_t b, int32_t c) { slqt_be_splitter_set_sizes(sp, a, b, c); }
+
+SLQT_API int64_t     slqt_codeedit_create_sl(int64_t p) { return slqt_be_codeedit_create(p); }
+SLQT_API void        slqt_codeedit_set_text_sl(int64_t h, const char* t) { slqt_be_codeedit_set_text(h, t); }
+SLQT_API const char* slqt_codeedit_text_sl(int64_t h) { return slqt_be_codeedit_text(h); }
+SLQT_API void        slqt_codeedit_set_readonly_sl(int64_t h, int32_t on) { slqt_be_codeedit_set_readonly(h, on); }
+SLQT_API void        slqt_codeedit_goto_line_sl(int64_t h, int32_t l) { slqt_be_codeedit_goto_line(h, l); }
+SLQT_API int32_t     slqt_codeedit_cursor_line_sl(int64_t h) { return slqt_be_codeedit_cursor_line(h); }
+SLQT_API void        slqt_codeedit_set_highlight_sl(int64_t h, int32_t on) { slqt_be_codeedit_set_highlight(h, on); }
+SLQT_API void        slqt_codeedit_set_breakpoint_sl(int64_t h, int32_t l, int32_t on) { slqt_be_codeedit_set_breakpoint(h, l, on); }
+SLQT_API int32_t     slqt_codeedit_toggle_breakpoint_sl(int64_t h) { return slqt_be_codeedit_toggle_breakpoint(h); }
+SLQT_API void        slqt_codeedit_clear_breakpoints_sl(int64_t h) { slqt_be_codeedit_clear_breakpoints(h); }
+SLQT_API const char* slqt_codeedit_breakpoints_sl(int64_t h) { return slqt_be_codeedit_breakpoints(h); }
+SLQT_API void        slqt_codeedit_set_font_pt_sl(int64_t h, int32_t pt) { slqt_be_codeedit_set_font_pt(h, pt); }
+SLQT_API const char* slqt_codeedit_word_sl(int64_t h) { return slqt_be_codeedit_word(h); }
+SLQT_API const char* slqt_codeedit_selected_sl(int64_t h) { return slqt_be_codeedit_selected(h); }
+
+/* 2026-11-12 第五轮：断点确认态 / 停驻行 */
+SLQT_API void slqt_codeedit_set_bound_sl(int64_t h, const char* csv) { slqt_be_codeedit_set_bound(h, csv); }
+SLQT_API void slqt_codeedit_set_stopped_sl(int64_t h, int32_t line) { slqt_be_codeedit_set_stopped(h, line); }
+
+/* 2026-11-13 VS 多标签：QTabWidget 转发 */
+SLQT_API int64_t     slqt_tab_create_sl(int64_t p) { return slqt_be_tab_create(p); }
+SLQT_API int32_t     slqt_tab_add_sl(int64_t h, int64_t page, const char* t) { return slqt_be_tab_add(h, page, t); }
+SLQT_API int32_t     slqt_tab_count_sl(int64_t h) { return slqt_be_tab_count(h); }
+SLQT_API int32_t     slqt_tab_current_sl(int64_t h) { return slqt_be_tab_current(h); }
+SLQT_API void        slqt_tab_set_current_sl(int64_t h, int32_t i) { slqt_be_tab_set_current(h, i); }
+SLQT_API const char* slqt_tab_text_sl(int64_t h, int32_t i) { return slqt_be_tab_text(h, i); }
+SLQT_API void        slqt_tab_set_text_sl(int64_t h, int32_t i, const char* t) { slqt_be_tab_set_text(h, i, t); }
+SLQT_API void        slqt_tab_remove_sl(int64_t h, int32_t i) { slqt_be_tab_remove(h, i); }
+SLQT_API void        slqt_tab_clear_sl(int64_t h) { slqt_be_tab_clear(h); }
+SLQT_API void        slqt_tab_set_closable_sl(int64_t h, int32_t on) { slqt_be_tab_set_closable(h, on); }
+
+/* 2026-11-12 第四轮：SLDP TCP 客户端桥 */
+SLQT_API int32_t     slqt_sldp_connect_sl(int32_t port) { return slqt_be_sldp_connect(port); }
+SLQT_API void        slqt_sldp_send_sl(const char* utf8) { slqt_be_sldp_send(utf8); }
+SLQT_API const char* slqt_sldp_poll_sl(void) { return slqt_be_sldp_poll(); }
+SLQT_API int32_t     slqt_sldp_connected_sl(void) { return slqt_be_sldp_connected(); }
+SLQT_API void        slqt_sldp_close_sl(void) { slqt_be_sldp_close(); }

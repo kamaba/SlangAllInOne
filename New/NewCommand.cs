@@ -5,28 +5,83 @@ namespace SlangAllInOne.New;
 /// <summary>
 /// new：脚手架命令（2026-10-18 自 Front CLI 迁入；CLI 三分后 Front 只保留
 /// compile/export，`new` 归宿主）。
-///   slang new project &lt;Name&gt; [-p &lt;dir&gt;] —— 在 &lt;dir&gt;\&lt;Name&gt;\ 下创建成套工程：
+///   slang new project &lt;Name&gt; [-p &lt;dir&gt;] [选项] —— 在 &lt;dir&gt;\&lt;Name&gt;\ 下创建成套工程：
 ///       Name.sp / Name.jsonc / Name.sl / Name.md（guide，内嵌模板生成；
 ///       重生成时 AI-DESCRIPTION 标记区内容原样保留）
+///       选项（CLI 先行，供 IDE 向导组装参数）：
+///         --kind app|module        module 默认不建 .sp 与同名 .sl、compileFiles 空数组
+///         --no-guide / --guide-description &lt;text&gt;
+///         --no-sp / --with-sp / --no-entry-source / --with-entry-source
 ///   slang new class &lt;Name&gt; [-p &lt;dir&gt;]   —— 在 &lt;dir&gt; 找到的 &lt;.sp 旁创建 &lt;Name&gt;.sl，
 ///       并登记进 jsonc 的 compileFiles.files[]（已注册则跳过）
 /// 落盘一律 UTF-8 BOM（R16）；改写手写 jsonc 时保持原文件 BOM 形态。
+/// 无选项时行为与旧版逐字节一致（app + 四件套）。
 /// </summary>
 internal static class NewCommand
 {
-    // ==== 入口：slang new project|class <Name> [-p <dir>] ====
+    /// <summary>new project 的选项（与 IDE 向导同源；默认值 = 旧 CLI 四件套）。</summary>
+    internal sealed class ProjectOptions
+    {
+        public bool IsModule;
+        public bool NoGuide;
+        public bool NoSp;
+        public bool NoEntrySource;
+        public bool WithSp;
+        public bool WithEntrySource;
+        public string GuideDescription = "";
+
+        public bool CreateSp => IsModule ? (WithSp && !NoSp) : !NoSp;
+        public bool CreateSource => IsModule ? (WithEntrySource && !NoEntrySource) : !NoEntrySource;
+        public bool CreateGuide => !NoGuide;
+    }
+
+    // ==== 入口：slang new project|class <Name> [-p <dir>] [选项] ====
 
     public static int Run(string[] args)
     {
         string kind = "";
         string name = "";
         string targetDir = Directory.GetCurrentDirectory();
+        var options = new ProjectOptions();
 
         for (int i = 0; i < args.Length; i++)
         {
             var a = args[i];
             if ((a == "-p" || a == "--path") && i + 1 < args.Length)
                 targetDir = args[++i];
+            else if (a == "--kind" && i + 1 < args.Length)
+            {
+                string k = args[++i];
+                if (k.Equals("module", StringComparison.OrdinalIgnoreCase))
+                    options.IsModule = true;
+                else if (!k.Equals("app", StringComparison.OrdinalIgnoreCase) &&
+                         !k.Equals("application", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"未知工程类型: {k}（应为 app|module）");
+                    PrintUsage();
+                    return 2;
+                }
+            }
+            else if (a == "--no-guide")
+                options.NoGuide = true;
+            else if (a == "--no-sp")
+                options.NoSp = true;
+            else if (a == "--no-entry-source")
+                options.NoEntrySource = true;
+            else if (a == "--with-sp")
+                options.WithSp = true;
+            else if (a == "--with-entry-source")
+                options.WithEntrySource = true;
+            else if ((a == "--guide-description" || a == "--desc") && i + 1 < args.Length)
+                options.GuideDescription = args[++i];
+            else if (a.StartsWith("--", StringComparison.Ordinal) ||
+                     (a == "-p" || a == "--path" || a == "--kind" ||
+                      a == "--guide-description" || a == "--desc"))
+            {
+                Console.WriteLine($"未知参数或缺少取值: {a}");
+                PrintUsage();
+                return 2;
+            }
             else if (kind.Length == 0)
                 kind = a;
             else if (name.Length == 0)
@@ -40,7 +95,7 @@ internal static class NewCommand
         }
 
         if (kind.Equals("project", StringComparison.OrdinalIgnoreCase))
-            return IsValidName(name) ? NewProject(name, targetDir) : InvalidName(name);
+            return IsValidName(name) ? NewProject(name, targetDir, options) : InvalidName(name);
         if (kind.Equals("class", StringComparison.OrdinalIgnoreCase))
             return IsValidName(name) ? NewClass(name, targetDir) : InvalidName(name);
 
@@ -71,7 +126,7 @@ internal static class NewCommand
 
     // ==== new project：<dir>\<Name>\{Name.sp, Name.jsonc, Name.sl, Name.md} ====
 
-    static int NewProject(string name, string baseDir)
+    static int NewProject(string name, string baseDir, ProjectOptions options)
     {
         string dir = Path.Combine(baseDir, name);
         Directory.CreateDirectory(dir);
@@ -81,7 +136,11 @@ internal static class NewCommand
         string source = Path.Combine(dir, name + ".sl");
         string guide = Path.Combine(dir, name + ".md");
 
-        foreach (var existing in new[] { sp, jsonc, source })
+        // 冲突预检只覆盖「本次真正要写」的文件；跳过的文件不检查也不触碰
+        var toCreate = new List<string> { jsonc };
+        if (options.CreateSp) toCreate.Add(sp);
+        if (options.CreateSource) toCreate.Add(source);
+        foreach (var existing in toCreate)
         {
             if (File.Exists(existing))
             {
@@ -90,25 +149,49 @@ internal static class NewCommand
             }
         }
 
-        WriteAllTextBom(sp, BuildProjectSpText(name));
-        WriteAllTextBom(jsonc, BuildProjectJsoncText(name));
-        WriteAllTextBom(source, BuildProjectSourceText(name));
-        Console.WriteLine($"Created: {sp}");
-        Console.WriteLine($"Created: {jsonc}");
-        Console.WriteLine($"Created: {source}");
-
-        // Name.md guide：内嵌模板生成；已存在 = 重生成（保留 AI 描述区）
-        string? template = LoadGuideTemplate();
-        if (template == null)
+        if (options.CreateSp)
         {
-            Console.WriteLine("[WARN] guide 模板资源缺失，跳过 guide 生成");
+            WriteAllTextBom(sp, BuildProjectSpText(name));
+            Console.WriteLine($"Created: {sp}");
         }
         else
         {
-            bool regen = File.Exists(guide);
-            string? existingGuide = regen ? File.ReadAllText(guide) : null;
-            WriteAllTextBom(guide, BuildGuideMarkdown(template, name, existingGuide));
-            Console.WriteLine(regen ? $"Regenerated（AI 描述已保留）: {guide}" : $"Created: {guide}");
+            Console.WriteLine($"Skipped: {sp}（--kind module / --no-sp）");
+        }
+
+        WriteAllTextBom(jsonc, BuildProjectJsoncText(name, options));
+        Console.WriteLine($"Created: {jsonc}");
+
+        if (options.CreateSource)
+        {
+            WriteAllTextBom(source, BuildProjectSourceText(name));
+            Console.WriteLine($"Created: {source}");
+        }
+        else
+        {
+            Console.WriteLine($"Skipped: {source}（compileFiles.files[] 为空数组）");
+        }
+
+        // Name.md guide：--no-guide = 完全不使用 .md（不生成、不重生成、不占位）
+        if (!options.CreateGuide)
+        {
+            Console.WriteLine($"Skipped: {guide}（已跳过详细说明）");
+        }
+        else
+        {
+            string? template = LoadGuideTemplate();
+            if (template == null)
+            {
+                Console.WriteLine("[WARN] guide 模板资源缺失，跳过 guide 生成");
+            }
+            else
+            {
+                bool regen = File.Exists(guide);
+                string? existingGuide = regen ? File.ReadAllText(guide) : null;
+                WriteAllTextBom(guide, BuildGuideMarkdown(
+                    template, name, existingGuide, options));
+                Console.WriteLine(regen ? $"Regenerated（AI 描述已保留）: {guide}" : $"Created: {guide}");
+            }
         }
 
         Console.WriteLine($"Next: slang compile \"{dir}\"");
@@ -401,14 +484,21 @@ $@"{name}
     /// "Core"（官方库直查语义：Front/C VM 两侧均按 &lt;exe 目录&gt;\lib\ 直查
     /// Core.module.slb|json）；outputDir 为 "out\export"（相对 jsonc 所在目录，
     /// 产物落 &lt;工程目录&gt;\out\export\&lt;ModuleName&gt;\）。</summary>
-    static string BuildProjectJsoncText(string name)
+    static string BuildProjectJsoncText(string name, ProjectOptions options)
     {
+        string desc = options.IsModule ? name + " module" : name + " project";
+        string filesBlock = options.CreateSource
+            ? "[\n      " + BuildFileEntryText(name) + "\n    ]"
+            : "[]";
+        string formatLine = options.IsModule
+            ? "\n    \"format\": \"binary+json\","
+            : "";
         return
 $@"{{
   ""project"":
   {{
     ""name"": ""{name}"",
-    ""desc"": ""{name} project"",
+    ""desc"": ""{desc}"",
     ""mainVersion"": 0,
     ""subVersion"": 0,
     ""buildVersion"": 1,
@@ -428,9 +518,7 @@ $@"{{
     ""isForceSpaceAfterSharp"": false
   }},
   ""compileFiles"": {{
-    ""files"": [
-      {BuildFileEntryText(name)}
-    ]
+    ""files"": {filesBlock}
   }},
   ""compileFilter"": {{
     ""isAllGroup"": true,
@@ -448,7 +536,7 @@ $@"{{
   ""struct"": [
   ],
   ""export"": {{
-    ""moduleName"": ""{name}"",
+    ""moduleName"": ""{name}"",{formatLine}
     ""outputDir"": ""out\\export"",
     ""versionMain"": 0,
     ""versionSub"": 0,
@@ -485,19 +573,50 @@ $@"{{
 
     /// <summary>模板占位符替换；已有 guide 重写时 AI-DESCRIPTION:BEGIN/END 标记区
     /// 内容原样保留（其余以最新模板为准）。</summary>
-    static string BuildGuideMarkdown(string template, string name, string? existingMarkdown)
+    static string BuildGuideMarkdown(string template, string name, string? existingMarkdown,
+        ProjectOptions options)
     {
+        const string begin = "<!-- AI-DESCRIPTION:BEGIN -->";
+        const string end = "<!-- AI-DESCRIPTION:END -->";
+        string entryFile = options.CreateSp ? name + ".sp" : name + ".jsonc";
         string text = template
             .Replace("{{ProjectName}}", name)
-            .Replace("{{EntryFile}}", name + ".sp")
+            .Replace("{{EntryFile}}", entryFile)
             .Replace("{{ConfigFile}}", name + ".jsonc")
             .Replace("{{GlobalDataKeys}}", "")
             .Replace("{{AiDescription}}", "");
 
-        if (!string.IsNullOrEmpty(existingMarkdown))
+        // 无 .sp 的库模块：不写 _main_/_test_ 等 Project{} 专属段落
+        if (!options.CreateSp)
         {
-            const string begin = "<!-- AI-DESCRIPTION:BEGIN -->";
-            const string end = "<!-- AI-DESCRIPTION:END -->";
+            const string conventions = "## Project Entry Conventions";
+            const string globalIntegration = "## Global Integration";
+            int s = text.IndexOf(conventions, StringComparison.Ordinal);
+            int e = text.IndexOf(globalIntegration, StringComparison.Ordinal);
+            if (s >= 0 && e > s)
+            {
+                string libraryNote =
+                    "## Library Module Layout\n\n" +
+                    "This project has no `.sp` entry: `<ConfigFile>` is the only project anchor.\n" +
+                    "It is compiled as a library module (`entryMethodId = null`); add source files to " +
+                    "`compileFiles.files[]` with `slang new class`.\n\n";
+                text = text.Substring(0, s) + libraryNote + text.Substring(e);
+            }
+        }
+
+        // 本次向导填写的项目说明（显式给出时覆盖保留区）
+        if (!string.IsNullOrEmpty(options.GuideDescription))
+        {
+            int b1 = text.IndexOf(begin, StringComparison.Ordinal);
+            int e1 = text.IndexOf(end, StringComparison.Ordinal);
+            if (b1 >= 0 && e1 > b1)
+            {
+                string block = begin + "\n" + options.GuideDescription + "\n" + end;
+                text = text.Substring(0, b1) + block + text.Substring(e1 + end.Length);
+            }
+        }
+        else if (!string.IsNullOrEmpty(existingMarkdown))
+        {
             int b0 = existingMarkdown.IndexOf(begin, StringComparison.Ordinal);
             int e0 = existingMarkdown.IndexOf(end, StringComparison.Ordinal);
             int b1 = text.IndexOf(begin, StringComparison.Ordinal);
@@ -534,11 +653,17 @@ $@"{{
     static void PrintUsage()
     {
         Console.WriteLine(@"用法:
-  slang new project <Name> [-p <dir>]   在 <dir>\<Name>\ 下创建成套工程:
-                                          Name.sp / Name.jsonc / Name.sl / Name.md（guide）
-  slang new class <Name> [-p <dir>]    在 <dir> 找到的 .sp 旁创建 <Name>.sl 并登记进 jsonc
+  slang new project <Name> [-p <dir>] [选项]   在 <dir>\<Name>\ 下创建成套工程:
+                                                Name.sp / Name.jsonc / Name.sl / Name.md（guide）
+  slang new class <Name> [-p <dir>]          在 <dir> 找到的 .sp 旁创建 <Name>.sl 并登记进 jsonc
 
-选项:
-  -p, --path <dir>   目标目录（缺省: 当前目录）");
+选项（仅 project；无选项 = 四件套 app 工程，行为与旧版一致）:
+  -p, --path <dir>                  目标目录（缺省: 当前目录）
+  --kind app|module                 module 默认不建 .sp 与同名 .sl、compileFiles.files[] 为空数组
+  --no-guide                        完全不使用 .md（不生成 / 不重生成 / 不占位）
+  --guide-description <text>       写入 guide 的 AI-DESCRIPTION 区
+  --no-sp / --with-sp               跳过 / 保留 .sp（module 缺省跳过）
+  --no-entry-source / --with-entry-source
+                                    跳过 / 保留同名 .sl（module 缺省跳过；跳过时 files[] 为空）");
     }
 }

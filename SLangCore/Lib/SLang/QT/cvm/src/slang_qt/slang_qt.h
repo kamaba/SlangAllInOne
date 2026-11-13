@@ -116,6 +116,24 @@ SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb
 #define SLQT_SIG_TEXT_CHANGED   4
 /* QListWidget::currentRowChanged(int)：int 载荷经 _dispatchInt 桥重入 VM */
 #define SLQT_SIG_CURRENT_ROW_CHANGED 5
+/* 2026-11-12 P2 扩展信号：
+ * 6 = QTreeWidget::itemSelectionChanged，utf8 载荷（选中项完整路径）→ _dispatchString
+ * 7 = QCodeEdit 光标行变化，int 载荷（1-based 行号）→ _dispatchInt
+ * 8 = QCodeEdit 装订线点击切换断点，int 载荷（行号）→ _dispatchInt */
+#define SLQT_SIG_TREE_SELECTED 6
+#define SLQT_SIG_CODEEDIT_LINE_CHANGED 7
+#define SLQT_SIG_CODEEDIT_BREAKPOINT 8
+/* 2026-11-13 VS 多标签：两个 int 载荷信号均走 _dispatchInt
+ * 9  = QTabWidget::currentChanged(int)  当前标签变化
+ * 10 = QTabWidget::tabCloseRequested(int) 点击标签关闭按钮 */
+#define SLQT_SIG_TAB_CHANGED 9
+#define SLQT_SIG_TAB_CLOSE_REQUESTED 10
+/* 2026-11-13 第十四轮 右键菜单：
+ * 11 = QTabWidget 标签区右键，int 载荷（右键所在标签下标，-1=非标签区）→ _dispatchInt
+ * 12 = QTreeWidget 节点右键，utf8 载荷（右键节点完整路径，空=空白区）→ _dispatchString
+ * 两者均需构造时 setContextMenuPolicy(CustomContextMenu)。 */
+#define SLQT_SIG_TAB_CONTEXT 11
+#define SLQT_SIG_TREE_CONTEXT 12
 
 /* ==========================================================================
  * 2026-11-03 扩展面：按 jsonc qtRuntime 组合部署（模块 dll + 插件分类）后，
@@ -245,10 +263,14 @@ SLQT_API const char* slqt_dbus_base_service_sl(void);
 SLQT_API int64_t slqt_menubar_create_sl(void);
 SLQT_API void    slqt_mainwindow_set_menubar_sl(int64_t win, int64_t mb);
 SLQT_API int64_t slqt_menu_create_sl(int64_t parent, const char* title);  /* parent: QMenuBar 或 QMenu */
+SLQT_API int64_t slqt_menu_create_popup_sl(const char* title);            /* 独立弹出菜单（parent=nullptr） */
 SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* text); /* 返回 QAction 句柄 */
 SLQT_API void    slqt_menu_add_separator_sl(int64_t menu);
+/* 阻塞弹出：在 anchor 控件 (x,y) 局部坐标处 exec；返回被选中 QAction 句柄（0=取消） */
+SLQT_API int64_t slqt_menu_popup_exec_sl(int64_t menu, int64_t anchor, int32_t x, int32_t y);
 SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t);
-SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int32_t on);
+SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int64_t on);
+SLQT_API int64_t slqt_action_enabled_sl(int64_t a);
 SLQT_API int64_t slqt_toolbar_create_sl(int64_t parent, const char* title);
 SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb);
 SLQT_API int64_t slqt_toolbar_add_action_sl(int64_t tb, const char* text); /* 返回 QAction 句柄 */
@@ -274,6 +296,73 @@ SLQT_API void    slqt_dialog_accept_sl(int64_t d);
 SLQT_API void    slqt_dialog_reject_sl(int64_t d);
 SLQT_API void    slqt_widget_set_min_size_sl(int64_t h, int32_t w, int32_t hh);
 SLQT_API void    slqt_widget_set_max_size_sl(int64_t h, int32_t w, int32_t hh);
+
+/* ── 2026-11-12 P2 能力扩展（能力登记表 D-01~D-05 回补）──────────────────
+ * QFileDialog（模态静态调用，返回路径；取消返回空串）
+ * QStatusBar（主窗口原生状态条）
+ * QTreeWidget（路径式建模：add_path("a/b/c")；选中回传完整路径）
+ * QSplitter（尺寸比例精确控制）
+ * QCodeEdit（QPlainTextEdit 派生：行号区 / 当前行 / 断点装订线 /
+ *            SLang 关键字语法高亮 / 光标行回调；无 Q_OBJECT，无需 moc） */
+SLQT_API const char* slqt_filedialog_open_sl(const char* dir, const char* filter);
+SLQT_API const char* slqt_filedialog_save_sl(const char* dir, const char* filter);
+SLQT_API const char* slqt_filedialog_dir_sl(const char* dir);
+
+SLQT_API int64_t slqt_statusbar_create_sl(int64_t parent);
+SLQT_API void    slqt_mainwindow_set_statusbar_sl(int64_t win, int64_t sb);
+SLQT_API void    slqt_statusbar_show_message_sl(int64_t sb, const char* t);
+SLQT_API void    slqt_statusbar_add_widget_sl(int64_t sb, int64_t w);
+
+SLQT_API int64_t     slqt_tree_create_sl(int64_t parent);
+SLQT_API void        slqt_tree_set_header_sl(int64_t h, const char* t);
+SLQT_API void        slqt_tree_clear_sl(int64_t h);
+SLQT_API void        slqt_tree_add_path_sl(int64_t h, const char* path);
+SLQT_API int32_t     slqt_tree_count_sl(int64_t h);
+SLQT_API const char* slqt_tree_selected_path_sl(int64_t h);
+
+SLQT_API int64_t slqt_splitter_create_sl(int64_t parent, int32_t vertical);
+SLQT_API void    slqt_splitter_add_widget_sl(int64_t sp, int64_t w);
+SLQT_API void    slqt_splitter_set_sizes_sl(int64_t sp, int32_t a, int32_t b, int32_t c);
+
+SLQT_API int64_t     slqt_codeedit_create_sl(int64_t parent);
+SLQT_API void        slqt_codeedit_set_text_sl(int64_t h, const char* t);
+SLQT_API const char* slqt_codeedit_text_sl(int64_t h);
+SLQT_API void        slqt_codeedit_set_readonly_sl(int64_t h, int32_t on);
+SLQT_API void        slqt_codeedit_goto_line_sl(int64_t h, int32_t line);
+SLQT_API int32_t     slqt_codeedit_cursor_line_sl(int64_t h);
+SLQT_API void        slqt_codeedit_set_highlight_sl(int64_t h, int32_t on);
+SLQT_API void        slqt_codeedit_set_breakpoint_sl(int64_t h, int32_t line, int32_t on);
+SLQT_API int32_t     slqt_codeedit_toggle_breakpoint_sl(int64_t h);
+SLQT_API void        slqt_codeedit_clear_breakpoints_sl(int64_t h);
+SLQT_API const char* slqt_codeedit_breakpoints_sl(int64_t h);
+SLQT_API void        slqt_codeedit_set_font_pt_sl(int64_t h, int32_t pt);
+/* 2026-11-12 第三轮：光标下单词 / 选中文本（符号索引·转到定义用） */
+SLQT_API const char* slqt_codeedit_word_sl(int64_t h);
+SLQT_API const char* slqt_codeedit_selected_sl(int64_t h);
+/* 2026-11-12 第五轮：断点确认态（实心）与停驻行（箭头 + 行高亮） */
+SLQT_API void        slqt_codeedit_set_bound_sl(int64_t h, const char* csv);
+SLQT_API void        slqt_codeedit_set_stopped_sl(int64_t h, int32_t line);
+
+/* 2026-11-13 VS 多标签：QTabWidget */
+SLQT_API int64_t     slqt_tab_create_sl(int64_t parent);
+SLQT_API int32_t     slqt_tab_add_sl(int64_t h, int64_t page, const char* title);
+SLQT_API int32_t     slqt_tab_count_sl(int64_t h);
+SLQT_API int32_t     slqt_tab_current_sl(int64_t h);
+SLQT_API void        slqt_tab_set_current_sl(int64_t h, int32_t idx);
+SLQT_API const char* slqt_tab_text_sl(int64_t h, int32_t idx);
+SLQT_API void        slqt_tab_set_text_sl(int64_t h, int32_t idx, const char* title);
+SLQT_API void        slqt_tab_remove_sl(int64_t h, int32_t idx);
+SLQT_API void        slqt_tab_clear_sl(int64_t h);
+SLQT_API void        slqt_tab_set_closable_sl(int64_t h, int32_t on);
+
+/* 2026-11-12 第四轮：SLDP TCP 客户端桥
+ * Qt 原生 IO：readyRead 在 C++ 侧累积字节，SL 侧同步 poll 取走，
+ * 不经过 C VM 的 socket 协程挂起协议（该协议在 Qt 回调重入 VM 时返回 null）。 */
+SLQT_API int32_t     slqt_sldp_connect_sl(int32_t port);
+SLQT_API void        slqt_sldp_send_sl(const char* utf8);
+SLQT_API const char* slqt_sldp_poll_sl(void);
+SLQT_API int32_t     slqt_sldp_connected_sl(void);
+SLQT_API void        slqt_sldp_close_sl(void);
 
 #ifdef __cplusplus
 }

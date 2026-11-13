@@ -400,3 +400,25 @@ const char* slr_renderer_string(void) { return s_renderer_str; }
 const char* slr_version_string(void) { return s_version_str; }
 
 const char* slr_current_backend(void) { return s_backend_str; }
+
+/* ===================================================================== */
+/* 资源占用计数（Environment.Render 资源查明；上限 = sl_render_internal.h
+ * SLR_MAX_CTX / SLR_MAX_PIPES / SLR_MAX_TEX）                            */
+/* ===================================================================== */
+int slr_context_count(void)
+{
+    int i, n = 0;
+    for (i = 0; i < SLR_MAX_CTX; i++)
+        if (s_ctxs[i].used) n++;
+    return n;
+}
+
+int slr_pipeline_count(void)
+{
+    int i, n = 0;
+    for (i = 0; i < SLR_MAX_PIPES; i++)
+        if (s_pipes[i].used) n++;
+    return n;
+}
+
+/* slr_texture_count 定义于 Pipeline/sl_texture.c（同语义，勿重复）*/

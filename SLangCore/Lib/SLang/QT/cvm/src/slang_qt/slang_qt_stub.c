@@ -209,10 +209,13 @@ const char* slqt_be_dbus_base_service(void) { return g_empty; }
 int64_t slqt_be_menubar_create(void) { return slqt_register(NULL); }
 void    slqt_be_mainwindow_set_menubar(int64_t win, int64_t mb) { (void)win;(void)mb; }
 int64_t slqt_be_menu_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
+int64_t slqt_be_menu_create_popup(const char* title) { (void)title; return slqt_register(NULL); }
 int64_t slqt_be_menu_add_action(int64_t menu, const char* text) { (void)menu;(void)text; return slqt_register(NULL); }
 void    slqt_be_menu_add_separator(int64_t menu) { (void)menu; }
+int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t y) { (void)menu;(void)anchor;(void)x;(void)y; return 0; }
 void    slqt_be_action_set_text(int64_t a, const char* t) { (void)a;(void)t; }
-void    slqt_be_action_set_enabled(int64_t a, int32_t on) { (void)a;(void)on; }
+void    slqt_be_action_set_enabled(int64_t a, int64_t on) { (void)a;(void)on; }
+int64_t slqt_be_action_enabled(int64_t a) { (void)a; return 1; }
 
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb) { (void)win;(void)tb; }
@@ -243,3 +246,62 @@ void    slqt_be_dialog_reject(int64_t d) { (void)d; }
 
 void    slqt_be_widget_set_min_size(int64_t h, int32_t w, int32_t hh) { (void)h;(void)w;(void)hh; }
 void    slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh) { (void)h;(void)w;(void)hh; }
+
+/* ---- 2026-11-12 P2 能力扩展 stub（no-op / 安全值，headless 链路不崩）---- */
+
+const char* slqt_be_filedialog_open(const char* d, const char* f) { (void)d;(void)f; return g_empty; }
+const char* slqt_be_filedialog_save(const char* d, const char* f) { (void)d;(void)f; return g_empty; }
+const char* slqt_be_filedialog_dir(const char* d) { (void)d; return g_empty; }
+
+int64_t slqt_be_statusbar_create(int64_t p) { (void)p; return slqt_register(NULL); }
+void    slqt_be_mainwindow_set_statusbar(int64_t win, int64_t sb) { (void)win;(void)sb; }
+void    slqt_be_statusbar_show_message(int64_t sb, const char* t) { (void)sb;(void)t; }
+void    slqt_be_statusbar_add_widget(int64_t sb, int64_t w) { (void)sb;(void)w; }
+
+int64_t     slqt_be_tree_create(int64_t p) { (void)p; return slqt_register(NULL); }
+void        slqt_be_tree_set_header(int64_t h, const char* t) { (void)h;(void)t; }
+void        slqt_be_tree_clear(int64_t h) { (void)h; }
+void        slqt_be_tree_add_path(int64_t h, const char* path) { (void)h;(void)path; }
+int32_t     slqt_be_tree_count(int64_t h) { (void)h; return 0; }
+const char* slqt_be_tree_selected_path(int64_t h) { (void)h; return g_empty; }
+
+int64_t slqt_be_splitter_create(int64_t p, int32_t v) { (void)p;(void)v; return slqt_register(NULL); }
+void    slqt_be_splitter_add_widget(int64_t sp, int64_t w) { (void)sp;(void)w; }
+void    slqt_be_splitter_set_sizes(int64_t sp, int32_t a, int32_t b, int32_t c) { (void)sp;(void)a;(void)b;(void)c; }
+
+int64_t     slqt_be_codeedit_create(int64_t p) { (void)p; return slqt_register(NULL); }
+void        slqt_be_codeedit_set_text(int64_t h, const char* t) { (void)h;(void)t; }
+const char* slqt_be_codeedit_text(int64_t h) { (void)h; return g_empty; }
+void        slqt_be_codeedit_set_readonly(int64_t h, int32_t on) { (void)h;(void)on; }
+void        slqt_be_codeedit_goto_line(int64_t h, int32_t l) { (void)h;(void)l; }
+int32_t     slqt_be_codeedit_cursor_line(int64_t h) { (void)h; return 1; }
+void        slqt_be_codeedit_set_highlight(int64_t h, int32_t on) { (void)h;(void)on; }
+void        slqt_be_codeedit_set_breakpoint(int64_t h, int32_t l, int32_t on) { (void)h;(void)l;(void)on; }
+int32_t     slqt_be_codeedit_toggle_breakpoint(int64_t h) { (void)h; return 0; }
+void        slqt_be_codeedit_clear_breakpoints(int64_t h) { (void)h; }
+const char* slqt_be_codeedit_breakpoints(int64_t h) { (void)h; return g_empty; }
+void        slqt_be_codeedit_set_font_pt(int64_t h, int32_t pt) { (void)h;(void)pt; }
+const char* slqt_be_codeedit_word(int64_t h) { (void)h; return g_empty; }
+const char* slqt_be_codeedit_selected(int64_t h) { (void)h; return g_empty; }
+void        slqt_be_codeedit_set_bound(int64_t h, const char* csv) { (void)h;(void)csv; }
+void        slqt_be_codeedit_set_stopped(int64_t h, int32_t l) { (void)h;(void)l; }
+
+/* 2026-11-13 VS 多标签 stub：headless 下不建真实标签，只返回安全值 */
+int64_t     slqt_be_tab_create(int64_t p) { (void)p; return slqt_register(NULL); }
+int32_t     slqt_be_tab_add(int64_t h, int64_t page, const char* t) { (void)h;(void)page;(void)t; return -1; }
+int32_t     slqt_be_tab_count(int64_t h) { (void)h; return 0; }
+int32_t     slqt_be_tab_current(int64_t h) { (void)h; return -1; }
+void        slqt_be_tab_set_current(int64_t h, int32_t i) { (void)h;(void)i; }
+const char* slqt_be_tab_text(int64_t h, int32_t i) { (void)h;(void)i; return g_empty; }
+void        slqt_be_tab_set_text(int64_t h, int32_t i, const char* t) { (void)h;(void)i;(void)t; }
+void        slqt_be_tab_remove(int64_t h, int32_t i) { (void)h;(void)i; }
+void        slqt_be_tab_clear(int64_t h) { (void)h; }
+void        slqt_be_tab_set_closable(int64_t h, int32_t on) { (void)h;(void)on; }
+
+/* 2026-11-12 第四轮：SLDP 桥 stub（headless 下不建连，poll 恒空） */
+int32_t     slqt_be_sldp_connect(int32_t p) { (void)p; return 0; }
+void        slqt_be_sldp_send(const char* t) { (void)t; }
+const char* slqt_be_sldp_poll(void) { return g_empty; }
+int32_t     slqt_be_sldp_connected(void) { return 0; }
+void        slqt_be_sldp_close(void) {}
+

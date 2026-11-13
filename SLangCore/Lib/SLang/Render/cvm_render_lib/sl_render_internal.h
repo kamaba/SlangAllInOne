@@ -10,6 +10,8 @@
  *   Pipeline/sl_texture.c  <-> RenderTexture        纹理注册表 + WIC 加载
  *   Pipeline/sl_camera.c   <-> RenderCamera         多相机槽表
  *   Pipeline/sl_light.c    <-> Camera/Light.sl      光照槽表 + 帧级光照块
+ *   Pipeline/sl_cmd.c      <-> Pipeline/CommandBuffer.sl
+ *                                                   命令流执行器（D1 真录制）
  *
  * RHI 层（渲染硬件抽象，一表多后端同效果）：
  *   RHI/sl_rhi.h           接口契约（vtable + 像素/坐标约定）
@@ -78,8 +80,23 @@ enum
      * PFLAT/PTEX —— SPIR-V 未含光照/高光，绘制不报错仅无 Phong 效果）*/
     SLR_PROG_PHONG_FLAT,
     SLR_PROG_PHONG_TEX,
-    SLR_PROG_COUNT
+    /* v3.5 固化编译槽（RHI/sl_rhi_shaders_gen.h 产物；本头不 include 该
+     * 446KB 头——避免所有包含者编译巨量字符串，后端经下方宏寻址 +
+     * 编译期 typedef 检查对齐）：5 效果（Lambert/Phong/BlinnPhong/
+     * BlinnPhongNormalMap/Toon）× 2 变体（TEX=0 / FLAT=1）。
+     * 管线全材质（material 0..4）路由至此（v3.5 起内建 PFLAT/PTEX/
+     * PHONG_* 仅作 VK 降级目标与阴影项专用）。GL/GLES 运行期编固化
+     * GLSL330/ESSL300 源；D3D11 直吃 DXBC blob（fxc SM5 预编译，运行期
+     * 零编译）；VK 降级映射 PFLAT/PTEX（SPIR-V 未含光照，绘制不报错
+     * 仅无该效果）。*/
+    SLR_PROG_GEN_BASE,
+    SLR_PROG_COUNT = SLR_PROG_GEN_BASE + 10   /* 10 = SLR_GEN_EFFECT_COUNT*2 */
 };
+
+/* v3.5 固化槽位寻址：效果 0..4 × 变体 0=TEX / 1=FLAT，
+ * 与固化头 SLR_GEN_SETS[effect*2+variant] 表同构 */
+#define SLR_PROG_GEN_SLOT(effect, variant) \
+    (SLR_PROG_GEN_BASE + (effect) * 2 + (variant))
 
 /* PerDraw 常量缓冲 CPU 暂存（列主序，与 GL std140 / HLSL cbuffer 布局一致）：
  *   mvp   —— 顶点变换矩阵（proj * model2d）
@@ -137,8 +154,9 @@ typedef struct
     int used, mesh, layer, queue, visible, anim_mode, cull_cams;
     float pos[3], rot_z, scale[2], color[4], anim_speed;
     int64_t texture;
-    /* v3.4 材质/阴影（阶段 5 消费）：
-     * material    0 = Lambert（PFLAT/PTEX），1 = Phong（PHONG_FLAT/PHONG_TEX）
+    /* v3.4/v3.5 材质/阴影（阶段 5 消费）：
+     * material    0=Lambert 1=Phong 2=BlinnPhong 3=BlinnPhongNormalMap 4=Toon
+     *             （0/1 走内建槽；2..4 走 v3.5 gen 固化槽，纹理→TEX/无→FLAT）
      * spec_str    Phong 高光强度（0 = 无高光）
      * spec_shin   Phong 光泽度（pow 指数）
      * cast_shadow 1 = 生成 2D 投影阴影绘制项（透明段，黑 0.35 alpha）*/
@@ -150,7 +168,7 @@ typedef struct
 {
     int obj;        /* objects 下标          */
     int slot;       /* PerDraw 槽位      */
-    int prog;        /* SLR_PROG_PFLAT/PTEX/PHONG_* */
+    int prog;        /* PFLAT/PTEX/PHONG_* 或 v3.5 gen 固化槽 */
     int queue, layer;
     int cam;        /* 所属相机位号（0..SLR_MAX_CAMERAS-1）*/
     int tex_desc;   /* 纹理描述符槽号（-1 = 无纹理；阶段 6 分配）*/

@@ -12,6 +12,12 @@
  * set_error / set_error_detail 上抛（共享 s_ready / s_perdraw）。
  * ========================================================================= */
 #include "sl_render_internal.h"   /* vm_sl_render.h + RHI/sl_rhi.h + 共享结构 */
+#include "sl_rhi_shaders_gen.h"   /* v3.5 固化着色器（GLSL330 + ESSL300 + DXBC blob）*/
+
+/* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
+ * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
+typedef char slr_gen_slot_check[
+    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* GL 类型 / 常量（手写，不依赖 SDK 头）                                  */
@@ -402,6 +408,14 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
 
+    /* v3.5 固化效果槽：5 效果 × 2 变体（固化 GLSL 3.3 源运行期编译，
+     * 与内建程序同一 make_program 路径——编译/链接失败同样致命）*/
+    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
+    {
+        const SlrGenShaderSet* gs = &SLR_GEN_SETS[i];
+        if (!make_program(SLR_PROG_GEN_BASE + i, gs->glsl_vs, gs->glsl_fs)) return 0;
+    }
+
     s_uni[SLR_PROG_FLAT].mvp   = p_glGetUniformLocation(s_progs[SLR_PROG_FLAT], "uMVP");
     s_uni[SLR_PROG_FLAT].color = p_glGetUniformLocation(s_progs[SLR_PROG_FLAT], "uColor");
 
@@ -416,6 +430,15 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_PHONG_TEX].obj_index  = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uObjIndex");
     s_uni[SLR_PROG_PHONG_TEX].tex        = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uTex");
 
+    /* v3.5 gen：全槽位取 uObjIndex；TEX 变体（偶数下标）取 uTex */
+    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
+    {
+        int gslot = SLR_PROG_GEN_BASE + i;
+        s_uni[gslot].obj_index = p_glGetUniformLocation(s_progs[gslot], "uObjIndex");
+        if (!(i & 1))
+            s_uni[gslot].tex = p_glGetUniformLocation(s_progs[gslot], "uTex");
+    }
+
     s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
     s_uni[SLR_PROG_POST].src  = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSrc");
     s_uni[SLR_PROG_POST].bright = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uBrightness");
@@ -429,6 +452,11 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_PTEX].tex, 1);
     p_glUseProgram(s_progs[SLR_PROG_PHONG_TEX]);
     p_glUniform1i(s_uni[SLR_PROG_PHONG_TEX].tex, 1);
+    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i += 2)
+    {
+        p_glUseProgram(s_progs[SLR_PROG_GEN_BASE + i]);
+        p_glUniform1i(s_uni[SLR_PROG_GEN_BASE + i].tex, 1);
+    }
     p_glUseProgram(s_progs[SLR_PROG_BLIT]);
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
     p_glUseProgram(s_progs[SLR_PROG_POST]);
@@ -442,6 +470,12 @@ static int gl_make_shared(void)
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PFLAT], blk, 0);
         blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PTEX], "PerDraw");
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PTEX], blk, 0);
+        for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
+        {
+            blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_GEN_BASE + i], "PerDraw");
+            if (blk != 0xFFFFFFFFu)
+                p_glUniformBlockBinding(s_progs[SLR_PROG_GEN_BASE + i], blk, 0);
+        }
         p_glGenBuffers(1, &s_ubo);
         p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo);
         p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrPerDraw), &s_perdraw, GL_DYNAMIC_DRAW);
@@ -460,6 +494,12 @@ static int gl_make_shared(void)
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_FLAT], blk, 1);
         blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PHONG_TEX], "LightBlock");
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PHONG_TEX], blk, 1);
+        for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
+        {
+            blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_GEN_BASE + i], "LightBlock");
+            if (blk != 0xFFFFFFFFu)
+                p_glUniformBlockBinding(s_progs[SLR_PROG_GEN_BASE + i], blk, 1);
+        }
         p_glGenBuffers(1, &s_ubo_light);
         p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo_light);
         p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrLightBlock), NULL, GL_DYNAMIC_DRAW);
@@ -721,7 +761,8 @@ static void gl_draw_item(int prog, int slot, int mesh)
     }
     p_glUseProgram(s_progs[prog]);
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
-        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX)
+        prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
+        prog >= SLR_PROG_GEN_BASE)
         p_glUniform1i(s_uni[prog].obj_index, slot);
     /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源 */
     p_glBindVertexArray(m->vao);

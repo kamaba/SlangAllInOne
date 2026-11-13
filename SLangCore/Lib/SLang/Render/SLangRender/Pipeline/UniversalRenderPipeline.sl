@@ -250,7 +250,12 @@ public class UniversalRenderPipeline extends ScriptableRenderPipeline
         this._transparentPass = DrawObjectsPass( "Transparent", 2500, 5000 )
         this._transparentPass.configure( this._colorId, this._depthId, false, false, Color.black() )
 
-        this._postPass = PostProcessPass( "PostProcess" )
+        # P1：PostProcessPass 构造改无参 + 字段赋值（原 _init_(string)
+        # 已随 P1 改造移除——其 this._init_() 自调用为运行期递归地雷）
+        PostProcessPass postPass = PostProcessPass()
+        postPass.name = "PostProcess"
+        postPass.profilerName = "PostProcess"
+        this._postPass = postPass
         this._postPass.colorAttachment = RenderTargetIdentifier.backBuffer()
         this._postPass.postMaterial = this._postMaterial
         this._postPass.source = this._colorTarget

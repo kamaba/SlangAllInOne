@@ -225,10 +225,13 @@ const char* slqt_be_dbus_base_service(void);
 int64_t slqt_be_menubar_create(void);
 void    slqt_be_mainwindow_set_menubar(int64_t win, int64_t mb);
 int64_t slqt_be_menu_create(int64_t parent, const char* title);
+int64_t slqt_be_menu_create_popup(const char* title);
 int64_t slqt_be_menu_add_action(int64_t menu, const char* text);
 void    slqt_be_menu_add_separator(int64_t menu);
+int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t y);
 void    slqt_be_action_set_text(int64_t a, const char* t);
-void    slqt_be_action_set_enabled(int64_t a, int32_t on);
+void    slqt_be_action_set_enabled(int64_t a, int64_t on);
+int64_t slqt_be_action_enabled(int64_t a);
 /* 工具栏：QToolBar */
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title);
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb);
@@ -259,6 +262,64 @@ void    slqt_be_dialog_reject(int64_t d);
 /* 控件 min/max 尺寸（面板规格钳制落地） */
 void    slqt_be_widget_set_min_size(int64_t h, int32_t w, int32_t hh);
 void    slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh);
+
+/* ── 2026-11-12 P2 能力扩展后端契约（与 slang_qt.h *_sl 导出一一对应）──── */
+/* QFileDialog：返回静态缓冲指针，取消为空串 */
+const char* slqt_be_filedialog_open(const char* dir, const char* filter);
+const char* slqt_be_filedialog_save(const char* dir, const char* filter);
+const char* slqt_be_filedialog_dir(const char* dir);
+/* QStatusBar */
+int64_t slqt_be_statusbar_create(int64_t parent);
+void    slqt_be_mainwindow_set_statusbar(int64_t win, int64_t sb);
+void    slqt_be_statusbar_show_message(int64_t sb, const char* t);
+void    slqt_be_statusbar_add_widget(int64_t sb, int64_t w);
+/* QTreeWidget：路径字符串按 '/' 分层，SL 侧只传字符串不碰 item 句柄 */
+int64_t     slqt_be_tree_create(int64_t parent);
+void        slqt_be_tree_set_header(int64_t h, const char* t);
+void        slqt_be_tree_clear(int64_t h);
+void        slqt_be_tree_add_path(int64_t h, const char* path);
+int32_t     slqt_be_tree_count(int64_t h);
+const char* slqt_be_tree_selected_path(int64_t h);
+/* QSplitter */
+int64_t slqt_be_splitter_create(int64_t parent, int32_t vertical);
+void    slqt_be_splitter_add_widget(int64_t sp, int64_t w);
+void    slqt_be_splitter_set_sizes(int64_t sp, int32_t a, int32_t b, int32_t c);
+/* QCodeEdit 复合控件 */
+int64_t     slqt_be_codeedit_create(int64_t parent);
+void        slqt_be_codeedit_set_text(int64_t h, const char* t);
+const char* slqt_be_codeedit_text(int64_t h);
+void        slqt_be_codeedit_set_readonly(int64_t h, int32_t on);
+void        slqt_be_codeedit_goto_line(int64_t h, int32_t line);
+int32_t     slqt_be_codeedit_cursor_line(int64_t h);
+void        slqt_be_codeedit_set_highlight(int64_t h, int32_t on);
+void        slqt_be_codeedit_set_breakpoint(int64_t h, int32_t line, int32_t on);
+int32_t     slqt_be_codeedit_toggle_breakpoint(int64_t h);
+void        slqt_be_codeedit_clear_breakpoints(int64_t h);
+const char* slqt_be_codeedit_breakpoints(int64_t h);
+void        slqt_be_codeedit_set_font_pt(int64_t h, int32_t pt);
+const char* slqt_be_codeedit_word(int64_t h);
+const char* slqt_be_codeedit_selected(int64_t h);
+void        slqt_be_codeedit_set_bound(int64_t h, const char* csv);
+void        slqt_be_codeedit_set_stopped(int64_t h, int32_t line);
+
+/* 2026-11-13 VS 多标签：QTabWidget（page 为任意 QWidget 句柄；SL 侧只传字符串标题） */
+int64_t     slqt_be_tab_create(int64_t parent);
+int32_t     slqt_be_tab_add(int64_t h, int64_t page, const char* title);
+int32_t     slqt_be_tab_count(int64_t h);
+int32_t     slqt_be_tab_current(int64_t h);
+void        slqt_be_tab_set_current(int64_t h, int32_t idx);
+const char* slqt_be_tab_text(int64_t h, int32_t idx);
+void        slqt_be_tab_set_text(int64_t h, int32_t idx, const char* title);
+void        slqt_be_tab_remove(int64_t h, int32_t idx);
+void        slqt_be_tab_clear(int64_t h);
+void        slqt_be_tab_set_closable(int64_t h, int32_t on);
+
+/* 2026-11-12 第四轮：SLDP TCP 客户端桥（Qt/Stub 双后端契约） */
+int32_t     slqt_be_sldp_connect(int32_t port);
+void        slqt_be_sldp_send(const char* utf8);
+const char* slqt_be_sldp_poll(void);
+int32_t     slqt_be_sldp_connected(void);
+void        slqt_be_sldp_close(void);
 
 #ifdef __cplusplus
 }

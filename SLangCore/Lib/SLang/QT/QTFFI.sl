@@ -27,6 +27,16 @@ namespace SLang
         public static Int32 SIG_DESTROYED      = 3
         public static Int32 SIG_TEXT_CHANGED   = 4
         public static Int32 SIG_CURRENT_ROW_CHANGED = 5
+        # 2026-11-12 P2 扩展信号（与 slang_qt.h 的 SLQT_SIG_* 逐值一致）
+        public static Int32 SIG_TREE_SELECTED = 6
+        public static Int32 SIG_CODEEDIT_LINE_CHANGED = 7
+        public static Int32 SIG_CODEEDIT_BREAKPOINT = 8
+        # 2026-11-13 VS 多标签（与 slang_qt.h 的 SLQT_SIG_* 逐值一致）
+        public static Int32 SIG_TAB_CHANGED = 9
+        public static Int32 SIG_TAB_CLOSE_REQUESTED = 10
+        # 2026-11-13 第十四轮 右键菜单（int=标签下标 / utf8=树节点路径）
+        public static Int32 SIG_TAB_CONTEXT = 11
+        public static Int32 SIG_TREE_CONTEXT = 12
 
         # ── 应用 ────────────────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
@@ -423,6 +433,13 @@ namespace SLang
             Int64 cb = _dispatchVoidCb
             if ( signalId == SIG_TEXT_CHANGED ) { cb = _dispatchStringCb }
             if ( signalId == SIG_CURRENT_ROW_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TREE_SELECTED ) { cb = _dispatchStringCb }
+            if ( signalId == SIG_CODEEDIT_LINE_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_CODEEDIT_BREAKPOINT ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TAB_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TAB_CLOSE_REQUESTED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TAB_CONTEXT ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TREE_CONTEXT ) { cb = _dispatchStringCb }
             if ( cb == 0 ) { ret 0 }
             _handlers.add( handler )
             Int64 slot = ( _handlers.length - 1 ) as Int64
@@ -443,6 +460,16 @@ namespace SLang
 
         # ── 运行时门面（组合部署探测 / 自描述输出）──────────────────
         public static string backendKind() { ret ffi_backendKind() }
+        # SLDP 桥门面：应用侧只经 SLang.QT.sldpXxx，不碰 ffi_* 与原生符号
+        public static void sldpConnect( int port ) { ffi_sldpConnect( port ) }
+        public static void sldpSend( string text ) { ffi_sldpSend( text ) }
+        public static string sldpPoll() { ret ffi_sldpPoll() }
+        public static bool sldpConnected()
+        {
+            if ( ffi_sldpConnected() == 1 ) { ret true }
+            ret false
+        }
+        public static void sldpClose() { ffi_sldpClose() }
         public static string runtimeDir() { ret ffi_runtimeDir() }
         public static bool moduleAvailable( string dll ) { ret ffi_moduleAvailable( dll ) }
         public static string appPlatformName() { ret ffi_appPlatformName() }
@@ -508,14 +535,21 @@ namespace SLang
         public static void ffi_mainwindowSetMenubar( Int64 win, Int64 mb ) {}
         @DllStaticImport( "slang_qt", "slqt_menu_create_sl" )
         public static Int64 ffi_menuCreate( Int64 parent, string title ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_menu_create_popup_sl" )
+        public static Int64 ffi_menuCreatePopup( string title ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_menu_add_action_sl" )
         public static Int64 ffi_menuAddAction( Int64 menu, string text ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_menu_popup_exec_sl" )
+        public static Int64 ffi_menuPopupExec( Int64 menu, Int64 anchor, Int32 x, Int32 y ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_menu_add_separator_sl" )
         public static void ffi_menuAddSeparator( Int64 menu ) {}
         @DllStaticImport( "slang_qt", "slqt_action_set_text_sl" )
         public static void ffi_actionSetText( Int64 a, string t ) {}
         @DllStaticImport( "slang_qt", "slqt_action_set_enabled_sl" )
-        public static void ffi_actionSetEnabled( Int64 a, bool on ) {}
+        public static void ffi_actionSetEnabled( Int64 a, int v ) {}
+        # 2026-11-12 第六轮：读取启用态，供菜单状态机按位回归
+        @DllStaticImport( "slang_qt", "slqt_action_enabled_sl" )
+        public static int ffi_actionEnabled( Int64 a ) { ret 0 }
 
         # 工具栏：QToolBar（快捷图标区）
         @DllStaticImport( "slang_qt", "slqt_toolbar_create_sl" )
@@ -577,6 +611,111 @@ namespace SLang
         @DllStaticImport( "slang_qt", "slqt_widget_set_max_size_sl" )
         public static void ffi_widgetSetMaxSize( Int64 h, int w, int hh ) {}
 
+        # ── 2026-11-12 P2 能力 FFI 面（能力登记表 D-01~D-05）────────
+        # QFileDialog（返回路径字符串，取消为空串）
+        @DllStaticImport( "slang_qt", "slqt_filedialog_open_sl" )
+        public static string ffi_filedialogOpen( string dir, string filter ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_filedialog_save_sl" )
+        public static string ffi_filedialogSave( string dir, string filter ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_filedialog_dir_sl" )
+        public static string ffi_filedialogDir( string dir ) { ret "" }
+        # QStatusBar
+        @DllStaticImport( "slang_qt", "slqt_statusbar_create_sl" )
+        public static Int64 ffi_statusbarCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mainwindow_set_statusbar_sl" )
+        public static void ffi_mainwindowSetStatusbar( Int64 win, Int64 sb ) {}
+        @DllStaticImport( "slang_qt", "slqt_statusbar_show_message_sl" )
+        public static void ffi_statusbarShowMessage( Int64 sb, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_statusbar_add_widget_sl" )
+        public static void ffi_statusbarAddWidget( Int64 sb, Int64 w ) {}
+        # QTreeWidget（路径式建模）
+        @DllStaticImport( "slang_qt", "slqt_tree_create_sl" )
+        public static Int64 ffi_treeCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tree_set_header_sl" )
+        public static void ffi_treeSetHeader( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_clear_sl" )
+        public static void ffi_treeClear( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_add_path_sl" )
+        public static void ffi_treeAddPath( Int64 h, string path ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_count_sl" )
+        public static int ffi_treeCount( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tree_selected_path_sl" )
+        public static string ffi_treeSelectedPath( Int64 h ) { ret "" }
+        # QSplitter
+        @DllStaticImport( "slang_qt", "slqt_splitter_create_sl" )
+        public static Int64 ffi_splitterCreate( Int64 parent, bool vertical ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_splitter_add_widget_sl" )
+        public static void ffi_splitterAddWidget( Int64 sp, Int64 w ) {}
+        @DllStaticImport( "slang_qt", "slqt_splitter_set_sizes_sl" )
+        public static void ffi_splitterSetSizes( Int64 sp, int a, int b, int c ) {}
+        # QCodeEdit 复合控件
+        @DllStaticImport( "slang_qt", "slqt_codeedit_create_sl" )
+        public static Int64 ffi_codeeditCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_text_sl" )
+        public static void ffi_codeeditSetText( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_text_sl" )
+        public static string ffi_codeeditText( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_readonly_sl" )
+        public static void ffi_codeeditSetReadonly( Int64 h, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_goto_line_sl" )
+        public static void ffi_codeeditGotoLine( Int64 h, int line ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_cursor_line_sl" )
+        public static int ffi_codeeditCursorLine( Int64 h ) { ret 1 }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_highlight_sl" )
+        public static void ffi_codeeditSetHighlight( Int64 h, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_breakpoint_sl" )
+        public static void ffi_codeeditSetBreakpoint( Int64 h, int line, bool on ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_toggle_breakpoint_sl" )
+        public static int ffi_codeeditToggleBreakpoint( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_clear_breakpoints_sl" )
+        public static void ffi_codeeditClearBreakpoints( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_breakpoints_sl" )
+        public static string ffi_codeeditBreakpoints( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_font_pt_sl" )
+        public static void ffi_codeeditSetFontPt( Int64 h, int pt ) {}
+        # 2026-11-12 第三轮：光标下单词 / 选中文本（符号索引·转到定义）
+        @DllStaticImport( "slang_qt", "slqt_codeedit_word_sl" )
+        public static string ffi_codeeditWord( Int64 h ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_codeedit_selected_sl" )
+        public static string ffi_codeeditSelected( Int64 h ) { ret "" }
+        # 2026-11-12 第五轮：断点确认态（csv 行号）/ 停驻行（0=清除）
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_bound_sl" )
+        public static void ffi_codeeditSetBound( Int64 h, string csv ) {}
+        @DllStaticImport( "slang_qt", "slqt_codeedit_set_stopped_sl" )
+        public static void ffi_codeeditSetStopped( Int64 h, int line ) {}
+        # 2026-11-13 VS 多标签：QTabWidget（page 传 QWidget 句柄）
+        @DllStaticImport( "slang_qt", "slqt_tab_create_sl" )
+        public static Int64 ffi_tabCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tab_add_sl" )
+        public static int ffi_tabAdd( Int64 h, Int64 page, string title ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_tab_count_sl" )
+        public static int ffi_tabCount( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tab_current_sl" )
+        public static int ffi_tabCurrent( Int64 h ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_tab_set_current_sl" )
+        public static void ffi_tabSetCurrent( Int64 h, int idx ) {}
+        @DllStaticImport( "slang_qt", "slqt_tab_text_sl" )
+        public static string ffi_tabText( Int64 h, int idx ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_tab_set_text_sl" )
+        public static void ffi_tabSetText( Int64 h, int idx, string title ) {}
+        @DllStaticImport( "slang_qt", "slqt_tab_remove_sl" )
+        public static void ffi_tabRemove( Int64 h, int idx ) {}
+        @DllStaticImport( "slang_qt", "slqt_tab_clear_sl" )
+        public static void ffi_tabClear( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_tab_set_closable_sl" )
+        public static void ffi_tabSetClosable( Int64 h, bool on ) {}
+        # 2026-11-12 第四轮：SLDP TCP 客户端桥（Qt 原生 IO，避开 VM 协程挂起）
+        @DllStaticImport( "slang_qt", "slqt_sldp_connect_sl" )
+        public static int ffi_sldpConnect( int port ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_sldp_send_sl" )
+        public static void ffi_sldpSend( string text ) {}
+        @DllStaticImport( "slang_qt", "slqt_sldp_poll_sl" )
+        public static string ffi_sldpPoll() { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_sldp_connected_sl" )
+        public static int ffi_sldpConnected() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_sldp_close_sl" )
+        public static void ffi_sldpClose() {}
+
         # ── VS 扩展工厂 ────────────────────────────────────────────
         public static QMenuBar newMenuBar() { ret QMenuBar() }
         public static QMenu newMenu( Int64 parent, string title ) { ret QMenu( parent, title ) }
@@ -587,5 +726,16 @@ namespace SLang
         # QAction / QMdiSubWindow 由原生创建（menu/toolbar/mdi 返回句柄），工厂按句柄收养
         public static QAction newAction( Int64 handle ) { ret QAction( handle ) }
         public static QMdiSubWindow newMdiSubWindow( Int64 handle ) { ret QMdiSubWindow( handle ) }
+
+        # ── 2026-11-12 P2 工厂 ─────────────────────────────────────
+        public static string openFileDialog( string dir, string filter ) { ret ffi_filedialogOpen( dir, filter ) }
+        public static string saveFileDialog( string dir, string filter ) { ret ffi_filedialogSave( dir, filter ) }
+        public static string dirFileDialog( string dir ) { ret ffi_filedialogDir( dir ) }
+        public static QStatusBar newStatusBar( Int64 parent ) { ret QStatusBar( parent ) }
+        public static QTreeWidget newTreeWidget( Int64 parent ) { ret QTreeWidget( parent ) }
+        public static QSplitter newSplitter( Int64 parent, bool vertical ) { ret QSplitter( parent, vertical ) }
+        public static QCodeEdit newCodeEdit( Int64 parent ) { ret QCodeEdit( parent ) }
+        public static QTabWidget newTabWidget( Int64 parent ) { ret QTabWidget( parent ) }
+        public static void mainWindowSetStatusBar( Int64 win, Int64 sb ) { ffi_mainwindowSetStatusbar( win, sb ) }
     }
 }

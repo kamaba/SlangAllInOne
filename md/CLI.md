@@ -25,8 +25,9 @@
 | `slang run-disk <module>` | `run` 的兼容别名 |
 | `slang info <module>` | 经 C VM 显示模块元数据（版本/依赖/符号表等） |
 | `slang publish <project>` | 发布（dotnet-publish 风格）：`both`（缺省）= 可运行 app exe（payload 附加 csimple_lang.exe + sqlite3.dll + lib\）+ `<Module>.module.slb`；`exe` / `slb` 只出其一。布局走 jsonc `publish` 段或 `--dest` |
-| `slang new project <Name> [-p <dir>]` | 脚手架：`<dir>\<Name>\` 下成套落盘 `Name.sp / Name.jsonc / Name.sl / Name.md`（UTF-8 BOM，含 guide） |
+| `slang new project <Name> [-p <dir>] [选项]` | 脚手架：`<dir>\<Name>\` 下成套落盘 `Name.sp / Name.jsonc / Name.sl / Name.md`（UTF-8 BOM，含 guide）。无选项时行为与旧版一致；选项见 §1.4 |
 | `slang new class <Name> [-p <dir>]` | 在 `<dir>` 找到的 `.sp` 旁创建 `<Name>.sl` 并登记进 jsonc |
+| `slang project <sub>` | 工程配置/目录扫描的 CLI 真源（自带文法）：`info / scan / get / set / raw`，见 §1.5 |
 | `slang lsp [--stdio]` | 内嵌 LSP 3.17 服务器（stdio JSON-RPC；VSCode 插件消费：诊断推送 + 符号补全） |
 | `slang lsp-compile` | LSP 专用诊断子命令（新进程单次编译，结构化 JSON 到 stdout；`slang lsp` 每轮自动调用，一般不直接用） |
 | `slang ffi-check <contract> [--dll <lib.dll>]` | FFI 契约独立校验（`.slffi.json`）：schema 自检（version / functionList / structs / callbacks）+ 可选 DLL 导出表逐符号比对；失败 exit 1（CI 友好） |
@@ -60,7 +61,11 @@
 ### 1.3 示例
 
 ```text
-slang new project MyApp                                        # 脚手架
+slang new project MyApp                                        # 脚手架（四件套）
+slang new project MyLib --kind module --no-guide               # 库模块：只生成 .jsonc
+slang project info MyLib/MyLib.jsonc --json                    # 工程信息 + 配置节点树
+slang project scan . --json --depth 4                          # 结构化目录扫描
+slang project set MyLib/MyLib.jsonc --key project/desc --value demo
 slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest        # 编译+运行（内存交接）
 slang MyProject --export-mode temp                             # 临时目录导出后运行
 slang MyProject -- arg1 arg2                                   # 程序参数透传
@@ -70,6 +75,32 @@ slang publish MyProject --mode exe --cvm Release               # 发布 GUI-less
 slang info out\export\ProjectTest\ProjectTest.module.json      # 模块元数据
 slang pack-modules --config Release                            # 标准库打包
 ```
+
+### 1.4 `slang new project` 选项（CLI 先行，IDE 向导同源）
+
+无选项时落盘内容及字节形态与旧版完全一致（app + 四件套）。选项只由 CLI 解析，IDE 侧只组装参数。
+
+| 选项 | 说明 |
+|------|------|
+| `--kind app\|module` | `module` 缺省不建 `.sp` 与同名 `.sl`，`compileFiles.files[]` 为空数组，`export.format` 写入 `binary+json`；guide 中 `.sp` 专属段落改为库模块说明 |
+| `--no-guide` | 完全不使用 `.md`：不生成、不重生成、不占位；已存在的 `.md` 不触碰 |
+| `--guide-description <text>` / `--desc` | 写入 guide 的 `AI-DESCRIPTION` 区（显式给出时覆盖保留区） |
+| `--no-sp` / `--with-sp` | 跳过 / 保留 `.sp`（module 缺省跳过，`--with-sp` 可保留） |
+| `--no-entry-source` / `--with-entry-source` | 跳过 / 保留同名 `.sl`；跳过时 `compileFiles.files[]` 为空数组 |
+
+冲突预检只覆盖「本次真正要写」的文件；跳过项不动且不参与检查。stdout 用 `Created:` / `Skipped:` / `Regenerated:` / `Next:` 报告结果；退出码 `0` 成功、`1` 文件冲突、`2` 参数/名称非法。
+
+### 1.5 `slang project` 命令组（工程配置/扫描 CLI 真源）
+
+| 子命令 | 说明 |
+|--------|------|
+| `project info <path> [--json]` | 工程锚点 / 类型 / 模块名 / 状态 + `compileFiles` 逐项存在性 + 配置节点树（路径、类型、值、行号、原始片段、标注）。`--json` 输出单行 JSON（含 `nodeCount/fileCount/referenceCount` 显式计数） |
+| `project scan <dir> [--json] [--depth N]` | 递归扫描 `*.jsonc`（排除 `.git/node_modules/out/publish/build/bin/obj/.codebuddy` 与 `plugin.jsonc`；深度缺省 8，上限 2000 文件 / 200 工程），`--json` 返回 `projects[]` 结构化结果 |
+| `project get <path> --key <a/b/[i]/c> [--json]` | 读一个键（类型化值 + 原始片段） |
+| `project set <path> --key <a/b> --value <text>` | 改一个键：`--value` 为 JSON 字面量或纯文本（纯文本自动加引号）；只替换值区间，**注释、缩进、键顺序、BOM 原样保留** |
+| `project raw <path> --key <a/b>` | 读一个节点的原始片段（只读） |
+
+`<path>` 可以是 `.jsonc`、`.sp` 或工程目录；节点路径用 `/` 拼接、数组索引写 `[i]`，例如 `export/moduleName`、`compileFiles/files/[0]/path`。`--json` 结构化输出可直接被编辑器 / 脚本消费，无需自行解析 jsonc。
 
 ***
 

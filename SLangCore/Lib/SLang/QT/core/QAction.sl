@@ -15,7 +15,20 @@ namespace SLang
 
         public void setText( string t ) { SLang.QT.ffi_actionSetText( this.handle, t ) }
 
-        public void setEnabled( bool on ) { SLang.QT.ffi_actionSetEnabled( this.handle, on ) }
+        public void setEnabled( bool on )
+        {
+            int v = 0
+            if ( on == true ) { v = 1 }
+            SLang.QT.ffi_actionSetEnabled( this.handle, v )
+        }
+
+        # 读取自身显式启用态（不含父级 widget 状态）；诊断 / 状态机回归用
+        public bool isEnabled()
+        {
+            int n = SLang.QT.ffi_actionEnabled( this.handle )
+            if ( n == 0 ) { ret false }
+            ret true
+        }
 
         # 触发（用户点击菜单项 / 工具栏按钮）时回调 handler
         public void onTriggered( Function handler )

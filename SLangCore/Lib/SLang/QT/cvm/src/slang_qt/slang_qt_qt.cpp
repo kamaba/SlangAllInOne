@@ -57,6 +57,31 @@
 #include <QMdiSubWindow>
 #include <QDialog>
 
+/* 2026-11-12 P2 能力扩展（Widgets 核心，非可选模块） */
+#include <QFileDialog>
+#include <QStatusBar>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QSplitter>
+#include <QPlainTextEdit>
+#include <QSyntaxHighlighter>
+/* 2026-11-13 VS 多标签 */
+#include <QTabWidget>
+#include <QTextBlock>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QRegularExpression>
+#include <QPaintEvent>
+#include <QMouseEvent>
+#include <QScrollBar>
+#include <QFont>
+#include <QColor>
+#include <QSet>
+#include <QHash>
+#include <QMap>
+#include <QList>
+#include <algorithm>
+
 /* 2026-11-03 扩展面（可选模块，vcxproj 一律 /DELAYLOAD；绑定层预装载后命中） */
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -81,6 +106,199 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
+
+/* ── 2026-11-12 SLang 语法高亮 ──────────────────────────────────────────
+ * QSyntaxHighlighter 派生类只覆盖 highlightBlock，不需要 Q_OBJECT/moc。
+ * '#' 行注释优先；关键字/数字/字符串按正则逐块着色。 */
+class SlangHighlighter : public QSyntaxHighlighter
+{
+public:
+    explicit SlangHighlighter(QTextDocument* doc) : QSyntaxHighlighter(doc) {}
+protected:
+    void highlightBlock(const QString& text) override
+    {
+        QTextCharFormat kw, num, str, com;
+        kw.setForeground(QColor("#7b1fa2")); kw.setFontWeight(QFont::Bold);
+        num.setForeground(QColor("#b35900"));
+        str.setForeground(QColor("#0a7d3f"));
+        com.setForeground(QColor("#8a8f98")); com.setFontItalic(true);
+
+        int comment = text.indexOf(QLatin1Char('#'));
+        int limit = (comment >= 0) ? comment : text.length();
+        QString code = text.left(limit);
+
+        QRegularExpression kwRx(QStringLiteral("\\b(public|private|class|static|void|int|Int64|Int32|string|bool|float|double|ret|if|elif|else|while|break|continue|import|new|null|true|false|try|catch|label|this|extends|namespace)\\b"));
+        auto ki = kwRx.globalMatch(code);
+        while (ki.hasNext()) { auto m = ki.next(); setFormat(m.capturedStart(), m.capturedLength(), kw); }
+
+        QRegularExpression numRx(QStringLiteral("\\b[0-9]+\\b"));
+        auto ni = numRx.globalMatch(code);
+        while (ni.hasNext()) { auto m = ni.next(); setFormat(m.capturedStart(), m.capturedLength(), num); }
+
+        QRegularExpression strRx(QStringLiteral("\"[^\"]*\""));
+        auto si = strRx.globalMatch(code);
+        while (si.hasNext()) { auto m = si.next(); setFormat(m.capturedStart(), m.capturedLength(), str); }
+
+        if (comment >= 0) setFormat(comment, text.length() - comment, com);
+    }
+};
+
+/* ── 2026-11-12 QCodeEdit 复合控件 ───────────────────────────────────────
+ * QPlainTextEdit + 行号/断点装订线 + 当前行高亮 + 光标行回调；
+ * 全部用 paintEvent/mousePressEvent 覆盖与 lambda 连接，无需 moc。 */
+class SlangCodeEdit : public QPlainTextEdit
+{
+public:
+    QSet<int> breakpoints;
+    QSet<int> boundLines;   /* 已被调试会话 verified 的行 → 实心红点 */
+    int stoppedLine = 0;    /* 当前停驻行 → 装订线箭头 + 行高亮 */
+    int64_t lineCb = 0;
+    int64_t bpCb = 0;
+    int64_t lineSlot = 0;
+    int64_t bpSlot = 0;
+    SlangHighlighter* highlighter = nullptr;
+    int m_gutter = 0;
+
+    explicit SlangCodeEdit(QWidget* parent = nullptr) : QPlainTextEdit(parent)
+    {
+        setLineWrapMode(QPlainTextEdit::NoWrap);
+        QFont f(QStringLiteral("Consolas"));
+        f.setPointSize(10);
+        setFont(f);
+        m_gutter = gutterWidth();
+        setViewportMargins(m_gutter, 0, 0, 0);
+        QObject::connect(this, &QPlainTextEdit::cursorPositionChanged, [this]() {
+            markCurrentLine();
+            if (lineCb)
+                ((void (*)(int64_t, int64_t))lineCb)(lineSlot, (int64_t)(textCursor().blockNumber() + 1));
+        });
+        markCurrentLine();
+    }
+
+    int gutterWidth() const
+    {
+        int digits = 1;
+        int maxLine = qMax(1, blockCount());
+        while (maxLine >= 10) { maxLine /= 10; ++digits; }
+        return 18 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits + 12;
+    }
+
+    /* QAbstractScrollArea::setViewportMargins 为 protected：
+     * 只在派生类内部重算装订线宽度，后端函数通过本方法触发。 */
+    void syncGutter()
+    {
+        m_gutter = gutterWidth();
+        setViewportMargins(m_gutter, 0, 0, 0);
+        viewport()->update();
+    }
+
+    void markCurrentLine()
+    {
+        QList<QTextEdit::ExtraSelection> sels;
+        if (!isReadOnly())
+        {
+            QTextEdit::ExtraSelection sel;
+            sel.format.setBackground(QColor("#f2f6fc"));
+            sel.format.setProperty(QTextFormat::FullWidthSelection, true);
+            sel.cursor = textCursor();
+            sel.cursor.clearSelection();
+            sels.append(sel);
+        }
+        setExtraSelections(sels);
+    }
+
+protected:
+    void paintEvent(QPaintEvent* e) override
+    {
+        int gw = gutterWidth();
+        if (m_gutter != gw) { m_gutter = gw; setViewportMargins(gw, 0, 0, 0); }
+        QPlainTextEdit::paintEvent(e);
+
+        QPainter p(viewport());
+        QRect r = e->rect();
+        p.fillRect(QRect(0, r.top(), gw, r.height()), QColor("#f4f6f8"));
+        p.setPen(QColor("#c8d0da"));
+        p.drawLine(gw - 1, r.top(), gw - 1, r.bottom());
+
+        QTextBlock block = firstVisibleBlock();
+        int blockNumber = block.blockNumber();
+        int top = (int)blockBoundingGeometry(block).translated(contentOffset()).top();
+        int bottom = top + (int)blockBoundingRect(block).height();
+        p.setFont(font());
+        while (block.isValid() && top <= r.bottom())
+        {
+            if (block.isVisible() && bottom >= r.top())
+            {
+                int line = blockNumber + 1;
+                if (breakpoints.contains(line))
+                {
+                    if (boundLines.contains(line))
+                    {
+                        p.setBrush(QColor("#e5484d"));
+                        p.setPen(Qt::NoPen);
+                    }
+                    else
+                    {
+                        p.setBrush(Qt::NoBrush);
+                        p.setPen(QPen(QColor("#e5484d"), 1.5));
+                    }
+                    p.drawEllipse(3, top + 3, 9, 9);
+                }
+                if (line == stoppedLine)
+                {
+                    int rowH = (int)blockBoundingRect(block).height();
+                    p.fillRect(QRect(gw, top, qMax(0, viewport()->width() - gw), rowH),
+                               QColor(245, 166, 35, 45));
+                    p.setPen(QPen(QColor("#f5a623"), 2));
+                    p.drawLine(gw - 4, top + 2, gw - 4, top + rowH - 2);
+                    p.drawLine(gw - 4, top + 2, gw - 10, top + 7);
+                    p.drawLine(gw - 4, top + rowH - 2, gw - 10, top + rowH - 7);
+                }
+                p.setPen(QColor("#8a94a6"));
+                p.drawText(14, top, gw - 18, fontMetrics().height(),
+                           Qt::AlignRight, QString::number(line));
+            }
+            block = block.next();
+            top = bottom;
+            bottom = top + (int)blockBoundingRect(block).height();
+            ++blockNumber;
+        }
+    }
+
+    void mousePressEvent(QMouseEvent* e) override
+    {
+        if (e->button() == Qt::LeftButton && e->position().x() < m_gutter)
+        {
+            QTextCursor c = cursorForPosition(QPoint(m_gutter + 1, (int)e->position().y()));
+            int line = c.blockNumber() + 1;
+            if (breakpoints.contains(line)) breakpoints.remove(line);
+            else breakpoints.insert(line);
+            viewport()->update();
+            if (bpCb) ((void (*)(int64_t, int64_t))bpCb)(bpSlot, (int64_t)line);
+            e->accept();
+            return;
+        }
+        QPlainTextEdit::mousePressEvent(e);
+    }
+};
+
+/* 树节点按「句柄 → 路径前缀 → item」缓存；SL 侧只传路径字符串。 */
+static QHash<int64_t, QMap<QString, QTreeWidgetItem*> > g_tree_nodes;
+
+static QString slqt_tree_item_path(QTreeWidgetItem* item)
+{
+    return item ? item->data(0, Qt::UserRole).toString() : QString();
+}
+
+/* 本模块的 QPlainTextEdit 一律由 slqt_be_codeedit_create 创建，
+ * 因此可安全地下转到 SlangCodeEdit（避免依赖 RTTI / 无 Q_OBJECT 的 qobject_cast）。 */
+static SlangCodeEdit* asCode(int64_t h)
+{
+    QObject* o = (QObject*)slqt_resolve(h);
+    QPlainTextEdit* pe = qobject_cast<QPlainTextEdit*>(o);
+    if (!pe) return nullptr;
+    return static_cast<SlangCodeEdit*>(pe);
+}
 
 static QApplication* g_app = nullptr;
 static char g_text_buf[8192];
@@ -438,6 +656,50 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
         if (auto* l = qobject_cast<QListWidget*>(sender))
             QObject::connect(l, &QListWidget::currentRowChanged, [=](int row) {
                 ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)row);
+            });
+        break;
+    /* 2026-11-12 P2 扩展信号 */
+    case SLQT_SIG_TREE_SELECTED:
+        if (auto* t = qobject_cast<QTreeWidget*>(sender))
+            QObject::connect(t, &QTreeWidget::itemSelectionChanged, [=]() {
+                QByteArray b = slqt_tree_item_path(t->currentItem()).toUtf8();
+                ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
+            });
+        break;
+    case SLQT_SIG_CODEEDIT_LINE_CHANGED:
+        if (auto* e = asCode(h)) { e->lineCb = dispatchCb; e->lineSlot = slot; }
+        break;
+    case SLQT_SIG_CODEEDIT_BREAKPOINT:
+        if (auto* e = asCode(h)) { e->bpCb = dispatchCb; e->bpSlot = slot; }
+        break;
+    /* 2026-11-13 VS 多标签：两个 int 载荷信号 */
+    case SLQT_SIG_TAB_CHANGED:
+        if (auto* t = qobject_cast<QTabWidget*>(sender))
+            QObject::connect(t, &QTabWidget::currentChanged, [=](int idx) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)idx);
+            });
+        break;
+    case SLQT_SIG_TAB_CLOSE_REQUESTED:
+        if (auto* t = qobject_cast<QTabWidget*>(sender))
+            QObject::connect(t, &QTabWidget::tabCloseRequested, [=](int idx) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)idx);
+            });
+        break;
+    /* 2026-11-13 第十四轮 右键菜单：控件构造时已设 CustomContextMenu 策略 */
+    case SLQT_SIG_TAB_CONTEXT:
+        if (auto* t = qobject_cast<QTabWidget*>(sender))
+            QObject::connect(t, &QWidget::customContextMenuRequested, [=](const QPoint& pos) {
+                int idx = t->tabBar()->tabAt(pos);
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)idx);
+            });
+        break;
+    case SLQT_SIG_TREE_CONTEXT:
+        if (auto* t = qobject_cast<QTreeWidget*>(sender))
+            QObject::connect(t, &QWidget::customContextMenuRequested, [=](const QPoint& pos) {
+                QTreeWidgetItem* it = t->itemAt(pos);
+                if (it) t->setCurrentItem(it);
+                QByteArray b = slqt_tree_item_path(it).toUtf8();
+                ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
             });
         break;
     default:
@@ -1236,16 +1498,42 @@ void slqt_be_menu_add_separator(int64_t menu)
     if (m) m->addSeparator();
 }
 
+/* 2026-11-13 第十四轮：独立弹出菜单（parent=nullptr，配合 popup_exec） */
+int64_t slqt_be_menu_create_popup(const char* title)
+{
+    QString t = QString::fromUtf8(title ? title : "");
+    return slqt_register(new QMenu(nullptr));
+}
+
+/* 阻塞弹出：anchor 控件 (x,y) 局部坐标 → mapToGlobal 后 exec。
+ * 返回被选中 QAction 的登记句柄（未选中/取消返回 0）。 */
+int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t y)
+{
+    auto* m = qobject_cast<QMenu*>((QObject*)slqt_resolve(menu));
+    if (!m) return 0;
+    QWidget* w = anchor ? asWidget(anchor) : nullptr;
+    QPoint gp(x, y);
+    if (w) gp = w->mapToGlobal(gp);
+    QAction* sel = m->exec(gp);
+    return sel ? slqt_register(sel) : 0;
+}
+
 void slqt_be_action_set_text(int64_t a, const char* t)
 {
     auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
     if (act && t) act->setText(QString::fromUtf8(t));
 }
 
-void slqt_be_action_set_enabled(int64_t a, int32_t on)
+void slqt_be_action_set_enabled(int64_t a, int64_t on)
 {
     auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
     if (act) act->setEnabled(on != 0);
+}
+
+int64_t slqt_be_action_enabled(int64_t a)
+{
+    auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
+    return (act && act->isEnabled()) ? (int64_t)1 : (int64_t)0;
 }
 
 /* ── 工具栏（QToolBar，快捷图标区）────────────────────────────────────── */
@@ -1421,4 +1709,429 @@ void slqt_be_widget_set_max_size(int64_t h, int32_t w, int32_t hh)
 {
     QWidget* o = asWidget(h);
     if (o) o->setMaximumSize(w, hh);
+}
+
+/* ========================================================================
+ * 2026-11-12 P2 能力扩展实现（QFileDialog / QStatusBar / QTreeWidget /
+ * QSplitter / QCodeEdit）。均为 Widgets 核心能力，不依赖可选 Qt 模块。
+ * ======================================================================== */
+
+/* ── QFileDialog：模态静态调用，返回选中路径；取消为空串 ──────────────── */
+const char* slqt_be_filedialog_open(const char* dir, const char* filter)
+{
+    QString s = QFileDialog::getOpenFileName(nullptr, QStringLiteral("Open"),
+        QString::fromUtf8(dir ? dir : ""), QString::fromUtf8(filter ? filter : ""));
+    return slqt_put(g_text_buf, sizeof(g_text_buf), s.toUtf8());
+}
+
+const char* slqt_be_filedialog_save(const char* dir, const char* filter)
+{
+    QString s = QFileDialog::getSaveFileName(nullptr, QStringLiteral("Save As"),
+        QString::fromUtf8(dir ? dir : ""), QString::fromUtf8(filter ? filter : ""));
+    return slqt_put(g_text_buf, sizeof(g_text_buf), s.toUtf8());
+}
+
+const char* slqt_be_filedialog_dir(const char* dir)
+{
+    QString s = QFileDialog::getExistingDirectory(nullptr, QStringLiteral("Select Directory"),
+        QString::fromUtf8(dir ? dir : ""));
+    return slqt_put(g_text_buf, sizeof(g_text_buf), s.toUtf8());
+}
+
+/* ── QStatusBar：主窗口原生状态条 ─────────────────────────────────────── */
+int64_t slqt_be_statusbar_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QStatusBar(p));
+}
+
+void slqt_be_mainwindow_set_statusbar(int64_t win, int64_t sb)
+{
+    auto* w = qobject_cast<QMainWindow*>((QObject*)slqt_resolve(win));
+    auto* s = qobject_cast<QStatusBar*>((QObject*)slqt_resolve(sb));
+    if (w && s) w->setStatusBar(s);
+}
+
+void slqt_be_statusbar_show_message(int64_t sb, const char* t)
+{
+    auto* s = qobject_cast<QStatusBar*>((QObject*)slqt_resolve(sb));
+    if (s) s->showMessage(QString::fromUtf8(t ? t : ""), 0);
+}
+
+void slqt_be_statusbar_add_widget(int64_t sb, int64_t w)
+{
+    auto* s = qobject_cast<QStatusBar*>((QObject*)slqt_resolve(sb));
+    QWidget* widget = asWidget(w);
+    if (s && widget) s->addWidget(widget);
+}
+
+/* ── QTreeWidget：路径式建模 ──────────────────────────────────────────── */
+int64_t slqt_be_tree_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    QTreeWidget* t = new QTreeWidget(p);
+    t->setColumnCount(1);
+    t->setContextMenuPolicy(Qt::CustomContextMenu);
+    return slqt_register(t);
+}
+
+void slqt_be_tree_set_header(int64_t h, const char* t)
+{
+    auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    if (tree) tree->setHeaderLabel(QString::fromUtf8(t ? t : ""));
+}
+
+void slqt_be_tree_clear(int64_t h)
+{
+    auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    if (tree) tree->clear();
+    if (g_tree_nodes.contains(h)) g_tree_nodes[h].clear();
+}
+
+void slqt_be_tree_add_path(int64_t h, const char* path)
+{
+    auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    if (!tree || !path) return;
+    QStringList parts = QString::fromUtf8(path).split(QLatin1Char('/'), Qt::SkipEmptyParts);
+    QString acc;
+    QTreeWidgetItem* parentItem = nullptr;
+    QMap<QString, QTreeWidgetItem*>& nodes = g_tree_nodes[h];
+    for (int i = 0; i < parts.size(); ++i)
+    {
+        acc = acc.isEmpty() ? parts.at(i) : acc + QLatin1Char('/') + parts.at(i);
+        auto it = nodes.constFind(acc);
+        if (it != nodes.constEnd()) { parentItem = it.value(); continue; }
+        QTreeWidgetItem* item = nullptr;
+        if (parentItem) item = new QTreeWidgetItem(parentItem, QStringList() << parts.at(i));
+        else            item = new QTreeWidgetItem(tree,      QStringList() << parts.at(i));
+        item->setData(0, Qt::UserRole, acc);
+        item->setExpanded(true);
+        nodes.insert(acc, item);
+        parentItem = item;
+    }
+}
+
+int32_t slqt_be_tree_count(int64_t h)
+{
+    if (!g_tree_nodes.contains(h)) return 0;
+    return (int32_t)g_tree_nodes[h].size();
+}
+
+const char* slqt_be_tree_selected_path(int64_t h)
+{
+    auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    if (!tree) return g_text_buf[0] = '\0', g_text_buf;
+    return slqt_put(g_text_buf, sizeof(g_text_buf),
+                    slqt_tree_item_path(tree->currentItem()).toUtf8());
+}
+
+/* ── QSplitter：尺寸比例 ──────────────────────────────────────────────── */
+int64_t slqt_be_splitter_create(int64_t parent, int32_t vertical)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QSplitter(vertical ? Qt::Vertical : Qt::Horizontal, p));
+}
+
+void slqt_be_splitter_add_widget(int64_t sp, int64_t w)
+{
+    auto* s = qobject_cast<QSplitter*>((QObject*)slqt_resolve(sp));
+    QWidget* widget = asWidget(w);
+    if (s && widget) s->addWidget(widget);
+}
+
+void slqt_be_splitter_set_sizes(int64_t sp, int32_t a, int32_t b, int32_t c)
+{
+    auto* s = qobject_cast<QSplitter*>((QObject*)slqt_resolve(sp));
+    if (!s) return;
+    QList<int> sizes;
+    if (a > 0) sizes.append(a);
+    if (b > 0) sizes.append(b);
+    if (c > 0) sizes.append(c);
+    if (!sizes.isEmpty()) s->setSizes(sizes);
+}
+
+/* ── QCodeEdit 复合控件 ───────────────────────────────────────────────── */
+int64_t slqt_be_codeedit_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new SlangCodeEdit(p));
+}
+
+void slqt_be_codeedit_set_text(int64_t h, const char* t)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (e) e->setPlainText(QString::fromUtf8(t ? t : ""));
+}
+
+const char* slqt_be_codeedit_text(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return g_big_buf[0] = '\0', g_big_buf;
+    return slqt_put(g_big_buf, sizeof(g_big_buf), e->toPlainText().toUtf8());
+}
+
+void slqt_be_codeedit_set_readonly(int64_t h, int32_t on)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (e) { e->setReadOnly(on != 0); e->markCurrentLine(); }
+}
+
+void slqt_be_codeedit_goto_line(int64_t h, int32_t line)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return;
+    QTextBlock b = e->document()->findBlockByNumber(qMax(0, line - 1));
+    QTextCursor c(b);
+    e->setTextCursor(c);
+    e->centerCursor();
+}
+
+int32_t slqt_be_codeedit_cursor_line(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    return e ? (int32_t)(e->textCursor().blockNumber() + 1) : 1;
+}
+
+void slqt_be_codeedit_set_highlight(int64_t h, int32_t on)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return;
+    if (on)
+    {
+        if (!e->highlighter) e->highlighter = new SlangHighlighter(e->document());
+        else e->highlighter->setDocument(e->document());
+    }
+    else if (e->highlighter)
+    {
+        e->highlighter->setDocument(nullptr);
+    }
+}
+
+void slqt_be_codeedit_set_breakpoint(int64_t h, int32_t line, int32_t on)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e || line <= 0) return;
+    if (on) e->breakpoints.insert(line);
+    else    e->breakpoints.remove(line);
+    e->viewport()->update();
+}
+
+int32_t slqt_be_codeedit_toggle_breakpoint(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return 0;
+    int line = (int)(e->textCursor().blockNumber() + 1);
+    if (e->breakpoints.contains(line)) { e->breakpoints.remove(line); e->viewport()->update(); return 0; }
+    e->breakpoints.insert(line);
+    e->viewport()->update();
+    return 1;
+}
+
+void slqt_be_codeedit_clear_breakpoints(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (e) { e->breakpoints.clear(); e->viewport()->update(); }
+}
+
+const char* slqt_be_codeedit_breakpoints(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return g_text_buf[0] = '\0', g_text_buf;
+    QList<int> v = e->breakpoints.values();
+    std::sort(v.begin(), v.end());
+    QString s;
+    for (int i = 0; i < v.size(); ++i)
+    {
+        if (i) s += QLatin1Char(',');
+        s += QString::number(v.at(i));
+    }
+    return slqt_put(g_text_buf, sizeof(g_text_buf), s.toUtf8());
+}
+
+void slqt_be_codeedit_set_font_pt(int64_t h, int32_t pt)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e || pt < 6 || pt > 72) return;
+    QFont f = e->font();
+    f.setPointSize(pt);
+    e->setFont(f);
+    e->syncGutter();
+}
+
+/* 光标下单词 / 选中文本：符号索引与「转到定义」的语义输入。 */
+const char* slqt_be_codeedit_word(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return g_text_buf[0] = '\0', g_text_buf;
+    QTextCursor c = e->textCursor();
+    c.select(QTextCursor::WordUnderCursor);
+    return slqt_put(g_text_buf, sizeof(g_text_buf), c.selectedText().toUtf8());
+}
+
+const char* slqt_be_codeedit_selected(int64_t h)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return g_text_buf[0] = '\0', g_text_buf;
+    return slqt_put(g_text_buf, sizeof(g_text_buf), e->textCursor().selectedText().toUtf8());
+}
+
+/* ── SLDP TCP 客户端桥（2026-11-12 第四轮）──────────────────────────────
+ * 背景：C VM 的 socket Option A 挂起协议在 Qt 事件回调重入 VM 时拿不到
+ * 返回值（Net.Tcp.connectTimeout 返回 null），所以调试会话的 TCP IO 放在
+ * Qt 原生层：readyRead 只在 C++ 侧把字节追加到缓冲，SL 侧经 poll 同步
+ * 取走，全程不涉及 VM 协程挂起。QTcpSocket 头文件就近包含以保持改动集中。
+ * ========================================================================== */
+#include <QTcpSocket>
+
+static QTcpSocket* g_sldp_sock = nullptr;
+static QByteArray  g_sldp_inbox;
+
+int32_t slqt_be_sldp_connect(int32_t port)
+{
+    slqt_be_sldp_close();
+    g_sldp_sock = new QTcpSocket(nullptr);
+    QObject::connect(g_sldp_sock, &QTcpSocket::readyRead, []() {
+        if (g_sldp_sock) g_sldp_inbox.append(g_sldp_sock->readAll());
+    });
+    g_sldp_sock->connectToHost(QStringLiteral("127.0.0.1"), (quint16)port);
+    return 1;
+}
+
+void slqt_be_sldp_send(const char* utf8)
+{
+    if (!g_sldp_sock || !utf8) return;
+    g_sldp_sock->write(QByteArray(utf8));
+    g_sldp_sock->flush();
+}
+
+const char* slqt_be_sldp_poll(void)
+{
+    QByteArray chunk = g_sldp_inbox;
+    g_sldp_inbox.clear();
+    return slqt_put(g_big_buf, sizeof(g_big_buf), chunk);
+}
+
+int32_t slqt_be_sldp_connected(void)
+{
+    if (!g_sldp_sock) return 0;
+    return g_sldp_sock->state() == QAbstractSocket::ConnectedState ? 1 : 0;
+}
+
+void slqt_be_sldp_close(void)
+{
+    if (g_sldp_sock)
+    {
+        g_sldp_sock->disconnectFromHost();
+        g_sldp_sock->deleteLater();
+        g_sldp_sock = nullptr;
+    }
+    g_sldp_inbox.clear();
+}
+
+/* ── 2026-11-12 第五轮：断点确认态 / 停驻行 ───────────────────────────
+ * csv 是已 verified 的 1-based 行号（逗号分隔）；空串 = 会话未起，点全空心。
+ * stoppedLine=0 清箭头。两者只改绘制状态，不改用户设置的断点集合。 */
+void slqt_be_codeedit_set_bound(int64_t h, const char* csv)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return;
+    e->boundLines.clear();
+    if (csv)
+    {
+        QList<QByteArray> parts = QByteArray(csv).split(',');
+        for (const QByteArray& part : parts)
+        {
+            bool ok = false;
+            int line = part.trimmed().toInt(&ok);
+            if (ok && line > 0) e->boundLines.insert(line);
+        }
+    }
+    e->viewport()->update();
+}
+
+void slqt_be_codeedit_set_stopped(int64_t h, int32_t line)
+{
+    SlangCodeEdit* e = asCode(h);
+    if (!e) return;
+    e->stoppedLine = line;
+    e->viewport()->update();
+}
+
+/* ── QTabWidget：VS 式多标签文档区（2026-11-13） ────────────────────────
+ * 说明：removeTab 不 delete 页面 QWidget（Qt 只解除父子关系）。页面对象由
+ * SL 侧持有句柄并在关闭标签时显式 delete()，避免 C++/SL 双重释放。 */
+static QTabWidget* asTab(int64_t h)
+{
+    return qobject_cast<QTabWidget*>(asWidget(h));
+}
+
+int64_t slqt_be_tab_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    QTabWidget* t = new QTabWidget(p);
+    t->setDocumentMode(true);
+    t->setMovable(true);
+    t->setTabsClosable(true);
+    t->setContextMenuPolicy(Qt::CustomContextMenu);
+    return slqt_register(t);
+}
+
+int32_t slqt_be_tab_add(int64_t h, int64_t page, const char* title)
+{
+    QTabWidget* t = asTab(h);
+    QWidget* w = page ? asWidget(page) : nullptr;
+    if (!t || !w) return -1;
+    return (int32_t)t->addTab(w, QString::fromUtf8(title ? title : ""));
+}
+
+int32_t slqt_be_tab_count(int64_t h)
+{
+    QTabWidget* t = asTab(h);
+    return t ? (int32_t)t->count() : 0;
+}
+
+int32_t slqt_be_tab_current(int64_t h)
+{
+    QTabWidget* t = asTab(h);
+    return t ? (int32_t)t->currentIndex() : -1;
+}
+
+void slqt_be_tab_set_current(int64_t h, int32_t idx)
+{
+    QTabWidget* t = asTab(h);
+    if (t && idx >= 0 && idx < t->count()) t->setCurrentIndex(idx);
+}
+
+const char* slqt_be_tab_text(int64_t h, int32_t idx)
+{
+    QTabWidget* t = asTab(h);
+    if (!t || idx < 0 || idx >= t->count()) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), t->tabText(idx).toUtf8());
+}
+
+void slqt_be_tab_set_text(int64_t h, int32_t idx, const char* title)
+{
+    QTabWidget* t = asTab(h);
+    if (!t || idx < 0 || idx >= t->count()) return;
+    t->setTabText(idx, QString::fromUtf8(title ? title : ""));
+}
+
+void slqt_be_tab_remove(int64_t h, int32_t idx)
+{
+    QTabWidget* t = asTab(h);
+    if (!t || idx < 0 || idx >= t->count()) return;
+    t->removeTab(idx);
+}
+
+void slqt_be_tab_clear(int64_t h)
+{
+    QTabWidget* t = asTab(h);
+    if (!t) return;
+    while (t->count() > 0) t->removeTab(0);
+}
+
+void slqt_be_tab_set_closable(int64_t h, int32_t on)
+{
+    QTabWidget* t = asTab(h);
+    if (t) t->setTabsClosable(on != 0);
 }

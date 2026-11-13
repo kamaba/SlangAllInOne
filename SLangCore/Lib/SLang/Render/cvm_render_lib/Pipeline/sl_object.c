@@ -183,12 +183,16 @@ int slr_object_set_animated(int64_t h, int64_t obj, int mode, float speed)
     return 1;
 }
 
-/* v3.4：材质模型（0 = Lambert，1 = Phong；阶段 5 据此选程序槽）*/
+/* v3.4/v3.5：材质模型（0 = Lambert，1 = Phong，2 = BlinnPhong，
+ * 3 = BlinnPhongNormalMap，4 = Toon；阶段 5 一律路由固化 gen 程序槽
+ * （v3.5），VK 后端内部降级 PFLAT/PTEX。越界值夹取 [0,4] 宽松兼容）*/
 int slr_object_set_material(int64_t h, int64_t obj, int material)
 {
     SlrPipeline* p; SlrObject* o; int idx;
     if (!obj_set_common(h, obj, &p, &o, &idx)) return 0;
-    o->material = material ? 1 : 0;
+    if (material < 0) material = 0;
+    if (material > 4) material = 4;
+    o->material = material;
     rhi_exit();
     return 1;
 }

@@ -288,12 +288,26 @@ public class ScriptableRenderContext
     public Camera camera = null
     public CullingResults cullingResults = null
 
+    # ── P1 Pass 功能块：Pass 序列 + 共享命令流（单流提交）──────
+    public static Int32 CAP_PASSES = 16
+
+    # 目标管线（submitPasses 经它整包提交共享命令流）
+    public SLang.RenderPipeline pipeline = null
+    Array<RenderPass> _passes = null
+    Int32 _passCount = 0
+    CommandBuffer _passCmd = null
+
     public void _init_()
     {
         this.device = null
         this.cmd = null
         this.camera = null
         this.cullingResults = CullingResults()
+        # P1 Pass 功能块
+        this.pipeline = null
+        this._passes = Array<RenderPass>( ScriptableRenderContext.CAP_PASSES )
+        this._passCount = 0
+        this._passCmd = CommandBuffer()
     }
 
     public void _init_( GfxDevice _device )
@@ -463,5 +477,104 @@ public class ScriptableRenderContext
             ret 720
         }
         ret this.device.window.height
+    }
+
+    # ── P1 Pass 序列管理 ──────────────────────────────────
+    # addPass(pass) —— 追加一个 Pass 到序列末尾（空引用/容量满返回 false）
+    public bool addPass( RenderPass pass )
+    {
+        if pass == null
+        {
+            ret false
+        }
+        if this._passCount >= ScriptableRenderContext.CAP_PASSES
+        {
+            ret false
+        }
+        Int32 idx = this._passCount
+        this._passes[ idx ] = pass
+        this._passCount = idx + 1
+        ret true
+    }
+
+    # clearPasses() —— 清空序列（容量保留，只回退游标）
+    public void clearPasses()
+    {
+        this._passCount = 0
+    }
+
+    public Int32 passCount()
+    {
+        ret this._passCount
+    }
+
+    # passAt(index) —— 取序列中的 Pass（越界返回 null）
+    public RenderPass passAt( Int32 index )
+    {
+        if index < 0 || index >= this._passCount
+        {
+            ret null
+        }
+        Int32 idx = index
+        ret this._passes[ idx ]
+    }
+
+    # ── P1 单流提交 ───────────────────────────────────────
+    # beginPassRecording() —— 开启一帧的共享命令流：清空旧录制并 begin。
+    # 之后可用 passCommandBuffer() 预录帧级共享状态（setTexture /
+    # setPerDraw 等）——C 侧 slr_cmd_execute_stream 每次调用都会重置
+    # PerDraw 槽与描述符表（sl_cmd.c 帧级前置 memset），一帧的全部
+    # 命令必须录进同一条流。
+    public void beginPassRecording()
+    {
+        if this._passCmd == null
+        {
+            this._passCmd = CommandBuffer()
+        }
+        this._passCmd.clear()
+        this._passCmd.begin()
+    }
+
+    # passCommandBuffer() —— 共享命令流引用（预录 / 断言用）
+    public CommandBuffer passCommandBuffer()
+    {
+        ret this._passCmd
+    }
+
+    # submitPasses() —— 依序执行 Pass 序列并整包提交（Unity
+    # ScriptableRenderContext.Submit 的 Pass 化对应物）：
+    #   1 逐 Pass 调 pass.execute(this, cmd) 把命令录进同一条流；
+    #   2 cmd.sortDrawItems() 整理 DrawItem 段（不透明 queue→z→prog、
+    #     透明 z 降序，与 C 侧 sort_items 键序一致）；
+    #   3 cmd.end() 后经 pipeline.executeCommandBuffer 整包提交（C 侧
+    #     逐 opcode 回放，统计口径与单流直提完全一致）。
+    # 返回 false：无管线 / 无命令流 / 序列为空 / 录制为空 / 提交失败。
+    public bool submitPasses()
+    {
+        if this.pipeline == null || this._passCmd == null
+        {
+            ret false
+        }
+        if this._passCount <= 0
+        {
+            ret false
+        }
+        Int32 i = 0
+        while i < this._passCount
+        {
+            RenderPass p = this.passAt( i )
+            if p != null
+            {
+                p.execute( this, this._passCmd )
+            }
+            i = i + 1
+        }
+        this._passCmd.sortDrawItems()
+        this._passCmd.end()
+        if this._passCmd.commandCount <= 0
+        {
+            ret false
+        }
+        ret this.pipeline.executeCommandBuffer( this._passCmd )
     }
 }

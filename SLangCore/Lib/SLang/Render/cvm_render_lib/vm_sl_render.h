@@ -141,6 +141,12 @@ SLR_API int64_t slr_texture_load_file(const char* path_utf8);
 SLR_API int     slr_texture_destroy(int64_t tex);
 SLR_API int     slr_texture_count(void);
 
+/* ================= 资源占用计数（Environment.Render 资源查明） =================
+ * 全局注册表 used 槽位计数（上限 SLR_MAX_CTX=16 / SLR_MAX_PIPES=32）；
+ * slr_texture_count 定义于 sl_texture.c（上方 v2 区） */
+SLR_API int     slr_context_count(void);
+SLR_API int     slr_pipeline_count(void);
+
 /* ================= v3.1：动态网格（3D/程序化几何通道） =================
  * verts_ptr 指向三角形列表（pos2+uv2 交错，stride 16B；SL 侧经
  * Memory.writeF32 填充，ptr sig 传 Int64）。对象 mesh_kind = 4+slot
@@ -221,8 +227,12 @@ SLR_API int slr_light_set_ambient(int64_t p, float ambient);
  * （透明段 queue 2500，黑色 alpha 0.35，沿"背离光源"方向偏移 0.10、
  * 放大 1.15；直射光方向优先，否则聚光位置逐物体定向）。
  * 注意：VK 后端 SPIR-V 固化未含 Phong 高光（新槽降级映射到
- * PFLAT/PTEX，绘制不报错仅无高光）；无光源时不生成阴影。 */
-SLR_API int slr_object_set_material(int64_t p, int64_t obj, int material);       /* 0=Lambert 1=Phong */
+ * PFLAT/PTEX，绘制不报错仅无高光）；无光源时不生成阴影。
+ * v3.5 固化材质：material 2..4 = BlinnPhong / BlinnPhongNormalMap /
+ * Toon（Unity shader 提炼的 HLSL 经通用固化编译进 sl_rhi_shaders_gen.h，
+ * GL/GLES 运行期编固化 GLSL/ESSL 源、D3D11 直吃 DXBC blob；VK 同降级
+ * 映射 PFLAT/PTEX）。uSpec 语义逐效果不同（高光/边缘光/凹凸/档位）。*/
+SLR_API int slr_object_set_material(int64_t p, int64_t obj, int material);       /* 0=Lambert 1=Phong 2=BlinnPhong 3=BlinnPhongNormalMap 4=Toon */
 SLR_API int slr_object_set_specular(int64_t p, int64_t obj,
                                      float strength, float shininess);           /* Phong 高光参数 */
 SLR_API int slr_object_set_shadow(int64_t p, int64_t obj, int cast_shadow);      /* 1=投影阴影 */
@@ -247,6 +257,26 @@ SLR_API int slr_pipeline_render_frame(int64_t p, float time, int64_t dst_ptr);
 
 /* 统计（见 SLR_STAT_* 枚举） */
 SLR_API int slr_pipeline_stat(int64_t p, int stat_id);
+
+/* ================= v4：命令流（CommandBuffer 真录制，D1） =================
+ * SL 侧 CommandBuffer 录制 opcode/args/floats 三段命令流（布局见 doc/04
+ * §3.6 SLMC：magic 'SLMC' | version | commandCount | argOffset | floatOffset
+ * | opcodes[] | args[] | floats[]），经本入口整包提交，C 侧逐 opcode 回放
+ * 到当前 RHI 后端（四后端同效果，零 vtable 改动）—— Unity 的
+ * 「整理 -> 提交 -> 渲染」三段式。
+ * 可执行命令集（桥接 13 阶段管线整数槽位世界）：
+ *   SetRenderTargets(targetId,x,y,w,h,clearFlags + rgba)
+ *     targetId 0=rt_scene 1=rt_post 2=rt_final（坐标 GL 约定原点左下）
+ *   Clear(clearFlags + rgba)            当前目标按已存视口再清
+ *   SetTexture(descSlot, texHandle)     帧级描述符槽写入
+ *   SetPerDraw(slot + 32 floats)        PerDraw 槽（mvp16+color4+wmat8+spec4）
+ *   DrawItem(prog,slot,mesh,texDesc,transparent,queue + z)
+ *     prog = SLR_PROG_*；mesh = 0..3 静态 / 4..4+SLR_CUSTOM_MESHES-1 动态
+ *   PostProcess(enabled + b,s,v) / Blit / Readback(dstPtr)
+ * 其余 opcode 记账跳过不报错（前向兼容）。每 opcode 的 args/floats 消费
+ * 数为固定契约（sl_cmd.c 的 CMD_ARGS/CMD_FLOATS 表与 SL 侧录制一致）。
+ * 返回 1=成功；失败经 slr_last_error（坏流 = SLR_E_BAD_PARAM）。 */
+SLR_API int slr_cmd_execute_stream( int64_t pipe, int64_t stream_ptr, int32_t command_count );
 
 #ifdef __cplusplus
 }

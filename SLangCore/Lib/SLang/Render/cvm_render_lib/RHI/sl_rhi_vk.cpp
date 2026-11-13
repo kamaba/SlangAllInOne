@@ -2033,14 +2033,17 @@ static void vk_draw_item(int prog, int slot, int mesh)
         set_error(SLR_E_STATE);
         return;
     }
-    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PHONG_FLAT)
+    if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PHONG_FLAT
+        || (prog >= SLR_PROG_GEN_BASE && ((prog - SLR_PROG_GEN_BASE) & 1)))
     {
-        /* Phong 新槽降级映射到 PFLAT 管线：VK SPIR-V 固化未含光照/高光，
-         * 绘制不报错仅无 Phong 效果（管线侧 C 层/阴影仍一致工作）*/
+        /* Phong 新槽与 v3.5 固化槽（FLAT 变体 = 奇数下标）降级映射到
+         * PFLAT 管线：VK SPIR-V 固化未含光照/高光/新效果，绘制不报错
+         * 仅无该效果（管线侧 C 层/阴影仍一致工作）*/
         idx = s_trans ? VKP_PFLAT_T : VKP_PFLAT_O;
         set = s_set_perdraw;
     }
-    else if (prog == SLR_PROG_PTEX || prog == SLR_PROG_PHONG_TEX)
+    else if (prog == SLR_PROG_PTEX || prog == SLR_PROG_PHONG_TEX
+        || (prog >= SLR_PROG_GEN_BASE && !((prog - SLR_PROG_GEN_BASE) & 1)))
     {
         if (!s_cur_tex_set) { set_error(SLR_E_TEXTURE); return; }
         idx = s_trans ? VKP_PTEX_T : VKP_PTEX_O;

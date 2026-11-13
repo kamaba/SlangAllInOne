@@ -6,6 +6,7 @@ using SlangAllInOne.FrontEnd;
 using SlangAllInOne.Lsp;
 using SlangAllInOne.New;
 using SlangAllInOne.Pack;
+using SlangAllInOne.Project;
 using SlangAllInOne.Publish;
 
 namespace SlangAllInOne;
@@ -91,6 +92,11 @@ internal static class Program
         // 拦截：`new` 有自己的文法（New\NewCommand.cs）。
         if (args.Length > 0 && args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
             return NewCommand.Run(args.Skip(1).ToArray());
+
+        // project: 工程配置/目录扫描的 CLI 真源（2026-11-13，总纲 §0.2 CLI 先行）。
+        // 自带文法（info/scan/get/set/raw + --json/--key/--value），在 Options 解析前拦截。
+        if (args.Length > 0 && args[0].Equals("project", StringComparison.OrdinalIgnoreCase))
+            return ProjectCommand.Run(args.Skip(1).ToArray());
 
         // lsp: 内嵌 LSP 服务器（stdio JSON-RPC；VSCode 插件 P2 消费，
         // slang_vscode_plugin\07_language_server_lsp.md §2）。同样在 Options
@@ -670,6 +676,15 @@ Commands:
                               成套落盘，UTF-8 BOM，含 guide)
                              slang new project -p <dir> MyApp
                              slang new class MyClass   (.sl + jsonc 登记)
+                             new project 选项: --kind app|module --no-guide
+                              --guide-description <text> --no-sp --with-sp
+                              --no-entry-source --with-entry-source
+  project <sub>             工程配置/目录扫描 CLI 真源（自带文法，--json）:
+                             slang project info <path> [--json]
+                             slang project scan <dir> [--json] [--depth N]
+                             slang project get <path> --key <a/b/[i]/c>
+                             slang project set <path> --key <a/b> --value <text>
+                             slang project raw <path> --key <a/b>
   lsp [--stdio]              Start the embedded LSP 3.17 server over stdio
                             (diagnostics push + symbol completion; consumed
                             by the Slang VSCode extension, engine=lsp).
@@ -727,6 +742,10 @@ Options:
 
 Examples:
   slang new project MyApp
+  slang new project MyLib --kind module --no-guide
+  slang project info MyLib/MyLib.jsonc --json
+  slang project scan . --json --depth 4
+  slang project set MyLib/MyLib.jsonc --key project/desc --value demo
   slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest       # compile + run
   slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest -t
   slang MyProject --export-mode temp

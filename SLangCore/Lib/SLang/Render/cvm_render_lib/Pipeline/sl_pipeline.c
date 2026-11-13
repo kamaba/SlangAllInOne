@@ -439,9 +439,10 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
                 it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
-                it->prog = (o->texture != 0)
-                    ? (o->material ? SLR_PROG_PHONG_TEX : SLR_PROG_PTEX)
-                    : (o->material ? SLR_PROG_PHONG_FLAT : SLR_PROG_PFLAT);
+                /* v3.5：全材质路由固化编译槽（HLSL 单源 -> GLSL330/ESSL300/
+                 * DXBC，5 效果 × flat/tex 变体）；内建 PFLAT/PTEX/PHONG_*
+                 * 保留为 VK 降级目标与阴影项专用（阴影固定 PFLAT）*/
+                it->prog = SLR_PROG_GEN_SLOT(o->material, o->texture ? 0 : 1);
                 mat4_model2d(model, o->pos[0], o->pos[1], o->pos[2], o->rot_z, o->scale[0], o->scale[1]);
                 mat4_mul(it->mvp, proj, model);
                 p->item_count++;
@@ -464,9 +465,10 @@ static int stage_assemble_impl(SlrPipeline* p)
                 it->queue = o->queue; it->layer = o->layer; it->z = o->pos[2];
                 it->cam = bit;
                 it->tex_desc = -1;   /* 阶段 6 分配描述符槽；未跑阶段 6 时不误绑槽 0 */
-                it->prog = (o->texture != 0)
-                    ? (o->material ? SLR_PROG_PHONG_TEX : SLR_PROG_PTEX)
-                    : (o->material ? SLR_PROG_PHONG_FLAT : SLR_PROG_PFLAT);
+                /* v3.5：全材质路由固化编译槽（HLSL 单源 -> GLSL330/ESSL300/
+                 * DXBC，5 效果 × flat/tex 变体）；内建 PFLAT/PTEX/PHONG_*
+                 * 保留为 VK 降级目标与阴影项专用（阴影固定 PFLAT）*/
+                it->prog = SLR_PROG_GEN_SLOT(o->material, o->texture ? 0 : 1);
                 mat4_model2d(model, o->pos[0], o->pos[1], o->pos[2], o->rot_z, o->scale[0], o->scale[1]);
                 mat4_mul(it->mvp, proj, model);
                 p->item_count++;
@@ -571,14 +573,17 @@ static int stage_upload_render_data(SlrPipeline* p)
         light_build_block(p, &lb);
         g_rhi->upload_lights(&lb, (int)sizeof(lb));
     }
-    /* 纹理描述符表：PTEX/PHONG_TEX 绘制项的纹理写入描述符槽（同纹理查重
-     * 复用），绘制项记录槽号——draw_item 不再携带资源指针 */
+    /* 纹理描述符表：PTEX/PHONG_TEX/gen-TEX 绘制项的纹理写入描述符槽
+     * （同纹理查重复用），绘制项记录槽号——draw_item 不再携带资源指针。
+     * v3.5：固化 gen 槽偶数下标 = TEX 变体（SLR_GEN_VARIANT_TEX=0），
+     * 与内建 TEX 槽同一描述符表，VK 降级 PTEX 消费同表 */
     memset(&p->descs, 0, sizeof(p->descs));
     for (i = 0; i < p->item_count; i++)
     {
         SlrDrawItem* it = &p->items[i];
         it->tex_desc = -1;
-        if (it->prog == SLR_PROG_PTEX || it->prog == SLR_PROG_PHONG_TEX)
+        if (it->prog == SLR_PROG_PTEX || it->prog == SLR_PROG_PHONG_TEX
+            || (it->prog >= SLR_PROG_GEN_BASE && !((it->prog - SLR_PROG_GEN_BASE) & 1)))
         {
             SlrTexRes* t = tex_from_handle(p->objects[it->obj].texture);
             void* res = t ? t->rhi_tex : NULL;

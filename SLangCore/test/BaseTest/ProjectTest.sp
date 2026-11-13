@@ -60,6 +60,7 @@ Project
         
         
         EnvironmentTest.fun()
+        RegistryTest.fun()
         PlatformOverrideTest.fun()
         PlatformLibTest.fun()
         PlatformSixTest.fun()

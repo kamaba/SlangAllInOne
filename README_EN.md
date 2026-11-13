@@ -120,20 +120,105 @@ Project file trio: `.sp` (entry, `Project{}` + `_main_`) + same-name `.jsonc` (c
 
 ## Documentation Map
 
-Master index for all docs: **[md/INDEX.md](md/INDEX.md)**. Common entries:
+The most complete master index for all docs is **[md/INDEX.md](md/INDEX.md)** (lists every doc per-topic); this map groups them by category for quick navigation.
+
+### Getting Started & Overview
 
 | Doc | Contents |
 |------|------|
-| [md/syntax/introduction.md](md/syntax/introduction.md) | Syntax primer (gateway to the 37 per-topic syntax docs) |
-| [md/SL语法与编码规范总表.md](md/SL语法与编码规范总表.md) | Single-reference syntax & coding conventions table |
-| [md/CLI.md](md/CLI.md) | CLI reference (slang / spm / csimple_lang) |
-| [md/code.md](md/code.md) | Coding conventions |
-| [md/project/project-config-jsonc-guide.md](md/project/project-config-jsonc-guide.md) | Authoritative `.jsonc` project config guide |
-| [md/project/project_sp-guide.md](md/project/project_sp-guide.md) | `.sp` project file guide |
-| [md/project/test-guide.md](md/project/test-guide.md) | Test guide (suite ↔ host mapping) |
-| [md/log/log-system-guide.md](md/log/log-system-guide.md) | Logging system |
-| [md/lib/Core/README.md](md/lib/Core/README.md) (plus Math / Std / HttpServer / WebUI) | Standard library API doc entries |
-| [PROJECTS.md](PROJECTS.md) / [RELEASE.md](RELEASE.md) | Project inventory / release policy |
+| [README.md](README.md) / [README_EN.md](README_EN.md) | Language & ecosystem overview (zh / en) |
+| [PROJECTS.md](PROJECTS.md) | Project composition / version coordination / repo layout |
+| [RELEASE.md](RELEASE.md) | Release & distribution package flow |
+| [code.md](md/code.md) | Coding conventions |
+| [CLI.md](md/CLI.md) | CLI reference (slang / spm / csimple_lang) |
+| [SL语法与编码规范总表.md](md/SL语法与编码规范总表.md) | Single-reference syntax & coding conventions table |
+
+### Project & Ecosystem (md/project, 17 docs)
+
+| Doc | Contents |
+|------|------|
+| [project.md](md/project/project.md) | Project overview |
+| [project-config-jsonc-guide.md](md/project/project-config-jsonc-guide.md) | Full `jsonc` config (project / source / compile / references / macro …) |
+| [project_sp-guide.md](md/project/project_sp-guide.md) | `.sp` project file guide |
+| [project-module.md](md/project/project-module.md) | Project / module structure |
+| [project_arguments.md](md/project/project_arguments.md) | Program arguments (`--` passthrough & `_inputArgs`) |
+| [project-system-method-call-guide.md](md/project/project-system-method-call-guide.md) | System-method call guide |
+| [static-if.md](md/project/static-if.md) | `global.macro` + `static if` conditional compilation + `_before_` hook |
+| [environment-guide.md](md/project/environment-guide.md) | Environment runtime / platform branching |
+| [exporter.md](md/project/exporter.md) | Exporter (module.json / SLB) |
+| [publish-guide.md](md/project/publish-guide.md) | `slang publish` guide |
+| [package-layout.md](md/project/package-layout.md) | Distribution package layout |
+| [spm-registry.md](md/project/spm-registry.md) | spm package/plugin manager & registry |
+| [ffi.md](md/project/ffi.md) | FFI contract (`.slffi.json` / `ffi-check`) |
+| [lsp-code-index.md](md/project/lsp-code-index.md) | LSP code index |
+| [docs-web.md](md/project/docs-web.md) | Docs site (official site deployment) |
+| [optimization.md](md/project/optimization.md) | Optimization guide |
+| [test-guide.md](md/project/test-guide.md) | Test guide (suite ↔ host mapping) |
+
+### Language Syntax (md/syntax, 37 docs)
+
+Getting-started & lexer: [introduction](md/syntax/introduction.md) · [keywords](md/syntax/keywords.md) · [marco](md/syntax/marco.md) · [attribute](md/syntax/attribute.md) · [namespace](md/syntax/namespace.md)
+
+Variables & scope: [variable](md/syntax/variable.md) · [local](md/syntax/local.md) · [global](md/syntax/global.md) · [typealias](md/syntax/typealias.md) · [float8_16](md/syntax/float8_16.md)
+
+Types: [type](md/syntax/type.md) · [number](md/syntax/number.md) · [string](md/syntax/string.md) · [object](md/syntax/object.md) · [array](md/syntax/array.md) · [range](md/syntax/range.md) · [data](md/syntax/data.md) · [class](md/syntax/class.md) · [interface](md/syntax/interface.md) · [enum](md/syntax/enum.md) · [cast](md/syntax/cast.md)
+
+Expressions & operators: [express](md/syntax/express.md) · [operator](md/syntax/operator.md) · [bind](md/syntax/bind.md)
+
+Control flow: [if](md/syntax/if.md) · [switch](md/syntax/switch.md) · [try](md/syntax/try.md) · [forwhiledowhile](md/syntax/forwhiledowhile.md) · [labelgoto](md/syntax/labelgoto.md)
+
+Functions & advanced features: [function](md/syntax/function.md) · [template](md/syntax/template.md) · [inline_lambda](md/syntax/inline_lambda.md) · [coroutine](md/syntax/coroutine.md) · [isolate](md/syntax/isolate.md) · [extend](md/syntax/extend.md) · [result](md/syntax/result.md) · [system_method](md/syntax/system_method.md)
+
+### Standard Library API (md/lib)
+
+Read each module's `README.md` first (responsibilities & dependency order); per-API docs in **[md/INDEX.md](md/INDEX.md) §3.3**.
+
+- **[lib/Core](md/lib/Core/README.md)** — built-in & core runtime (numeric / String / Array / containers / IO / text / Data / Coroutine …, 79 docs)
+- **[lib/Math](md/lib/Math/README.md)** — math library (scalar / big-number / vectors & matrices / Rect, 27 docs)
+- **[lib/Std](md/lib/Std/README.md)** — system & ecosystem (IO / text / networking / DB / cache / GPU / Isolate / OS, 53 docs)
+- **[lib/HttpServer](md/lib/HttpServer/README.md)** — built-in HTTP server framework (18 docs)
+- **[lib/WebUI](md/lib/WebUI/README.md)** — SLangWebUI UI package (separate module)
+
+### Logging (md/log)
+
+| Doc | Contents |
+|------|------|
+| [log-system-guide.md](md/log/log-system-guide.md) | Logging system guide |
+| [log-debug-usage.md](md/log/log-debug-usage.md) | Logging debug usage |
+
+### AI Collaboration (internal, md/ai)
+
+| Doc | Contents |
+|------|------|
+| [AI_GUIDE.md](md/ai/AI_GUIDE.md) | AI collaboration entry |
+| [INDEX.md](md/ai/INDEX.md) | AI doc index |
+| [PROJECT_MAP.md](md/ai/PROJECT_MAP.md) | Code map |
+| [EXPORT_PATHS.md](md/ai/EXPORT_PATHS.md) | Export paths |
+| [DEBUG_WORKFLOW.md](md/ai/DEBUG_WORKFLOW.md) | Debug workflow |
+| [故障排查流程.md](md/ai/故障排查流程.md) | Troubleshooting SOP |
+| [CONTRIBUTING_GUIDE.md](md/ai/CONTRIBUTING_GUIDE.md) | Contributing guide |
+| [troubleshooting/](md/ai/troubleshooting/) (8 docs) | Scenario-based troubleshooting (compile / crash / runtime / concurrency / plugin-FFI / build / stdlib / methodology) |
+
+### Unity3D Ecosystem (md/unity3d + unity/)
+
+| Doc | Contents |
+|------|------|
+| [unity/README.md](../unity/README.md) | U3D landing example (HelloCube) |
+| [00-INDEX.md](md/unity3d/00-INDEX.md) | Series master index |
+| [01-架构总览.md](md/unity3d/01-架构总览.md) ~ [14-实例落地记录.md](md/unity3d/14-实例落地记录.md) | architecture / local build / C# bridge / module hot-reload / Unity API mapping / lifecycle / debugging / JIT·IL2CPP / build pipeline / cross-platform deploy / security sandbox / examples / known issues |
+
+### External Project Docs (csimple_lang / simple_language)
+
+| Doc | Contents |
+|------|------|
+| [SLB_DESIGN.md](../csimple_lang/md/design/SLB_DESIGN.md) | SLB module package format design |
+| [ATTRIBUTE_DESIGN.md](../csimple_lang/md/design/ATTRIBUTE_DESIGN.md) | attribute system design |
+| [PROCESS_DESIGN.md](../csimple_lang/md/design/PROCESS_DESIGN.md) | Compilation flow design |
+| [NET_DESIGN.md](../csimple_lang/md/design/NET_DESIGN.md) | C VM network stack design |
+| [DEBUG_PROTOCOL_DESIGN.md](../csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md) | SLDP debug protocol design |
+| [X86_ASM_FASTPATH_DESIGN.md](../csimple_lang/md/design/X86_ASM_FASTPATH_DESIGN.md) | x86 ASM fast-path design |
+| [MONO_DESIGN.md](../csimple_lang/md/design/MONO_DESIGN.md) | Mono interop design |
+| [MLIR_AOT_实现与待办.md](../simple_language/source/Export/MLIR/MLIR_AOT_实现与待办.md) | MLIR AOT backend |
 
 ## License
 

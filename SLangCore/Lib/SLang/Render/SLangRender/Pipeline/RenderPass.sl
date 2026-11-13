@@ -40,6 +40,39 @@ public class RenderPass
     public CullingResults cullingResults = null
     public Camera camera = null
 
+    # ── P1 Pass 功能块：类型常量 + 桥接世界字段 ───────────────
+    # 派发不用 virtual 重写——子类构造不调 this._init_()（运行期递归
+    # 地雷），完全手动设字段；基类 execute 按 passType 走 exec* 私有
+    # 方法（同 ECommandOpcode 教训后的「类静态 + type 字段」约定）。
+    public static Int32 TYPE_BASE = 0
+    public static Int32 TYPE_OPAQUE = 1
+    public static Int32 TYPE_TRANSPARENT = 2
+    public static Int32 TYPE_POST = 3
+    public static Int32 TYPE_BLIT = 4
+
+    # Pass 类型（TYPE_*，execute 派发键）
+    public Int32 passType = 0
+
+    # 桥接世界数据（P0 CullingData 快照；Opaque/Transparent 消费）
+    public CullingData culling = null
+
+    # 视口与清屏（OpaquePass 录 setRenderTargets 用）
+    public Int32 viewportX = 0
+    public Int32 viewportY = 0
+    public Int32 viewportWidth = 256
+    public Int32 viewportHeight = 256
+    public bool clearTargetColor = false
+    public bool clearTargetDepth = false
+
+    # 后处理参数（PostProcessPass）
+    public bool postEnabled = false
+    public Float32 postBrightness = 1.0f
+    public Float32 postSaturation = 1.0f
+    public Float32 postVignette = 1.0f
+
+    # 输出回读（BlitPass；非 0 时 blit 后追加 readback）
+    public Int64 blitReadbackPtr = 0
+
     public void _init_()
     {
         this.name = "RenderPass"
@@ -73,6 +106,123 @@ public class RenderPass
     {
         this.cullingResults = cull
         this.camera = cam
+    }
+
+    # ── P1 execute：按 passType 派发录制（命令进共享命令流）──
+    # 每个 Pass = 一个录制单元；命令录进 ctx 持有的同一条 CommandBuffer
+    # （C 侧 slr_cmd_execute_stream 每次调用都重置 PerDraw 槽与描述符
+    # 表——sl_cmd.c 帧级前置 memset，因此一帧全部命令必须同一条流内
+    # 提交，ScriptableRenderContext.submitPasses 负责单流整包）。
+    public void execute( ScriptableRenderContext ctx, CommandBuffer cmd )
+    {
+        if this.passType == RenderPass.TYPE_OPAQUE
+        {
+            this.executeOpaque( ctx, cmd )
+        }
+        elif this.passType == RenderPass.TYPE_TRANSPARENT
+        {
+            this.executeTransparent( ctx, cmd )
+        }
+        elif this.passType == RenderPass.TYPE_POST
+        {
+            this.executePost( ctx, cmd )
+        }
+        elif this.passType == RenderPass.TYPE_BLIT
+        {
+            this.executeBlit( ctx, cmd )
+        }
+    }
+
+    # 不透明段：绑场景目标（可选清屏）+ 遍历 culling 画 queue < 2500
+    # （CullingData 列为 Int64，经 SystemConvertInt32 显式窄化——同
+    # Core Int64.toInt32 的转换通路；drawItem 七元组取 Int32）
+    void executeOpaque( ScriptableRenderContext ctx, CommandBuffer cmd )
+    {
+        if this.culling == null
+        {
+            ret
+        }
+        Int32 clearFlags = 0
+        if this.clearTargetColor
+        {
+            clearFlags = clearFlags + SLang.RenderPipeline.CLEAR_COLOR
+        }
+        if this.clearTargetDepth
+        {
+            clearFlags = clearFlags + SLang.RenderPipeline.CLEAR_DEPTH
+        }
+        Color cc = this.clearColor
+        if cc == null
+        {
+            cc = Color.black()
+        }
+        cmd.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, this.viewportX, this.viewportY,
+                              this.viewportWidth, this.viewportHeight, clearFlags, cc )
+        Int32 i = 0
+        while i < this.culling.count()
+        {
+            Int64 qMin = 2500
+            if this.culling.getQueue( i ) < qMin
+            {
+                Int32 prog = SystemConvertInt32( this.culling.getProg( i ) )
+                Int32 slot = SystemConvertInt32( this.culling.getSlot( i ) )
+                Int32 mesh = SystemConvertInt32( this.culling.getMesh( i ) )
+                Int32 texd = SystemConvertInt32( this.culling.getTex( i ) )
+                Int32 transp = SystemConvertInt32( this.culling.getTransp( i ) )
+                Int32 queue = SystemConvertInt32( this.culling.getQueue( i ) )
+                Float32 z = this.culling.getZ( i )
+                cmd.drawItem( prog, slot, mesh, texd, transp, queue, z )
+            }
+            i = i + 1
+        }
+    }
+
+    # 透明段：不重绑目标（OpaquePass 已绑场景目标，同帧槽位持久），
+    # 遍历 culling 画 queue >= 2500（z 降序由 sortDrawItems 统一整理）
+    void executeTransparent( ScriptableRenderContext ctx, CommandBuffer cmd )
+    {
+        if this.culling == null
+        {
+            ret
+        }
+        Int32 i = 0
+        while i < this.culling.count()
+        {
+            Int64 qMin = 2500
+            if this.culling.getQueue( i ) >= qMin
+            {
+                Int32 prog = SystemConvertInt32( this.culling.getProg( i ) )
+                Int32 slot = SystemConvertInt32( this.culling.getSlot( i ) )
+                Int32 mesh = SystemConvertInt32( this.culling.getMesh( i ) )
+                Int32 texd = SystemConvertInt32( this.culling.getTex( i ) )
+                Int32 transp = SystemConvertInt32( this.culling.getTransp( i ) )
+                Int32 queue = SystemConvertInt32( this.culling.getQueue( i ) )
+                Float32 z = this.culling.getZ( i )
+                cmd.drawItem( prog, slot, mesh, texd, transp, queue, z )
+            }
+            i = i + 1
+        }
+    }
+
+    # 后处理：全屏 pass（enabled=0 走纯拷贝 scene -> post）
+    void executePost( ScriptableRenderContext ctx, CommandBuffer cmd )
+    {
+        Int32 enabled = 0
+        if this.postEnabled
+        {
+            enabled = 1
+        }
+        cmd.postProcess( enabled, this.postBrightness, this.postSaturation, this.postVignette )
+    }
+
+    # 整合输出：blit post -> final + 可选回读（非 0 指针时）
+    void executeBlit( ScriptableRenderContext ctx, CommandBuffer cmd )
+    {
+        cmd.blitFinal()
+        if this.blitReadbackPtr != 0
+        {
+            cmd.readback( this.blitReadbackPtr )
+        }
     }
 
     # ── 生命周期（子类重写 render）─────────────────────────
@@ -268,14 +418,24 @@ public class PostProcessPass extends RenderPass
     public Material postMaterial = null
     public GpuTexture source = null
 
-    public void _init_( string _name )
+    # P1 改造（2026-11-13）：无参构造完全手动设字段——原 _init_(string)
+    # 调 this._init_()（子类内自调用绑定到自身 -> 无限递归，运行期地雷）
+    # 且 ERenderPassEvent 为文件级 enum（成员访问解析为「最近类」静态
+    # 槽，ECommandOpcode 同源教训）。桥接世界派发走基类 execute 的
+    # execPost：postProcess(enabled, brightness, saturation, vignette)；
+    # 草稿 render()（GpuTexture 世界）保留不动。
+    public void _init_()
     {
-        this._init_()
-        this.name = _name
-        this.profilerName = _name
-        this.passEvent = ERenderPassEvent.PostProcessing
-        this.clearColorFlag = true
-        this.clearDepthFlag = true
+        this.name = "PostProcessPass"
+        this.profilerName = "PostProcessPass"
+        this.passEvent = 800
+        this.passType = RenderPass.TYPE_POST
+        this.culling = null
+        this.postEnabled = false
+        this.postBrightness = 1.0f
+        this.postSaturation = 1.0f
+        this.postVignette = 1.0f
+        this.blitReadbackPtr = 0
     }
 
     override void render( ScriptableRenderContext ctx )
@@ -288,6 +448,60 @@ public class PostProcessPass extends RenderPass
             ctx.cmd.setTexture( 0, this.source.srv() )
         }
         ctx.drawFullscreen( this.postMaterial )
+    }
+}
+
+# ── P1 可执行 Pass（桥接世界：录制进共享命令流，单流提交）──────
+# 构造约定：无参 _init_ 完全手动设字段、不调 this._init_()（基类
+# _init_ 含文件级 enum 访问与草稿类构造，运行期地雷）；派发不靠
+# virtual——基类 execute 按 passType 字段走 exec* 私有方法。
+# 数据注入：culling（P0 CullingData 快照）由上层在 execute 前设好。
+public class OpaquePass extends RenderPass
+{
+    public void _init_()
+    {
+        this.name = "OpaquePass"
+        this.profilerName = "OpaquePass"
+        this.passEvent = 200
+        this.passType = RenderPass.TYPE_OPAQUE
+        this.culling = null
+        this.viewportX = 0
+        this.viewportY = 0
+        this.viewportWidth = 256
+        this.viewportHeight = 256
+        this.clearTargetColor = false
+        this.clearTargetDepth = false
+        this.postEnabled = false
+        this.postBrightness = 1.0f
+        this.postSaturation = 1.0f
+        this.postVignette = 1.0f
+        this.blitReadbackPtr = 0
+    }
+}
+
+public class TransparentPass extends RenderPass
+{
+    public void _init_()
+    {
+        this.name = "TransparentPass"
+        this.profilerName = "TransparentPass"
+        this.passEvent = 300
+        this.passType = RenderPass.TYPE_TRANSPARENT
+        this.culling = null
+        this.blitReadbackPtr = 0
+    }
+}
+
+public class BlitPass extends RenderPass
+{
+    public void _init_()
+    {
+        this.name = "BlitPass"
+        this.profilerName = "BlitPass"
+        this.passEvent = 1000
+        this.passType = RenderPass.TYPE_BLIT
+        this.culling = null
+        this.blitReadbackPtr = 0
     }
 }
 

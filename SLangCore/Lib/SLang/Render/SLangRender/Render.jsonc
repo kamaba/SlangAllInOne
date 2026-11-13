@@ -50,42 +50,55 @@
   "compileFiles": {
     "files": [
       { "path": "Render.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 0 },
-      { "path": "Pipeline/Pipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 },
-      { "path": "Mesh.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 2 },
+      // RenderData —— P0 数据层三类（CullingData/FrameData/PassData），纯数据
+      // 零 FFI 零依赖；与 Render.sl 同级 priority 0，先于 Pipeline(2)/CommandBuffer(22)
+      { "path": "Pipeline/RenderData.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 0 },
+      // RenderFFI —— 新增后端调用单点（@DllStaticImport 声明处，doc/05 规则 11）；
+      // 必须先于消费方 Pipeline.sl 编译
+      { "path": "Pipeline/RenderFFI.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 1 },
+      { "path": "Pipeline/Pipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 2 },
+      { "path": "Mesh.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 3 },
       // ---- 场景层草稿并入编译集（2026-11-12，基类在前）----
-      { "path": "Config.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 3 },
-      { "path": "Vector.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 4 },
-      { "path": "Vertex.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 5 },
-      { "path": "Texture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 6 },
-      { "path": "Shader.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 7 },
-      { "path": "Material.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 8 },
-      { "path": "Transform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 9 },
-      { "path": "RectTransform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 10 },
-      { "path": "Renderer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 11 },
-      { "path": "Ray.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
-      { "path": "Camera/Camera.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
-      { "path": "Camera/Light.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 13 },
+      { "path": "Config.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 4 },
+      { "path": "Vector.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 5 },
+      { "path": "Vertex.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 6 },
+      { "path": "Texture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 7 },
+      { "path": "Shader.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 8 },
+      { "path": "Material.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 9 },
+      { "path": "Transform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 10 },
+      { "path": "RectTransform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 11 },
+      { "path": "Renderer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
+      { "path": "Ray.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 13 },
+      { "path": "Camera/Camera.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 14 },
+      { "path": "Camera/Light.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 15 },
       // ---- RHI 层草稿（依赖序：资源 -> 设备 -> 命令 -> 管线状态）----
-      { "path": "Pipeline/GfxBackend.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 14 },
-      { "path": "Pipeline/GpuResource.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 15 },
-      { "path": "Pipeline/GpuTexture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 16 },
-      { "path": "Pipeline/GfxDevice.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 17 },
-      { "path": "Pipeline/PipelineState.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 18 },
-      { "path": "Pipeline/RootSignature.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 19 },
-      { "path": "Pipeline/CommandBuffer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 20 },
-      { "path": "Pipeline/CommandQueue.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 21 },
-      { "path": "Pipeline/RenderTarget.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 22 },
-      { "path": "Pipeline/RenderTexture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 22 },
-      { "path": "Pipeline/PlatformWindow.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 23 },
-      { "path": "Pipeline/Hlsl.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 24 },
-      { "path": "Pipeline/HlslLibrary.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 25 },
+      { "path": "Pipeline/GfxBackend.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 16 },
+      { "path": "Pipeline/GpuResource.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 17 },
+      { "path": "Pipeline/GpuTexture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 18 },
+      { "path": "Pipeline/GfxDevice.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 19 },
+      { "path": "Pipeline/PipelineState.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 20 },
+      { "path": "Pipeline/RootSignature.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 21 },
+      { "path": "Pipeline/CommandBuffer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 22 },
+      { "path": "Pipeline/CommandQueue.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 23 },
+      { "path": "Pipeline/RenderTarget.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 24 },
+      { "path": "Pipeline/RenderTexture.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 25 },
+      { "path": "Pipeline/PlatformWindow.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 26 },
+      { "path": "Pipeline/Hlsl.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 27 },
+      { "path": "Pipeline/HlslLibrary.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 28 },
       // ---- SRP 草稿（RenderPipeline 类与 Pipeline.sl 的 SLang.RenderPipeline
       //      同名冲突，草稿基类改名 ScriptableRenderPipeline）----
-      { "path": "Pipeline/RenderPass.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 26 },
-      { "path": "Pipeline/RenderPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 27 },
-      { "path": "Pipeline/ScriptableRenderContext.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 28 },
-      { "path": "Pipeline/UniversalRenderPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 29 },
-      { "path": "Pipeline/PipelineDemo.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 30 }
+      { "path": "Pipeline/RenderPass.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 29 },
+      { "path": "Pipeline/RenderPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 30 },
+      { "path": "Pipeline/RenderCamera.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 30 },
+      { "path": "Pipeline/RenderObject.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 30 },
+      { "path": "Pipeline/ScriptableRenderContext.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 31 },
+      { "path": "Pipeline/UniversalRenderPipeline.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 32 },
+      { "path": "Pipeline/PipelineDemo.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 33 },
+      // Environment —— 渲染环境查询类（根级 RenderEnvironment：查明
+      // 支持后端/当前选择/硬件条件/资源占用/当前渲染配置）；
+      // 消费 RenderFFI 计数绑定（priority 1）与 CommandBuffer 常量（22），
+      // 置于其后
+      { "path": "Environment.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 34 }
     ]
   },
   "compileFilter": {
@@ -189,6 +202,12 @@
     { "class": "RootParameter" },
     { "class": "RootSignature" },
     { "class": "DescriptorHeap" },
+    // RenderFFI —— 原生 FFI 静态绑定单点（新增后端调用声明处）
+    { "class": "RenderFFI" },
+    // ECommandOpcode —— opcode 值表改 Int32 静态常量类（2026-11-13：
+    // 文件级 enum 成员编译为「最近类」静态槽索引，与 CommandBuffer 自身
+    // 静态冲突/越界致录制 opcode 全坏；类静态通路经 Phase ENV 实证完好）
+    { "class": "ECommandOpcode" },
     { "class": "CommandBuffer" },
     { "class": "CommandBufferPool" },
     { "enum": "ECommandQueueType" },
@@ -222,6 +241,10 @@
     { "class": "DrawObjectsPass" },
     { "class": "SkyboxPass" },
     { "class": "PostProcessPass" },
+    // P1 可执行 Pass（RenderPass.sl：passType 派发 + 单流提交）
+    { "class": "OpaquePass" },
+    { "class": "TransparentPass" },
+    { "class": "BlitPass" },
     { "class": "RenderPassList" },
     { "class": "ScriptableRenderPipeline" },
     { "class": "RenderPipelineAsset" },
@@ -234,7 +257,15 @@
     { "enum": "EShadowCascades" },
     { "class": "UniversalRenderPipelineAsset" },
     { "class": "UniversalRenderPipeline" },
-    { "class": "PipelineDemo" }
+    { "class": "PipelineDemo" },
+    // RenderEnvironment —— 渲染环境查询（根级类；与 Core.Environment.Render
+    // 平台层探测互补，本类为渲染库运行时视图。Core 已占 Environment.Render
+    // 裸名，故取独立根级名）
+    { "class": "RenderEnvironment" },
+    // P0 数据层三类（根级类，RenderData.sl）
+    { "class": "CullingData" },
+    { "class": "FrameData" },
+    { "class": "PassData" }
   ],
   "export": {
     "moduleName": "SLangRender",

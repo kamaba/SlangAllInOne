@@ -87,6 +87,23 @@ namespace SLang
         public static Int32 ANIM_NONE        = 0
         public static Int32 ANIM_HUE_CYCLE   = 1
 
+        # ── 着色器程序槽（C 侧 SLR_PROG_* 逐值一致；命令流 drawItem 的
+        #    prog 参数取值。0..7 内建槽 + 8..17 v3.5 固化编译槽）────
+        public static Int32 PROG_FLAT       = 0    # v1：MVP/Color uniform
+        public static Int32 PROG_TEX        = 1    # v1：MVP/Color + 纹理
+        public static Int32 PROG_PFLAT      = 2    # 管线：PerDraw + 纯色
+        public static Int32 PROG_PTEX       = 3    # 管线：PerDraw + 纹理
+        public static Int32 PROG_BLIT       = 4    # 全屏拷贝
+        public static Int32 PROG_POST       = 5    # 后处理
+        public static Int32 PROG_PHONG_FLAT = 6    # Phong 光照 + 纯色
+        public static Int32 PROG_PHONG_TEX  = 7    # Phong 光照 + 纹理
+        public static Int32 PROG_GEN_BASE   = 8    # 固化槽基（effect*2+variant）
+
+        # ── 命令流渲染目标 id（executeCommandBuffer 桥接的目标表）────
+        public static Int32 TARGET_SCENE    = 0    # rt_scene（场景，带深度）
+        public static Int32 TARGET_POST     = 1    # rt_post（后处理中间）
+        public static Int32 TARGET_FINAL    = 2    # rt_final（回读源）
+
         Int64 _handle = 0
         Int32 _width = 0
         Int32 _height = 0
@@ -260,6 +277,45 @@ namespace SLang
         public bool uploadMesh( Int32 slot, Int64 vertsPtr, Int32 vertCount )
         {
             ret RenderPipeline.ffiMeshUpload( slot, vertsPtr, vertCount )
+        }
+
+        # ── 命令流提交（D1 真录制：SLangRender.CommandBuffer）────
+        # Unity 的 context.ExecuteCommandBuffer 对应物。三段式的最后一环：
+        #   cb.begin() -> 录制命令（setRenderTargets/setTexture/setPerDraw/
+        #   drawItem...，录制期零后端调用）-> cb.sortDrawItems() 整理排序
+        #   -> 本方法提交：按 SLMC 布局（doc/04 §3.6）打包 cb 的
+        #   opcode/args/floats 三段数组，经 slr_cmd_execute_stream 整包
+        #   传入，C 侧逐 opcode 回放到当前 RHI 后端（四后端同效果）。
+        # 约束：cb 须已 end()；本帧用完的命令流不被引用（提交后即回放，
+        # cb 可 clear 后复用）。
+        public bool executeCommandBuffer( CommandBuffer cb )
+        {
+            if this._handle == 0 || cb == null
+            {
+                ret false
+            }
+            if cb.isRecording
+            {
+                ret false
+            }
+            if cb.commandCount <= 0
+            {
+                ret false
+            }
+            Int32 bytes = cb.streamBytes()
+            if bytes <= 0
+            {
+                ret false
+            }
+            Int64 ptr = Memory.alloc( bytes )
+            if ptr == 0
+            {
+                ret false
+            }
+            cb.pack( ptr )
+            bool ok = RenderFFI.ffiCmdExecuteStream( this._handle, ptr, cb.commandCount )
+            Memory.free( ptr )
+            ret ok
         }
 
         public bool removeObject( RenderObject obj )
@@ -522,6 +578,43 @@ namespace SLang
             ret ok
         }
 
+        # ── P0 数据层：FrameData 构建 / 相机场景渲染（数据与流程分离）──
+
+        # buildFrameData(time, dstPixels) —— 采集一帧渲染上下文成 FrameData
+        # （P0 为数据快照；P1+ Pass 体系将消费这些字段）
+        public FrameData buildFrameData( Float32 time, Int64 dstPixels )
+        {
+            FrameData fd = FrameData()
+            fd.time = time
+            fd.dstPixels = dstPixels
+            fd.targetHandle = RenderPipeline.TARGET_SCENE
+            fd.targetW = this._width
+            fd.targetH = this._height
+            fd.envBackend = Render.currentBackend()
+            fd.envRenderer = Render.rendererInfo()
+            fd.envVersion = Render.versionInfo()
+            ret fd
+        }
+
+        # renderCameraScene(fd) —— 以 FrameData 驱动一帧（P0 转发 runStages，
+        # 行为零变化；P1+ 由 ScriptableRenderContext 接管）
+        public bool renderCameraScene( FrameData fd )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            if fd == null
+            {
+                ret false
+            }
+            if fd.dstPixels == 0
+            {
+                ret false
+            }
+            ret this.runStages( fd.time, fd.dstPixels )
+        }
+
         # stat(id) —— 管线统计（STAT_* 常量）
         public Int32 stat( Int32 id )
         {
@@ -739,408 +832,6 @@ namespace SLang
         static Int32 ffiStat( Int64 p, Int32 id )
         {
             ret 0
-        }
-    }
-
-    # ===================================================================
-    # RenderObject —— 场景对象门面（网格/材质参数/变换/层级）
-    # ===================================================================
-    public class RenderObject
-    {
-        Int64 _pipe = 0
-        Int64 _id = 0
-
-        _init_( Int64 pipe, Int64 id )
-        {
-            this._pipe = pipe
-            this._id = id
-        }
-
-        get Int64 handle()
-        {
-            ret this._id
-        }
-
-        get bool isValid()
-        {
-            ret this._id != 0
-        }
-
-        public bool setVisible( Int32 visible )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetVisible( this._pipe, this._id, visible )
-        }
-
-        public bool setLayer( Int32 layer )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetLayer( this._pipe, this._id, layer )
-        }
-
-        # setQueue —— 渲染队列（<2500 不透明，>=2500 透明）
-        public bool setQueue( Int32 queue )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetQueue( this._pipe, this._id, queue )
-        }
-
-        public bool setPosition( Float32 x, Float32 y, Float32 z )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetPosition( this._pipe, this._id, x, y, z )
-        }
-
-        public bool setRotationZ( Float32 rz )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetRotationZ( this._pipe, this._id, rz )
-        }
-
-        public bool setScale( Float32 sx, Float32 sy )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetScale( this._pipe, this._id, sx, sy )
-        }
-
-        public bool setColor( Float32 r, Float32 g, Float32 b, Float32 a )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetColor( this._pipe, this._id, r, g, b, a )
-        }
-
-        public bool setTexture( RenderTexture tex )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            Int64 h = 0
-            if tex != null
-            {
-                h = tex.handle
-            }
-            ret RenderObject.ffiSetTexture( this._pipe, this._id, h )
-        }
-
-        public bool setAnimated( Int32 mode, Float32 speed )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetAnimated( this._pipe, this._id, mode, speed )
-        }
-
-        # v3.4：材质模型 —— MATERIAL_LAMBERT(0)=v3.3 光照，MATERIAL_PHONG(1)=
-        # 追加伪 3D 高光（ambient+diffuse+specular），阶段 5 自动选程序槽。
-        public bool setMaterial( Int32 material )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetMaterial( this._pipe, this._id, material )
-        }
-
-        # v3.4：Phong 高光参数（strength 高光强度 0..8，shininess 光泽度 1..256）。
-        public bool setSpecular( Float32 strength, Float32 shininess )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetSpecular( this._pipe, this._id, strength, shininess )
-        }
-
-        # v3.4：投影阴影开关 —— 1 = 生成 2D 投影阴影绘制项（透明段黑 0.35，
-        # 沿背离光源方向偏移；直射光方向优先，否则按聚光位置逐物体定向，
-        # 聚光摇晃时阴影跟随）。无光源时不生成。
-        public bool setShadow( Int32 castShadow )
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            ret RenderObject.ffiSetShadow( this._pipe, this._id, castShadow )
-        }
-
-        public bool destroy()
-        {
-            if this._pipe == 0 || this._id == 0
-            {
-                ret false
-            }
-            bool ok = RenderObject.ffiObjectDestroy( this._pipe, this._id )
-            if ok
-            {
-                this._id = 0
-            }
-            ret ok
-        }
-
-        # ── FFI 绑定 ──────────────────────────────────────────────
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_visible", "i64,i64,i32->bool" )
-        static bool ffiSetVisible( Int64 p, Int64 obj, Int32 visible )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_layer", "i64,i64,i32->bool" )
-        static bool ffiSetLayer( Int64 p, Int64 obj, Int32 layer )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_queue", "i64,i64,i32->bool" )
-        static bool ffiSetQueue( Int64 p, Int64 obj, Int32 queue )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_position", "i64,i64,f32,f32,f32->bool" )
-        static bool ffiSetPosition( Int64 p, Int64 obj, Float32 x, Float32 y, Float32 z )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_rotation_z", "i64,i64,f32->bool" )
-        static bool ffiSetRotationZ( Int64 p, Int64 obj, Float32 rz )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_scale", "i64,i64,f32,f32->bool" )
-        static bool ffiSetScale( Int64 p, Int64 obj, Float32 sx, Float32 sy )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_color", "i64,i64,f32,f32,f32,f32->bool" )
-        static bool ffiSetColor( Int64 p, Int64 obj, Float32 r, Float32 g, Float32 b, Float32 a )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_texture", "i64,i64,i64->bool" )
-        static bool ffiSetTexture( Int64 p, Int64 obj, Int64 tex )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_animated", "i64,i64,i32,f32->bool" )
-        static bool ffiSetAnimated( Int64 p, Int64 obj, Int32 mode, Float32 speed )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_material", "i64,i64,i32->bool" )
-        static bool ffiSetMaterial( Int64 p, Int64 obj, Int32 material )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_specular", "i64,i64,f32,f32->bool" )
-        static bool ffiSetSpecular( Int64 p, Int64 obj, Float32 strength, Float32 shininess )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_set_shadow", "i64,i64,i32->bool" )
-        static bool ffiSetShadow( Int64 p, Int64 obj, Int32 castShadow )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_object_destroy", "i64,i64->bool" )
-        static bool ffiObjectDestroy( Int64 p, Int64 obj )
-        {
-            ret false
-        }
-    }
-    # ===================================================================
-    # RenderCamera —— 管线相机门面（多相机渲染）
-    # ----------------------------------------------------------------------------
-    # 槽 0 为默认相机（RenderPipeline.setCamera 写入，不经过本类）。
-    # 新建相机经 RenderPipeline.addCamera(depth)：depth 升序决定
-    # 绘制次序（小 depth 先画）。每相机独立：
-    #   cullingMask  —— 按位对应 layer 0..31（-1 = 全部）
-    #   extents      —— 正交视域（NDC 前的世界系包围盒）
-    #   viewport     —— 输出目标内像素视口
-    #   clearColor   —— 本相机清屏色
-    #   clearFlags   —— 位 1 = 清颜色、位 2 = 清深度（叠加相机可清 0）
-    # ===================================================================
-    public class RenderCamera
-    {
-        Int64 _pipe = 0
-        Int64 _id = 0
-
-        _init_( Int64 pipe, Int64 id )
-        {
-            this._pipe = pipe
-            this._id = id
-        }
-
-        get Int64 handle()
-        {
-            ret this._id
-        }
-
-        get bool isValid()
-        {
-            ret this._id != 0 && this._pipe != 0
-        }
-
-        public bool setEnabled( bool enabled )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetEnabled( this._pipe, this._id, enabled ? 1 : 0 )
-        }
-
-        public bool setDepth( Int32 depth )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetDepth( this._pipe, this._id, depth )
-        }
-
-        public bool setCullMask( Int32 mask )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetCullMask( this._pipe, this._id, mask )
-        }
-
-        # setExtents(l, r, b, t) —— 正交视域
-        public bool setExtents( Float32 l, Float32 r, Float32 b, Float32 t )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetExtents( this._pipe, this._id, l, r, b, t )
-        }
-
-        # setViewport(x, y, w, h) —— 输出目标内像素视口
-        public bool setViewport( Int32 x, Int32 y, Int32 w, Int32 h )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetViewport( this._pipe, this._id, x, y, w, h )
-        }
-
-        public bool setClearColor( Float32 r, Float32 g, Float32 b, Float32 a )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetClearColor( this._pipe, this._id, r, g, b, a )
-        }
-
-        # setClearFlags(flags) —— 位 1 = 清颜色，位 2 = 清深度
-        public bool setClearFlags( Int32 flags )
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            ret RenderCamera.ffiCameraSetClearFlags( this._pipe, this._id, flags )
-        }
-
-        public bool destroy()
-        {
-            if this.isValid == false
-            {
-                ret false
-            }
-            bool ok = RenderCamera.ffiCameraDestroy( this._pipe, this._id )
-            if ok
-            {
-                this._id = 0
-            }
-            ret ok
-        }
-
-        # ── FFI 绑定 ──────────────────────────────────────────────
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_enabled", "i64,i64,i32->bool" )
-        static bool ffiCameraSetEnabled( Int64 p, Int64 cam, Int32 enabled )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_depth", "i64,i64,i32->bool" )
-        static bool ffiCameraSetDepth( Int64 p, Int64 cam, Int32 depth )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_cull_mask", "i64,i64,i32->bool" )
-        static bool ffiCameraSetCullMask( Int64 p, Int64 cam, Int32 mask )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_extents", "i64,i64,f32,f32,f32,f32->bool" )
-        static bool ffiCameraSetExtents( Int64 p, Int64 cam, Float32 l, Float32 r, Float32 b, Float32 t )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_viewport", "i64,i64,i32,i32,i32,i32->bool" )
-        static bool ffiCameraSetViewport( Int64 p, Int64 cam, Int32 x, Int32 y, Int32 w, Int32 h )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_clear_color", "i64,i64,f32,f32,f32,f32->bool" )
-        static bool ffiCameraSetClearColor( Int64 p, Int64 cam, Float32 r, Float32 g, Float32 b, Float32 a )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_set_clear_flags", "i64,i64,i32->bool" )
-        static bool ffiCameraSetClearFlags( Int64 p, Int64 cam, Int32 flags )
-        {
-            ret false
-        }
-
-        @DllStaticImport( "sl_render_lib", "slr_camera_destroy", "i64,i64->bool" )
-        static bool ffiCameraDestroy( Int64 p, Int64 cam )
-        {
-            ret false
         }
     }
 }

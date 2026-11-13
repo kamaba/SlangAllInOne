@@ -229,6 +229,7 @@ int64_t slqt_be_menu_create_popup(const char* title);
 int64_t slqt_be_menu_add_action(int64_t menu, const char* text);
 void    slqt_be_menu_add_separator(int64_t menu);
 int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t y);
+int64_t slqt_be_menu_popup_cursor(int64_t menu);
 void    slqt_be_action_set_text(int64_t a, const char* t);
 void    slqt_be_action_set_enabled(int64_t a, int64_t on);
 int64_t slqt_be_action_enabled(int64_t a);

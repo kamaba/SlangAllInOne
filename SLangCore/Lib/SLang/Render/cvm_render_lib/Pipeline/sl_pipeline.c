@@ -115,10 +115,15 @@ void pipeline_release_targets(SlrPipeline* p)
         if (p->rt_scene) g_rhi->target_destroy(p->rt_scene);
         if (p->rt_post)  g_rhi->target_destroy(p->rt_post);
         if (p->rt_final) g_rhi->target_destroy(p->rt_final);
+        /* N2a：shadow 深度目标（后端无 shadow 能力时 vtable 为 NULL，
+         * rt_shadow 恒 NULL，此调用天然跳过）*/
+        if (p->rt_shadow && g_rhi->shadow_target_destroy)
+            g_rhi->shadow_target_destroy(p->rt_shadow);
     }
     p->rt_scene = NULL;
     p->rt_post = NULL;
     p->rt_final = NULL;
+    p->rt_shadow = NULL;
 }
 
 static int pipeline_make_targets(SlrPipeline* p, int w, int h)
@@ -155,6 +160,10 @@ int64_t slr_pipeline_create(int w, int h)
             /* 光照默认态：无光源 + 环境光 1.0（memset 归零会让全屏变黑，
              * 必须显式置 1——输出与无光照版逐字节一致，向后兼容）*/
             p->ambient = 1.0f;
+            /* N2a shadow map 默认参数（shadowQuality=1 的平行光出现时激活）*/
+            p->shadow_map_size = 512;
+            p->shadow_bias = 0.002f;
+            p->shadow_strength = 0.35f;   /* 对齐旧黑斑 alpha 0.35 观感 */
             p->clear_color[0] = 0.06f; p->clear_color[1] = 0.06f;
             p->clear_color[2] = 0.10f; p->clear_color[3] = 1.0f;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
@@ -261,6 +270,7 @@ static int stage_begin_frame(SlrPipeline* p, float time)
     p->last_stage = 1;
     p->visible_count = 0; p->culled_count = 0;
     p->draw_calls = 0; p->opaque_draws = 0; p->transparent_draws = 0;
+    p->instance_total = 0;   /* N1：实例总数逐帧清零 */
     p->chunk_count = 0; p->program_switches = 0; p->upload_count = 0;
     p->layers_mask = 0; p->item_count = 0; p->opaque_count = 0;
     /* RHI：绑定场景目标 + 全视口 + 整幅清 + 不透明初始状态 */
@@ -398,6 +408,243 @@ static void sort_items(SlrDrawItem* items, int count, int transparent)
     }
 }
 
+/* 4.5 N2a/N2b shadow 深度 pass：首个 shadowQuality>=1 平行光的光空间
+ * 正交深度渲染（castShadow 对象 -> 深度图集；阶段 6 全量 PerDraw 覆盖
+ * 重传，临时槽互不干扰）。
+ *
+ * 2D 光空间扫掠体（shadow volume 正解——平面几何零厚度的光栅化）：
+ *   u 轴 = 光方向 d（沿光距离，深度通道）、v 轴 = 垂直光方向；
+ *   直接投影 (v→x, u→z) 是 rank-1 退化（屏面零厚度，光栅化丢弃）。
+ *   解：把 castShadow 物体沿"背光方向"仿射拉伸成扫掠体
+ *   （u ∈ [u_min,u_max] -> [un, u_max]，u 小侧推到视域近端），
+ *   深度恒 = (uf-u_max)/range（物体最朝光面）——深度图语义
+ *   "柱 v 的最朝光遮挡面"，覆盖物体自身 + 全部背光侧投影区。
+ *   采样端：P 重投影 (v_P, u_P) 单点 + 深度比较（与 3D 完全同构）。
+ *
+ * N2b CSM（cascades=4）：v 轴按固定比例分割（0.05/0.25/0.6/1.0，
+ * Unity URP 默认级联分布），每级独立 (vc, W) 视域 + 级内物体的收紧
+ * u 窗口（级联精髓——窄 v 段 + 窄深度窗 = 局部高精度）；深度图集单张
+ * 1x4 横向分区（每区宽 size/4，级 i 映 [i/4,(i+1)/4]）；shader 端按
+ * 片元 v_P 与 uShadowSplit 比较选级联（=1 时全段单级 = N2a 零变化）。
+ *
+ * 跨后端深度值域：ndc.z ∈ [0,1]（D3D11 直通；GL/GLES 硬件深度
+ * z*0.5+0.5，shader 里 zxform (2,-1) 还原后比较）。
+ * 前置：阶段 4 剔除后（cull_cams 就绪）；后端无 shadow 能力
+ * （VK vtable NULL）或无 shadow 光源时置 shadow_on=0 走黑斑回退。 */
+static int stage_shadow_pass(SlrPipeline* p)
+{
+    float ldir[2];
+    float dx, dy;
+    float vmin = 0.0f, vmax = 0.0f, umin = 0.0f, ufar = 0.0f;
+    float split[5];
+    int cascades = 1;
+    int lv, i, ci, k, first = 1;
+    SlrLight* sl = NULL;
+
+    p->shadow_on = 0;
+    /* 后端能力：vtable 四函数任一为 NULL（VK 降级）即回退 */
+    if (!g_rhi->shadow_target_create || !g_rhi->shadow_begin ||
+        !g_rhi->shadow_target_destroy || !g_rhi->shadow_bind_depth)
+        return 1;
+    i = light_pick_shadowmap(p, ldir);
+    if (i < 0) return 1;
+    sl = &p->lights[i];
+    dx = ldir[0]; dy = ldir[1];
+    /* N2b：光源级覆盖（0 = 管线默认；每帧刷新——灯可动态改参）*/
+    p->shadow_bias = sl->shadow_bias_ovr > 0.0f ? sl->shadow_bias_ovr : 0.002f;
+    p->shadow_strength = sl->shadow_str_ovr > 0.0f ? sl->shadow_str_ovr : 0.35f;
+    cascades = (sl->shadow_cascades >= 4) ? 4 : 1;
+    p->shadow_cascades = cascades;
+
+    /* 第一遍：castShadow 物体的 (v,u) 轴向范围（旋转精确——|基系数|
+     * 和式）+ 视域包围更新 */
+    for (i = 0; i < SLR_MAX_OBJECTS; i++)
+    {
+        SlrObject* o = &p->objects[i];
+        float c, s, A, B, Pp, Qq, V0, U0, av, au;
+        if (!o->used || !o->cast_shadow) continue;
+        c = cosf(o->rot_z); s = sinf(o->rot_z);
+        A = o->scale[0] * (-c * dy + s * dx);
+        B = o->scale[1] * ( s * dy + c * dx);
+        Pp = o->scale[0] * ( c * dx + s * dy);
+        Qq = o->scale[1] * (-s * dx + c * dy);
+        V0 = -o->pos[0] * dy + o->pos[1] * dx;
+        U0 =  o->pos[0] * dx + o->pos[1] * dy;
+        av = (A >= 0 ? A : -A) + (B >= 0 ? B : -B);
+        au = (Pp >= 0 ? Pp : -Pp) + (Qq >= 0 ? Qq : -Qq);
+        if (first || V0 - av * 0.5f < vmin) vmin = V0 - av * 0.5f;
+        if (first || V0 + av * 0.5f > vmax) vmax = V0 + av * 0.5f;
+        if (first || U0 + au * 0.5f > ufar) ufar = U0 + au * 0.5f;
+        first = 0;
+    }
+    if (first) return 1;   /* 无 castShadow 对象：黑斑路径同样无内容 */
+    for (ci = 0; ci < p->active_cam_count; ci++)
+    {
+        SlrCamera* c = &p->cameras[p->active_cams[ci]];
+        float corner[4][2] = {
+            { c->cam_l, c->cam_b }, { c->cam_r, c->cam_b },
+            { c->cam_l, c->cam_t }, { c->cam_r, c->cam_t } };
+        for (k = 0; k < 4; k++)
+        {
+            float v = -corner[k][0] * dy + corner[k][1] * dx;
+            float u =  corner[k][0] * dx + corner[k][1] * dy;
+            if (v < vmin) vmin = v;
+            if (v > vmax) vmax = v;
+            if (first || u < umin) umin = u;
+            if (u > ufar) ufar = u;
+        }
+    }
+
+    /* 级联 v 分段：单级 = [vmin, vmax] 全段；4 级 = 固定比例分割
+     * （0.05 / 0.25 / 0.6 / 1.0，段宽 5% / 20% / 35% / 40%）*/
+    if (cascades == 4)
+    {
+        float d = vmax - vmin;
+        static const float r[5] = { 0.0f, 0.05f, 0.25f, 0.6f, 1.0f };
+        for (lv = 0; lv < 5; lv++) split[lv] = vmin + r[lv] * d;
+    }
+    else
+    {
+        split[0] = vmin;
+        split[1] = split[2] = split[3] = split[4] = vmax;
+    }
+    for (lv = 0; lv < 5; lv++) p->shadow_split[lv] = split[lv];
+
+    /* 深度图集懒创建（1x4 分区：每区宽 size/4，y 全高）*/
+    if (!p->rt_shadow)
+        p->rt_shadow = g_rhi->shadow_target_create(p->shadow_map_size,
+                                                   p->shadow_map_size);
+    if (!p->rt_shadow) return 1;
+    g_rhi->shadow_begin(p->rt_shadow, p->shadow_map_size, p->shadow_map_size);
+
+    /* 每级联：独立视域/窗口/扫掠体渲染（单级 = N2a 路径退化）*/
+    for (lv = 0; lv < cascades; lv++)
+    {
+        float seg_lo = split[lv], seg_hi = split[lv + 1];
+        float W, vc, un, uf, du, svp[16];
+        SlrPerDraw tmp;
+        int n = 0, slot = 0;
+
+        W = (seg_hi - seg_lo) * 0.5f;
+        vc = (seg_hi + seg_lo) * 0.5f;
+        if (W < 1e-3f) W = 1e-3f;
+        W *= 1.15f;                       /* 级内 15% pad（跨级重叠正常）*/
+
+        /* 级内 u 窗口：v 投影与 [seg_lo, seg_hi] 相交的物体 u 范围 */
+        un = umin; uf = ufar;
+        {
+            int hit = 0;
+            float ul = 0.0f, uh = 0.0f;
+            for (i = 0; i < SLR_MAX_OBJECTS; i++)
+            {
+                SlrObject* o = &p->objects[i];
+                float c, s, Pp, Qq, V0, U0, av, au;
+                if (!o->used || !o->cast_shadow) continue;
+                c = cosf(o->rot_z); s = sinf(o->rot_z);
+                Pp = o->scale[0] * ( c * dx + s * dy);
+                Qq = o->scale[1] * (-s * dx + c * dy);
+                V0 = -o->pos[0] * dy + o->pos[1] * dx;
+                U0 =  o->pos[0] * dx + o->pos[1] * dy;
+                av = (o->scale[0] * (-c * dy + s * dx));
+                av = (av >= 0 ? av : -av) + (o->scale[1] * ( s * dy + c * dx));
+                au = (Pp >= 0 ? Pp : -Pp) + (Qq >= 0 ? Qq : -Qq);
+                if (V0 + av * 0.5f < seg_lo || V0 - av * 0.5f > seg_hi)
+                    continue;               /* v 投影与本级无交集 */
+                if (!hit || U0 - au * 0.5f < ul) ul = U0 - au * 0.5f;
+                if (!hit || U0 + au * 0.5f > uh) uh = U0 + au * 0.5f;
+                hit = 1;
+            }
+            if (!hit) continue;            /* 空级联：无内容（全 clear）*/
+            un = ul; uf = uh;
+        }
+        if (uf - un < 1e-3f) uf = un + 1e-3f;
+        { float pad = (uf - un) * 0.15f + 0.05f; un -= pad; uf += pad; }
+        du = 1.0f / (uf - un);
+
+        /* 采样矩阵（列主序；shader mul(uLightVP_lv, world4) 同构）：
+         *   sp.x = (v-vc)/W（柱）、sp.y = 2(u-un)*du-1（行 = 片元自身 u）、
+         *   sp.z = (uf-u)*du（参考深度——翻转：u 越大越朝光 z 越小）*/
+        memset(svp, 0, sizeof(svp));
+        svp[0] = -dy / W;   svp[1] = 2.0f * dx * du;  svp[2] = -dx * du;  svp[3] = 0.0f;
+        svp[4] =  dx / W;   svp[5] = 2.0f * dy * du;  svp[6] = -dy * du;  svp[7] = 0.0f;
+        svp[12] = -vc / W;  svp[13] = -2.0f * un * du - 1.0f; svp[14] = uf * du; svp[15] = 1.0f;
+        memcpy(p->shadow_light_vp[lv], svp, sizeof(svp));
+
+        /* 级内扫掠体 mvp（local quad 顶点直映 NDC，深度恒 = 最朝光面）*/
+        memset(&tmp, 0, sizeof(tmp));
+        n = 0;
+        for (i = 0; i < SLR_MAX_OBJECTS; i++)
+        {
+            SlrObject* o = &p->objects[i];
+            float c, s, A, B, Pp, Qq, V0, U0, av, au, umax_i, umin_i, kk, ca, *m;
+            if (!o->used || !o->cast_shadow) continue;
+            c = cosf(o->rot_z); s = sinf(o->rot_z);
+            A = o->scale[0] * (-c * dy + s * dx);
+            B = o->scale[1] * ( s * dy + c * dx);
+            Pp = o->scale[0] * ( c * dx + s * dy);
+            Qq = o->scale[1] * (-s * dx + c * dy);
+            V0 = -o->pos[0] * dy + o->pos[1] * dx;
+            U0 =  o->pos[0] * dx + o->pos[1] * dy;
+            av = (A >= 0 ? A : -A) + (B >= 0 ? B : -B);
+            au = (Pp >= 0 ? Pp : -Pp) + (Qq >= 0 ? Qq : -Qq);
+            if (V0 + av * 0.5f < seg_lo || V0 - av * 0.5f > seg_hi)
+                continue;                   /* 非本级联物体 */
+            umin_i = U0 - au * 0.5f;
+            umax_i = U0 + au * 0.5f;
+            if (umax_i - umin_i < 1e-4f) continue;
+            if (umax_i <= un + 1e-3f) continue;
+            kk = (umax_i - un) / (umax_i - umin_i);
+            ca = un - kk * umin_i;
+            m = tmp.mvp[n];
+            memset(m, 0, sizeof(float) * 16);
+            /* x 列：级内 ndc.x ∈[-1,1] 映图集分区 lv 的 ndc 区
+             * [-1+lv·0.5, -1+(lv+1)·0.5]：ndc_atlas = 0.25·ndc + lv·0.5-0.75
+             * （单级 lv=0：[-1,-0.5] 即 uv.x∈[0,0.25]——与 shader 采样同区）*/
+            m[0]  = A / W * 0.25f;
+            m[4]  = B / W * 0.25f;
+            m[12] = (V0 - vc) / W * 0.25f + (float)lv * 0.5f - 0.75f;
+            m[1]  = 2.0f * du * kk * Pp;
+            m[5]  = 2.0f * du * kk * Qq;
+            m[13] = 2.0f * du * (kk * U0 + ca) - 2.0f * un * du - 1.0f;
+            m[14] = (uf - umax_i) * du;
+            m[15] = 1.0f;
+            n++;
+        }
+        if (n == 0) continue;
+
+        g_rhi->upload_perdraw(&tmp, (int)sizeof(tmp));
+        g_rhi->set_state(0);
+        for (i = 0; i < SLR_MAX_OBJECTS; i++)
+        {
+            SlrObject* o = &p->objects[i];
+            float c, s, A, B, Pp, Qq, V0, U0, av, au, umax_i, umin_i;
+            if (!o->used || !o->cast_shadow) continue;
+            c = cosf(o->rot_z); s = sinf(o->rot_z);
+            A = o->scale[0] * (-c * dy + s * dx);
+            B = o->scale[1] * ( s * dy + c * dx);
+            Pp = o->scale[0] * ( c * dx + s * dy);
+            Qq = o->scale[1] * (-s * dx + c * dy);
+            V0 = -o->pos[0] * dy + o->pos[1] * dx;
+            U0 =  o->pos[0] * dx + o->pos[1] * dy;
+            av = (A >= 0 ? A : -A) + (B >= 0 ? B : -B);
+            au = (Pp >= 0 ? Pp : -Pp) + (Qq >= 0 ? Qq : -Qq);
+            if (V0 + av * 0.5f < seg_lo || V0 - av * 0.5f > seg_hi)
+                continue;
+            umin_i = U0 - au * 0.5f;
+            umax_i = U0 + au * 0.5f;
+            if (umax_i - umin_i < 1e-4f) continue;
+            if (umax_i <= un + 1e-3f) continue;
+            g_rhi->draw_item(SLR_PROG_PFLAT, slot, o->mesh, 1);
+            slot++;
+        }
+    }
+    /* 深度纹理绑采样单元（GL TEXTURE2 / D3D11 t1），帧内持续有效：
+     * 后续 desc_bind_tex 只动 TEXTURE1/t0 不冲突 */
+    g_rhi->shadow_bind_depth(p->rt_shadow);
+    p->shadow_on = 1;
+    return 1;
+}
+
 /* 5 渲染层整理数据（真正实现，多相机）：
  *   逐活动相机（depth 升序）收集可见对象：每相机先不透明（queue 升序、
  *   z 升序：近→远，z 同按材质键 prog+tex_desc——同材质相邻成批），
@@ -480,8 +727,10 @@ static int stage_assemble_impl(SlrPipeline* p)
          * + queue 2500 都保证先于本体绘制），比 z 更小的接收面（地面）
          * 近（深度测试 LESS 通过）；本体遮挡自己的阴影（阴影深度大于
          * 本体写入深度 -> 在本体像素上被剔除）。聚光（点源）时方向逐
-         * 物体归一化（灯摇晃 -> 阴影跟随）；无光源不生成。 */
-        if (sh_has)
+         * 物体归一化（灯摇晃 -> 阴影跟随）；无光源不生成。
+         * N2a：shadow map 已启用（阶段 4.5 已渲深度图 + shader 采样
+         * PCF）时跳过本黑斑路径（shadowQuality=0 的回退保留）*/
+        if (sh_has && !p->shadow_on)
         {
             for (i = 0; i < SLR_MAX_OBJECTS && p->item_count < SLR_MAX_OBJECTS; i++)
             {
@@ -607,10 +856,12 @@ static int stage_upload_render_data(SlrPipeline* p)
 static void draw_one_item(SlrPipeline* p, SlrDrawItem* it)
 {
     SlrObject* o = &p->objects[it->obj];
-    /* 纹理绑定在批头（desc_bind_tex，见阶段 7/9 分块循环）——
-     * 绑定与绘制分离：批内所有项共享一次纹理绑定 */
-    g_rhi->draw_item(it->prog, it->slot, o->mesh);
+    /* 纹理绑定在批头（desc_bind_tex，见阶段 9 分块循环）——
+     * 绑定与绘制分离：批内所有项共享一次纹理绑定。
+     * 逐项路径（透明段序敏感，不合批）：单实例 draw */
+    g_rhi->draw_item(it->prog, it->slot, o->mesh, 1);
     p->draw_calls++;
+    p->instance_total++;
     p->layers_mask |= (1 << it->layer);
 }
 
@@ -644,10 +895,27 @@ static int stage_render_shader_chunks(SlrPipeline* p)
             p->program_switches++;
             /* 批头绑定一次纹理描述符（批内同材质共享，SetPass 级合批）*/
             g_rhi->desc_bind_tex(p->items[i].tex_desc);
-            for (; i < j; i++)
+            /* N1 GPU 实例化：批内按 mesh 相同 + PerDraw 槽连续递增 RLE
+             * 分段，每段一次 instanced draw（实例 i = 槽 base+i，VS 槽
+             * 索引 = base + InstanceID；段上限 64 槽 = PerDraw 容量）。
+             * 阶段 5 排序在前、赋槽在后（slot=数组下标），同材质连续段
+             * 槽天然连续，RLE 合批率稳定。段内 layers_mask 逐项照记 */
+            for (; i < j; )
             {
-                draw_one_item(p, &p->items[i]);
+                int mesh = p->objects[p->items[i].obj].mesh;
+                int base = p->items[i].slot, n = 1, m;
+                while (i + n < j
+                    && p->objects[p->items[i + n].obj].mesh == mesh
+                    && p->items[i + n].slot == base + n
+                    && base + n < 64)
+                    n++;
+                g_rhi->draw_item(p->items[i].prog, base, mesh, n);
+                p->draw_calls++;
+                p->instance_total += n;
                 p->opaque_draws++;
+                for (m = 0; m < n; m++)
+                    p->layers_mask |= (1 << p->items[i + m].layer);
+                i += n;
             }
             p->chunk_count++;    /* 批计数（= 状态切换次数）*/
         }
@@ -806,6 +1074,7 @@ int slr_pipeline_render_frame(int64_t h, float time, int64_t dst_ptr)
       && stage_prepare_materials(p)
       && stage_early_update(p)
       && stage_cull_layers(p)
+      && stage_shadow_pass(p)            /* 4.5 N2a：shadow 深度 pass */
       && stage_assemble_impl(p)
       && stage_upload_render_data(p)
       && stage_render_shader_chunks(p)
@@ -847,6 +1116,7 @@ int slr_pipeline_stat(int64_t h, int stat_id)
     case SLR_STAT_TEXTURE_COUNT:     return slr_texture_count();
     case SLR_STAT_PROGRAM_SWITCHES:  return p->program_switches;
     case SLR_STAT_CAMERA_COUNT:      return p->active_cam_count;
+    case SLR_STAT_INSTANCE_COUNT:    return p->instance_total;
     default: set_error(SLR_E_BAD_PARAM); return 0;
     }
 }

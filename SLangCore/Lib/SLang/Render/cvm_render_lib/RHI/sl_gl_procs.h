@@ -66,3 +66,8 @@ GLDECL(glReadPixels,            void, (GLint, GLint, GLsizei, GLsizei, GLenum, G
 GLDECL(glPixelStorei,           void, (GLenum, GLint))
 GLDECL(glGetString,             const unsigned char*, (GLenum))
 GLDECL(glDrawArrays,            void, (GLenum, GLint, GLsizei))
+GLDECL(glDrawArraysInstanced,   void, (GLenum, GLint, GLsizei, GLsizei))
+/* N2a shadow map：颜色写掩码 / 深度清屏 / 无颜色 attachment FBO */
+GLDECL(glColorMask,             void, (GLboolean, GLboolean, GLboolean, GLboolean))
+GLDECL(glClearDepth,            void, (GLdouble))
+GLDECL(glDrawBuffers,           void, (GLsizei, const GLenum*))

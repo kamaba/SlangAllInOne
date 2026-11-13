@@ -19,6 +19,65 @@ public class String extends Object
     {
         ret SystemStringFormat(this, _parmas)
     }
+
+    # 2026-11-13：Front params 打包修复后（IRCall packN），params 版恢复工作；
+    # 1..6 元素定参重载保留（紧邻 params 版，避免虚表序扰动其它方法）。
+    public string format( object p1 )
+    {
+        Array<object> arr = Array<object>( 1 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        ret SystemStringFormat(this, arr)
+    }
+
+    public string format( object p1, object p2 )
+    {
+        Array<object> arr = Array<object>( 2 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        ret SystemStringFormat(this, arr)
+    }
+
+    public string format( object p1, object p2, object p3 )
+    {
+        Array<object> arr = Array<object>( 3 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        ret SystemStringFormat(this, arr)
+    }
+
+    public string format( object p1, object p2, object p3, object p4 )
+    {
+        Array<object> arr = Array<object>( 4 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        ret SystemStringFormat(this, arr)
+    }
+
+    public string format( object p1, object p2, object p3, object p4, object p5 )
+    {
+        Array<object> arr = Array<object>( 5 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        SystemArraySetValueThis( arr, 4, p5 )
+        ret SystemStringFormat(this, arr)
+    }
+
+    public string format( object p1, object p2, object p3, object p4, object p5, object p6 )
+    {
+        Array<object> arr = Array<object>( 6 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        SystemArraySetValueThis( arr, 4, p5 )
+        SystemArraySetValueThis( arr, 5, p6 )
+        ret SystemStringFormat(this, arr)
+    }
     public get int length()
     {
         # 直接走系统调用：字符串值在 VM 上是 scalar wrapper（无类字段布局），
@@ -32,6 +91,63 @@ public class String extends Object
     public static string toFormat( string _format, params object[] _parmas )
     {
         ret SystemStringFormat(_format, _parmas)
+    }
+
+    public static string toFormat( string _format, object p1 )
+    {
+        Array<object> arr = Array<object>( 1 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        ret SystemStringFormat(_format, arr)
+    }
+
+    public static string toFormat( string _format, object p1, object p2 )
+    {
+        Array<object> arr = Array<object>( 2 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        ret SystemStringFormat(_format, arr)
+    }
+
+    public static string toFormat( string _format, object p1, object p2, object p3 )
+    {
+        Array<object> arr = Array<object>( 3 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        ret SystemStringFormat(_format, arr)
+    }
+
+    public static string toFormat( string _format, object p1, object p2, object p3, object p4 )
+    {
+        Array<object> arr = Array<object>( 4 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        ret SystemStringFormat(_format, arr)
+    }
+
+    public static string toFormat( string _format, object p1, object p2, object p3, object p4, object p5 )
+    {
+        Array<object> arr = Array<object>( 5 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        SystemArraySetValueThis( arr, 4, p5 )
+        ret SystemStringFormat(_format, arr)
+    }
+
+    public static string toFormat( string _format, object p1, object p2, object p3, object p4, object p5, object p6 )
+    {
+        Array<object> arr = Array<object>( 6 )
+        SystemArraySetValueThis( arr, 0, p1 )
+        SystemArraySetValueThis( arr, 1, p2 )
+        SystemArraySetValueThis( arr, 2, p3 )
+        SystemArraySetValueThis( arr, 3, p4 )
+        SystemArraySetValueThis( arr, 4, p5 )
+        SystemArraySetValueThis( arr, 5, p6 )
+        ret SystemStringFormat(_format, arr)
     }
 
     # 截取前 index 个字符；index<=0 为空串；大于长度则整串

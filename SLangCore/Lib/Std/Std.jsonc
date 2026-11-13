@@ -37,6 +37,7 @@
       { "path": "OS/DateTime.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },
       { "path": "OS/Timer.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },
       { "path": "OS/Process.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },
+      { "path": "OS/Kernel.sl", "group": "std", "tag": "os", "ignore": false, "priority": 0 },
       { "path": "Net/HttpClient.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
       { "path": "Net/IpProtocal.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
       { "path": "Net/TcpSocket.sl", "group": "std", "tag": "net", "ignore": false, "priority": 0 },
@@ -138,7 +139,8 @@
             { "enum": "ProcessError" },
             { "class": "ProcessStartInfo" },
             { "class": "ProcessResult" },
-            { "class": "Process" }
+            { "class": "Process" },
+            { "class": "Kernel" }
         ]
       },
       { "namespace": "Net", "children":
@@ -244,6 +246,7 @@
       // ---- Std/Encoding/Sha256.sl：根级注册（同上）----
       { "enum": "Sha256Error" },
       { "class": "Sha256" },
+
       // ---- Std/Encoding/Md5.sl：根级注册（同上）----
       { "enum": "Md5Error" },
       { "class": "Md5" },
@@ -339,6 +342,7 @@
     { "name": "SystemProcessGetId",       "returnType": "Int64",  "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_get_id" },
     { "name": "SystemProcessHasExited",   "returnType": "bool",   "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_has_exited" },
     { "name": "SystemProcessExitCode",    "returnType": "Int32",  "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_exit_code" },
+    { "name": "SystemExit",               "returnType": "void",   "params": ["Int32"],  "isVariadic": false, "cvmFunction": "vm_sys_exit" },
     { "name": "SystemProcessWait",        "returnType": "Int32",  "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_wait" },
     { "name": "SystemProcessKill",        "returnType": "void",   "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_kill" },
     { "name": "SystemProcessTerminate",   "returnType": "void",   "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_process_terminate" },

@@ -35,5 +35,12 @@ namespace SLang
         {
             ret SLang.QT.connect( this.handle, SLang.QT.SIG_TREE_SELECTED, handler )
         }
+
+        # 第十四轮：节点右键。handler 形态：static void onContext( string path )，
+        # path = 右键所在节点完整路径（同时会把该节点设为 current；空白区为空串）
+        public Int64 onContext( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_TREE_CONTEXT, handler )
+        }
     }
 }

@@ -1,18 +1,29 @@
 # ============================================================================
-# RenderData.sl —— P0 数据层三类（纯数据快照，零 FFI 零依赖）
+# RenderData.sl —— P0 数据层三类（纯数据快照，零 FFI）
 # ----------------------------------------------------------------------------
 # SRP「数据与流程分离」第一步（AIPrompt.md P0）：
 #   CullingData —— 可视物体快照（CommandBuffer.sortDrawItems 排序后产出，
 #                 列与 drawItem 七元组逐一对齐：prog/slot/mesh/texDesc/
 #                 transparent/queue + z；P1 剔除阶段直灌本表）
 #   FrameData   —— 一帧渲染上下文（时间 / 相机 viewProj / 目标 RT / 清除色 /
-#                 环境快照；Pipeline.buildFrameData 采集，P1+ Pass 体系消费）
+#                 环境快照；Pipeline.buildFrameData 采集，P1+ Pass 体系消费；
+#                 P3 扩展：culling/perDraw/纹理/后处理参数 —— 帧数据完备后
+#                 CameraRenderPipeline.Render(FrameData) 即可独立驱动一帧）
 #   PassData    —— 单个 Pass 的数据描述（输入 / 输出 RT 引用 + 预留参数槽；
 #                 P1 RenderPass.execute 填充）
-# 三类均为根级类（同 RenderEnvironment 先例，jsonc struct 段注册）；
-# 无 import、无 FFI、不依赖 Render / Pipeline（被 Pipeline.sl / CommandBuffer.sl
-# 消费，priority 0 先于 Pipeline(2) / CommandBuffer(22) 编译）。
+#   PerDrawData —— P3 新增：PerDraw 槽常量表（mvp16 + color4，固定容量 16 槽；
+#                 FrameData 携带，CameraRenderPipeline 预录 setPerDraw 消费）
+#   FrameSettings —— P4 新增：帧渲染配置（后处理开关 / 透明排序策略 / 目标
+#                 尺寸缩放百分比），挂 Camera（每相机）与 RenderPipelineAsset
+#                 （管线默认），CameraRenderPipeline 渲染时消费
+# 三类 + 两扩展均为根级类（同 RenderEnvironment 先例，jsonc struct 段注册）；
+# 除 Math/Std 模块引用（Float32_4x4 / Color）外零依赖，不依赖 Render /
+# Pipeline（被 Pipeline.sl / CommandBuffer.sl 消费，priority 0 先于
+# Pipeline(2) / CommandBuffer(22) / Camera(14) 编译）。
 # ============================================================================
+
+import Std;
+import Math;
 
 # ============================================================================
 # CullingData —— 可视物体快照（排序后的 DrawItem 列表，固定容量 + 游标）
@@ -209,6 +220,21 @@ public class FrameData
     string envRenderer = "unknown"
     string envVersion = "unknown"
 
+    # ── P3 帧数据完备扩展（CameraRenderPipeline.Render 消费）──────
+    # 可视物体快照（null 或空表 = 无命令流场景，走 legacy runStages）
+    public CullingData culling = null
+    # PerDraw 槽常量表（mvp16 + color4；槽号与 culling 条目 slot 列对应）
+    public PerDrawData perDraw = null
+    # 帧级纹理（desc 槽 + RenderTexture 句柄；hasTexture=false 跳过 setTexture）
+    public bool hasTexture = false
+    public Int32 texSlot = 0
+    public Int64 texHandle = 0
+    # 后处理参数（与 FrameSettings.postEnabled 相与后生效；enabled=0 纯拷贝）
+    public bool postEnabled = false
+    public Float32 postBrightness = 1.0f
+    public Float32 postSaturation = 1.0f
+    public Float32 postVignette = 1.0f
+
     public void _init_()
     {
         this.time = 0.0f
@@ -232,6 +258,16 @@ public class FrameData
         this.envBackend = "none"
         this.envRenderer = "unknown"
         this.envVersion = "unknown"
+        # P3 扩展
+        this.culling = CullingData()
+        this.perDraw = PerDrawData()
+        this.hasTexture = false
+        this.texSlot = 0
+        this.texHandle = 0
+        this.postEnabled = false
+        this.postBrightness = 1.0f
+        this.postSaturation = 1.0f
+        this.postVignette = 1.0f
     }
 
     # setViewProj(m16) —— 写入 4x4 view-projection（16 元素行/列主序随调用方）
@@ -279,6 +315,25 @@ public class FrameData
         this.targetHandle = handle
         this.targetW = w
         this.targetH = h
+    }
+
+    # setTexture(slot, handle) —— 帧级纹理（P3：CameraRenderPipeline 预录
+    # setTexture 消费；slot = 描述符槽，handle = RenderTexture.handle）
+    public void setTexture( Int32 slot, Int64 handle )
+    {
+        this.texSlot = slot
+        this.texHandle = handle
+        this.hasTexture = handle != 0
+    }
+
+    # setPost(enabled, brightness, saturation, vignette) —— 后处理参数
+    #（enabled=false 纯拷贝；与 FrameSettings.postEnabled 相与后生效）
+    public void setPost( bool enabled, Float32 brightness, Float32 saturation, Float32 vignette )
+    {
+        this.postEnabled = enabled
+        this.postBrightness = brightness
+        this.postSaturation = saturation
+        this.postVignette = vignette
     }
 }
 
@@ -367,5 +422,182 @@ public class PassData
             i = i + 1
         }
         ret 0.0f
+    }
+}
+
+# ============================================================================
+# PerDrawData —— PerDraw 槽常量表（P3：FrameData 携带的槽位常量快照）
+# ----------------------------------------------------------------------------
+# 与 C 侧 SlrPerDraw 槽位世界对齐（mvp16 列主序 + color4；wmat/spec 置零 =
+# 无光照参与）。固定容量 16 槽 + used 标记表（游标式，不逐帧增长）；
+# CameraRenderPipeline 渲染前预录：used 槽逐个 setPerDraw 进共享命令流，
+# DrawItem 经 slot 列引用本槽。默认 mvp=identity / color=white。
+# ============================================================================
+public class PerDrawData
+{
+    public static Int32 CAP_SLOTS = 16
+
+    Array<Float32_4x4> _mvp = null
+    Array<Color> _color = null
+    Array<Int32> _used = null
+    Int32 _usedCount = 0
+
+    public void _init_()
+    {
+        this._mvp = Array<Float32_4x4>( PerDrawData.CAP_SLOTS )
+        this._color = Array<Color>( PerDrawData.CAP_SLOTS )
+        this._used = Array<Int32>( PerDrawData.CAP_SLOTS )
+        Int32 i = 0
+        while i < PerDrawData.CAP_SLOTS
+        {
+            this._mvp[ i ] = Float32_4x4.identity()
+            this._color[ i ] = Color.white()
+            this._used[ i ] = 0
+            i = i + 1
+        }
+        this._usedCount = 0
+    }
+
+    # clear() —— 清空槽表（容量与槽内容保留，只回退 used 标记）
+    public void clear()
+    {
+        Int32 i = 0
+        while i < PerDrawData.CAP_SLOTS
+        {
+            this._used[ i ] = 0
+            i = i + 1
+        }
+        this._usedCount = 0
+    }
+
+    # setSlot(slot, mvp, color) —— 写一个 PerDraw 槽（越界返回 false）
+    public bool setSlot( Int32 slot, Float32_4x4 mvp, Color color )
+    {
+        if slot < 0 || slot >= PerDrawData.CAP_SLOTS
+        {
+            ret false
+        }
+        if mvp == null
+        {
+            ret false
+        }
+        Color c = color
+        if c == null
+        {
+            c = Color.white()
+        }
+        Int32 idx = slot
+        if this._used[ idx ] == 0
+        {
+            this._usedCount = this._usedCount + 1
+        }
+        this._mvp[ idx ] = mvp
+        this._color[ idx ] = c
+        this._used[ idx ] = 1
+        ret true
+    }
+
+    # isUsed(slot) —— 槽是否已写（越界返回 false）
+    public bool isUsed( Int32 slot )
+    {
+        if slot < 0 || slot >= PerDrawData.CAP_SLOTS
+        {
+            ret false
+        }
+        Int32 idx = slot
+        ret this._used[ idx ] != 0
+    }
+
+    # getMvp(slot) —— 槽 MVP（未写槽返回 identity）
+    public Float32_4x4 getMvp( Int32 slot )
+    {
+        if slot < 0 || slot >= PerDrawData.CAP_SLOTS
+        {
+            ret Float32_4x4.identity()
+        }
+        Int32 idx = slot
+        ret this._mvp[ idx ]
+    }
+
+    # getColor(slot) —— 槽颜色（未写槽返回 white）
+    public Color getColor( Int32 slot )
+    {
+        if slot < 0 || slot >= PerDrawData.CAP_SLOTS
+        {
+            ret Color.white()
+        }
+        Int32 idx = slot
+        ret this._color[ idx ]
+    }
+
+    # usedCount() —— 已写槽数
+    public Int32 usedCount()
+    {
+        ret this._usedCount
+    }
+
+    override string toString()
+    {
+        ret "PerDrawData(slots=" + this._usedCount.toString() + "/" + PerDrawData.CAP_SLOTS.toString() + ")"
+    }
+}
+
+# ============================================================================
+# FrameSettings —— 帧渲染配置（P4：每相机/管线级开关，Unity FrameSettings）
+# ----------------------------------------------------------------------------
+# 纯数据类（无方法副作用），消费方：
+#   Camera.sl        —— 每相机挂一份（camera.frameSettings）
+#   RenderPipelineAsset —— 管线默认配置（asset.frameSettings）
+#   CameraRenderPipeline —— 渲染时应用：
+#     postEnabled                false -> PostProcessPass 走纯拷贝（enabled=0）；
+#                                 注意不能整段跳过 Post Pass——C 侧 Blit 固定
+#                                 post->final、Readback 固定 final，跳过会读到
+#                                 陈旧 rt_post（与 AIPrompt P4 验收 draws=3 的
+#                                 预期不同，实现按链路正确性偏离并记录）
+#     transparentSortBackToFront false -> CommandBuffer.transparentDescending=
+#                                 false，透明段改近->远（z 升序）
+#     renderScalePercent         100 -> 全尺寸；50 -> 视口宽高减半（目标 RT
+#                                 尺寸缩放；用整数百分比，避免浮点取整 FFI）
+#     clearOnBegin               OpaquePass 是否清屏（默认 true）
+# ============================================================================
+public class FrameSettings
+{
+    public bool postEnabled = true
+    public bool transparentSortBackToFront = true
+    public Int32 renderScalePercent = 100
+    public bool clearOnBegin = true
+
+    public void _init_()
+    {
+        this.postEnabled = true
+        this.transparentSortBackToFront = true
+        this.renderScalePercent = 100
+        this.clearOnBegin = true
+    }
+
+    # clone() —— 复制一份（相机/资产各自持有时互不影响）
+    public FrameSettings clone()
+    {
+        FrameSettings fs = FrameSettings()
+        fs.postEnabled = this.postEnabled
+        fs.transparentSortBackToFront = this.transparentSortBackToFront
+        fs.renderScalePercent = this.renderScalePercent
+        fs.clearOnBegin = this.clearOnBegin
+        ret fs
+    }
+
+    override string toString()
+    {
+        string pe = "on"
+        if this.postEnabled == false
+        {
+            pe = "off"
+        }
+        string so = "back-to-front"
+        if this.transparentSortBackToFront == false
+        {
+            so = "front-to-back"
+        }
+        ret "FrameSettings(post=" + pe + ", transparent=" + so + ", scale=" + this.renderScalePercent.toString() + "%)"
     }
 }

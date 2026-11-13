@@ -20,7 +20,16 @@ public class Light extends Component
 
     # 阴影
     public bool castShadow = false
-    public Float32 shadowStrength = 1.0f
+    # N2a 阴影质量：0 = 旧 2D 投影黑斑（默认）；1 = shadow map
+    # （光空间深度图 + shader PCF；仅平行光生效，VK 后端按 0 回退）
+    public Float32 shadowQuality = 0.0f
+    # N2b CSM 参数（0 = 管线默认 bias 0.002 / strength 0.35 / 单级联）：
+    # shadowBias 防 acne 深度偏移；shadowStrength 阴影强度覆盖（0..1，
+    # 原 v3.4 字段未消费——复用为管线强度覆盖）；shadowCascades
+    # 级联数（1 = 单级；4 = CSM 4 级联 v 分段 0.05/0.25/0.6/1.0）
+    public Float32 shadowBias = 0.0f
+    public Float32 shadowStrength = 0.0f
+    public Float32 shadowCascades = 0.0f
 
     # ── 显式光照参数（applyTo 写管线槽用；无 Transform 时的方向/位置）──
     # dirX/dirY：平行光 = 表面 -> 光源方向；聚光 = 光轴方向（光源 -> 外）
@@ -39,7 +48,10 @@ public class Light extends Component
         this.lightRange = 0.0f
         this.spotAngle = 30.0f
         this.castShadow = false
-        this.shadowStrength = 1.0f
+        this.shadowQuality = 0.0f
+        this.shadowBias = 0.0f
+        this.shadowStrength = 0.0f
+        this.shadowCascades = 0.0f
         this.dirX = 1.0f
         this.dirY = 0.0f
         this.posX = 0.0f
@@ -214,13 +226,18 @@ public class Light extends Component
         }
         else
         {
-            # 平行光：[dirX, dirY, r, g, b, intensity]
+            # 平行光：[dirX, dirY, r, g, b, intensity, shadowQuality,
+            #          shadowBias, shadowStrength, shadowCascades]（N2b 扩 10 项）
             Memory.writeF32( p, 0, this.dirX )
             Memory.writeF32( p, 4, this.dirY )
             Memory.writeF32( p, 8, cr )
             Memory.writeF32( p, 12, cg )
             Memory.writeF32( p, 16, cb )
             Memory.writeF32( p, 20, this.intensity )
+            Memory.writeF32( p, 24, this.shadowQuality )
+            Memory.writeF32( p, 28, this.shadowBias )
+            Memory.writeF32( p, 32, this.shadowStrength )
+            Memory.writeF32( p, 36, this.shadowCascades )
         }
         ret pipe.setLightParams( slot, ty, p )
     }

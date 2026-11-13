@@ -139,6 +139,13 @@
 - 预防建议：① 在"取指后、执行前"型注入点写探测逻辑，先写清 `execute_index` 的语义基准（本轮待执行 = `execute_index-1`），与主循环取指协议对表；② IR 指令 di 的归属基准 = **用户语句**，任何"缺省取方法 token"的便利路径都会抹平行号（断点/单步/stack 三处同时受害）；③ 状态锚点的失效条件要先枚举"跨边界往返"场景（进被调方再弹回）再定，单一维度的变化判定（行 OR 方法）必错，正确形态是限定同主体内的变化。
 - 详见 `csimple_lang/md/design/DEBUG_PROTOCOL_DESIGN.md` §8.2（三缺陷对照表 + 26 项冒烟覆盖）。
 
+### [2026-11-13] MonitorTest P5/P6 9 项 FAIL 的真根因：门面类改名后 `vm_debug_is_facade_frame` 判定串 stale（"Debug" vs "Core.Monitor"）
+- 现象：`csimple_lang/问题.txt` #4 的 MonitorTest 9 项长期 FAIL（P5 frames/frameData/frameVar 六项 + coroutine frames isolated + P6 log chain/pause 两项）——frames() 栈顶仍是 `{"method":"frames"}`（Monitor API 自身帧），frameData(0) 返回门面自身 args，全链错位一层。
+- 排障路径（R12 插桩三连）：① `vm_debug_stackview.c` 本有 `vm_debug_is_facade_frame` 门面下移机制（§13.5 设计已预见）→ 判定失败 → ② 判定串 `declaring_type_full_name == "Debug"` stale——门面类已改名 "Monitor"（Monitor.sl 头注释明说），且 fullName 实际带模块前缀 `"Core.Monitor"`（Core.module.json L46471 实证）；插桩打印帧上实际值 `decl=Monitor`。③ 修复：判定串四串精确兼容（`Core.Monitor`/`Monitor`/`Core.Debug`/`Debug`——裸串兼容历史产物，模块前缀串对应当前导出）。
+- 修复后：**7 项转 OK**（frames top frame is caller / frameData locals rows / frameVar local values / frameVar reads caller frame / frameData arg rows / frameVar arg value / coroutine frames isolated / P6 log chain summary / P6 pause drops & resume keeps——P6 两项的 log 帧定位同走门面下移，随修全绿）。**剩 2 项登记**（P5 stack empty at statement level / stack snapshot sees left operand）：操作数栈在语句边界残留前序表达式临时值（35 个 obj/str——前文语句的临时对象未弹出），属 VM 操作数栈语句级清理语义，与性能域 #1/#2（slots 改造）一并评估。
+- **验证基建的坑（本轮主耗时来源）**：① **宿主 C VM dll 三级拷贝链**——`build\Debug\bin\csimple_lang_dll.dll`（vmbuild 产物）→ 宿主真实加载位是 **`package\win32-debug\bin\`**（CSimpleVMTest 执行端 = package\win32-debug\slang.exe，csproj 头注释）——vmbuild 后必须拷贝，否则测试跑的是旧 VM（本轮第一/二次回归 FAIL 未变即因此）；② **常驻 slang 进程锁 dll**（LNK1168）——bin\Debug 的 slang.exe（LSP 常驻）需先杀再链接；③ BaseTest FAIL 分布按 `]` 前缀 Group 对比基线是最快回归口径。
+- 预防建议：① **类改名必须全仓 grep 旧名**（含 C 侧字符串字面量判定——Monitor.sl 头注释自述"原 Debug"但 C 侧判定串没跟改）；② 门面/桥接类改名时同步审计**按类型名匹配的运行时判定**（本条是第 2 次同类踩坑：第 1 次是 declaring_type_full_name 短名问题 p4-9）；③ VM dll 修复验证前先核对「构建产物 → 宿主加载位」拷贝链。
+
 ### [2026-10-20] SLangServer P2 中间件 List<Function> 取值恒 null：CastClass Step 6 etype 闸吃掉 Class 闭包引用 + 闭包对象无 RuntimeType + 目标类名双形态
 - 现象：中间件管道 T1/T2 全 500（`mw==null`、mwCount=3 但 mw 调用落到 no-response 兜底）；同批 List<RouteInfo> 等真类实例全绿、List<object> 全绿、无 use() 的 T3/T4 全绿——三组差异长期无机制解释，极易误导修错方向（首验曾误判 Front 发射问题）。
 - 首个异常阶段：VM（CastClass 指令语义；装配层/数组层/比较层均无辜——本轮逐一排除）。

@@ -64,6 +64,11 @@ public class RenderEnvironment
     # 透明渲染队列分界（queue >= 该值走透明序：queue 升序 -> z 降序）
     public Int32 transparentQueueMin = 2500
 
+    # ── P4 帧级统计（最近一次 submitPasses 的 Pass/Feature 计数；
+    #    ScriptableRenderContext 静态记录，query() 快照）────────
+    public Int32 passCount = 0
+    public Int32 featureCount = 0
+
     # ── 诊断 ────────────────────────────────────────────────
     # 最近一次原生调用的错误文本（"ok" = 无错）
     public string lastErrorText = "ok"
@@ -86,6 +91,8 @@ public class RenderEnvironment
         this.argCapacity = 2048
         this.floatCapacity = 8192
         this.transparentQueueMin = 2500
+        this.passCount = 0
+        this.featureCount = 0
         this.lastErrorText = "ok"
     }
 
@@ -202,6 +209,9 @@ public class RenderEnvironment
         env.argCapacity = CommandBuffer.CAP_ARGS
         env.floatCapacity = CommandBuffer.CAP_FLOATS
         env.transparentQueueMin = CommandBuffer.QUEUE_TRANSPARENT_MIN
+        # P4 帧级统计（最近一次 submitPasses 的 Pass / Feature 执行数）
+        env.passCount = ScriptableRenderContext.lastPassCount
+        env.featureCount = ScriptableRenderContext.lastFeatureRunCount
         ret env
     }
 
@@ -243,6 +253,7 @@ public class RenderEnvironment
         s = s + "commandbuffer : " + SystemConvertString( this.commandCapacity ) + " cmds / " + SystemConvertString( this.argCapacity ) + " args / "
         s = s + SystemConvertString( this.floatCapacity ) + " floats\n"
         s = s + "render queue  : transparent >= " + SystemConvertString( this.transparentQueueMin ) + "\n"
+        s = s + "frame stats   : passes " + SystemConvertString( this.passCount ) + ", feature runs " + SystemConvertString( this.featureCount ) + "\n"
         s = s + "last error    : " + this.lastErrorText
         ret s
     }

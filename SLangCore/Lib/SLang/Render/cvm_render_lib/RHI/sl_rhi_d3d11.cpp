@@ -58,6 +58,7 @@ struct SlrRhiTarget           /* D3D11 渲染目标 = 颜色纹理 + RTV/SRV + �
     ID3D11ShaderResourceView* srv;
     ID3D11Texture2D* dtex;                /* 深度纹理（可选）*/
     ID3D11DepthStencilView* dsv;
+    ID3D11ShaderResourceView* dsrv;      /* N2a shadow：深度 SRV（仅 shadow 目标）*/
 };
 
 typedef struct                  /* D3D11 纹理 = 纹理 + SRV */
@@ -94,11 +95,12 @@ static ID3D11Buffer* s_cb_draw = NULL;   /* 7168B：mat4[64] + vec4[64] + wmat[1
 static ID3D11Buffer* s_cb_obj = NULL;    /* 16B  : int uObjIndex + pad     */
 static ID3D11Buffer* s_cb_v1 = NULL;     /* 80B  : float4x4 + float4       */
 static ID3D11Buffer* s_cb_fx = NULL;     /* 16B  : 后处理参数 / 清屏色     */
-static ID3D11Buffer* s_cb_light = NULL;  /* 96B  : LightBlock（光照块）    */
+static ID3D11Buffer* s_cb_light = NULL;  /* 176B : LightBlock（光照 + shadow 参数，N2a 扩 11 vec4）*/
 
 /* 管线状态对象 */
 static ID3D11InputLayout*       s_layout = NULL;
 static ID3D11SamplerState*      s_samp = NULL;
+static ID3D11SamplerState*      s_samp_shadow = NULL;  /* N2a：POINT 采样（s1）*/
 static ID3D11RasterizerState*   s_rs = NULL;
 static ID3D11DepthStencilState* s_ds_opaque = NULL;  /* LESS + 写         */
 static ID3D11DepthStencilState* s_ds_trans = NULL;   /* LESS + 不写       */
@@ -137,16 +139,20 @@ static const char* HLSL_PS_TEX =
     "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
     "float4 psTex(PSIn i) : SV_Target { return uColor * tex0.Sample(samp0, i.uv); }\n";
 
+/* N1 GPU 实例化：实例 i 使用 PerDraw 槽 uObjIndex+i（连续排布），
+ * VS 槽索引 = uObjIndex + SV_InstanceID，经 nointerpolation 插值器传 PS */
 static const char* HLSL_VS_PIPE =
     "cbuffer PerDraw : register(b0) { float4x4 uMVP[64]; float4 uColor[64]; float4 uWMat[128]; float4 uSpec[64]; };\n"
     "cbuffer PerObj : register(b1) { int uObjIndex; float3 _pad; };\n"
-    "struct VSIn { float2 pos : POSITION; float2 uv : TEXCOORD0; };\n"
-    "struct VSOut { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "struct VSIn { float2 pos : POSITION; float2 uv : TEXCOORD0; uint iid : SV_InstanceID; };\n"
+    "struct VSOut { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; nointerpolation int obj : TEXCOORD3; };\n"
     "VSOut vsPipe(VSIn i) { VSOut o; o.uv = i.uv;\n"
-    "  int k = uObjIndex * 2;\n"
+    "  int obj = uObjIndex + (int)i.iid;\n"
+    "  int k = obj * 2;\n"
     "  o.world = float2(dot(i.pos, uWMat[k].xy), dot(i.pos, uWMat[k].zw)) + uWMat[k + 1].xy;\n"
     "  o.nrm = uWMat[k + 1].zw;\n"
-    "  o.sv = mul(uMVP[uObjIndex], float4(i.pos, 0.0, 1.0)); return o; }\n";
+    "  o.obj = obj;\n"
+    "  o.sv = mul(uMVP[obj], float4(i.pos, 0.0, 1.0)); return o; }\n";
 
 /* 管线片元光照（与 GL/GLES 后端公式逐字一致，跨后端同效果）*/
 static const char* HLSL_PS_PIPE_FLAT =
@@ -155,9 +161,9 @@ static const char* HLSL_PS_PIPE_FLAT =
     "cbuffer PerLight : register(b4) {\n"
     "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
     "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; nointerpolation int obj : TEXCOORD3; };\n"
     "float4 psPipeFlat(PSIn i) : SV_Target {\n"
-    "  float4 base = uColor[uObjIndex];\n"
+    "  float4 base = uColor[i.obj];\n"
     "  float3 light = uAmbient.xxx;\n"
     "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
     "  if (uSpotColor.a > 0.5) {\n"
@@ -178,9 +184,9 @@ static const char* HLSL_PS_PIPE_TEX =
     "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
     "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
     "Texture2D tex0 : register(t0); SamplerState samp0 : register(s0);\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; nointerpolation int obj : TEXCOORD3; };\n"
     "float4 psPipeTex(PSIn i) : SV_Target {\n"
-    "  float4 base = uColor[uObjIndex] * tex0.Sample(samp0, i.uv);\n"
+    "  float4 base = uColor[i.obj] * tex0.Sample(samp0, i.uv);\n"
     "  float3 light = uAmbient.xxx;\n"
     "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
     "  if (uSpotColor.a > 0.5) {\n"
@@ -203,13 +209,13 @@ static const char* HLSL_PS_PHONG_FLAT =
     "cbuffer PerLight : register(b4) {\n"
     "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
     "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; nointerpolation int obj : TEXCOORD3; };\n"
     "float4 psPhongFlat(PSIn i) : SV_Target {\n"
-    "  float4 base = uColor[uObjIndex];\n"
+    "  float4 base = uColor[i.obj];\n"
     "  float3 light = uAmbient.xxx;\n"
     "  float3 N = normalize(float3(i.nrm, 0.75));\n"
     "  float3 V = float3(0.0, 0.0, 1.0);\n"
-    "  float2 sp = uSpec[uObjIndex].xy;\n"
+    "  float2 sp = uSpec[i.obj].xy;\n"
     "  float shin = max(sp.y, 0.001);\n"
     "  if (uDirColor.a > 0.5) {\n"
     "    light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
@@ -239,13 +245,13 @@ static const char* HLSL_PS_PHONG_TEX =
     "  float4 uAmbient; float4 uDirColor; float4 uDirDir;\n"
     "  float4 uSpotColor; float4 uSpotPosRange; float4 uSpotDirCos; };\n"
     "Texture2D tex0 : register(t0); SamplerState samp0 : register(s0);\n"
-    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; };\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float2 nrm : TEXCOORD2; nointerpolation int obj : TEXCOORD3; };\n"
     "float4 psPhongTex(PSIn i) : SV_Target {\n"
-    "  float4 base = uColor[uObjIndex] * tex0.Sample(samp0, i.uv);\n"
+    "  float4 base = uColor[i.obj] * tex0.Sample(samp0, i.uv);\n"
     "  float3 light = uAmbient.xxx;\n"
     "  float3 N = normalize(float3(i.nrm, 0.75));\n"
     "  float3 V = float3(0.0, 0.0, 1.0);\n"
-    "  float2 sp = uSpec[uObjIndex].xy;\n"
+    "  float2 sp = uSpec[i.obj].xy;\n"
     "  float shin = max(sp.y, 0.001);\n"
     "  if (uDirColor.a > 0.5) {\n"
     "    light += uDirColor.rgb * max(dot(i.nrm, uDirDir.xy), 0.0);\n"
@@ -511,7 +517,7 @@ static int d3d_make_shared(void)
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_fx))) goto fail_cb;
     bd.ByteWidth = 80;                         /* PerV1：mat4 + vec4         */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_v1))) goto fail_cb;
-    bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：6 vec4 光照块    */
+    bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：11 vec4（光照 + N2a shadow）*/
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_light))) goto fail_cb;
 
     /* 槽位常驻绑定：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx / b4 PerLight
@@ -533,6 +539,11 @@ static int d3d_make_shared(void)
     samp.MaxLOD = D3D11_FLOAT32_MAX;
     if (FAILED(s_dev->CreateSamplerState(&samp, &s_samp))) goto fail_cb;
     s_ctx->PSSetSamplers(0, 1, &s_samp);
+    /* N2a：shadow 深度采样器 s1（POINT + CLAMP——深度剖面 shader 手动
+     * PCF，硬件线性过滤会破坏深度比较；GL/GLES 纹理参数即 NEAREST）*/
+    samp.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+    if (FAILED(s_dev->CreateSamplerState(&samp, &s_samp_shadow))) goto fail_cb;
+    s_ctx->PSSetSamplers(1, 1, &s_samp_shadow);
 
     /* ---- 光栅化：实心 + 不剔除 + 无 scissor（GL 默认态）---- */
     memset(&rsd, 0, sizeof(rsd));
@@ -616,6 +627,7 @@ static void d3d_free_shared(void)
     if (s_cb_v1) { s_cb_v1->Release(); s_cb_v1 = NULL; }
     if (s_cb_fx) { s_cb_fx->Release(); s_cb_fx = NULL; }
     if (s_samp) { s_samp->Release(); s_samp = NULL; }
+    if (s_samp_shadow) { s_samp_shadow->Release(); s_samp_shadow = NULL; }
     if (s_rs) { s_rs->Release(); s_rs = NULL; }
     if (s_ds_opaque) { s_ds_opaque->Release(); s_ds_opaque = NULL; }
     if (s_ds_trans) { s_ds_trans->Release(); s_ds_trans = NULL; }
@@ -688,12 +700,93 @@ fail:
 static void d3d_target_destroy(SlrRhiTarget* t)
 {
     if (!t) return;
+    if (t->dsrv) t->dsrv->Release();
     if (t->dsv) t->dsv->Release();
     if (t->dtex) t->dtex->Release();
     if (t->srv) t->srv->Release();
     if (t->rtv) t->rtv->Release();
     if (t->tex) t->tex->Release();
     free(t);
+}
+
+/* ---- N2a shadow map：depth-only 纹理 + DSV + SRV ---------------------
+ * TYPELESS R24G8（D24 存深度、8 stencil 位闲置）：DSV 以 D24_UNORM_S8
+ * 读，SRV 以 R24_UNORM_X8_TYPELESS 读（r = 深度 [0,1]）。D3D11 无绑
+ * RTV 时 OMSetRenderTargets(0 targets) 合法 —— 片元只写深度。 */
+static SlrRhiTarget* d3d_shadow_target_create(int w, int h)
+{
+    D3D11_TEXTURE2D_DESC td;
+    D3D11_SHADER_RESOURCE_VIEW_DESC sv;
+    D3D11_DEPTH_STENCIL_VIEW_DESC dv;
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
+    if (!t) { set_error(SLR_E_MEMORY); return NULL; }
+    memset(t, 0, sizeof(*t));
+    t->w = w; t->h = h;
+
+    memset(&td, 0, sizeof(td));
+    td.Width = (UINT)w;
+    td.Height = (UINT)h;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    td.SampleDesc.Count = 1;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+    if (FAILED(s_dev->CreateTexture2D(&td, NULL, &t->dtex)))
+    {
+        free(t);
+        set_error_detail(SLR_E_FBO, "D3D11 depth texture creation failed");
+        return NULL;
+    }
+    memset(&dv, 0, sizeof(dv));
+    dv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    if (FAILED(s_dev->CreateDepthStencilView(t->dtex, &dv, &t->dsv))) goto fail;
+    memset(&sv, 0, sizeof(sv));
+    sv.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    sv.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    sv.Texture2D.MostDetailedMip = 0;
+    sv.Texture2D.MipLevels = 1;
+    if (FAILED(s_dev->CreateShaderResourceView(t->dtex, &sv, &t->dsrv))) goto fail;
+    return t;
+
+fail:
+    d3d_target_destroy(t);
+    set_error_detail(SLR_E_FBO, "D3D11 shadow view creation failed");
+    return NULL;
+}
+
+static void d3d_shadow_target_destroy(SlrRhiTarget* t)
+{
+    d3d_target_destroy(t);
+}
+
+/* shadow pass 开始：只绑 DSV（0 RTV）+ 清深度 + 深度测写开（不透明态）。
+ * begin_scene 重新绑 rtv + dsv 恢复主渲染。 */
+static void d3d_shadow_begin(SlrRhiTarget* t, int w, int h)
+{
+    D3D11_VIEWPORT vp;
+    vp.TopLeftX = 0.0f; vp.TopLeftY = 0.0f;
+    vp.Width = (FLOAT)w; vp.Height = (FLOAT)h;
+    vp.MinDepth = 0.0f; vp.MaxDepth = 1.0f;
+    s_ctx->RSSetViewports(1, &vp);        /* 深度图视口（camera_begin 重设）*/
+    s_ctx->OMSetRenderTargets(0, NULL, t->dsv);
+    s_ctx->ClearDepthStencilView(t->dsv, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    s_ctx->OMSetDepthStencilState(s_ds_opaque, 0);
+    s_ctx->OMSetBlendState(s_bs_none, NULL, 0xFFFFFFFF);
+}
+
+/* 深度 SRV 绑 t1（gen 着色器 uShadowTex register(t1)；desc_bind_tex 只动
+ * t0），帧一次；t 为 NULL 时解绑。
+ * D3D11 红线：同资源不得同时作为 OM 输出（DSV）与 PS 输入（SRV）——
+ * 运行时静默拒绑 SRV（无 debug layer 不报错）。shadow_begin 把 shadow
+ * DSV 绑上 OM 后此处必须先清 OM 再绑 SRV；主渲染 begin_scene 会重绑
+ * 完整 RT（RTV+DSV），此清空无副作用。 */
+static void d3d_shadow_bind_depth(SlrRhiTarget* t)
+{
+    ID3D11ShaderResourceView* srv = t ? t->dsrv : NULL;
+    s_ctx->OMSetRenderTargets(0, NULL, NULL);
+    s_ctx->PSSetShaderResources(1, 1, &srv);
 }
 
 /* rgba 首行 = 图像底部（sl_texture.c 已统一翻转）：
@@ -862,7 +955,7 @@ static void d3d_desc_bind_tex(int slot)
     s_ctx->PSSetShaderResources(0, 1, &srv);
 }
 
-static void d3d_draw_item(int prog, int slot, int mesh)
+static void d3d_draw_item(int prog, int slot, int mesh, int instance_count)
 {
     D3dPerObj obj;
     UINT stride = 16, offset = 0;
@@ -883,11 +976,17 @@ static void d3d_draw_item(int prog, int slot, int mesh)
         vb = s_vb[mesh];
         vcount = s_vb_count[mesh];
     }
+    if (instance_count < 1) instance_count = 1;
+    if (slot < 0 || slot + instance_count > 64)
+    {
+        set_error_detail(SLR_E_BAD_PARAM, "instance slots exceed PerDraw bounds");
+        return;
+    }
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
         prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
         prog >= SLR_PROG_GEN_BASE)
     {
-        obj.obj = slot;
+        obj.obj = slot;   /* VS 内部叠加 SV_InstanceID */
         obj.pad[0] = obj.pad[1] = obj.pad[2] = 0.0f;
         d3d_cb_update(s_cb_obj, &obj, sizeof(obj));
     }
@@ -895,7 +994,10 @@ static void d3d_draw_item(int prog, int slot, int mesh)
     s_ctx->VSSetShader(s_vs[prog], NULL, 0);
     s_ctx->PSSetShader(s_ps[prog], NULL, 0);
     s_ctx->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-    s_ctx->Draw(vcount, 0);
+    if (instance_count > 1)
+        s_ctx->DrawInstanced(vcount, (UINT)instance_count, 0, 0);
+    else
+        s_ctx->Draw(vcount, 0);
 }
 
 /* 动态网格上传（三角形列表 pos2+uv2，stride 16B）：容量不足时重建
@@ -1063,7 +1165,7 @@ static void d3d_v1_draw(SlrRhiTarget* t, int w, int h,
         ID3D11ShaderResourceView* srv = tex ? ((D3dTexture*)tex)->srv : NULL;
         s_ctx->PSSetShaderResources(0, 1, &srv);
     }
-    d3d_draw_item(prog, 0, 3);   /* 网格 3 = v1 居中大三角 */
+    d3d_draw_item(prog, 0, 3, 1);   /* 网格 3 = v1 居中大三角（单实例）*/
 }
 
 /* ===================================================================== */
@@ -1178,6 +1280,10 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_desc_write_tex,
     d3d_desc_bind_tex,
     d3d_upload_lights,
+    d3d_shadow_target_create,      /* N2a：shadow 深度目标（R24G8 + DSV + SRV）*/
+    d3d_shadow_target_destroy,
+    d3d_shadow_begin,
+    d3d_shadow_bind_depth,         /* t1 深度 SRV（desc_bind_tex 用 t0 不冲突）*/
 };
 
 const SlrRhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }

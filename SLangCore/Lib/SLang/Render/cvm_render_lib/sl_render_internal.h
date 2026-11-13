@@ -128,12 +128,23 @@ typedef struct
     float cos_angle;      /* 聚光：cos(锥半角) */
     float color[3];
     float intensity;
+    int shadow_quality;   /* N2a：0 = 旧 2D 投影黑斑回退；1 = shadow map
+                             （仅平行光生效；聚光 1 时仍走黑斑）。VK 无
+                             深度采样支持时管线层强制按 0 处理 */
+    float shadow_bias_ovr;    /* N2b：bias 覆盖（0 = 管线默认 0.002）*/
+    float shadow_str_ovr;     /* N2b：强度覆盖（0 = 管线默认 0.35）*/
+    int   shadow_cascades;    /* N2b：级联数（0/1 = 单级 N2a；4 = CSM）*/
 } SlrLight;
 
-/* 帧级光照块（std140，6 vec4 = 96B；GL/GLES 绑定点 1，D3D11 寄存器 b4）
+/* 帧级光照块（std140；GL/GLES 绑定点 1，D3D11 b4）
  * 组装规则：环境光 + 首个启用的平行光 + 首个启用的聚光（light_build_block）；
  * 颜色均为 颜色*强度 预乘；a 分量 1.0=启用。全零 + ambient=1 时输出与
- * 无光照版逐字节一致（向后兼容：跨后端同效果测试不受影响）。 */
+ * 无光照版逐字节一致（向后兼容：跨后端同效果测试不受影响）。
+ * N2a 段（176B）：uLightVP（级联 0）/ uShadowParam / uShadowZx
+ *   ——偏移恒定（尾部追加原则），旧布局零破坏。
+ * N2b 追加（+48B = 224B）：uShadowSplit（4 级联 v 左端边界）/
+ *   uShadowInfo（x=级联数 y=末级右端 v）/ uLightVP1..3（级联 1..3 VP；
+ *   级联 0 复用 N2a 的 uLightVP 位）*/
 typedef struct
 {
     float ambient[4];      /* x = 环境光强度（管线默认 1.0 = 无光照效果）*/
@@ -142,6 +153,14 @@ typedef struct
     float spot_color[4];   /* rgb = 颜色*强度, a = 启用 */
     float spot_pos_range[4]; /* xy = 聚光位置, z = 有效半径 */
     float spot_dir_cos[4]; /* xy = 光轴方向（光源 -> 外）, z = cos(锥半角)*/
+    float light_vp[16];    /* N2a：级联 0 光空间 VP（column_major 4x4）*/
+    float shadow_param[4]; /* N2a：enable / bias / strength / texel */
+    float shadow_zxform[4]; /* N2a：深度还原 xy + 行 v 适配 zw */
+    float shadow_split[4]; /* N2b：4 级联 v 左端边界（split[i+1]=右端）*/
+    float shadow_info[4];  /* N2b：x = 级联数（1/4），y = 末级右端 v */
+    float shadow_vp1[16];  /* N2b：级联 1 VP */
+    float shadow_vp2[16];  /* N2b：级联 2 VP */
+    float shadow_vp3[16];  /* N2b：级联 3 VP */
 } SlrLightBlock;
 
 /* ===================================================================== */
@@ -230,6 +249,7 @@ typedef struct
 
     int visible_count, culled_count;
     int draw_calls, opaque_draws, transparent_draws;
+    int instance_total;                         /* N1：本帧实例总数（合批后）*/
     int chunk_count, program_switches, upload_count;
     int layers_mask, last_stage;
 
@@ -237,6 +257,17 @@ typedef struct
 
     SlrLight lights[SLR_MAX_LIGHTS];   /* 光照槽表（SL 侧 Light.applyTo 写入）*/
     float ambient;                     /* 环境光强度（默认 1.0 = 无光照效果）*/
+
+    /* N2a shadow map：深度专用目标（懒创建 512x512，仅平行光 quality>=1
+     * 且后端支持时激活；destroy 走 pipeline_release_targets）
+     * N2b CSM：4 级联 v 分段（图集 1x4 分区），级联 0 复用单级语义 */
+    SlrRhiTarget* rt_shadow;
+    int   shadow_on;                    /* 本帧 shadow pass 已执行（绑定+VP 就绪）*/
+    int   shadow_map_size;              /* 深度图边长（正方形，默认 512）*/
+    int   shadow_cascades;              /* N2b：级联数（1 = 单级 N2a；4 = CSM）*/
+    float shadow_light_vp[4][16];       /* N2b：每级光空间 VP（[0] = N2a 单级位）*/
+    float shadow_split[5];              /* N2b：级联 v 边界（split[i]..split[i+1]）*/
+    float shadow_bias, shadow_strength;/* 防 acne 偏移 / 阴影强度（0..1）*/
 
     float clear_color[4];
     int post_enabled;
@@ -281,6 +312,10 @@ void light_build_block(SlrPipeline* p, SlrLightBlock* out);
  * 返回 0 = 无可用光源 -> 不生成阴影。 */
 int light_pick_shadow(SlrPipeline* p, float* dir_out, int* has_pos_out,
                       float* pos_out);
+
+/* sl_light.c：N2a shadow map 光源查询（阶段 4.5/5）：首个 shadow_quality>=1
+ * 的平行光（dir_out = 表面->光源方向）；返回 -1 = 无（走黑斑回退）。 */
+int light_pick_shadowmap(SlrPipeline* p, float* dir_out);
 
 #ifdef __cplusplus
 }

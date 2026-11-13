@@ -65,5 +65,12 @@ namespace SLang
         {
             ret SLang.QT.connect( this.handle, SLang.QT.SIG_TAB_CLOSE_REQUESTED, handler )
         }
+
+        # 第十四轮：标签区右键。handler 形态：static void onTabContext( int idx )，
+        # idx = 右键所在标签下标（-1 = 非标签区域）
+        public Int64 onTabContext( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_TAB_CONTEXT, handler )
+        }
     }
 }

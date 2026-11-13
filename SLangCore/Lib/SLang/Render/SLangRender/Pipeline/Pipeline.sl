@@ -71,6 +71,7 @@ namespace SLang
         public static Int32 STAT_TEXTURE_COUNT      = 14
         public static Int32 STAT_PROGRAM_SWITCHES   = 15
         public static Int32 STAT_CAMERA_COUNT       = 16
+        public static Int32 STAT_INSTANCE_COUNT    = 17
 
         # ── 相机清屏标志位（clearFlags）──────────────────────────
         public static Int32 CLEAR_COLOR = 1
@@ -596,8 +597,11 @@ namespace SLang
             ret fd
         }
 
-        # renderCameraScene(fd) —— 以 FrameData 驱动一帧（P0 转发 runStages，
-        # 行为零变化；P1+ 由 ScriptableRenderContext 接管）
+        # renderCameraScene(fd) —— 以 FrameData 驱动一帧（P0 转发 runStages；
+        # P3 起双重路由：注册了活动 CameraRenderPipeline（SLang.Render.
+        # usePipeline）且帧数据完备（fd.culling 非空）且句柄一致时，转交
+        # CameraRenderPipeline.render（P1 context submit 流程包装）；否则
+        # legacy runStages —— 既有 Phase 全部零变化）
         public bool renderCameraScene( FrameData fd )
         {
             if this._handle == 0
@@ -611,6 +615,21 @@ namespace SLang
             if fd.dstPixels == 0
             {
                 ret false
+            }
+            # P3 路由：活动管线 + 数据完备 + 句柄一致 -> 新管线实例
+            if fd.culling != null
+            {
+                if fd.culling.count() > 0
+                {
+                    CameraRenderPipeline active = SLang.Render.currentPipeline()
+                    if active != null
+                    {
+                        if active.pipelineHandle() == this._handle
+                        {
+                            ret active.render( fd )
+                        }
+                    }
+                }
             }
             ret this.runStages( fd.time, fd.dstPixels )
         }

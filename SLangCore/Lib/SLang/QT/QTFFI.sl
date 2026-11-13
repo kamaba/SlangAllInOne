@@ -541,6 +541,8 @@ namespace SLang
         public static Int64 ffi_menuAddAction( Int64 menu, string text ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_menu_popup_exec_sl" )
         public static Int64 ffi_menuPopupExec( Int64 menu, Int64 anchor, Int32 x, Int32 y ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_menu_popup_cursor_sl" )
+        public static Int64 ffi_menuPopupCursor( Int64 menu ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_menu_add_separator_sl" )
         public static void ffi_menuAddSeparator( Int64 menu ) {}
         @DllStaticImport( "slang_qt", "slqt_action_set_text_sl" )

@@ -425,6 +425,7 @@ SLQT_API int64_t slqt_menu_create_popup_sl(const char* t) { return slqt_be_menu_
 SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* t) { return slqt_be_menu_add_action(menu, t); }
 SLQT_API void    slqt_menu_add_separator_sl(int64_t menu) { slqt_be_menu_add_separator(menu); }
 SLQT_API int64_t slqt_menu_popup_exec_sl(int64_t menu, int64_t anchor, int32_t x, int32_t y) { return slqt_be_menu_popup_exec(menu, anchor, x, y); }
+SLQT_API int64_t slqt_menu_popup_cursor_sl(int64_t menu) { return slqt_be_menu_popup_cursor(menu); }
 SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t) { slqt_be_action_set_text(a, t); }
 SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int64_t on) { slqt_be_action_set_enabled(a, on); }
 SLQT_API int64_t slqt_action_enabled_sl(int64_t a) { return (int64_t)slqt_be_action_enabled(a); }

@@ -380,3 +380,19 @@
 - 语义边界（重要）：实参位置非调用成员函数 = 函数值（方法引用）；链中间节点与表达式上下文维持自动调用。**不要**把规则放宽到链中间——`f.type`、`x.hashCode.toString()`、`re.groupCount.toString()` 等 API 会立刻碎。
 - 排障教训：① "not support type" 挂在**外层调用头**不代表头有问题，是**实参子链解析失败**向传导（插桩 `TryCreateMethodReference` 无日志才定位到分支没走到）；② 修 Front 语义前先跑**全量语料回归**（BaseTest+ExpendTest 编译）——首轮"只放行真访问器"修复就因 SLB 旗标丢失把 `f.type` 碎了；③ 测试用例自身也会骗人：单行多语句 `{ f( 7 )  ret 0 }`（无分号）静默丢语句，曾把问题误导向 JIT/VM；④ 载荷链路加字段要全链核对（writer→SLBReader→IRMethod→loader 四点，漏一点就是"写了但读不回"）。
 - 验证：`test\Other\WebUIProbe`（六形态探针：0 参静态带返/无返、1 参静态、0 参/1 参实例、0 参匿名闭包）全通过；BaseTest+ExpendTest 全量编译干净；WebUITest bindHandle 三形态端到端（窗口/绑定/阻塞）通过。
+
+### [2026-11-13] SL 保留字黑名单新证据：`def` 与 `label`（SLangCodeEditor 第十五轮实测）
+- 现象：`CliProjectLogic.sl` 局部变量 `def`、`Probe16.sl` 方法参数 `label` 均报 `TokenLexerUnsupportedKeyword`（「关键字不受支持：identifier:[def] 函数直接以名称声明」）；`label` 报 `NodeStructParseNameIsKeyword`（参数名不允许使用关键字）。
+- 结论：SL 词法把 `def`（函数直接以名称声明的保留语法位）与 `label`（标签语法）列为保留字，不能作变量名/参数名。黑名单累计实证：`base` / `list` / `out` / `next` / `params` / `data` / `get` / `set` / `def` / `label`。
+- 预防建议：在 SL 里起名避开常见 C/Python 关键字与短小写词；遇到 `TokenLexerUnsupportedKeyword` / `ParseNameIsKeyword` 先查是否撞保留字，再查语法形态。总表见 `md/syntax/keywords.md`。
+
+### [2026-11-13] `params` 可变参数打包从未实现——声明/匹配层齐备而调用装配缺失（TupleTest 10 FAIL 与 String.format 全局失效同根因）
+- 现象（最小复现：`PUtil.sum(params object[] values)` 静态方法，`sum(1,2,3)` 返回 0 无 "values-null" 打印；`PUtil.fmt("a","b","c")` 返回 "n=0"；`string.format(7,8)` 原样输出占位符）：**调用处实参没有打包进 params 数组**——方法收到的 `values` 非 null 但 length=0。
+- 机制定位（三层分段审计）：
+  1. **声明层**：Lexer `case "params": ETokenType.Params`（LexerParseToToken.cs L2424）→ `FileMetaMemberFunction.GetNameAndTypeNode` 吸收 params token 存 `m_ParamsToken`——**存档即止，无下游**；
+  2. **匹配层**：`MetaParam.isExtendParams`（Core/MetaParam.cs L123，`m_ExtendParamsForced` 传播链齐备）→ `MetaDefineParamCollection.IsEqualMetaInputParamCollection` 的 `m_IsExtendParams` 分支放行任意实参个数（L604-630，inputCount > 形参个数时跳过逐参检查）→ **重载匹配通过**；
+  3. **IR 层**：`IRMethod.isExtendParams`（flags bit 128，IRMethod.cs L245 从 slb 装载）**存在但零消费**——`IRCall` 全部实参发射点（`paramCount = mfc.metaInputParamList.Count` 逐个 `CreateExpress`）对 params 方法照常逐个压栈，无 NewArray+SetItem 打包。
+- 运行时表现的自洽解释：方法形参槽 1 个（object[]），实参按声明顺序压栈 → 帧上 `values` 槽错位读取 → 观察到「非 null 空数组」。
+- **修复方向**（未实施，见 `csimple_lang/问题.txt` #5）：IRCall 主调用路径实参发射处，对目标方法 `IRMethod.isExtendParams` 发射 NewArray<object>(N) + 逐元素 SetItem + 数组引用入栈（单数组单参）——匹配层已放行任意实参个数，只差 IR 装配。影响面：`String.format` / `Tuple.create`（TupleTest 10 FAIL）/ `StringBuilder.appendFormat` / `Coroutine.waitAll`。
+- 复现要点：静态/实例 params、泛型类与非泛型类全可复现；`Tuple<int,string>.create`（模板形式、定参）不受影响——**params 与模板正交，纯调用装配缺口**。
+- **库侧重载绕过（2026-11-13 已落地，部分生效）**：`Tuple.create` 加 1..10 元素定参重载（TupleTest 10 项全绿——BaseTest 17→7）；`String.format`/`String.toFormat` 加 1..6 元素重载。**决议差异实证**：**静态调用**（`String.toFormat(3 参)`）命中重载 ✓；**实例调用**（`"lit".format(2 参)` / 变量接收者同样）仍选 params 版 ✗——**实例成员重载决议与静态决议路径不同**（实例侧重载遍历疑似未纳入新重载或优先级差异，待查）。**当前可用姿势**：格式化用 `String.toFormat(fmt, args...)` 静态形态；`Tuple.create` 1..10 元素已全面可用（>10 元素场景仍待 Front 打包）。

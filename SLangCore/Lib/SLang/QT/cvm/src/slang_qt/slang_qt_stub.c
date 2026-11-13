@@ -213,6 +213,7 @@ int64_t slqt_be_menu_create_popup(const char* title) { (void)title; return slqt_
 int64_t slqt_be_menu_add_action(int64_t menu, const char* text) { (void)menu;(void)text; return slqt_register(NULL); }
 void    slqt_be_menu_add_separator(int64_t menu) { (void)menu; }
 int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t y) { (void)menu;(void)anchor;(void)x;(void)y; return 0; }
+int64_t slqt_be_menu_popup_cursor(int64_t menu) { (void)menu; return 0; }
 void    slqt_be_action_set_text(int64_t a, const char* t) { (void)a;(void)t; }
 void    slqt_be_action_set_enabled(int64_t a, int64_t on) { (void)a;(void)on; }
 int64_t slqt_be_action_enabled(int64_t a) { (void)a; return 1; }

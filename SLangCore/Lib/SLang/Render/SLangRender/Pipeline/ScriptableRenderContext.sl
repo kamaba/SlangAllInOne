@@ -291,11 +291,22 @@ public class ScriptableRenderContext
     # ── P1 Pass 功能块：Pass 序列 + 共享命令流（单流提交）──────
     public static Int32 CAP_PASSES = 16
 
+    # ── P2 Feature 表：注入式渲染特性（HDRP CustomPass 等价物）───
+    public static Int32 CAP_FEATURES = 16
+
+    # 帧级统计（P4 RenderEnvironment 消费：最近一次 submitPasses 的
+    # Pass 数 / Feature 执行次数；静态记录，query() 快照读取）
+    public static Int32 lastPassCount = 0
+    public static Int32 lastFeatureRunCount = 0
+
     # 目标管线（submitPasses 经它整包提交共享命令流）
     public SLang.RenderPipeline pipeline = null
     Array<RenderPass> _passes = null
     Int32 _passCount = 0
     CommandBuffer _passCmd = null
+    Array<RenderFeature> _features = null
+    Int32 _featureCount = 0
+    Int32 _featureRunCount = 0
 
     public void _init_()
     {
@@ -308,6 +319,10 @@ public class ScriptableRenderContext
         this._passes = Array<RenderPass>( ScriptableRenderContext.CAP_PASSES )
         this._passCount = 0
         this._passCmd = CommandBuffer()
+        # P2 Feature 表
+        this._features = Array<RenderFeature>( ScriptableRenderContext.CAP_FEATURES )
+        this._featureCount = 0
+        this._featureRunCount = 0
     }
 
     public void _init_( GfxDevice _device )
@@ -519,6 +534,108 @@ public class ScriptableRenderContext
         ret this._passes[ idx ]
     }
 
+    # ── P2 Feature 序列管理 ──────────────────────────────
+    # addFeature(feature) —— 注册一个注入式渲染特性（空引用/容量满返回 false）
+    public bool addFeature( RenderFeature feature )
+    {
+        if feature == null
+        {
+            ret false
+        }
+        if this._featureCount >= ScriptableRenderContext.CAP_FEATURES
+        {
+            ret false
+        }
+        Int32 idx = this._featureCount
+        this._features[ idx ] = feature
+        this._featureCount = idx + 1
+        ret true
+    }
+
+    # clearFeatures() —— 清空 Feature 表（容量保留，只回退游标）
+    public void clearFeatures()
+    {
+        this._featureCount = 0
+    }
+
+    public Int32 featureCount()
+    {
+        ret this._featureCount
+    }
+
+    # featureAt(index) —— 取注册的 Feature（越界返回 null）
+    public RenderFeature featureAt( Int32 index )
+    {
+        if index < 0 || index >= this._featureCount
+        {
+            ret null
+        }
+        Int32 idx = index
+        ret this._features[ idx ]
+    }
+
+    # runFeatures(injectionPoint, cmd) —— 执行该注入点全部启用的 Feature
+    # （命令录进共享命令流；返回本次执行的 Feature 数）
+    public Int32 runFeatures( Int32 injectionPoint, CommandBuffer cmd )
+    {
+        Int32 ran = 0
+        Int32 i = 0
+        while i < this._featureCount
+        {
+            RenderFeature f = this._features[ i ]
+            if f != null
+            {
+                if f.enabled
+                {
+                    if f.injectionPoint == injectionPoint
+                    {
+                        f.execute( this, cmd )
+                        ran = ran + 1
+                    }
+                }
+            }
+            i = i + 1
+        }
+        this._featureRunCount = this._featureRunCount + ran
+        ret ran
+    }
+
+    # injectBeforeOf(passType) / injectAfterOf(passType) —— Pass 类型 →
+    # 前置/后置注入点映射（无注入隙的类型返回 -1；==/!= 整型派发）
+    static Int32 injectBeforeOf( Int32 passType )
+    {
+        if passType == RenderPass.TYPE_OPAQUE
+        {
+            ret EInjectionPoint.BeforeOpaque
+        }
+        if passType == RenderPass.TYPE_TRANSPARENT
+        {
+            ret EInjectionPoint.BeforeTransparent
+        }
+        if passType == RenderPass.TYPE_POST
+        {
+            ret EInjectionPoint.BeforePost
+        }
+        ret -1
+    }
+
+    static Int32 injectAfterOf( Int32 passType )
+    {
+        if passType == RenderPass.TYPE_OPAQUE
+        {
+            ret EInjectionPoint.AfterOpaque
+        }
+        if passType == RenderPass.TYPE_TRANSPARENT
+        {
+            ret EInjectionPoint.AfterTransparent
+        }
+        if passType == RenderPass.TYPE_POST
+        {
+            ret EInjectionPoint.AfterPost
+        }
+        ret -1
+    }
+
     # ── P1 单流提交 ───────────────────────────────────────
     # beginPassRecording() —— 开启一帧的共享命令流：清空旧录制并 begin。
     # 之后可用 passCommandBuffer() 预录帧级共享状态（setTexture /
@@ -533,6 +650,8 @@ public class ScriptableRenderContext
         }
         this._passCmd.clear()
         this._passCmd.begin()
+        # P2：Feature 执行计数按帧归零（submitPasses 期间累加）
+        this._featureRunCount = 0
     }
 
     # passCommandBuffer() —— 共享命令流引用（预录 / 断言用）
@@ -543,7 +662,9 @@ public class ScriptableRenderContext
 
     # submitPasses() —— 依序执行 Pass 序列并整包提交（Unity
     # ScriptableRenderContext.Submit 的 Pass 化对应物）：
-    #   1 逐 Pass 调 pass.execute(this, cmd) 把命令录进同一条流；
+    #   1 逐 Pass 调 pass.execute(this, cmd) 把命令录进同一条流，Pass 前后
+    #     间隙按注入点执行已注册 Feature（P2：Opaque/Transparent/Post 三对
+    #     前后隙，runFeatures ==/!= 整型派发）；
     #   2 cmd.sortDrawItems() 整理 DrawItem 段（不透明 queue→z→prog、
     #     透明 z 降序，与 C 侧 sort_items 键序一致）；
     #   3 cmd.end() 后经 pipeline.executeCommandBuffer 整包提交（C 侧
@@ -565,12 +686,25 @@ public class ScriptableRenderContext
             RenderPass p = this.passAt( i )
             if p != null
             {
+                Int32 before = ScriptableRenderContext.injectBeforeOf( p.passType )
+                if before >= 0
+                {
+                    this.runFeatures( before, this._passCmd )
+                }
                 p.execute( this, this._passCmd )
+                Int32 after = ScriptableRenderContext.injectAfterOf( p.passType )
+                if after >= 0
+                {
+                    this.runFeatures( after, this._passCmd )
+                }
             }
             i = i + 1
         }
         this._passCmd.sortDrawItems()
         this._passCmd.end()
+        # 帧级统计（P4 RenderEnvironment 快照消费）
+        ScriptableRenderContext.lastPassCount = this._passCount
+        ScriptableRenderContext.lastFeatureRunCount = this._featureRunCount
         if this._passCmd.commandCount <= 0
         {
             ret false

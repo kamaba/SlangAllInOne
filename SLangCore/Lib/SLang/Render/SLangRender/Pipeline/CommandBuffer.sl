@@ -88,6 +88,11 @@ public class CommandBuffer
     public bool isRecording = false
     public Int32 commandCount = 0  # 已录制命令数（= 条目数，随录制同步）
 
+    # 透明段排序策略（P4 FrameSettings.transparentSortBackToFront 消费）：
+    # true = 远→近（z 降序，默认，保混合次序）；false = 近→远（z 升序）。
+    # 仅 sortDrawItems 消费；clear() 不重置（配置项非游标）。
+    public bool transparentDescending = true
+
     # P0 数据层：可视物体快照（sortDrawItems 排序后产出，CullingData）
     public CullingData culling = null
 
@@ -128,6 +133,7 @@ public class CommandBuffer
         this._floatUsed = 0
         this._overflow = 0
         this._curActive = false
+        this.transparentDescending = true
         this.culling = CullingData()
     }
 
@@ -849,8 +855,53 @@ public class CommandBuffer
             Int64 jProg = this._args[ js ]
             ret kProg < jProg
         }
-        # 透明：z 降序（远→近），不加材质键（合批不得改混合次序）
-        ret kZ > jZ
+        # 透明：z 降序（远→近，保混合次序）或升序（策略开关，P4
+        # FrameSettings.transparentSortBackToFront），不加材质键
+        # （合批不得改混合次序）
+        if this.transparentDescending
+        {
+            ret kZ > jZ
+        }
+        ret kZ < jZ
+    }
+
+    # ── P2 Feature 回放：把本缓冲录制的条目重放进目标缓冲 ──
+    # 单流约束（P1 偏离记录）：Feature 持有的自身 CommandBuffer 经
+    # preRecord 产出命令账目，execute 时经本方法重放进 P1 的共享命令流
+    # （一帧全部命令必须同一条流提交）。逐条目按固定消费数拷贝 opcode +
+    # args/floats 数据区间；目标须处于录制中（isRecording）。
+    public bool replayInto( CommandBuffer dst )
+    {
+        if dst == null
+        {
+            ret false
+        }
+        if dst.isRecording == false
+        {
+            ret false
+        }
+        Int32 i = 0
+        while i < this._cmdUsed
+        {
+            dst.beginCmd( this._opcodes[ i ] )
+            Int32 k = 0
+            while k < this._argCount[ i ]
+            {
+                Int32 srcArg = this._argStart[ i ] + k
+                dst.arg64( this._args[ srcArg ] )
+                k = k + 1
+            }
+            Int32 m = 0
+            while m < this._floatCount[ i ]
+            {
+                Int32 srcFlt = this._floatStart[ i ] + m
+                dst.flt( this._floats[ srcFlt ] )
+                m = m + 1
+            }
+            dst.endCmd()
+            i = i + 1
+        }
+        ret true
     }
 
     # ── 提交打包（SLMC 布局，doc/04 §3.6）─────────────────

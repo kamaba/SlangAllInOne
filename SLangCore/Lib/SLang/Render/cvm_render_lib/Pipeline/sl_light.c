@@ -14,8 +14,12 @@
  * ========================================================================= */
 #include "sl_render_internal.h"
 
-/* params 布局（vm_sl_render.h v3.3 注释为准）：
- *   平行光 type=0：[dirX, dirY, r, g, b, intensity]                  6 float
+/* params 布局（vm_sl_render.h v3.7 注释为准）：
+ *   平行光 type=0：[dirX, dirY, r, g, b, intensity, shadowQuality,
+ *                   shadowBias, shadowStrength, shadowCascades]        10 float
+ *     （shadowQuality：0=旧 2D 投影黑斑；1=shadow map——N2a，仅平行光；
+ *       shadowBias/Strength/Cascades：N2b 覆盖（0 = 管线默认
+ *       0.002 / 0.35 / 单级；cascades 支持 1 与 4——4 = CSM）
  *   聚光   type=2：[posX, posY, dirX, dirY, angleDeg, range, r, g, b, intensity] 10 float */
 int slr_light_set(int64_t h, int slot, int type, int64_t params_ptr)
 {
@@ -45,6 +49,12 @@ int slr_light_set(int64_t h, int slot, int type, int64_t params_ptr)
         L->dir[1] = q[1] / len;
         L->color[0] = q[2]; L->color[1] = q[3]; L->color[2] = q[4];
         L->intensity = q[5];
+        /* N2a：shadow map 质量（仅平行光有意义；1=启用）*/
+        if (q[6] >= 1.0f) L->shadow_quality = 1;
+        /* N2b：bias / 强度 / 级联数覆盖（0 = 管线默认）*/
+        L->shadow_bias_ovr = q[7];
+        L->shadow_str_ovr = q[8];
+        L->shadow_cascades = (q[9] >= 3.5f) ? 4 : 1;
     }
     else
     {
@@ -141,6 +151,33 @@ void light_build_block(SlrPipeline* p, SlrLightBlock* out)
             out->spot_dir_cos[2] = L->cos_angle;
         }
     }
+    /* N2a/N2b shadow 参数：stage_shadow_pass 已执行（阶段 4.5，先于本
+     * 函数）时填 —— 光空间 VP（级联 0..3，列主）+ 开关/偏移/强度/纹素
+     * + 跨后端深度值域还原（GL/GLES 硬件深度 *2-1）+ 级联 v 分段表 */
+    if (p->shadow_on)
+    {
+        int d3d = (g_rhi && strcmp(g_rhi->name, "d3d11") == 0);
+        int lv;
+        memcpy(out->light_vp, p->shadow_light_vp[0], sizeof(float) * 16);
+        memcpy(out->shadow_vp1, p->shadow_light_vp[1], sizeof(float) * 16);
+        memcpy(out->shadow_vp2, p->shadow_light_vp[2], sizeof(float) * 16);
+        memcpy(out->shadow_vp3, p->shadow_light_vp[3], sizeof(float) * 16);
+        out->shadow_param[0] = 1.0f;                          /* enable */
+        out->shadow_param[1] = p->shadow_bias;                /* bias   */
+        out->shadow_param[2] = p->shadow_strength;            /* 强度    */
+        out->shadow_param[3] = 1.0f / (float)p->shadow_map_size; /* texel */
+        out->shadow_zxform[0] = d3d ? 1.0f : 2.0f;    /* 深度还原 scale  */
+        out->shadow_zxform[1] = d3d ? 0.0f : -1.0f;   /* 深度还原 bias   */
+        out->shadow_zxform[2] = d3d ? -1.0f : 1.0f;   /* 行 v scale（D3D11 RT 行序镜像）*/
+        out->shadow_zxform[3] = d3d ? 1.0f : 0.0f;   /* 行 v bias        */
+        /* N2b：级联 v 分段（级联 i 覆盖 [split[i], split[i+1]]；
+         * 单级 = [vmin, vmax] 全段，split[1..3] 填 vmax 让 shader 级联
+         * 选择天然落 0 级——N2a 语义零变化）*/
+        for (lv = 0; lv < 4; lv++)
+            out->shadow_split[lv] = p->shadow_split[lv];
+        out->shadow_info[0] = (float)p->shadow_cascades;
+        out->shadow_info[1] = p->shadow_split[4];   /* 末级右端 v */
+    }
 }
 
 /* 阴影投射光源查询（阶段 5）：首个平行光优先 —— 平行光 dir 为
@@ -178,4 +215,23 @@ int light_pick_shadow(SlrPipeline* p, float* dir_out, int* has_pos_out,
         }
     }
     return 0;
+}
+
+/* N2a shadow map 光源查询（阶段 4.5 / 阶段 5）：返回首个
+ * shadow_quality>=1 的平行光索引（dir_out 输出其方向，表面->光源）；
+ *无则返回 -1（阶段 5 照常生成 2D 投影黑斑回退）。 */
+int light_pick_shadowmap(SlrPipeline* p, float* dir_out)
+{
+    int i;
+    for (i = 0; i < SLR_MAX_LIGHTS; i++)
+    {
+        SlrLight* L = &p->lights[i];
+        if (L->used && L->type == SLR_LIGHT_DIRECTIONAL && L->shadow_quality >= 1)
+        {
+            dir_out[0] = L->dir[0];
+            dir_out[1] = L->dir[1];
+            return i;
+        }
+    }
+    return -1;
 }

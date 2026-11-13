@@ -268,6 +268,8 @@ SLQT_API int64_t slqt_menu_add_action_sl(int64_t menu, const char* text); /* 返
 SLQT_API void    slqt_menu_add_separator_sl(int64_t menu);
 /* 阻塞弹出：在 anchor 控件 (x,y) 局部坐标处 exec；返回被选中 QAction 句柄（0=取消） */
 SLQT_API int64_t slqt_menu_popup_exec_sl(int64_t menu, int64_t anchor, int32_t x, int32_t y);
+/* 阻塞弹出：在当前光标（鼠标）位置 exec（右键菜单标准形态） */
+SLQT_API int64_t slqt_menu_popup_cursor_sl(int64_t menu);
 SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t);
 SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int64_t on);
 SLQT_API int64_t slqt_action_enabled_sl(int64_t a);

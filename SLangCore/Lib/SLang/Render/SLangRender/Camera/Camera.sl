@@ -22,6 +22,33 @@ public class Camera extends Component
     # 深度排序（值小先渲染）
     public Int32 depth = 0
 
+    # ── P4：帧渲染配置（每相机开关；null = 用管线默认）──────────
+    # FrameSettings：postEnabled / transparentSortBackToFront /
+    # renderScalePercent / clearOnBegin（CameraRenderPipeline 渲染时消费；
+    # 设置后相机渲染走该配置，未设置时用 RenderPipelineAsset 的默认）
+    public FrameSettings frameSettings = null
+
+    # 取本相机的帧配置（未设置时惰性建默认份）
+    public FrameSettings getFrameSettings()
+    {
+        if this.frameSettings == null
+        {
+            this.frameSettings = FrameSettings()
+        }
+        ret this.frameSettings
+    }
+
+    # 设置帧配置（null 被拒，保留原值）
+    public bool setFrameSettings( FrameSettings fs )
+    {
+        if fs == null
+        {
+            ret false
+        }
+        this.frameSettings = fs
+        ret true
+    }
+
     # ── 视图矩阵 ─────────────────────────────────────────
     # Transform 提供世界变换；若未挂 Transform 则用本地 identity
     public get Float32_4x4 worldToCameraMatrix()

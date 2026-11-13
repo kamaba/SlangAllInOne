@@ -85,6 +85,25 @@ public class RenderPipelineAsset
     public Int32 maxVisibleLights = 4
     public Int32 pixelLights = 1
 
+    # ── P3 桥接世界字段（CameraRenderPipeline 消费；草稿 GfxDevice 世界
+    #    的 createPipeline() 不受影响，URP asset 不调本 _init_，字段留语言
+    #    默认值——CameraRenderPipeline.create 对 null/0 全量兜底）────
+    # 目标 RT 尺寸（create 时 SLang.RenderPipeline.create 用）
+    public Int32 targetWidth = 256
+    public Int32 targetHeight = 256
+    # 清除色（OpaquePass 绑定场景目标时用）
+    public Float32 clearR = 0.06f
+    public Float32 clearG = 0.06f
+    public Float32 clearB = 0.10f
+    public Float32 clearA = 1.0f
+    # 帧渲染配置（null -> CameraRenderPipeline 兜底 FrameSettings()）
+    public FrameSettings frameSettings = null
+    # Feature 模板表（固定容量；CameraRenderPipeline 装配时逐个 addFeature
+    # 注册进 context——HDRP「资产声明 + 实例装配」思想）
+    public static Int32 CAP_FEATURE_TEMPLATES = 16
+    Array<RenderFeature> _featureTemplates = null
+    Int32 _featureTemplateCount = 0
+
     public void _init_()
     {
         this.name = "RenderPipelineAsset"
@@ -95,6 +114,54 @@ public class RenderPipelineAsset
         this.softShadows = true
         this.maxVisibleLights = 4
         this.pixelLights = 1
+        # P3 桥接字段
+        this.targetWidth = 256
+        this.targetHeight = 256
+        this.clearR = 0.06f
+        this.clearG = 0.06f
+        this.clearB = 0.10f
+        this.clearA = 1.0f
+        this.frameSettings = FrameSettings()
+        this._featureTemplates = Array<RenderFeature>( RenderPipelineAsset.CAP_FEATURE_TEMPLATES )
+        this._featureTemplateCount = 0
+    }
+
+    # addFeatureTemplate(feature) —— 声明一个注入式渲染特性模板
+    #（空引用/容量满返回 false；模板表持有实例引用）
+    public bool addFeatureTemplate( RenderFeature feature )
+    {
+        if feature == null
+        {
+            ret false
+        }
+        if this._featureTemplates == null
+        {
+            this._featureTemplates = Array<RenderFeature>( RenderPipelineAsset.CAP_FEATURE_TEMPLATES )
+        }
+        if this._featureTemplateCount >= RenderPipelineAsset.CAP_FEATURE_TEMPLATES
+        {
+            ret false
+        }
+        Int32 idx = this._featureTemplateCount
+        this._featureTemplates[ idx ] = feature
+        this._featureTemplateCount = idx + 1
+        ret true
+    }
+
+    # featureTemplateCount() / featureTemplateAt(index) —— 模板表读取
+    public Int32 featureTemplateCount()
+    {
+        ret this._featureTemplateCount
+    }
+
+    public RenderFeature featureTemplateAt( Int32 index )
+    {
+        if index < 0 || index >= this._featureTemplateCount
+        {
+            ret null
+        }
+        Int32 idx = index
+        ret this._featureTemplates[ idx ]
     }
 
     # 由子类（URP asset）创建具体管线

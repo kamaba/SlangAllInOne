@@ -15,6 +15,8 @@ macOs /iOS的环境
 10. 接入kotlin
 
 
+配置里边增加是否打开Console的配置文件 。
+
 Unity的机制
 1. 有了对应的类 并且命名空间与Unity3d里边CSharp里边的类同命名空间+类名
 2. 机制重构，需要使用data->逻辑的做法
@@ -72,5 +74,3 @@ MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 l
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 
-
-现在文档导航 貌似还少很多呀，要在Readmd.md里边 都能显示出来。

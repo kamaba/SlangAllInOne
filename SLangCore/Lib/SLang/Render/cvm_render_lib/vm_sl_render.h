@@ -84,7 +84,8 @@ enum
     SLR_STAT_DT_MS            = 13,  /* 帧间隔（int 毫秒）                 */
     SLR_STAT_TEXTURE_COUNT    = 14,  /* 全局纹理数                         */
     SLR_STAT_PROGRAM_SWITCHES = 15,  /* 本帧着色器程序切换次数              */
-    SLR_STAT_CAMERA_COUNT     = 16   /* 本帧实际参与渲染的相机数            */
+    SLR_STAT_CAMERA_COUNT     = 16,  /* 本帧实际参与渲染的相机数            */
+    SLR_STAT_INSTANCE_COUNT   = 17   /* N1：本帧实例总数（合批后）           */
 };
 
 /* ---- 网格类型 ---- */
@@ -206,8 +207,13 @@ SLR_API int     slr_object_count(int64_t p);
  * 世界坐标锥角 + 距离衰减）。环境光经 slr_light_set_ambient 全局调节
  * （默认 1.0 = 无光照效果，输出与旧版逐字节一致）。
  * params_ptr 指向 float 数组（SL 侧 Memory.writeF32 填充），布局：
- *   平行光 type=0：[dirX, dirY, r, g, b, intensity]                      6 项
- *     dirX/dirY = 表面 -> 光源方向（任意长度，内部归一化）
+ *   平行光 type=0：[dirX, dirY, r, g, b, intensity, shadowQuality,
+ *                   shadowBias, shadowStrength, shadowCascades]        10 项
+ *     dirX/dirY = 表面 -> 光源方向（任意长度，内部归一化）；
+ *     shadowQuality = 0 旧 2D 投影黑斑（默认）；1 = shadow map（N2a，
+ *     光空间深度图 + shader PCF，仅平行光；VK 后端按 0 回退）；
+ *     shadowBias/Strength/Cascades = N2b CSM 覆盖（0 = 管线默认
+ *     0.002 / 0.35 / 单级；cascades 4 = CSM 级联 v 分段 0.05/0.25/0.6/1.0）
  *   聚光   type=2：[posX, posY, dirX, dirY, angleDeg, range, r, g, b, intensity] 10 项
  *     dirX/dirY = 光轴方向（光源 -> 外）；angleDeg 锥半角 [1,89]；
  *     range 有效半径（>0，距离平方衰减 + 截断）

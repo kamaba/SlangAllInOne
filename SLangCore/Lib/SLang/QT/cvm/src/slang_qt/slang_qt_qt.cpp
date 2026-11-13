@@ -67,6 +67,7 @@
 #include <QSyntaxHighlighter>
 /* 2026-11-13 VS 多标签 */
 #include <QTabWidget>
+#include <QCursor>
 #include <QTextBlock>
 #include <QTextCursor>
 #include <QTextDocument>
@@ -473,7 +474,10 @@ int32_t slqt_be_app_set_style(const char* n)
     if (!g_app || !n) return 0;
     return g_app->setStyle(QString::fromUtf8(n)) != nullptr ? 1 : 0;
 }
-void slqt_be_app_exec(void) { if (g_app) g_app->exec(); }
+void slqt_be_app_exec(void)
+{
+    if (g_app) g_app->exec();
+}
 void slqt_be_app_process_events(void) { if (g_app) g_app->processEvents(); }
 void slqt_be_app_quit(void) { if (g_app) g_app->quit(); }
 int32_t slqt_be_app_argc(void) { return g_app ? (int32_t)g_app->arguments().size() : 0; }
@@ -747,7 +751,9 @@ int64_t slqt_be_timer_create(int32_t ms, int32_t single, int64_t dispatchCb, int
     if (!dispatchCb) return 0;
     QTimer* t = new QTimer(nullptr);
     t->setSingleShot(single != 0);
-    QObject::connect(t, &QTimer::timeout, [=]() { ((void (*)(int64_t))dispatchCb)(slot); });
+    QObject::connect(t, &QTimer::timeout, [=]() {
+        ((void (*)(int64_t))dispatchCb)(slot);
+    });
     if (ms > 0) t->start(ms);
     return slqt_register(t);
 }
@@ -1515,6 +1521,15 @@ int64_t slqt_be_menu_popup_exec(int64_t menu, int64_t anchor, int32_t x, int32_t
     QPoint gp(x, y);
     if (w) gp = w->mapToGlobal(gp);
     QAction* sel = m->exec(gp);
+    return sel ? slqt_register(sel) : 0;
+}
+
+/* 阻塞弹出：在当前光标（鼠标）位置 exec（右键菜单标准形态）。 */
+int64_t slqt_be_menu_popup_cursor(int64_t menu)
+{
+    auto* m = qobject_cast<QMenu*>((QObject*)slqt_resolve(menu));
+    if (!m) return 0;
+    QAction* sel = m->exec(QCursor::pos());
     return sel ? slqt_register(sel) : 0;
 }
 

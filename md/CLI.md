@@ -27,7 +27,8 @@
 | `slang publish <project>` | 发布（dotnet-publish 风格）：`both`（缺省）= 可运行 app exe（payload 附加 csimple_lang.exe + sqlite3.dll + lib\）+ `<Module>.module.slb`；`exe` / `slb` 只出其一。布局走 jsonc `publish` 段或 `--dest` |
 | `slang new project <Name> [-p <dir>] [选项]` | 脚手架：`<dir>\<Name>\` 下成套落盘 `Name.sp / Name.jsonc / Name.sl / Name.md`（UTF-8 BOM，含 guide）。无选项时行为与旧版一致；选项见 §1.4 |
 | `slang new class <Name> [-p <dir>]` | 在 `<dir>` 找到的 `.sp` 旁创建 `<Name>.sl` 并登记进 jsonc |
-| `slang project <sub>` | 工程配置/目录扫描的 CLI 真源（自带文法）：`info / scan / get / set / raw`，见 §1.5 |
+| `slang test <project>` | 跑工程 `tests/` 下的测试用例（第十八轮）：用例 = `tests\<Name>\` 目录工程（`<Name>.sl` 含 `Project._main_()` 入口 + `<Name>.jsonc`）；每个用例独立子进程编译+运行，**退出码 0 = PASS**，断言失败在用例里调 `SystemExit(非0)`（裸系统调用，Std 模块注册，引用 Std 即可用；正数透传为进程退出码）。输出逐用例 `[PASS]\|[FAIL] (exit=N)` + 汇总 `tests: N total, M passed, K failed`；全过 exit 0，否则 1；无 `tests/` 目录输出 `tests: none` exit 0。`--filter <子串>`（第十九轮）只跑名字含该子串的用例（大小写不敏感；无匹配输出 `tests: none matched filter` exit 0） |
+| `slang project <sub>` | 工程配置/目录扫描的 CLI 真源（自带文法）：`info / scan / get / set / raw / copy / rename / delete`，见 §1.5 |
 | `slang lsp [--stdio]` | 内嵌 LSP 3.17 服务器（stdio JSON-RPC；VSCode 插件消费：诊断推送 + 符号补全） |
 | `slang lsp-compile` | LSP 专用诊断子命令（新进程单次编译，结构化 JSON 到 stdout；`slang lsp` 每轮自动调用，一般不直接用） |
 | `slang ffi-check <contract> [--dll <lib.dll>]` | FFI 契约独立校验（`.slffi.json`）：schema 自检（version / functionList / structs / callbacks）+ 可选 DLL 导出表逐符号比对；失败 exit 1（CI 友好） |
@@ -72,6 +73,7 @@ slang MyProject -- arg1 arg2                                   # 程序参数透
 slang compile MyProject --format binary+json                   # 仅编译，SLB+json 副本
 slang run publish\MyApp.module.slb                             # 只运行编译产物
 slang publish MyProject --mode exe --cvm Release               # 发布 GUI-less exe
+slang test MyProject                                           # 跑工程 tests/ 用例
 slang info out\export\ProjectTest\ProjectTest.module.json      # 模块元数据
 slang pack-modules --config Release                            # 标准库打包
 ```
@@ -97,8 +99,11 @@ slang pack-modules --config Release                            # 标准库打包
 | `project info <path> [--json]` | 工程锚点 / 类型 / 模块名 / 状态 + `compileFiles` 逐项存在性 + 配置节点树（路径、类型、值、行号、原始片段、标注）。`--json` 输出单行 JSON（含 `nodeCount/fileCount/referenceCount` 显式计数） |
 | `project scan <dir> [--json] [--depth N]` | 递归扫描 `*.jsonc`（排除 `.git/node_modules/out/publish/build/bin/obj/.codebuddy` 与 `plugin.jsonc`；深度缺省 8，上限 2000 文件 / 200 工程），`--json` 返回 `projects[]` 结构化结果 |
 | `project get <path> --key <a/b/[i]/c> [--json]` | 读一个键（类型化值 + 原始片段） |
-| `project set <path> --key <a/b> --value <text>` | 改一个键：`--value` 为 JSON 字面量或纯文本（纯文本自动加引号）；只替换值区间，**注释、缩进、键顺序、BOM 原样保留** |
+| `project set <path> --key <a/b> --value <text> [--add]` | 改一个键：`--value` 为 JSON 字面量或纯文本（纯文本自动加引号）；只替换值区间，**注释、缩进、键顺序、BOM 原样保留**。带 `--add` 时新增缺失键/段：最长已存在祖先为 object → 插入成员（中间缺失段构造嵌套 object），为 array → 只支持末尾追加元素（`[i]` 必须等于当前元素数，元素内嵌套键合法）；`--add` 遇已存在键报错退出 1，缺失键不带 `--add` 报错并提示 |
 | `project raw <path> --key <a/b>` | 读一个节点的原始片段（只读） |
+| `project copy <path> --name <New> [--dest <dir>]` | 复制工程为新名副本：整目录递归复制（`--dest` 缺省同父目录）→ 副本内 jsonc/sp 改名为 `<New>` → 同步 `project.name` / `export.moduleName`（存在才改，注释/BOM/缩进保留）；目标已存在退出 1、名称非法退出 2 |
+| `project rename <path> --name <New>` | 重命名工程：jsonc/sp 改名 + `project.name` / `export.moduleName` 同步；目标已存在退出 1 |
+| `project delete <path>` | 递归永久删除工程目录（无回收站；盘根/异常路径拒绝）；IDE 的「删除工程（可恢复）」= copy 到回收槽位 + delete 原目录 + manifest 登记 |
 
 `<path>` 可以是 `.jsonc`、`.sp` 或工程目录；节点路径用 `/` 拼接、数组索引写 `[i]`，例如 `export/moduleName`、`compileFiles/files/[0]/path`。`--json` 结构化输出可直接被编辑器 / 脚本消费，无需自行解析 jsonc。
 

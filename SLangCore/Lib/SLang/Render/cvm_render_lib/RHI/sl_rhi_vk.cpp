@@ -2019,14 +2019,15 @@ static void vk_desc_bind_tex(int slot)
                   ? s_desc_set[slot] : NULL;
 }
 
-static void vk_draw_item(int prog, int slot, int mesh)
+static void vk_draw_item(int prog, int slot, int mesh, int instance_count)
 {
     int idx;
     VkDescriptorSet set;
     VkDeviceSize off = 0;
     VkBuffer vb;
     uint32_t count;
-    uint32_t obj = (uint32_t)slot;
+    uint32_t obj;
+    int i;
 
     if (!s_pass_open)
     {
@@ -2068,14 +2069,27 @@ static void vk_draw_item(int prog, int slot, int mesh)
         vb = s_vb[mesh];
         count = (mesh == 1) ? 6 : 3;
     }
+    if (instance_count < 1) instance_count = 1;
+    if (slot < 0 || slot + instance_count > 64)
+    {
+        set_error_detail(SLR_E_BAD_PARAM, "instance slots exceed PerDraw bounds");
+        return;
+    }
     p_vkCmdBindPipeline(s_cmd, (VkPipelineBindPoint)VK_PIPELINE_BIND_POINT_GRAPHICS, s_vk_pipes[idx]);
-    p_vkCmdPushConstants(s_cmd, s_pl_layouts[idx],
-                        (VkShaderStageFlagBits)(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
-                        0, 4, &obj);
     p_vkCmdBindDescriptorSets(s_cmd, (VkPipelineBindPoint)VK_PIPELINE_BIND_POINT_GRAPHICS,
                               s_pl_layouts[idx], 0, 1, &set, 0, NULL);
     p_vkCmdBindVertexBuffers(s_cmd, 0, 1, &vb, &off);
-    p_vkCmdDraw(s_cmd, count, 1, 0, 0);
+    /* N1 实例化降级：固化 SPIR-V 不含实例索引（PerDraw 槽经 push
+     * constant 逐实例传），内部展开为 n 次单实例 draw，像素输出与
+     * 真 GPU instancing 等效（GL/GLES/D3D11 走原生 instanced 路径）*/
+    for (i = 0; i < instance_count; i++)
+    {
+        obj = (uint32_t)(slot + i);
+        p_vkCmdPushConstants(s_cmd, s_pl_layouts[idx],
+                            (VkShaderStageFlagBits)(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT),
+                            0, 4, &obj);
+        p_vkCmdDraw(s_cmd, count, 1, 0, 0);
+    }
 }
 
 /* 动态网格上传（三角形列表 pos2+uv2，stride 16B）：容量不足时重建

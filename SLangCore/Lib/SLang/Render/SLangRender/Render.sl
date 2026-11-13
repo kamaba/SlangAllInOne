@@ -246,6 +246,37 @@ namespace SLang
         {
             ret Render.libErrorString( err )
         }
+
+        # ── P3：RenderPipeline 实例注册（usePipeline 门面，纯 SL 路由）──
+        # 全局唯一活动管线实例；注册后 SLang.RenderPipeline.renderCameraScene
+        # (FrameData) 在帧数据完备（fd.culling 非空）且句柄一致时自动路由到
+        # CameraRenderPipeline.render（P1 context submit 流程包装），否则走
+        # legacy runStages —— 行为零变化（AIPrompt P3 需求 4）。
+        # 类型互引先例：RenderPass(29) <-> ScriptableRenderContext(31)。
+        static CameraRenderPipeline _activePipeline = null
+
+        # usePipeline(pipeline) —— 注册活动管线实例（null 拒绝）
+        public static bool usePipeline( CameraRenderPipeline pipeline )
+        {
+            if pipeline == null
+            {
+                ret false
+            }
+            Render._activePipeline = pipeline
+            ret true
+        }
+
+        # currentPipeline() —— 当前活动管线实例（未注册 null）
+        public static CameraRenderPipeline currentPipeline()
+        {
+            ret Render._activePipeline
+        }
+
+        # clearPipeline() —— 取消注册（不销毁管线）
+        public static void clearPipeline()
+        {
+            Render._activePipeline = null
+        }
     }
 
     # ===================================================================

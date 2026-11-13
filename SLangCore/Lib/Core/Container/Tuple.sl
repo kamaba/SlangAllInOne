@@ -823,6 +823,126 @@ public class Tuple extends Object
     }
 
     #不限长静态工厂：可传任意个元素（内部按数组存储）
+    # 2026-11-13：Front params 打包未实现（调用侧实参不进数组，见
+    # troubleshooting/01-front-compile.md 2026-11-13 条目）——
+    # 在此提供 1..10 元素的定参重载（object 逐元素），TupleTest 用例走重载；
+    # params 版保留（Front 打包修复后自动生效，>10 元素场景由其承接）。
+    public static Tuple create( object v1 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5, object v6 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        t._appendValue( v6 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5, object v6, object v7 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        t._appendValue( v6 )
+        t._appendValue( v7 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5, object v6, object v7, object v8 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        t._appendValue( v6 )
+        t._appendValue( v7 )
+        t._appendValue( v8 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5, object v6, object v7, object v8, object v9 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        t._appendValue( v6 )
+        t._appendValue( v7 )
+        t._appendValue( v8 )
+        t._appendValue( v9 )
+        ret t
+    }
+
+    public static Tuple create( object v1, object v2, object v3, object v4, object v5, object v6, object v7, object v8, object v9, object v10 )
+    {
+        var t = Tuple()
+        t._appendValue( v1 )
+        t._appendValue( v2 )
+        t._appendValue( v3 )
+        t._appendValue( v4 )
+        t._appendValue( v5 )
+        t._appendValue( v6 )
+        t._appendValue( v7 )
+        t._appendValue( v8 )
+        t._appendValue( v9 )
+        t._appendValue( v10 )
+        ret t
+    }
+
+    # params 版（可传任意个元素，内部按数组存储）——依赖 Front params 打包
     public static Tuple create( params object[] values )
     {
         var t = Tuple()

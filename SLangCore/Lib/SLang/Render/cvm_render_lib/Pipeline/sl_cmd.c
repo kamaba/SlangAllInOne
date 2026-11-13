@@ -33,7 +33,10 @@
  *   DrawItem          args[prog slot mesh texDesc transparent queue]
  *                     floats[z]（z 仅供 SL 侧排序，回放不消费）
  *                     -> 脏则 upload_perdraw；set_state；desc_bind_tex；
- *                        draw_item（自包含命令：排序重排安全）
+ *                        draw_item（自包含命令：排序重排安全）；N1 起
+ *                        不透明连续项回放端 RLE 合并为 instanced draw
+ *                        （prog/mesh/texDesc 同 + 槽连续递增 + ≤64 槽，
+ *                        透明项混合序敏感恒逐项）
  *   PostProcess       args[enabled] floats[b s v] -> post_process(post<-scene)
  *   Blit              -> blit(final<-post)
  *   Readback          args[dstPtr] -> readback(final)
@@ -225,6 +228,7 @@ SLR_API int slr_cmd_execute_stream(int64_t pipe, int64_t stream_ptr,
         g_rhi->upload_lights(&lb, (int)sizeof(lb));
     }
     p->draw_calls = 0; p->opaque_draws = 0; p->transparent_draws = 0;
+    p->instance_total = 0;   /* N1：实例总数逐帧清零（与管线阶段 1 同口径）*/
     p->program_switches = 0; p->chunk_count = 0; p->upload_count = 0;
     p->layers_mask = 0;
     p->visible_count = 0; p->culled_count = 0;
@@ -311,6 +315,24 @@ SLR_API int slr_cmd_execute_stream(int64_t pipe, int64_t stream_ptr,
             if (cmd_prog_valid(prog) && slot >= 0 && slot < SLR_MAX_OBJECTS
                 && cmd_mesh_valid(mesh))
             {
+                int n = 1;
+                /* N1 GPU 实例化（方案 B：C 侧回放 RLE 合并，SL 录制端零改动）
+                 * —— 不透明项 lookahead：连续 DrawItem 且 prog/mesh/texDesc
+                 * 相同、槽号连续递增（实例 i = 槽 base+i）、槽不越 64 上限
+                 * （PerDraw 容量）。合并候选隐式通过首项验证（prog/mesh/
+                 * texd 同已验证值、slot+n ≤ 63）。透明项混合序敏感，恒 1。 */
+                if (!transp)
+                {
+                    while (i + n < count
+                        && opcodes[i + n] == SLR_CMD_DRAW_ITEM
+                        && slot + n < 64
+                        && (int)args[ai + n * CMD_ARGS[SLR_CMD_DRAW_ITEM]] == prog
+                        && (int)args[ai + n * CMD_ARGS[SLR_CMD_DRAW_ITEM] + 1] == slot + n
+                        && (int)args[ai + n * CMD_ARGS[SLR_CMD_DRAW_ITEM] + 2] == mesh
+                        && (int)args[ai + n * CMD_ARGS[SLR_CMD_DRAW_ITEM] + 3] == texd
+                        && (int)args[ai + n * CMD_ARGS[SLR_CMD_DRAW_ITEM] + 4] == 0)
+                        n++;
+                }
                 if (perdraw_dirty)
                 {
                     g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
@@ -318,11 +340,20 @@ SLR_API int slr_cmd_execute_stream(int64_t pipe, int64_t stream_ptr,
                 }
                 g_rhi->set_state(transp ? 1 : 0);
                 g_rhi->desc_bind_tex(texd);   /* -1 = 清绑定（与批头行为一致）*/
-                g_rhi->draw_item(prog, slot, mesh);
+                g_rhi->draw_item(prog, slot, mesh, n);
                 p->draw_calls++;
+                p->instance_total += n;
                 if (transp) p->transparent_draws++;
                 else p->opaque_draws++;
                 if (prog != last_prog) { p->program_switches++; last_prog = prog; }
+                /* 合并 n 条命令：游标推进 = 命令数 x 表定消费（switch 后统一
+                 * 推进补最后一条）；首项无效时不合并不推进（保持原行为）*/
+                if (n > 1)
+                {
+                    ai += (n - 1) * CMD_ARGS[op];
+                    fi += (n - 1) * CMD_FLOATS[op];
+                    i += n - 1;
+                }
             }
             break;
         }

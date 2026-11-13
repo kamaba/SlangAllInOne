@@ -92,8 +92,12 @@ typedef struct SlrRhi
     void (*upload_perdraw)(const void* data, int bytes);
     /* 单绘制项：纯整数索引（prog = SLR_PROG_PFLAT/PTEX，slot = PerDraw
      * 槽位，mesh = 0..3 静态网格 / 4..4+SLR_CUSTOM_MESHES-1 动态网格）。
-     * 纹理不在此传——绘制前经 desc_bind_tex 绑描述符槽（见下）*/
-    void (*draw_item)(int prog, int slot, int mesh);
+     * 纹理不在此传——绘制前经 desc_bind_tex 绑描述符槽（见下）。
+     * instance_count：GPU 实例化（N1）——实例 i 使用 PerDraw 槽
+     * slot+i（连续排布，上限 64 槽），VS 槽索引 = slot + InstanceID
+     * 经 flat varying 传 FS；1 = 单实例（非实例化路径，逐字节兼容）。
+     * VK 后端固化 SPIR-V 不含实例索引，内部降级为 n 次单实例 draw */
+    void (*draw_item)(int prog, int slot, int mesh, int instance_count);
 
     /* 阶段 11：后处理（enabled=0 走纯拷贝）scene -> post */
     void (*post_process)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
@@ -122,11 +126,28 @@ typedef struct SlrRhi
     int  (*desc_write_tex)(int slot, void* tex);   /* 写：纹理资源 -> 描述符槽 */
     void (*desc_bind_tex)(int slot);               /* 绑：槽 -> 像素着色器 */
 
-    /* ---- 帧级光照块（SlrLightBlock，96B；PFLAT/PTEX 着色器消费）----
+    /* ---- 帧级光照块（SlrLightBlock，176B；PFLAT/PTEX/gen 着色器消费）----
      * GL/GLES：LightBlock UBO 绑定点 1；D3D11：PerLight 寄存器 b4；
      * VK：SPIR-V 着色器固化暂未消费光照（空实现，设置光照无效果——
      * 不影响默认路径：无光照时输出与旧版逐字节一致）。 */
     void (*upload_lights)(const void* data, int bytes);
+
+    /* ---- N2a shadow map（深度专用目标；NULL = 后端不支持，管线层
+     *      强制回退旧 2D 投影黑斑）----
+     * 深度目标 = depth-only 可采样：GL/GLES FBO + depth TEXTURE
+     * (GL_DEPTH_COMPONENT24)；D3D11 depth-stencil 纹理 + DSV + SRV
+     * (R24G8 read D24)；VK 未实现（vtable NULL -> shadow_quality 按 0）。
+     *   shadow_target_create(w,h)  深度目标创建（无颜色 attachment）
+     *   shadow_target_destroy(t)  目标销毁
+     *   shadow_begin(t,w,h)       绑深度目标 + 清深度 + 关颜色写掩码
+     *                             + 深度测写开（begin_scene 重置恢复）
+     *   shadow_bind_depth(t)      深度纹理绑到 shadow 采样点（帧一次：
+     *                             GL/GLES TEXTURE2 / D3D11 t1 —— 与
+     *                             desc_bind_tex 的 t0/TEXTURE1 不冲突）*/
+    SlrRhiTarget* (*shadow_target_create)(int w, int h);
+    void (*shadow_target_destroy)(SlrRhiTarget* t);
+    void (*shadow_begin)(SlrRhiTarget* t, int w, int h);
+    void (*shadow_bind_depth)(SlrRhiTarget* t);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

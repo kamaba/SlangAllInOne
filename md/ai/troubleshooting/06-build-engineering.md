@@ -275,3 +275,32 @@
 - 修复点：`build-unity-package.ps1` 增 `$pluginLib = <exe目录>/lib`，把 `Core.module.slb` / `Std.module.slb` 同步部署到 `Packages/com.slang.unity/Plugins/x86_64/lib/`；`slang_unity.cpp` 清理重复 `SlUObject` 定义并把对象表与 `g_state` 统一放进 `.slushare`（RWS，virtual size 34648 B），`slu_boot` 注释改为真实原因；`verify-hello-cube.ps1` 去掉全部临时诊断。
 - 如何快速复现/验证：删掉 `<exe>/lib/*.module.slb` 重跑 verify 即复现 FAIL；部署后 `verify-hello-cube.ps1` 输出 `objects=2` / `rotY=90` / `color=(1,0.45,0.1)` / `volume=0.8` / `PASS`。二分关键动作是**同一份 SLB 换目录直接跑 CLI**（导出目录好、StreamingAssets 坏）。
 - 预防建议：① 与主包一同分发 SLB 时，必须同时检查 `moduleReferences` 的相对基准（Front 导出目录 ≠ 运行目录），并优先利用 `<exe>/lib` 回退链；② 「rc=0 + 日志正常 + 状态全默认」先怀疑**依赖模块静默 skip**（查 `VM.txt` 的 `could not load module reference`），别先改 FFI / 共享内存；③ 跨进程共享段里所有可变状态必须同处一个 RWS 段，独立 `.sluobjs` 段没标 RWS 会制造「一半状态可见」的假象。
+
+### [2026-11-13] `slang project set --add`（JSONC 结构化插入）三处实现 bug：行号/尾逗号/数组嵌套段（SLangCodeEditor 第十五轮）
+- 背景：`SlangAllInOne/Project/ProjectCommand.cs` 的 `Set` 增 `--add`（键缺失时向最长已存在祖先容器插入成员）。初版三处 bug：
+  1. **`NodeEntry.StartLine` 是 1-based 行号不是字符下标**——按行取缩进须从行号重扫到行首；直接把 StartLine 当下标传入 `LastIndexOf('\n', idx-1)` 会取错行，缩进全错（功能对但格式坏）。
+  2. **尾逗号场景产生 `,,`**——JSONC 容许尾逗号，闭括号前最后一个内容字符若是 `,` 再补逗号即坏。判据改为：前文是 `{` / `[` / `,` / `:` 时只换行不补逗号；且「最后内容字符」回扫必须跳过 `//` 与 `/* */` 注释，否则逗号会落在注释行内。
+  3. **缺失中间段 `[i]` 被建成 object 键**——`compileFiles/files/[0]/path` 全链缺失时嵌套构造把 `[0]` 当普通键写成 `{"[0]": {...}}`。判据：段匹配 `[n]` 时构造数组字面量（i>0 用 null 占位），数组才是它的容器语义。
+- 另一处语义洞：不带 `--add` 时缺失键也静默新增——`--add` 缺失必须显式报错退出 1（提示加 `--add`）。
+- 验证：PowerShell 批处理绕开多层引号传递（`cmd /c` 传带引号 JSON 用 `\"` 转义；PS 函数参数名勿用自动变量 `$args`）；成功（顶层段/嵌套链/对象内加键/数组整元素/数组元素+嵌套键）、失败（非法 JSON exit 2）、冲突（`--add` 已存在键 exit 1）三类全绿；注释/BOM/缩进保留 + `project info --json` 回归。
+
+### [2026-11-13] `slang test` 测试链三处深坑：Front 静态不可重入 / 引用模块 systemCalls 可见域 / 新增类对外暴露缺口（SLangCodeEditor 第十八轮）
+- **坑 1 · Front 编译器静态状态不可同进程重入**：`slang test` 初版在宿主进程内逐用例调 `RunProject`——第二个用例编译即被污染（首个用例失败后全部 exit=1）。修复：每用例起独立 `slang.exe` 子进程（`Environment.ProcessPath` + Process.Start，退出码即结果）。
+- **坑 2 · 引用模块 systemCalls 的对外可见域**：新增系统方法 `SystemExit` 登记在 Core.jsonc（隐式装载的根模块）→ 用户工程解析不到（`not support type`）；登记回 **Std.jsonc + 用例工程 references Std** → 可见。规则：**裸系统调用的可见域 = 引用模块的 systemCalls，Core 隐式装载不外放新增项**（framework 里可用的 `SystemStringCharCodeAt` 等全部来自 Core 内置子集）。
+- **坑 3 · 新增类进引用模块后引用方不可见**：Std 新增 `Kernel` 类（namespace 与顶层根级两种形态都试过，slb/json 副本均含该类、引用装载日志正常）→ 引用方 `OS.Kernel`/`Std.Kernel`/裸名 `Kernel` 全部 `not found`，同模块的 `OS.Process` 却可见——**引用装载重建类表的链路对新类有缺口**（待查 `TryLoadCompiledPackage`/IRMetaClass 重建路径）。绕过：测试失败信号用裸 `SystemExit`（`_main_` 内可用形态受限，见坑 4）。
+- **坑 4 · 裸系统调用表达式语句解析域**：`SystemExit(7)` 仅在 `_main_` 特定形态编译通过（块内/多语句/封装方法体内均 `not support type`）；Std 模块内部封装（println 模式）不受限。域规则待 Front 域排查。
+- **附带修复（VM 真实缺陷）**：未捕获异常静默 exit 0（false success）——`runtime_trace.c` `vm_execute_throw` uncaught 分支补 `error_code=-90`（对齐同文件 OOM 硬停注释的防护语义；正数 error_code 由 `SystemExit` 透传为进程退出码，负数归一 1）。BaseTest 回归：try 语义全绿，FAIL 项均为已知历史失败（宿主判定不看 exit code，不受影响）。
+- **构建环境**：VS 自带 cmake 直接 PS 调用缺 INCLUDE/LIB（`stdarg.h` 找不到）——须 `vcvars64.bat && cmake --build`；输出重定向落盘避免管道被执行器截胡。
+
+### [2026-11-13] 跨模块类解析机制三层实测（第十九轮 Front 专项）：文件级 import 开关 / Core 显式引用 / 正确姿势
+- **背景**：`slang test` 用例里 `OS.Kernel.exit` 报 `节点[OS] 没有找到`，同文件 `OS.Process` 却可用；最小模块（Mini.Tool）复现同样现象。**插桩实证**（`GetMetaNodeByListString` + `CreateReferenceTypeShell` + fileMeta 级三处临时日志，实验后已清除）定位三层机制：
+  1. **文件级 `import <模块名>;` 是引用模块类对 MetaCore 可见的开关**——`GetMetaNodeByListString` 只走三路：①首段=模块名（`GetMetaModuleByName`）→模块根逐段；②ownerBase 向上链（本模块树）；③CoreMetaClassManager（仅单段）。引用模块的类不在三路里，靠 `GetMetaClassByNameAndFileMeta` 的 **fileMeta 级**（`FileMeta.GetMetaNodeFileMetaClass`，由文件头 import 声明填充）命中。**无 import 的文件完全看不到引用模块类**（连 lookup 都不进入后续命中路径）。
+  2. **IR 层 irName 反查需要 Core 显式引用**：MetaCore 解析通过后 IR 报 `ir runtime[Std.OS.Process.run_...] method not found`——用例 jsonc 显式加 `Core.module.slb` 引用后消失（Std slb 双包含 Core 但 IR 注册需显式引用触发）。
+  3. **`import` 后仍差一级——已修复（第十九轮扩展收口）**：Mini 实验里 `import Mini;` 后模块节点命中、其下 `Tool` 类仍 not found。根因：`Mini.Tool` 短名链首段经 import 命中的是**模块根节点**（import 通道 AddImportMetaNode(模块根)），次段在根下未命中（Tool 在 `根/Mini/Tool`，模块名与顶层命名空间同名）；而 `MetaCallNode` 的中段查找只有「isMetaNamespace 跨模块级联」分支，模块根没有「下钻同名命名空间」的路径。**修复**（MetaCallNode 中段查找，与 `ClassManager.GetMetaNodeByListString` 的模块 ns 分支同构）：模块根命中未中时，到「与模块同名的命名空间」下继续找。验证：`Mini.Tool.ping()` 短名编译 EXIT=0 + 运行输出 pong（跨模块静态调用真实执行）；framework 编译回归 EXIT=0；BaseTest FAIL 分布与基线完全一致（无新增）。
+- **正确姿势（跨模块/namespace 类使用的完整规则，第十九轮扩展·第二阶段全部实测）**：
+  1. 引用模块类：每个使用它的 `.sl/.sp` 文件头 `import <模块名>;`（文件级，缺 = 完全不可见）；
+  2. jsonc `references` **显式列出全部依赖模块**（含 Core——IR 层 irName 反查需要；不要指望 Std slb 内嵌 Core 包）；
+  3. **namespace 类（本工程或引用模块）**：使用处文件头 **`import <命名空间名>;`**（语言规范 namespace.md §「使用方式」——本工程 namespace 类在 `_main_` 里裸名引用也要 import，否则 `ProcUser not found`）；
+  4. 满足 ①②③ 后**短名（`Mini.Tool`）与全限定名（`Mini.Mini.Tool`）均可解析**（MetaCallNode 模块根 ns 下钻修复），**封装类方法（`OS.Kernel.exit(1)`）在 namespace 类方法体内块内可用**（类方法解析通道不受裸 systemCall 解析域限制——裸 systemCall 的「_main_ 唯一语句」限制只影响**直接裸调用**，用封装类即绕过）；
+  5. 附带记录：jsonc 锚点**相对路径裸文件名**（`-p Mini.jsonc` 无目录前缀）触发 Front 找 `Project.sp` 断言崩溃（Error 11002）——用 `.\Mini.jsonc` 或绝对路径绕过；同轮已修同类 false-success（CommandExecutor 锚点缺失不再静默回退 CWD 扫描/`return true`，改 `Console.Error` + `return false`）。
+- **验证**：ProcUse（import Std + Core/Std 引用 + 类方法体内 `OS.Process`/`OS.Kernel.exit(1)`）编译 EXIT=0 + 运行 exit=1（SystemExit 透传）✓；TestHarness 用例升级为该形态后冒烟 PASS；framework 编译回归 EXIT=0。

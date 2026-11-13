@@ -39,6 +39,8 @@ internal static class Program
         public bool DebugVm = false;
         public bool StrictPlugins = false;
         public bool Help = false;
+        /// <summary>test --filter：只跑名字含该子串的用例（第十九轮）。</summary>
+        public string TestFilter = "";
         public string CvmConfig = "Debug";
         /// <summary>--cvm 显式指定标记（publish 用：未指定时走 jsonc publish.config，
         /// 不被缺省 "Debug" 覆盖）。</summary>
@@ -71,7 +73,7 @@ internal static class Program
     /// run-disk 保留为 run 的兼容别名。</summary>
     static readonly HashSet<string> KnownCommands = new(StringComparer.OrdinalIgnoreCase)
     {
-        "compile", "run", "run-disk", "info", "publish",
+        "compile", "run", "run-disk", "info", "publish", "test",
         "pack-modules", "pack-docs", "ffi-check", "version", "help",
     };
 
@@ -139,6 +141,8 @@ internal static class Program
         return opts.Command switch
         {
             "compile" => RunCompile(opts),
+            // 测试（2026-11-13 第十八轮，总纲 §0.2 CLI 先行）：跑工程 tests/ 用例
+            "test" => RunTests(opts),
             // 裸工程路径（slang <project>）：Front 编译 + C VM 运行一体化
             "projectrun" => RunProject(opts),
             // run 在解析期已归一为 run-disk（只运行编译结果；run-disk 为兼容别名）
@@ -192,8 +196,90 @@ internal static class Program
     // - memory (default): uncompressed SLB bytes -> C VM memory entry (no disk IO)
     // - output / temp: disk export -> C VM runs the exported module from disk
     //   (slb path preferred; --debug-server and friends apply, same as run-disk)
-    static int RunProject(Options opts)
+    // test（第十八轮）：逐用例起独立 slang.exe 子进程跑裸工程链
+    // （编译+运行一体化，退出码即结果）。子进程隔离是必须的：Front 编译器
+    // 静态状态（ClassManager/引用装载缓存）不可同进程重入，连续编译第二个
+    // 工程会被污染（2026-11-13 实录）。0 = PASS；全过 exit 0，否则 1。
+    // --filter <text>（第十九轮）：只跑名字含该子串的用例。
+    static int RunTests(Options opts)
     {
+        if (string.IsNullOrWhiteSpace(opts.ProjectPath))
+        {
+            Console.Error.WriteLine("[FAIL] 缺少工程路径: slang test <project>");
+            return 2;
+        }
+        string jsonc = ProjectCommand.ResolveJsoncPath(opts.ProjectPath);
+        if (jsonc.Length == 0)
+        {
+            Console.Error.WriteLine("[FAIL] 未找到工程 .jsonc: " + opts.ProjectPath);
+            return 1;
+        }
+        var all = ProjectCommand.CollectTestCases(jsonc);
+        var cases = new List<(string Name, string Anchor)>();
+        foreach (var (name, anchor) in all)
+        {
+            if (opts.TestFilter.Length == 0 ||
+                name.Contains(opts.TestFilter, StringComparison.OrdinalIgnoreCase))
+            {
+                cases.Add((name, anchor));
+            }
+        }
+        if (all.Count == 0)
+        {
+            Console.WriteLine("tests: none");
+            return 0;
+        }
+        if (cases.Count == 0)
+        {
+            Console.WriteLine($"tests: none matched filter \"{opts.TestFilter}\" (of {all.Count})");
+            return 0;
+        }
+        string? selfExe = Environment.ProcessPath;
+        if (string.IsNullOrWhiteSpace(selfExe))
+        {
+            Console.Error.WriteLine("[FAIL] cannot locate slang.exe (Environment.ProcessPath)");
+            return 1;
+        }
+        int passed = 0;
+        int failed = 0;
+        foreach (var (name, anchor) in cases)
+        {
+            Console.WriteLine($"=== test {name} ===");
+            int code;
+            try
+            {
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = selfExe,
+                    Arguments = "\"" + anchor + "\" --no-banner",
+                    UseShellExecute = false
+                };
+                var p = System.Diagnostics.Process.Start(psi);
+                p!.WaitForExit();
+                code = p.ExitCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[FAIL] " + name + " (exception: " + ex.Message + ")");
+                failed++;
+                continue;
+            }
+            if (code == 0)
+            {
+                Console.WriteLine("[PASS] " + name);
+                passed++;
+            }
+            else
+            {
+                Console.WriteLine("[FAIL] " + name + " (exit=" + code + ")");
+                failed++;
+            }
+        }
+        Console.WriteLine($"tests: {cases.Count} total, {passed} passed, {failed} failed");
+        return failed > 0 ? 1 : 0;
+    }
+
+    static int RunProject(Options opts)    {
         string? repoRoot = GetRepoRoot();
         var mode = opts.ExportModeSet ? opts.ExportMode : EExportMode.Memory;
 
@@ -415,6 +501,10 @@ internal static class Program
             else if ((a == "-t" || a == "--test"))
             {
                 opts.Test = true;
+            }
+            else if (a == "--filter" && i + 1 < args.Length)
+            {
+                opts.TestFilter = args[++i];
             }
             else if (a == "--export-mode" && i + 1 < args.Length)
             {

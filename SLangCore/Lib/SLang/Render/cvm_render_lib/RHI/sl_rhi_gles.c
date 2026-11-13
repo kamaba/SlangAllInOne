@@ -65,12 +65,17 @@ typedef ptrdiff_t   GLsizeiptr;
 #define GL_TEXTURE_2D             0x0DE1
 #define GL_TEXTURE0               0x84C0
 #define GL_TEXTURE1               0x84C1
+#define GL_TEXTURE2               0x84C2   /* N2a：shadow depth 采样单元 */
 #define GL_TEXTURE_MIN_FILTER     0x2801
 #define GL_TEXTURE_MAG_FILTER     0x2800
 #define GL_TEXTURE_WRAP_S         0x2802
 #define GL_TEXTURE_WRAP_T         0x2803
 #define GL_LINEAR                 0x2601
+#define GL_NEAREST                0x2600  /* N2a：深度纹理 NEAREST */
 #define GL_CLAMP_TO_EDGE          0x812F
+#define GL_NONE                   0
+#define GL_DEPTH_COMPONENT        0x1902
+#define GL_UNSIGNED_INT           0x1405
 #define GL_FRAMEBUFFER            0x8D40
 #define GL_RENDERBUFFER           0x8D41
 #define GL_COLOR_ATTACHMENT0      0x8CE0
@@ -177,10 +182,16 @@ struct SlrRhiTarget            /* GLES 渲染目标 = FBO + 颜色纹理 + 可�
 {
     int w, h;
     GLuint fbo, tex, rb;
+    GLuint depth_tex;   /* N2a shadow：可采样深度纹理（仅 shadow 目标非 0）*/
 };
 
-typedef struct { int mvp, color, tex; int obj_index; int src, bright, sat, vig; } GlProgUni;
+typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; } GlProgUni;
 typedef struct { GLuint vao, vbo; int count; } GlMesh;
+
+/* ES 3.0 深度清屏是 glClearDepthf（float），共享清单里的 glClearDepth
+ * (GLdouble) 在 ES 无符号——本地声明 + load（N2a shadow 用）*/
+typedef void (APIENTRY *PFN_glClearDepthfES)(GLfloat);
+static PFN_glClearDepthfES p_glClearDepthfES = NULL;
 
 static GLuint       s_progs[SLR_PROG_COUNT];
 static GlProgUni  s_uni[SLR_PROG_COUNT];
@@ -234,12 +245,15 @@ static const char* VS_PSCENE =
     "out vec2 vUv;\n"
     "out vec2 vWorld;\n"
     "out vec2 vNrm;\n"
+    "flat out highp int vObj;\n"
     "void main(){\n"
     "  vUv = aUv;\n"
-    "  int k = uObjIndex * 2;\n"
+    "  int obj = uObjIndex + gl_InstanceID;\n"
+    "  int k = obj * 2;\n"
     "  vWorld = vec2(dot(aPos, uWMat[k].xy), dot(aPos, uWMat[k].zw)) + uWMat[k + 1].xy;\n"
     "  vNrm = uWMat[k + 1].zw;\n"
-    "  gl_Position = uMVP[uObjIndex] * vec4(aPos, 0.0, 1.0); }\n";
+    "  vObj = obj;\n"
+    "  gl_Position = uMVP[obj] * vec4(aPos, 0.0, 1.0); }\n";
 
 /* 管线片元光照（与 GL/D3D11 后端公式逐字一致，跨后端同效果）*/
 static const char* FS_PFLAT =
@@ -249,12 +263,12 @@ static const char* FS_PFLAT =
     "layout(std140) uniform LightBlock {\n"
     "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
     "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
-    "uniform highp int uObjIndex;\n"
+    "flat in highp int vObj;\n"
     "in vec2 vWorld;\n"
     "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
     "void main(){\n"
-    "  vec4 base = uColor[uObjIndex];\n"
+    "  vec4 base = uColor[vObj];\n"
     "  vec3 light = vec3(uAmbient.x);\n"
     "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
     "  if (uSpotColor.a > 0.5) {\n"
@@ -275,14 +289,14 @@ static const char* FS_PTEX =
     "layout(std140) uniform LightBlock {\n"
     "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
     "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
-    "uniform highp int uObjIndex;\n"
+    "flat in highp int vObj;\n"
     "uniform sampler2D uTex;\n"
     "in vec2 vUv;\n"
     "in vec2 vWorld;\n"
     "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
     "void main(){\n"
-    "  vec4 base = uColor[uObjIndex] * texture(uTex, vUv);\n"
+    "  vec4 base = uColor[vObj] * texture(uTex, vUv);\n"
     "  vec3 light = vec3(uAmbient.x);\n"
     "  if (uDirColor.a > 0.5) light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
     "  if (uSpotColor.a > 0.5) {\n"
@@ -306,16 +320,16 @@ static const char* FS_PHONG_FLAT =
     "layout(std140) uniform LightBlock {\n"
     "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
     "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
-    "uniform highp int uObjIndex;\n"
+    "flat in highp int vObj;\n"
     "in vec2 vWorld;\n"
     "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
     "void main(){\n"
-    "  vec4 base = uColor[uObjIndex];\n"
+    "  vec4 base = uColor[vObj];\n"
     "  vec3 light = vec3(uAmbient.x);\n"
     "  vec3 N = normalize(vec3(vNrm, 0.75));\n"
     "  vec3 V = vec3(0.0, 0.0, 1.0);\n"
-    "  vec2 sp = uSpec[uObjIndex].xy;\n"
+    "  vec2 sp = uSpec[vObj].xy;\n"
     "  float shin = max(sp.y, 0.001);\n"
     "  if (uDirColor.a > 0.5) {\n"
     "    light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
@@ -345,18 +359,18 @@ static const char* FS_PHONG_TEX =
     "layout(std140) uniform LightBlock {\n"
     "  vec4 uAmbient; vec4 uDirColor; vec4 uDirDir;\n"
     "  vec4 uSpotColor; vec4 uSpotPosRange; vec4 uSpotDirCos; };\n"
-    "uniform highp int uObjIndex;\n"
+    "flat in highp int vObj;\n"
     "uniform sampler2D uTex;\n"
     "in vec2 vUv;\n"
     "in vec2 vWorld;\n"
     "in vec2 vNrm;\n"
     "out vec4 oCol;\n"
     "void main(){\n"
-    "  vec4 base = uColor[uObjIndex] * texture(uTex, vUv);\n"
+    "  vec4 base = uColor[vObj] * texture(uTex, vUv);\n"
     "  vec3 light = vec3(uAmbient.x);\n"
     "  vec3 N = normalize(vec3(vNrm, 0.75));\n"
     "  vec3 V = vec3(0.0, 0.0, 1.0);\n"
-    "  vec2 sp = uSpec[uObjIndex].xy;\n"
+    "  vec2 sp = uSpec[vObj].xy;\n"
     "  float shin = max(sp.y, 0.001);\n"
     "  if (uDirColor.a > 0.5) {\n"
     "    light += uDirColor.rgb * max(dot(vNrm, uDirDir.xy), 0.0);\n"
@@ -499,11 +513,13 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_PHONG_TEX].obj_index  = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uObjIndex");
     s_uni[SLR_PROG_PHONG_TEX].tex        = p_glGetUniformLocation(s_progs[SLR_PROG_PHONG_TEX], "uTex");
 
-    /* v3.5 固化槽 uniform：全槽取 uObjIndex；偶数下标（TEX 变体）取 uTex */
+    /* v3.5 固化槽 uniform：全槽取 uObjIndex；偶数下标（TEX 变体）取 uTex；
+     * N2a：全 gen 槽取 uShadowTex 绑 TEXTURE2（flat/tex 变体都有 shadow 采样）*/
     for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
     {
         int gslot = SLR_PROG_GEN_BASE + i;
         s_uni[gslot].obj_index = p_glGetUniformLocation(s_progs[gslot], "uObjIndex");
+        s_uni[gslot].shadow_tex = p_glGetUniformLocation(s_progs[gslot], "uShadowTex");
         if (!(i & 1))
             s_uni[gslot].tex = p_glGetUniformLocation(s_progs[gslot], "uTex");
     }
@@ -521,12 +537,17 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_PTEX].tex, 1);
     p_glUseProgram(s_progs[SLR_PROG_PHONG_TEX]);
     p_glUniform1i(s_uni[SLR_PROG_PHONG_TEX].tex, 1);
-    /* v3.5 固化槽：偶数下标（TEX 变体）管线纹理走 unit 1 */
-    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i += 2)
+    /* v3.5 固化槽 + N2a shadow：偶数下标（TEX 变体）管线纹理走 unit 1；
+     * 全槽 uShadowTex 走 unit 2——glUniform1i 只作用于当前绑定 program，
+     * 必须逐槽 useProgram 后设置（gen 全槽含 shadow 采样，同 GL 后端）*/
+    for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
     {
         int gslot = SLR_PROG_GEN_BASE + i;
         p_glUseProgram(s_progs[gslot]);
-        p_glUniform1i(s_uni[gslot].tex, 1);
+        if (!(i & 1))
+            p_glUniform1i(s_uni[gslot].tex, 1);
+        if (s_uni[gslot].shadow_tex >= 0)
+            p_glUniform1i(s_uni[gslot].shadow_tex, 2);
     }
     p_glUseProgram(s_progs[SLR_PROG_BLIT]);
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
@@ -663,7 +684,7 @@ static SlrRhiTarget* gl_target_create(int w, int h, int with_depth)
     SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
     GLenum st;
     if (!t) { set_error(SLR_E_MEMORY); return NULL; }
-    t->w = w; t->h = h; t->fbo = 0; t->tex = 0; t->rb = 0;
+    t->w = w; t->h = h; t->fbo = 0; t->tex = 0; t->rb = 0; t->depth_tex = 0;
     p_glGenFramebuffers(1, &t->fbo);
     p_glGenTextures(1, &t->tex);
     p_glBindTexture(GL_TEXTURE_2D, t->tex);
@@ -702,7 +723,71 @@ static void gl_target_destroy(SlrRhiTarget* t)
     p_glDeleteFramebuffers(1, &t->fbo);
     p_glDeleteTextures(1, &t->tex);
     if (t->rb) p_glDeleteRenderbuffers(1, &t->rb);
+    if (t->depth_tex) p_glDeleteTextures(1, &t->depth_tex);
     free(t);
+}
+
+/* ---- N2a shadow map（与 GL 后端同构；ES 3.0 depth texture 原生支持）----
+ * depth-only FBO（glDrawBuffers(GL_NONE)）+ GL_DEPTH_COMPONENT24 纹理
+ *（NEAREST，无 compare mode —— shader 手动 PCF）。 */
+static SlrRhiTarget* gl_shadow_target_create(int w, int h)
+{
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
+    GLenum st, none = (GLenum)GL_NONE;
+    if (!t) { set_error(SLR_E_MEMORY); return NULL; }
+    t->w = w; t->h = h; t->fbo = 0; t->tex = 0; t->rb = 0; t->depth_tex = 0;
+    p_glGenFramebuffers(1, &t->fbo);
+    p_glGenTextures(1, &t->depth_tex);
+    p_glBindTexture(GL_TEXTURE_2D, t->depth_tex);
+    p_glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_DEPTH_COMPONENT24, w, h, 0,
+                   GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+    p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)GL_NEAREST);
+    p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)GL_NEAREST);
+    p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_EDGE);
+    p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_EDGE);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
+    p_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                             t->depth_tex, 0);
+    p_glDrawBuffers(1, &none);   /* 无颜色输出：片元只写深度 */
+    st = p_glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (st != GL_FRAMEBUFFER_COMPLETE)
+    {
+        p_glDeleteFramebuffers(1, &t->fbo);
+        p_glDeleteTextures(1, &t->depth_tex);
+        free(t);
+        set_error(SLR_E_FBO);
+        return NULL;
+    }
+    return t;
+}
+
+static void gl_shadow_target_destroy(SlrRhiTarget* t)
+{
+    gl_target_destroy(t);
+}
+
+/* shadow pass 开始：绑深度 FBO + 清深度（ES glClearDepthf）+ 关颜色写。 */
+static void gl_shadow_begin(SlrRhiTarget* t, int w, int h)
+{
+    (void)t;
+    p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
+    p_glViewport(0, 0, w, h);
+    p_glDepthMask(GL_TRUE);
+    p_glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    if (p_glClearDepthfES) p_glClearDepthfES(1.0f);
+    p_glClear(GL_DEPTH_BUFFER_BIT);
+    p_glDisable(GL_BLEND);
+    p_glEnable(GL_DEPTH_TEST);
+    p_glDepthFunc(GL_LESS);
+    p_glDisable(GL_SCISSOR_TEST);
+}
+
+/* 深度纹理绑 TEXTURE2（gen 着色器 uShadowTex 单元 2），帧一次。 */
+static void gl_shadow_bind_depth(SlrRhiTarget* t)
+{
+    p_glActiveTexture(GL_TEXTURE2);
+    p_glBindTexture(GL_TEXTURE_2D, t ? t->depth_tex : 0);
 }
 
 /* rgba 首行 = 图像底部（sl_texture.c 已统一翻转），GLES 原样入显存 */
@@ -735,6 +820,8 @@ static void gl_begin_scene(SlrRhiTarget* t, int w, int h, const float* clear)
     p_glViewport(0, 0, w, h);
     /* DepthMask 必须先于清屏打开：glClear(DEPTH) 受深度写掩码限制 */
     p_glDepthMask(GL_TRUE);
+    /* N2a：shadow pass 关掉的 ColorMask 在此恢复（主渲染入口统一重置）*/
+    p_glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     p_glClearColor(clear[0], clear[1], clear[2], clear[3]);
     p_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     p_glDisable(GL_BLEND);
@@ -748,6 +835,8 @@ static void gl_camera_begin(SlrRhiTarget* t, int x, int y, int w, int h,
 {
     (void)target_h;   /* GLES 视口原点即左下，与 GL 一致 */
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
+    /* N2a：shadow pass（阶段 4.5）关掉的 ColorMask 在此恢复（同 GL）*/
+    p_glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     p_glViewport(x, y, w, h);
     /* scissor box = 相机矩形，整段保持开启（局部清屏 + 相机段裁剪）*/
     p_glEnable(GL_SCISSOR_TEST);
@@ -816,7 +905,7 @@ static void gl_desc_bind_tex(int slot)
     p_glBindTexture(GL_TEXTURE_2D, name);
 }
 
-static void gl_draw_item(int prog, int slot, int mesh)
+static void gl_draw_item(int prog, int slot, int mesh, int instance_count)
 {
     GlMesh* m;
     if (mesh >= 4 + SLR_CUSTOM_MESHES)
@@ -830,6 +919,12 @@ static void gl_draw_item(int prog, int slot, int mesh)
         set_error_detail(SLR_E_BAD_PARAM, "mesh not uploaded");
         return;
     }
+    if (instance_count < 1) instance_count = 1;
+    if (slot < 0 || slot + instance_count > 64)
+    {
+        set_error_detail(SLR_E_BAD_PARAM, "instance slots exceed PerDraw bounds");
+        return;
+    }
     p_glUseProgram(s_progs[prog]);
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
         prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
@@ -837,7 +932,10 @@ static void gl_draw_item(int prog, int slot, int mesh)
         p_glUniform1i(s_uni[prog].obj_index, slot);
     /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源 */
     p_glBindVertexArray(m->vao);
-    p_glDrawArrays(GL_TRIANGLES, 0, m->count);
+    if (instance_count > 1)
+        p_glDrawArraysInstanced(GL_TRIANGLES, 0, m->count, instance_count);
+    else
+        p_glDrawArrays(GL_TRIANGLES, 0, m->count);
     p_glBindVertexArray(0);
 }
 
@@ -1062,7 +1160,13 @@ static int load_all_gles_procs(void)
     LOAD_GL(glPixelStorei);
     LOAD_GL(glGetString);
     LOAD_GL(glDrawArrays);
+    LOAD_GL(glDrawArraysInstanced);
+    /* N2a shadow map（glClearDepth 是 GL 的 GLdouble 版，ES 无符号不加载；
+     * ES 侧深度清屏走本地声明的 glClearDepthf）*/
+    LOAD_GL(glColorMask);
+    LOAD_GL(glDrawBuffers);
 #undef LOAD_GL
+    p_glClearDepthfES = (PFN_glClearDepthfES)resolve_gles("glClearDepthf");
     if (missing)
     {
         set_error_detail(SLR_E_GL_SYMBOL, "GLES 3.0 core symbol missing");
@@ -1276,6 +1380,11 @@ static const SlrRhi s_rhi_gles =
     gl_desc_write_tex,
     gl_desc_bind_tex,
     gl_upload_lights,
+    /* N2a shadow map（深度专用目标）*/
+    gl_shadow_target_create,
+    gl_shadow_target_destroy,
+    gl_shadow_begin,
+    gl_shadow_bind_depth,
 };
 
 const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

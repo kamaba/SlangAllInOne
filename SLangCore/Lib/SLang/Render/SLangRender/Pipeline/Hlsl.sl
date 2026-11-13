@@ -277,3 +277,144 @@ public class HlslShader
         ret "HlslShader(" + this.name + ", compiled=" + this.isCompiled().toString() + ")"
     }
 }
+
+# ── P5：SL -> C 程序枚举映射表（Hlsl.sl 定位收窄）─────────────────
+# ShaderProgramMap —— 着色器名 <-> C 侧程序槽（SLang.RenderPipeline.PROG_*）
+# 的唯一映射表。本链路无 HLSL 编译器（上方 HlslShader 的 compileHlsl 为
+# 草稿层 SystemCallExternalFunction 软分发，运行期无后端命中——不假装
+# 支持）；材质 -> 程序的真实路由 = 本表 + Material 关键字位掩码
+#（Material.resolveProgram）→ C 侧 draw_item(prog) switch 分发。
+#   genSlot(effect, variant) —— 固化编译槽 8..17（effect 0..4 = Lambert/
+#     Phong/BlinnPhong/NormalMap/Toon × variant 0..1 flat/tex，与 C 侧
+#     SLR_PROG_GEN_SLOT 一致：槽 = PROG_GEN_BASE + effect*2 + variant）
+public class ShaderProgramMap
+{
+    # fromName(name) —— 着色器名 -> 程序槽（未知名返回 PROG_PFLAT 兜底）
+    public static Int32 fromName( string name )
+    {
+        if name == "flat"
+        {
+            ret SLang.RenderPipeline.PROG_FLAT
+        }
+        if name == "tex"
+        {
+            ret SLang.RenderPipeline.PROG_TEX
+        }
+        if name == "perdraw-flat"
+        {
+            ret SLang.RenderPipeline.PROG_PFLAT
+        }
+        if name == "perdraw-tex"
+        {
+            ret SLang.RenderPipeline.PROG_PTEX
+        }
+        if name == "blit"
+        {
+            ret SLang.RenderPipeline.PROG_BLIT
+        }
+        if name == "post"
+        {
+            ret SLang.RenderPipeline.PROG_POST
+        }
+        if name == "phong-flat"
+        {
+            ret SLang.RenderPipeline.PROG_PHONG_FLAT
+        }
+        if name == "phong-tex"
+        {
+            ret SLang.RenderPipeline.PROG_PHONG_TEX
+        }
+        ret SLang.RenderPipeline.PROG_PFLAT
+    }
+
+    # nameOf(prog) —— 程序槽 -> 着色器名（未知槽返回 "unknown"）
+    public static string nameOf( Int32 prog )
+    {
+        if prog == SLang.RenderPipeline.PROG_FLAT
+        {
+            ret "flat"
+        }
+        if prog == SLang.RenderPipeline.PROG_TEX
+        {
+            ret "tex"
+        }
+        if prog == SLang.RenderPipeline.PROG_PFLAT
+        {
+            ret "perdraw-flat"
+        }
+        if prog == SLang.RenderPipeline.PROG_PTEX
+        {
+            ret "perdraw-tex"
+        }
+        if prog == SLang.RenderPipeline.PROG_BLIT
+        {
+            ret "blit"
+        }
+        if prog == SLang.RenderPipeline.PROG_POST
+        {
+            ret "post"
+        }
+        if prog == SLang.RenderPipeline.PROG_PHONG_FLAT
+        {
+            ret "phong-flat"
+        }
+        if prog == SLang.RenderPipeline.PROG_PHONG_TEX
+        {
+            ret "phong-tex"
+        }
+        if prog >= SLang.RenderPipeline.PROG_GEN_BASE
+        {
+            Int32 rel = prog - SLang.RenderPipeline.PROG_GEN_BASE
+            Int32 effect = rel / 2
+            Int32 variant = rel - effect * 2
+            string vn = "flat"
+            if variant == 1
+            {
+                vn = "tex"
+            }
+            ret "gen/" + ShaderProgramMap.effectName( effect ) + "-" + vn
+        }
+        ret "unknown"
+    }
+
+    # effectName(effect) —— 固化效果名（0..4；越界 "unknown"）
+    public static string effectName( Int32 effect )
+    {
+        if effect == 0
+        {
+            ret "lambert"
+        }
+        if effect == 1
+        {
+            ret "phong"
+        }
+        if effect == 2
+        {
+            ret "blinnphong"
+        }
+        if effect == 3
+        {
+            ret "normalmap"
+        }
+        if effect == 4
+        {
+            ret "toon"
+        }
+        ret "unknown"
+    }
+
+    # genSlot(effect, variant) —— 固化编译槽（effect 0..4 / variant 0..1；
+    # 越界参数返回 PROG_PFLAT 兜底，防越界槽进命令流）
+    public static Int32 genSlot( Int32 effect, Int32 variant )
+    {
+        if effect < 0 || effect > 4
+        {
+            ret SLang.RenderPipeline.PROG_PFLAT
+        }
+        if variant < 0 || variant > 1
+        {
+            ret SLang.RenderPipeline.PROG_PFLAT
+        }
+        ret SLang.RenderPipeline.PROG_GEN_BASE + effect * 2 + variant
+    }
+}

@@ -17,6 +17,14 @@ public class Material
     public bool enableDepthWrite = true
     public bool isTransparent = false
 
+    # ── P5：变体关键字位掩码（程序枚举 + int 关键字，C 侧 switch 消费）──
+    # Unity shader keyword 思想：位 = 关键字开关，Material.resolveProgram
+    # 按位掩码路由到 C 侧程序槽（ShaderProgramMap 同源表）。
+    public static Int32 KEY_TEXTURED = 1   # bit0：带主纹理
+    public static Int32 KEY_LIT = 2        # bit1：参与光照（Phong 通路）
+    public static Int32 KEY_SPECULAR = 4   # bit2：高光（PHONG_TEX 通路预留）
+    public Int32 keywords = 0
+
     # ── 构造 ─────────────────────────────────────────────
     public void _init_()
     {
@@ -30,6 +38,7 @@ public class Material
         this.enableDepthTest = true
         this.enableDepthWrite = true
         this.isTransparent = false
+        this.keywords = 0
     }
 
     public void _init_( Shader _shader )
@@ -99,6 +108,65 @@ public class Material
         }
     }
 
+    # ── P5：关键字位掩码 API ──────────────────────────────
+    # isKeywordEnabled(bit) —— 关键字位是否开（位 = 1/2/4）
+    public bool isKeywordEnabled( Int32 bit )
+    {
+        if bit <= 0
+        {
+            ret false
+        }
+        ret ( this.keywords / bit ) % 2 == 1
+    }
+
+    # enableKeyword(bit) —— 打开关键字位（已开幂等）
+    public void enableKeyword( Int32 bit )
+    {
+        if bit <= 0
+        {
+            ret
+        }
+        if this.isKeywordEnabled( bit ) == false
+        {
+            this.keywords = this.keywords + bit
+        }
+    }
+
+    # disableKeyword(bit) —— 关闭关键字位（已关幂等）
+    public void disableKeyword( Int32 bit )
+    {
+        if bit <= 0
+        {
+            ret
+        }
+        if this.isKeywordEnabled( bit )
+        {
+            this.keywords = this.keywords - bit
+        }
+    }
+
+    # resolveProgram() —— 位掩码 -> C 侧程序槽（变体路由，AIPrompt P5：
+    # 程序枚举 + Material 关键字位掩码，C 侧 draw_item(prog) switch 消费）：
+    #   KEY_LIT x KEY_TEXTURED -> PHONG_TEX / PHONG_FLAT / PTEX / PFLAT
+    public Int32 resolveProgram()
+    {
+        bool lit = this.isKeywordEnabled( Material.KEY_LIT )
+        bool tex = this.isKeywordEnabled( Material.KEY_TEXTURED )
+        if lit
+        {
+            if tex
+            {
+                ret SLang.RenderPipeline.PROG_PHONG_TEX
+            }
+            ret SLang.RenderPipeline.PROG_PHONG_FLAT
+        }
+        if tex
+        {
+            ret SLang.RenderPipeline.PROG_PTEX
+        }
+        ret SLang.RenderPipeline.PROG_PFLAT
+    }
+
     public Material clone()
     {
         Material m = Material()
@@ -112,6 +180,7 @@ public class Material
         m.enableDepthTest = this.enableDepthTest
         m.enableDepthWrite = this.enableDepthWrite
         m.isTransparent = this.isTransparent
+        m.keywords = this.keywords
         ret m
     }
 

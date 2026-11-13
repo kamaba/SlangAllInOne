@@ -317,6 +317,13 @@
     // ---- Environment operations (Environment.sl) ----
     { "name": "SystemEnvironmentGetVariable", "returnType": "string", "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_env_get_variable" },
     { "name": "SystemEnvironmentSetVariable", "returnType": "bool",   "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_env_set_variable" },
+    // ---- Registry query (Environment.registry, Windows only; soft-fail elsewhere) ----
+    { "name": "SystemRegistryKeyExists",   "returnType": "bool",          "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_key_exists" },
+    { "name": "SystemRegistryValueExists", "returnType": "bool",          "params": ["string", "string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_value_exists" },
+    { "name": "SystemRegistryGetString",   "returnType": "string",        "params": ["string", "string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_get_string" },
+    { "name": "SystemRegistryGetInt",      "returnType": "Int32",         "params": ["string", "string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_get_int" },
+    { "name": "SystemRegistrySubKeyNames", "returnType": "Array<object>", "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_subkey_names" },
+    { "name": "SystemRegistryValueNames",  "returnType": "Array<object>", "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_reg_value_names" },
     // ---- Platform environment (Environment.current, PLATFORM_CAPABILITY §12) ----
     { "name": "SystemPlatformEnvGetInt",      "returnType": "Int32",  "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_plat_env_get_int" },
     { "name": "SystemPlatformEnvGetInt64",    "returnType": "Int64",  "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_plat_env_get_i64" },

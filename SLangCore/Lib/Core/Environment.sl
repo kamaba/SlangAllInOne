@@ -8,6 +8,7 @@
 #     ├── class probe          (raw probed values, ignores overrides, §8.5.6)
 #     ├── class Override       (override query: isDisabled/source/getValue)
 #     ├── class env            (process environment variables)
+#     ├── class registry       (Windows registry content query, read-only)
 #     ├── class custom         (jsonc require.custom)
 #     ├── class sys            (directory / newline / timing)
 #     └── class legacy         (P1.6 compat shell: getVariable / setVariable)
@@ -1423,6 +1424,69 @@ namespace Environment
         public static bool exists( string name )
         {
             ret SystemStringLength( SystemEnvironmentGetVariable( name ) ) > 0
+        }
+    }
+
+    # -------------------------------------------------------------------------
+    # registry - Windows registry content query (read-only; Windows only,
+    # everywhere else soft-fails: exists->false, getString->"", getInt->0,
+    # subKeyNames/valueNames->empty array — same fallback policy as the
+    # module's other probe families).
+    #
+    # Root key names are case-insensitive: "HKLM"/"HKCU"/"HKCR"/"HKU"/"HKCC"
+    # or the full "HKEY_LOCAL_MACHINE"/... forms.
+    #
+    # Type mapping: REG_SZ/REG_EXPAND_SZ -> getString, REG_DWORD -> getInt
+    # (values of other types read as missing by the typed getters;
+    # valueExists still reports them).
+    # -------------------------------------------------------------------------
+
+    public class registry extends Object
+    {
+        # Whether a registry key exists.
+        public static bool exists( string root, string path )
+        {
+            ret SystemRegistryKeyExists( root, path )
+        }
+
+        # Whether a value (of any type, including the default value "")
+        # exists under the key.
+        public static bool valueExists( string root, string path, string name )
+        {
+            ret SystemRegistryValueExists( root, path, name )
+        }
+
+        # Read a REG_SZ/REG_EXPAND_SZ value.
+        # Returns the value string, or an empty string when missing or of
+        # another type.
+        public static string getString( string root, string path, string name )
+        {
+            ret SystemRegistryGetString( root, path, name )
+        }
+
+        # Read a REG_DWORD value.
+        # Returns the value, or 0 when missing or of another type.
+        public static Int32 getInt( string root, string path, string name )
+        {
+            ret SystemRegistryGetInt( root, path, name )
+        }
+
+        # Subkey names of a key, in enumeration order.
+        # Returns an empty array when the key is missing.
+        public static Array<string> subKeyNames( string root, string path )
+        {
+            Array<string> r = null
+            r = SystemRegistrySubKeyNames( root, path )
+            ret r
+        }
+
+        # Value names under a key (including "" for the default value), in
+        # enumeration order. Returns an empty array when the key is missing.
+        public static Array<string> valueNames( string root, string path )
+        {
+            Array<string> r = null
+            r = SystemRegistryValueNames( root, path )
+            ret r
         }
     }
 

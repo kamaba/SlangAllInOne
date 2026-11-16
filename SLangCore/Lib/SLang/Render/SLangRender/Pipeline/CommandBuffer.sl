@@ -72,6 +72,16 @@ public class ECommandOpcode
     public static Int32 PostProcess = 27
     public static Int32 Blit = 28
     public static Int32 Readback = 29
+    # ---- N4a 软光追（RaySet* 场景累积 + RayRender 渲产纹理写槽）----
+    public static Int32 RaySetSphere = 30
+    public static Int32 RaySetLight = 31
+    public static Int32 RaySetGround = 32
+    public static Int32 RaySetCamera = 33
+    public static Int32 RaySetBackground = 34
+    public static Int32 RayRender = 35
+    # ---- N3 异步控制（模式切换 / 排空屏障，C 侧走同步控制路径）----
+    public static Int32 AsyncMode = 36
+    public static Int32 AsyncFlush = 37
 }
 
 public class CommandBuffer
@@ -115,6 +125,13 @@ public class CommandBuffer
     Int32 _curFloatStart = 0
     bool _curActive = false
 
+    # ── N3 双缓冲 pack 块（pack 帧 N+1 与执行帧 N 交替）────
+    # 块内存归本对象（容量只增，轮换复用）；C 侧入队时自拷贝到队列槽，
+    # 提交返回后本块即可复用——双块轮换是同线程流水线的语义保险。
+    Array<Int64> _packPtr = null
+    Array<Int32> _packCap = null
+    Int32 _packSlot = 0
+
     public void _init_()
     {
         this.name = "cmd"
@@ -133,6 +150,13 @@ public class CommandBuffer
         this._floatUsed = 0
         this._overflow = 0
         this._curActive = false
+        this._packPtr = Array<Int64>( 2 )
+        this._packCap = Array<Int32>( 2 )
+        this._packPtr[ 0 ] = 0
+        this._packPtr[ 1 ] = 0
+        this._packCap[ 0 ] = 0
+        this._packCap[ 1 ] = 0
+        this._packSlot = 0
         this.transparentDescending = true
         this.culling = CullingData()
     }
@@ -715,6 +739,130 @@ public class CommandBuffer
         this.endCmd()
     }
 
+    # ── 桥接（可执行，N4a 软光追）：场景录制 + CPU 渲产纹理 ──
+    # raySetSphere(index, s) —— 球写入管线光追场景槽（≤16，跨命令流
+    # 持久累积；floats = cx cy cz r cr cg cb reflect 八元组）
+    public void raySetSphere( Int32 index, RaySphere s )
+    {
+        if s == null
+        {
+            ret
+        }
+        Int32 op = ECommandOpcode.RaySetSphere
+        this.beginCmd( op )
+        this.arg( index )
+        this.flt( s.cx )
+        this.flt( s.cy )
+        this.flt( s.cz )
+        this.flt( s.radius )
+        this.flt( s.cr )
+        this.flt( s.cg )
+        this.flt( s.cb )
+        this.flt( s.reflect )
+        this.endCmd()
+    }
+
+    # 平行光（dir 为表面 -> 光源方向，C 侧消费时归一）
+    public void raySetLight( Float32 dx, Float32 dy, Float32 dz, Float32 intensity )
+    {
+        Int32 op = ECommandOpcode.RaySetLight
+        this.beginCmd( op )
+        this.flt( dx )
+        this.flt( dy )
+        this.flt( dz )
+        this.flt( intensity )
+        this.endCmd()
+    }
+
+    # 地面平面（y=0；r g b + 反射率）
+    public void raySetGround( Float32 r, Float32 g, Float32 b, Float32 reflect )
+    {
+        Int32 op = ECommandOpcode.RaySetGround
+        this.beginCmd( op )
+        this.flt( r )
+        this.flt( g )
+        this.flt( b )
+        this.flt( reflect )
+        this.endCmd()
+    }
+
+    # 相机（正交固定基 forward +z / up +y；fovY 垂直视场角度数）
+    public void raySetCamera( Float32 ex, Float32 ey, Float32 ez, Float32 fovYDegrees )
+    {
+        Int32 op = ECommandOpcode.RaySetCamera
+        this.beginCmd( op )
+        this.flt( ex )
+        this.flt( ey )
+        this.flt( ez )
+        this.flt( fovYDegrees )
+        this.endCmd()
+    }
+
+    # 背景色（射线未命中）
+    public void raySetBackground( Float32 r, Float32 g, Float32 b )
+    {
+        Int32 op = ECommandOpcode.RaySetBackground
+        this.beginCmd( op )
+        this.flt( r )
+        this.flt( g )
+        this.flt( b )
+        this.endCmd()
+    }
+
+    # rayRender(texSlot, w, h) —— CPU whitted 渲染 w*h 光追图 ->
+    # texture_register 产纹理并写入描述符槽 texSlot（与 setTexture 同
+    # 路径；后续 drawItem 经 texDesc 绑定上屏）
+    public void rayRender( Int32 texSlot, Int32 w, Int32 h )
+    {
+        Int32 op = ECommandOpcode.RayRender
+        this.beginCmd( op )
+        this.arg( texSlot )
+        this.arg( w )
+        this.arg( h )
+        this.endCmd()
+    }
+
+    # ── N3 异步控制（控制命令流；建议独占一条流提交）─────────
+    # asyncMode(mode) —— 切换执行路径：0 = 同步直接回放；1 = 入队即返 +
+    # worker 线程回放（GL/GLES context 线程亲和随启停整体移交）。切换
+    # 是屏障：此前全部在途流回放完成后才生效。
+    public void asyncMode( Int32 mode )
+    {
+        Int32 op = ECommandOpcode.AsyncMode
+        this.beginCmd( op )
+        this.arg( mode )
+        this.endCmd()
+    }
+
+    # asyncFlush() —— 排空屏障：等此前全部已入队流回放完成（回读像素
+    # 前必调；此后 Readback 数据就绪）
+    public void asyncFlush()
+    {
+        Int32 op = ECommandOpcode.AsyncFlush
+        this.beginCmd( op )
+        this.endCmd()
+    }
+
+    # 场景整录（RayScene -> RaySet* 命令族；球表 + 光/地面/相机/背景）
+    public void recordRayScene( RayScene scene )
+    {
+        if scene == null
+        {
+            ret
+        }
+        Int32 i = 0
+        while i < scene.sphereCount
+        {
+            RaySphere s = scene.sphereAt( i )
+            this.raySetSphere( i, s )
+            i = i + 1
+        }
+        this.raySetLight( scene.lightX, scene.lightY, scene.lightZ, scene.lightIntensity )
+        this.raySetGround( scene.groundR, scene.groundG, scene.groundB, scene.groundReflect )
+        this.raySetCamera( scene.eyeX, scene.eyeY, scene.eyeZ, scene.fovY )
+        this.raySetBackground( scene.bgR, scene.bgG, scene.bgB )
+    }
+
     # ── 调试标记（RenderDoc / PIX 显示；marker 不入流）─────
     public void beginEvent( string marker )
     {
@@ -963,6 +1111,53 @@ public class CommandBuffer
             i = i + 1
         }
         ret true
+    }
+
+    # ── N3 双缓冲 pack：块轮换 + 容量只增 ─────────────────
+    # packToSlot() —— pack 到轮换槽并返回块指针（executeCommandBuffer 提交
+    # 用）。容量不足时释放重分；轮换游标推进到另一槽（下帧 pack 用）。
+    # 返回 0 = 分配失败。
+    public Int64 packToSlot()
+    {
+        Int32 bytes = this.streamBytes()
+        Int32 slot = this._packSlot
+        if bytes > this._packCap[ slot ]
+        {
+            if this._packPtr[ slot ] != 0
+            {
+                Memory.free( this._packPtr[ slot ] )
+                this._packPtr[ slot ] = 0
+            }
+            Int64 p = Memory.alloc( bytes )
+            if p == 0
+            {
+                this._packCap[ slot ] = 0
+                ret 0
+            }
+            this._packPtr[ slot ] = p
+            this._packCap[ slot ] = bytes
+        }
+        this.pack( this._packPtr[ slot ] )
+        this._packSlot = 1 - slot
+        ret this._packPtr[ slot ]
+    }
+
+    # disposeStreams() —— 释放双缓冲 pack 块（长生命周期对象显式回收；
+    # 块内存归本对象，GC 不感知原生分配；释放后可继续 packToSlot 重建）
+    public void disposeStreams()
+    {
+        Int32 i = 0
+        while i < 2
+        {
+            if this._packPtr[ i ] != 0
+            {
+                Memory.free( this._packPtr[ i ] )
+                this._packPtr[ i ] = 0
+            }
+            this._packCap[ i ] = 0
+            i = i + 1
+        }
+        this._packSlot = 0
     }
 
     override string toString()

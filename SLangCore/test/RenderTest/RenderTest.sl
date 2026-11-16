@@ -61,6 +61,12 @@ import Std;
 #   交替打断 RLE -> 64 独立 draw（draws=66）；双保险断言：64 槽中心 RGB
 #   抽样（baseSlot+InstanceID -> uColor[obj] 槽号路由）+ A/B 两帧
 #   262144 字节逐点一致（合批与逐 draw 数值等价）
+# Phase ASYNC 异步提交（N3：SLMC 双缓冲 + 渲染 worker 线程）：
+#   自建 256x256 管线，每帧 6 命令流（清色/quad 色随帧变防串帧）；模式 1
+#   双缓冲 pack 轮换 + 同步执行、模式 2 asyncMode(1) 控制流开 worker
+#   （context 归 worker）-> 入队即返 + asyncFlush 控制流排空后断言 ->
+#   asyncMode(0) 关 worker —— 两模式与同步路径逐帧像素一致（边角=清色、
+#   中心=quad 色）+ stats（draws=3 opaque=1）+ 关线程后同步复验 1 帧
 # ============================================================================
 public class RenderTest
 {
@@ -380,7 +386,7 @@ public class RenderTest
     # 缩放）。字母按渲染方向垂直翻转写入（v=0 <-> 像素 y=0 <-> 面底部）。
     static Texture makeCubeAtlas()
     {
-        Texture tex = Texture( 192, 128 )
+        Texture tex = Texture( 1920, 128 )
         Array<Float32> fr = Array<Float32>( 6 )
         Array<Float32> fg = Array<Float32>( 6 )
         Array<Float32> fb = Array<Float32>( 6 )
@@ -1017,6 +1023,12 @@ public class RenderTest
         # Phase DATA：数据层快照（CullingData / FrameData / PassData）
         bool phaseData = runDataSnapshot()
 
+        # Phase RAY：软光追 demo（N4a：CPU whitted + SLMC RaySet*/RayRender）
+        bool phaseRay = runRayTracing()
+
+        # Phase ASYNC：异步提交（N3：SLMC 双缓冲 + 渲染 worker 线程）
+        bool phaseAsync = runAsyncSubmit()
+
         Int32 phaseB = runQtWindow()
 
         string dText = "FAIL"
@@ -1075,6 +1087,8 @@ public class RenderTest
         Console.println( "phase RTPOOL(rt handle pool): " + ( phaseRtpool ? "PASS" : "FAIL" ) )
         Console.println( "phase FS  (frame settings)   : " + ( phaseFs ? "PASS" : "FAIL" ) )
         Console.println( "phase DATA(data layer)       : " + ( phaseData ? "PASS" : "FAIL" ) )
+        Console.println( "phase RAY (software raytr)   : " + ( phaseRay ? "PASS" : "FAIL" ) )
+        Console.println( "phase ASYNC(async submit)   : " + ( phaseAsync ? "PASS" : "FAIL" ) )
         Console.println( "phase B  (QT window)         : " + bText )
         # 终判：主流程全绿 + D3D11/VK 可用即 PASS，GLES 允许 SKIP（环境无 GLES 库）
         bool allOk = phaseA
@@ -1127,6 +1141,14 @@ public class RenderTest
             allOk = false
         }
         if !phaseData
+        {
+            allOk = false
+        }
+        if !phaseRay
+        {
+            allOk = false
+        }
+        if !phaseAsync
         {
             allOk = false
         }
@@ -2184,32 +2206,23 @@ public class RenderTest
         Console.println( "-- Phase A3: multi-camera (depth order + viewport split) + image file load --" )
 
         # 图片加载：坏路径 -> null；好路径 -> 纹理句柄
-        Console.println( "[a3dbg] step1: before bad loadFile" )
-        # N2B-DBG（临时）：跳过坏路径，直接测好路径
-        SLang.RenderTexture badTex = null
-        Console.println( "[a3dbg] step2: bad loadFile skipped" )
+        SLang.RenderTexture badTex = SLang.RenderTexture.loadFile( "no/such/file_missing.png" )
         if badTex != null
         {
             Console.println( "[cam] FAIL: loadFile should fail for missing file" )
             ret false
         }
 
-        Console.println( "[a3dbg] step3: before pipe create" )
         SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 1280, 720 )
-        Console.println( "[a3dbg] step4: after pipe create" )
         if pipe == null
         {
             Console.println( "[cam] FAIL: pipeline create - " + SLang.Render.errorString() )
             ret false
         }
 
-        Console.println( "[a3dbg] step5: before stat texcount" )
         Int32 texBefore = pipe.stat( SLang.RenderPipeline.STAT_TEXTURE_COUNT )
-        Console.println( "[a3dbg] step6: texBefore=" + texBefore.toString() )
         # 相对路径依赖运行进程 CWD（package 目录），失败则回退绝对路径
-        Console.println( "[a3dbg] step7: before good loadFile" )
         SLang.RenderTexture imgTex = SLang.RenderTexture.loadFile( "SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
-        Console.println( "[a3dbg] step8: after good loadFile" )
         if imgTex == null
         {
             imgTex = SLang.RenderTexture.loadFile( "D:/project/lang/SlangAllInOne/SLangCore/test/RenderTest/test_image.png" )
@@ -5100,6 +5113,451 @@ public class RenderTest
         Memory.free( pixels )
         pipe.destroy()
         Console.println( "[data] Phase DATA: PASS (culling snapshot + frame data + pass data)" )
+        ret true
+    }
+
+    # ── Phase RAY：软光追 demo（N4a：CPU whitted + SLMC RaySet*/RayRender）──
+    # 场景（RayScene SL 参考实现与 C 侧 sl_ray.c 数学逐字一致）：
+    #   地面 y=0 灰 0.55（reflect 0.2）；球 A 红色漫反射 c(0,1,0) r1
+    #   reflect 0；球 B 蓝色镜面 c(1.6,0.6,1.8) r0.6 reflect 0.7；
+    #   平行光 (-0.5,1,-0.5) 强度 1.0（表面 -> 光源）；相机 (0,1,-4)
+    #   fov60 朝 +z；背景天蓝 (0.45,0.62,0.95)；AMBIENT 0.25。
+    # 链路：cb.recordRayScene -> cb.rayRender(0,256,256)（CPU 逐像素
+    #   whitted -> 产纹理写描述符槽 0）-> 全屏 quad（MESH_QUAD scale2
+    #   + PROG_PTEX）贴图上屏 -> post(纯拷贝) -> blit -> readback。
+    # 断言四点（回读 top-left 坐标；C 实渲 vs RayScene 参考值 ±2/255，
+    #   再对手算理论值 ±6/255 双保险——公式见 RayScene 类头注释）：
+    #   背景    (32,32)   射线未命中 -> (0.45,0.62,0.95) = (115,158,242)
+    #   漫反射  (128,128) 球 A 正面 n·l=0.408，lit=0.658
+    #            -> (0.85,0.15,0.15)*0.658 = (143,25,25)
+    #   阴影    (157,175) 地面点 ~(0.62,0,0.62) 被球 A 遮挡：
+    #            local=0.55*0.25=0.1375，地板 reflect 0.2 且反射线
+    #            未命中 -> 0.1375*0.8 + 0.2*bg = (0.20,0.234,0.30) = (51,60,77)
+    #   反射    (128,197) 光泽地板点 ~(0,0,-0.8)：lit=1.0665（未被遮挡），
+    #            反射线命中球 A 背光面（n·l<0 -> 仅环境光）：
+    #            0.8*0.55*1.0665 + 0.2*(0.85,0.15,0.15)*0.25
+    #            = (0.512,0.477,0.477) = (131,122,122)
+    static bool runRayTracing()
+    {
+        Console.println( "-- Phase RAY: software ray tracing (CPU whitted, 2 spheres + ground, 256x256) --" )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[ray] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int64 pixels = Memory.alloc( 256 * 256 * 4 )
+        if pixels == 0
+        {
+            Console.println( "[ray] FAIL: pixel alloc" )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 场景（与 C 侧 RaySet* 命令同参数）─────────────────────
+        RayScene scene = RayScene()
+        scene.setGround( 0.55f, 0.55f, 0.55f, 0.2f )
+        scene.setLight( -0.5f, 1.0f, -0.5f, 1.0f )
+        scene.setCamera( 0.0f, 1.0f, -4.0f, 60.0f )
+        scene.setBackground( 0.45f, 0.62f, 0.95f )
+        RaySphere sphA = RaySphere()
+        sphA.setAll( 0.0f, 1.0f, 0.0f, 1.0f, 0.85f, 0.15f, 0.15f, 0.0f )
+        scene.addSphere( sphA )
+        RaySphere sphB = RaySphere()
+        sphB.setAll( 1.6f, 0.6f, 1.8f, 0.6f, 0.15f, 0.25f, 0.85f, 0.7f )
+        scene.addSphere( sphB )
+
+        # ── 录制：6 场景命令 + rayRender + 上屏 6 命令 = 13 条 ──────
+        # 全屏 quad：MESH_QUAD 半径 0.5，scale 2 覆盖整个 NDC
+        Float32_4x4 fsMvp = Float32_4x4( 2.0f, 0.0f, 0.0f, 0.0f,
+                                         0.0f, 2.0f, 0.0f, 0.0f,
+                                         0.0f, 0.0f, 1.0f, 0.0f,
+                                         0.0f, 0.0f, 0.0f, 1.0f )
+        CommandBuffer cb = CommandBuffer()
+        cb.name = "cb-ray"
+        cb.begin()
+        cb.recordRayScene( scene )
+        cb.rayRender( 0, 256, 256 )
+        cb.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, 0, 0, 256, 256,
+                             3, Color( 0.0f, 0.0f, 0.0f, 1.0f ) )
+        cb.setPerDraw( 0, fsMvp, Color( 1.0f, 1.0f, 1.0f, 1.0f ) )
+        cb.drawItem( SLang.RenderPipeline.PROG_PTEX, 0, SLang.RenderPipeline.MESH_QUAD, 0, 0, 2000, 0.0f )
+        cb.postProcess( 0, 1.0f, 1.0f, 1.0f )
+        cb.blitFinal()
+        cb.readback( pixels )
+        cb.end()
+        Console.println( "[ray] recorded " + cb.commandCount.toString() + " commands (overflow=" + cb.overflowCount.toString() + ")" )
+        if cb.commandCount != 13 || cb.overflowCount != 0
+        {
+            Console.println( "[ray] FAIL: commandCount expect 13, overflow expect 0" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        Int32 sorted = cb.sortDrawItems()
+        if sorted != 1
+        {
+            Console.println( "[ray] FAIL: sortDrawItems expect 1" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 提交渲染：C 侧逐 opcode 回放（rayRender 产纹理 + quad 上屏）──
+        if !pipe.executeCommandBuffer( cb )
+        {
+            Console.println( "[ray] FAIL: executeCommandBuffer - " + SLang.Render.errorString() )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 统计断言：quad + post + blit = 3 draw，1 不透明，1 实例
+        Int32 statDraws = pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS )
+        Int32 statOpaque = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Int32 statInst = pipe.stat( SLang.RenderPipeline.STAT_INSTANCE_COUNT )
+        Console.println( "[ray] stats: draws=" + statDraws.toString() + " opaque=" + statOpaque.toString() + " instances=" + statInst.toString() )
+        if statDraws != 3 || statOpaque != 1 || statInst != 1
+        {
+            Console.println( "[ray] FAIL: stats expect draws=3 opaque=1 instances=1" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # ── 四点像素断言（参考值 + 手算值双保险）──────────────────
+        # 参考值：RayScene.tracePixel（与 C 侧逐字一致的 SL 实现）
+        Float32_3 eBg = scene.tracePixel( 32, 32, 256, 256 )
+        Float32_3 eDiff = scene.tracePixel( 128, 128, 256, 256 )
+        Float32_3 eShadow = scene.tracePixel( 166, 176, 256, 256 )
+        Float32_3 eRefl = scene.tracePixel( 128, 197, 256, 256 )
+
+        # 1 背景 (32,32)：未命中 -> 纯背景色（字面值断言）
+        printRayPx( "bg     ", pixels, 32, 32 )
+        if rayPxOk( pixels, 256, 32, 32, 0.45f, 0.62f, 0.95f, 0.012f ) == false
+        {
+            Console.println( "[ray] FAIL: background (32,32) expect (0.45,0.62,0.95)" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 2 球 A 漫反射 (128,128)
+        printRayPx( "diffuse", pixels, 128, 128 )
+        if rayPxOk( pixels, 256, 128, 128, eDiff.x, eDiff.y, eDiff.z, 0.008f ) == false
+        {
+            Console.println( "[ray] FAIL: sphere diffuse (128,128) vs reference (" + eDiff.toString() + ")" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if rayPxOk( pixels, 256, 128, 128, 0.562f, 0.099f, 0.099f, 0.024f ) == false
+        {
+            Console.println( "[ray] FAIL: sphere diffuse (128,128) vs hand value (143,25,25)" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 3 地面阴影 (166,176)：地面点 (0.8,0,0.6) 在球 A 阴影椭圆内
+        #   （视线绕开球；local 仅环境光，地板反射背景混 0.2）
+        printRayPx( "shadow ", pixels, 166, 176 )
+        if rayPxOk( pixels, 256, 166, 176, eShadow.x, eShadow.y, eShadow.z, 0.008f ) == false
+        {
+            Console.println( "[ray] FAIL: ground shadow (166,176) vs reference (" + eShadow.toString() + ")" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if rayPxOk( pixels, 256, 166, 176, 0.20f, 0.234f, 0.30f, 0.024f ) == false
+        {
+            Console.println( "[ray] FAIL: ground shadow (166,176) vs hand value (51,60,77)" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        # 4 光泽地板反射 (128,197)：反射球 A 背光面（红染地板）
+        printRayPx( "reflect", pixels, 128, 197 )
+        if rayPxOk( pixels, 256, 128, 197, eRefl.x, eRefl.y, eRefl.z, 0.008f ) == false
+        {
+            Console.println( "[ray] FAIL: floor reflection (128,197) vs reference (" + eRefl.toString() + ")" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+        if rayPxOk( pixels, 256, 128, 197, 0.512f, 0.477f, 0.477f, 0.024f ) == false
+        {
+            Console.println( "[ray] FAIL: floor reflection (128,197) vs hand value (131,122,122)" )
+            Memory.free( pixels )
+            pipe.destroy()
+            ret false
+        }
+
+        Memory.free( pixels )
+        pipe.destroy()
+        Console.println( "[ray] Phase RAY: PASS (bg + diffuse + shadow + reflection 4-point hand-computed assertions, ref=(" + eBg.x.toString() + "," + eDiff.x.toString() + "," + eShadow.x.toString() + "," + eRefl.x.toString() + "))" )
+        ret true
+    }
+
+    # Phase RAY 像素容差检查（|actual - expect| <= tol，三通道全过才 true）
+    static bool rayPxOk( Int64 pixels, Int32 w, Int32 x, Int32 y,
+                         Float32 er, Float32 eg, Float32 eb, Float32 tol )
+    {
+        Int32 ar = sampleChannel( pixels, w, x, y, 0 )
+        Int32 ag = sampleChannel( pixels, w, x, y, 1 )
+        Int32 ab = sampleChannel( pixels, w, x, y, 2 )
+        Float32 fr = ar.toFloat32() / 255.0f
+        Float32 fg = ag.toFloat32() / 255.0f
+        Float32 fb = ab.toFloat32() / 255.0f
+        if Mathf.abs( fr - er ) > tol
+        {
+            ret false
+        }
+        if Mathf.abs( fg - eg ) > tol
+        {
+            ret false
+        }
+        if Mathf.abs( fb - eb ) > tol
+        {
+            ret false
+        }
+        ret true
+    }
+
+    # Phase RAY 采样点打印（诊断输出；参数名避开关键字 label）
+    static void printRayPx( string mark, Int64 pixels, Int32 x, Int32 y )
+    {
+        Int32 r = sampleChannel( pixels, 256, x, y, 0 )
+        Int32 g = sampleChannel( pixels, 256, x, y, 1 )
+        Int32 b = sampleChannel( pixels, 256, x, y, 2 )
+        Console.println( "[ray] " + mark + " (" + x.toString() + "," + y.toString() + ") RGB=(" + r.toString() + "," + g.toString() + "," + b.toString() + ")" )
+    }
+
+    # ── Phase ASYNC：异步提交（N3：SLMC 双缓冲 + 渲染 worker 线程）──
+    # 验收（AIPrompt.md N3）：模式 1 双缓冲 pack 轮换 + 同步执行、
+    # 模式 2 worker 线程入队执行 —— 两模式与同步路径逐帧像素一致。
+    # 每帧 6 命令流（SetRenderTargets 清色随帧变 + SetPerDraw 槽 0
+    # quad 色随帧变 + DrawItem + PostProcess + Blit + Readback）：
+    #   边角 (4,4) = 清色_i（quad 外）、中心 (128,128) = quad 色_i
+    #   （scale 0.5 中心 quad 内）；清色/quad 色逐帧变化 —— 陈旧槽/
+    #   串帧/双缓冲轮换错位立即暴露。
+    # 模式 2 流程：asyncMode(1) 控制流开 worker（context 归 worker）->
+    #   每帧入队（立即返回）+ asyncFlush 控制流排空（控制流进回放前
+    #   先 drain 保 FIFO，返回后主线程断言像素/stats 安全）->
+    #   asyncMode(0) 关 worker（context 绑回主线程）-> 1 帧同步复验
+    #   （关线程后管线仍可用）。
+    static bool runAsyncSubmit()
+    {
+        Console.println( "-- Phase ASYNC: double-buffer pack + render worker (6-cmd stream per frame) --" )
+        SLang.RenderPipeline pipe = SLang.RenderPipeline.create( 256, 256 )
+        if pipe == null
+        {
+            Console.println( "[async] FAIL: pipeline create - " + SLang.Render.errorString() )
+            ret false
+        }
+        Int64 pixels = Memory.alloc( 256 * 256 * 4 )
+        if pixels == 0
+        {
+            Console.println( "[async] FAIL: pixel alloc" )
+            pipe.destroy()
+            ret false
+        }
+
+        # quad MVP：中心 scale 0.5（列向量约定，平移 0）——NDC
+        # [-0.5,0.5]² -> 像素 [64,192]²：中心在内、边角在外
+        Float32_4x4 quadMvp = Float32_4x4( 0.5f, 0.0f, 0.0f, 0.0f,
+                                           0.0f, 0.5f, 0.0f, 0.0f,
+                                           0.0f, 0.0f, 1.0f, 0.0f,
+                                           0.0f, 0.0f, 0.0f, 1.0f )
+        CommandBuffer frameCb = CommandBuffer()
+        frameCb.name = "cb-async-frame"
+
+        # ── 模式 1：双缓冲 pack 轮换 + 同步执行（基线像素）────────
+        Int32 i = 0
+        while i < 6
+        {
+            Float32 fi = i.toFloat32()
+            Color clearCol = Color( 0.05f + 0.05f * fi, 0.06f + 0.04f * fi, 0.08f + 0.06f * fi, 1.0f )
+            Color quadCol = Color( 0.90f - 0.06f * fi, 0.20f + 0.05f * fi, 0.30f + 0.07f * fi, 1.0f )
+            frameCb.begin()
+            frameCb.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, 0, 0, 256, 256, 3, clearCol )
+            frameCb.setPerDraw( 0, quadMvp, quadCol )
+            frameCb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_QUAD, 0, 0, 2000, 0.5f )
+            frameCb.postProcess( 0, 1.0f, 1.0f, 1.0f )
+            frameCb.blitFinal()
+            frameCb.readback( pixels )
+            frameCb.end()
+            if i == 0 && frameCb.commandCount != 6
+            {
+                Console.println( "[async] FAIL: frame stream expect 6 commands, got " + frameCb.commandCount.toString() )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            if !pipe.executeCommandBuffer( frameCb )
+            {
+                Console.println( "[async] FAIL: sync execute frame " + i.toString() + " - " + SLang.Render.errorString() )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            if !rayPxOk( pixels, 256, 4, 4, 0.05f + 0.05f * fi, 0.06f + 0.04f * fi, 0.08f + 0.06f * fi, 0.03f )
+            {
+                Console.println( "[async] FAIL: sync frame " + i.toString() + " corner should be clear color" )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            if !rayPxOk( pixels, 256, 128, 128, 0.90f - 0.06f * fi, 0.20f + 0.05f * fi, 0.30f + 0.07f * fi, 0.03f )
+            {
+                Console.println( "[async] FAIL: sync frame " + i.toString() + " center should be quad color" )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            i = i + 1
+        }
+        # stats 断言（每流 SetRenderTargets 帧级重置）：1 drawItem +
+        # post + blit = 3 draws，opaque=1，transp=0
+        Int32 statDraws = pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS )
+        Int32 statOpaque = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Console.println( "[async] mode1 sync 6 frames ok; stats: draws=" + statDraws.toString() + " opaque=" + statOpaque.toString() )
+        if statDraws != 3 || statOpaque != 1
+        {
+            Console.println( "[async] FAIL: mode1 stats expect draws=3 opaque=1" )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+
+        # ── 模式 2：worker 线程（控制流开/关 + 普通流入队即返）─────
+        CommandBuffer ctrlCb = CommandBuffer()
+        ctrlCb.name = "cb-async-ctrl"
+        ctrlCb.begin()
+        ctrlCb.asyncMode( 1 )
+        ctrlCb.end()
+        if !pipe.executeCommandBuffer( ctrlCb )
+        {
+            Console.println( "[async] FAIL: asyncMode(1) control stream - " + SLang.Render.errorString() )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+        i = 0
+        while i < 6
+        {
+            Float32 fi = i.toFloat32()
+            Color clearCol = Color( 0.05f + 0.05f * fi, 0.06f + 0.04f * fi, 0.08f + 0.06f * fi, 1.0f )
+            Color quadCol = Color( 0.90f - 0.06f * fi, 0.20f + 0.05f * fi, 0.30f + 0.07f * fi, 1.0f )
+            frameCb.begin()
+            frameCb.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, 0, 0, 256, 256, 3, clearCol )
+            frameCb.setPerDraw( 0, quadMvp, quadCol )
+            frameCb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_QUAD, 0, 0, 2000, 0.5f )
+            frameCb.postProcess( 0, 1.0f, 1.0f, 1.0f )
+            frameCb.blitFinal()
+            frameCb.readback( pixels )
+            frameCb.end()
+            # 入队即返（等空槽 = 深度 2 流水线节流；worker 并行回放）
+            if !pipe.executeCommandBuffer( frameCb )
+            {
+                Console.println( "[async] FAIL: async submit frame " + i.toString() + " - " + SLang.Render.errorString() )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            # 排空屏障：控制流进入回放前先 drain —— 等 worker 完成帧 i
+            # 的回读后才返回，主线程断言像素安全
+            ctrlCb.begin()
+            ctrlCb.asyncFlush()
+            ctrlCb.end()
+            if !pipe.executeCommandBuffer( ctrlCb )
+            {
+                Console.println( "[async] FAIL: asyncFlush frame " + i.toString() + " - " + SLang.Render.errorString() )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            if !rayPxOk( pixels, 256, 4, 4, 0.05f + 0.05f * fi, 0.06f + 0.04f * fi, 0.08f + 0.06f * fi, 0.03f )
+            {
+                Console.println( "[async] FAIL: worker frame " + i.toString() + " corner should be clear color" )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            if !rayPxOk( pixels, 256, 128, 128, 0.90f - 0.06f * fi, 0.20f + 0.05f * fi, 0.30f + 0.07f * fi, 0.03f )
+            {
+                Console.println( "[async] FAIL: worker frame " + i.toString() + " center should be quad color" )
+                pipe.destroy()
+                Memory.free( pixels )
+                ret false
+            }
+            i = i + 1
+        }
+        statDraws = pipe.stat( SLang.RenderPipeline.STAT_DRAW_CALLS )
+        statOpaque = pipe.stat( SLang.RenderPipeline.STAT_OPAQUE_DRAWS )
+        Console.println( "[async] mode2 worker 6 frames ok; stats: draws=" + statDraws.toString() + " opaque=" + statOpaque.toString() )
+        if statDraws != 3 || statOpaque != 1
+        {
+            Console.println( "[async] FAIL: mode2 stats expect draws=3 opaque=1" )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+
+        # 关 worker（控制流：drain -> 停线程 -> context 绑回主线程）
+        ctrlCb.begin()
+        ctrlCb.asyncMode( 0 )
+        ctrlCb.end()
+        if !pipe.executeCommandBuffer( ctrlCb )
+        {
+            Console.println( "[async] FAIL: asyncMode(0) control stream - " + SLang.Render.errorString() )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+
+        # 同步复验：worker 关闭后管线仍可用（帧色 i=6 继续变化，
+        # 检测 context 收回后的同步路径无残留状态）
+        Float32 f6 = 6.0f
+        Color clearCol6 = Color( 0.05f + 0.05f * f6, 0.06f + 0.04f * f6, 0.08f + 0.06f * f6, 1.0f )
+        Color quadCol6 = Color( 0.90f - 0.06f * f6, 0.20f + 0.05f * f6, 0.30f + 0.07f * f6, 1.0f )
+        frameCb.begin()
+        frameCb.setRenderTargets( SLang.RenderPipeline.TARGET_SCENE, 0, 0, 256, 256, 3, clearCol6 )
+        frameCb.setPerDraw( 0, quadMvp, quadCol6 )
+        frameCb.drawItem( SLang.RenderPipeline.PROG_PFLAT, 0, SLang.RenderPipeline.MESH_QUAD, 0, 0, 2000, 0.5f )
+        frameCb.postProcess( 0, 1.0f, 1.0f, 1.0f )
+        frameCb.blitFinal()
+        frameCb.readback( pixels )
+        frameCb.end()
+        if !pipe.executeCommandBuffer( frameCb )
+        {
+            Console.println( "[async] FAIL: post-shutdown sync execute - " + SLang.Render.errorString() )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+        if !rayPxOk( pixels, 256, 4, 4, 0.05f + 0.05f * f6, 0.06f + 0.04f * f6, 0.08f + 0.06f * f6, 0.03f )
+        {
+            Console.println( "[async] FAIL: post-shutdown corner should be clear color" )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+        if !rayPxOk( pixels, 256, 128, 128, 0.90f - 0.06f * f6, 0.20f + 0.05f * f6, 0.30f + 0.07f * f6, 0.03f )
+        {
+            Console.println( "[async] FAIL: post-shutdown center should be quad color" )
+            pipe.destroy()
+            Memory.free( pixels )
+            ret false
+        }
+
+        frameCb.disposeStreams()
+        ctrlCb.disposeStreams()
+        pipe.destroy()
+        Memory.free( pixels )
+        Console.println( "[async] Phase ASYNC: PASS (mode1 sync 6 + mode2 worker 6 + post-shutdown sync 1; pixels identical)" )
         ret true
     }
 

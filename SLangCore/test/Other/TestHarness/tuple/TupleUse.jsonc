@@ -1,0 +1,13 @@
+{
+    "project": { "name": "TupleUse" },
+    "source": { "root": "." },
+    "compile": { "optimize": false, "target": "x64", "debug": true },
+    "references": [
+      { "path": "D:/project/lang/SlangAllInOne/bin/Debug/net8.0/lib/Core.module.slb", "name": "Core" },
+      { "path": "D:/project/lang/SlangAllInOne/bin/Debug/net8.0/lib/Std.module.slb", "name": "Std" }
+    ],
+    "compileFiles": { "files": [ { "path": "TupleUse.sl", "group": "t", "tag": "t", "ignore": false, "priority": 0 } ] },
+    "compileFilter": { "isAllGroup": true, "isAllTag": true },
+    "global": { "imports": [ "Std.Console" ] },
+    "export": { "moduleName": "TupleUse", "outputDir": "export" }
+}

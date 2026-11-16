@@ -2461,6 +2461,9 @@ static int vk_enter(void)
 
 static void vk_exit(void) { LeaveCriticalSection(&s_lock); }
 
+/* N3 线程亲和：队列/设备对象无绑定线程限制（互斥由 s_lock 保证）*/
+static int vk_thread_nop(void) { return 1; }
+
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
@@ -2492,6 +2495,14 @@ static const SlrRhi s_rhi_vk =
     vk_desc_write_tex,
     vk_desc_bind_tex,
     vk_upload_lights,
+    /* N2a shadow map 四钩子（后端不支持，显式 NULL：管线层回退黑斑）*/
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    /* N3 线程亲和（无 context 绑定要求，no-op）*/
+    vk_thread_nop,
+    vk_thread_nop,
 };
 
 const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

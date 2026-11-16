@@ -1,0 +1,9 @@
+{
+    "project": { "name": "Good" },
+    "source": { "root": "." },
+  "references": [
+    { "path": "../../../../../out/cli-release/lib/Core.module.slb", "name": "Core" },
+    { "path": "../../../../../out/cli-release/lib/Std.module.slb", "name": "Std" }
+  ],
+    "export": { "moduleName": "Good", "outputDir": "export" }
+}

@@ -73,6 +73,18 @@
       { "path": "core/QSplitter.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "core/QCodeEdit.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "core/QTabWidget.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-15 第二十三轮：原生选项控件（下拉框 / 复选框 / 只读属性表）
+      { "path": "core/QComboBox.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QCheckBox.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      { "path": "core/QTableWidget.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-15 第二十六轮：原生数值输入（扫描深度设置）
+      { "path": "core/QSpinBox.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-16 第二十七轮：独立标签条 + 窗口关闭请求
+      { "path": "core/QTabBar.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-16 第二十八轮：原生消息框封装（回补 §3.3 部分实现欠账）
+      { "path": "core/QMessageBox.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
+      // 2026-11-16 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染）
+      { "path": "core/QTextBrowser.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QVBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
       { "path": "layout/QHBoxLayout.sl", "group": "qt", "tag": "gui", "ignore": false, "priority": 0 },
@@ -125,6 +137,13 @@
         { "class": "QSplitter" },
         { "class": "QCodeEdit" },
         { "class": "QTabWidget" },
+        { "class": "QComboBox" },
+        { "class": "QCheckBox" },
+        { "class": "QTableWidget" },
+        { "class": "QSpinBox" },
+        { "class": "QTabBar" },
+        { "class": "QMessageBox" },
+        { "class": "QTextBrowser" },
         { "class": "QLayout" },
         { "class": "QVBoxLayout" },
         { "class": "QHBoxLayout" },

@@ -650,6 +650,42 @@ $@"{{
         File.WriteAllText(path, content, new UTF8Encoding(hasBom));
     }
 
+    /// <summary>
+    /// slang project guide：对已存在工程补建/重生成同名 .md（总纲 §0.2 CLI 先行）。
+    /// 复用 new project 的内嵌模板与 AI 描述区保留逻辑；新建带 BOM，重写保持原 BOM。
+    /// </summary>
+    public static int GenerateGuide(string jsoncPath, string description)
+    {
+        string full = Path.GetFullPath(jsoncPath);
+        if (!File.Exists(full))
+        {
+            Console.Error.WriteLine("[FAIL] 工程配置不存在: " + full);
+            return 1;
+        }
+        string dir = Path.GetDirectoryName(full)!;
+        string name = Path.GetFileNameWithoutExtension(full);
+        string guide = Path.Combine(dir, name + ".md");
+        string? template = LoadGuideTemplate();
+        if (template == null)
+        {
+            Console.Error.WriteLine("[FAIL] guide 模板资源缺失");
+            return 1;
+        }
+        bool hasSp = File.Exists(Path.Combine(dir, name + ".sp"));
+        var options = new ProjectOptions
+        {
+            IsModule = !hasSp,
+            WithSp = hasSp,
+            GuideDescription = description,
+        };
+        string? existing = File.Exists(guide) ? File.ReadAllText(guide) : null;
+        string content = BuildGuideMarkdown(template, name, existing, options);
+        if (existing == null) WriteAllTextBom(guide, content);
+        else WriteTextPreservingBom(guide, content);
+        Console.WriteLine((existing == null ? "Created: " : "Regenerated: ") + guide);
+        return 0;
+    }
+
     static void PrintUsage()
     {
         Console.WriteLine(@"用法:

@@ -25,5 +25,17 @@ namespace SLang
 
         # area 取 Qt::DockWidgetArea 位值：1=左 2=右 4=顶 8=底
         public void addDockWidget( SLang.QDockWidget dock, int area ) { SLang.QT.ffi_mainwindowAddDock( this.handle, dock.handle, area ) }
+
+        # ── 2026-11-16 第二十七轮：窗口关闭请求 ──
+        # 订阅后点 X 不再直接关窗，先发信号（int 载荷=0）交应用确认；
+        # 确认退出时回调 close()（bypass 过滤器真正关窗）或 quitApp()。
+        # handler 形态：static void onCloseRequest( int payload )
+        public Int64 onCloseRequested( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_CLOSE_REQUESTED, handler )
+        }
+
+        # 程序化关闭（绕过关闭过滤器）；无过滤器时等同直接关窗
+        public void close() { SLang.QT.ffi_windowClose( this.handle ) }
     }
 }

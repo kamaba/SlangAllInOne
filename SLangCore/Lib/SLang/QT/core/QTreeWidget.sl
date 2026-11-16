@@ -42,5 +42,62 @@ namespace SLang
         {
             ret SLang.QT.connect( this.handle, SLang.QT.SIG_TREE_CONTEXT, handler )
         }
+
+        # 2026-11-14 第二十一轮：展开态 / 前景色 / tooltip / 双击（按路径定位节点）
+        public void expandAll() { SLang.QT.ffi_treeExpandAll( this.handle ) }
+
+        public void collapseAll() { SLang.QT.ffi_treeCollapseAll( this.handle ) }
+
+        public void setItemExpanded( string path, int on )
+        {
+            SLang.QT.ffi_treeSetItemExpanded( this.handle, path, on )
+        }
+
+        public bool isItemExpanded( string path )
+        {
+            int v = SLang.QT.ffi_treeItemExpanded( this.handle, path )
+            if ( v != 0 ) { ret true }
+            ret false
+        }
+
+        # rgb = 0xRRGGBB（如 0x888888 灰显 / 0xC00000 标红）
+        public void setItemForeground( string path, int rgb )
+        {
+            SLang.QT.ffi_treeSetItemForeground( this.handle, path, rgb )
+        }
+
+        public void setItemTooltip( string path, string tip )
+        {
+            SLang.QT.ffi_treeSetItemTooltip( this.handle, path, tip )
+        }
+
+        # 2026-11-15 第二十三轮：按累计路径选中节点（属性页默认选中 root/project）
+        public void setCurrentPath( string path )
+        {
+            SLang.QT.ffi_treeSetCurrentPath( this.handle, path )
+        }
+
+        # 第二十四轮：淡色背景底纹 / 字体加粗（rgb = 0xRRGGBB）
+        public void setItemBackground( string path, int rgb )
+        {
+            SLang.QT.ffi_treeSetItemBackground( this.handle, path, rgb )
+        }
+
+        public void setItemBold( string path, int on )
+        {
+            SLang.QT.ffi_treeSetItemBold( this.handle, path, on )
+        }
+
+        # 第二十六轮：Qt 标准图标 id（0 文件 / 1 目录 / 2 警告 / 3 应用 / 4 取消）
+        public void setItemIcon( string path, int iconId )
+        {
+            SLang.QT.ffi_treeSetItemIcon( this.handle, path, iconId )
+        }
+
+        # handler 形态：static void onDoubleClicked( string path )
+        public Int64 onDoubleClicked( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_TREE_DOUBLE_CLICKED, handler )
+        }
     }
 }

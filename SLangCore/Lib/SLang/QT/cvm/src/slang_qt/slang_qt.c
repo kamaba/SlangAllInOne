@@ -298,6 +298,41 @@ SLQT_API int32_t     slqt_list_current_row_sl(int64_t h) { return slqt_be_list_c
 SLQT_API void        slqt_list_set_current_row_sl(int64_t h, int32_t row) { slqt_be_list_set_current_row(h, row); }
 SLQT_API const char* slqt_list_item_text_sl(int64_t h, int32_t row) { return slqt_be_list_item_text(h, row); }
 
+/* 2026-11-15 第二十三轮：原生选项控件转发 */
+SLQT_API int64_t slqt_combo_create_sl(int64_t p) { return slqt_be_combo_create(p); }
+SLQT_API void    slqt_combo_add_item_sl(int64_t h, const char* t) { slqt_be_combo_add_item(h, t); }
+SLQT_API int32_t slqt_combo_count_sl(int64_t h) { return slqt_be_combo_count(h); }
+SLQT_API int32_t slqt_combo_current_index_sl(int64_t h) { return slqt_be_combo_current_index(h); }
+SLQT_API void    slqt_combo_set_current_index_sl(int64_t h, int32_t i) { slqt_be_combo_set_current_index(h, i); }
+SLQT_API int64_t slqt_check_create_sl(int64_t p, const char* t) { return slqt_be_check_create(p, t); }
+SLQT_API int32_t slqt_check_is_checked_sl(int64_t h) { return slqt_be_check_is_checked(h); }
+SLQT_API void    slqt_check_set_checked_sl(int64_t h, int32_t on) { slqt_be_check_set_checked(h, on); }
+SLQT_API int64_t slqt_table_create_sl(int64_t p) { return slqt_be_table_create(p); }
+SLQT_API void    slqt_table_set_column_count_sl(int64_t h, int32_t n) { slqt_be_table_set_column_count(h, n); }
+SLQT_API void    slqt_table_set_row_count_sl(int64_t h, int32_t n) { slqt_be_table_set_row_count(h, n); }
+SLQT_API void    slqt_table_set_headers_sl(int64_t h, const char* csv) { slqt_be_table_set_headers(h, csv); }
+SLQT_API void    slqt_table_set_item_sl(int64_t h, int32_t r, int32_t c, const char* t) { slqt_be_table_set_item(h, r, c, t); }
+SLQT_API void    slqt_table_clear_sl(int64_t h) { slqt_be_table_clear(h); }
+SLQT_API int32_t slqt_table_current_row_sl(int64_t h) { return slqt_be_table_current_row(h); }
+SLQT_API void        slqt_table_set_item_editable_sl(int64_t h, int32_t r, int32_t c, int32_t on) { slqt_be_table_set_item_editable(h, r, c, on); }
+SLQT_API const char* slqt_table_item_text_sl(int64_t h, int32_t r, int32_t c) { return slqt_be_table_item_text(h, r, c); }
+
+/* 第二十六轮：QSpinBox */
+SLQT_API int64_t slqt_spin_create_sl(int64_t parent) { return slqt_be_spin_create(parent); }
+SLQT_API void    slqt_spin_set_range_sl(int64_t h, int32_t lo, int32_t hi) { slqt_be_spin_set_range(h, lo, hi); }
+SLQT_API void    slqt_spin_set_value_sl(int64_t h, int32_t v) { slqt_be_spin_set_value(h, v); }
+SLQT_API int32_t slqt_spin_value_sl(int64_t h) { return slqt_be_spin_value(h); }
+
+/* 第二十七轮：独立标签条 QTabBar + 窗口关闭请求 */
+SLQT_API int64_t     slqt_tabbar_create_sl(int64_t parent) { return slqt_be_tabbar_create(parent); }
+SLQT_API int32_t     slqt_tabbar_add_tab_sl(int64_t h, const char* title) { return slqt_be_tabbar_add_tab(h, title); }
+SLQT_API void        slqt_tabbar_remove_tab_sl(int64_t h, int32_t idx) { slqt_be_tabbar_remove_tab(h, idx); }
+SLQT_API void        slqt_tabbar_set_current_sl(int64_t h, int32_t idx) { slqt_be_tabbar_set_current(h, idx); }
+SLQT_API int32_t     slqt_tabbar_current_sl(int64_t h) { return slqt_be_tabbar_current(h); }
+SLQT_API int32_t     slqt_tabbar_count_sl(int64_t h) { return slqt_be_tabbar_count(h); }
+SLQT_API const char* slqt_tabbar_tab_text_sl(int64_t h, int32_t idx) { return slqt_be_tabbar_tab_text(h, idx); }
+SLQT_API void        slqt_window_close_sl(int64_t h) { slqt_be_window_close(h); }
+
 SLQT_API int64_t slqt_mainwindow_create_sl(void) { return slqt_be_mainwindow_create(); }
 SLQT_API void    slqt_mainwindow_set_central_sl(int64_t h, int64_t w) { slqt_be_mainwindow_set_central(h, w); }
 SLQT_API void    slqt_mainwindow_set_title_sl(int64_t h, const char* t) { slqt_be_mainwindow_set_title(h, t); }
@@ -429,6 +464,15 @@ SLQT_API int64_t slqt_menu_popup_cursor_sl(int64_t menu) { return slqt_be_menu_p
 SLQT_API void    slqt_action_set_text_sl(int64_t a, const char* t) { slqt_be_action_set_text(a, t); }
 SLQT_API void    slqt_action_set_enabled_sl(int64_t a, int64_t on) { slqt_be_action_set_enabled(a, on); }
 SLQT_API int64_t slqt_action_enabled_sl(int64_t a) { return (int64_t)slqt_be_action_enabled(a); }
+/* 第二十九轮：QAction 快捷键 */
+SLQT_API void    slqt_action_set_shortcut_sl(int64_t a, const char* keys) { slqt_be_action_set_shortcut(a, keys); }
+
+/* 第三十轮：QTextBrowser */
+SLQT_API int64_t slqt_browser_create_sl(int64_t parent) { return slqt_be_browser_create(parent); }
+SLQT_API void    slqt_browser_set_markdown_sl(int64_t h, const char* md) { slqt_be_browser_set_markdown(h, md); }
+/* 第三十二轮：文档内链接跳转 */
+SLQT_API void        slqt_browser_set_document_sl(int64_t h, const char* path, const char* md) { slqt_be_browser_set_document(h, path, md); }
+SLQT_API const char* slqt_browser_current_source_sl(int64_t h) { return slqt_be_browser_current_source(h); }
 
 SLQT_API int64_t slqt_toolbar_create_sl(int64_t p, const char* t) { return slqt_be_toolbar_create(p, t); }
 SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb) { slqt_be_mainwindow_add_toolbar(win, tb); }
@@ -477,6 +521,16 @@ SLQT_API void        slqt_tree_clear_sl(int64_t h) { slqt_be_tree_clear(h); }
 SLQT_API void        slqt_tree_add_path_sl(int64_t h, const char* path) { slqt_be_tree_add_path(h, path); }
 SLQT_API int32_t     slqt_tree_count_sl(int64_t h) { return slqt_be_tree_count(h); }
 SLQT_API const char* slqt_tree_selected_path_sl(int64_t h) { return slqt_be_tree_selected_path(h); }
+SLQT_API void        slqt_tree_expand_all_sl(int64_t h) { slqt_be_tree_expand_all(h); }
+SLQT_API void        slqt_tree_collapse_all_sl(int64_t h) { slqt_be_tree_collapse_all(h); }
+SLQT_API void        slqt_tree_set_item_expanded_sl(int64_t h, const char* path, int32_t on) { slqt_be_tree_set_item_expanded(h, path, on); }
+SLQT_API int32_t     slqt_tree_item_expanded_sl(int64_t h, const char* path) { return slqt_be_tree_item_expanded(h, path); }
+SLQT_API void        slqt_tree_set_item_foreground_sl(int64_t h, const char* path, int32_t rgb) { slqt_be_tree_set_item_foreground(h, path, rgb); }
+SLQT_API void        slqt_tree_set_item_tooltip_sl(int64_t h, const char* path, const char* t) { slqt_be_tree_set_item_tooltip(h, path, t); }
+SLQT_API void        slqt_tree_set_current_path_sl(int64_t h, const char* path) { slqt_be_tree_set_current_path(h, path); }
+SLQT_API void        slqt_tree_set_item_background_sl(int64_t h, const char* path, int32_t rgb) { slqt_be_tree_set_item_background(h, path, rgb); }
+SLQT_API void        slqt_tree_set_item_bold_sl(int64_t h, const char* path, int32_t on) { slqt_be_tree_set_item_bold(h, path, on); }
+SLQT_API void        slqt_tree_set_item_icon_sl(int64_t h, const char* path, int32_t iconId) { slqt_be_tree_set_item_icon(h, path, iconId); }
 
 SLQT_API int64_t slqt_splitter_create_sl(int64_t p, int32_t v) { return slqt_be_splitter_create(p, v); }
 SLQT_API void    slqt_splitter_add_widget_sl(int64_t sp, int64_t w) { slqt_be_splitter_add_widget(sp, w); }

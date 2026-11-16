@@ -709,23 +709,6 @@ static void gl_shadow_bind_depth(SlrRhiTarget* t)
 {
     p_glActiveTexture(GL_TEXTURE2);
     p_glBindTexture(GL_TEXTURE_2D, t ? t->depth_tex : 0);
-    /* N2A-DBG（临时）：ReadPixels 深度图 4 分区各自 min——验证级联写入 */
-    if (t)
-    {
-        static float dbg[512 * 4];
-        float mn[4];
-        int q, i;
-        for (q = 0; q < 4; q++)
-        {
-            mn[q] = 1.0f;
-            p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
-            p_glReadPixels(q * 128, 0, 128, 4, GL_DEPTH_COMPONENT, GL_FLOAT, dbg);
-            p_glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            for (i = 0; i < 128 * 4; i++) if (dbg[i] < mn[q]) mn[q] = dbg[i];
-        }
-        printf("[N2A-DBG] gl csm depth min: L0=%.4f L1=%.4f L2=%.4f L3=%.4f (1.0=empty)\n",
-               mn[0], mn[1], mn[2], mn[3]);
-    }
 }
 
 /* rgba 首行 = 图像底部（sl_texture.c 已统一翻转），GL 原样入显存 */
@@ -1290,6 +1273,18 @@ static int gl_enter(void)
 
 static void gl_exit(void) { LeaveCriticalSection(&s_lock); }
 
+/* N3 线程亲和切换：async 启停窗口整体移交 context（无并发渲染；
+ * enter 每次 MakeCurrent 幂等绑定当前线程，故主线程持绑常态成立）*/
+static int gl_thread_acquire(void)
+{
+    return pwglMakeCurrent(s_hdc, s_hrc) ? 1 : 0;
+}
+
+static int gl_thread_release(void)
+{
+    return pwglMakeCurrent(NULL, NULL) ? 1 : 0;
+}
+
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
@@ -1326,6 +1321,9 @@ static const SlrRhi s_rhi_gl =
     gl_shadow_target_destroy,
     gl_shadow_begin,
     gl_shadow_bind_depth,
+    /* N3 线程亲和（context 移交）*/
+    gl_thread_acquire,
+    gl_thread_release,
 };
 
 const SlrRhi* slr_rhi_gl(void) { return &s_rhi_gl; }

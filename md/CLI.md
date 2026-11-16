@@ -28,7 +28,7 @@
 | `slang new project <Name> [-p <dir>] [选项]` | 脚手架：`<dir>\<Name>\` 下成套落盘 `Name.sp / Name.jsonc / Name.sl / Name.md`（UTF-8 BOM，含 guide）。无选项时行为与旧版一致；选项见 §1.4 |
 | `slang new class <Name> [-p <dir>]` | 在 `<dir>` 找到的 `.sp` 旁创建 `<Name>.sl` 并登记进 jsonc |
 | `slang test <project>` | 跑工程 `tests/` 下的测试用例（第十八轮）：用例 = `tests\<Name>\` 目录工程（`<Name>.sl` 含 `Project._main_()` 入口 + `<Name>.jsonc`）；每个用例独立子进程编译+运行，**退出码 0 = PASS**，断言失败在用例里调 `SystemExit(非0)`（裸系统调用，Std 模块注册，引用 Std 即可用；正数透传为进程退出码）。输出逐用例 `[PASS]\|[FAIL] (exit=N)` + 汇总 `tests: N total, M passed, K failed`；全过 exit 0，否则 1；无 `tests/` 目录输出 `tests: none` exit 0。`--filter <子串>`（第十九轮）只跑名字含该子串的用例（大小写不敏感；无匹配输出 `tests: none matched filter` exit 0） |
-| `slang project <sub>` | 工程配置/目录扫描的 CLI 真源（自带文法）：`info / scan / get / set / raw / copy / rename / delete`，见 §1.5 |
+| `slang project <sub>` | 工程配置/目录扫描的 CLI 真源（自带文法）：`info / scan / get / set / raw / guide / copy / rename / delete`，见 §1.5 |
 | `slang lsp [--stdio]` | 内嵌 LSP 3.17 服务器（stdio JSON-RPC；VSCode 插件消费：诊断推送 + 符号补全） |
 | `slang lsp-compile` | LSP 专用诊断子命令（新进程单次编译，结构化 JSON 到 stdout；`slang lsp` 每轮自动调用，一般不直接用） |
 | `slang ffi-check <contract> [--dll <lib.dll>]` | FFI 契约独立校验（`.slffi.json`）：schema 自检（version / functionList / structs / callbacks）+ 可选 DLL 导出表逐符号比对；失败 exit 1（CI 友好） |
@@ -67,6 +67,10 @@ slang new project MyLib --kind module --no-guide               # 库模块：只
 slang project info MyLib/MyLib.jsonc --json                    # 工程信息 + 配置节点树
 slang project scan . --json --depth 4                          # 结构化目录扫描
 slang project set MyLib/MyLib.jsonc --key project/desc --value demo
+slang project set MyLib/MyLib.jsonc --key project/desc --remove                # 删除键
+slang project set MyLib/MyLib.jsonc --key compileFiles/files/[1] --value "New.sl" --insert  # 数组中间插入
+slang project guide MyLib/MyLib.jsonc --desc "库模块说明"      # 补建/重生成项目说明 .md
+slang project scan . --json --exclude out,publish              # 额外排除目录
 slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest        # 编译+运行（内存交接）
 slang MyProject --export-mode temp                             # 临时目录导出后运行
 slang MyProject -- arg1 arg2                                   # 程序参数透传
@@ -96,10 +100,13 @@ slang pack-modules --config Release                            # 标准库打包
 
 | 子命令 | 说明 |
 |--------|------|
-| `project info <path> [--json]` | 工程锚点 / 类型 / 模块名 / 状态 + `compileFiles` 逐项存在性 + 配置节点树（路径、类型、值、行号、原始片段、标注）。`--json` 输出单行 JSON（含 `nodeCount/fileCount/referenceCount` 显式计数） |
-| `project scan <dir> [--json] [--depth N]` | 递归扫描 `*.jsonc`（排除 `.git/node_modules/out/publish/build/bin/obj/.codebuddy` 与 `plugin.jsonc`；深度缺省 8，上限 2000 文件 / 200 工程），`--json` 返回 `projects[]` 结构化结果 |
+| `project info <path> [--json]` | 工程锚点 / 类型 / 模块名 / 状态 + `compileFiles` 逐项存在性 + 配置节点树（路径、类型、值、行号、原始片段、标注）。`--json` 输出单行 JSON（含 `nodeCount/fileCount/referenceCount` 显式计数）；解析失败时 `state=parseError`，`parseError` 附 `errorLine` / `errorColumn` / `errorOffset`（0 = 无结构化位置），退出码 1 |
+| `project scan <dir> [--json] [--depth N] [--exclude <a,b>]` | 递归扫描 `*.jsonc`（内置排除 `.git/node_modules/out/publish/build/bin/obj/.codebuddy` 与 `plugin.jsonc`；`--exclude` 追加逗号分隔的目录名；深度缺省 8，上限 2000 文件 / 200 工程），`--json` 返回 `projects[]` 与 `excludeDirs[]` |
 | `project get <path> --key <a/b/[i]/c> [--json]` | 读一个键（类型化值 + 原始片段） |
 | `project set <path> --key <a/b> --value <text> [--add]` | 改一个键：`--value` 为 JSON 字面量或纯文本（纯文本自动加引号）；只替换值区间，**注释、缩进、键顺序、BOM 原样保留**。带 `--add` 时新增缺失键/段：最长已存在祖先为 object → 插入成员（中间缺失段构造嵌套 object），为 array → 只支持末尾追加元素（`[i]` 必须等于当前元素数，元素内嵌套键合法）；`--add` 遇已存在键报错退出 1，缺失键不带 `--add` 报错并提示 |
+| `project set <path> --key <a/b> --remove` | 删除已存在的 object 成员或数组元素；只动该成员区间与相邻逗号，注释、缩进、键顺序、BOM 原样保留；键不存在退出 1（不需要 `--value`） |
+| `project set <path> --key <a/b/[i]> --value <text> --insert` | 向已有数组插入元素：末段必须是 `[i]`，`i` 不大于当前元素数；`i == 元素数` 等价末尾追加，否则插到原 `[i]` 元素之前并补逗号、沿用同数组缩进；越界或父节点不是数组退出 1。`--add` / `--remove` / `--insert` 互斥 |
+| `project guide <path> [--desc <text>]` | 对已存在工程补建/重生成同名 `.md` 项目说明；`--desc` 写入说明区，已有说明的 AI 描述区原样保留；新建 UTF-8 BOM，重生成保持原 BOM 形态 |
 | `project raw <path> --key <a/b>` | 读一个节点的原始片段（只读） |
 | `project copy <path> --name <New> [--dest <dir>]` | 复制工程为新名副本：整目录递归复制（`--dest` 缺省同父目录）→ 副本内 jsonc/sp 改名为 `<New>` → 同步 `project.name` / `export.moduleName`（存在才改，注释/BOM/缩进保留）；目标已存在退出 1、名称非法退出 2 |
 | `project rename <path> --name <New>` | 重命名工程：jsonc/sp 改名 + `project.name` / `export.moduleName` 同步；目标已存在退出 1 |

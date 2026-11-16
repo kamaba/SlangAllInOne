@@ -157,3 +157,75 @@ SDK 前缀。
 - **重要纪律（跨模块对象存储）**：应用侧不要把 `SLang.Q*` 对象存进 `List<对象>` —— 实测 `List<SLang.QCodeEdit>` 取回后 `_handle` 被污染成无效大整数，`toPlainText()` 返回指针样数字、按句柄直调 FFI 返回空串。正确做法是 `List<Int64>` 只存句柄，需要操作时 `QCodeEdit.fromHandle(h)` 临时收养封装对象。
 - **生命周期**：`QTabWidget::removeTab` 只解除父子关系、不 delete 页面；SL 侧关闭标签时对收养对象显式 `delete()`（走 `slqt_be_object_delete` → `delete (QObject*)o` + `slqt_unregister`），避免泄漏与二次释放。
 - 验证：stub / `-Qt` 双构建 + stage 通过；消费方 `SLangCodeEditor` 探针 `p11` 得 `open count=3`、`cur=[CCC] h1=18 viaFfi=[CCC]`、`switch A=[AAA-edited] B=[BBB]`、三种关闭与空态全部正确、`failures=0`；主工程编译 `EXIT=0`、Qt 后端零 stderr。
+
+## 2026-11-15 第二十三轮补记（原生选项控件 / 只读属性表，QTModule 先行）
+
+按总纲 §6 [C] 七处登记补 `QComboBox` / `QCheckBox` / `QTableWidget` 三个封装类与 `QTreeWidget.setCurrentPath`：有效 FFI **235 → 250**、struct **44 → 47**、信号 **14 不变**。
+
+- 五处原生登记：`slang_qt.h`（15 条 `SLQT_API`）/ `slang_qt.c` 转发 / `slang_qt_backend.h` 契约 / `slang_qt_qt.cpp`（`<QComboBox>` `<QCheckBox>` `<QTableWidget>` `<QHeaderView>` 实现；表格创建即 `NoEditTriggers + SelectRows + AlternatingRowColors`）/ `slang_qt_stub.c`（create 返回 `slqt_register(NULL)` 安全空句柄，count / currentIndex / checked 返回 0 / -1 / 0）。
+- 两处 SL 登记：`QTFFI.sl`（15 条 `@DllStaticImport` + 3 个工厂）、`QT.jsonc`（3 条 `compileFiles` + 3 个 `struct.children`）；新增 3 个 `core/Q*.sl`。全量表见 [04 §4.8](doc/04-SymbolTable.md)。
+- 验证：`build-slqt.ps1` stub 与 `-Qt` 双构建 EXIT=0；`deploy-qt.ps1 -Combo full -PkgFlavor release -Targets package` 33 dll 并 stage；PE 导出表实测新符号存在；临时探针工程在 Qt 后端实跑 `combo count=2 idx=1` / `check=true` / `table filled` / `tree current set` / `qtprobe ok`（EXIT=0），探针已清理。
+
+## 2026-11-15 第二十四轮补记（表格行信号 / 树节点底纹，QTModule 先行）
+
+按总纲 §6 [C] 七处登记补 3 条 FFI + 1 个信号：有效 FFI **250 → 253**、信号 **14 → 15**、struct **47 不变**。
+
+- 五处原生登记：`slang_qt.h`（3 条 `SLQT_API` + `SLQT_SIG_TABLE_ROW_CLICKED=14`）/ `slang_qt.c` 转发 / `slang_qt_backend.h` 契约 / `slang_qt_qt.cpp`（`QTableWidget::cellClicked` 的 `_dispatchInt` 分派 + `currentRow()` + `setBackground(0,QBrush(QColor))` + `QFont::setBold`）/ `slang_qt_stub.c`（currentRow 返回 -1、两个 setter 空桩）。
+- 两处 SL 登记：`QTFFI.sl`（3 条 `@DllStaticImport` + 信号常量 + connect 分派）、`core/QTableWidget.sl` / `core/QTreeWidget.sl`（4 个新方法）；本轮不新增 `.sl`，`QT.jsonc` 无需改。全量表见 [04 §4.9](doc/04-SymbolTable.md)。
+- 验证：`build-slqt.ps1` stub 与 `-Qt` 双构建 EXIT=0（C++ 编译零 error）；PE 导出表实测 `slqt_table_current_row_sl` / `slqt_tree_set_item_background_sl` / `slqt_tree_set_item_bold_sl` 存在；临时探针在 Qt 后端实跑 `table cur=-1 signal=bound` / `tree styled` / `splitter nested` / `qtprobe24 ok`（EXIT=0）。
+- 部署边界：本机 `deploy-qt.ps1 -Targets package` 在清理既有 33 个 Qt runtime DLL 时被环境的 `Remove-Item` 包装拦截（管道输入绑定失败），非脚本缺陷；Qt runtime 文件已就位，本轮直接同步 `SLangQT.module.slb/json` 与 Qt 后端 `slang_qt.dll` 到 package / IDE 两个 slot（与 `run.ps1` 的 stage 步骤同口径）。
+
+## 2026-11-15 第二十五轮补记（值列就地编辑，QTModule 先行）
+
+按总纲 §6 [C] 七处登记补 2 条 FFI + 1 个信号：有效 FFI **253 → 255**、信号 **15 → 16**、struct **47 不变**。
+
+- 五处原生登记：`slang_qt.h`（2 条 `SLQT_API` + `SLQT_SIG_TABLE_ITEM_CHANGED=15`）/ `slang_qt.c` / `slang_qt_backend.h` / `slang_qt_qt.cpp`（逐格 `Qt::ItemIsEditable`、`g_text_buf` 读回、`cellChanged` 的 `_dispatchInt`；`setItem` 与 `setItemEditable` 内加 `QSignalBlocker` 防止程序化填充误触发）/ `slang_qt_stub.c`。
+- 两处 SL 登记：`QTFFI.sl`（2 条 `@DllStaticImport` + 信号常量 + connect 分派）、`core/QTableWidget.sl`（`setItemEditable` / `itemText` / `onItemChanged`）；本轮不新增 `.sl`，`QT.jsonc` 无需改。全量表见 [04 §4.10](doc/04-SymbolTable.md)。
+- 验证：stub / `-Qt` 双构建 EXIT=0（C++ 零 error），PE 导出表实测新符号；临时探针 Qt 后端实跑 `itemText=CodeEditor` / `changedRows=0`（证明填充不误触发）/ `qtprobe25 ok`（EXIT=0）；IDE 主工程编译与 headless 自检全绿。
+
+## 2026-11-15 第二十六轮补记（QSpinBox / 节点图标，QTModule 先行）
+
+按总纲 §6 [C] 七处登记补 5 条 FFI + 1 个信号 + 1 个封装类：有效 FFI **255 → 260**、信号 **16 → 17**、struct **47 → 48**。
+
+- 五处原生登记：`slang_qt.h`（4 条 `slqt_spin_*` + `slqt_tree_set_item_icon_sl` + `SLQT_SIG_SPIN_VALUE_CHANGED=16`）/ `slang_qt.c` / `slang_qt_backend.h` / `slang_qt_qt.cpp`（`<QSpinBox>` `<QStyle>`；`qOverload<int>(&QSpinBox::valueChanged)` 消歧；图标用 `QApplication::style()->standardIcon(QStyle::StandardPixmap)`，无外部图片资源）/ `slang_qt_stub.c`。
+- 两处 SL 登记 + `QT.jsonc`：`QTFFI.sl`（5 条 `@DllStaticImport` + 信号常量 + connect 分派 + `newSpinBox` 工厂）、新建 `core/QSpinBox.sl`、`core/QTreeWidget.sl` 增 `setItemIcon`；`QT.jsonc` 的 `compileFiles` 与 `struct.children` 同步登记。全量表见 [04 §4.11](doc/04-SymbolTable.md)。
+- 验证：stub / `-Qt` 双构建 EXIT=0（C++ 零 error），PE 导出表实测 `slqt_spin_create_sl` / `slqt_spin_value_sl` / `slqt_tree_set_item_icon_sl`；临时探针 Qt 后端实跑 `spin value=12 signal=12`（`valueChanged` 回调真实生效）/ `tree icon set` / `qtprobe26 ok`（EXIT=0）；IDE 主工程编译与 headless 自检全绿。
+
+## 2026-11-16 第二十七轮补记（QTabBar / 窗口关闭请求，QTModule 先行）
+
+按总纲 §6 [C] 七处登记补 8 条 FFI + 2 个信号 + 1 个封装类：有效 FFI **260 → 268**、信号 **17 → 19**、struct **48 → 49**（`@DllStaticImport` 与 `SLQT_API` 声明实测均 268，逐条对齐）。
+
+- 五处原生登记：`slang_qt.h`（7 条 `slqt_tabbar_*` + `slqt_window_close_sl` + `SLQT_SIG_TABBAR_CHANGED=17` / `SLQT_SIG_CLOSE_REQUESTED=18`）/ `slang_qt.c` / `slang_qt_backend.h` / `slang_qt_qt.cpp`（`<QTabBar>` `<QCloseEvent>`；`SlqtCloseFilter` 事件过滤器拦 `QEvent::Close`——首拦 `ignore()` + 发信号 int 载荷=0，真正关窗走 `slqt_be_window_close` 的 `g_close_bypass` 放行；过滤器以被监听对象为父、connect 即安装，一个窗口只 connect 一次）/ `slang_qt_stub.c`。
+- 两处 SL 登记 + `QT.jsonc`：`QTFFI.sl`（8 条 `@DllStaticImport` + 信号常量 + connect 分派 + `newTabBar` 工厂）、新建 `core/QTabBar.sl`、`core/QMainWindow.sl` 增 `onCloseRequested` / `close`；`QT.jsonc` 的 `compileFiles` 与 `struct.children` 同步登记。全量表见 [04 §4.12](doc/04-SymbolTable.md)。
+- 验证：stub / `-Qt` 双构建 EXIT=0（新增 C++ 零 error 零 warning）；顺带根修 `deploy-qt.ps1` `Clean-QtFiles` 管道输入坑（第二十四轮遗留，改 `ForEach-Object` + `-LiteralPath` 直删）后 `-Combo full -Targets package` 部署 33 dll；IDE 主工程编译 EXIT=0、真实启动 `backend: qt` / `panels: 6 files: 44 commands: 50`、stderr 为空。
+
+## 2026-11-16 第二十八轮补记（QMessageBox 封装类，部分实现回补）
+
+总纲 §3.3「无 SL 封装类但已有 FFI」欠账清零：`slqt_messagebox_info/question` 的 C++ 真实实现早已在，本轮**只补 SL 层**——新建 `core/QMessageBox.sl`（`extends QObject` 静态工具类：`information` / `question`，返回 `Qt::StandardButton` 值），`QT.jsonc` 的 `compileFiles` / `struct.children` 两处登记。`QTFFI.sl` 与原生五件套零改动：有效 FFI **268 不变**、信号 **19 不变**、struct **49 → 50**。stub / `-Qt` 双构建 + deploy/stage 全绿，IDE 编译与真实启动自检全绿。详见 [05 §9.6](doc/05-SL-Wrapper-Classes.md)。
+
+## 2026-11-16 第二十九轮补记（QAction 快捷键，QTModule 先行）
+
+按总纲 §6 [C] 五处原生 + 两处 SL 登记补 1 条 FFI：有效 FFI **268 → 269**、信号 **19 不变**、struct **50 不变**。
+
+- 五处原生登记：`slang_qt.h` / `slang_qt.c` / `slang_qt_backend.h` / `slang_qt_qt.cpp`（`<QKeySequence>`；`slqt_be_action_set_shortcut`：可移植串 `QKeySequence(QString::fromUtf8(keys))`，空串走默认构造清除）/ `slang_qt_stub.c`（no-op）。
+- 两处 SL 登记：`QTFFI.sl`（`ffi_actionSetShortcut`）、`core/QAction.sl` 增 `setShortcut(string keys)`；无新类/新信号，`QT.jsonc` 零改动。全量表见 [04 §4.13](doc/04-SymbolTable.md)。
+- IDE 侧：`CatalogData.shortcutOf(code)` 13 条 VS 风格映射 + `MenuBarUi.addItems` 只绑菜单侧 action（工具栏同名 action 独立，绑两侧会双触发）。
+- 验证：stub / `-Qt` 双构建 EXIT=0；PE 导出表实测新符号；IDE 编译与真实启动自检全绿。
+
+## 2026-11-16 第三十轮补记（QTextBrowser，QTModule 先行）
+
+按总纲 §6 [C] 五处原生 + 两处 SL 登记补 2 条 FFI + 1 个封装类：有效 FFI **269 → 271**、信号 **19 不变**、struct **50 → 51**。
+
+- 五处原生登记：`slang_qt.h` / `slang_qt.c` / `slang_qt_backend.h` / `slang_qt_qt.cpp`（`<QTextBrowser>`；`slqt_be_browser_create` / `slqt_be_browser_set_markdown`——Qt6 原生 `setMarkdown` 渲染）/ `slang_qt_stub.c`（安全 no-op）。
+- 两处 SL 登记 + `QT.jsonc`：`QTFFI.sl`（2 条 `@DllStaticImport` + `newTextBrowser` 工厂）、新建 `core/QTextBrowser.sl`——**首个封装类继承链先例**：`extends QTextEdit`，子类 `_init_` 自建句柄，基类 `setPlainText` / `toPlainText` / `setReadOnly` / `append` 经 `this.handle` 走既有 `slqt_textedit_*`（`qobject_cast<QTextEdit*>` 对子类兼容）；`QT.jsonc` 的 `compileFiles` 与 `struct.children` 同步登记。全量表见 [04 §4.14](doc/04-SymbolTable.md)。
+- IDE 侧：`HelpBrowserDialog`（帮助菜单四命令 → Qt6 Markdown 渲染查看器）。**坑**：framework 新文件必须登记 `CodeEditor.jsonc` 的 `compileFiles`，漏登时调用点报 `Call link parse failed` 并连锁污染其他文件——表象像解析缺口，根因是清单缺文件。
+- 验证：stub / `-Qt` 双构建 EXIT=0；IDE 编译 EXIT=0、真实启动 `panels: 6 files: 45 commands: 50`、stderr 为空。
+
+## 2026-11-16 第三十二轮补记（QTextBrowser 文档内链接跳转）
+
+按总纲 §6 [C] 补 2 条 FFI + 1 个信号：有效 FFI **271 → 273**、信号 **19 → 20**、struct **51 不变**。
+
+- 原生：`slqt_browser_set_document_sl`（path 目录为 base）/ `slqt_browser_current_source_sl`；`SIG_BROWSER_NAVIGATED=19`——connect 时 `setOpenLinks(false)` 关掉 QTextBrowser 默认 `setSource` 加载（否则 md 被当纯文本覆盖），anchorClicked 经静态辅助 `slqt_browser_navigate`（相对 base 解析 → 仅本地 `.md`/`.markdown` 且存在 → 读入渲染，base 随跳转前移）成功才发信号。`slqt_browser_navigate` 定义在 be_ 实现区、connect 分支先用，需**前向声明**。
+- SL：`core/QTextBrowser.sl` 增 `setDocument(path, md)` / `currentSource()` / `onNavigated(handler)`；QTFFI 2 条绑定 + connect 分派。
+- IDE：`HelpBrowserDialog.openDoc` 改走 `setDocument` + `_active` 静态通道；跳转成功状态条显示新文档名。**坑**：`HelpBrowserDialog._active._view.currentSource()` 三段链式下钻（类.静态.实例.方法()）报 `MetaCoreCallNotSupportFrontCall`——第二十一轮坑的静态链变体，拆局部变量恢复。
+- 验证：stub / `-Qt` 双构建 EXIT=0；IDE 编译 EXIT=0、真实启动自检全绿。

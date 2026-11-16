@@ -1,0 +1,11 @@
+{
+  "project": {
+    "name": "TestHarness",
+    "desc": "slang test 测试链冒烟（第十九轮固化）：验证 tests/ 收集、独立子进程执行、退出码判定（SystemExit 透传）与 --filter。",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "export": { "moduleName": "TestHarness", "outputDir": "export" }
+}

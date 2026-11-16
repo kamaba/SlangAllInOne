@@ -15,6 +15,12 @@ namespace SLang
 
         public void setText( string t ) { SLang.QT.ffi_actionSetText( this.handle, t ) }
 
+        # 第二十九轮：命令快捷键（QKeySequence 可移植串："Ctrl+S" / "F5" /
+        # "Shift+F5"；空串清除）。菜单项文本右侧由 Qt 自动显示快捷键。
+        # 注意：同一命令的菜单与工具栏是两个独立 QAction，快捷键只绑一侧，
+        # 两侧都绑会一次按键触发两次命令。
+        public void setShortcut( string keys ) { SLang.QT.ffi_actionSetShortcut( this.handle, keys ) }
+
         public void setEnabled( bool on )
         {
             int v = 0

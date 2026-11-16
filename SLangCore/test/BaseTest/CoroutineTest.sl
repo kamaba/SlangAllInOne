@@ -771,8 +771,10 @@ CoroutineTest
         }
         catch CoroTestError ex
         {
-            # catch 绑定变量静态类型为 object（无字段访问），与枚举成员比较
-            if ex == CoroTestError.BoomError
+            # catch 绑定值是 throw 时解包后的 Error 实例（不是 enum 成员包装），
+            # 与枚举成员 `==` 按语言规则不可按值比较；用 toString() 校验
+            # code/message 完整不变，错误类型由 catch 子句本身保证。
+            if ex.toString() == "Error (code=201): coro-boom"
             {
                 caughtCode = 201
             }
@@ -1017,8 +1019,10 @@ CoroutineTest
         }
         catch CoroTestError ex
         {
-            # catch 绑定变量静态类型为 object（无字段访问），与枚举成员比较
-            if ex == CoroTestError.BoomError
+            # catch 绑定值是 throw 时解包后的 Error 实例（不是 enum 成员包装），
+            # 与枚举成员 `==` 按语言规则不可按值比较；用 toString() 校验
+            # 跨协程后 code/message 不变，错误类型由 catch 子句本身保证。
+            if ex.toString() == "Error (code=201): coro-boom"
             {
                 code1 = 201
             }

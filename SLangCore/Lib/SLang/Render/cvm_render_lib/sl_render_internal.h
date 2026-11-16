@@ -140,9 +140,10 @@ typedef struct
  * 组装规则：环境光 + 首个启用的平行光 + 首个启用的聚光（light_build_block）；
  * 颜色均为 颜色*强度 预乘；a 分量 1.0=启用。全零 + ambient=1 时输出与
  * 无光照版逐字节一致（向后兼容：跨后端同效果测试不受影响）。
- * N2a 段（176B）：uLightVP（级联 0）/ uShadowParam / uShadowZx
+ * 基础段（96B）：6 vec4 光照。
+ * N2a 段（+96B = 192B）：uLightVP（级联 0）/ uShadowParam / uShadowZx
  *   ——偏移恒定（尾部追加原则），旧布局零破坏。
- * N2b 追加（+48B = 224B）：uShadowSplit（4 级联 v 左端边界）/
+ * N2b 追加（+224B = 416B）：uShadowSplit（4 级联 v 左端边界）/
  *   uShadowInfo（x=级联数 y=末级右端 v）/ uLightVP1..3（级联 1..3 VP；
  *   级联 0 复用 N2a 的 uLightVP 位）*/
 typedef struct
@@ -162,6 +163,43 @@ typedef struct
     float shadow_vp2[16];  /* N2b：级联 2 VP */
     float shadow_vp3[16];  /* N2b：级联 3 VP */
 } SlrLightBlock;
+
+/* ── N4a 软光追场景（Pipeline/sl_ray.c <-> SL 侧 Ray.sl）──
+ * 固定容量场景（≤16 球 + y=0 地面平面）+ whitted 2 弹射（主射线 +
+ * 阴影射线 + 1 次反射）。状态挂 SlrPipeline（跨命令流持久：RaySet*
+ * 命令累积覆写，RayRender 命令消费渲染）。着色模型（C/SL 两侧逐字
+ * 一致，RenderTest Phase RAY 手算断言依据）：
+ *   local = albedo * (AMBIENT + (inShadow ? 0 : intensity * max(0, n·l)))
+ *   color = (depth < 1 && reflect > 0)
+ *             ? local * (1 - reflect) + trace(reflected) * reflect : local
+ *   AMBIENT = 0.25；字节 = clamp01(c) * 255 + 0.5
+ * 相机（正交固定基：forward +z / up +y / right +x，fov 为垂直视场角）：
+ *   ndc_x = (px+0.5)/w*2-1   ndc_y = 1-(py+0.5)/h*2
+ *   half_h = tan(fov_y/2)    half_w = half_h * (w/h)
+ *   dir = normalize(ndc_x*half_w, ndc_y*half_h, 1) */
+#define SLR_RAY_MAX_SPHERES 16
+#define SLR_RAY_AMBIENT 0.25f
+
+typedef struct
+{
+    int used;
+    float cx, cy, cz, r;     /* 球心 + 半径            */
+    float cr, cg, cb;        /* albedo                 */
+    float reflect;           /* 反射率 0..1            */
+} SlrRaySphere;
+
+typedef struct
+{
+    SlrRaySphere spheres[SLR_RAY_MAX_SPHERES];
+    int sphere_count;
+    int ground_on;           /* 1 = y=0 地面平面参与求交 */
+    float ground[4];         /* r g b reflect           */
+    float light_dir[3];      /* 表面 -> 光源（消费时归一）*/
+    float light_intensity;
+    float eye[3];
+    float fov_y;             /* 垂直视场角（度）        */
+    float bg[3];             /* 未命中背景色            */
+} SlrRayScene;
 
 /* ===================================================================== */
 /* 资源结构                                                                */
@@ -228,6 +266,23 @@ typedef struct
     int start, n_opaque, n_trans;
 } SlrCamRange;
 
+/* ── N3 异步提交队列（深度 2 环形；SL 语言无线程原语，并发全封装 C 侧）──
+ * async_mode=1 时 execute_stream 把 SLMC 块拷入空槽即返（等空槽阻塞在
+ * cv_done），worker 线程取槽回放；completed==submitted 即 drain 完成。
+ * 块内存归队列持有（容量按需扩，shutdown 释放）；context 线程亲和随
+ * 模式启停整体移交（g_rhi->thread_acquire/release，见 cmd_async_switch）。*/
+typedef struct
+{
+    CRITICAL_SECTION     lock;
+    CONDITION_VARIABLE   cv_submit, cv_done;
+    HANDLE               thread;          /* worker（async 模式期存活）*/
+    unsigned char*       buf[2];          /* 槽块（malloc/realloc，NULL = 空）*/
+    int                  cap[2];          /* 槽容量（字节，只增）*/
+    int                  head, tail, count;   /* 环形游标 (x+1)&1 */
+    int                  running, inited;
+    int64_t              submitted, completed;
+} SlrAsyncQueue;
+
 typedef struct
 {
     int used, w, h;
@@ -273,8 +328,20 @@ typedef struct
     int post_enabled;
     float post_brightness, post_saturation, post_vignette;
 
+    /* N4a 软光追：场景状态（RaySet* 命令累积写）+ 输出纹理（RayRender
+     * 命令产出并写入描述符槽；纹理归管线持有，pipeline_release_targets
+     * 统一销毁，尺寸变化时销毁重建） */
+    SlrRayScene ray;
+    int64_t ray_tex;
+    int ray_tex_w, ray_tex_h;
+
     float time, last_time, dt, total_time;
     int64_t frame_count;
+
+    /* N3 异步渲染：async_mode=1 时命令流入队即返、worker 线程回放；
+     * 0 = 同步直接回放（默认）。模式经流内 AsyncMode 控制命令切换。*/
+    SlrAsyncQueue async;
+    int async_mode;
 } SlrPipeline;
 
 /* ===================================================================== */
@@ -298,10 +365,26 @@ void rhi_exit(void);
 
 /* sl_texture.c：纹理注册表（管线/对象跨文件取用） */
 SlrTexRes* tex_from_handle(int64_t h);
+/* sl_texture.c：top-down RGBA8 像素块 -> 翻行(bottom-up) -> RHI 上传 ->
+ * 注册表占位（调用方须已 rhi_enter；返回句柄 0 = 失败）。
+ * N4a 起非 static：sl_ray.c 的 RayRender 输出纹理复用本通路。 */
+int64_t texture_register(int w, int h, const unsigned char* topdown);
 
 /* sl_pipeline.c：管线句柄解析与渲染目标回收（slr_uninit 也调用） */
 SlrPipeline* pipe_from_handle(int64_t h);
 void pipeline_release_targets(SlrPipeline* p);
+
+/* Pipeline/sl_ray.c：软光追场景写入口（SLMC RaySet* 命令回放调用；
+ * f8 = [cx cy cz r cr cg cb reflect]，f4/f3 同序）+ 渲染入口（RayRender
+ * 命令；逐像素 whitted 求交 -> top-down RGBA8 -> texture_register ->
+ * 写描述符槽 tex_slot，与 SLR_CMD_SET_TEXTURE 同路径） */
+void ray_scene_reset(SlrRayScene* s);
+void ray_set_sphere(SlrRayScene* s, int idx, const float* f8);
+void ray_set_light(SlrRayScene* s, const float* f4);
+void ray_set_ground(SlrRayScene* s, const float* f4);
+void ray_set_camera(SlrRayScene* s, const float* f4);
+void ray_set_background(SlrRayScene* s, const float* f3);
+int  ray_render(SlrPipeline* p, int tex_slot, int w, int h);
 
 /* sl_light.c：帧级光照块组装（阶段 6 调用；环境光 + 首个平行光 + 首个聚光）*/
 void light_build_block(SlrPipeline* p, SlrLightBlock* out);
@@ -316,6 +399,19 @@ int light_pick_shadow(SlrPipeline* p, float* dir_out, int* has_pos_out,
 /* sl_light.c：N2a shadow map 光源查询（阶段 4.5/5）：首个 shadow_quality>=1
  * 的平行光（dir_out = 表面->光源方向）；返回 -1 = 无（走黑斑回退）。 */
 int light_pick_shadowmap(SlrPipeline* p, float* dir_out);
+
+/* Pipeline/sl_cmd.c：N3 异步提交队列（execute_stream 内部分流）。
+ *   cmd_async_switch(p, mode)  0->1 惰性启 worker（主线程解绑 context 移交
+ *                              worker）；1->0 drain 后停 worker 并绑回主线程。
+ *                              内部自带 drain，仅在锁外（rhi_exit 之后）调用。
+ *   cmd_async_drain(p)         等待全部已入队流回放完成（completed ==
+ *                              submitted；无 RHI 锁，可在任意时刻调用）。
+ *   cmd_async_shutdown(p)      管线销毁前的安全停机（drain + 停 worker +
+ *                              释放槽块/同步原语）。必须在实际持有 RHI 锁
+ *                              之前调用——worker 回放需要 rhi_enter。*/
+void cmd_async_switch(SlrPipeline* p, int mode);
+void cmd_async_drain(SlrPipeline* p);
+void cmd_async_shutdown(SlrPipeline* p);
 
 #ifdef __cplusplus
 }

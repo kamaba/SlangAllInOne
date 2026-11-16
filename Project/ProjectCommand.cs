@@ -1,14 +1,18 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using SlangAllInOne.New;
 
 namespace SlangAllInOne.Project;
 
 /// <summary>
 /// slang project：工程配置与目录扫描的 CLI 真源（2026-11-13，总纲 §0.2 CLI 先行）。
-///   slang project info &lt;path&gt; [--json]                    工程信息 + 配置节点树 + 原始片段
-///   slang project scan &lt;dir&gt; [--json] [--depth N]           递归扫描工程 .jsonc
+///   slang project info &lt;path&gt; [--json]                    工程信息 + 配置节点树 + 原始片段（解析失败含 errorLine/Column/Offset）
+///   slang project scan &lt;dir&gt; [--json] [--depth N] [--exclude a,b]  递归扫描工程 .jsonc
 ///   slang project get &lt;path&gt; --key &lt;json.path&gt;           读一个键（结构化）
+///   slang project set &lt;path&gt; --key &lt;json.path&gt; [--value &lt;text&gt;] [--add|--remove|--insert]
+///                                                        改/新增/删除键或数组元素（中间插入）
+///   slang project guide &lt;path&gt; [--desc &lt;text&gt;]            补建/重生成项目说明 .md
 ///   slang project copy &lt;path&gt; --name &lt;New&gt; [--dest &lt;dir&gt;]  复制工程目录为新名副本（改名锚点 + 同步模块语义键）
 ///   slang project rename &lt;path&gt; --name &lt;New&gt;               重命名工程（改名 jsonc/sp + 同步模块语义键）
 ///   slang project delete &lt;path&gt;                             递归永久删除工程目录（危险，无回收）
@@ -30,6 +34,7 @@ internal static class ProjectCommand
         public string Raw = "";
         public int StartLine;
         public int EndLine;
+        public int KeyStart;
         public int ValueStart;
         public int ValueEnd;
         public string Note = "";
@@ -43,15 +48,38 @@ internal static class ProjectCommand
         public readonly List<NodeEntry> Nodes = new();
         public readonly Dictionary<string, NodeEntry> ByPath = new(StringComparer.Ordinal);
         public string Error = "";
+        public int ErrorPos = -1;
 
         public Parser(string text) { _text = text; }
+
+        /// <summary>统一设置错误与出错位置（IDE 行号级错误页消费）。</summary>
+        private void Fail(string message)
+        {
+            Error = message;
+            ErrorPos = _pos;
+        }
+
+        public int ErrorLine => ErrorPos < 0 ? 0 : LineAt(ErrorPos);
+
+        public int ErrorColumn
+        {
+            get
+            {
+                if (ErrorPos < 0) return 0;
+                int lineStart = Math.Min(ErrorPos, _text.Length);
+                while (lineStart > 0 && _text[lineStart - 1] != '\n') lineStart--;
+                return ErrorPos - lineStart + 1;
+            }
+        }
+
+        public int ErrorOffset => ErrorPos < 0 ? 0 : ErrorPos;
 
         public bool Parse()
         {
             SkipSpace();
             if (_pos >= _text.Length || _text[_pos] != '{')
             {
-                Error = "根节点不是 object";
+                Fail("根节点不是 object");
                 return false;
             }
             ParseObjectBody("");
@@ -98,7 +126,7 @@ internal static class ProjectCommand
         {
             SkipSpace();
             if (_pos < _text.Length && _text[_pos] == c) { _pos++; return true; }
-            Error = $"第 {LineAt(_pos)} 行期望 '{c}'，实际 '{(_pos < _text.Length ? _text[_pos] : '?')}'";
+            Fail($"第 {LineAt(_pos)} 行期望 '{c}'，实际 '{(_pos < _text.Length ? _text[_pos] : '?')}'");
             return false;
         }
 
@@ -124,7 +152,7 @@ internal static class ProjectCommand
             while (true)
             {
                 SkipSpace();
-                if (_pos >= _text.Length) { Error = "object 未闭合"; return; }
+                if (_pos >= _text.Length) { Fail("object 未闭合"); return; }
                 if (_text[_pos] == '}')
                 {
                     _pos++;
@@ -134,7 +162,7 @@ internal static class ProjectCommand
                 }
                 int keyStart = _pos;
                 string keyRaw = ReadStringRaw();
-                if (keyRaw.Length < 2) { Error = $"第 {LineAt(keyStart)} 行键名解析失败"; return; }
+                if (keyRaw.Length < 2) { Fail($"第 {LineAt(keyStart)} 行键名解析失败"); return; }
                 string key = Unquote(keyRaw);
                 if (!Expect(':')) return;
                 ParseValue(Join(parent, key), key, keyStart);
@@ -150,7 +178,7 @@ internal static class ProjectCommand
                         self2.ChildCount = childCount;
                     return;
                 }
-                Error = $"第 {LineAt(_pos)} 行 object 成员后缺少 ',' 或 '}}'";
+                Fail($"第 {LineAt(_pos)} 行 object 成员后缺少 ',' 或 '}}'");
                 return;
             }
         }
@@ -163,7 +191,7 @@ internal static class ProjectCommand
             while (true)
             {
                 SkipSpace();
-                if (_pos >= _text.Length) { Error = "array 未闭合"; return; }
+                if (_pos >= _text.Length) { Fail("array 未闭合"); return; }
                 if (_text[_pos] == ']')
                 {
                     _pos++;
@@ -184,7 +212,7 @@ internal static class ProjectCommand
                     if (ByPath.TryGetValue(parent, out var self2)) self2.ChildCount = childCount;
                     return;
                 }
-                Error = $"第 {LineAt(_pos)} 行 array 元素后缺少 ',' 或 ']'";
+                Fail($"第 {LineAt(_pos)} 行 array 元素后缺少 ',' 或 ']'");
                 return;
             }
         }
@@ -198,6 +226,7 @@ internal static class ProjectCommand
                 Path = path,
                 Key = key,
                 StartLine = LineAt(keyStart),
+                KeyStart = keyStart,
                 ValueStart = valueStart,
             };
             Nodes.Add(node);
@@ -293,6 +322,9 @@ internal static class ProjectCommand
         public bool HasSp;
         public string State = "ok";
         public string ParseError = "";
+        public int ErrorLine;
+        public int ErrorColumn;
+        public int ErrorOffset;
         public int SourceCount;
         public int MissingCount;
         public readonly List<JsonObject> CompileFiles = new();
@@ -310,19 +342,27 @@ internal static class ProjectCommand
         int depth = 8;
         bool json = false;
         bool add = false;
+        bool remove = false;
+        bool insert = false;
         string name = "";
         string dest = "";
+        string desc = "";
+        string exclude = "";
 
         for (int i = 1; i < args.Length; i++)
         {
             string a = args[i];
             if (a == "--json") json = true;
             else if (a == "--add") add = true;
+            else if (a == "--remove") remove = true;
+            else if (a == "--insert") insert = true;
             else if ((a == "--depth") && i + 1 < args.Length && int.TryParse(args[++i], out int d)) depth = d;
             else if ((a == "--key" || a == "-k") && i + 1 < args.Length) key = args[++i];
             else if ((a == "--value" || a == "-v") && i + 1 < args.Length) value = args[++i];
             else if ((a == "--name") && i + 1 < args.Length) name = args[++i];
             else if ((a == "--dest") && i + 1 < args.Length) dest = args[++i];
+            else if ((a == "--desc" || a == "--description") && i + 1 < args.Length) desc = args[++i];
+            else if (a == "--exclude" && i + 1 < args.Length) exclude = args[++i];
             else if (!a.StartsWith("--", StringComparison.Ordinal) && target.Length == 0) target = a;
             else { Console.Error.WriteLine("未知参数: " + a); PrintUsage(); return 2; }
         }
@@ -330,7 +370,7 @@ internal static class ProjectCommand
         if (target.Length == 0) { PrintUsage(); return 2; }
 
         if (verb.Equals("scan", StringComparison.OrdinalIgnoreCase))
-            return Scan(target, depth, json);
+            return Scan(target, depth, json, exclude);
 
         string jsoncPath = ResolveJsonc(target);
         if (jsoncPath.Length == 0)
@@ -344,7 +384,8 @@ internal static class ProjectCommand
             case "info": return Info(jsoncPath, json);
             case "get": return Get(jsoncPath, key, json);
             case "raw": return Raw(jsoncPath, key);
-            case "set": return Set(jsoncPath, key, value, add);
+            case "set": return Set(jsoncPath, key, value, add, remove, insert);
+            case "guide": return NewCommand.GenerateGuide(jsoncPath, desc);
             case "copy": return Copy(jsoncPath, name, dest);
             case "rename": return Rename(jsoncPath, name);
             case "delete": return DeleteProject(jsoncPath);
@@ -575,6 +616,9 @@ internal static class ProjectCommand
         bool parsed = parser.Parse();
         info.State = parsed ? "ok" : "parseError";
         info.ParseError = parser.Error;
+        info.ErrorLine = parser.ErrorLine;
+        info.ErrorColumn = parser.ErrorColumn;
+        info.ErrorOffset = parser.ErrorOffset;
         if (withNodes) info.Nodes.AddRange(parser.Nodes);
 
         bool hasFeature = parser.ByPath.ContainsKey("project/name") ||
@@ -653,6 +697,9 @@ internal static class ProjectCommand
             ["hasSp"] = info.HasSp,
             ["state"] = info.State,
             ["parseError"] = info.ParseError,
+            ["errorLine"] = info.ErrorLine,
+            ["errorColumn"] = info.ErrorColumn,
+            ["errorOffset"] = info.ErrorOffset,
             ["sourceCount"] = info.SourceCount,
             ["missingCount"] = info.MissingCount,
             // 显式计数：SL 侧 BaseJson 没有数组长度 API，IDE 按 count + 索引遍历
@@ -710,7 +757,7 @@ internal static class ProjectCommand
         return info.State == "parseError" ? 1 : 0;
     }
 
-    private static int Scan(string dir, int depth, bool json)
+    private static int Scan(string dir, int depth, bool json, string exclude)
     {
         string full = Path.GetFullPath(dir);
         if (!Directory.Exists(full))
@@ -722,6 +769,12 @@ internal static class ProjectCommand
         {
             ".git", "node_modules", "out", "publish", "build", "bin", "obj", ".codebuddy",
         };
+        string[] extraExcludes = exclude
+            .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim().Trim('/', '\\'))
+            .Where(s => s.Length > 0)
+            .ToArray();
+        foreach (string s in extraExcludes) excluded.Add(s);
         var list = new JsonArray();
         int seen = 0;
         int projects = 0;
@@ -744,17 +797,21 @@ internal static class ProjectCommand
         }
         if (json)
         {
+            var exArr = new JsonArray();
+            foreach (string x in extraExcludes) exArr.Add(JsonValue.Create(x));
             var wrapper = new JsonObject
             {
                 ["ok"] = true,
                 ["scanRoot"] = full.Replace('\\', '/'),
                 ["count"] = projects,
+                ["excludeDirs"] = exArr,
                 ["projects"] = list,
             };
             Console.WriteLine(wrapper.ToJsonString());
             return 0;
         }
         Console.WriteLine($"ScanRoot: {full}  Projects: {projects}");
+        if (extraExcludes.Length > 0) Console.WriteLine("Exclude: " + string.Join(", ", extraExcludes));
         foreach (var node in list)
         {
             var o = node!.AsObject();
@@ -816,10 +873,16 @@ internal static class ProjectCommand
         return 0;
     }
 
-    private static int Set(string path, string key, string value, bool add)
+    private static int Set(string path, string key, string value, bool add, bool remove, bool insert)
     {
         if (key.Length == 0) { Console.Error.WriteLine("[FAIL] 缺少 --key"); return 2; }
-        if (value.Length == 0) { Console.Error.WriteLine("[FAIL] 缺少 --value"); return 2; }
+        int modes = (add ? 1 : 0) + (remove ? 1 : 0) + (insert ? 1 : 0);
+        if (modes > 1)
+        {
+            Console.Error.WriteLine("[FAIL] --add / --remove / --insert 只能选一个");
+            return 2;
+        }
+        if (!remove && value.Length == 0) { Console.Error.WriteLine("[FAIL] 缺少 --value"); return 2; }
         if (key.Split('/').Any(s => s.Length == 0))
         {
             Console.Error.WriteLine("[FAIL] 键路径含空段: " + key);
@@ -832,8 +895,10 @@ internal static class ProjectCommand
             Console.Error.WriteLine("[FAIL] jsonc 解析失败: " + parser.Error);
             return 1;
         }
+        if (remove) return RemoveKey(path, text, parser, key);
         string literal = ToLiteral(value);
         if (literal.Length == 0) return 2;
+        if (insert) return InsertArrayElement(path, text, parser, key, literal);
 
         if (parser.ByPath.ContainsKey(key))
         {
@@ -858,6 +923,89 @@ internal static class ProjectCommand
         if (inserted.Length == 0) return 1;
         WritePreservingBom(path, inserted);
         Console.WriteLine($"Added: {path}#{key} = {literal}");
+        return 0;
+    }
+
+    /// <summary>
+    /// --remove：删除 object 成员或 array 元素，只动该成员区间与相邻逗号，
+    /// 注释 / 缩进 / 键顺序 / BOM 全部原样保留。
+    /// </summary>
+    private static int RemoveKey(string path, string text, Parser parser, string key)
+    {
+        if (!parser.ByPath.TryGetValue(key, out var n) || n == null)
+        {
+            Console.Error.WriteLine("[FAIL] 未找到键路径: " + key);
+            return 1;
+        }
+        int start = n.KeyStart;
+        int end = n.ValueEnd;
+        int after = end;
+        while (after < text.Length && char.IsWhiteSpace(text[after])) after++;
+        string updated;
+        if (after < text.Length && text[after] == ',')
+        {
+            updated = text.Substring(0, start) + text.Substring(after + 1);
+        }
+        else
+        {
+            int before = start - 1;
+            while (before >= 0 && char.IsWhiteSpace(text[before])) before--;
+            if (before >= 0 && text[before] == ',')
+                updated = text.Substring(0, before) + text.Substring(end);
+            else
+                updated = text.Substring(0, start) + text.Substring(end);
+        }
+        WritePreservingBom(path, updated);
+        Console.WriteLine("Removed: " + path + "#" + key);
+        return 0;
+    }
+
+    /// <summary>
+    /// --insert：向已有数组插入元素；索引 [i] &lt;= 当前元素数，
+    /// i == 元素数等价于末尾追加（复用 InsertNewKey 的 array 分支）。
+    /// 中间插入时在新元素后补逗号，缩进取同数组现有元素。
+    /// </summary>
+    private static int InsertArrayElement(string path, string text, Parser parser,
+        string key, string literal)
+    {
+        string[] segs = key.Split('/');
+        int idx = ArrayIndexOf(segs[segs.Length - 1]);
+        if (idx < 0 || segs.Length < 2)
+        {
+            Console.Error.WriteLine("[FAIL] --insert 的 --key 末段必须是 [i] 且带父数组路径: " + key);
+            return 2;
+        }
+        string parentPath = string.Join("/", segs, 0, segs.Length - 1);
+        if (!parser.ByPath.TryGetValue(parentPath, out var parent) || parent == null || parent.Type != "array")
+        {
+            Console.Error.WriteLine("[FAIL] 父节点不是 array: " + parentPath);
+            return 1;
+        }
+        if (idx > parent.ChildCount)
+        {
+            Console.Error.WriteLine($"[FAIL] 索引越界: [{idx}] > 元素数 {parent.ChildCount}");
+            return 1;
+        }
+        string updated;
+        if (idx == parent.ChildCount)
+        {
+            updated = InsertNewKey(parser, text, key, literal);
+            if (updated.Length == 0) return 1;
+        }
+        else
+        {
+            string childPath = parentPath + "/[" + idx + "]";
+            if (!parser.ByPath.TryGetValue(childPath, out var child) || child == null)
+            {
+                Console.Error.WriteLine("[FAIL] 未找到插入位置: " + childPath);
+                return 1;
+            }
+            string indent = LeadingWhitespaceOfLine(text, child.StartLine);
+            updated = text.Substring(0, child.KeyStart) + literal + ",\n" + indent
+                + text.Substring(child.KeyStart);
+        }
+        WritePreservingBom(path, updated);
+        Console.WriteLine("Inserted: " + path + "#" + key + " = " + literal);
         return 0;
     }
 
@@ -1092,10 +1240,13 @@ internal static class ProjectCommand
     {
         Console.WriteLine(@"用法:
   slang project info <path> [--json]                     工程信息 + 配置节点树 + 原始片段
-  slang project scan <dir> [--json] [--depth N]          递归扫描工程 .jsonc（默认深度 8）
+  slang project scan <dir> [--json] [--depth N] [--exclude a,b]
+                                                       递归扫描工程 .jsonc（默认深度 8；额外排除目录逗号分隔）
   slang project get <path> --key <json.path> [--json]    读一个键
-  slang project set <path> --key <json.path> --value <text> [--add]
-                                                        改一个键；--add 新增缺失键/段（支持嵌套段与数组末尾追加）
+  slang project set <path> --key <json.path> --value <text> [--add|--remove|--insert]
+                                                       改一个键；--add 新增缺失键/段；--remove 删除键或数组元素；
+                                                       --insert 向数组 [i] 插入元素（i <= 元素数，末段必须是 [i]）
+  slang project guide <path> [--desc <text>]             补建/重生成同名 .md 项目说明（AI 描述区原样保留）
   slang project copy <path> --name <New> [--dest <dir>]  复制工程为新名副本（锚点改名 + 同步 project.name/export.moduleName）
   slang project rename <path> --name <New>               重命名工程（jsonc/sp 改名 + 语义键同步）
   slang project delete <path>                            递归永久删除工程目录（无回收站）

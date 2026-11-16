@@ -1349,6 +1349,20 @@ static int gl_enter(void)
 
 static void gl_exit(void) { LeaveCriticalSection(&s_lock); }
 
+/* N3 线程亲和切换：async 启停窗口整体移交 context（无并发渲染）。
+ * GLES 的 enter 不做 MakeCurrent（context sticky 在 init 线程），所以
+ * 模式启停必须显式解绑/重绑，worker 的回放依赖 acquire 后的绑定。*/
+static int gl_thread_acquire(void)
+{
+    return p_eglMakeCurrent(s_dpy, s_surf, s_surf, s_ctx) == EGL_TRUE ? 1 : 0;
+}
+
+static int gl_thread_release(void)
+{
+    return p_eglMakeCurrent(s_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                            EGL_NO_CONTEXT) == EGL_TRUE ? 1 : 0;
+}
+
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
@@ -1385,6 +1399,9 @@ static const SlrRhi s_rhi_gles =
     gl_shadow_target_destroy,
     gl_shadow_begin,
     gl_shadow_bind_depth,
+    /* N3 线程亲和（context 移交）*/
+    gl_thread_acquire,
+    gl_thread_release,
 };
 
 const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

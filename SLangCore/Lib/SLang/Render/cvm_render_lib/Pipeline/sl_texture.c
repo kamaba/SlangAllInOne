@@ -22,8 +22,10 @@ SlrTexRes* tex_from_handle(int64_t h)
 }
 
 /* 纹理注册：top-down RGBA8 像素块 -> 翻行(bottom-up) -> RHI 上传 ->
- * 注册表占位。调用方须已 rhi_enter。返回句柄（0 = 失败）。 */
-static int64_t texture_register(int w, int h, const unsigned char* topdown)
+ * 注册表占位。调用方须已 rhi_enter。返回句柄（0 = 失败）。
+ * N4a 起非 static：sl_ray.c 的 RayRender 输出纹理复用本通路
+ * （原型见 sl_render_internal.h）。 */
+int64_t texture_register(int w, int h, const unsigned char* topdown)
 {
     int i;
     unsigned char* flipped;

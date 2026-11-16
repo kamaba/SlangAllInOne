@@ -287,8 +287,11 @@ namespace SLang
         #   -> 本方法提交：按 SLMC 布局（doc/04 §3.6）打包 cb 的
         #   opcode/args/floats 三段数组，经 slr_cmd_execute_stream 整包
         #   传入，C 侧逐 opcode 回放到当前 RHI 后端（四后端同效果）。
-        # 约束：cb 须已 end()；本帧用完的命令流不被引用（提交后即回放，
-        # cb 可 clear 后复用）。
+        # 约束：cb 须已 end()；本帧用完的命令流不被引用（提交后即回放或
+        #   入队自拷，cb 可 clear 后复用）。
+        # N3 双缓冲：pack 到 cb 内部轮换槽（pack 帧 N+1 与执行帧 N 的块
+        #   交替，容量只增）；同步路径提交即回放、async 路径 C 侧入队时
+        #   自拷到队列槽——两种路径块返回后即可复用。
         public bool executeCommandBuffer( CommandBuffer cb )
         {
             if this._handle == 0 || cb == null
@@ -308,15 +311,12 @@ namespace SLang
             {
                 ret false
             }
-            Int64 ptr = Memory.alloc( bytes )
+            Int64 ptr = cb.packToSlot()
             if ptr == 0
             {
                 ret false
             }
-            cb.pack( ptr )
-            bool ok = RenderFFI.ffiCmdExecuteStream( this._handle, ptr, cb.commandCount )
-            Memory.free( ptr )
-            ret ok
+            ret RenderFFI.ffiCmdExecuteStream( this._handle, ptr, cb.commandCount )
         }
 
         public bool removeObject( RenderObject obj )

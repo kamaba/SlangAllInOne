@@ -171,6 +171,11 @@ int slr_uninit(void)
     int i;
     s_last_error = SLR_OK;
     if (!s_ready) return 1;
+    /* N3：先停全部管线的异步 worker（等队列清空 + 线程退出 + 释放）。
+     * 必须在 g_rhi->enter() 之前——worker 回放需要 RHI 锁，持锁遍历
+     * 等待会死锁。*/
+    for (i = 0; i < SLR_MAX_PIPES; i++)
+        if (s_pipes[i].used) cmd_async_shutdown(&s_pipes[i]);
     if (g_rhi && g_rhi->enter())
     {
         /* 管线 / 纹理 / v1 ctx 资源回收（经 RHI）*/

@@ -84,6 +84,68 @@ SLQT_API int32_t     slqt_list_current_row_sl(int64_t h);
 SLQT_API void        slqt_list_set_current_row_sl(int64_t h, int32_t row);
 SLQT_API const char* slqt_list_item_text_sl(int64_t h, int32_t row);
 
+/* ── 2026-11-15 第二十三轮：原生选项控件（下拉框 / 复选框 / 只读属性表） ── */
+SLQT_API int64_t slqt_combo_create_sl(int64_t parent);
+SLQT_API void    slqt_combo_add_item_sl(int64_t h, const char* t);
+SLQT_API int32_t slqt_combo_count_sl(int64_t h);
+SLQT_API int32_t slqt_combo_current_index_sl(int64_t h);
+SLQT_API void    slqt_combo_set_current_index_sl(int64_t h, int32_t idx);
+SLQT_API int64_t slqt_check_create_sl(int64_t parent, const char* text);
+SLQT_API int32_t slqt_check_is_checked_sl(int64_t h);
+SLQT_API void    slqt_check_set_checked_sl(int64_t h, int32_t on);
+SLQT_API int64_t slqt_table_create_sl(int64_t parent);
+SLQT_API void    slqt_table_set_column_count_sl(int64_t h, int32_t n);
+SLQT_API void    slqt_table_set_row_count_sl(int64_t h, int32_t n);
+SLQT_API void    slqt_table_set_headers_sl(int64_t h, const char* csv);
+SLQT_API void    slqt_table_set_item_sl(int64_t h, int32_t row, int32_t col, const char* t);
+SLQT_API void    slqt_table_clear_sl(int64_t h);
+/* 第二十四轮：读取当前行（属性表行联动 / 探针断言用）。 */
+SLQT_API int32_t slqt_table_current_row_sl(int64_t h);
+/* 第二十五轮：值列就地编辑（逐格开关 + 读取新值）。 */
+SLQT_API void        slqt_table_set_item_editable_sl(int64_t h, int32_t row, int32_t col, int32_t on);
+SLQT_API const char* slqt_table_item_text_sl(int64_t h, int32_t row, int32_t col);
+
+/* ── 2026-11-15 第二十六轮：原生数值输入 QSpinBox ───────────────────── */
+SLQT_API int64_t slqt_spin_create_sl(int64_t parent);
+SLQT_API void    slqt_spin_set_range_sl(int64_t h, int32_t minValue, int32_t maxValue);
+SLQT_API void    slqt_spin_set_value_sl(int64_t h, int32_t v);
+SLQT_API int32_t slqt_spin_value_sl(int64_t h);
+
+/* ── 2026-11-16 第二十七轮：独立标签条 QTabBar ──────────────────────── */
+SLQT_API int64_t     slqt_tabbar_create_sl(int64_t parent);
+SLQT_API int32_t     slqt_tabbar_add_tab_sl(int64_t h, const char* title);
+SLQT_API void        slqt_tabbar_remove_tab_sl(int64_t h, int32_t idx);
+SLQT_API void        slqt_tabbar_set_current_sl(int64_t h, int32_t idx);
+SLQT_API int32_t     slqt_tabbar_current_sl(int64_t h);
+SLQT_API int32_t     slqt_tabbar_count_sl(int64_t h);
+SLQT_API const char* slqt_tabbar_tab_text_sl(int64_t h, int32_t idx);
+
+/* ── 2026-11-16 第二十九轮：QAction 快捷键（菜单命令快捷键）─────────────
+ * keys 为 QKeySequence 可移植串（"Ctrl+S" / "F5" / "Shift+F5"），空串清除 */
+SLQT_API void slqt_action_set_shortcut_sl(int64_t h, const char* keys);
+
+/* ── 2026-11-16 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染）──
+ * 工厂创建 QTextBrowser（本身只读，不可编辑源文本）；setText/toPlainText/
+ * setReadOnly/append 复用既有 slqt_textedit_*（qobject_cast 兼容子类），
+ * 另需 setMarkdown（QTextBrowser 独有能力，Qt6 原生 MD 渲染） */
+SLQT_API int64_t slqt_browser_create_sl(int64_t parent);
+SLQT_API void    slqt_browser_set_markdown_sl(int64_t h, const char* md);
+
+/* ── 2026-11-16 第三十二轮：QTextBrowser 文档内链接跳转 ────────────────
+ * set_document 记录文档绝对路径为 base；此后 anchorClicked（内部导航，
+ * setOpenLinks(false) 由 SLQT_SIG_BROWSER_NAVIGATED 的 connect 接管默认
+ * 行为）相对 base 解析目标，仅当为本地 .md/.markdown 且存在时读入并
+ * setMarkdown，成功后发 SLQT_SIG_BROWSER_NAVIGATED（int 载荷=0）。
+ * current_source 返回当前文档绝对路径（未设置时为空串） */
+SLQT_API void        slqt_browser_set_document_sl(int64_t h, const char* path, const char* md);
+SLQT_API const char* slqt_browser_current_source_sl(int64_t h);
+
+/* ── 2026-11-16 第二十七轮：窗口关闭请求（事件过滤器，无原生 Qt 信号）──
+ * 订阅 = SLang.QT.connect(h, SIG_CLOSE_REQUESTED, handler)（connect 内部
+ * 安装 Close 事件过滤器）；此后用户点 X 触发信号（int 载荷=0），窗口默认
+ * 不关闭（event 被 ignore），真正关窗须回调 slqt_window_close_sl。 */
+SLQT_API void slqt_window_close_sl(int64_t h);
+
 /* ── 主窗口 / 对话框 ─────────────────────────────────────────────────── */
 SLQT_API int64_t slqt_mainwindow_create_sl(void);
 SLQT_API void    slqt_mainwindow_set_central_sl(int64_t h, int64_t widget);
@@ -134,6 +196,28 @@ SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb
  * 两者均需构造时 setContextMenuPolicy(CustomContextMenu)。 */
 #define SLQT_SIG_TAB_CONTEXT 11
 #define SLQT_SIG_TREE_CONTEXT 12
+/* 2026-11-14 第二十一轮 树节点双击：
+ * 13 = QTreeWidget::itemDoubleClicked，utf8 载荷（双击节点完整路径）→ _dispatchString */
+#define SLQT_SIG_TREE_DOUBLE_CLICKED 13
+/* 2026-11-15 第二十四轮：表格点击
+ * 14 = QTableWidget::cellClicked，int 载荷（点击行号）→ _dispatchInt */
+#define SLQT_SIG_TABLE_ROW_CLICKED 14
+/* 2026-11-15 第二十五轮：值列就地编辑
+ * 15 = QTableWidget::cellChanged，int 载荷（改动行号）→ _dispatchInt，
+ *      列号由 SL 侧固定为值列（1）；程序化填充由 QSignalBlocker 阻断 */
+#define SLQT_SIG_TABLE_ITEM_CHANGED 15
+/* 2026-11-15 第二十六轮：数值输入
+ * 16 = QSpinBox::valueChanged，int 载荷（新值）→ _dispatchInt */
+#define SLQT_SIG_SPIN_VALUE_CHANGED 16
+/* 2026-11-16 第二十七轮：独立标签条 / 窗口关闭请求
+ * 17 = QTabBar::currentChanged，int 载荷（新标签下标）→ _dispatchInt
+ * 18 = QEvent::Close（事件过滤器拦截），int 载荷=0 → _dispatchInt；
+ *      过滤器默认 ignore 关闭事件，真正关窗须调 slqt_window_close_sl */
+#define SLQT_SIG_TABBAR_CHANGED 17
+#define SLQT_SIG_CLOSE_REQUESTED 18
+/* 2026-11-16 第三十二轮：QTextBrowser 内部导航完成（anchorClicked → md
+ * 加载成功并渲染），int 载荷=0 → _dispatchInt；SL 侧可拉 current_source */
+#define SLQT_SIG_BROWSER_NAVIGATED 19
 
 /* ==========================================================================
  * 2026-11-03 扩展面：按 jsonc qtRuntime 组合部署（模块 dll + 插件分类）后，
@@ -321,6 +405,20 @@ SLQT_API void        slqt_tree_clear_sl(int64_t h);
 SLQT_API void        slqt_tree_add_path_sl(int64_t h, const char* path);
 SLQT_API int32_t     slqt_tree_count_sl(int64_t h);
 SLQT_API const char* slqt_tree_selected_path_sl(int64_t h);
+/* 2026-11-14 第二十一轮：树节点展开态 / 前景色 / tooltip（按路径定位，只增不改） */
+SLQT_API void        slqt_tree_expand_all_sl(int64_t h);
+SLQT_API void        slqt_tree_collapse_all_sl(int64_t h);
+SLQT_API void        slqt_tree_set_item_expanded_sl(int64_t h, const char* path, int32_t on);
+SLQT_API int32_t     slqt_tree_item_expanded_sl(int64_t h, const char* path);
+SLQT_API void        slqt_tree_set_item_foreground_sl(int64_t h, const char* path, int32_t rgb);
+SLQT_API void        slqt_tree_set_item_tooltip_sl(int64_t h, const char* path, const char* t);
+/* 第二十三轮：按累计路径选中树节点（属性页默认选中 root/project）。 */
+SLQT_API void        slqt_tree_set_current_path_sl(int64_t h, const char* path);
+/* 第二十四轮：节点背景色（淡色底纹）与字体加粗（当前工程高亮）。 */
+SLQT_API void        slqt_tree_set_item_background_sl(int64_t h, const char* path, int32_t rgb);
+SLQT_API void        slqt_tree_set_item_bold_sl(int64_t h, const char* path, int32_t on);
+/* 第二十六轮：节点图标（Qt 标准图标枚举 id，不引入外部图片资源）。 */
+SLQT_API void        slqt_tree_set_item_icon_sl(int64_t h, const char* path, int32_t iconId);
 
 SLQT_API int64_t slqt_splitter_create_sl(int64_t parent, int32_t vertical);
 SLQT_API void    slqt_splitter_add_widget_sl(int64_t sp, int64_t w);

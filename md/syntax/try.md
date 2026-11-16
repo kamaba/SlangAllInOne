@@ -185,6 +185,33 @@ finally
 6. `finally` 块无论是否发生异常都会执行。
 7. 如果没有任何 catch 匹配成功，异常继续向外层传播。
 
+### 注意事项：catch 绑定值不要与枚举成员用 `==` 比较
+
+`throw EnumType.Member` 抛出的是该成员承载的错误值，`catch EnumType e` 里的 `e` 也是这个错误值；它与 `EnumType.Member` 用 `==` 比较**不成立**（`extends Error` 的结构化错误枚举尤其如此）。这个写法在普通（非协程）抛出下同样不成立。
+
+```sl
+enum NetError extends Error
+{
+    Timeout = { code = 408, message = "request timeout" }
+}
+
+label netBlock
+{
+    try request()
+}
+catch NetError e
+{
+    # 错误类型已由 catch 子句保证；用错误值的字符串形态校验具体错误
+    if e.toString() == "Error (code=408): request timeout"
+    {
+        global.println("请求超时")
+    }
+}
+```
+
+- 只需区分错误类型时，写多个 `catch EnumType` 子句即可，不需要 `==`。
+- 需要判断具体是哪个错误时，用 `e.toString()`（含 `code` 与 `message`）；跨 `await` / `cor.All` 传播后错误值保持不变，同样适用。
+
 ### 关键：try 标记
 
 在 `label{}catch{}` 块内，**只有使用 `try` 前缀标记的调用**，其异常才会被 `catch` 捕获。未使用 `try` 的调用，异常会直接传播。

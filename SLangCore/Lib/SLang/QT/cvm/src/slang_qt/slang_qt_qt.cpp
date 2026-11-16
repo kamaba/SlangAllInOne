@@ -30,6 +30,10 @@
 #include <QImage>
 #include <QImageReader>
 #include <QIcon>
+#include <QStyle>
+#include <QSpinBox>
+#include <QTabBar>
+#include <QCloseEvent>
 #include <QPixmap>
 #include <QPainter>
 #include <QStyleFactory>
@@ -44,13 +48,23 @@
 #include <QGridLayout>
 #include <QMessageBox>
 #include <QTextEdit>
+#include <QTextBrowser>
+#include <QDir>
+#include <QFileInfo>
+#include <QFile>
+#include <QUrl>
 #include <QListWidget>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QTableWidget>
+#include <QHeaderView>
 #include <QListWidgetItem>
 
 /* 2026-11-10 VS 式主框架扩展（Widgets 核心，非可选模块） */
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QKeySequence>
 #include <QToolBar>
 #include <QDockWidget>
 #include <QMdiArea>
@@ -600,6 +614,219 @@ const char* slqt_be_list_item_text(int64_t h, int32_t row)
     return slqt_put(g_text_buf, sizeof(g_text_buf), it->text().toUtf8());
 }
 
+/* ── 2026-11-15 第二十三轮：原生选项控件（QComboBox / QCheckBox / QTableWidget） ── */
+int64_t slqt_be_combo_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QComboBox(parent)); }
+void slqt_be_combo_add_item(int64_t h, const char* t)
+{
+    auto* o = qobject_cast<QComboBox*>((QObject*)slqt_resolve(h));
+    if (o) o->addItem(QString::fromUtf8(t ? t : ""));
+}
+int32_t slqt_be_combo_count(int64_t h)
+{
+    auto* o = qobject_cast<QComboBox*>((QObject*)slqt_resolve(h));
+    return o ? (int32_t)o->count() : 0;
+}
+int32_t slqt_be_combo_current_index(int64_t h)
+{
+    auto* o = qobject_cast<QComboBox*>((QObject*)slqt_resolve(h));
+    return o ? (int32_t)o->currentIndex() : -1;
+}
+void slqt_be_combo_set_current_index(int64_t h, int32_t i)
+{
+    auto* o = qobject_cast<QComboBox*>((QObject*)slqt_resolve(h));
+    if (o) o->setCurrentIndex(i);
+}
+
+int64_t slqt_be_check_create(int64_t p, const char* text)
+{
+    QWidget* parent = p ? asWidget(p) : nullptr;
+    return slqt_register(new QCheckBox(QString::fromUtf8(text ? text : ""), parent));
+}
+int32_t slqt_be_check_is_checked(int64_t h)
+{
+    auto* o = qobject_cast<QCheckBox*>((QObject*)slqt_resolve(h));
+    return (o && o->isChecked()) ? 1 : 0;
+}
+void slqt_be_check_set_checked(int64_t h, int32_t on)
+{
+    auto* o = qobject_cast<QCheckBox*>((QObject*)slqt_resolve(h));
+    if (o) o->setChecked(on != 0);
+}
+
+int64_t slqt_be_table_create(int64_t p)
+{
+    QWidget* parent = p ? asWidget(p) : nullptr;
+    auto* t = new QTableWidget(parent);
+    t->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    t->setSelectionBehavior(QAbstractItemView::SelectRows);
+    t->setAlternatingRowColors(true);
+    return slqt_register(t);
+}
+void slqt_be_table_set_column_count(int64_t h, int32_t n)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (t) t->setColumnCount(n);
+}
+void slqt_be_table_set_row_count(int64_t h, int32_t n)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (t) t->setRowCount(n);
+}
+void slqt_be_table_set_headers(int64_t h, const char* csv)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (!t) return;
+    QStringList labels = QString::fromUtf8(csv ? csv : "").split(QLatin1Char(','), Qt::KeepEmptyParts);
+    t->setHorizontalHeaderLabels(labels);
+    if (t->horizontalHeader()) t->horizontalHeader()->setStretchLastSection(true);
+}
+void slqt_be_table_set_item(int64_t h, int32_t row, int32_t col, const char* text)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (!t || row < 0 || col < 0 || row >= t->rowCount() || col >= t->columnCount()) return;
+    /* 第二十五轮：程序化填充不得触发 cellChanged（否则被误判为用户编辑）。 */
+    QSignalBlocker blocker(t);
+    QTableWidgetItem* it = t->item(row, col);
+    if (!it) { it = new QTableWidgetItem(); t->setItem(row, col, it); }
+    it->setText(QString::fromUtf8(text ? text : ""));
+}
+void slqt_be_table_clear(int64_t h)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (!t) return;
+    t->clearContents();
+    t->setRowCount(0);
+}
+int32_t slqt_be_table_current_row(int64_t h)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    return t ? (int32_t)t->currentRow() : -1;
+}
+
+/* 2026-11-15 第二十五轮：只放行「值列」可编辑，并读取编辑后的新值 */
+void slqt_be_table_set_item_editable(int64_t h, int32_t row, int32_t col, int32_t on)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (!t || row < 0 || col < 0 || row >= t->rowCount() || col >= t->columnCount()) return;
+    QSignalBlocker blocker(t);
+    QTableWidgetItem* it = t->item(row, col);
+    if (!it) { it = new QTableWidgetItem(); t->setItem(row, col, it); }
+    Qt::ItemFlags f = it->flags();
+    if (on != 0) f |= Qt::ItemIsEditable;
+    else f &= ~Qt::ItemIsEditable;
+    it->setFlags(f);
+}
+
+const char* slqt_be_table_item_text(int64_t h, int32_t row, int32_t col)
+{
+    auto* t = qobject_cast<QTableWidget*>((QObject*)slqt_resolve(h));
+    if (!t) return "";
+    QTableWidgetItem* it = t->item(row, col);
+    if (!it) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), it->text().toUtf8());
+}
+
+/* 2026-11-15 第二十六轮：QSpinBox（原生数值输入，用于扫描深度设置） */
+int64_t slqt_be_spin_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    auto* s = new QSpinBox(p);
+    s->setRange(0, 100);
+    return slqt_register(s);
+}
+void slqt_be_spin_set_range(int64_t h, int32_t lo, int32_t hi)
+{
+    auto* s = qobject_cast<QSpinBox*>((QObject*)slqt_resolve(h));
+    if (s) s->setRange(lo, hi);
+}
+void slqt_be_spin_set_value(int64_t h, int32_t v)
+{
+    auto* s = qobject_cast<QSpinBox*>((QObject*)slqt_resolve(h));
+    if (s) s->setValue(v);
+}
+int32_t slqt_be_spin_value(int64_t h)
+{
+    auto* s = qobject_cast<QSpinBox*>((QObject*)slqt_resolve(h));
+    return s ? (int32_t)s->value() : 0;
+}
+
+/* ── 2026-11-16 第二十七轮：独立标签条 QTabBar ─────────────────────── */
+int64_t slqt_be_tabbar_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QTabBar(p));
+}
+int32_t slqt_be_tabbar_add_tab(int64_t h, const char* title)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    if (!b || !title) return -1;
+    return (int32_t)b->addTab(QString::fromUtf8(title));
+}
+void slqt_be_tabbar_remove_tab(int64_t h, int32_t idx)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    if (b) b->removeTab(idx);
+}
+void slqt_be_tabbar_set_current(int64_t h, int32_t idx)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    if (b) b->setCurrentIndex(idx);
+}
+int32_t slqt_be_tabbar_current(int64_t h)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    return b ? (int32_t)b->currentIndex() : -1;
+}
+int32_t slqt_be_tabbar_count(int64_t h)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    return b ? (int32_t)b->count() : 0;
+}
+const char* slqt_be_tabbar_tab_text(int64_t h, int32_t idx)
+{
+    auto* b = qobject_cast<QTabBar*>((QObject*)slqt_resolve(h));
+    if (!b || idx < 0 || idx >= b->count()) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), b->tabText(idx).toUtf8());
+}
+
+/* ── 2026-11-16 第二十七轮：窗口关闭请求（事件过滤器）────────────────
+ * Qt 无原生"关闭请求"信号，用 QObject 事件过滤器拦 QEvent::Close：
+ * 首次 Close → ignore + 发 SLQT_SIG_CLOSE_REQUESTED（int 载荷=0），
+ * 真正关窗由 SL 侧回调 slqt_be_window_close（置 bypass 后调 close()）。 */
+static bool g_close_bypass = false;
+
+/* 前向声明（第三十二轮）：定义在 browser be_ 实现区，connect 分支先用 */
+static bool slqt_browser_navigate(QTextBrowser* b, const QUrl& url);
+
+class SlqtCloseFilter : public QObject
+{
+public:
+    SlqtCloseFilter(int64_t cb, int64_t slotArg) : m_cb(cb), m_slot(slotArg) {}
+protected:
+    bool eventFilter(QObject* obj, QEvent* ev) override
+    {
+        if (ev->type() == QEvent::Close)
+        {
+            if (g_close_bypass) { g_close_bypass = false; return false; }
+            static_cast<QCloseEvent*>(ev)->ignore();
+            ((void (*)(int64_t, int64_t))m_cb)(m_slot, (int64_t)0);
+            return true;
+        }
+        return QObject::eventFilter(obj, ev);
+    }
+private:
+    int64_t m_cb;
+    int64_t m_slot;
+};
+
+void slqt_be_window_close(int64_t h)
+{
+    auto* w = qobject_cast<QWidget*>((QObject*)slqt_resolve(h));
+    if (!w) return;
+    g_close_bypass = true;
+    w->close();
+}
+
 /* ── 主窗口 / 对话框 ─────────────────────────────────────────────────── */
 int64_t slqt_be_mainwindow_create(void) { return slqt_register(new QMainWindow()); }
 void slqt_be_mainwindow_set_central(int64_t h, int64_t w) { auto* mw = qobject_cast<QMainWindow*>((QObject*)slqt_resolve(h)); if (mw) mw->setCentralWidget(asWidget(w)); }
@@ -705,6 +932,67 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
                 QByteArray b = slqt_tree_item_path(it).toUtf8();
                 ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
             });
+        break;
+    /* 2026-11-14 第二十一轮：树节点双击，utf8 载荷 = 完整路径 */
+    case SLQT_SIG_TREE_DOUBLE_CLICKED:
+        if (auto* t = qobject_cast<QTreeWidget*>(sender))
+            QObject::connect(t, &QTreeWidget::itemDoubleClicked, [=](QTreeWidgetItem* it, int) {
+                QByteArray b = slqt_tree_item_path(it).toUtf8();
+                ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
+            });
+        break;
+    /* 2026-11-15 第二十四轮：属性表点击行，int 载荷 = row（列号丢弃） */
+    case SLQT_SIG_TABLE_ROW_CLICKED:
+        if (auto* t = qobject_cast<QTableWidget*>(sender))
+            QObject::connect(t, &QTableWidget::cellClicked, [=](int row, int) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)row);
+            });
+        break;
+    /* 2026-11-15 第二十五轮：值列编辑完成，int 载荷 = row（列号由 SL 固定为 1） */
+    case SLQT_SIG_TABLE_ITEM_CHANGED:
+        if (auto* t = qobject_cast<QTableWidget*>(sender))
+            QObject::connect(t, &QTableWidget::cellChanged, [=](int row, int) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)row);
+            });
+        break;
+    /* 2026-11-15 第二十六轮：数值输入变化，int 载荷 = 新值 */
+    case SLQT_SIG_SPIN_VALUE_CHANGED:
+        if (auto* s = qobject_cast<QSpinBox*>(sender))
+            QObject::connect(s, qOverload<int>(&QSpinBox::valueChanged), [=](int v) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)v);
+            });
+        break;
+    /* 2026-11-16 第二十七轮：独立标签条当前项变化，int 载荷 = 新下标 */
+    case SLQT_SIG_TABBAR_CHANGED:
+        if (auto* b = qobject_cast<QTabBar*>(sender))
+            QObject::connect(b, &QTabBar::currentChanged, [=](int idx) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)idx);
+            });
+        break;
+    /* 2026-11-16 第二十七轮：窗口关闭请求（事件过滤器，见 SlqtCloseFilter）。
+     * 以被监听对象为父：窗口析构时过滤器随之释放；重复 connect 会叠装
+     * 多个过滤器并重复发信号，应用侧对一个窗口只 connect 一次。 */
+    case SLQT_SIG_CLOSE_REQUESTED:
+        if (qobject_cast<QWidget*>(sender))
+        {
+            auto* f = new SlqtCloseFilter(dispatchCb, slot);
+            f->setParent(sender);
+            sender->installEventFilter(f);
+        }
+        break;
+    /* 2026-11-16 第三十二轮：QTextBrowser 文档内链接跳转。
+     * setOpenLinks(false) 关掉 QTextBrowser 默认的 setSource 加载（否则
+     * md 会被当纯文本覆盖），导航完全由 slqt_browser_navigate 接管；
+     * 加载成功才发信号（int 载荷=0），SL 侧经 current_source 拉新路径。 */
+    case SLQT_SIG_BROWSER_NAVIGATED:
+        if (auto* b = qobject_cast<QTextBrowser*>(sender))
+        {
+            b->setOpenLinks(false);
+            QObject::connect(b, &QTextBrowser::anchorClicked, b, [=](const QUrl& url) {
+                if (slqt_browser_navigate(b, url))
+                    ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)0);
+            });
+        }
         break;
     default:
         break;
@@ -1551,6 +1839,73 @@ int64_t slqt_be_action_enabled(int64_t a)
     return (act && act->isEnabled()) ? (int64_t)1 : (int64_t)0;
 }
 
+/* 2026-11-16 第二十九轮：QAction 快捷键（QKeySequence 可移植串，空串清除） */
+void slqt_be_action_set_shortcut(int64_t a, const char* keys)
+{
+    auto* act = qobject_cast<QAction*>((QObject*)slqt_resolve(a));
+    if (!act) return;
+    if (!keys || !keys[0]) { act->setShortcut(QKeySequence()); return; }
+    act->setShortcut(QKeySequence(QString::fromUtf8(keys)));
+}
+
+/* ── 2026-11-16 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染）── */
+int64_t slqt_be_browser_create(int64_t parent)
+{
+    QWidget* p = parent ? asWidget(parent) : nullptr;
+    return slqt_register(new QTextBrowser(p));
+}
+void slqt_be_browser_set_markdown(int64_t h, const char* md)
+{
+    auto* b = qobject_cast<QTextBrowser*>((QObject*)slqt_resolve(h));
+    if (!b) return;
+    b->setMarkdown(md ? QString::fromUtf8(md) : QString());
+}
+
+/* ── 2026-11-16 第三十二轮：QTextBrowser 文档内链接跳转 ──────────────── */
+static QHash<QObject*, QString> g_browser_base;
+static QHash<QObject*, QString> g_browser_doc;
+
+/* 内部导航：相对 base 解析 → 仅本地 .md/.markdown 且存在 → 读入渲染 */
+static bool slqt_browser_navigate(QTextBrowser* b, const QUrl& url)
+{
+    QString base = g_browser_base.value(b);
+    if (base.isEmpty()) return false;
+    QString p = url.isRelative() ? QDir(base).absoluteFilePath(url.toString())
+                                 : url.toLocalFile();
+    p = QDir::cleanPath(p);
+    if (!p.endsWith(".md", Qt::CaseInsensitive) &&
+        !p.endsWith(".markdown", Qt::CaseInsensitive))
+        return false;
+    QFile f(p);
+    if (!f.open(QIODevice::ReadOnly)) return false;
+    QByteArray data = f.readAll();
+    g_browser_base[b] = QFileInfo(p).absolutePath();
+    g_browser_doc[b] = p;
+    b->setMarkdown(QString::fromUtf8(data));
+    return true;
+}
+
+void slqt_be_browser_set_document(int64_t h, const char* path, const char* md)
+{
+    auto* b = qobject_cast<QTextBrowser*>((QObject*)slqt_resolve(h));
+    if (!b) return;
+    if (path && path[0])
+    {
+        QString abs = QDir::cleanPath(
+            QFileInfo(QString::fromUtf8(path)).absoluteFilePath());
+        g_browser_base[b] = QFileInfo(abs).absolutePath();
+        g_browser_doc[b] = abs;
+    }
+    b->setMarkdown(md ? QString::fromUtf8(md) : QString());
+}
+
+const char* slqt_be_browser_current_source(int64_t h)
+{
+    auto* b = qobject_cast<QTextBrowser*>((QObject*)slqt_resolve(h));
+    if (!b) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), g_browser_doc.value(b).toUtf8());
+}
+
 /* ── 工具栏（QToolBar，快捷图标区）────────────────────────────────────── */
 
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title)
@@ -1790,6 +2145,14 @@ int64_t slqt_be_tree_create(int64_t parent)
     return slqt_register(t);
 }
 
+/* 2026-11-14 第二十一轮：按累计路径（add_path 存于 Qt::UserRole 的 key）
+ * 反查 QTreeWidgetItem；样式/展开态/tooltip/双击统一以路径字符串为节点 key。 */
+static QTreeWidgetItem* slqt_tree_find_item(int64_t h, const char* path)
+{
+    if (!path || !g_tree_nodes.contains(h)) return nullptr;
+    return g_tree_nodes[h].value(QString::fromUtf8(path), nullptr);
+}
+
 void slqt_be_tree_set_header(int64_t h, const char* t)
 {
     auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
@@ -1838,6 +2201,86 @@ const char* slqt_be_tree_selected_path(int64_t h)
     if (!tree) return g_text_buf[0] = '\0', g_text_buf;
     return slqt_put(g_text_buf, sizeof(g_text_buf),
                     slqt_tree_item_path(tree->currentItem()).toUtf8());
+}
+
+/* ── 2026-11-14 第二十一轮：展开态 / 前景色 / tooltip（路径式） ───────── */
+void slqt_be_tree_expand_all(int64_t h)
+{
+    if (auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h))) tree->expandAll();
+}
+
+void slqt_be_tree_collapse_all(int64_t h)
+{
+    if (auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h))) tree->collapseAll();
+}
+
+void slqt_be_tree_set_item_expanded(int64_t h, const char* path, int32_t on)
+{
+    if (QTreeWidgetItem* it = slqt_tree_find_item(h, path)) it->setExpanded(on != 0);
+}
+
+int32_t slqt_be_tree_item_expanded(int64_t h, const char* path)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    return (it && it->isExpanded()) ? 1 : 0;
+}
+
+void slqt_be_tree_set_item_foreground(int64_t h, const char* path, int32_t rgb)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (!it) return;
+    QColor c((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+    it->setForeground(0, QBrush(c));
+}
+
+void slqt_be_tree_set_item_tooltip(int64_t h, const char* path, const char* t)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (it) it->setToolTip(0, QString::fromUtf8(t ? t : ""));
+}
+
+/* 第二十三轮：按累计路径选中节点（属性页默认选中 root/project）。 */
+void slqt_be_tree_set_current_path(int64_t h, const char* path)
+{
+    auto* tree = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (tree && it) tree->setCurrentItem(it);
+}
+
+/* 2026-11-15 第二十四轮：节点背景色与字体加粗（与前景色同用路径定位） */
+void slqt_be_tree_set_item_background(int64_t h, const char* path, int32_t rgb)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (!it) return;
+    QColor c((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+    it->setBackground(0, QBrush(c));
+}
+
+void slqt_be_tree_set_item_bold(int64_t h, const char* path, int32_t on)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (!it) return;
+    QFont f = it->font(0);
+    f.setBold(on != 0);
+    it->setFont(0, f);
+}
+
+/* 2026-11-15 第二十六轮：Qt 标准图标（无外部图片资源，id 由 SL 侧映射） */
+void slqt_be_tree_set_item_icon(int64_t h, const char* path, int32_t iconId)
+{
+    QTreeWidgetItem* it = slqt_tree_find_item(h, path);
+    if (!it) return;
+    QStyle::StandardPixmap sp;
+    switch (iconId) {
+        case 0: sp = QStyle::SP_FileIcon; break;
+        case 1: sp = QStyle::SP_DirIcon; break;
+        case 2: sp = QStyle::SP_MessageBoxWarning; break;
+        case 3: sp = QStyle::SP_DialogApplyButton; break;
+        case 4: sp = QStyle::SP_DialogCancelButton; break;
+        default: return;
+    }
+    QStyle* st = QApplication::style();
+    if (st) it->setIcon(0, st->standardIcon(sp));
 }
 
 /* ── QSplitter：尺寸比例 ──────────────────────────────────────────────── */

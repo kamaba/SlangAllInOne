@@ -304,3 +304,70 @@
   4. 满足 ①②③ 后**短名（`Mini.Tool`）与全限定名（`Mini.Mini.Tool`）均可解析**（MetaCallNode 模块根 ns 下钻修复），**封装类方法（`OS.Kernel.exit(1)`）在 namespace 类方法体内块内可用**（类方法解析通道不受裸 systemCall 解析域限制——裸 systemCall 的「_main_ 唯一语句」限制只影响**直接裸调用**，用封装类即绕过）；
   5. 附带记录：jsonc 锚点**相对路径裸文件名**（`-p Mini.jsonc` 无目录前缀）触发 Front 找 `Project.sp` 断言崩溃（Error 11002）——用 `.\Mini.jsonc` 或绝对路径绕过；同轮已修同类 false-success（CommandExecutor 锚点缺失不再静默回退 CWD 扫描/`return true`，改 `Console.Error` + `return false`）。
 - **验证**：ProcUse（import Std + Core/Std 引用 + 类方法体内 `OS.Process`/`OS.Kernel.exit(1)`）编译 EXIT=0 + 运行 exit=1（SystemExit 透传）✓；TestHarness 用例升级为该形态后冒烟 PASS；framework 编译回归 EXIT=0。
+
+### [2026-11-14] 引用模块类方法「复杂表达式直接作参数」解析链缺口（第二十一轮 SLangCodeEditor）
+
+- **现象**：本轮给 SLangQT 补 6 条树 FFI 后，IDE 编译报 8 条 `[Error] MetaCoreParseCallNodeNotFoundInClass`——连旧方法 `SLang.QTreeWidget.addPath`、`SLang.QListWidget.addItem` 都报「类里没有」，且同一静态字段 `solutionTree` 后续调用连锁失败；一度还牵连本地类 `PathRules.startsWith/contains`。
+- **隔离实验**：最小探针工程（只 `import SLangQT` + references Core/Std/SLangQT）里 `t.addPath("a/b")`、`t.setItemForeground("a/b", 8947848)` 编译 EXIT=0，证明新 SLB 类方法表完整；把 `build-slqt.ps1 -Qt` 产物、`release slang.exe` 产物、改动前旧 SLB 三者互换，错误集合不变 → 排除模块/DLL/Front 版本问题。
+- **根因**：Front MetaCore 的方法调用解析链在「实参是 List 索引表达式（`paths[i]`）或裸方法调用表达式（`Strings.msg(...)`）」时未先完成类型绑定，按签名找不到目标方法；首个调用失败后同一变量/类的后续解析链被污染，于是旧方法也误报。注意成功案例全是局部变量或字面量实参（`isItemExpanded(old)`、`collapseAll()`）。
+- **规避**：引用模块类方法的实参一律先赋局部变量——`string one = paths[i]; tree.addPath( one )`、`string stylePath = paths[s]; tree.setItemForeground( stylePath, c )`、`string stepText = Strings.msg("..."); w.addItem( stepText )`。改完 8 条错误全部消失。
+- **同轮两个命名坑**：① `base` 是 SLang 关键字，`string base = ...` 触发 `NodeStructParseNameIsKeyword`（改名 `basePath`）；② 局部变量 `k`（上轮是 `state`）与类函数临时名冲突触发 `[Info] [ParseMeta] [MetaCoreMemberFunctionVariableFunctionDefine]` —— 该诊断是 **Info 级别**，只 grep `[Error]` 会漏掉，排障应按文本 `Error` 搜全日志。
+- **验证**：`slang compile -p CodeEditor.sp --format binary+json --no-banner` EXIT=0 且日志无 `Error`；headless `QT_QPA_PLATFORM=offscreen` 启动自检 `backend: qt`、`panels: 6 files: 44 commands: 50`、stderr 0 字节；PE 导出表实测 6 个新 `slqt_tree_*_sl` 符号存在。
+
+### [2026-11-15] 局部变量与类字段同名 → 19 条连锁解析错误（第二十三轮 SLangCodeEditor）
+
+- **现象**：`NewProjectDialog` 把四组 `QListWidget` 换成 `QComboBox` / `QCheckBox` 后编译 EXIT=1，报 19 条 `[Error] MetaCoreParseCallLinkFailed`，连本地基类方法 `this.addContent(...)` 都误报 `MetaCoreParseCallNodeNotFoundInClass`；一度误判为新 SLB 类表缺失或重演第二十一轮「复杂表达式实参」缺口。
+- **证据**：保存完整编译日志后按文本 `Error`（不是 `[Error]`）搜，最早三条是 `[Info] [ParseMeta] [MetaCoreMemberFunctionVariableDefineCall]`——「Error 定义变量名称与类定义名称一样 如果调用成员变量，需要在前边使用 this.!!」，分别指向 `kindCombo` / `spCombo` / `guideCheck`。这三个名字既是新增的类字段，又被写成 `_init_` 里的局部变量；唯独 `srcCombo`（对应字段 `sourceCombo`）不同名，日志里完全没有它，正好反证。
+- **根因**：SLang 不允许方法内局部变量与类成员变量同名。变量声明被判非法后，后续对该名字的所有引用都退化为「成员变量查找」并失败，且污染同一语句块里 `this.addContent` 的解析链——与第二十一轮「引用模块类方法实参为复杂表达式」是**两类不同缺口**。
+- **修复**：不再声明同名局部变量，直接 `this.kindCombo = ...` / `this.guideCheck.setChecked(...)`；改完 EXIT=0，日志全文零 `Error`。
+- **排障纪律**：这类根因是 **Info 级但文本里含 `Error`**，只 grep `[Error]` 必漏；按文本 `Error` 搜全日志并只看最早一条（R8）。另：`string label = ...` 会触发 `[Info] [ParseNode] NodeStructParseGotoLabelId`（「只支持 goto id;」），改名 `lineText` 后日志干净。
+- **验证边界**：headless `QT_QPA_PLATFORM=offscreen` 的 stderr 出现 `QFontDatabase: Cannot find font directory ...` / `This plugin does not support propagateSizeHints()` 属 Qt 环境提示，不是应用错误；以 stdout 的 `backend: qt` / `panels: 6 files: 44 commands: 50` + EXIT 判定通过即可。临时 Qt 探针（`combo count=2 idx=1`、`check=true`、`table filled`、`tree current set`）证明新 FFI 在 Qt 后端真实可调。
+
+### [2026-11-15] 第二十四轮两个验证侧坑（均非产品缺陷）
+
+- **`deploy-qt.ps1 -Targets package` 清理既有 Qt runtime 时失败**：报 `Remove-Item : 无法绑定参数 InputObject ... 无法转换值`（本机环境把 `Remove-Item` 包装成 Safe-Delete，拒绝管道输入；上一轮目标目录为空所以未触发）。脚本本身无缺陷，33 个 Qt runtime DLL 已经就位。处理：不要为此改部署脚本，按 `SLangCodeEditor/run.ps1` 的 stage 口径直接 `Copy-Item` 把 `out/export/SLangQT` 的 `SLangQT.module.slb` / `.module.json` / Qt 后端 `slang_qt.dll` 同步到 `package/win32-release/modules/SLangQT` 与 `SLangCodeEditor/modules/SLangQT`，再用 PE 导出表 ASCII 校验新符号存在。
+- **探针里 `Int64` 返回值不能直接与整数字面量比较**：`Int64 bind = table.onRowClicked(...)` + `if ( bind > 0 )` 触发 5 条错误——`MetaCoreDefineVarStatementDuplicate2`「名称Int64与ClassName 有重复」与 `BuildTst 表达式解析错误 604 [ > Lex: 0]`，同语句块里 `Console.println` 也被连锁污染。信号 connect 的 `Int64 bind_id` 应像 IDE 里 `tree.onSelected(...)` / `write.clicked(...)` 一样**直接丢弃**，需要判断时只比较 `int`（如 `currentRow()`）。删掉该变量后探针编译 EXIT=0、运行输出 `table cur=-1 signal=bound`。
+- 结论：`SIG_TABLE_ROW_CLICKED=14` 与 3 条新 FFI 在 Qt 后端实跑通过（`tree styled` / `splitter nested` / `qtprobe24 ok`）；IDE 主工程编译与 headless 自检全绿。
+
+### [2026-11-15] 第二十五轮：新增 cellChanged 后必须阻断程序化填充
+
+- **风险**：`QTableWidget::cellChanged` 不只由用户编辑触发，`setItem` 程序化填充也会同步发信号。若把该信号直接当脏标记，打开属性页（`refreshTable` 填若干行 × 4 列）会立刻把全表标成「已修改」，关闭时误弹三选，甚至把占位摘要写回 jsonc。
+- **处理**：C++ `slqt_be_table_set_item` / `slqt_be_table_set_item_editable` 内加 `QSignalBlocker blocker(t)`；SL 侧 `refreshTable` 再用静态 `fillingTable` 做第二道守卫。探针 `qtprobe25` 先 `onItemChanged` 绑定、再程序化填充，输出 `changedRows=0`，证明阻断生效；`itemText=CodeEditor` 证明字符串读回正常。
+- **值语义（易踩）**：CLI `project info --json` 的 `nodes[].value` 对 string 已 `Unquote`，是裸文本；`project set --value` 会把非 JSON 字面量的裸文本自动 `JsonSerializer.Serialize` 加引号，所以表格里改的值可直接传回，**IDE 不要自行拼引号**。但 `type=object/array` 的 value 是 `{…} (N 项)` / `[…] (N 项)` 占位摘要，必须禁止编辑；空字符串不能传给 `--value`（CLI 取 `value[0]` 会越界），IDE 侧跳过并保留脏标记。
+- **关闭三选无需新 Qt 信号**：QDialog 的 X / 取消都走 `reject()`，`BaseDialog.run()` 返回 0，`open()` 在该分支弹 `SaveChoiceDialog`（1 保存 / 2 放弃 / 0 继续编辑并重新 `exec`）即可；`close_request` 作为 Qt 信号能力仍留在待办。
+- 验证：`slang compile -p CodeEditor.sp --format binary+json --no-banner` EXIT=0 且日志零 `Error`；headless 自检 `backend: qt` / `panels: 6 files: 44 commands: 50`；探针 `qtprobe25 ok` EXIT=0，探针与日志已清理。
+
+### [2026-11-15] 第二十六轮：QSpinBox 信号重载消歧与图标零资源方案
+
+- Qt6 里 `QSpinBox` 的 value/text 信号家族容易让 `QObject::connect(s, &QSpinBox::valueChanged, ...)` 产生重载歧义；用 `qOverload<int>(&QSpinBox::valueChanged)` 明确绑定 int 版本即可。探针先绑 `onValueChanged` 再 `setValue(12)`，输出 `spin value=12 signal=12`，同时证明**程序化 `setValue` 也会触发回调**——数值输入没有「填充误判」问题，不需要 `QSignalBlocker`（与上一轮 `cellChanged` 相反）。
+- 树节点图标不引入图片资源：`QApplication::style()->standardIcon(QStyle::StandardPixmap)`，SL 侧只传 int id（0 文件 / 1 目录 / 2 警告 / 3 应用 / 4 取消），未知 id 静默忽略；这样部署时不会因漏拷 iconengines 插件或图片而空图标。
+- 数据层规则表继续加列：`ProjectScanData.mark()` 同时产出 colors / tips / bgs / icons 四张并行表，`UiContext.setTreePaths` 只做转发；中间自动生成的分组节点（如 `compileFiles`）不在 `treePaths()` 结果里，因此不设图标（已写入验证边界）。
+- 验证：stub / `-Qt` 双构建 EXIT=0，探针 `tree icon set` / `qtprobe26 ok` EXIT=0；IDE 编译与 headless 自检全绿。
+
+### [2026-11-16] 第二十七轮：close_request 无原生信号（事件过滤器方案）+ deploy-qt 管道坑根修
+
+- **`close_request` 不是 Qt 信号**：`QMainWindow` 关闭走的是 `QWidget::closeEvent` 虚函数，平面 FFI 表达不了虚覆盖。做法：C++ 侧 `SlqtCloseFilter`（QObject 事件过滤器）拦 `QEvent::Close`——首次 Close `ignore()` 并经既有 `_dispatchInt` 桥发 `SIG_CLOSE_REQUESTED=18`（载荷=0）；真正关窗由 SL 回调 `slqt_be_window_close`（进程级 `g_close_bypass` 置位 → 过滤器放行本次 Close 并复位）。**不新增 install FFI**：connect 即安装（与其他信号同一 `slqt_connect` 入口），过滤器以被监听对象为父、随窗口析构。已知边界：同一窗口 connect 两次会叠装两个过滤器、一次点 X 发两次信号，框架层未去重，应用侧对一个窗口只 connect 一次。
+- **否决同步语义不可行也不必要**：dispatch 回调是 void 返回，VM handler 无法把「是否放行」传回 eventFilter；两段式（拦下 → handler 决定 → `window_close`/`quitApp`）在既有 void ABI 内闭环，还天然支持异步确认（弹模态框）。
+- **deploy-qt.ps1 `Clean-QtFiles` 管道坑根修**（推翻第二十四轮「不要改脚本」的绕行结论）：目标目录已有 Qt runtime 时 `Get-ChildItem | Remove-Item -Force` 稳定复现绑定失败；改为 `ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force }` 直删后 `-Combo full -Targets package` 一次通过（33 dll）。教训：环境级坑若每轮都要绕，就该修根而不是固化绕行。
+- 验证：stub / `-Qt` 双构建 EXIT=0；IDE 编译 EXIT=0；真实启动 `backend: qt` / `panels: 6 files: 44 commands: 50`、stderr 为空。
+
+### [2026-11-16] 第三十轮：framework 新文件漏登 compileFiles 的连锁表象
+
+- **现象**：`CodeEditor.jsonc` 的 `compileFiles` 是**显式清单**（不是目录递归）。新增 `framework/widget/HelpBrowserDialog.sl` 后忘登记，编译报 8 个 `MetaCore` 错误：调用点四行全是 `MetaCoreCallNotSupportFrontCall`（"front call node type not supported: None"）+ `Call link parse failed`（指向 `HelpBrowserDialog` 符号），且连锁污染了完全没改过的 `ProjectContextDialog.sl`（报 `not found functon by [title]`）——表象极像第二十一轮的「实参复杂表达式解析缺口」。
+- **根因**：类根本没进编译，符号不存在；解析器对未知类名的报错形态与解析缺口同款，容易误判方向。
+- **排障要点**：遇到「跨类静态调用 Call link parse failed」先确认**目标类文件是否在 `CodeEditor.jsonc`（或对应工程 jsonc）的 `compileFiles` 里**，再怀疑语言解析缺口（R8 精神：最早错误是调用点不可见，不是调用形态）。登记后立即恢复 EXIT=0。
+- **纪律**：新增 framework 文件的第一步就是登记 `compileFiles`；总纲 §1 与根 AGENTS.md 已有此约定，本轮为执行遗漏非未知坑。
+
+### [2026-11-16] 第三十三轮：List 下标读取 `[i]` 的索引必须是局部变量（Front 域精确规律）
+
+- **现象**：SLangCodeEditor 帮助查看器历史栈（HelpBrowserDialog）在 `ParseStatements` 阶段触发 `MetaCallNode.HandleVisit` NullReferenceException 崩溃（无源码行报错，只有栈），且报错形态随上下文漂移（伴随 `ProjectContextDialog.sl Line:54 not found functon by [title]` 等无关连锁 Info）。
+- **二分实测规律**（逐步回填定位）：
+  - ✅ `string entry = breakpoints[i]` —— **静态 List 字段 + 局部 int 索引**（ConfigStore 第三十一轮先例）
+  - ✅ `string p = _stack[k]` —— 静态 List 字段 + **先赋局部变量的** int 索引
+  - ❌ `string cur = h[this._pos]` —— 局部/成员 List 变量 + **实例字段索引**
+  - ❌ `string p = _stack[_pos]` —— 静态 List 字段 + **静态字段索引**
+  - ❌ `same = h[this._pos] == p` —— 下标表达式**直接参与 `==` 比较赋值**（连带崩）
+  - ✅ `h.indexOf(p)` / `h.length` / `h.add` / `h.removeAt` —— 方法调用全安全
+- **规律**：`list[idx]` 的 **idx 必须是局部变量**（字段做索引即崩）；且下标表达式不能直接参与二元比较赋值。`Core/Container/List` 无 `at()/get()` 方法式读取（`getRange` 仍需下标取元素），故「按位置取元素」只有两条安全路径：**局部变量索引下标** 或 **indexOf+指针移动**。
+- **附带坑**：子类声明与父类同名静态字段（`HelpBrowserDialog._active` vs `BaseDialog._active`）触发 `MetaCoreClassExtend6`「继承的父类中已包含」——重命名绕开（`_cur`）。
+- **正解姿势**：跨类静态回调取实例通道用独立名静态字段；按位置取 List 元素先 `int k = pos` 再 `list[k]`；去重用 `indexOf`。Front 侧根修（下标索引类型解析）待 Front 域专项。

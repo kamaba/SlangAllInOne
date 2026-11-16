@@ -73,6 +73,41 @@ int32_t     slqt_be_list_count(int64_t h);
 int32_t     slqt_be_list_current_row(int64_t h);
 void        slqt_be_list_set_current_row(int64_t h, int32_t row);
 const char* slqt_be_list_item_text(int64_t h, int32_t row);
+/* 2026-11-15 第二十三轮：原生选项控件（下拉框 / 复选框 / 只读属性表） */
+int64_t slqt_be_combo_create(int64_t parent);
+void    slqt_be_combo_add_item(int64_t h, const char* t);
+int32_t slqt_be_combo_count(int64_t h);
+int32_t slqt_be_combo_current_index(int64_t h);
+void    slqt_be_combo_set_current_index(int64_t h, int32_t idx);
+int64_t slqt_be_check_create(int64_t parent, const char* text);
+int32_t slqt_be_check_is_checked(int64_t h);
+void    slqt_be_check_set_checked(int64_t h, int32_t on);
+int64_t slqt_be_table_create(int64_t parent);
+void    slqt_be_table_set_column_count(int64_t h, int32_t n);
+void    slqt_be_table_set_row_count(int64_t h, int32_t n);
+void    slqt_be_table_set_headers(int64_t h, const char* csv);
+void    slqt_be_table_set_item(int64_t h, int32_t row, int32_t col, const char* t);
+void    slqt_be_table_clear(int64_t h);
+int32_t slqt_be_table_current_row(int64_t h);
+/* 2026-11-15 第二十五轮：值列就地编辑 */
+void        slqt_be_table_set_item_editable(int64_t h, int32_t row, int32_t col, int32_t on);
+const char* slqt_be_table_item_text(int64_t h, int32_t row, int32_t col);
+
+/* 2026-11-15 第二十六轮：QSpinBox */
+int64_t slqt_be_spin_create(int64_t parent);
+void    slqt_be_spin_set_range(int64_t h, int32_t minValue, int32_t maxValue);
+void    slqt_be_spin_set_value(int64_t h, int32_t v);
+int32_t slqt_be_spin_value(int64_t h);
+
+/* 2026-11-16 第二十七轮：独立标签条 QTabBar + 窗口关闭请求 */
+int64_t     slqt_be_tabbar_create(int64_t parent);
+int32_t     slqt_be_tabbar_add_tab(int64_t h, const char* title);
+void        slqt_be_tabbar_remove_tab(int64_t h, int32_t idx);
+void        slqt_be_tabbar_set_current(int64_t h, int32_t idx);
+int32_t     slqt_be_tabbar_current(int64_t h);
+int32_t     slqt_be_tabbar_count(int64_t h);
+const char* slqt_be_tabbar_tab_text(int64_t h, int32_t idx);
+void        slqt_be_window_close(int64_t h);
 
 /* 主窗口 / 对话框 */
 int64_t slqt_be_mainwindow_create(void);
@@ -233,6 +268,14 @@ int64_t slqt_be_menu_popup_cursor(int64_t menu);
 void    slqt_be_action_set_text(int64_t a, const char* t);
 void    slqt_be_action_set_enabled(int64_t a, int64_t on);
 int64_t slqt_be_action_enabled(int64_t a);
+/* 2026-11-16 第二十九轮：QAction 快捷键（QKeySequence 可移植串，空串清除） */
+void    slqt_be_action_set_shortcut(int64_t a, const char* keys);
+/* 2026-11-16 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染） */
+int64_t slqt_be_browser_create(int64_t parent);
+void    slqt_be_browser_set_markdown(int64_t h, const char* md);
+/* 2026-11-16 第三十二轮：文档内链接跳转（set_document 记 base + 导航接管） */
+void        slqt_be_browser_set_document(int64_t h, const char* path, const char* md);
+const char* slqt_be_browser_current_source(int64_t h);
 /* 工具栏：QToolBar */
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title);
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb);
@@ -281,6 +324,20 @@ void        slqt_be_tree_clear(int64_t h);
 void        slqt_be_tree_add_path(int64_t h, const char* path);
 int32_t     slqt_be_tree_count(int64_t h);
 const char* slqt_be_tree_selected_path(int64_t h);
+/* 2026-11-14 第二十一轮：树节点展开态 / 前景色 / tooltip */
+void        slqt_be_tree_expand_all(int64_t h);
+void        slqt_be_tree_collapse_all(int64_t h);
+void        slqt_be_tree_set_item_expanded(int64_t h, const char* path, int32_t on);
+int32_t     slqt_be_tree_item_expanded(int64_t h, const char* path);
+void        slqt_be_tree_set_item_foreground(int64_t h, const char* path, int32_t rgb);
+void        slqt_be_tree_set_item_tooltip(int64_t h, const char* path, const char* t);
+/* 2026-11-15 第二十三轮：按累计路径选中树节点 */
+void        slqt_be_tree_set_current_path(int64_t h, const char* path);
+/* 2026-11-15 第二十四轮：背景色 / 字体加粗 */
+void        slqt_be_tree_set_item_background(int64_t h, const char* path, int32_t rgb);
+void        slqt_be_tree_set_item_bold(int64_t h, const char* path, int32_t on);
+/* 第二十六轮：节点图标 */
+void        slqt_be_tree_set_item_icon(int64_t h, const char* path, int32_t iconId);
 /* QSplitter */
 int64_t slqt_be_splitter_create(int64_t parent, int32_t vertical);
 void    slqt_be_splitter_add_widget(int64_t sp, int64_t w);

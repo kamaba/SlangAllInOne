@@ -37,6 +37,20 @@ namespace SLang
         # 2026-11-13 第十四轮 右键菜单（int=标签下标 / utf8=树节点路径）
         public static Int32 SIG_TAB_CONTEXT = 11
         public static Int32 SIG_TREE_CONTEXT = 12
+        # 2026-11-14 第二十一轮：树节点双击（utf8=节点完整路径）
+        public static Int32 SIG_TREE_DOUBLE_CLICKED = 13
+        # 2026-11-15 第二十四轮：属性表点击行（int=行号）
+        public static Int32 SIG_TABLE_ROW_CLICKED = 14
+        # 2026-11-15 第二十五轮：属性表值列编辑完成（int=行号）
+        public static Int32 SIG_TABLE_ITEM_CHANGED = 15
+        # 2026-11-15 第二十六轮：数值输入变化（int=新值）
+        public static Int32 SIG_SPIN_VALUE_CHANGED = 16
+        # 2026-11-16 第二十七轮：独立标签条当前项变化（int=新下标）
+        public static Int32 SIG_TABBAR_CHANGED = 17
+        # 2026-11-16 第二十七轮：窗口关闭请求（int=0；默认不关窗，须回调 windowClose）
+        public static Int32 SIG_CLOSE_REQUESTED = 18
+        # 2026-11-16 第三十二轮：QTextBrowser 内部导航完成（int=0；拉 currentSource 取新路径）
+        public static Int32 SIG_BROWSER_NAVIGATED = 19
 
         # ── 应用 ────────────────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
@@ -119,6 +133,16 @@ namespace SLang
         public static void ffi_texteditSetReadonly( Int64 h, bool on ) {}
         @DllStaticImport( "slang_qt", "slqt_textedit_append_sl" )
         public static void ffi_texteditAppend( Int64 h, string t ) {}
+        # 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染）
+        @DllStaticImport( "slang_qt", "slqt_browser_create_sl" )
+        public static Int64 ffi_browserCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_browser_set_markdown_sl" )
+        public static void ffi_browserSetMarkdown( Int64 h, string md ) {}
+        # 第三十二轮：文档内链接跳转
+        @DllStaticImport( "slang_qt", "slqt_browser_set_document_sl" )
+        public static void ffi_browserSetDocument( Int64 h, string path, string md ) {}
+        @DllStaticImport( "slang_qt", "slqt_browser_current_source_sl" )
+        public static string ffi_browserCurrentSource( Int64 h ) { ret "" }
         @DllStaticImport( "slang_qt", "slqt_list_create_sl" )
         public static Int64 ffi_listCreate( Int64 parent ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_list_add_item_sl" )
@@ -133,6 +157,70 @@ namespace SLang
         public static void ffi_listSetCurrentRow( Int64 h, Int32 row ) {}
         @DllStaticImport( "slang_qt", "slqt_list_item_text_sl" )
         public static string ffi_listItemText( Int64 h, Int32 row ) { ret "" }
+
+        # ── 2026-11-15 第二十三轮：原生选项控件（下拉框/复选框/只读属性表） ──
+        @DllStaticImport( "slang_qt", "slqt_combo_create_sl" )
+        public static Int64 ffi_comboCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_combo_add_item_sl" )
+        public static void ffi_comboAddItem( Int64 h, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_combo_count_sl" )
+        public static Int32 ffi_comboCount( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_combo_current_index_sl" )
+        public static Int32 ffi_comboCurrentIndex( Int64 h ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_combo_set_current_index_sl" )
+        public static void ffi_comboSetCurrentIndex( Int64 h, Int32 idx ) {}
+        @DllStaticImport( "slang_qt", "slqt_check_create_sl" )
+        public static Int64 ffi_checkCreate( Int64 parent, string text ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_check_is_checked_sl" )
+        public static Int32 ffi_checkIsChecked( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_check_set_checked_sl" )
+        public static void ffi_checkSetChecked( Int64 h, Int32 on ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_create_sl" )
+        public static Int64 ffi_tableCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_table_set_column_count_sl" )
+        public static void ffi_tableSetColumnCount( Int64 h, Int32 n ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_set_row_count_sl" )
+        public static void ffi_tableSetRowCount( Int64 h, Int32 n ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_set_headers_sl" )
+        public static void ffi_tableSetHeaders( Int64 h, string csv ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_set_item_sl" )
+        public static void ffi_tableSetItem( Int64 h, Int32 row, Int32 col, string t ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_clear_sl" )
+        public static void ffi_tableClear( Int64 h ) {}
+        # 第二十四轮：当前行读取
+        @DllStaticImport( "slang_qt", "slqt_table_current_row_sl" )
+        public static Int32 ffi_tableCurrentRow( Int64 h ) { ret -1 }
+        # 第二十五轮：值列就地编辑
+        @DllStaticImport( "slang_qt", "slqt_table_set_item_editable_sl" )
+        public static void ffi_tableSetItemEditable( Int64 h, int row, int col, int on ) {}
+        @DllStaticImport( "slang_qt", "slqt_table_item_text_sl" )
+        public static string ffi_tableItemText( Int64 h, int row, int col ) { ret "" }
+        # 第二十六轮：QSpinBox 原生数值输入
+        @DllStaticImport( "slang_qt", "slqt_spin_create_sl" )
+        public static Int64 ffi_spinCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_spin_set_range_sl" )
+        public static void ffi_spinSetRange( Int64 h, int minValue, int maxValue ) {}
+        @DllStaticImport( "slang_qt", "slqt_spin_set_value_sl" )
+        public static void ffi_spinSetValue( Int64 h, int v ) {}
+        @DllStaticImport( "slang_qt", "slqt_spin_value_sl" )
+        public static int ffi_spinValue( Int64 h ) { ret 0 }
+        # 第二十七轮：独立标签条 QTabBar + 窗口关闭请求
+        @DllStaticImport( "slang_qt", "slqt_tabbar_create_sl" )
+        public static Int64 ffi_tabbarCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tabbar_add_tab_sl" )
+        public static int ffi_tabbarAddTab( Int64 h, string title ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_tabbar_remove_tab_sl" )
+        public static void ffi_tabbarRemoveTab( Int64 h, int idx ) {}
+        @DllStaticImport( "slang_qt", "slqt_tabbar_set_current_sl" )
+        public static void ffi_tabbarSetCurrent( Int64 h, int idx ) {}
+        @DllStaticImport( "slang_qt", "slqt_tabbar_current_sl" )
+        public static int ffi_tabbarCurrent( Int64 h ) { ret -1 }
+        @DllStaticImport( "slang_qt", "slqt_tabbar_count_sl" )
+        public static int ffi_tabbarCount( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tabbar_tab_text_sl" )
+        public static string ffi_tabbarTabText( Int64 h, int idx ) { ret "" }
+        @DllStaticImport( "slang_qt", "slqt_window_close_sl" )
+        public static void ffi_windowClose( Int64 h ) {}
 
         # ── 主窗口 / 对话框 ────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_mainwindow_create_sl" )
@@ -440,6 +528,13 @@ namespace SLang
             if ( signalId == SIG_TAB_CLOSE_REQUESTED ) { cb = _dispatchIntCb }
             if ( signalId == SIG_TAB_CONTEXT ) { cb = _dispatchIntCb }
             if ( signalId == SIG_TREE_CONTEXT ) { cb = _dispatchStringCb }
+            if ( signalId == SIG_TREE_DOUBLE_CLICKED ) { cb = _dispatchStringCb }
+            if ( signalId == SIG_TABLE_ROW_CLICKED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TABLE_ITEM_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_SPIN_VALUE_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TABBAR_CHANGED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_CLOSE_REQUESTED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_BROWSER_NAVIGATED ) { cb = _dispatchIntCb }
             if ( cb == 0 ) { ret 0 }
             _handlers.add( handler )
             Int64 slot = ( _handlers.length - 1 ) as Int64
@@ -523,6 +618,16 @@ namespace SLang
             ret e
         }
         public static QListWidget newListWidget( Int64 parent ) { ret QListWidget(parent) }
+        # 第二十三轮：原生选项控件工厂
+        public static QComboBox newComboBox( Int64 parent ) { ret QComboBox(parent) }
+        public static QCheckBox newCheckBox( Int64 parent, string text ) { ret QCheckBox(parent, text) }
+        public static QTableWidget newTableWidget( Int64 parent ) { ret QTableWidget(parent) }
+        # 第二十六轮：原生数值输入工厂
+        public static QSpinBox newSpinBox( Int64 parent ) { ret QSpinBox(parent) }
+        # 第二十七轮：独立标签条工厂
+        public static QTabBar newTabBar( Int64 parent ) { ret QTabBar(parent) }
+        # 第三十轮：帮助/文档查看器工厂
+        public static QTextBrowser newTextBrowser( Int64 parent ) { ret QTextBrowser(parent) }
         public static QVBoxLayout newVBox( Int64 parent ) { ret QVBoxLayout(parent) }
         public static QHBoxLayout newHBox( Int64 parent ) { ret QHBoxLayout(parent) }
         public static QGridLayout newGrid( Int64 parent ) { ret QGridLayout(parent) }
@@ -549,6 +654,9 @@ namespace SLang
         public static void ffi_actionSetText( Int64 a, string t ) {}
         @DllStaticImport( "slang_qt", "slqt_action_set_enabled_sl" )
         public static void ffi_actionSetEnabled( Int64 a, int v ) {}
+        # 第二十九轮：QAction 快捷键（QKeySequence 可移植串，空串清除）
+        @DllStaticImport( "slang_qt", "slqt_action_set_shortcut_sl" )
+        public static void ffi_actionSetShortcut( Int64 a, string keys ) {}
         # 2026-11-12 第六轮：读取启用态，供菜单状态机按位回归
         @DllStaticImport( "slang_qt", "slqt_action_enabled_sl" )
         public static int ffi_actionEnabled( Int64 a ) { ret 0 }
@@ -643,6 +751,30 @@ namespace SLang
         public static int ffi_treeCount( Int64 h ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_tree_selected_path_sl" )
         public static string ffi_treeSelectedPath( Int64 h ) { ret "" }
+        # 2026-11-14 第二十一轮：树节点展开态 / 前景色 / tooltip（路径式）
+        @DllStaticImport( "slang_qt", "slqt_tree_expand_all_sl" )
+        public static void ffi_treeExpandAll( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_collapse_all_sl" )
+        public static void ffi_treeCollapseAll( Int64 h ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_expanded_sl" )
+        public static void ffi_treeSetItemExpanded( Int64 h, string path, int on ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_item_expanded_sl" )
+        public static int ffi_treeItemExpanded( Int64 h, string path ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_foreground_sl" )
+        public static void ffi_treeSetItemForeground( Int64 h, string path, int rgb ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_tooltip_sl" )
+        public static void ffi_treeSetItemTooltip( Int64 h, string path, string t ) {}
+        # 第二十三轮：按累计路径选中树节点
+        @DllStaticImport( "slang_qt", "slqt_tree_set_current_path_sl" )
+        public static void ffi_treeSetCurrentPath( Int64 h, string path ) {}
+        # 第二十四轮：节点背景色 / 字体加粗
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_background_sl" )
+        public static void ffi_treeSetItemBackground( Int64 h, string path, int rgb ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_bold_sl" )
+        public static void ffi_treeSetItemBold( Int64 h, string path, int on ) {}
+        # 第二十六轮：节点图标（Qt 标准图标 id）
+        @DllStaticImport( "slang_qt", "slqt_tree_set_item_icon_sl" )
+        public static void ffi_treeSetItemIcon( Int64 h, string path, int iconId ) {}
         # QSplitter
         @DllStaticImport( "slang_qt", "slqt_splitter_create_sl" )
         public static Int64 ffi_splitterCreate( Int64 parent, bool vertical ) { ret 0 }

@@ -113,6 +113,100 @@ public class QVBoxLayout extends QLayout { _init_( Int64 parent ) { this.setHand
 
 `QT` 类提供 `newApp()` / `newButton(parent,text)` / `newLabel` / `newLineEdit` / `newWidget` / `newMainWindow` / `newVBox` / `newHBox` / `newGrid`，内部用 `ClassName(args)`（不带 new）构造后返回。示例与测试统一走工厂。
 
+## 9.1 原生选项控件封装类（2026-11-15 第二十三轮增补，只增不改）
+
+三个新类均在 `namespace SLang` 且 `extends QWidget`，构造统一走 `QT` 门面工厂 `newComboBox(parent)` / `newCheckBox(parent,text)` / `newTableWidget(parent)`：
+
+| 类 | 方法 | FFI |
+|---|---|---|
+| `QComboBox` | `addItem(string)` / `count()` / `currentIndex()` / `setCurrentIndex(int)` | `ffi_combo*` |
+| `QCheckBox` | `isChecked()` / `setChecked(bool)`（SL 侧转 0/1） | `ffi_check*` |
+| `QTableWidget` | `setColumnCount(int)` / `setRowCount(int)` / `setHeaders(string csv)` / `setItem(int,int,string)` / `clearItems()` | `ffi_table*` |
+
+`QTreeWidget` 增 `setCurrentPath(string path)`（按累计路径 `setCurrentItem`，不新增信号）。`QTableWidget` 创建即只读（`NoEditTriggers` + `SelectRows` + `AlternatingRowColors`），不承担编辑职责；`setHeaders` 收逗号分隔 csv，`clearItems` 只清内容不清表头。stub 后端 create 返回安全空句柄、`count=0` / `currentIndex=-1` / `isChecked=false`，调用方须对 `-1` 做回落（IDE 向导已按第 0 项兜底）。符号全量见 [04 §4.8](04-SymbolTable.md)。
+
+## 9.2 表格行回调与树节点底纹（2026-11-15 第二十四轮增补，只增不改）
+
+| 类 | 新增方法 | 契约 |
+|---|---|---|
+| `QTableWidget` | `currentRow()` | 无当前项返回 -1；stub 恒 -1 |
+| `QTableWidget` | `onRowClicked(Function)` | `SIG_TABLE_ROW_CLICKED=14`；handler 形态 `static void onTableRow(int row)`，点任意单元格都触发，列号不传 |
+| `QTreeWidget` | `setItemBackground(string path, int rgb)` | 淡色底纹，与前/背景色同用路径定位 |
+| `QTreeWidget` | `setItemBold(string path, int on)` | 1=加粗 / 0=取消，字体其余属性保留 |
+
+`QSplitter` 已于 D-05 登记（工厂 `QT.newSplitter(parent, vertical)`、`addWidget(QWidget)`、`setSizes(a,b,c)`）；本轮 IDE 属性页用它做左右分栏 + 右侧上下分栏，**QT 能力本身零改动**。符号全量见 [04 §4.9](04-SymbolTable.md)，信号槽见 [06](06-Events-And-Signals.md)。
+
+## 9.3 值列就地编辑（2026-11-15 第二十五轮增补，只增不改）
+
+`QTableWidget` 创建时仍是只读（`NoEditTriggers + SelectRows`）；要允许编辑，须在填完单元格后**逐格**开启：
+
+| 方法 | 契约 |
+|---|---|
+| `setItemEditable(int row, int col, int on)` | 1 = 加 `Qt::ItemIsEditable`，0 = 去掉；只应对标量的值列开户 |
+| `itemText(int row, int col)` | 读回单元格文本；无 item / stub 返回 `""` |
+| `onItemChanged(Function handler)` | `SIG_TABLE_ITEM_CHANGED=15`；handler 形态 `static void onTableItemChanged(int row)`，列号由调用方固定为值列 |
+
+`slqt_be_table_set_item` 与 `slqt_be_table_set_item_editable` 内部有 `QSignalBlocker`，**程序化填充不会触发 `onItemChanged`**；只有真实用户编辑会触发。IDE 侧另有 `fillingTable` 静态守卫做第二道保险。符号见 [04 §4.10](04-SymbolTable.md)，信号见 [06 §6](06-Events-And-Signals.md)。
+
+## 9.4 QSpinBox 与节点图标（2026-11-15 第二十六轮增补，只增不改）
+
+新增 `core/QSpinBox.sl`（`extends QWidget`，`namespace SLang`），工厂 `QT.newSpinBox(parent)`：
+
+| 方法 | 契约 |
+|---|---|
+| `setRange(int min, int max)` / `setValue(int v)` / `value()` | 原生整数输入；stub 的 `value()` 恒 0 |
+| `onValueChanged(Function handler)` | `SIG_SPIN_VALUE_CHANGED=16`；handler 形态 `static void onSpinValueChanged(int v)` |
+
+`core/QTreeWidget.sl` 增 `setItemIcon(string path, int iconId)`，id 映射 Qt 标准图标：0 文件 / 1 目录 / 2 警告 / 3 应用（勾选）/ 4 取消；未知 id 静默忽略。图标取自 `QApplication::style()`，**不需要打包任何图片资源**。符号见 [04 §4.11](04-SymbolTable.md)，信号见 [06 §7](06-Events-And-Signals.md)。
+
+## 9.5 QTabBar 与窗口关闭请求（2026-11-16 第二十七轮增补，只增不改）
+
+新增 `core/QTabBar.sl`（`extends QWidget`，`namespace SLang`），工厂 `QT.newTabBar(parent)`：
+
+| 方法 | 契约 |
+|---|---|
+| `addTab(string title)` | 追加标签，返回新下标 |
+| `removeTab(int idx)` / `setCurrentIndex(int idx)` | 删标签 / 切换当前 |
+| `currentIndex()` / `count()` / `tabText(int idx)` | 无标签 -1；越界文本为空串 |
+| `onCurrentChanged(Function handler)` | `SIG_TABBAR_CHANGED=17`；handler 形态 `static void onTabbarChanged(int idx)` |
+
+`core/QMainWindow.sl` 增：
+
+| 方法 | 契约 |
+|---|---|
+| `onCloseRequested(Function handler)` | `SIG_CLOSE_REQUESTED=18`；订阅后点 X 不直接关窗（Close 被过滤器 ignore），handler 形态 `static void onCloseRequest(int payload)` |
+| `close()` | 程序化关窗，绕过关闭过滤器；确认退出时由 handler 链调用 |
+
+符号见 [04 §4.12](04-SymbolTable.md)，信号见 [06 §8](06-Events-And-Signals.md)。
+
+## 9.6 QMessageBox（2026-11-16 第二十八轮增补，部分实现回补）
+
+总纲 §3.3「无 SL 封装类但已有 FFI」欠账清零：`slqt_messagebox_info_sl` / `slqt_messagebox_question_sl` 的 C++ 实现早已在（[04 §「主窗口/对话框」](04-SymbolTable.md)），本轮只补 SL 封装类。新增 `core/QMessageBox.sl`（`extends QObject` **静态工具类**，不实例化、无工厂）：
+
+| 方法 | 契约 |
+|---|---|
+| `QMessageBox.information(parent, title, text)` | 原生模态信息框（Ok），返回 `Qt::StandardButton` 值 |
+| `QMessageBox.question(parent, title, text)` | 原生模态询问框（Yes\|No），返回被点按钮值 |
+
+常用返回值：`Ok=1024` / `Yes=16384` / `No=65536` / `Cancel=4194304`；调用阻塞至弹窗关闭。FFI 零新增、信号不变、**struct 49→50**（`QT.jsonc` 的 `compileFiles` / `struct.children` 已登记）。IDE 现有 `ConfirmDialog` 为自绘对话框，与本类并存。
+
+## 9.7 QAction 快捷键（2026-11-16 第二十九轮增补）
+
+`core/QAction.sl` 增 `setShortcut(string keys)`（`QKeySequence` 可移植串：`"Ctrl+S"` / `"F5"` / `"Shift+F5"`，空串清除）；菜单项文本右侧由 Qt 自动显示快捷键。**同一命令的菜单与工具栏是两个独立 QAction，快捷键只绑一侧**（两侧都绑会一次按键触发两次）。符号见 [04 §4.13](04-SymbolTable.md)。
+
+## 9.8 QTextBrowser（2026-11-16 第三十轮增补）
+
+新增 `core/QTextBrowser.sl`（**`extends QTextEdit`**——首个封装类继承链先例：子类 `_init_` 自建句柄，基类 `setPlainText` / `toPlainText` / `setReadOnly` / `append` 经 `this.handle` 原生转发），工厂 `QT.newTextBrowser(parent)`：
+
+| 方法 | 契约 |
+|---|---|
+| `setMarkdown(string md)` | 整体替换内容并按 Qt6 原生 Markdown 渲染（标题/列表/代码块/链接） |
+| 继承自 QTextEdit | `setPlainText` / `toPlainText` / `setReadOnly` / `append` 直接可用 |
+
+QTextBrowser 天然只读（不可编辑源文本），适用于内置帮助/文档查看器。**有效 FFI 269→271、struct 50→51**。符号见 [04 §4.14](04-SymbolTable.md)。
+
+第三十二轮增：`setDocument(string path, string md)`（以 path 目录为 base → 文档内相对 `.md` 链接可点击跳转）、`currentSource()`（当前文档绝对路径）、`onNavigated(Function handler)`（`SIG_BROWSER_NAVIGATED=19`，handler 形态 `static void onNavigated(int payload)`）。符号见 [04 §4.14.1](04-SymbolTable.md)，信号见 [06 §9](06-Events-And-Signals.md)。
+
 ## 10. 降级与判空（D5）
 
 - `QT.ffi_*` 无 `slang_qt.dll` 时回退函数体返回 0 / 空 / false；封装类判定 `isValid()` 即可降级（CI 无 Qt 也能编译跑通）。

@@ -161,7 +161,7 @@
 #### N2 —— 真实阴影：Shadow Map → CSM 级联（依赖 P1 Pass 体系 ✅；软依赖 N1 共享绘制路径）
 
 > ✅ **N2a 已完成（2026-11-13，Phase SHADOW2 三后端全 PASS，RenderTest 19/19 相位全绿）**：
-> - **架构偏离（相对原规划）**：① 不新增 SLMC opcode——shadow pass 为 C 侧 `sl_pipeline.c` 新增 `stage_shadow_pass()`（阶段 4.5，cull_layers 与 assemble 之间），管线内部驱动，SL 侧零 opcode 变更；② shadow 深度纹理不走 DESC_TEX_SLOTS——vtable 尾部新增四函数 `shadow_target_create/destroy/begin/bind_depth`（GL/GLES：TEXTURE2 + depth-only FBO；D3D11：t1 SRV + R24G8_TYPELESS；VK 全 NULL → `shadow_on=0` 走黑斑回退）；③ LightBlock 96B→176B（追加 `uLightVP` column_major mat4 + `uShadowParam` + `uShadowZx`，尾部追加零破坏旧布局）。
+> - **架构偏离（相对原规划）**：① 不新增 SLMC opcode——shadow pass 为 C 侧 `sl_pipeline.c` 新增 `stage_shadow_pass()`（阶段 4.5，cull_layers 与 assemble 之间），管线内部驱动，SL 侧零 opcode 变更；② shadow 深度纹理不走 DESC_TEX_SLOTS——vtable 尾部新增四函数 `shadow_target_create/destroy/begin/bind_depth`（GL/GLES：TEXTURE2 + depth-only FBO；D3D11：t1 SRV + R24G8_TYPELESS；VK 全 NULL → `shadow_on=0` 走黑斑回退）；③ LightBlock 96B→192B（追加 `uLightVP` column_major mat4 + `uShadowParam` + `uShadowZx`，尾部追加零破坏旧布局）。
 > - **2D 光向扫掠体（核心设计——平面几何零厚度光栅化正解）**：直接 (v→x, u→z) 投影是 rank-1 退化（ε 剪切也无效，深度图实测恒 clear=1.0）。正解 = shadow volume：castShadow 物体沿背光方向仿射拉伸成扫掠体（u∈[u_min,u_max]→[un,u_max]，深度恒 = (uf-u_max)·du 物体最朝光面），覆盖物体自身 + 全部背光投影区；采样端 P 重投影 (v_P, u_P) 单点 + 深度比较（与 3D shadow map 完全同构）。
 > - **跨后端适配（uShadowZx 4 参数）**：xy = 深度值域还原（D3D11 直通 (1,0)；GL/GLES 硬件深度 = ndc.z·0.5+0.5 → (2,-1)）；zw = 纹理行 v 适配（GL/GLES RT t=0 = ndc.y=-1 恒等 (1,0)；D3D11 RT v=0 = ndc.y=+1 行序镜像 → (-1,1)）。
 > - **D3D11 双坑（实操记录）**：① `glUniform1i` 同款陷阱在 GL/GLES gen 槽重复——sampler 单元设置必须先 `glUseProgram`（uShadowTex→unit 2 / uTex→unit 1 逐槽设置）；② **D3D11 同资源 DSV（OM 输出）+ SRV（PS 输入）冲突时静默拒绑 SRV**（无 debug layer 不报错，`PSGetShaderResources` 回读 NULL 才确诊）——`d3d_shadow_bind_depth` 必须先 `OMSetRenderTargets(0,NULL,NULL)` 清 OM 再绑 t1。
@@ -169,7 +169,14 @@
 > - **验收**：Phase SHADOW2——S_in(阴影内)=213（(0.25+0.9×0.65)×255 精确命中理论值）< S_out=255；S_side（投影区外）=255 证阴影限定在光向投影内；GL/D3D11/GLES 三后端逐像素一致（挂入 Phase D/F 复检，VK 与光照同待遇跳过）；build-shaders.ps1 重产（ESSL shadow sampler 显式 highp——ES3.0 默认 lowp 8bit 深度比较不可用）。
 > - **状态恢复**：shadow pass 关 ColorMask（GL/GLES）→ `camera_begin` 每相机恢复；D3D11 shadow_begin 绑 0 RTV + viewport → begin_scene 重绑。黑斑回退路径（shadowQuality=0）代码零改动，Phase L 黑斑断言原样全绿。
 
-- N2a 单张 shadow map：C 侧新增深度专用目标（GL depth texture / D3D11 depth-stencil+SRV / VK depth image，独立于 rt_scene 现有深度）+ 深度 pass 走 SLMC 新 opcode（可被 Pass 体系调度）：光源视角正交投影渲 castShadow 对象；LightBlock（96B/8 灯）外挂 lightVP 16 floats + shadowTex 占 DESC_TEX_SLOTS 16 位中 1 位；光照 shader 加 PCF 2×2；旧投影黑斑保留为 shadowQuality=off 回退（**✅ 实现偏离见上方记录：无 SLMC opcode / 不走 DESC_TEX_SLOTS / LightBlock 176B 尾部追加**）
+> ✅ **N2b 已完成（2026-11-13，Phase CSM 六断言 PASS，RenderTest 19/19 相位全绿）**：
+> - **实现**：`stage_shadow_pass` 级联循环——v 分段 = 视域 [vmin,vmax] 按 0.05/0.25/0.6/1.0 比例切 4 级（单级退化 = N2a 零变化）；每级独立 svp（v 窗口 [seg_lo,seg_hi]、u 窗口物体∪相机并集）写 `shadow_light_vp[4]`；深度图集单张 1x4 横向分区（渲染端 NDC x 平移 `lv*0.5-0.75` + x 缩 0.25，采样端 `uv.x=(ndc+1)*0.125+lv*0.25`）；shader 按片元世界 v 与 `uShadowSplit` 比较选级（`uShadowInfo.x>2.5` 时 4 级查表，否则恒 0 级）。LightBlock 192B→**416B**（追加 uShadowSplit/uShadowInfo/uLightVP1..3，尾部追加零破坏）。
+> - **Light.sl 参数链**：shadowBias/shadowStrength/shadowCascades 三字段（默认 0 = 管线默认 0.002/0.35/单级），applyTo 7→10 float，`slr_light_set` q[6..9] → `SlrLight.shadow_*_ovr` → 管线归一（cascades 钳 1/4）。
+> - **三 bug 排障记录（SHADOW2/CSM/D/F 四相位全 255 → 全 PASS）**：① **级内 u 窗口覆盖**——`sl_pipeline.c` 物体-only 窗口直接覆盖相机视域初值，接收面（背光侧）像素 u 出窗 → 采样端 sp.y 出界早退 1.0 → 全屏无阴影；修为物体∪相机并集（`if (ul<un) un=ul; if (uh>uf) uf=uh;`，2D 下 u 精度收益为零、级联精度全靠 v 分段收紧 W，无损）；② **ShadowAttenuation 诊断态遗留**——N2A-DBG raw 深度可视化（直接返回采样值）未恢复，重写完整版：zxform.xy 还原 GL/GLES 硬件深度（×2-1）→ ref=sp.z-bias 比较 → PCF 4 tap（±0.5/±1.5 纹素 v 向）；③ **strength 语义反转**——`lerp(1,strength,occ)` 把 strength 当透光率，实为暗化量（对齐旧黑斑 α0.35：Phase L 黑斑 S_in=102=lit×0.65 反推），修为 `1-strength*occ`；S_in 144=(0.25+0.9×0.35)×255 → **213=(0.25+0.9×0.65)×255 精确命中理论值**。
+> - **模块漂移根因（N2b 期间 loadFile 坏路径杀 VM）**：宿主 bin\modules 与 RenderTest\modules 的 slb/json/dll 三件套跨副本漂移（CompileStdlib 只重编了部分模块链）→ import 版本失配 → VM 崩溃；修复 = Core→Std→Math + SLangQT + SLangRender 全链重编 + 部署同步。教训：**C 侧或任一依赖模块改动后必须全链重编再部署**（zip 真源重打包，见 N1 实操记录）。
+> - **验收（run5，19/19 全绿 + 零诊断残留）**：Phase CSM 六断言 S_inA/S_inB/S_e1/S_e2=213（boxA 跨级 0/1、boxB 仅级 2、boxC 骑跨级 1/2 边界各采样落位）+ S_out/S_out2=255（级 3 空区不遮）；SHADOW2 三后端（gl/d3d11/gles）S_in=213 逐像素一致（挂 Phase D/F 复检，VK 同 N2a 跳过）；A3 坏路径 loadFile 恢复真实调用（回归守卫）；F 段 gles 与 GL 像素一致。
+
+- N2a 单张 shadow map：C 侧新增深度专用目标（GL depth texture / D3D11 depth-stencil+SRV / VK depth image，独立于 rt_scene 现有深度）+ 深度 pass 走 SLMC 新 opcode（可被 Pass 体系调度）：光源视角正交投影渲 castShadow 对象；LightBlock（96B/8 灯）外挂 lightVP 16 floats + shadowTex 占 DESC_TEX_SLOTS 16 位中 1 位；光照 shader 加 PCF 2×2；旧投影黑斑保留为 shadowQuality=off 回退（**✅ 实现偏离见上方记录：无 SLMC opcode / 不走 DESC_TEX_SLOTS / LightBlock 192B 尾部追加**）
 - N2b CSM 4 级联：视锥固定比例分割（0.05/0.25/0.6/1.0），每级独立 lightVP、深度图集单张 4 分区；shader 按 viewZ 选级联 + 固定核 PCF；Light.sl 扩强度/偏移/级联数参数（applyTo 下发）
 - 验收：Phase SHADOW2（N2a：遮挡像素断言——阴影内亮度 < 阴影外）+ Phase CSM（N2b：级联采样落位断言）；四后端一致（VK 降级时跳过）
 

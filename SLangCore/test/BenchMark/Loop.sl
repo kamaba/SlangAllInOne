@@ -52,6 +52,45 @@ Loop
         Console.println("for step +7 1e6 = " + stepSum.toString() + "  [$nowMs.toString() ms]")
         BenchCollector.recordSL("Loop", "for step +7 1e6", nowMs)
 
+        # 4. 普通 for 对照段（与 #5 同规模、同循环体，用来隔离 for-in 的迭代开销）
+        nowMs = Environment.sys.nowMillis()
+        cforSum = 0L
+        for i = 0, i < 1000000, i++
+        {
+            cforSum += i
+        }
+        nowMs = Environment.sys.nowMillis() - nowMs
+        Console.println("for sum 1e6 = " + cforSum.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Loop", "for sum 1e6", nowMs)
+
+        # 5. for-in range 迭代段（问题.txt #2 快速迭代基线）
+        nowMs = Environment.sys.nowMillis()
+        inSum = 0L
+        for fi in range(1000000)
+        {
+            inSum += fi
+        }
+        nowMs = Environment.sys.nowMillis() - nowMs
+        Console.println("for-in range sum 1e6 = " + inSum.toString() + "  [$nowMs.toString() ms]")
+        BenchCollector.recordSL("Loop", "for-in range sum 1e6", nowMs)
+
+        # 6. for-in range 边界语义哨兵（不计时）：负步长与零步长两条分支
+        #    range(10,0,-3) => 10,7,4,1；range(5,5,0) => 不进入循环体
+        downSum = 0L
+        downCnt = 0
+        for d in range(10, 0, -3)
+        {
+            downSum += d
+            downCnt++
+        }
+        Console.println("for-in range down = " + downSum.toString() + "/" + downCnt.toString())
+        zeroCnt = 0
+        for z in range(5, 5, 0)
+        {
+            zeroCnt++
+        }
+        Console.println("for-in range zero-step count = " + zeroCnt.toString())
+
         Console.println("========== Loop (end) ==========")
     }
 }

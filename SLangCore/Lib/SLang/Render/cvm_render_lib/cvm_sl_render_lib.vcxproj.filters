@@ -32,6 +32,9 @@
     <ClCompile Include="Pipeline\sl_camera.c">
       <Filter>Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="Pipeline\sl_ray.c">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
     <ClCompile Include="RHI\sl_rhi_gl.c">
       <Filter>RHI</Filter>
     </ClCompile>

@@ -119,11 +119,25 @@ void pipeline_release_targets(SlrPipeline* p)
          * rt_shadow 恒 NULL，此调用天然跳过）*/
         if (p->rt_shadow && g_rhi->shadow_target_destroy)
             g_rhi->shadow_target_destroy(p->rt_shadow);
+        /* N4a：软光追输出纹理（注册在 s_textures，管线持有；销毁走
+         * 纹理注册表同路径）*/
+        if (p->ray_tex)
+        {
+            SlrTexRes* t = tex_from_handle(p->ray_tex);
+            if (t)
+            {
+                g_rhi->texture_destroy(t->rhi_tex);
+                memset(t, 0, sizeof(SlrTexRes));
+            }
+            p->ray_tex = 0;
+        }
     }
     p->rt_scene = NULL;
     p->rt_post = NULL;
     p->rt_final = NULL;
     p->rt_shadow = NULL;
+    p->ray_tex_w = 0;
+    p->ray_tex_h = 0;
 }
 
 static int pipeline_make_targets(SlrPipeline* p, int w, int h)
@@ -164,6 +178,9 @@ int64_t slr_pipeline_create(int w, int h)
             p->shadow_map_size = 512;
             p->shadow_bias = 0.002f;
             p->shadow_strength = 0.35f;   /* 对齐旧黑斑 alpha 0.35 观感 */
+            /* N4a 软光追场景默认态（与 SL 侧 RayScene._init_ 逐字一致；
+             * RaySet* 命令可逐项覆写）*/
+            ray_scene_reset(&p->ray);
             p->clear_color[0] = 0.06f; p->clear_color[1] = 0.06f;
             p->clear_color[2] = 0.10f; p->clear_color[3] = 1.0f;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
@@ -185,9 +202,12 @@ int64_t slr_pipeline_create(int w, int h)
 
 int slr_pipeline_destroy(int64_t h)
 {
-    SlrPipeline* p;
+    SlrPipeline* p = pipe_from_handle(h);
+    /* N3：先安全停机（等队列清空 + worker 退出 + 释放槽块）。必须在实际
+     * 持 RHI 锁之前——worker 回放需要 rhi_enter，destroy 若持锁等待会
+     * 死锁；未启用 async 时为 no-op。*/
+    if (p) cmd_async_shutdown(p);
     if (!rhi_enter()) return 0;
-    p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
     pipeline_release_targets(p);
     memset(p, 0, sizeof(SlrPipeline));
@@ -198,8 +218,11 @@ int slr_pipeline_destroy(int64_t h)
 int slr_pipeline_resize(int64_t h, int w, int hh)
 {
     SlrPipeline* p;
-    if (!rhi_enter()) return 0;
     p = pipe_from_handle(h);
+    /* N3：先等在途流回放完成（worker 可能正持有旧目标回放；SL 主线程
+     * 不会并发提交，drain 后重建目标安全）。未启用 async 时 no-op。*/
+    if (p) cmd_async_drain(p);
+    if (!rhi_enter()) return 0;
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
     if (w <= 0 || hh <= 0) { set_error(SLR_E_BAD_PARAM); rhi_exit(); return 0; }
     pipeline_release_targets(p);
@@ -555,7 +578,11 @@ static int stage_shadow_pass(SlrPipeline* p)
                 hit = 1;
             }
             if (!hit) continue;            /* 空级联：无内容（全 clear）*/
-            un = ul; uf = uh;
+            /* 物体 ∪ 相机并集（不覆盖 534 行初值）：接收面（背光侧）
+             * 像素的 u 也必须落在窗口内，否则采样端 sp.y 出界早退
+             * 1.0 -> 全屏无阴影（级联精度靠 v 分段收紧 W，u 并集无损）*/
+            if (ul < un) un = ul;
+            if (uh > uf) uf = uh;
         }
         if (uf - un < 1e-3f) uf = un + 1e-3f;
         { float pad = (uf - un) * 0.15f + 0.05f; un -= pad; uf += pad; }

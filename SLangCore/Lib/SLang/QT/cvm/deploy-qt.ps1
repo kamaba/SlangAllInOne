@@ -100,14 +100,16 @@ $hasBackendDll = Test-Path $SlangQtDll
 # --- helpers -----------------------------------------------------------------
 function Clean-QtFiles([string]$dir) {
     if (-not (Test-Path $dir)) { return }
+    # direct -Path form: pipeline input to Remove-Item breaks under the local
+    # PS 5.1 shim (parameter binding rejects Process objects).
     Get-ChildItem $dir -Filter "Qt6*.dll" -File -ErrorAction SilentlyContinue |
-        Remove-Item -Force
+        ForEach-Object { Remove-Item -LiteralPath $_.FullName -Force }
     foreach ($x in @("opengl32sw.dll","d3dcompiler_47.dll")) {
         $p = Join-Path $dir $x
-        if (Test-Path $p) { Remove-Item $p -Force }
+        if (Test-Path $p) { Remove-Item -LiteralPath $p -Force }
     }
     $pdir = Join-Path $dir "plugins"
-    if (Test-Path $pdir) { Remove-Item $pdir -Recurse -Force }
+    if (Test-Path $pdir) { Remove-Item -LiteralPath $pdir -Recurse -Force }
 }
 
 function Write-QtConf([string]$exeDir, [string]$pluginsEntry) {

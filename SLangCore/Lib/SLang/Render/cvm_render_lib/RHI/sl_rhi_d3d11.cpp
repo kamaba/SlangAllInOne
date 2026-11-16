@@ -95,7 +95,7 @@ static ID3D11Buffer* s_cb_draw = NULL;   /* 7168B：mat4[64] + vec4[64] + wmat[1
 static ID3D11Buffer* s_cb_obj = NULL;    /* 16B  : int uObjIndex + pad     */
 static ID3D11Buffer* s_cb_v1 = NULL;     /* 80B  : float4x4 + float4       */
 static ID3D11Buffer* s_cb_fx = NULL;     /* 16B  : 后处理参数 / 清屏色     */
-static ID3D11Buffer* s_cb_light = NULL;  /* 176B : LightBlock（光照 + shadow 参数，N2a 扩 11 vec4）*/
+static ID3D11Buffer* s_cb_light = NULL;  /* 416B : LightBlock（光照 + shadow 参数，N2b 扩 26 vec4）*/
 
 /* 管线状态对象 */
 static ID3D11InputLayout*       s_layout = NULL;
@@ -517,7 +517,7 @@ static int d3d_make_shared(void)
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_fx))) goto fail_cb;
     bd.ByteWidth = 80;                         /* PerV1：mat4 + vec4         */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_v1))) goto fail_cb;
-    bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：11 vec4（光照 + N2a shadow）*/
+    bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：26 vec4（光照 + N2a/N2b shadow）*/
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_light))) goto fail_cb;
 
     /* 槽位常驻绑定：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx / b4 PerLight
@@ -1249,6 +1249,9 @@ static int d3d_enter(void)
 
 static void d3d_exit(void) { LeaveCriticalSection(&s_lock); }
 
+/* N3 线程亲和：immediate context 无绑定线程限制（互斥由 s_lock 保证）*/
+static int d3d_thread_nop(void) { return 1; }
+
 /* ===================================================================== */
 /* vtable                                                                 */
 /* ===================================================================== */
@@ -1284,6 +1287,9 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_shadow_target_destroy,
     d3d_shadow_begin,
     d3d_shadow_bind_depth,         /* t1 深度 SRV（desc_bind_tex 用 t0 不冲突）*/
+    /* N3 线程亲和（无 context 绑定要求，no-op）*/
+    d3d_thread_nop,
+    d3d_thread_nop,
 };
 
 const SlrRhi* slr_rhi_d3d11(void) { return &s_rhi_d3d11; }

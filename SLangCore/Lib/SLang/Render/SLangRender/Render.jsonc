@@ -167,6 +167,10 @@
     { "class": "Camera" },
     { "class": "Light" },
     { "class": "Ray" },
+    // N4a 软光追（Ray.sl）：求交记录 / 球元素 / 场景 + SL 参考实现
+    { "class": "RayHit" },
+    { "class": "RaySphere" },
+    { "class": "RayScene" },
     // RHI 层
     { "enum": "EGraphicsBackend" },
     { "enum": "ED3DFeatureLevel" },

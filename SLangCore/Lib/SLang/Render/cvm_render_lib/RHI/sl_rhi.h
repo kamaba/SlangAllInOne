@@ -126,7 +126,7 @@ typedef struct SlrRhi
     int  (*desc_write_tex)(int slot, void* tex);   /* 写：纹理资源 -> 描述符槽 */
     void (*desc_bind_tex)(int slot);               /* 绑：槽 -> 像素着色器 */
 
-    /* ---- 帧级光照块（SlrLightBlock，176B；PFLAT/PTEX/gen 着色器消费）----
+    /* ---- 帧级光照块（SlrLightBlock，416B；PFLAT/PTEX/gen 着色器消费）----
      * GL/GLES：LightBlock UBO 绑定点 1；D3D11：PerLight 寄存器 b4；
      * VK：SPIR-V 着色器固化暂未消费光照（空实现，设置光照无效果——
      * 不影响默认路径：无光照时输出与旧版逐字节一致）。 */
@@ -148,6 +148,18 @@ typedef struct SlrRhi
     void (*shadow_target_destroy)(SlrRhiTarget* t);
     void (*shadow_begin)(SlrRhiTarget* t, int w, int h);
     void (*shadow_bind_depth)(SlrRhiTarget* t);
+
+    /* ---- N3 渲染 worker 线程切换（GL/GLES context 线程亲和）----
+     * async 模式启停时在主线程与 worker 间整体移交 context（仅在
+     * cmd_async_switch 的停机窗口调用：队列已 drain、无并发渲染）：
+     *   thread_acquire  context 绑定到当前线程（GL: wglMakeCurrent(hdc,
+     *                   hrc)；GLES: eglMakeCurrent(dpy,surf,surf,ctx)；
+     *                   D3D11/VK: no-op 返回 1）
+     *   thread_release  context 从当前线程解绑（GL: wglMakeCurrent(NULL,
+     *                   NULL)；GLES: eglMakeCurrent(NO_*)；D3D11/VK: no-op）
+     * 不参与逐帧 enter/exit；NULL = 后端无亲和性要求（防御性跳过）。*/
+    int  (*thread_acquire)(void);
+    int  (*thread_release)(void);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

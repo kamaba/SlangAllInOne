@@ -51,6 +51,10 @@ namespace SLang
         public static Int32 SIG_CLOSE_REQUESTED = 18
         # 2026-11-16 第三十二轮：QTextBrowser 内部导航完成（int=0；拉 currentSource 取新路径）
         public static Int32 SIG_BROWSER_NAVIGATED = 19
+        # 2026-11-16 第三十五轮：面板右键请求（int=0；QListWidget=20 / QTextEdit=21，
+        # connect 时自动启用 CustomContextMenu；弹出位置用 menu.popupCursor()）
+        public static Int32 SIG_LIST_CONTEXT = 20
+        public static Int32 SIG_TEXT_CONTEXT = 21
 
         # ── 应用 ────────────────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
@@ -136,6 +140,11 @@ namespace SLang
         # 第三十轮：QTextBrowser（帮助/文档查看，Markdown 渲染）
         @DllStaticImport( "slang_qt", "slqt_browser_create_sl" )
         public static Int64 ffi_browserCreate( Int64 parent ) { ret 0 }
+        # 第三十六轮：剪贴板与树节点文本
+        @DllStaticImport( "slang_qt", "slqt_clipboard_set_sl" )
+        public static void ffi_clipboardSet( string text ) {}
+        @DllStaticImport( "slang_qt", "slqt_tree_current_text_sl" )
+        public static string ffi_treeCurrentText( Int64 h ) { ret "" }
         @DllStaticImport( "slang_qt", "slqt_browser_set_markdown_sl" )
         public static void ffi_browserSetMarkdown( Int64 h, string md ) {}
         # 第三十二轮：文档内链接跳转
@@ -535,6 +544,8 @@ namespace SLang
             if ( signalId == SIG_TABBAR_CHANGED ) { cb = _dispatchIntCb }
             if ( signalId == SIG_CLOSE_REQUESTED ) { cb = _dispatchIntCb }
             if ( signalId == SIG_BROWSER_NAVIGATED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_LIST_CONTEXT ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_TEXT_CONTEXT ) { cb = _dispatchIntCb }
             if ( cb == 0 ) { ret 0 }
             _handlers.add( handler )
             Int64 slot = ( _handlers.length - 1 ) as Int64

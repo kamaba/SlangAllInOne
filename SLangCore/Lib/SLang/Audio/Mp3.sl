@@ -106,8 +106,7 @@ namespace Audio
 
         override string toString()
         {
-            ret "Mp3Frame(" + this.bitrateKbps.toString() + "kbps, " +
-                this.sampleRate.toString() + "Hz, len=" + this.frameLength.toString() + ")"
+            ret "Mp3Frame(" + this.bitrateKbps.toString() + "kbps, " + this.sampleRate.toString() + "Hz, len=" + this.frameLength.toString() + ")"
         }
     }
 
@@ -440,9 +439,7 @@ namespace Audio
             {
                 ret false
             }
-            ret AudioInfo.readU8( bytes, 0 ) == 0x49 &&
-                AudioInfo.readU8( bytes, 1 ) == 0x44 &&
-                AudioInfo.readU8( bytes, 2 ) == 0x33
+            ret AudioInfo.readU8( bytes, 0 ) == 0x49 && AudioInfo.readU8( bytes, 1 ) == 0x44 && AudioInfo.readU8( bytes, 2 ) == 0x33
         }
 
         # syncsafe：每字节只用低 7 位，共 28 位
@@ -477,9 +474,7 @@ namespace Audio
                 ret false
             }
             Int32 p = bytes.length - 128
-            ret AudioInfo.readU8( bytes, p ) == 0x54 &&
-                AudioInfo.readU8( bytes, p + 1 ) == 0x41 &&
-                AudioInfo.readU8( bytes, p + 2 ) == 0x47
+            ret AudioInfo.readU8( bytes, p ) == 0x54 && AudioInfo.readU8( bytes, p + 1 ) == 0x41 && AudioInfo.readU8( bytes, p + 2 ) == 0x47
         }
 
         # 第一个 MPEG 帧的偏移（跳过 ID3v2）
@@ -521,36 +516,33 @@ namespace Audio
             ret ( 1.0f * byteSize * 8 ) / ( 1.0f * bitrateKbps * 1000 )
         }
 
-        # ── 后端 ────────────────────────────────────────────
+        # ── 编解码路由（原生 sl_audio_lib，minimp3 CC0）──────
+        # 解码：先本类纯 SL 帧头校验（isMp3），再走原生整段解码；
+        # 编码 / 标签读取 v1 无后端（详见各方法注释）。
         public static AudioBuffer decode( Array<UInt8> bytes )
         {
             if bytes == null
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Audio.mp3Decode", bytes )
-            ret result as AudioBuffer
+            if !Mp3.isMp3( bytes )
+            {
+                ret null
+            }
+            ret AudioBuffer.decode( bytes )
         }
 
+        # v1 原生库无 MP3 编码器（仅解码）；WAV 编码走 Wav.encode
         public static Array<UInt8> encode( AudioBuffer buffer, Mp3EncodeOptions options )
         {
-            if buffer == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Audio.mp3Encode",
-                buffer.sampleRate, buffer.channels, buffer, options )
-            ret result as Array<UInt8>
+            ret null
         }
 
+        # v1 无后端标签读取；ID3v2 结构探测可用 hasId3v2 / id3v2Size /
+        # id3v2TotalSize，帧参数可用 readFrameHeader
         public static ID3v2Tag readTags( Array<UInt8> bytes )
         {
-            if bytes == null
-            {
-                ret null
-            }
-            object result = SystemCallExternalFunction( "Audio.mp3Tags", bytes )
-            ret result as ID3v2Tag
+            ret null
         }
 
         override string toString()

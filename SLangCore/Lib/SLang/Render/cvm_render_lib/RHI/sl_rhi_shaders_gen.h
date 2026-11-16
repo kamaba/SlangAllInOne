@@ -1,8 +1,9 @@
 /* =========================================================================
  * sl_rhi_shaders_gen.h —— SLangRender 固化着色器（自动生成，勿手改）
  *
- * 单源 HLSL（sl_shaders/hlsl/*.hlsl + SlShadersCommon.hlsli 拼接）经
- * 「通用固化编译」产出各平台使用代码，由 RHI 后端直接读取：
+ * 单源 HLSL（工作目录 test\RenderTest\shader 优先，回落 sl_shaders/hlsl\；
+ * SlShadersCommon.hlsli 拼接）经「通用固化编译」产出各平台使用代码，
+ * 由 RHI 后端直接读取：
  *   - GL 3.3 core   ：glslang HLSL->SPIR-V -> spirv-cross GLSL330
  *   - GLES 3.0      ：同枢纽 -> spirv-cross ESSL300（precision highp）
  *   - D3D11 SM5     ：fxc 预编译 DXBC blob（运行期零编译）+ HLSL 源回退

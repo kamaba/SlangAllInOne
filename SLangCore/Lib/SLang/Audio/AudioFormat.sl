@@ -9,32 +9,42 @@
 
 namespace Audio
 {
-    # 容器 / 编码格式
+    # 容器 / 编码格式（显式值：裸名成员无法被 MetaCore 调用链解析）
     public enum EAudioFormat
     {
         Unknown = 0
-        Wav        # RIFF / PCM（纯 SL 可完整读写）
-        Mp3
-        Aac        # ADTS / ADIF / MP4 容器
-        Flac       # 无损
-        Ogg        # Ogg 容器（Vorbis / Opus / FLAC）
-        Opus
-        Wma
-        Aiff
-        Amr
-        Midi
+        # RIFF / PCM（纯 SL 可完整读写）
+        Wav = 1
+        Mp3 = 2
+        # ADTS / ADIF / MP4 容器
+        Aac = 3
+        # 无损
+        Flac = 4
+        # Ogg 容器（Vorbis / Opus / FLAC）
+        Ogg = 5
+        Opus = 6
+        Wma = 7
+        Aiff = 8
+        Amr = 9
+        Midi = 10
     }
 
     # PCM 采样格式（位深）
     public enum ESampleFormat
     {
         Unknown = 0
-        U8        # 无符号 8 位，零点 128
-        S16       # 有符号 16 位小端（最常见）
-        S24       # 有符号 24 位，打包成 3 字节
-        S32       # 有符号 32 位
-        F32       # IEEE Float32
-        F64       # IEEE Float64
+        # 无符号 8 位，零点 128
+        U8 = 1
+        # 有符号 16 位小端（最常见）
+        S16 = 2
+        # 有符号 24 位，打包成 3 字节
+        S24 = 3
+        # 有符号 32 位
+        S32 = 4
+        # IEEE Float32
+        F32 = 5
+        # IEEE Float64
+        F64 = 6
     }
 
     # 声道布局
@@ -51,22 +61,30 @@ namespace Audio
     # 常用采样率
     public enum ESampleRate
     {
-        Rate8000 = 8000      # 电话
-        Rate16000 = 16000    # 语音识别常用
+        # 电话
+        Rate8000 = 8000
+        # 语音识别常用
+        Rate16000 = 16000
         Rate22050 = 22050
         Rate32000 = 32000
-        Rate44100 = 44100    # CD
-        Rate48000 = 48000    # 视频 / Opus 原生
-        Rate96000 = 96000    # 高解析
+        # CD
+        Rate44100 = 44100
+        # 视频 / Opus 原生
+        Rate48000 = 48000
+        # 高解析
+        Rate96000 = 96000
     }
 
     # 码率控制模式
     public enum EBitrateMode
     {
         Unknown = 0
-        CBR        # 恒定码率
-        VBR        # 可变码率
-        ABR        # 平均码率
+        # 恒定码率
+        CBR = 1
+        # 可变码率
+        VBR = 2
+        # 平均码率
+        ABR = 3
     }
 
     public enum AudioErrorCode extends Error

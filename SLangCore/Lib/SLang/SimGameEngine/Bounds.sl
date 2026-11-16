@@ -1,5 +1,6 @@
 # 轴对齐包围盒（AABB）。
 # 使用 Math 库的 Float32_3 表示 min / max。
+import Math;
 public class Bounds
 {
     public Float32_3 min = Float32_3.zero()
@@ -59,24 +60,20 @@ public class Bounds
     # ── 包含 / 相交 ──────────────────────────────────────
     public bool contains( Float32_3 p )
     {
-        ret p.x >= this.min.x && p.x <= this.max.x &&
-            p.y >= this.min.y && p.y <= this.max.y &&
-            p.z >= this.min.z && p.z <= this.max.z
+        ret p.x >= this.min.x && p.x <= this.max.x && p.y >= this.min.y && p.y <= this.max.y && p.z >= this.min.z && p.z <= this.max.z
     }
 
     public bool intersects( Bounds other )
     {
-        ret this.min.x <= other.max.x && this.max.x >= other.min.x &&
-            this.min.y <= other.max.y && this.max.y >= other.min.y &&
-            this.min.z <= other.max.z && this.max.z >= other.min.z
+        ret this.min.x <= other.max.x && this.max.x >= other.min.x && this.min.y <= other.max.y && this.max.y >= other.min.y && this.min.z <= other.max.z && this.max.z >= other.min.z
     }
 
     # ── 扩展 ─────────────────────────────────────────────
     # 扩展以包含某个点
     public void encapsulate( Float32_3 p )
     {
-        this.min = Vector.min3( this.min, p )
-        this.max = Vector.max3( this.max, p )
+        this.min = Bounds.min3( this.min, p )
+        this.max = Bounds.max3( this.max, p )
     }
 
     # 扩展以包含另一个包围盒
@@ -220,8 +217,8 @@ public class Bounds
     # ── 静态工厂 ─────────────────────────────────────────
     public static Bounds fromCenterSize( Float32_3 center, Float32_3 size )
     {
-        Float32_3 half = size._mul_( 0.5f ) as Float32_3
-        ret Bounds( center._sub_( half ) as Float32_3, center._add_( half ) as Float32_3 )
+        Float32_3 ext = size._mul_( 0.5f ) as Float32_3
+        ret Bounds( center._sub_( ext ) as Float32_3, center._add_( ext ) as Float32_3 )
     }
 
     # 由点集构造（points 为空时返回无效盒）
@@ -237,8 +234,9 @@ public class Bounds
         int i = 1
         while i < points.length
         {
-            lo = Vector.min3( lo, points[i] )
-            hi = Vector.max3( hi, points[i] )
+            Float32_3 pi = points[i]
+            lo = Bounds.min3( lo, pi )
+            hi = Bounds.max3( hi, pi )
             i++
         }
         ret Bounds( lo, hi )
@@ -247,6 +245,43 @@ public class Bounds
     public static get Bounds empty()
     {
         ret Bounds()
+    }
+
+    # ── 内部工具（替代 Render 模块 Vector.min3/max3，本模块不引用 Render）──
+    static Float32_3 min3( Float32_3 a, Float32_3 b )
+    {
+        Float32_3 r = a.clone()
+        if b.x < r.x
+        {
+            r.x = b.x
+        }
+        if b.y < r.y
+        {
+            r.y = b.y
+        }
+        if b.z < r.z
+        {
+            r.z = b.z
+        }
+        ret r
+    }
+
+    static Float32_3 max3( Float32_3 a, Float32_3 b )
+    {
+        Float32_3 r = a.clone()
+        if b.x > r.x
+        {
+            r.x = b.x
+        }
+        if b.y > r.y
+        {
+            r.y = b.y
+        }
+        if b.z > r.z
+        {
+            r.z = b.z
+        }
+        ret r
     }
 
     override string toString()

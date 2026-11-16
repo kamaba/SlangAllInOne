@@ -19,13 +19,16 @@ namespace Audio
     public enum EWaveFormatTag
     {
         Unknown = 0
-        Pcm = 1          # 整数 PCM
+        # 整数 PCM
+        Pcm = 1
         Adpcm = 2
-        Float = 3        # IEEE Float32 / Float64
+        # IEEE Float32 / Float64
+        Float = 3
         Alaw = 6
         Mulaw = 7
         DviAdpcm = 17
-        Extensible = 65534   # 0xFFFE
+        # 0xFFFE
+        Extensible = 65534
     }
 
     # ── 头 ─────────────────────────────────────────────────
@@ -56,8 +59,7 @@ namespace Audio
 
         public get bool isValid()
         {
-            ret this.channels > 0 && this.sampleRate > 0 &&
-                this.bitsPerSample > 0 && this.blockAlign > 0
+            ret this.channels > 0 && this.sampleRate > 0 && this.bitsPerSample > 0 && this.blockAlign > 0
         }
 
         public get bool isPcm()
@@ -111,9 +113,7 @@ namespace Audio
 
         override string toString()
         {
-            ret "WavHeader(" + this.sampleRate.toString() + "Hz, " +
-                this.channels.toString() + "ch, " + this.bitsPerSample.toString() + "bit, " +
-                this.duration().toString() + "s)"
+            ret "WavHeader(" + this.sampleRate.toString() + "Hz, " + this.channels.toString() + "ch, " + this.bitsPerSample.toString() + "bit, " + this.duration().toString() + "s)"
         }
     }
 
@@ -127,14 +127,7 @@ namespace Audio
             {
                 ret false
             }
-            ret AudioInfo.readU8( bytes, 0 ) == 0x52 &&
-                AudioInfo.readU8( bytes, 1 ) == 0x49 &&
-                AudioInfo.readU8( bytes, 2 ) == 0x46 &&
-                AudioInfo.readU8( bytes, 3 ) == 0x46 &&
-                AudioInfo.readU8( bytes, 8 ) == 0x57 &&
-                AudioInfo.readU8( bytes, 9 ) == 0x41 &&
-                AudioInfo.readU8( bytes, 10 ) == 0x56 &&
-                AudioInfo.readU8( bytes, 11 ) == 0x45
+            ret AudioInfo.readU8( bytes, 0 ) == 0x52 && AudioInfo.readU8( bytes, 1 ) == 0x49 && AudioInfo.readU8( bytes, 2 ) == 0x46 && AudioInfo.readU8( bytes, 3 ) == 0x46 && AudioInfo.readU8( bytes, 8 ) == 0x57 && AudioInfo.readU8( bytes, 9 ) == 0x41 && AudioInfo.readU8( bytes, 10 ) == 0x56 && AudioInfo.readU8( bytes, 11 ) == 0x45
         }
 
         static bool isChunkId( Array<UInt8> b, Int32 offset, string id )
@@ -274,9 +267,7 @@ namespace Audio
                 elif bps == 3
                 {
                     # 24 位小端有符号
-                    Int32 s = AudioInfo.readU8( bytes, p ) |
-                              ( AudioInfo.readU8( bytes, p + 1 ) << 8 ) |
-                              ( AudioInfo.readU8( bytes, p + 2 ) << 16 )
+                    Int32 s = AudioInfo.readU8( bytes, p ) | ( AudioInfo.readU8( bytes, p + 1 ) << 8 ) | ( AudioInfo.readU8( bytes, p + 2 ) << 16 )
                     if s >= 8388608
                     {
                         s = s - 16777216
@@ -298,10 +289,7 @@ namespace Audio
         # 小端 Float32（按位重组，避免依赖后端）
         public static Float32 readFloat32Le( Array<UInt8> b, Int32 offset )
         {
-            Int32 bits = AudioInfo.readU8( b, offset ) |
-                         ( AudioInfo.readU8( b, offset + 1 ) << 8 ) |
-                         ( AudioInfo.readU8( b, offset + 2 ) << 16 ) |
-                         ( AudioInfo.readU8( b, offset + 3 ) << 24 )
+            Int32 bits = AudioInfo.readU8( b, offset ) | ( AudioInfo.readU8( b, offset + 1 ) << 8 ) | ( AudioInfo.readU8( b, offset + 2 ) << 16 ) | ( AudioInfo.readU8( b, offset + 3 ) << 24 )
             ret SystemConvertFloat32( bits )
         }
 
@@ -313,38 +301,37 @@ namespace Audio
             {
                 ret null
             }
-            if bitsPerSample != 8 && bitsPerSample != 16 &&
-               bitsPerSample != 24 && bitsPerSample != 32
+            if bitsPerSample != 8 && bitsPerSample != 16 && bitsPerSample != 24 && bitsPerSample != 32
             {
                 bitsPerSample = 16
             }
             Int32 channels = buffer.channels
             Int32 total = buffer.sampleCount()
             Int32 dataSize = total * ( bitsPerSample / 8 )
-            Array<UInt8> out = Array<UInt8>( 44 + dataSize )
+            Array<UInt8> result = Array<UInt8>( 44 + dataSize )
 
-            Wav.writeFourCC( out, 0, "RIFF" )
-            Wav.writeLe32( out, 4, 36 + dataSize )
-            Wav.writeFourCC( out, 8, "WAVE" )
+            Wav.writeFourCC( result, 0, "RIFF" )
+            Wav.writeLe32( result, 4, 36 + dataSize )
+            Wav.writeFourCC( result, 8, "WAVE" )
 
             # fmt 块
-            Wav.writeFourCC( out, 12, "fmt " )
-            Wav.writeLe32( out, 16, 16 )
+            Wav.writeFourCC( result, 12, "fmt " )
+            Wav.writeLe32( result, 16, 16 )
             Int32 tag = 1
             if bitsPerSample == 32
             {
                 tag = 3
             }
-            Wav.writeLe16( out, 20, tag )
-            Wav.writeLe16( out, 22, channels )
-            Wav.writeLe32( out, 24, buffer.sampleRate )
-            Wav.writeLe32( out, 28, buffer.sampleRate * channels * bitsPerSample / 8 )
-            Wav.writeLe16( out, 32, channels * bitsPerSample / 8 )
-            Wav.writeLe16( out, 34, bitsPerSample )
+            Wav.writeLe16( result, 20, tag )
+            Wav.writeLe16( result, 22, channels )
+            Wav.writeLe32( result, 24, buffer.sampleRate )
+            Wav.writeLe32( result, 28, buffer.sampleRate * channels * bitsPerSample / 8 )
+            Wav.writeLe16( result, 32, channels * bitsPerSample / 8 )
+            Wav.writeLe16( result, 34, bitsPerSample )
 
             # data 块
-            Wav.writeFourCC( out, 36, "data" )
-            Wav.writeLe32( out, 40, dataSize )
+            Wav.writeFourCC( result, 36, "data" )
+            Wav.writeLe32( result, 40, dataSize )
 
             Int32 i = 0
             while i < total
@@ -357,7 +344,7 @@ namespace Audio
                     Int32 u = SystemConvertInt32( f * 127.0f + 128.0f )
                     if u < 0 { u = 0 }
                     if u > 255 { u = 255 }
-                    out[ p ] = SystemConvertUInt8( u )
+                    result[ p ] = SystemConvertUInt8( u )
                 }
                 elif bitsPerSample == 16
                 {
@@ -365,8 +352,8 @@ namespace Audio
                     if s < -32768 { s = -32768 }
                     if s > 32767 { s = 32767 }
                     if s < 0 { s = s + 65536 }
-                    out[ p ] = SystemConvertUInt8( s & 0xFF )
-                    out[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
+                    result[ p ] = SystemConvertUInt8( s & 0xFF )
+                    result[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
                 }
                 elif bitsPerSample == 24
                 {
@@ -374,9 +361,9 @@ namespace Audio
                     if s < -8388608 { s = -8388608 }
                     if s > 8388607 { s = 8388607 }
                     if s < 0 { s = s + 16777216 }
-                    out[ p ] = SystemConvertUInt8( s & 0xFF )
-                    out[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
-                    out[ p + 2 ] = SystemConvertUInt8( ( s >> 16 ) & 0xFF )
+                    result[ p ] = SystemConvertUInt8( s & 0xFF )
+                    result[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
+                    result[ p + 2 ] = SystemConvertUInt8( ( s >> 16 ) & 0xFF )
                 }
                 else
                 {
@@ -385,16 +372,16 @@ namespace Audio
                     if s < -32768 { s = -32768 }
                     if s > 32767 { s = 32767 }
                     if s < 0 { s = s + 65536 }
-                    out[ p ] = SystemConvertUInt8( s & 0xFF )
-                    out[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
-                    out[ p + 2 ] = SystemConvertUInt8( 0 )
-                    out[ p + 3 ] = SystemConvertUInt8( 0 )
+                    result[ p ] = SystemConvertUInt8( s & 0xFF )
+                    result[ p + 1 ] = SystemConvertUInt8( ( s >> 8 ) & 0xFF )
+                    result[ p + 2 ] = SystemConvertUInt8( 0 )
+                    result[ p + 3 ] = SystemConvertUInt8( 0 )
                 }
 
                 i = i + 1
             }
 
-            ret out
+            ret result
         }
 
         public static Array<UInt8> encode( AudioBuffer buffer )

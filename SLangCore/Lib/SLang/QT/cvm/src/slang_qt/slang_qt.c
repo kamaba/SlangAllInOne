@@ -474,6 +474,10 @@ SLQT_API void    slqt_browser_set_markdown_sl(int64_t h, const char* md) { slqt_
 SLQT_API void        slqt_browser_set_document_sl(int64_t h, const char* path, const char* md) { slqt_be_browser_set_document(h, path, md); }
 SLQT_API const char* slqt_browser_current_source_sl(int64_t h) { return slqt_be_browser_current_source(h); }
 
+/* 第三十六轮：剪贴板与树节点文本 */
+SLQT_API void        slqt_clipboard_set_sl(const char* text) { slqt_be_clipboard_set(text); }
+SLQT_API const char* slqt_tree_current_text_sl(int64_t h) { return slqt_be_tree_current_text(h); }
+
 SLQT_API int64_t slqt_toolbar_create_sl(int64_t p, const char* t) { return slqt_be_toolbar_create(p, t); }
 SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb) { slqt_be_mainwindow_add_toolbar(win, tb); }
 SLQT_API int64_t slqt_toolbar_add_action_sl(int64_t tb, const char* t) { return slqt_be_toolbar_add_action(tb, t); }

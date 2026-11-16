@@ -67,9 +67,22 @@ int rhi_enter(void)
     return 1;
 }
 
+/* N3 线程移交标志：async 模式置位后，主线程每次 rhi_exit 顺手解绑
+ * context 还给 worker。根因：GL/GLES 的 context 单线程独占且 exit 只解
+ * 锁不解绑——控制流（AsyncFlush）回放后主线程持绑，worker 下一次
+ * thread_acquire 的 MakeCurrent 因 context 绑在主线程而 ERROR_BUSY 失败
+ * （旧实现忽略返回值 -> 回放无 context 裸奔，readback 读到陈旧像素）。
+ * 同步常态恒 0：exit 不解绑，enter 幂等重绑，省一次 MakeCurrent 往返。*/
+static int s_thread_handoff = 0;
+
+void rhi_set_thread_handoff(int on) { s_thread_handoff = on ? 1 : 0; }
+
 void rhi_exit(void)
 {
-    if (g_rhi) g_rhi->exit();
+    if (!g_rhi) return;
+    g_rhi->exit();
+    if (s_thread_handoff && g_rhi->thread_release)
+        g_rhi->thread_release();
 }
 
 /* ===================================================================== */

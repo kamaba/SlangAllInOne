@@ -30,6 +30,9 @@ namespace SLang
 
         public string selectedPath() { ret SLang.QT.ffi_treeSelectedPath( this.handle ) }
 
+        # 当前节点第 0 列显示文本（2026-11-16 第三十六轮；无选中为空串）
+        public string currentText() { ret SLang.QT.ffi_treeCurrentText( this.handle ) }
+
         # handler 形态：static void onSelected( string path )
         public Int64 onSelected( Function handler )
         {

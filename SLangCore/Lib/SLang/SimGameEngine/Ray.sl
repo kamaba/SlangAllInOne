@@ -1,5 +1,6 @@
 # 射线：origin + direction（direction 建议保持单位长度）。
 # 使用 Math 库的 Float32_3 / Float32_4x4。
+import Math;
 public class Ray
 {
     public Float32_3 origin = Float32_3.zero()

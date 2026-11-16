@@ -16,6 +16,21 @@ macOs /iOS的环境
 
 
 配置里边增加是否打开Console的配置文件 。
+引擎层增加材质球的显示 显示27种不同材质的显示。
+增加shape库  增加固定的shape的形状库。
+后处理的文档貌似还没写吧
+
+QTCodeEditor
+1. 解决方案区，没有右键区
+2. 左键点击后，应该默认选择当前的文件
+3. 代码显示区域右边有5-10个字符没有显示出来
+4. 在快捷图标区，要和VS一样显示，当前的选中工程
+5. 
+
+SLang GameEngine
+1. 引擎层需要有时间同步的时间周期 会贯穿渲染，音频，视频，游戏逻辑，物理 等环境
+2. 音频现在底层是有了，但在有了时间周期引入后，增加对某个AudioSource的play/pause/resume/stop等 操作 还有就是增加时间 的播放速率
+3. 
 
 Unity的机制
 1. 有了对应的类 并且命名空间与Unity3d里边CSharp里边的类同命名空间+类名
@@ -64,8 +79,6 @@ ffmpeg的dll 引入  要制作成modules
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了
 
-做cocos的附属语言
-
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心    主版本/插件/包 要在后管平台分开管理  前端页显示，需要使用数据库的数据显示内容， 跑起来wasm  增加贡献的功能，显示捐助
 然后使用http server 写一个若依平台   
@@ -74,3 +87,19 @@ MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 l
 SLangTorch 的制作
 
 在esp32-p4的机器上跑起来 然后做一个sdk 
+
+[2026-11-16 第三十七轮登记] run-tests-win 存量问题排查（MathTest/SpecialTest）
+1. MathTest 编译链已修（outputDir/moduleName/TestMap 对齐 + if 内联构造比较坑规避），compile-tests 由恒 FAIL 变 OK、runner exit 1→0。
+2. 【遗留】MathTest 运行期矩阵段 283 FAIL：identity/zero 等走 SystemMath* 系统调用（math_lib.dll!mathvm_* 扩展 dll）静默失效——疑 VM 扩展 dll 搜索路径（module 在 out\export\MathTest\ 而 math_lib.dll 在 out\export\Math\）+ MathVMLib.dll 全仓缺失（Math.jsonc 未引用但注释提及）。疑点：10/28 旧日志曾成功从 out\export\Math 加载。待 VM 扩展 dll 解析域专项。
+3. 【遗留】SpecialTest DLibrary 段 8 FAIL（load/refcount/release 引用计数），其余子段（CPlusClang 29 / Python 13）通过。待 VM 动态库域专项。
+4. 【缺陷】Front 编译存在 Error 时进程仍 exit 0（compile-tests 靠 Get-ModuleFresh rewritten 判定兜底）；另裸目录路径 [FAIL] project anchor not found: <Dir>.sp（11002 锚点缺陷再证）。
+[2026-11-16 第三十九轮更新] MathTest 矩阵 282 FAIL 根因收敛：
+- VM 侧已修三处（system_method_registry.c：宿主 ext dll 加载失败不缓存 NULL 占位 / 裸名失败追加 exe\lib\<plat>\ 发布布局候选链 / systemCalls 注册期解析失败登记 id 占位 + 调用期惰性重解析）——SL_VM_LOG=on 实证 lazy re-resolve 已触发但 math_lib.dll 仍未进进程（SL_VM_LOG 需环境变量开启，日志在 module 目录 build\logs\VM.txt）。
+- 剩余断点收敛为引用锚点缺陷（11002 家族）：MathTest.jsonc 的 ./lib/Math.module.slb 被 Front 解析到 simple_language\source\bin\Debug\net8.0\lib\ 的 10/27 旧 slb；vmDllImports/FFI 预载的相对锚点解析结果依赖 CWD（D:\project\lang 时成功、module 目录时失败）。改绝对路径引用触发 uuid 校验失败 exit 1（进一步佐证）。最终修复归 11002 jsonc 锚点相对路径专项。
+- FFIMathTest.testFloat64 偶发 1 FAIL（dot3 roundtrip 精度噪声，前后对照出现/消失）观察项。
+
+[2026-11-16 第四十轮更新] MathTest 矩阵段已清零（PASS=613 / FAIL=0）：
+- 根因补上第三十九轮漏改第四处：vm_system_func_preload_ext_lib 错误锚点首载失败后仍缓存 NULL 占位，封死后续 exe\lib\<平台>\ 候选链；已改为非 wasm 失败时直接走统一候选链重试（wasm 保留占位）。
+- 配套：run-tests-win.ps1 经 common.ps1 自动把 out\export\Math\math_lib.dll 部署到 csimple_lang\build\<Config>\bin\lib\windows\（移除该副本立即回 283 FAIL，两处缺一不可）。
+- 11002 锚点写法缺陷仍在（moduleReferences 写回 Front bin lib），但不再阻断系统调用；彻底清理需单独做 Front 引用解析专项（影响面含 Core/Std 全量引用）。
+- 【遗留】SpecialTest DLibrary/FFI 段 71 FAIL（load/refcount/release、native symbol resolve、float8 等）未动，待 VM 动态库域专项。

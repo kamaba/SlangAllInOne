@@ -257,6 +257,9 @@ void    slqt_be_browser_set_markdown(int64_t h, const char* md) { (void)h;(void)
 /* 第三十二轮：文档内链接跳转（stub 安全 no-op） */
 void        slqt_be_browser_set_document(int64_t h, const char* p, const char* md) { (void)h;(void)p;(void)md; }
 const char* slqt_be_browser_current_source(int64_t h) { (void)h; return g_empty; }
+/* 第三十六轮：剪贴板与树节点文本（stub 安全 no-op） */
+void        slqt_be_clipboard_set(const char* text) { (void)text; }
+const char* slqt_be_tree_current_text(int64_t h) { (void)h; return g_empty; }
 
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb) { (void)win;(void)tb; }

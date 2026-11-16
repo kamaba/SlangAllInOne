@@ -1,0 +1,119 @@
+{
+  "project": {
+    "name": "SimGameEngine",
+    "desc": "SLang game engine scene/node/component layer - GameObject tree + Transform(TRS) + Scene + Behaviour lifecycle + headless Application frame loop; batching submits to SLangRender (see doc/)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  // 本模块为纯 SL 库模块：无 FFI / 无原生库。渲染提交走引用方工程的
+  // SLangRender 模块（doc/05）。
+  "dllImports": [],
+  "vmDlls": [],
+  // systemCalls：SystemSimEngineCallHook —— 生命周期钩子动态派发（C VM 内建
+  // 符号 vm_sys_component_call_hook，见 csimple_lang component_system_method.c）。
+  // 背景：跨模块基类引用（slb）的 SL CallVirt 虚分发不派发到消费方模块的
+  // override（Behaviour 钩子静态落到基类空实现，SimEngineTest 实证），
+  // 引擎内所有对 Behaviour 钩子的调用一律走本系统调用按名派发。
+  "systemCalls": [
+    { "name": "SystemSimEngineCallHook", "returnType": "bool", "params": ["object", "string"], "isVariadic": false, "cvmFunction": "vm_sys_component_call_hook" },
+    { "name": "SystemSimEngineSetEnabled", "returnType": "void", "params": ["object", "bool"], "isVariadic": false, "cvmFunction": "vm_sys_component_set_enabled" },
+    { "name": "SystemSimEngineGetEnabled", "returnType": "bool", "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_component_get_enabled" }
+  ],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      // ---- P0 场景核心（依赖序：Transform -> GameObject -> Scene）----
+      { "path": "Transform.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 1 },
+      { "path": "GameObject.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 2 },
+      { "path": "Scene.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 3 },
+      // ---- 生命周期基类与空间工具（既有草稿，随 P0 入编译集）----
+      { "path": "Behaviour.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 4 },
+      { "path": "Bounds.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 5 },
+      { "path": "Plane.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 6 },
+      { "path": "Ray.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 7 },
+      // ---- P1 运行时：无头帧循环（fixedUpdate 累加器 + start/update/lateUpdate
+      //      + 变换刷新 + 帧尾延迟销毁收口）----
+      { "path": "Application.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 8 },
+      // ---- P2 渲染资源组件 + 合批器（doc/04/05；数据层不引用 SLangRender，
+      //      双模块根级 Transform/Ray 同名冲突待专项，见 doc/10 §6）----
+      { "path": "MaterialData.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 9 },
+      { "path": "MeshRef.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 10 },
+      { "path": "MaterialRef.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 11 },
+      { "path": "BatchGroup.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 12 },
+      { "path": "Batcher.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 13 }
+      // UIBehaviour.sl 暂不入编译集（依赖待建：RectTransform 位于 SLangRender
+      // 模块，需 module 引用；双模块根级 Transform/Ray 同名冲突待专项验证，
+      // 见 doc/10 §5 P5 与 doc/08 §3.1）
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    // Memory.alloc / List / Array / String.toFormat 等来自 Core
+    //（本 jsonc 位于 SLangCore\Lib\SLang\SimGameEngine\，上 2 级到 SLangCore\Lib\）
+    { "path": "../../Core", "name": "Core" },
+    // Component 基类（Std 根级类，裸名可见）
+    { "path": "../../Std", "name": "Std" },
+    // Float32_2/3、Float32_4x4、Quaternion、MatrixUtil（TRS / 刚体求逆）
+    { "path": "../../Math", "name": "Math" }
+  ],
+  "struct": [
+    // 场景核心（根级类型，引用方裸名可见，同 Std Component 先例）
+    { "class": "Transform" },
+    { "class": "GameObject" },
+    { "class": "Scene" },
+    { "class": "Application" },
+    // 生命周期与空间工具（既有草稿）
+    { "class": "Behaviour" },
+    { "class": "UIBehaviour" },
+    { "class": "Bounds" },
+    { "class": "Plane" },
+    { "class": "Ray" },
+    // P2 渲染资源组件 + 合批器
+    { "class": "MaterialData" },
+    { "class": "MeshRef" },
+    { "class": "MaterialRef" },
+    { "class": "BatchGroup" },
+    { "class": "Batcher" }
+  ],
+  "export": {
+    "moduleName": "SimGameEngine",
+    // jsonc 位于 SLangCore\Lib\SLang\SimGameEngine\，上 4 级到 SlangAllInOne\out\export
+    //（Render.jsonc 在 Lib\SLang\Render\SLangRender\ 故为 5 级；本模块少一层）
+    "outputDir": "..\\..\\..\\..\\out\\export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  }
+}

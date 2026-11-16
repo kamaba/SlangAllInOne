@@ -48,7 +48,7 @@ internal static class Program
         ("MathTest",    Path.Combine("SLangCore", "test", "MathTest", "ProjectTest")),
         ("SpecialTest", Path.Combine("SLangCore", "test", "SpecialTest", "ProjectTest")),
         ("BenchMark",   Path.Combine("SLangCore", "test", "BenchMark", "BenchMark")),
-        ("RenderTest",  Path.Combine("SLangCore", "test", "RenderTest", "ProjectTest")),
+        ("RenderTest",  Path.Combine("SLangCore", "test", "RenderTest", "RenderTest")),
         // 命名用例（原 CSimpleVMTest）
         ("NullFast",                   Path.Combine("SLangCore", "test", "Other", "NullFastTest", "ProjectTest")),
         ("JsonTest",                   Path.Combine("SLangCore", "test", "Other", "JsonTest", "JsonTest")),

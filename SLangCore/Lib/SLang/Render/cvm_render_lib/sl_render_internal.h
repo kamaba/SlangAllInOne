@@ -362,6 +362,8 @@ void set_error_detail(int e, const char* detail);
 void clear_error(void);
 int  rhi_enter(void);
 void rhi_exit(void);
+void rhi_set_thread_handoff(int on);   /* N3：async 常态下主线程 exit 顺带
+                                        * 解绑 context（见 sl_render.c）*/
 
 /* sl_texture.c：纹理注册表（管线/对象跨文件取用） */
 SlrTexRes* tex_from_handle(int64_t h);

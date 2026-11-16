@@ -21,7 +21,17 @@
   },
   "compileFiles": {
     "files": [
-      { "path": "RenderTest.sl", "group": "render", "tag": "base", "ignore": false, "priority": 0 }
+      { "path": "RenderTest.sl", "group": "render", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "RenderTestHelpers.sl", "group": "render", "tag": "base", "ignore": false, "priority": 1 },
+      { "path": "RenderTestCube.sl", "group": "render", "tag": "base", "ignore": false, "priority": 2 },
+      { "path": "RenderTestQt.sl", "group": "render", "tag": "base", "ignore": false, "priority": 3 },
+      { "path": "RenderTestAudio.sl", "group": "render", "tag": "base", "ignore": false, "priority": 4 },
+      { "path": "RenderTestSmoke.sl", "group": "render", "tag": "base", "ignore": false, "priority": 5 },
+      { "path": "RenderTestPhasesA.sl", "group": "render", "tag": "base", "ignore": false, "priority": 6 },
+      { "path": "RenderTestPhasesB.sl", "group": "render", "tag": "base", "ignore": false, "priority": 7 },
+      { "path": "RenderTestPhasesC.sl", "group": "render", "tag": "base", "ignore": false, "priority": 8 },
+      { "path": "RenderTestPhasesD.sl", "group": "render", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "RenderTestPhasesE.sl", "group": "render", "tag": "base", "ignore": false, "priority": 10 }
     ]
   },
   "compileFilter": {
@@ -46,7 +56,11 @@
     // zip 缺失走 official 渠道 registry 检索。模块版本取自各模块 jsonc
     // export 段（SLangQT 0.1.0 / SLangRender 1.0.0）。
     { "type": "module", "name": "SLangQT", "channel": "official", "version": "0.1.0" },
-    { "type": "module", "name": "SLangRender", "channel": "official", "version": "1.0.0" }
+    { "type": "module", "name": "SLangRender", "channel": "official", "version": "1.0.0" },
+    // SLangAudio 模块（out/export/SLangAudio：module.json + slb +
+    // sl_audio_lib.dll；路径引用同 ImageTest 的 SLangImage 模式）：
+    // probe / 整段解码（AudioClip）/ 流式（AudioStream）/ 播放（waveOut）
+    { "path": "../../../out/export/SLangAudio/SLangAudio.module.json" }
   ],
   "struct": [
   ],

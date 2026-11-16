@@ -54,7 +54,7 @@ $TestMap = [ordered]@{
     'ExpendTest'   = @{ Sp = 'test\ExpendTest\ProjectTest.sp';         Module = 'ProjectTest2\ProjectTest2.module.json';
                         NoteWin = 'Sqlite3Test FAILs if cwd != test\ExpendTest (Resources/ relative path)';
                         NoteLinux = 'Sqlite3Test FAILs if cwd != test\ExpendTest (Resources/ relative path)' }
-    'MathTest'     = @{ Sp = 'test\MathTest\ProjectTest.sp';           Module = 'MathTest\ProjectTest.module.json';
+    'MathTest'     = @{ Sp = 'test\MathTest\ProjectTest.sp';           Module = 'MathTest\MathTest.module.json';
                         NoteLinux = 'matrix 3x3/4x4 FAILs expected: native math_lib.dll is Windows-only' }
     'SpecialTest'  = @{ Sp = 'test\SpecialTest\ProjectTest.sp';        Module = 'SpecialTest\SpecialTest.module.json';
                         ExitOkLinux = 1;
@@ -363,6 +363,16 @@ function Invoke-RunTestsWin([string[]]$Tests, [string]$Config) {
         Write-Host ('C VM exe not found: ' + $exe) -ForegroundColor Red
         Write-Host 'Run scripts\build-vm-win.ps1 first.' -ForegroundColor Yellow
         return $false
+    }
+    # Stage Math system-method DLL into the VM's associated-lib layout
+    # (<exe>\lib\<platform>\). The C VM resolves "math_lib.dll!symbol"
+    # through that candidate chain; the module reference anchor may point
+    # at an older Front-bin lib without this copy.
+    $mathDll = Join-Path $ExportDir 'Math\math_lib.dll'
+    if (Test-Path -LiteralPath $mathDll) {
+        $platLib = Join-Path $VMDir ('build\' + $Config + '\bin\lib\windows')
+        New-Item -ItemType Directory -Force -Path $platLib | Out-Null
+        Copy-Item -LiteralPath $mathDll -Destination (Join-Path $platLib 'math_lib.dll') -Force
     }
     $rows = @()
     $allOk = $true

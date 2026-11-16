@@ -16,6 +16,10 @@ namespace Audio
         public EAudioFormat format = EAudioFormat.Unknown
         public ESampleFormat sampleFormat = ESampleFormat.Unknown
 
+        # C 侧源格式 id（SLA_FMT_*，细粒度：区分 PCM 家族 / 容器内编码；
+        # 纯 SL 回退路径恒 0）。粗粒度容器归类看 format。
+        public Int32 srcFormatId = 0
+
         public Int32 sampleRate = 0
         public Int32 channels = 0
         public Int32 bitDepth = 0
@@ -40,6 +44,7 @@ namespace Audio
         {
             this.format = EAudioFormat.Unknown
             this.sampleFormat = ESampleFormat.Unknown
+            this.srcFormatId = 0
             this.sampleRate = 0
             this.channels = 0
             this.bitDepth = 0
@@ -81,14 +86,12 @@ namespace Audio
 
         public static Int32 readLe32( Array<UInt8> b, Int32 i )
         {
-            ret AudioInfo.readU8( b, i ) | ( AudioInfo.readU8( b, i + 1 ) << 8 ) |
-                ( AudioInfo.readU8( b, i + 2 ) << 16 ) | ( AudioInfo.readU8( b, i + 3 ) << 24 )
+            ret AudioInfo.readU8( b, i ) | ( AudioInfo.readU8( b, i + 1 ) << 8 ) | ( AudioInfo.readU8( b, i + 2 ) << 16 ) | ( AudioInfo.readU8( b, i + 3 ) << 24 )
         }
 
         public static Int32 readBe32( Array<UInt8> b, Int32 i )
         {
-            ret ( AudioInfo.readU8( b, i ) << 24 ) | ( AudioInfo.readU8( b, i + 1 ) << 16 ) |
-                ( AudioInfo.readU8( b, i + 2 ) << 8 ) | AudioInfo.readU8( b, i + 3 )
+            ret ( AudioInfo.readU8( b, i ) << 24 ) | ( AudioInfo.readU8( b, i + 1 ) << 16 ) | ( AudioInfo.readU8( b, i + 2 ) << 8 ) | AudioInfo.readU8( b, i + 3 )
         }
 
         public static Int32 readLe16( Array<UInt8> b, Int32 i )
@@ -237,6 +240,9 @@ namespace Audio
         }
 
         # ── 探测元数据（不解码 PCM）─────────────────────────
+        # 优先原生探测（sl_audio_lib：wav / pcm / mp3 / aac-adts /
+        # mp4 家族全量）；FFI 不可用或原生不识（如裸 PCM 无 hint）时
+        # 回退纯 SL 嗅探 + WAV RIFF 头解析。
         public static AudioInfo probe( Array<UInt8> bytes )
         {
             AudioInfo info = AudioInfo()
@@ -245,8 +251,18 @@ namespace Audio
                 ret info
             }
             info.byteSize = bytes.length
-            info.format = AudioInfo.sniff( bytes )
 
+            if AudioFfi.ensureReady()
+            {
+                AudioInfo nativeInfo = AudioFfi.probeMem( bytes )
+                if nativeInfo != null && nativeInfo.sampleRate > 0
+                {
+                    ret nativeInfo
+                }
+            }
+
+            # 回退：纯 SL magic bytes 嗅探
+            info.format = AudioInfo.sniff( bytes )
             if info.format == EAudioFormat.Wav
             {
                 WavHeader h = Wav.readHeader( bytes )
@@ -258,29 +274,13 @@ namespace Audio
                 info.bitrateKbps = h.bitrateKbps()
                 info.sampleFormat = h.sampleFormat()
                 info.bitrateMode = EBitrateMode.CBR
-                ret info
-            }
-
-            if info.format == EAudioFormat.Unknown
-            {
-                ret info
-            }
-
-            # 其余格式交给后端
-            object result = SystemCallExternalFunction( "Audio.probe", bytes, info.format )
-            AudioInfo remote = result as AudioInfo
-            if remote != null
-            {
-                ret remote
             }
             ret info
         }
 
         override string toString()
         {
-            ret "AudioInfo(fmt=" + this.format.toString() + ", " +
-                this.sampleRate.toString() + "Hz, " + this.channels.toString() + "ch, " +
-                this.duration.toString() + "s)"
+            ret "AudioInfo(fmt=" + this.format.toString() + ", " + this.sampleRate.toString() + "Hz, " + this.channels.toString() + "ch, " + this.duration.toString() + "s)"
         }
     }
 }

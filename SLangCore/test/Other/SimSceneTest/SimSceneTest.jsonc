@@ -1,0 +1,65 @@
+{
+  "project": {
+    "name": "SimSceneTest",
+    "desc": "SimGameEngine asset pipeline e2e - Unity CubeDemo export (scene.json/mesh_1.json/.bin via SlangSceneExporter) -> SLangRender MESH_CUSTOM spinning cube",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "SimSceneTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
+    { "path": "./lib/Math.module.slb" },
+    { "type": "module", "name": "SLangQT", "channel": "official", "version": "0.1.0" },
+    { "type": "module", "name": "SLangRender", "channel": "official", "version": "1.0.0" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "SimSceneTest",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  }
+}

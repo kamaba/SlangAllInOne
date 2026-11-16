@@ -218,6 +218,15 @@ SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb
 /* 2026-11-16 第三十二轮：QTextBrowser 内部导航完成（anchorClicked → md
  * 加载成功并渲染），int 载荷=0 → _dispatchInt；SL 侧可拉 current_source */
 #define SLQT_SIG_BROWSER_NAVIGATED 19
+/* 2026-11-16 第三十五轮：面板右键请求（customContextMenuRequested）。
+ * connect 时自动 setContextMenuPolicy(CustomContextMenu)；int 载荷=0
+ * （弹出位置用 slqt_menu_popup_cursor_sl 取鼠标处，无需坐标载荷） */
+#define SLQT_SIG_LIST_CONTEXT 20
+#define SLQT_SIG_TEXT_CONTEXT 21
+
+/* ── 2026-11-16 第三十六轮：剪贴板与树节点文本 ──────────────────────── */
+SLQT_API void        slqt_clipboard_set_sl(const char* text);
+SLQT_API const char* slqt_tree_current_text_sl(int64_t h);
 
 /* ==========================================================================
  * 2026-11-03 扩展面：按 jsonc qtRuntime 组合部署（模块 dll + 插件分类）后，

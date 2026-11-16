@@ -26,5 +26,13 @@ namespace SLang
 
         # 清空正文
         public void clear() { SLang.QT.ffi_texteditSetText( this.handle, "" ) }
+
+        # 右键请求（2026-11-16 第三十五轮）：handler 形态
+        # static void onCtx( int payload )——payload 恒 0，弹出位置用
+        # QMenu.popupCursor() 取鼠标处（SLQT_SIG_TEXT_CONTEXT=21）
+        public Int64 onContext( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_TEXT_CONTEXT, handler )
+        }
     }
 }

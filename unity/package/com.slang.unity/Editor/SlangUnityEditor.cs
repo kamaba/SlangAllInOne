@@ -79,6 +79,14 @@ namespace SlangUnity.Editor
             {
                 ExportPackage();
             }
+            else if (command == "export-scene")
+            {
+                SlangSceneExporter.ExportActiveScene(null);
+            }
+            else if (command == "export-cube")
+            {
+                SlangSceneExporter.ExportCubeDemo();
+            }
         }
 
         [MenuItem("Tools/SlangUnity/Install HelloCube Sample")]

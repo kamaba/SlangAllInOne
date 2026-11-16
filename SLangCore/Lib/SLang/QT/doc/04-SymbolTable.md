@@ -217,4 +217,26 @@
 
 ---
 
+## 4.15 面板右键请求信号（2026-11-16 第三十五轮增补，只增不改）
+
+| 信号 id | Qt 来源 | SL 绑定 | 说明 |
+|---|---|---|---|
+| SLQT_SIG_LIST_CONTEXT = 20 | `QListWidget::customContextMenuRequested` | `QListWidget.onContext(handler)` | handler 形态 `static void onCtx(int payload)`，载荷恒 0 |
+| SLQT_SIG_TEXT_CONTEXT = 21 | `QTextEdit::customContextMenuRequested` | `QTextEdit.onContext(handler)` | 同上 |
+
+connect 时自动 `setContextMenuPolicy(CustomContextMenu)`；弹出位置由 SL 侧 `QMenu.popupCursor()` 取鼠标处（无需坐标载荷）。无新 FFI、struct 不变；**信号 20 → 22**。右键菜单项经既有 `slqt_menu_*` 系（§4.6）弹出。
+
+---
+
+## 4.16 剪贴板与树节点文本（2026-11-16 第三十六轮增补，只增不改）
+
+| C 导出 | SL 绑定 | sig | 说明 |
+|---|---|---|---|
+| slqt_clipboard_set_sl | ffi_clipboardSet | `(utf8)` | `QGuiApplication::clipboard()->setText`（静态入口，不依赖实例） |
+| slqt_tree_current_text_sl | ffi_treeCurrentText | `(i64)->utf8` | QTreeWidget 当前节点第 0 列文本，无选中空串 |
+
+`QApplication.setClipboard(text)`（静态）/ `QTreeWidget.currentText()` 封装落位。无新信号、struct 不变；**有效 FFI 273 → 275、信号 22 不变**。
+
+---
+
 *符号表即契约（冻结 v1，之后只增不改）。SL 封装类如何包裹见 05，信号槽见 06。*

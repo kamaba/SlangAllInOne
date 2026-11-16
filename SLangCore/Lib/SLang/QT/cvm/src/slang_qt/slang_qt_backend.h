@@ -276,6 +276,9 @@ void    slqt_be_browser_set_markdown(int64_t h, const char* md);
 /* 2026-11-16 第三十二轮：文档内链接跳转（set_document 记 base + 导航接管） */
 void        slqt_be_browser_set_document(int64_t h, const char* path, const char* md);
 const char* slqt_be_browser_current_source(int64_t h);
+/* 2026-11-16 第三十六轮：剪贴板与树节点文本 */
+void        slqt_be_clipboard_set(const char* text);
+const char* slqt_be_tree_current_text(int64_t h);
 /* 工具栏：QToolBar */
 int64_t slqt_be_toolbar_create(int64_t parent, const char* title);
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb);

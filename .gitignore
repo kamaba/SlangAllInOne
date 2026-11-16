@@ -110,3 +110,7 @@
 /SLangCore/test/RenderTest/publish
 /SLangCore/Lib/SLang/Render/sl_shaders
 /report
+/SLangCore/test/Other/SimSceneTest/modules
+/SLangCore/Lib/SLang/Audio/cvm_audio_lib/x64
+/SLangCore/Lib/SLang/Audio/cvm_audio_lib/cvm_sl_audio_lib
+/SLangCore/Lib/SLang/Audio/cvm_audio_lib/tools

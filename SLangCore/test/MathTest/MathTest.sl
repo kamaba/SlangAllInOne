@@ -110,6 +110,9 @@ class MathTest
         Console.println("ba >= 16 : " + dGe.toString())
 
         # 分支形式：关系/相等分支 opcode 上的同套分发
+        # （2026-11-16：if 条件里的内联构造比较触发 Front
+        #   MetaCoreExpressManagerNotSupportOptimazeDon 编译错误，
+        #   先赋局部 bool 再进分支——同 99 行赋值形态）
         if ba > bb
         {
             Console.println("branch: ba > bb holds")
@@ -118,7 +121,8 @@ class MathTest
         {
             Console.println("branch: ba <= bb")
         }
-        if ba == BigNumber( 15 )
+        bool dEqBranch = ba == BigNumber( 15 )
+        if dEqBranch
         {
             Console.println("branch: ba == 15 holds")
         }

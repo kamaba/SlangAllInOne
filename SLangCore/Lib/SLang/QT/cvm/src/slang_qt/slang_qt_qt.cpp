@@ -38,6 +38,7 @@
 #include <QPainter>
 #include <QStyleFactory>
 #include <QApplication>
+#include <QClipboard>
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -928,9 +929,27 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
         if (auto* t = qobject_cast<QTreeWidget*>(sender))
             QObject::connect(t, &QWidget::customContextMenuRequested, [=](const QPoint& pos) {
                 QTreeWidgetItem* it = t->itemAt(pos);
-                if (it) t->setCurrentItem(it);
+                /* 先取路径副本：setCurrentItem 会同步触发 itemSelectionChanged，
+                 * SL 侧选中回调会 refreshLists -> UiContext.setTreePaths -> tree.clear()
+                 * 就地销毁 it；之后再读 it 即是悬空指针。 */
                 QByteArray b = slqt_tree_item_path(it).toUtf8();
-                ((void (*)(int64_t, const char*))dispatchCb)(slot, b.constData());
+                if (it) {
+                    /* 阻断选中信号：右键只应设 current 供动作定位，不应触发
+                     * 选中联动重建树。 */
+                    QSignalBlocker blocker(t);
+                    t->setCurrentItem(it);
+                }
+                /* 关键：把 dispatchCb 推迟到下一事件循环轮次。
+                 * 右键事件栈里同步调 dispatchCb 会重入 VM 弹模态菜单 exec()；此时
+                 * itemSelectionChanged 的选中联动（SL 侧 refreshLists -> tree.clear()
+                 * 重建）与 exec() 中的事件处理互相重入，导致菜单弹不出/回调不返回。
+                 * 延迟一轮让选中重建先完成，菜单在干净的事件栈上 exec。
+                 * path 用堆持有，随延迟 lambda 一起释放。 */
+                QByteArray* heap = new QByteArray(b);
+                QTimer::singleShot(0, t, [=]() {
+                    ((void (*)(int64_t, const char*))dispatchCb)(slot, heap->constData());
+                    delete heap;
+                });
             });
         break;
     /* 2026-11-14 第二十一轮：树节点双击，utf8 载荷 = 完整路径 */
@@ -991,6 +1010,27 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
             QObject::connect(b, &QTextBrowser::anchorClicked, b, [=](const QUrl& url) {
                 if (slqt_browser_navigate(b, url))
                     ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)0);
+            });
+        }
+        break;
+    /* 2026-11-16 第三十五轮：面板右键请求。connect 时自动启用
+     * CustomContextMenu 策略；int 载荷=0（弹出位置由 SL 侧
+     * slqt_menu_popup_cursor_sl 取鼠标处，无需坐标载荷）。 */
+    case SLQT_SIG_LIST_CONTEXT:
+        if (auto* l = qobject_cast<QListWidget*>(sender))
+        {
+            l->setContextMenuPolicy(Qt::CustomContextMenu);
+            QObject::connect(l, &QWidget::customContextMenuRequested, [=](const QPoint&) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)0);
+            });
+        }
+        break;
+    case SLQT_SIG_TEXT_CONTEXT:
+        if (auto* e = qobject_cast<QTextEdit*>(sender))
+        {
+            e->setContextMenuPolicy(Qt::CustomContextMenu);
+            QObject::connect(e, &QWidget::customContextMenuRequested, [=](const QPoint&) {
+                ((void (*)(int64_t, int64_t))dispatchCb)(slot, (int64_t)0);
             });
         }
         break;
@@ -1904,6 +1944,20 @@ const char* slqt_be_browser_current_source(int64_t h)
     auto* b = qobject_cast<QTextBrowser*>((QObject*)slqt_resolve(h));
     if (!b) return "";
     return slqt_put(g_text_buf, sizeof(g_text_buf), g_browser_doc.value(b).toUtf8());
+}
+
+/* ── 2026-11-16 第三十六轮：剪贴板与树节点文本 ──────────────────────── */
+void slqt_be_clipboard_set(const char* text)
+{
+    if (!text) return;
+    QGuiApplication::clipboard()->setText(QString::fromUtf8(text));
+}
+
+const char* slqt_be_tree_current_text(int64_t h)
+{
+    auto* t = qobject_cast<QTreeWidget*>((QObject*)slqt_resolve(h));
+    if (!t || !t->currentItem()) return "";
+    return slqt_put(g_text_buf, sizeof(g_text_buf), t->currentItem()->text(0).toUtf8());
 }
 
 /* ── 工具栏（QToolBar，快捷图标区）────────────────────────────────────── */

@@ -29,5 +29,13 @@ namespace SLang
         {
             ret SLang.QT.connect( this.handle, SLang.QT.SIG_CURRENT_ROW_CHANGED, handler )
         }
+
+        # 右键请求（2026-11-16 第三十五轮）：handler 形态
+        # static void onCtx( int payload )——payload 恒 0，弹出位置用
+        # QMenu.popupCursor() 取鼠标处（SLQT_SIG_LIST_CONTEXT=20）
+        public Int64 onContext( Function handler )
+        {
+            ret SLang.QT.connect( this.handle, SLang.QT.SIG_LIST_CONTEXT, handler )
+        }
     }
 }

@@ -1,6 +1,7 @@
 # 平面：法线 normal + 到原点距离 distance。
 # 平面方程：dot(normal, p) + distance = 0
 # 使用 Math 库的 Float32_3。
+import Math;
 public class Plane
 {
     public Float32_3 normal = Float32_3.up()

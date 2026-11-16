@@ -187,10 +187,26 @@
 - 验收：Phase ASYNC——双缓冲与 worker 两模式各连跑 N 帧，与同步路径逐帧像素一致；Phase D/E 不回退
 - 红线：SL 语言无线程原语，并发全部封装 C 侧；现有四后端 CRITICAL_SECTION 保留为 API 进出锁
 
+> ✅ **N3 已完成（2026-11-16，Phase ASYNC 双模式与同步路径逐帧像素一致 + stats 一致；RenderTest 22/22 相位全绿）**：
+> - **SLMC 双缓冲（N3a）**：SL 侧 CommandBuffer 三段录制（opcodes/args/floats）pack 成原生内存块（头：偏移 0 magic 'SLMC' / 4 version / 8 commandCount / 12 argOffset / 16 floatOffset / 24 起 opcodes[]），FFI 只传 ptr+count；`Pipeline.executeCommandBuffer` 帧间轮换 pack 缓冲——pack 帧 N+1 与执行帧 N 交替的同线程流水线起步。
+> - **worker 线程（N3b）**：C 侧 `SlrPipeline.async`（SlrAsyncQueue）深度 2 环形（CRITICAL_SECTION + cv_submit/cv_done 双条件变量）+ `cmd_worker` 循环取槽回放；**SLMC 两新 opcode**：ASYNC_MODE(36) 控制流开关 worker、ASYNC_FLUSH(37) 屏障排空（drain 等 completed==submitted，后续 readback 保持同步语义）。`slr_cmd_execute_stream` 三分路径：控制流（含 36/37）→ 先 drain 再同步回放（pending_mode 出参，rhi_exit 后锁外 switch）；async 普通流 → cmd_async_submit 入队即返（队列满阻塞等槽 = 流水线节流点）；同步普通流 → 直接回放。
+> - **线程亲和（架构偏离：D3D11 未做 context 归属移交）**：vtable 尾部新增 thread_acquire/thread_release 两钩子——GL/GLES 真实现（wglMakeCurrent / eglMakeCurrent 挪 context 归属）；**D3D11/VK 均 nop 返回 1**（immediate context / 队列对象无绑定线程限制，既有 enter/exit CRITICAL_SECTION 互斥已足够）；VK 维持每段提交后 QueueWaitIdle（一帧约 4 次），未引入 per-frame fence（即时风格现状无需）。
+> - **handoff 机制（Bug1：worker f1 边角陈旧像素的根因修复）**：GL/GLES context 单线程独占且 gl_exit 只解锁不解绑——flush 控制流回放后主线程持绑，worker thread_acquire 的 MakeCurrent 因 context 绑在主线程 ERROR_BUSY 失败（旧实现忽略返回值 → 无锁无 context 裸奔回放 → readback 不写 → 断言读到上帧像素）。修法：`s_thread_handoff` 标志（`rhi_set_thread_handoff`，async 常态置位后主线程每次 rhi_exit 顺带 thread_release 解绑还给 worker；同步常态恒 0 与原行为完全一致零回归）+ worker 失败防线（enter 失败不回放不 exit——gl_enter 失败路径已自行出锁；completed 照常推进防 drain 死锁）。
+> - **pure_ctrl 优化（Bug1b：ASYNC stats 读回 0）**：flush 控制流（流内 opcode 全 ∈ {Nop, AsyncMode, AsyncFlush}）回放跳过帧级前置——原前置每帧清零 stats 会抹掉 worker 刚回放的统计，光照上传也是纯浪费；混渲染命令的流照常前置（targets/viewport 初始化挪出前置块恒执行）。
+> - **Phase B 连带修复**：makeCubeAtlas 宽度 1920 笔误（注释/UV 计算均按 192 宽图集）→ 修正后 vk/d3d11 段恢复持续渲染（N3 后复跑 renderFrames=2025 pixOk=2025 backendMask=15，四后端 7s 轮播全绿）。
+> - **验收**：Phase ASYNC——模式 1（双缓冲同步执行）+ 模式 2（asyncMode(1) 开 worker 入队即返）各 6 帧，边角=清色/中心=quad 色逐帧与同步路径一致 + stats（draws=3 opaque=1）+ asyncMode(0) 关线程后同步复验 1 帧；Phase D/E/F/B 不回退。
+
 #### N4 —— RayTracing（N4a 软件光追 demo 纯 CPU 无依赖可插队；N4b 硬件 RT 记录不排期）
 
 - N4a 软光追 demo（对齐本节原始意图）：C 侧逐像素 CPU 求交——固定容量场景（≤16 球 + 地面平面）+ whitted 2 弹射（主射线 + 阴影射线 + 1 反射），场景描述打包 SLMC 新 opcode 的 args/floats，渲 256×256 写纹理；SL 侧 Ray.sl 激活（rayOrigin/rayDir/球求交/hit 记录结构）；QT QLabel 展示；四后端无关（纯离线）
 - 验收：Phase RAY——背景/球体漫反射/阴影区/反射四点手算像素断言
+
+> ✅ **N4a 已完成（2026-11-16，Phase RAY 四点手算断言 PASS；RenderTest 22/22 相位全绿）**：
+> - **实现**：C 侧 `Pipeline/sl_ray.c` 纯 CPU whitted 光追——固定容量场景（≤16 球 + y=0 地面）挂 `SlrPipeline.ray` 跨命令流持久（RaySet* 累积覆写）；2 弹射（主射线 + 1 反射，漫反射求值各发一条阴影射线，EPS 1e-3 沿法线偏移起点防自交）；`ray_render` 逐像素 trace → top-down RGBA8 翻行 → texture_register 走 RHI 上传 → 写描述符槽（与 SET_TEXTURE 同路径，后续 DrawItem 经 texDesc 上屏）——渲染后即普通纹理，任意后端可采样。
+> - **SLMC 六新 opcode（30..35）**：RAY_SET_SPHERE / RAY_SET_LIGHT / RAY_SET_GROUND / RAY_SET_CAMERA / RAY_SET_BACKGROUND / RAY_RENDER——场景设置走 args/floats 覆写管线状态，RENDER 消费渲染（失败仅置错误码不中断回放）。
+> - **SL 侧**：Ray.sl 激活（RayScene 参考实现——C/SL 两侧着色与相机模型逐字一致，双实现互为断言基准）+ CommandBuffer 六个 raySet*/rayRender 录制方法 + Render.jsonc 登记。
+> - **验收**：Phase RAY（256×256）四点手算断言全 PASS——bg (32,32)=(115,158,242) / 漫反射 (128,128)=(141,25,25) / 阴影区 (166,176)=(51,60,77) / 反射 (128,197)=(130,122,122)；Ray.sl 参考实现同点复核（ref 逐值一致）。
+
 - N4b 硬件 RT（真远景）：前提 = VK 从零扩展升级（ray_tracing_pipeline + acceleration_structure + device 扩展）并重生成 SPIR-V RT 管线，或新增 D3D12 后端走 DXR——两者均为 vtable 大扩面工程，明确不排期
 
 ***
@@ -206,7 +222,7 @@ P0(Data) ──► P1(Pass) ──► P2(Feature) ──► P3(PipelineAsset) �
               N4a(软件光追，无依赖可插队) ──远景──► N4b(硬件RT，不排期)
 ```
 
-- **总回归基线（2026-11-13 N1 后更新）**：`RenderTest` **18 相位**（A1/A2/A3/L/G/D/E/F/CB/**INST**/PASS/FEATURE/ASSET/ENV/RTPOOL/FS/DATA/B）全 PASS，`GLRenderTest: PASS`。P0-P5 + N1 实现完毕；N1 后复跑 Phase B renderFrames=1971 pixOk=1971 backendMask=15。
+- **总回归基线（2026-11-16 N4a + N3 后更新）**：`RenderTest` **22 相位**（A1/A2/A3/L/**SHADOW2**/**CSM**/G/D/E/F/CB/**INST**/PASS/FEATURE/ASSET/ENV/RTPOOL/FS/DATA/**RAY**/**ASYNC**/B）全 PASS，`GLRenderTest: PASS`。P0-P5 + N1 + N2 + N3 + N4a 实现完毕（N4b 明确不排期）；N3 后复跑 Phase B renderFrames=2025 pixOk=2025 backendMask=15（四后端 7s 轮播全绿）。
 - **Phase B 时序定版（根因记录）**：QT 帧循环 animT 16ms、自动轮播 cycleT **7000ms**（repeating）、退出 quitT **60000ms**（single-shot）。根因：后端段最重路径 = gles EGL init（最长 ~1.2s）+ 全量场景重建（~4.8s）合计 ~5.9s，6s 周期余量仅 ~160ms 随时翻车；7s 周期保证每段 ≥1s 渲染余量。断言：renderFrames≥60 && pixOk≥60，backendMask（gl=1 d3d11=2 vk=4 gles=8）须含 gl 位 + 至少一个其他后端位。
 - **C 侧改动仅 P5 需要**；P0-P4 全部 SL 侧，走"重编模块 → 重打包 package zip → RenderTest 编译自愈重装 → 运行"验证链。
 - **N 阶段全部涉及 C 侧**：sl_render_lib.dll 重编 + package zip 重打包自愈链；N1/N2 追加固化 shader 重产（`build-shaders.ps1`：HLSL 单源 → GLSL330/ESSL300/DXBC/SPIR-V）。

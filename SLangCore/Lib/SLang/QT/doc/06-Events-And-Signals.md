@@ -156,4 +156,15 @@ bool slqt_connect_clicked(int64_t h, int64_t cb){
 
 ---
 
+## 10. 2026-11-16 第三十五轮：面板右键请求信号
+
+| 信号 id | Qt 来源 | trampoline | SL 回调 | 说明 |
+|---|---|---|---|---|
+| `SLQT_SIG_LIST_CONTEXT = 20` | `QListWidget::customContextMenuRequested` | `_dispatchInt(slot, 0)` | `static void onCtx(int payload)` | QListWidget 右键 |
+| `SLQT_SIG_TEXT_CONTEXT = 21` | `QTextEdit::customContextMenuRequested` | `_dispatchInt(slot, 0)` | 同上 | QTextEdit 右键 |
+
+connect 时自动 `setContextMenuPolicy(CustomContextMenu)`；弹出位置用 `popupCursor()`（鼠标处）。旧信号 0~19 取值与行为不变。
+
+---
+
 *信号槽机制完成事件闭环。构建系统见 07，打包见 08，示例见 09。*

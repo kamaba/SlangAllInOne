@@ -17,5 +17,9 @@ namespace SLang
         public void exec() { SLang.QT.ffi_appExec() }
         public void processEvents() { SLang.QT.ffi_appProcessEvents() }
         public void quit() { SLang.QT.ffi_appQuit() }
+
+        # 写系统剪贴板（2026-11-16 第三十六轮）：静态工具入口，不依赖实例——
+        # 复制日志/变量值/问题文本等场景直接 SLang.QApplication.setClipboard(text)
+        public static void setClipboard( string text ) { SLang.QT.ffi_clipboardSet( text ) }
     }
 }

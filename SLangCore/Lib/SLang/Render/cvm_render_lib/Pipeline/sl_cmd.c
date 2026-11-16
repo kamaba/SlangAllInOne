@@ -68,7 +68,10 @@
  *              回放（AsyncMode 仅记账 pending_mode）-> rhi_exit 后锁外
  *              cmd_async_switch（内部再 drain + 线程启停 + context 移交）。
  *   worker：每流 thread_acquire -> rhi_enter -> 回放 -> rhi_exit ->
- *              thread_release（idle 时 context 游离，主线程随时可 enter）。
+ *              thread_release。主线程在 async 常态下每次 rhi_exit 也顺带
+ *              解绑（rhi_set_thread_handoff，sl_render.c）——否则控制流
+ *              （AsyncFlush）回放后主线程持绑 context，worker 的
+ *              thread_acquire 会 ERROR_BUSY 失败（GL/GLES 单线程独占）。
  * ========================================================================= */
 #include "sl_render_internal.h"
 #include <stdlib.h>    /* realloc/free（N3 队列槽块）*/
@@ -266,20 +269,40 @@ static int cmd_replay_locked(SlrPipeline* p, const unsigned char* base,
     args    = (const int64_t*)(base + arg_off);
     floats  = (const float*)(base + float_off);
 
-    /* 帧级前置：PerDraw / 描述符表清零 + 光照块组装上传（沿用管线光照
-     * 槽；无光照 + ambient=1.0 时输出与纯色路径逐字节一致）*/
-    memset(&s_perdraw, 0, sizeof(s_perdraw));
-    memset(&p->descs, 0, sizeof(p->descs));
+    /* 纯控制流（仅 Nop/AsyncMode/AsyncFlush）：跳过帧级前置。flush 屏障
+     * 每帧末尾都会回放一次，前置里的 stats 清零会抹掉 worker 刚回放完
+     * 的统计（读回 0），光照上传也是纯浪费；混渲染命令的流照常前置。*/
     {
-        SlrLightBlock lb;
-        light_build_block(p, &lb);
-        g_rhi->upload_lights(&lb, (int)sizeof(lb));
+        int pure_ctrl = 1;
+        for (i = 0; i < count; i++)
+        {
+            int op = opcodes[i];
+            if (op != SLR_CMD_NOP && op != SLR_CMD_ASYNC_MODE &&
+                op != SLR_CMD_ASYNC_FLUSH)
+            {
+                pure_ctrl = 0;
+                break;
+            }
+        }
+
+        /* 帧级前置：PerDraw / 描述符表清零 + 光照块组装上传（沿用管线
+         * 光照槽；无光照 + ambient=1.0 时输出与纯色路径逐字节一致）*/
+        if (!pure_ctrl)
+        {
+            memset(&s_perdraw, 0, sizeof(s_perdraw));
+            memset(&p->descs, 0, sizeof(p->descs));
+            {
+                SlrLightBlock lb;
+                light_build_block(p, &lb);
+                g_rhi->upload_lights(&lb, (int)sizeof(lb));
+            }
+            p->draw_calls = 0; p->opaque_draws = 0; p->transparent_draws = 0;
+            p->instance_total = 0;   /* N1：实例总数逐帧清零（与阶段 1 同口径）*/
+            p->program_switches = 0; p->chunk_count = 0; p->upload_count = 0;
+            p->layers_mask = 0;
+            p->visible_count = 0; p->culled_count = 0;
+        }
     }
-    p->draw_calls = 0; p->opaque_draws = 0; p->transparent_draws = 0;
-    p->instance_total = 0;   /* N1：实例总数逐帧清零（与管线阶段 1 同口径）*/
-    p->program_switches = 0; p->chunk_count = 0; p->upload_count = 0;
-    p->layers_mask = 0;
-    p->visible_count = 0; p->culled_count = 0;
 
     targets[0] = p->rt_scene;
     targets[1] = p->rt_post;
@@ -566,10 +589,16 @@ static DWORD WINAPI cmd_worker(LPVOID param)
         LeaveCriticalSection(&q->lock);
         WakeAllConditionVariable(&q->cv_done);
 
-        if (g_rhi->thread_acquire) g_rhi->thread_acquire();
-        rhi_enter();
-        cmd_replay_locked(p, buf, -1, NULL);
-        rhi_exit();
+        /* 线程亲和 + 回放（含失败防线：绑定/enter 失败不裸奔回放——
+         * 无 context 的 GL 调用是 UB；且 gl_enter 失败路径已自行出锁，
+         * 不能再配对 rhi_exit。completed 照常推进防 drain 死锁。正常
+         * 路径下 handoff 机制保证主线程用完即解绑，此处恒成功）。*/
+        if ((!g_rhi->thread_acquire || g_rhi->thread_acquire()) &&
+            rhi_enter())
+        {
+            cmd_replay_locked(p, buf, -1, NULL);
+            rhi_exit();
+        }
         if (g_rhi->thread_release) g_rhi->thread_release();
 
         EnterCriticalSection(&q->lock);
@@ -593,9 +622,12 @@ void cmd_async_drain(SlrPipeline* p)
 }
 
 /* 模式切换（仅在锁外调用——内部要 drain + 线程创建/等待）。
- *   mode=1：惰性建队列 -> 主线程解绑 context -> 启 worker（worker 侧
- *           acquire 绑定；GL/GLES 的 context 从此归 worker）。
- *   mode=0：drain -> 通知退出并等线程收尾 -> context 绑回主线程。*/
+ *   mode=1：惰性建队列 -> 置 handoff + 主线程解绑 context -> 启 worker
+ *           （此后主线程每次 rhi_exit 都顺带解绑——含控制流回放，保证
+ *           worker 的 thread_acquire 恒可见游离 context；GL/GLES 的
+ *           context 从此归 worker）。
+ *   mode=0：drain -> 通知退出并等线程收尾 -> 关 handoff 恢复同步常态
+ *           -> context 绑回主线程。*/
 void cmd_async_switch(SlrPipeline* p, int mode)
 {
     SlrAsyncQueue* q = &p->async;
@@ -603,7 +635,8 @@ void cmd_async_switch(SlrPipeline* p, int mode)
     {
         if (p->async_mode) return;
         cmd_async_init(p);
-        /* context 从主线程解绑（GL: wglMakeCurrent(NULL)；GLES: NO_*）*/
+        /* 解绑当前主线程绑定 + 此后主线程 exit 不再持绑（handoff）*/
+        rhi_set_thread_handoff(1);
         if (g_rhi->thread_release) g_rhi->thread_release();
         q->running = 1;
         q->thread = CreateThread(NULL, 0, cmd_worker, p, 0, NULL);
@@ -623,7 +656,9 @@ void cmd_async_switch(SlrPipeline* p, int mode)
             CloseHandle(q->thread);
             q->thread = NULL;
         }
-        /* worker 每流 release 后 context 游离：绑回主线程 */
+        /* worker 末流 exit 已解绑（handoff）：关 handoff 恢复同步常态
+         * （exit 不解绑、enter 幂等重绑）+ context 绑回主线程 */
+        rhi_set_thread_handoff(0);
         if (g_rhi->thread_acquire) g_rhi->thread_acquire();
         p->async_mode = 0;
     }
@@ -655,6 +690,7 @@ void cmd_async_shutdown(SlrPipeline* p)
     DeleteCriticalSection(&q->lock);
     q->inited = 0;
     p->async_mode = 0;
+    rhi_set_thread_handoff(0);   /* 恢复同步常态（exit 不解绑）*/
 }
 
 /* ---- SLMC 整包提交（三路径：同步回放 / 异步入队 / 控制屏障）----

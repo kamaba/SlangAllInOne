@@ -155,7 +155,7 @@ namespace Audio
         public Array<UInt8> toS16Interleaved()
         {
             Int32 n = this._samples.length
-            Array<UInt8> out = Array<UInt8>( n * 2 )
+            Array<UInt8> result = Array<UInt8>( n * 2 )
             Int32 i = 0
             while i < n
             {
@@ -167,11 +167,11 @@ namespace Audio
                 {
                     v = v + 65536
                 }
-                out[ i * 2 ] = SystemConvertUInt8( v & 0xFF )
-                out[ i * 2 + 1 ] = SystemConvertUInt8( ( v >> 8 ) & 0xFF )
+                result[ i * 2 ] = SystemConvertUInt8( v & 0xFF )
+                result[ i * 2 + 1 ] = SystemConvertUInt8( ( v >> 8 ) & 0xFF )
                 i = i + 1
             }
-            ret out
+            ret result
         }
 
         # 8 位无符号（零点 128）
@@ -251,10 +251,10 @@ namespace Audio
             Int32 iter = 0
             while iter < 16
             {
-                Float32 next = 0.5f * ( guess + x / guess )
-                Float32 diff = next - guess
+                Float32 nextGuess = 0.5f * ( guess + x / guess )
+                Float32 diff = nextGuess - guess
                 if diff < 0.0f { diff = 0.0f - diff }
-                guess = next
+                guess = nextGuess
                 if diff < 0.000001f
                 {
                     break
@@ -524,12 +524,17 @@ namespace Audio
             ret b
         }
 
-        # ── 后端编解码 ───────────────────────────────────────
+        # ── 编解码路由 ───────────────────────────────────────
+        # 编码：WAV 走纯 SL（Wav.encode）；v1 原生库无压缩格式编码器。
+        # 解码：优先原生库（wav/pcm/mp3/aac/mp4 全格式，AudioClip 句柄
+        # 路径）；FFI 不可用回退纯 SL WAV。
         public Array<UInt8> encode( EAudioFormat format, Int32 bitrateKbps )
         {
-            object result = SystemCallExternalFunction( "Audio.encode",
-                this.sampleRate, this.channels, this._samples, format, bitrateKbps )
-            ret result as Array<UInt8>
+            if format == EAudioFormat.Wav
+            {
+                ret Wav.encode( this )
+            }
+            ret null
         }
 
         public static AudioBuffer decode( Array<UInt8> bytes )
@@ -538,14 +543,29 @@ namespace Audio
             {
                 ret null
             }
-            object result = SystemCallExternalFunction( "Audio.decode", bytes )
-            ret result as AudioBuffer
+            if AudioFfi.ensureReady()
+            {
+                AudioClip clip = AudioClip.loadBytes( bytes )
+                if clip != null
+                {
+                    AudioBuffer buf = clip.toAudioBuffer()
+                    clip.free()
+                    if buf != null
+                    {
+                        ret buf
+                    }
+                }
+            }
+            if AudioInfo.sniff( bytes ) == EAudioFormat.Wav
+            {
+                ret Wav.decode( bytes )
+            }
+            ret null
         }
 
         override string toString()
         {
-            ret "AudioBuffer(" + this.sampleRate.toString() + "Hz, " +
-                this.channels.toString() + "ch, " + this.duration().toString() + "s)"
+            ret "AudioBuffer(" + this.sampleRate.toString() + "Hz, " + this.channels.toString() + "ch, " + this.duration().toString() + "s)"
         }
     }
 }

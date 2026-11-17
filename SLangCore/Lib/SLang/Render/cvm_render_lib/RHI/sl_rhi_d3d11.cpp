@@ -28,7 +28,7 @@
 /* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
  * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
 typedef char slr_gen_slot_check[
-    (SLR_GEN_EFFECT_COUNT * 2 + 1 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
+    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* 运行期解析符号（零 .lib 依赖）                                          */

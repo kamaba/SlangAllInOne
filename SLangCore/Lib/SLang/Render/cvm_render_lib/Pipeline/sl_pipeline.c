@@ -180,6 +180,12 @@ int64_t slr_pipeline_create(int w, int h)
             p->cameras[0].clear_color[2] = 0.10f; p->cameras[0].clear_color[3] = 1.0f;
             p->cameras[0].vp_x = 0; p->cameras[0].vp_y = 0;
             p->cameras[0].vp_w = w; p->cameras[0].vp_h = h;
+            /* doc/13 §2.1：cube 天空相机基向量默认值（= 旧固定公式
+             * normalize(vUv*2-1, -1)，正交正向后向兼容）*/
+            p->sky_cam[0] = 0.0f; p->sky_cam[1] = 0.0f; p->sky_cam[2] = -1.0f;   /* fwd */
+            p->sky_cam[3] = 1.0f; p->sky_cam[4] = 0.0f; p->sky_cam[5] = 0.0f;    /* right */
+            p->sky_cam[6] = 0.0f; p->sky_cam[7] = 1.0f; p->sky_cam[8] = 0.0f;    /* up */
+            p->sky_cam[9] = 1.0f; p->sky_cam[10] = 1.0f;                          /* tanX tanY */
             p->camera_count = 1;
             /* 光照默认态：无光源 + 环境光 1.0（memset 归零会让全屏变黑，
              * 必须显式置 1——输出与无光照版逐字节一致，向后兼容）*/
@@ -320,6 +326,27 @@ int slr_pipeline_set_sky_cube(int64_t h, int64_t tex)
     SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     p->sky_cube = tex;
+    return 1;
+}
+
+/* doc/13 §2.1 透视相机专项：cube 天空采样基向量（camPtr 11 float：
+ * fwd3/right3/up3/tanX/tanY；0 指针 = 恢复默认） */
+int slr_pipeline_set_sky_cube_cam(int64_t h, int64_t cam_ptr)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    if (cam_ptr)
+    {
+        const float* c = (const float*)(intptr_t)cam_ptr;
+        memcpy(p->sky_cam, c, sizeof(float) * 11);
+    }
+    else
+    {
+        p->sky_cam[0] = 0.0f; p->sky_cam[1] = 0.0f; p->sky_cam[2] = -1.0f;
+        p->sky_cam[3] = 1.0f; p->sky_cam[4] = 0.0f; p->sky_cam[5] = 0.0f;
+        p->sky_cam[6] = 0.0f; p->sky_cam[7] = 1.0f; p->sky_cam[8] = 0.0f;
+        p->sky_cam[9] = 1.0f; p->sky_cam[10] = 1.0f;
+    }
     return 1;
 }
 
@@ -977,7 +1004,7 @@ static int stage_render_shader_chunks(SlrPipeline* p)
                 /* doc/13 §2.1 第二步：cubemap 天空（GL/GLES）——句柄解析
                  * 失败静默回退渐变（不报错不打断帧） */
                 SlrTexRes* ct = tex_from_handle(p->sky_cube);
-                if (ct) { g_rhi->draw_sky_cube(ct->rhi_tex); s_sky_last_mode = 2; }
+                if (ct) { g_rhi->draw_sky_cube(ct->rhi_tex, p->sky_cam); s_sky_last_mode = 2; }
                 else if (g_rhi->draw_sky)
                 {
                     float tb[6];

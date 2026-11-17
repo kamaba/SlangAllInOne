@@ -4,7 +4,7 @@
     "desc": "SLang game engine scene/node/component layer - GameObject tree + Transform(TRS) + Scene + Behaviour lifecycle + headless Application frame loop; batching submits to SLangRender (see doc/)",
     "mainVersion": 0,
     "subVersion": 1,
-    "buildVersion": 0,
+    "buildVersion": 6,
     "buildSubVersion": 0
   },
   "source": {
@@ -102,6 +102,9 @@
       //      （胶水层；JSON 解析由 Core Json 内建承担，无新增 C 函数）----
       { "path": "ImportReport.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "SceneImporter.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- InputSystem（SnakeGame）：状态表在 C（sle_input_*），注入方 =
+      //      QT 键盘回调，查询方 = 游戏逻辑（薄门面，无计算）----
+      { "path": "InputSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       // ---- system/ 系统总逻辑层（仿 Unity 系统总管；doc/09 §2 帧序驱动）----
       { "path": "system/CollisionSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 24 },
       { "path": "system/PhysicsSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 25 },
@@ -196,7 +199,9 @@
     { "class": "ShapeFactory" },
     // 时间同步（doc/18）
     { "class": "TimeService" },
-    { "class": "EngineTime" }
+    { "class": "EngineTime" },
+    // 输入系统（SnakeGame）
+    { "class": "InputSystem" }
   ],
   "export": {
     "moduleName": "SimGameEngine",

@@ -622,6 +622,67 @@ SLE_API int32_t sle_points_transform(const float* m, const float* src, int32_t c
     return count;
 }
 
+/* ── 输入状态表（SnakeGame 专用；QT 键盘回调注入，游戏逻辑查询）──────
+ * down[256]：当前按住；pressed[256]：本帧按下边沿（down 置位时置 1，
+ * sle_input_end_frame 清零）。键码 = Qt::Key 枚举值：字母/数字区（<128，
+ * 与 ASCII 同）直接下标；方向键族（0x01000000+）压缩映射到 128+ 槽。
+ * 单线程（Qt 事件循环与 VM 重入同线程），无锁。 */
+#define SLE_INPUT_SLOTS 256
+static unsigned char s_input_down[SLE_INPUT_SLOTS];
+static unsigned char s_input_pressed[SLE_INPUT_SLOTS];
+
+static int sle_input_slot(int32_t key)
+{
+    if (key >= 0 && key < 128)
+    {
+        return key;
+    }
+    switch (key)
+    {
+    case 0x01000000: return 128; /* Escape */
+    case 0x01000003: return 132; /* Backspace */
+    case 0x01000004: return 133; /* Return/Enter */
+    case 0x01000012: return 134; /* Left  (Qt::Key_Left  = 0x01000012) */
+    case 0x01000013: return 135; /* Up    (Qt::Key_Up    = 0x01000013) */
+    case 0x01000014: return 136; /* Right (Qt::Key_Right = 0x01000014) */
+    case 0x01000015: return 137; /* Down  (Qt::Key_Down  = 0x01000015) */
+    default: return -1;
+    }
+}
+
+SLE_API int32_t sle_input_set_key(int32_t key, int32_t down)
+{
+    int slot = sle_input_slot(key);
+    if (slot < 0)
+    {
+        return 0;
+    }
+    s_input_down[slot] = down ? 1 : 0;
+    if (down)
+    {
+        s_input_pressed[slot] = 1;
+    }
+    return 1;
+}
+
+SLE_API int32_t sle_input_down(int32_t key)
+{
+    int slot = sle_input_slot(key);
+    return slot >= 0 ? s_input_down[slot] : 0;
+}
+
+SLE_API int32_t sle_input_pressed(int32_t key)
+{
+    int slot = sle_input_slot(key);
+    return slot >= 0 ? s_input_pressed[slot] : 0;
+}
+
+SLE_API int32_t sle_input_end_frame(void)
+{
+    memset(s_input_pressed, 0, sizeof(s_input_pressed));
+    return 1;
+}
+
 static void sle_support_diff(const float* A, int32_t na, const float* B, int32_t nb, const float* d, float* w)
 {
     /* Minkowski 差支撑：argmax_A dot(p,d) - argmax_B dot(p,-d)
@@ -960,6 +1021,88 @@ SLE_API int32_t sle_gjk_intersect(const float* A, int32_t na, const float* B, in
     }
     /* 迭代上限：保守判分离（布尔测试误差可接受） */
     return 0;
+}
+
+/* ── 透视相机投影（doc/13 §2.1 透视相机专项；计算核心）────────
+ * camPtr 9 float：[eyeX,eyeY,eyeZ, yawRad,pitchRad, tanHalfFovY, aspect,
+ * zNear, zFar]。朝向约定（与 sky 正交公式同族）：fwd = (sinYaw*cosPitch,
+ * sinPitch, -cosYaw*cosPitch)（yaw=0 → 朝 -Z），right = (cosYaw,0,sinYaw)，
+ * up = cross(right, fwd)。
+ * src 世界 float3 × count；dst 每点 8 float：
+ *   [ndcX, ndcY, depth01, visible, viewZ, projX, projY, 0]
+ *   ndc = (vx/(aspect*tanHalf), vy/tanHalf) / viewZ（透视除）；
+ *   depth01 = (viewZ - near) / (far - near)（线性，painter 用）；
+ *   visible = viewZ ∈ [near, far]；projX/Y = 1/(aspect*tanHalf), 1/tanHalf
+ *   （SL 侧直通组 scale 换算用：ndcSize = worldSize * proj / viewZ）。
+ * 返回可见点数（-1 = 参数非法）。 */
+static void sle_cam_basis(const float* cam, float* eye, float* fwd, float* right, float* up)
+{
+    float cy = cosf(cam[3]);
+    float sy = sinf(cam[3]);
+    float cp = cosf(cam[4]);
+    float sp = sinf(cam[4]);
+    eye[0] = cam[0]; eye[1] = cam[1]; eye[2] = cam[2];
+    fwd[0] = sy * cp; fwd[1] = sp; fwd[2] = -cy * cp;
+    right[0] = cy; right[1] = 0.0f; right[2] = sy;
+    /* up = cross(right, fwd) */
+    up[0] = right[1] * fwd[2] - right[2] * fwd[1];
+    up[1] = right[2] * fwd[0] - right[0] * fwd[2];
+    up[2] = right[0] * fwd[1] - right[1] * fwd[0];
+}
+
+SLE_API int32_t sle_camera_project(const float* cam, const float* src, int32_t count, float* dst)
+{
+    float eye[3];
+    float fwd[3];
+    float right[3];
+    float up[3];
+    float tanHalf;
+    float aspect;
+    float projX;
+    float projY;
+    float zNear;
+    float zFar;
+    int32_t i;
+    int32_t visCount = 0;
+    if (cam == NULL || src == NULL || dst == NULL || count <= 0)
+    {
+        return -1;
+    }
+    tanHalf = cam[5];
+    aspect = cam[6];
+    zNear = cam[7];
+    zFar = cam[8];
+    projX = 1.0f / (aspect * tanHalf);
+    projY = 1.0f / tanHalf;
+    sle_cam_basis(cam, eye, fwd, right, up);
+    for (i = 0; i < count; ++i)
+    {
+        const float* p = src + i * 3;
+        float* o = dst + i * 8;
+        float dx = p[0] - eye[0];
+        float dy = p[1] - eye[1];
+        float dz = p[2] - eye[2];
+        float vx = dx * right[0] + dy * right[1] + dz * right[2];
+        float vy = dx * up[0] + dy * up[1] + dz * up[2];
+        float vz = dx * fwd[0] + dy * fwd[1] + dz * fwd[2];
+        float inv;
+        o[4] = vz;
+        o[5] = projX;
+        o[6] = projY;
+        o[7] = 0.0f;
+        if (vz < zNear || vz > zFar || vz <= 0.0f)
+        {
+            o[0] = 0.0f; o[1] = 0.0f; o[2] = 1.0f; o[3] = 0.0f;
+            continue;
+        }
+        inv = 1.0f / vz;
+        o[0] = vx * projX * inv;
+        o[1] = vy * projY * inv;
+        o[2] = (vz - zNear) / (zFar - zNear);
+        o[3] = 1.0f;
+        ++visCount;
+    }
+    return visCount;
 }
 
 /* ── GJK/MTV 接触法线与穿透深度（26 方向采样，doc/11）────────

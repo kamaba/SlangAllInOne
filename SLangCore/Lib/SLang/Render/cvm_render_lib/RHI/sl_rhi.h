@@ -173,9 +173,11 @@ void (*draw_sky)(const float* top_bottom);
      * 消费随专项后续步。 */
     void* (*texture_create_cube)(int w, int h, const unsigned char* faces6);
     /* cubemap 天空绘制（doc/13 §2.1 第二步）：tex = texture_create_cube
-     * 产物；全屏 quad 按视线采样 cube（GL/GLES 实现，D3D11/VK NULL）。
-     * 状态处理与 draw_sky 一致（关深度/混合，画完恢复）。 */
-    void (*draw_sky_cube)(void* tex);
+     * 产物；cam11 = 采样基向量（fwd3/right3/up3/tanX/tanY，见
+     * SlrPipeline.sky_cam）——FS 按真实相机朝向构造采样射线（透视
+     * 多面覆盖）；全屏 quad 按视线采样 cube（GL/GLES 实现，D3D11/VK
+     * NULL）。状态处理与 draw_sky 一致（关深度/混合，画完恢复）。 */
+    void (*draw_sky_cube)(void* tex, const float* cam11);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

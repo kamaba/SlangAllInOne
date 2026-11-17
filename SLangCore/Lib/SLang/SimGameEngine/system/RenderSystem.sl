@@ -556,6 +556,7 @@ public class RenderSystem
         ret submitted
     }
 
+
     # 渲染一帧到 dstPtr 原生块（RGBA8，供 QT/宿主上屏）
     public bool frame( Float32 time, Int64 dstPtr )
     {

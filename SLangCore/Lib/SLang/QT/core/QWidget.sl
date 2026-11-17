@@ -11,6 +11,16 @@ namespace SLang
             this.setHandle( SLang.QT.ffi_widgetCreate( parent ) )
         }
 
+        # createKeyWidget(parent) —— 键盘接收面板工厂（收养 SlangKeyWidget
+        # 句柄；keyPress/Release 经 SIG_KEY_PRESSED/RELEASED 以 Qt::Key int
+        # 载荷回 SL，2026-11-17 SnakeGame）。static 常量类，同 QApplication。
+        public static QWidget createKeyWidget( QWidget parent )
+        {
+            QWidget w = QWidget()
+            w.setHandle( SLang.QT.ffi_keyWidgetCreate( parent.handle ) )
+            ret w
+        }
+
         public void setText( string t ) { SLang.QT.ffi_widgetSetText( this.handle, t ) }
         # 顶层控件等价于窗口标题（Qt 后端对 QWidget 调用 setWindowTitle）
         public void setTitle( string t ) { SLang.QT.ffi_widgetSetText( this.handle, t ) }

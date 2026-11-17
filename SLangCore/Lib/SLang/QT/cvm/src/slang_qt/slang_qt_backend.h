@@ -32,6 +32,8 @@ int32_t slqt_be_app_argc(void);
 void    slqt_be_object_delete(int64_t h);
 int32_t slqt_be_object_is_valid(int64_t h);
 int64_t slqt_be_widget_create(int64_t parent);
+/* 键盘接收面板（SlangKeyWidget；键事件由 connect(SIG_KEY_*) 注入回调） */
+int64_t slqt_be_keywidget_create(int64_t parent);
 void    slqt_be_widget_set_parent(int64_t h, int64_t parent);
 void    slqt_be_widget_set_text(int64_t h, const char* t);
 const char* slqt_be_widget_text(int64_t h);

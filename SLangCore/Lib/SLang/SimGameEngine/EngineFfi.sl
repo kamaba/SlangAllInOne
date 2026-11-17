@@ -177,4 +177,39 @@ public class EngineFfi
     {
         ret 0 - 1
     }
+
+    # 透视相机投影（doc/13 §2.1 专项）：camPtr 9 float（eye3/yaw/pitch/
+    # tanHalfFovY/aspect/near/far）× 世界点集 → dst 每点 8 float
+    # [ndcX,ndcY,depth01,visible,viewZ,projX,projY,0]。返回可见点数；
+    # 绑定失败兜底 -1。
+    @DllStaticImport( "sl_sim_engine_lib", "sle_camera_project", "i64,i64,i32,i64->i32" )
+    public static Int32 libCameraProject( Int64 camPtr, Int64 srcPtr, Int32 count, Int64 dstPtr )
+    {
+        ret 0 - 1
+    }
+
+    # ── 输入状态表（SnakeGame；键码 = Qt::Key，QT 回调注入/游戏查询）──
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_set_key", "i32,i32->i32" )
+    public static Int32 libInputSetKey( Int32 key, Int32 down )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_down", "i32->i32" )
+    public static Int32 libInputDown( Int32 key )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_pressed", "i32->i32" )
+    public static Int32 libInputPressed( Int32 key )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_end_frame", "i32->i32" )
+    public static Int32 libInputEndFrame()
+    {
+        ret 0 - 1
+    }
 }

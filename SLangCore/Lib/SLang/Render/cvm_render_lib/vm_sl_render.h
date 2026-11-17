@@ -193,10 +193,14 @@ SLR_API int     slr_pipeline_set_sky_bottom(int64_t p, float r, float g, float b
 SLR_API int     slr_pipeline_set_sky_on(int64_t p, int on);
 /* doc/13 §2.1 第二步：cubemap 天空纹理句柄（0 = 回退渐变路径） */
 SLR_API int     slr_pipeline_set_sky_cube(int64_t p, int64_t tex);
+/* doc/13 §2.1 透视相机专项：cube 天空采样基向量（camPtr 11 float：
+ * fwd3/right3/up3/tanX/tanY；未设置时默认 = 旧固定公式） */
+SLR_API int     slr_pipeline_set_sky_cube_cam(int64_t p, int64_t cam_ptr);
 /* 诊断：最近一帧天空绘制模式（0=未画 1=渐变 2=cube 采样） */
 SLR_API int     slr_sky_last_mode(int64_t pipe);
 /* 诊断：最近一次 draw_sky_cube 的 glGetError（-1 = 未调用过） */
 SLR_API int     slr_sky_draw_diag(int64_t pipe);
+SLR_API int     slr_sky_prog_handle(int64_t pipe);
 /* 后处理：亮度 / 饱和度 / 暗角（enable=0 时纯拷贝） */
 SLR_API int     slr_pipeline_set_post(int64_t p, int enable,
                                       float brightness, float saturation, float vignette);

@@ -73,6 +73,16 @@ SLE_API int32_t sle_gjk_mtv(const float* a, int32_t na, const float* b, int32_t 
 /* ── 正交烘焙投影（P7 烘焙组提交；世界 float3 → NDC pos2+uv2）── */
 SLE_API int32_t sle_ortho_bake(const float* center, float viewSize, const float* src, int32_t count, float* dst);
 
+/* ── 输入状态表（Qt::Key 键码；字母/数字区直接映射，方向键族压缩槽）── */
+SLE_API int32_t sle_input_set_key(int32_t key, int32_t down);
+SLE_API int32_t sle_input_down(int32_t key);
+SLE_API int32_t sle_input_pressed(int32_t key);
+SLE_API int32_t sle_input_end_frame(void);
+
+/* ── 透视相机投影（doc/13 §2.1 专项；cam9 = eye3/yaw/pitch/tanHalf/aspect/
+ *    near/far；dst 每点 8 float [ndcX,ndcY,depth01,visible,viewZ,projX,projY,0]）── */
+SLE_API int32_t sle_camera_project(const float* cam, const float* src, int32_t count, float* dst);
+
 /* ── 形状生成（P9 shape 库；计算核心；形状表与参数布局见 sle_engine.c）──
  * type：0 Cube / 1 Plane / 2 Sprite / 3 Sphere / 4 Cylinder / 5 Cone /
  *       6 Torus / 7 Prism / 8 Pipe / 9 Arch / 10 Stair（与 SL ShapeTypes 常量一致）。

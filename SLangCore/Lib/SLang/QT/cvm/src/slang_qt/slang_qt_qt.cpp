@@ -89,6 +89,7 @@
 #include <QRegularExpression>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QScrollBar>
 #include <QFont>
 #include <QColor>
@@ -521,6 +522,36 @@ int32_t slqt_be_object_is_valid(int64_t h) { return slqt_resolve(h) != nullptr ?
 
 int64_t slqt_be_widget_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new QWidget(parent)); }
 
+/* ── 2026-11-17 SnakeGame：键盘接收面板 ───────────────────────────────
+ * SlangKeyWidget : QWidget，覆盖 keyPressEvent/keyReleaseEvent（无 moc，
+ * 同 SlangCodeEdit 模式）；回调由 connect(SIG_KEY_PRESSED/RELEASED) 注入，
+ * int 载荷 = Qt::Key 枚举值（QKeyEvent::key()）。StrongFocus + 点击聚焦
+ * 才能收键；未设回调时透传 Qt 默认。 */
+class SlangKeyWidget : public QWidget
+{
+public:
+    void (*pressCb)(int64_t, int64_t) = nullptr;
+    void (*releaseCb)(int64_t, int64_t) = nullptr;
+    int64_t cbSlot = 0;
+    SlangKeyWidget(QWidget* parent) : QWidget(parent)
+    {
+        setFocusPolicy(Qt::StrongFocus);
+    }
+protected:
+    void keyPressEvent(QKeyEvent* e) override
+    {
+        if (pressCb) { pressCb(cbSlot, (int64_t)e->key()); e->accept(); return; }
+        QWidget::keyPressEvent(e);
+    }
+    void keyReleaseEvent(QKeyEvent* e) override
+    {
+        if (releaseCb) { releaseCb(cbSlot, (int64_t)e->key()); e->accept(); return; }
+        QWidget::keyReleaseEvent(e);
+    }
+};
+
+int64_t slqt_be_keywidget_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new SlangKeyWidget(parent)); }
+
 void slqt_be_widget_set_parent(int64_t h, int64_t p)
 {
     QWidget* w = asWidget(h);
@@ -571,8 +602,9 @@ int32_t slqt_be_label_set_pixmap(int64_t h, int64_t ptr, int32_t len) { (void)h;
  * scaledContents 让 label 随窗口缩放；qobject_cast 过滤非 QLabel 句柄。 */
 int32_t slqt_be_label_set_pixmap_rgba(int64_t h, int64_t ptr, int32_t w, int32_t hh)
 {
+    fprintf(stderr, "[QTPX] h=%lld ptr=%lld w=%d h=%d\n", (long long)h, (long long)ptr, w, hh); fflush(stderr);
     auto* o = qobject_cast<QLabel*>((QObject*)slqt_resolve(h));
-    if (!o || !ptr || w <= 0 || hh <= 0) return 0;
+    if (!o || !ptr || w <= 0 || hh <= 0) { fprintf(stderr, "[QTPX] reject o=%p\n", (void*)o); fflush(stderr); return 0; }
     QImage img((const uchar*)(uintptr_t)ptr, w, hh, (qsizetype)w * 4, QImage::Format_RGBA8888);
     if (img.isNull()) return 0;
     o->setPixmap(QPixmap::fromImage(img));
@@ -905,6 +937,22 @@ int64_t slqt_be_connect(int64_t h, int32_t signalId, int64_t dispatchCb, int64_t
         if (auto* e = asCode(h)) { e->bpCb = dispatchCb; e->bpSlot = slot; }
         break;
     /* 2026-11-13 VS 多标签：两个 int 载荷信号 */
+    case SLQT_SIG_KEY_PRESSED:
+        /* 无 Q_OBJECT（无 moc）——qobject_cast 不可用于 SlangKeyWidget，
+         * 句柄由 keywidget_create 注册，static_cast 安全（QT.md 踩坑 #2）*/
+        if (auto* k = static_cast<SlangKeyWidget*>(sender))
+        {
+            k->pressCb = (void (*)(int64_t, int64_t))dispatchCb;
+            k->cbSlot = slot;
+        }
+        break;
+    case SLQT_SIG_KEY_RELEASED:
+        if (auto* k = static_cast<SlangKeyWidget*>(sender))
+        {
+            k->releaseCb = (void (*)(int64_t, int64_t))dispatchCb;
+            k->cbSlot = slot;
+        }
+        break;
     case SLQT_SIG_TAB_CHANGED:
         if (auto* t = qobject_cast<QTabWidget*>(sender))
             QObject::connect(t, &QTabWidget::currentChanged, [=](int idx) {
@@ -1080,7 +1128,9 @@ int64_t slqt_be_timer_create(int32_t ms, int32_t single, int64_t dispatchCb, int
     QTimer* t = new QTimer(nullptr);
     t->setSingleShot(single != 0);
     QObject::connect(t, &QTimer::timeout, [=]() {
+        fprintf(stderr, "[QTTIMER] fire cb=%lld slot=%lld\n", (long long)dispatchCb, (long long)slot); fflush(stderr);
         ((void (*)(int64_t))dispatchCb)(slot);
+        fprintf(stderr, "[QTTIMER] fire done\n"); fflush(stderr);
     });
     if (ms > 0) t->start(ms);
     return slqt_register(t);

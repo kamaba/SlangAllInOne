@@ -55,6 +55,10 @@ namespace SLang
         # connect 时自动启用 CustomContextMenu；弹出位置用 menu.popupCursor()）
         public static Int32 SIG_LIST_CONTEXT = 20
         public static Int32 SIG_TEXT_CONTEXT = 21
+        # 2026-11-17 SnakeGame：键盘事件（int = Qt::Key 枚举值，
+        # 如 Qt::Key_Left=0x01000000、字母 A..Z=0x41..0x5A；SlangKeyWidget）
+        public static Int32 SIG_KEY_PRESSED  = 22
+        public static Int32 SIG_KEY_RELEASED = 23
 
         # ── 应用 ────────────────────────────────────────────────────
         @DllStaticImport( "slang_qt", "slqt_app_create_sl" )
@@ -79,6 +83,8 @@ namespace SLang
         public static bool ffi_objectIsValid( Int64 h ) { ret false }
         @DllStaticImport( "slang_qt", "slqt_widget_create_sl" )
         public static Int64 ffi_widgetCreate( Int64 parent ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_keywidget_create_sl" )
+        public static Int64 ffi_keyWidgetCreate( Int64 parent ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_widget_set_parent_sl" )
         public static void ffi_widgetSetParent( Int64 h, Int64 parent ) {}
         @DllStaticImport( "slang_qt", "slqt_widget_set_text_sl" )

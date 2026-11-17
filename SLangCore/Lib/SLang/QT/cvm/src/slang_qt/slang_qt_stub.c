@@ -37,6 +37,7 @@ void    slqt_be_object_delete(int64_t h) { (void)h; }
 int32_t slqt_be_object_is_valid(int64_t h) { return (h >= 0) ? 1 : 0; }
 
 int64_t slqt_be_widget_create(int64_t p) { (void)p; return slqt_register(NULL); }
+int64_t slqt_be_keywidget_create(int64_t p) { (void)p; return slqt_register(NULL); }
 void    slqt_be_widget_set_parent(int64_t h, int64_t p) { (void)h; (void)p; }
 void    slqt_be_widget_set_text(int64_t h, const char* t) { (void)h; (void)t; }
 const char* slqt_be_widget_text(int64_t h) { (void)h; return g_empty; }

@@ -282,6 +282,18 @@ namespace SLang
             ret RenderPipeline.ffiSetSkyCube( this._handle, texHandle )
         }
 
+        # setSkyCubeCam(camPtr) —— cube 天空采样基向量（doc/13 §2.1 透视相机
+        # 专项）：camPtr 11 float [fwd3/right3/up3/tanX/tanY]；0 指针 = 恢复
+        # 默认（正交 -Z 公式，向后兼容）。
+        public bool setSkyCubeCam( Int64 camPtr )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetSkyCubeCam( this._handle, camPtr )
+        }
+
         # setPostEffect(enable, brightness, saturation, vignette)
         #   enable=0 纯拷贝；vignette 0..1 暗角强度
         public bool setPostEffect( Int32 enable, Float32 brightness, Float32 saturation, Float32 vignette )
@@ -740,6 +752,12 @@ namespace SLang
             ret 0
         }
 
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_sky_cube_cam", "i64,ptr->i32" )
+        static Int32 ffiSetSkyCubeCam( Int64 p, Int64 camPtr )
+        {
+            ret 0
+        }
+
         @DllStaticImport( "sl_render_lib", "slr_sky_last_mode", "i64->i32" )
         static Int32 ffiSkyLastMode( Int64 pipe )
         {
@@ -752,11 +770,23 @@ namespace SLang
             ret 0
         }
 
+        @DllStaticImport( "sl_render_lib", "slr_sky_prog_handle", "i64->i32" )
+        static Int32 ffiSkyProgHandle( Int64 pipe )
+        {
+            ret 0
+        }
+
         # skyDrawDiag(pipe) —— 诊断：最近一次 draw_sky_cube 的 glGetError
         # （-1 = 未调用过；带 pipe 形参规避零参绑定）
         public Int32 skyDrawDiag( Int64 pipe )
         {
             ret RenderPipeline.ffiSkyDrawDiag( pipe )
+        }
+
+        # skyProgHandle(pipe) —— 诊断：SKY_CUBE 程序句柄（0 = 创建失败）
+        public Int32 skyProgHandle( Int64 pipe )
+        {
+            ret RenderPipeline.ffiSkyProgHandle( pipe )
         }
 
         # skyLastMode(pipe) —— 诊断：最近一帧天空绘制模式（0=未画 1=渐变

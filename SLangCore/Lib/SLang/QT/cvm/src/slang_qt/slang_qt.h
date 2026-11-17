@@ -45,6 +45,9 @@ SLQT_API int32_t slqt_app_argc_sl(void);
 SLQT_API int64_t slqt_object_delete_sl(int64_t h);
 SLQT_API int32_t slqt_object_is_valid_sl(int64_t h);
 SLQT_API int64_t slqt_widget_create_sl(int64_t parent);
+/* 键盘接收面板（SlangKeyWidget：keyPress/Release → SIG_KEY_PRESSED/RELEASED，
+ * int 载荷 = Qt::Key；StrongFocus，点击或 setFocus 后接收键盘） */
+SLQT_API int64_t slqt_keywidget_create_sl(int64_t parent);
 SLQT_API void    slqt_widget_set_parent_sl(int64_t h, int64_t parent);
 SLQT_API void    slqt_widget_set_text_sl(int64_t h, const char* t);
 SLQT_API const char* slqt_widget_text_sl(int64_t h);
@@ -223,6 +226,10 @@ SLQT_API int64_t slqt_connect_sl(int64_t h, int32_t signalId, int64_t dispatchCb
  * （弹出位置用 slqt_menu_popup_cursor_sl 取鼠标处，无需坐标载荷） */
 #define SLQT_SIG_LIST_CONTEXT 20
 #define SLQT_SIG_TEXT_CONTEXT 21
+/* ── 2026-11-17 SnakeGame：键盘事件（SlangKeyWidget 子类，int 载荷 =
+ * Qt::Key 枚举值，如 Qt::Key_Left=0x01000000、字母=A..Z=0x41..0x5A）── */
+#define SLQT_SIG_KEY_PRESSED  22
+#define SLQT_SIG_KEY_RELEASED 23
 
 /* ── 2026-11-16 第三十六轮：剪贴板与树节点文本 ──────────────────────── */
 SLQT_API void        slqt_clipboard_set_sl(const char* text);

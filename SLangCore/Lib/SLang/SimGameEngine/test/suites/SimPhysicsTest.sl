@@ -31,7 +31,7 @@ public class SimPhysicsTest
         }
     }
 
-    # ── 场景搭建 ────────────────────────────────────────
+    # ── 场景搭建────────────────────────────────────
     # 地面盒：顶面 y=0（center.y=-h/2）；Static（只有 Collider）
     static GameObject makeGround( Scene scene )
     {
@@ -70,7 +70,7 @@ public class SimPhysicsTest
     {
         Application app = Application()
         app.init()
-        app.fixedDt = 1.0f / 60.0f
+        app.fixedDt = 0.0166667f
         app.physicsSystem = PhysicsSystem()
         app.collisionSystem = CollisionSystem()
         ret app
@@ -85,7 +85,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 300
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t = ball.transform
@@ -111,7 +111,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 300
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             Transform t = ball.transform
             Float32_3 p = t.localPosition
             if p.y > peak
@@ -148,7 +148,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 120
         {
-            appA.tick( 1.0f / 60.0f )
+            appA.tick( 0.0166667f )
             i = i + 1
         }
         Application appB = makeWorld()
@@ -203,7 +203,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 120
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t = ball.transform
@@ -227,7 +227,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 60
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t = ball.transform
@@ -244,7 +244,7 @@ public class SimPhysicsTest
         while k < 60
         {
             rb2.addForce( Float32_3( 0.0f, 20.0f, 0.0f ) )
-            app2.tick( 1.0f / 60.0f )
+            app2.tick( 0.0166667f )
             k = k + 1
         }
         check( rb2.velocity.y > 9.0f && rb2.velocity.y < 11.0f, "PH6a force accumulates a=10/s (v=" + rb2.velocity.y.toString() + ")" )
@@ -262,7 +262,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 90
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Rigidbody rb1 = bodyOf( lo )
@@ -287,7 +287,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 120
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         check( rb.sleeping, "PH8a asleep after resting 2s" )
@@ -314,7 +314,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 120
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t = ball.transform
@@ -335,7 +335,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 60
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform tg = ground.transform
@@ -358,7 +358,7 @@ public class SimPhysicsTest
     {
         Application app = Application()
         app.init()
-        app.fixedDt = 1.0f / 60.0f
+        app.fixedDt = 0.0166667f
         app.physicsSystem = PhysicsSystem()
         app.collisionSystem = CollisionSystem()
         GameObject wall = app.activeScene.createObject( "Wall" )
@@ -396,7 +396,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 60
         {
-            app1.tick( 1.0f / 60.0f )
+            app1.tick( 0.0166667f )
             i = i + 1
         }
         Transform t1 = b1.transform
@@ -410,7 +410,7 @@ public class SimPhysicsTest
         Int32 j = 0
         while j < 60
         {
-            app2.tick( 1.0f / 60.0f )
+            app2.tick( 0.0166667f )
             j = j + 1
         }
         Transform t2 = b2.transform
@@ -432,7 +432,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 300
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t = ball.transform
@@ -460,7 +460,7 @@ public class SimPhysicsTest
         Int32 i = 0
         while i < 60
         {
-            app.tick( 1.0f / 60.0f )
+            app.tick( 0.0166667f )
             i = i + 1
         }
         Transform t2 = ball.transform

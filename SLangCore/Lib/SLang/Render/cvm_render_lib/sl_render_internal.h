@@ -94,7 +94,7 @@ enum
     /* doc/13 §2.1 第二步：cubemap 天空（全屏 quad 按视线方向采样 cube；
      * 尾部追加不动既有槽序——gen 固化槽检查宏同步 +1）*/
     SLR_PROG_SKY_CUBE,
-    SLR_PROG_COUNT = SLR_PROG_GEN_BASE + 11   /* 10 = SLR_GEN_EFFECT_COUNT*2，+1 = SKY_CUBE */
+    SLR_PROG_COUNT = SLR_PROG_GEN_BASE + 10   /* 10 = SLR_GEN_EFFECT_COUNT*2；SKY_CUBE 懒创建不占内建槽 */
 };
 
 /* v3.5 固化槽位寻址：效果 0..4 × 变体 0=TEX / 1=FLAT，
@@ -341,6 +341,11 @@ typedef struct
     /* doc/13 §2.1 第二步：cubemap 天空纹理句柄（0 = 走渐变路径；
      * set_sky_cube 写入，stage 7 天空绘制按它分派 draw_sky_cube）*/
     int64_t sky_cube;
+    /* doc/13 §2.1 透视相机专项：cube 天空采样基向量（11 float：
+     * fwd3/right3/up3/tanX/tanY；默认 fwd=(0,0,-1) right=(1,0,0)
+     * up=(0,1,0) tan=(1,1) —— 与旧固定公式 normalize(vUv*2-1, -1)
+     * 逐位同效，向后兼容）；set_sky_cube_cam 写入 */
+    float sky_cam[11];
 
     /* N4a 软光追：场景状态（RaySet* 命令累积写）+ 输出纹理（RayRender
      * 命令产出并写入描述符槽；纹理归管线持有，pipeline_release_targets

@@ -1,0 +1,119 @@
+{
+  // SnakeGame —— 贪吃蛇示例（gameExample 首个工程，2026-11-17）
+  // QT 窗口（SLangQT）+ SimGameEngine 渲染上屏（renderFrame RGBA8 →
+  // QLabel.setPixmapRgba）+ 引擎 InputSystem（QT 键盘回调 → C 状态表）。
+  // 蛇逻辑/渲染顶点为胶水（每帧重建 3 组烘焙顶点，O(格数) 小计算）；
+  // 投影数学在 C（sle_ortho_bake，正交烘焙路径 = SimSystemsTest S10 同款）。
+  // 构建/运行：
+  //   1) 引擎：slang compile SLangCore\Lib\SLang\SimGameEngine\SimGameEngine.jsonc --format binary
+  //   2) QT：  powershell -File SLangCore\Lib\SLang\QT\cvm\build-slqt.ps1 -Qt
+  //            （-DeployQt gui 额外部署 Qt6 运行时到模块槽位）
+  //   3) 游戏：slang compile SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\SnakeGame.jsonc --format binary
+  //   4) 运行：slang run out\export\SnakeGame\SnakeGame.module.slb
+  //      （Qt6 dll 需在 PATH 或经 deploy-qt.ps1 部署；方向键控制，R 重开）
+  "project": {
+    "name": "SnakeGame",
+    "desc": "Snake game example on SimGameEngine + SLangQT (QT window, engine ortho bake render path, InputSystem)",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "dllImports": [],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      // QTHost.sl 独立解析（import 平面仅 SLangQT）承接 QT 对象，规避
+      // SimGameEngine（传递 SLangRender 的 SLang namespace）与 SLangQT 的
+      // import 平面「SLang」重名冲突（MetaCoreMemberNameImportConflict）
+      { "path": "QTHost.sl", "group": "game", "tag": "game", "ignore": false, "priority": 0 },
+      { "path": "SnakeGame.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 }
+    ]
+  },
+  "references": [
+    // 形态照抄 Test.jsonc：Lib 包相对 jsonc 目录（上 5 级到根）、模块产物绝对路径
+    // （SnakeGame → gameExample → SimGameEngine → SLang → SLangCore → SlangAllInOne）
+    { "path": "../../../../../SLangCore/Lib/Core", "name": "Core" },
+    { "path": "../../../../../SLangCore/Lib/Std", "name": "Std" },
+    { "path": "../../../../../SLangCore/Lib/Math", "name": "Math" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
+  ],
+  "struct": [
+    // 类为根级（源文件无 namespace 块——jsonc namespace 包装会导致方法不注册）
+    { "class": "SnakeGame" },
+    { "class": "QTHost" }
+  ],
+  "export": {
+    "moduleName": "SnakeGame",
+    "outputDir": "D:\\project\\lang\\SlangAllInOne\\out\\export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  },
+  // 发布配置（VSCode 右键「发布工程」= slang publish <sp>，走这里的默认段）：
+  // 无此段时 mode=both/config=Release/gui=false，且不带任何 Qt 运行库 →
+  // 打包出来只有 Core/Gui/Widgets 三个 Qt dll，真窗口崩在 ffi_appCreate
+  // （0xC0000409）。gui=true 去掉 cmd 黑窗，与真窗口程序匹配。
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish",
+    "config": "Release"
+  },
+  // Qt 运行库随包部署（QTTest/RenderTest 同款机制）：slang_qt.dll 在
+  // publish\release\lib\windows，故 targetDir=lib/windows 与其同位；
+  // Plugins 重定向 + qt.conf 由 PublishCommand 自动写。缺件按 FAIL 处理，
+  // 保证 VSCode 打包产物开箱即跑（无需手工 deploy-qt.ps1）。
+  "qtRuntime": {
+    "enabled": true,
+    "qt6Dir": "C:\\Qt\\6.8.1\\msvc2022_64",
+    "debugRuntime": false,
+    "targetDir": "lib/windows",
+    "modules": [
+      "Network", "Sql", "Svg", "SvgWidgets", "OpenGL", "OpenGLWidgets",
+      "PrintSupport", "Xml", "Concurrent", "Test", "UiTools", "Help",
+      "DBus", "Designer"
+    ],
+    "plugins": {
+      "platforms": ["qwindows", "qoffscreen", "qminimal"],
+      "styles": ["qmodernwindowsstyle"],
+      "imageformats": ["qgif", "qico", "qjpeg", "qsvg"],
+      "iconengines": ["qsvgicon"],
+      "sqldrivers": ["qsqlite"],
+      "tls": ["qschannelbackend", "qcertonlybackend"],
+      "networkinformation": ["qnetworklistmanager"],
+      "generic": ["qtuiotouchplugin"]
+    },
+    "extraBinDlls": ["opengl32sw.dll"]
+  },
+  "global": {
+    "imports": []
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  }
+}

@@ -20,6 +20,8 @@
 #             (aligned with StageReferencedModules: CVM fallback root 2 spm layout
 #              <exe>\modules\<name>\<name>.module.json)
 #   publish : <QTTest>\publish\release\modules\SLangQT (+ qt.conf beside QTTest.exe)
+#   snakepub: <SnakeGame>\publish\release\lib\windows (+ qt.conf beside SnakeGame.exe)
+#   snakeexp: <repo>\SlangAllInOne\out\export\SnakeGame (dev module slot, no qt.conf)
 #
 # The script CLEANS previously deployed Qt files in each target first
 # (Qt6*.dll / opengl32sw.dll / d3dcompiler_47.dll / plugins\), so switching
@@ -50,6 +52,7 @@ $ErrorActionPreference = "Stop"
 $here    = Split-Path -Parent $MyInvocation.MyCommand.Path   # Lib/SLang/QT/cvm
 $repo    = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $here)))))  # <repo root>
 $testDir = Join-Path $repo "SlangAllInOne\SLangCore\test\Other\QTTest"
+$snakeDir = Join-Path $repo "SlangAllInOne\SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame"
 
 if (-not (Test-Path (Join-Path $Qt6Dir "bin\Qt6Core.dll"))) {
     throw "Qt SDK not found: $Qt6Dir (pass -Qt6Dir <sdk root containing bin\ + plugins\>)"
@@ -125,16 +128,18 @@ function Write-QtConf([string]$exeDir, [string]$pluginsEntry) {
 $pkgRoot  = Join-Path $repo ("SlangAllInOne\package\win32-" + $PkgFlavor)
 $pubRoot  = Join-Path $testDir "publish\release"
 $slotMap = @{
-    modules = @{ dir = Join-Path $testDir "modules\SLangQT"; conf = ""; entry = "" }
-    package = @{ dir = Join-Path $pkgRoot "modules\SLangQT"; conf = $pkgRoot; entry = "modules/SLangQT/plugins" }
-    publish = @{ dir = Join-Path $pubRoot "modules\SLangQT"; conf = $pubRoot; entry = "modules/SLangQT/plugins" }
+    modules  = @{ dir = Join-Path $testDir "modules\SLangQT"; conf = ""; entry = "" }
+    package  = @{ dir = Join-Path $pkgRoot "modules\SLangQT"; conf = $pkgRoot; entry = "modules/SLangQT/plugins" }
+    publish  = @{ dir = Join-Path $pubRoot "modules\SLangQT"; conf = $pubRoot; entry = "modules/SLangQT/plugins" }
+    snakepub = @{ dir = Join-Path $snakeDir "publish\release\lib\windows"; conf = Join-Path $snakeDir "publish\release"; entry = "lib/windows/plugins" }
+    snakeexp = @{ dir = Join-Path $repo "SlangAllInOne\out\export\SnakeGame"; conf = ""; entry = "" }
 }
 
 # --- deploy ------------------------------------------------------------------
 $totalDlls = 0
 foreach ($t in $Targets) {
     if (-not $slotMap.ContainsKey($t)) {
-        throw "unknown target '$t' (expected modules|package|publish)"
+        throw "unknown target '$t' (expected modules|package|publish|snakepub|snakeexp)"
     }
     $slot = $slotMap[$t]
     $dir = $slot.dir

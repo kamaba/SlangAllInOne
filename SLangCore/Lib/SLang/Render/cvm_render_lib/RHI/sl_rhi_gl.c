@@ -17,7 +17,7 @@
 /* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
  * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
 typedef char slr_gen_slot_check[
-    (SLR_GEN_EFFECT_COUNT * 2 + 1 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
+    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* GL 类型 / 常量（手写，不依赖 SDK 头）                                  */
@@ -121,6 +121,30 @@ static GLuint       s_ubo_light = 0;   /* LightBlock UBO（绑定点 1）*/
 static GlMesh      s_meshes[4];
 static GlMesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
 static GLuint       s_desc_tex[SLR_DESC_TEX_SLOTS];   /* 描述符槽表（free_shared 前向引用）*/
+
+/* doc/13 §2.1 诊断：draw_sky_cube 的 glGetError / prog 句柄编码
+ *（printf 跨 VM 不可靠，状态通道 slr_sky_draw_diag 读取）*/
+int g_sky_draw_diag = -1;
+
+/* SKY_CUBE 程序（懒创建，见 gl_draw_sky_cube）+ 相机 uniforms 位置 */
+static GLuint g_sky_cube_prog = 0;
+static GLint  g_sky_uni_fwd = -1;
+static GLint  g_sky_uni_right = -1;
+static GLint  g_sky_uni_up = -1;
+static GLint  g_sky_uni_tan = -1;
+
+SLR_API int slr_sky_draw_diag(int64_t pipe)
+{
+    (void)pipe;
+    return g_sky_draw_diag;
+}
+
+/* 诊断：SKY_CUBE 程序句柄（0 = 未懒创建） */
+SLR_API int slr_sky_prog_handle(int64_t pipe)
+{
+    (void)pipe;
+    return (int)g_sky_cube_prog;
+}
 
 static HMODULE  s_hgl = NULL;
 static HWND     s_hwnd = NULL;
@@ -373,10 +397,14 @@ static const char* FS_SKY_CUBE =
     "in vec2 vUv;\n"
     "out vec4 oCol;\n"
     "uniform samplerCube uCube;\n"
+    "uniform vec3 uCamFwd;\n"
+    "uniform vec3 uCamRight;\n"
+    "uniform vec3 uCamUp;\n"
+    "uniform vec2 uCamTan;\n"
     "void main(){\n"
-    "  vec3 dir = normalize(vec3(vUv.x * 2.0 - 1.0, vUv.y * 2.0 - 1.0, -1.0));\n"
+    "  vec3 dir = normalize(uCamFwd + uCamRight * (vUv.x * 2.0 - 1.0) * uCamTan.x\n"
+    "                          + uCamUp * (vUv.y * 2.0 - 1.0) * uCamTan.y);\n"
     "  oCol = vec4(texture(uCube, dir).rgb, 1.0);\n"
-    "  oCol = vec4(0.8, 0.2, 0.8, 1.0);\n"
     "}\n";
 
 static int compile_stage(GLuint prog, GLenum kind, const char* src)
@@ -443,7 +471,9 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
     if (!make_program(SLR_PROG_SKY,  VS_FULL,  FS_SKY))   return 0;
-    if (!make_program(SLR_PROG_SKY_CUBE, VS_FULL, FS_SKY_CUBE)) return 0;
+    /* SKY_CUBE 不在此创建：init 期创建的该程序在渲染期不产出片段
+     *（2026-11-17 差分实证——同上下文现场重建同源码程序即可出图），
+     * 改为 draw_sky_cube 懒创建（g_sky_cube_prog），根因登记 doc/13 §2.1 */
 
     /* v3.5 固化效果槽：5 效果 × 2 变体（固化 GLSL 3.3 源运行期编译，
      * 与内建程序同一 make_program 路径——编译/链接失败同样致命）*/
@@ -485,7 +515,6 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_POST].vig     = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uVignette");
     s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
     s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
-    s_uni[SLR_PROG_SKY_CUBE].tex   = p_glGetUniformLocation(s_progs[SLR_PROG_SKY_CUBE], "uCube");
 
     /* 采样器常量：管线纹理走 unit 1，全屏拷贝走 unit 0；
      * N2a：uShadowTex 走 unit 2——glUniform1i 只作用于当前绑定 program，
@@ -509,8 +538,6 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
     p_glUseProgram(s_progs[SLR_PROG_POST]);
     p_glUniform1i(s_uni[SLR_PROG_POST].src, 0);
-    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
-    p_glUniform1i(s_uni[SLR_PROG_SKY_CUBE].tex, 0);
     p_glUseProgram(0);
 
     /* PerDraw UBO：块绑定 0，全局一次 */
@@ -1018,34 +1045,63 @@ static void gl_draw_sky(const float* tb)
     p_glEnable(GL_DEPTH_TEST);
 }
 
-/* 诊断：最近一次 draw_sky_cube 的 glGetError（printf 跨 VM 不可靠）*/
-int g_sky_draw_diag = -1;
-
-SLR_API int slr_sky_draw_diag(int64_t pipe)
-{
-    (void)pipe;
-    return g_sky_draw_diag;
-}
-
 /* cubemap 天空（doc/13 §2.1 第二步）：tex = 后端 cube 纹理句柄
  * （slr_texture_create_cube 产物）。状态处理与渐变天空一致
  * （关深度/关混合，画完恢复）。cube 纹理走纹理单元 0。 */
-static void gl_draw_sky_cube(void* tex)
+static void gl_draw_sky_cube(void* tex, const float* cam11)
 {
     p_glDisable(GL_DEPTH_TEST);
     p_glDepthMask(GL_FALSE);
     p_glDisable(GL_BLEND);
     p_glActiveTexture(GL_TEXTURE0);
     p_glBindTexture(GL_TEXTURE_CUBE_MAP, (GLuint)(intptr_t)tex);
-    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
+    /* SKY_CUBE 程序懒创建（首次 draw 时在渲染上下文内编译链接——init 期
+     * 创建的同源码程序不产出片段，差分实证 2026-11-17，根因登记
+     * doc/13 §2.1）。sampler uCube → unit0；相机基向量 uniforms。 */
+    if (g_sky_cube_prog == 0)
+    {
+        GLuint vs = p_glCreateShader(GL_VERTEX_SHADER);
+        GLuint fs = p_glCreateShader(GL_FRAGMENT_SHADER);
+        g_sky_cube_prog = p_glCreateProgram();
+        p_glShaderSource(vs, 1, &VS_FULL, NULL);
+        p_glCompileShader(vs);
+        p_glShaderSource(fs, 1, &FS_SKY_CUBE, NULL);
+        p_glCompileShader(fs);
+        p_glAttachShader(g_sky_cube_prog, vs);
+        p_glAttachShader(g_sky_cube_prog, fs);
+        p_glLinkProgram(g_sky_cube_prog);
+        p_glDeleteShader(vs);
+        p_glDeleteShader(fs);
+        p_glUseProgram(g_sky_cube_prog);
+        p_glUniform1i(p_glGetUniformLocation(g_sky_cube_prog, "uCube"), 0);
+        g_sky_uni_fwd   = p_glGetUniformLocation(g_sky_cube_prog, "uCamFwd");
+        g_sky_uni_right = p_glGetUniformLocation(g_sky_cube_prog, "uCamRight");
+        g_sky_uni_up    = p_glGetUniformLocation(g_sky_cube_prog, "uCamUp");
+        g_sky_uni_tan   = p_glGetUniformLocation(g_sky_cube_prog, "uCamTan");
+        p_glUniform3f(g_sky_uni_fwd, 0.0f, 0.0f, -1.0f);
+        p_glUniform3f(g_sky_uni_right, 1.0f, 0.0f, 0.0f);
+        p_glUniform3f(g_sky_uni_up, 0.0f, 1.0f, 0.0f);
+        p_glUniform2f(g_sky_uni_tan, 1.0f, 1.0f);
+        p_glUseProgram(0);
+    }
+    p_glUseProgram(g_sky_cube_prog);
+    p_glUniform3f(g_sky_uni_fwd, cam11[0], cam11[1], cam11[2]);
+    p_glUniform3f(g_sky_uni_right, cam11[3], cam11[4], cam11[5]);
+    p_glUniform3f(g_sky_uni_up, cam11[6], cam11[7], cam11[8]);
+    p_glUniform2f(g_sky_uni_tan, cam11[9], cam11[10]);
     p_glBindVertexArray(s_meshes[2].vao);
     p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
     p_glBindVertexArray(0);
     p_glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     p_glUseProgram(0);
+    {
+        unsigned char px[4];
+        p_glReadPixels(10, 10, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, px);
+        /* 诊断编码：20000 + r（画完立即读，绕开 printf 不可靠） */
+        g_sky_draw_diag = 20000 + (int)px[0] + (int)p_glGetError();
+    }
     p_glDepthMask(GL_TRUE);
     p_glEnable(GL_DEPTH_TEST);
-    g_sky_draw_diag = (s_progs[SLR_PROG_SKY_CUBE] == 0) ? 999 : (int)p_glGetError();
 }
 
 /* 回读 + 行翻 top-down（glReadPixels 产出 bottom-up，原地交换行序）*/
@@ -1165,7 +1221,8 @@ static int load_all_gl_procs(void)
     LOAD_GL(glUseProgram);
     LOAD_GL(glGetUniformLocation);
     LOAD_GL(glUniform1f);
-LOAD_GL(glUniform3f);
+    LOAD_GL(glUniform2f);
+    LOAD_GL(glUniform3f);
     LOAD_GL(glUniform1i);
     LOAD_GL(glUniform4f);
     LOAD_GL(glUniformMatrix4fv);

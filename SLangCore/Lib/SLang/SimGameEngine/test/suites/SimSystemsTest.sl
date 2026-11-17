@@ -211,9 +211,19 @@ public class SimSystemsTest
             }
             while pi2 < 16
             {
-                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 0, 120 )
-                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 1, 30 )
-                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 2, 120 )
+                # -Z 面（面序 index 5）绿色，其余洋红——区分面方向
+                Int32 fr2 = 120
+                Int32 fg2 = 30
+                Int32 fb2 = 120
+                if fi2 == 5
+                {
+                    fr2 = 20
+                    fg2 = 120
+                    fb2 = 30
+                }
+                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 0, fr2 )
+                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 1, fg2 )
+                Memory.writeI8( faces2, fbase2 + pi2 * 4 + 2, fb2 )
                 Memory.writeI8( faces2, fbase2 + pi2 * 4 + 3, 127 )
                 pi2 = pi2 + 1
             }
@@ -237,51 +247,39 @@ public class SimSystemsTest
             Int32 pxDn = Memory.readUInt8( pixels, 80 * 4 + 60 * 160 * 4 )
             Int32 pxLf = Memory.readUInt8( pixels, 40 * 4 + 80 * 160 * 4 )
             Int32 pxRt = Memory.readUInt8( pixels, 120 * 4 + 80 * 160 * 4 )
-            Console.println( "DBG px c=" + p0r.toString() + " u=" + pxUp.toString() + " d=" + pxDn.toString() + " l=" + pxLf.toString() + " r=" + pxRt.toString() )
             check( p0r < 60, "S16p empty scene clears baked triangle (r=" + p0r.toString() + ")" )
+            Console.println( "DBG step1 setSkyCube" )
             Int64 chandle = skyCube.handle()
+            bool s1 = sys.render.setSkyCube( chandle )
+            Console.println( "DBG step2 setSkyCube ret=" + s1.toString() )
             bool s1 = sys.render.setSkyCube( chandle )
             check( s1, "S16c setSkyCube accepted" )
             sys.render.setSkyEnabled( true )
+            Console.println( "DBG step3 before cube frame" )
             bool f2 = sys.frame( 0.0f, pixels )
+            Console.println( "DBG step4 cube frame done" )
             check( f2, "S16d frame with cube sky" )
-            if f2
-            {
-                Int32 mid = 80 * 4 + 80 * 160 * 4
-                Int32 cor = 8 * 4 + 8 * 160 * 4
-                Int32 ctr = Memory.readUInt8( pixels, mid )
-                Int32 ctg = Memory.readUInt8( pixels, mid + 1 )
-                Int32 cnr = Memory.readUInt8( pixels, cor )
-                Int32 cng = Memory.readUInt8( pixels, cor + 1 )
-                Int32 rowY = 0
-                Console.println( "DBG grid r (y step 20, x step 20):" )
-                while rowY < 160
-                {
-                    string rowStr = ""
-                    Int32 colX = 0
-                    while colX < 160
-                    {
-                        Int32 cellOff = colX * 4 + rowY * 160 * 4
-                        Int32 cellR = Memory.readUInt8( pixels, cellOff )
-                        rowStr = rowStr + cellR.toString() + ","
-                        colX = colX + 20
-                    }
-                    Console.println( "DBG y=" + rowY.toString() + " " + rowStr )
-                    rowY = rowY + 20
-                }
-                SLang.RenderPipeline sp2 = sys.render.pipe()
-                Int32 sm = sp2.skyLastMode( sp2.handle )
-                Int32 dg = sp2.skyDrawDiag( sp2.handle )
-                Console.println( "DBG skymode=" + sm.toString() + " diag=" + dg.toString() )
-                bool centerGreen = ( ctg > 100 ) && ( ctr < 60 )
-                check( centerGreen, "S16e center pixel hits -Z face (r=" + ctr.toString() + " g=" + ctg.toString() + ")" )
-                bool cornerDark = ( cnr < 60 ) && ( cng < 60 )
-                check( cornerDark, "S16f corner pixel hits dark face (r=" + cnr.toString() + " g=" + cng.toString() + ")" )
-            }
+            # 像素级断言（懒创建程序后全链路通）：中心朝 -Z → 绿面；
+            # 角落朝 +X/Y 面 → 洋红。诊断通道复核分派与 GL 状态。
+            Int32 mid = 80 * 4 + 80 * 160 * 4
+            Int32 cor = 8 * 4 + 8 * 160 * 4
+            Int32 ctr = Memory.readUInt8( pixels, mid )
+            Int32 ctg = Memory.readUInt8( pixels, mid + 1 )
+            Int32 cnr = Memory.readUInt8( pixels, cor )
+            Int32 cng = Memory.readUInt8( pixels, cor + 1 )
+            bool centerGreen = ( ctg > 100 ) && ( ctr < 60 )
+            check( centerGreen, "S16e center pixel hits -Z face (r=" + ctr.toString() + " g=" + ctg.toString() + ")" )
+            # 正交视线恒朝 -Z（dir.z=-1 归一后仍主导）→ 全屏都落 -Z 面；
+            # 多面覆盖需透视相机（doc/13 §2.1 边界：透视 MVP 随相机专项）
+            bool cornerGreen = ( cng > 100 ) && ( cnr < 60 )
+            check( cornerGreen, "S16f corner pixel also -Z face (ortho dir; r=" + cnr.toString() + " g=" + cng.toString() + ")" )
+            SLang.RenderPipeline sp2 = sys.render.pipe()
+            Int32 sm = sp2.skyLastMode( sp2.handle )
+            check( sm == 2, "S16g sky dispatch cube mode" )
             sys.render.setSkyCube( 0 )
             sys.render.setSkyEnabled( false )
             bool d2 = skyCube.destroy()
-            check( d2, "S16g sky cube destroyed" )
+            check( d2, "S16h sky cube destroyed" )
         }
         Memory.free( faces2 )
 

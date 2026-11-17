@@ -24,7 +24,7 @@
 /* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
  * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
 typedef char slr_gen_slot_check[
-    (SLR_GEN_EFFECT_COUNT * 2 + 1 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
+    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* GL 类型 / 常量（与 sl_rhi_gl.c 相同；ES 3.0 core 值一致）               */
@@ -438,8 +438,13 @@ static const char* FS_SKY_CUBE =
     "in vec2 vUv;\n"
     "out vec4 oCol;\n"
     "uniform highp samplerCube uCube;\n"
+    "uniform vec3 uCamFwd;\n"
+    "uniform vec3 uCamRight;\n"
+    "uniform vec3 uCamUp;\n"
+    "uniform vec2 uCamTan;\n"
     "void main(){\n"
-    "  vec3 dir = normalize(vec3(vUv.x * 2.0 - 1.0, vUv.y * 2.0 - 1.0, -1.0));\n"
+    "  vec3 dir = normalize(uCamFwd + uCamRight * (vUv.x * 2.0 - 1.0) * uCamTan.x\n"
+    "                          + uCamUp * (vUv.y * 2.0 - 1.0) * uCamTan.y);\n"
     "  oCol = vec4(texture(uCube, dir).rgb, 1.0);\n"
     "}\n";
 
@@ -517,7 +522,8 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
     if (!make_program(SLR_PROG_SKY,  VS_FULL,  FS_SKY))   return 0;
-    if (!make_program(SLR_PROG_SKY_CUBE, VS_FULL, FS_SKY_CUBE)) return 0;
+    /* SKY_CUBE 懒创建（同 gl.c：init 期创建的该程序渲染期不产出片段，
+     * 差分实证 2026-11-17——draw_sky_cube 首次调用时现场编译链接）*/
 
     /* v3.5 固化效果槽：5 效果 × 2 变体（固化 ESSL300 源运行期编译，
      * 与内建程序同一 make_program 路径——编译/链接失败同样致命）*/
@@ -556,7 +562,6 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
     s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
     s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
-    s_uni[SLR_PROG_SKY_CUBE].tex   = p_glGetUniformLocation(s_progs[SLR_PROG_SKY_CUBE], "uCube");
     s_uni[SLR_PROG_POST].src  = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSrc");
     s_uni[SLR_PROG_POST].bright = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uBrightness");
     s_uni[SLR_PROG_POST].sat    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSaturation");
@@ -585,8 +590,6 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
     p_glUseProgram(s_progs[SLR_PROG_POST]);
     p_glUniform1i(s_uni[SLR_PROG_POST].src, 0);
-    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
-    p_glUniform1i(s_uni[SLR_PROG_SKY_CUBE].tex, 0);
     p_glUseProgram(0);
 
     /* PerDraw UBO：块绑定 0，全局一次 */
@@ -1091,14 +1094,52 @@ static void gl_draw_sky(const float* tb)
 
 /* cubemap 天空（doc/13 §2.1 第二步）：状态处理与渐变天空一致；
  * cube 纹理走纹理单元 0 */
-static void gl_draw_sky_cube(void* tex)
+/* SKY_CUBE 程序（懒创建，见上——init 期创建的该程序渲染期不产出片段）*/
+static GLuint g_sky_cube_prog = 0;
+
+static GLint  g_sky_uni_fwd = -1;
+static GLint  g_sky_uni_right = -1;
+static GLint  g_sky_uni_up = -1;
+static GLint  g_sky_uni_tan = -1;
+
+static void gl_draw_sky_cube(void* tex, const float* cam11)
 {
     p_glDisable(GL_DEPTH_TEST);
     p_glDepthMask(GL_FALSE);
     p_glDisable(GL_BLEND);
     p_glActiveTexture(GL_TEXTURE0);
     p_glBindTexture(GL_TEXTURE_CUBE_MAP, (GLuint)(intptr_t)tex);
-    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
+    if (g_sky_cube_prog == 0)
+    {
+        GLuint vs = p_glCreateShader(GL_VERTEX_SHADER);
+        GLuint fs = p_glCreateShader(GL_FRAGMENT_SHADER);
+        g_sky_cube_prog = p_glCreateProgram();
+        p_glShaderSource(vs, 1, &VS_FULL, NULL);
+        p_glCompileShader(vs);
+        p_glShaderSource(fs, 1, &FS_SKY_CUBE, NULL);
+        p_glCompileShader(fs);
+        p_glAttachShader(g_sky_cube_prog, vs);
+        p_glAttachShader(g_sky_cube_prog, fs);
+        p_glLinkProgram(g_sky_cube_prog);
+        p_glDeleteShader(vs);
+        p_glDeleteShader(fs);
+        p_glUseProgram(g_sky_cube_prog);
+        p_glUniform1i(p_glGetUniformLocation(g_sky_cube_prog, "uCube"), 0);
+        g_sky_uni_fwd   = p_glGetUniformLocation(g_sky_cube_prog, "uCamFwd");
+        g_sky_uni_right = p_glGetUniformLocation(g_sky_cube_prog, "uCamRight");
+        g_sky_uni_up    = p_glGetUniformLocation(g_sky_cube_prog, "uCamUp");
+        g_sky_uni_tan   = p_glGetUniformLocation(g_sky_cube_prog, "uCamTan");
+        p_glUniform3f(g_sky_uni_fwd, 0.0f, 0.0f, -1.0f);
+        p_glUniform3f(g_sky_uni_right, 1.0f, 0.0f, 0.0f);
+        p_glUniform3f(g_sky_uni_up, 0.0f, 1.0f, 0.0f);
+        p_glUniform2f(g_sky_uni_tan, 1.0f, 1.0f);
+        p_glUseProgram(0);
+    }
+    p_glUseProgram(g_sky_cube_prog);
+    p_glUniform3f(g_sky_uni_fwd, cam11[0], cam11[1], cam11[2]);
+    p_glUniform3f(g_sky_uni_right, cam11[3], cam11[4], cam11[5]);
+    p_glUniform3f(g_sky_uni_up, cam11[6], cam11[7], cam11[8]);
+    p_glUniform2f(g_sky_uni_tan, cam11[9], cam11[10]);
     p_glBindVertexArray(s_meshes[2].vao);
     p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
     p_glBindVertexArray(0);

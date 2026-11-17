@@ -270,6 +270,18 @@ namespace SLang
             ret RenderPipeline.ffiSetSkyOn( this._handle, on )
         }
 
+        # setSkyCube(texHandle) —— cubemap 天空纹理句柄（doc/13 §2.1 第二步；
+        # 非 0 且 GL/GLES 后端时阶段 7 天空绘制改走 cube 采样，0 回退渐变）。
+        # texHandle 用 RenderTexture.createCubeTexture 产物的 handle。
+        public bool setSkyCube( Int64 texHandle )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetSkyCube( this._handle, texHandle )
+        }
+
         # setPostEffect(enable, brightness, saturation, vignette)
         #   enable=0 纯拷贝；vignette 0..1 暗角强度
         public bool setPostEffect( Int32 enable, Float32 brightness, Float32 saturation, Float32 vignette )
@@ -720,6 +732,38 @@ namespace SLang
         static bool ffiSetSkyOn( Int64 p, Int32 on )
         {
             ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_sky_cube", "i64,i64->i32" )
+        static Int32 ffiSetSkyCube( Int64 p, Int64 tex )
+        {
+            ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_sky_last_mode", "i64->i32" )
+        static Int32 ffiSkyLastMode( Int64 pipe )
+        {
+            ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_sky_draw_diag", "i64->i32" )
+        static Int32 ffiSkyDrawDiag( Int64 pipe )
+        {
+            ret 0
+        }
+
+        # skyDrawDiag(pipe) —— 诊断：最近一次 draw_sky_cube 的 glGetError
+        # （-1 = 未调用过；带 pipe 形参规避零参绑定）
+        public Int32 skyDrawDiag( Int64 pipe )
+        {
+            ret RenderPipeline.ffiSkyDrawDiag( pipe )
+        }
+
+        # skyLastMode(pipe) —— 诊断：最近一帧天空绘制模式（0=未画 1=渐变
+        # 2=cube；零参 DllStaticImport 无先例会静默丢成员——带 pipe 形参）
+        public Int32 skyLastMode( Int64 pipe )
+        {
+            ret RenderPipeline.ffiSkyLastMode( pipe )
         }
 
         @DllStaticImport( "sl_render_lib", "slr_pipeline_set_post", "i64,i32,f32,f32,f32->bool" )

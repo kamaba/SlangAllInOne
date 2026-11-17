@@ -1,6 +1,6 @@
 # SimGameEngine · 16 Unity 资源导入与导出（含 FBX 与通用 HLSL）
 
-> 状态：Unity 导出器【已落盘，端到端已验证】；JSON schema【有参考实现】；FBX 转换器 / 通用 HLSL 链路【设计稿】；引擎侧完整导入器【设计稿，最小消费已通】。
+> 状态：Unity 导出器【已落盘，端到端已验证】；JSON schema【有参考实现】；FBX 转换器 / 通用 HLSL 链路【设计稿】；**引擎侧完整 SceneImporter v1【已落盘 2026-11-17】**（manifest/scene.json → 建树挂组件，`SimImportTest` 34 项；mesh.bin 深解析仍走 SimSceneTest 最小消费路径）。
 > 前置阅读：`01-总体架构与边界.md`、`04-渲染资源模型.md`、`05-合批与RenderObject提交.md`。
 > 关联实现：`SlangAllInOne/unity/package/com.slang.unity/Editor/SlangSceneExporter.cs`（导出器）、`SlangAllInOne/SLangCore/test/Other/SimSceneTest/`（引擎侧消费工程）、`SlangAllInOne/unity/README.md`、`SlangAllInOne/md/unity3d/`、`../Render/doc/03-Module-Design.md` §4.4（Hlsl 层）、`../Render/doc/08-RHI-Backends.md`（四后端着色语言）。
 
@@ -171,29 +171,27 @@ Render 四后端的着色语言现状（`Render/doc/08` §表）：
 - `anim_<id>.json`：轨道 keyframe，easing 导出侧线性化采样；
 - 贴图导 PNG 原文件 + 元数据；Unity 内 DXT/ASTC 压缩不影响导出。
 
-## 5. 引擎侧导入器【设计稿】
+## 5. 引擎侧导入器【已落盘 v1（2026-11-17），`SceneImporter.sl` + `ImportReport.sl`】
 
 ```sl
-public class SceneImporter
-{
-    public static Scene load( string exportDir )     # 读 manifest → 注册资源 → 建树
-}
+SceneImporter imp = SceneImporter()
+ImportReport rep = imp.loadDir( exportDir )          # manifest + scene.json → 建树
+ImportReport rep2 = imp.parseCore( 1, sceneText )    # 核心：文本直解析（可脱离文件测试）
 ```
 
-流程：
+v1 落盘形态：
 
-```
-1. 读 manifest.json，校验版本与 md5
-2. 注册资源表：mesh / material / texture / anim（第 04 章生命周期）
-3. shader 解析：固化效果 → 直用；hlsl → 查 shadercache，未命中且后端支持才编译
-4. 读 scene.json，按 parent 顺序建 GameObject 树（第 02 章）
-5. 逐节点挂组件：MeshRef / MaterialRef / Collider / Rigidbody / Camera / Light / SpriteRenderer
-6. 交还 Application：正常走第 09 章帧序与第 05 章合批
-```
+| 项 | 说明 |
+|---|---|
+| 建树 | 两遍法：Pass A 全量 `scene.createObject`（顺序无关），Pass B `setParent` 修正层级（parent=0 根；父 id miss → skipped 计数） |
+| Transform | `localPosition/localScale` + `localRotation` 四元数经统一版 `setPositionAndRotation` 直传（Merge 版支持非纯 Z 旋转）；缺省 [0,0,0,1]/[1,1,1] |
+| 组件映射 | MeshFilter→MeshRef(MESH_CUSTOM，slot 4..7 轮转 + meshIds 登记)；MeshRenderer→MaterialData(name=mat id)+MaterialRef(renderQueue/castShadow)；Rigidbody(mass/useGravity)；BoxCollider(center/size/isTrigger)；SphereCollider(center/radius/isTrigger)；SpriteRenderer；Camera/Light 引擎无对应组件 → 计数登记；未识别 type → skippedCount |
+| version 守卫 | manifest 与 scene 双重校验，非 1 明确报错不猜（§5 原则） |
+| 计数统计 | ImportReport：node/root/mesh/material/collider/rigidbody/camera/light/sprite/skipped + meshIdAt(i) |
 
-- JSON 解析用标准库 Json（用例见 `SLangCore/test/ExpendTest`，API 以库实际签名为准）；
+- JSON 解析用标准库 Json（`JsonValue.parse/select/children/asXxx(默认值)`，用例 `SLangCore/test/Other/JsonTest`）；
 - 导入器不依赖 Unity 与 FBX——转换与导出都发生在资产侧；
-- 遇到不认识的 `version` 明确报错，不猜。
+- mesh `<id>.bin` 顶点深解析仍走 SimSceneTest 最小消费路径（uploadMesh 通道），导入器只登记 meshIds（资源管线 v2 接管）。
 
 ## 6. 坐标系与单位约定
 
@@ -249,6 +247,9 @@ Unity 2023.2.20f1（HDRP 工程）export-cube →
 12. **SL 侧：不要显式 `import Core;`**——Core 类型（JsonValue 等）随引用自动可见，显式导入会触发 MetaCore 解析链异常（节点 not found / 表达式 604 连锁）。
 13. **SL 侧：跨模块对象方法不要链式调用**（`a.b().c()` 会炸 MetaCore），一律拆单步局部变量；`ret` 不要直接携带跨模块方法调用。
 14. **SL 侧：`UInt8Array.length` 返回容量语义**（实测 512，文件实际 934B）——二进制长度以 json 声明推导，不要信 `.length`；`File.readAllBytes` 是 throws 方法必须 try/catch。
+15. **`tr` 是 Transience 保留字且引发元崩溃**（2026-11-17 SceneImporter 实证，第 5 次踩）：变量名 `tr` → Transience 语句 → `MetaTRStatements` ctor null 引用（`root is Null` + ParseStatements 失败，无文件行号指向，极难定位）——命名避让 `tr`（keywords.md 总表）。
+16. **`error`/`errmsg` 是 Result 保留成员名**（`error` 字段编译报 MetaCoreMemberNameReserved）——改名 `lastError`（RenderSystem 先例）；`def` 也是不支持关键字（Python 词，lexer 报 TokenLexerUnsupportedKeyword）。
+17. **`ret` 不携带内联构造表达式 / 跨模块调用；方法调用表达式不作实参；跨模块链拆单步**（§8.13 家族在导入器全量复现：`node.select("x").asString()` 链、`jsonVec3(node.select(...))` 嵌套实参、`ret Float32_3(...)` 构造——一律先落局部变量）；文件存在性用 `File.exists` 预检 + 直读（try/catch 形态见 §8.14 / SimSceneTest）。
 
 ## 9. 变更记录
 
@@ -257,3 +258,4 @@ Unity 2023.2.20f1（HDRP 工程）export-cube →
 | 2026-11-16 | v0.1 | 初版：Unity 原生格式解析判定、Editor 导出器落点、JSON schema、引擎导入器 |
 | 2026-11-16 | v0.2 | 引入 FBX SDK 转换器路径（ufbx 起步，官方 SDK 备选，统一 schema）；shader 升级为通用 HLSL 源文件（三态映射 + DXC 编译链 + 跨后端如实边界 + 编译缓存） |
 | 2026-11-16 | v0.3 | 导出器落地（`SlangSceneExporter.cs` + flag `export-scene`/`export-cube`），SimSceneTest 端到端验证 PASS（Unity Cube → SLangRender 渲染 937 帧）；记录 SL 侧解析链实证坑（§8.12-8.14） |
+| 2026-11-17 | v0.4 | **引擎侧完整 SceneImporter v1 落盘**（§5）：`SceneImporter`（loadDir/parseCore 两入口，两遍建树 + 组件映射 + version 双守卫）+ `ImportReport`（统计 + meshIds 登记）；`SimImportTest` 34 项（第 11 套），十一套 **407 项全绿**；实证坑落 §8.15-8.17（`tr` Transience 元崩溃 / `error`/`def` 保留名 / 链式与嵌套实参全量规避形态） |

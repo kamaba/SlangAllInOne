@@ -4,21 +4,21 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 
 增加
 macOs /iOS的环境 
-编译android的环境
 
-1. nodejs的接入 v8js  C:\Program Files\nodejs   需要使用nodejs里边的js解析，然后 可以仿制javascript_quickjs来参考制作 但要使用typescript的语言类型
-3. 接一个asm 
+1. 接一个asm 
+2. Php的接入
+3. Go语言的接入
+
 5. R语言的接入
-6. Go语言的接入
-7. Php的接入
 9. 接入dart 
 10. 接入kotlin
 
 
 配置里边增加是否打开Console的配置文件 。
 引擎层增加材质球的显示 显示27种不同材质的显示。
-增加shape库  增加固定的shape的形状库。
+增加shape库  增加固定的shape的形状库。  可以 参考这个  D:\project\com\virtualhuman_application\Library\PackageCache\com.unity.probuilder@5.2.3   这个现在还没有提供一些基础数据吧，你把这个里边已经有的东西 然后同步写到shape的固定开关库里边吧
 后处理的文档貌似还没写吧
+UI的话，使用 FairyGUI 的编辑器，然后 在引擎的2d渲染上边再包装一层，然后显示UI
 
 QTCodeEditor
 1. 解决方案区，没有右键区

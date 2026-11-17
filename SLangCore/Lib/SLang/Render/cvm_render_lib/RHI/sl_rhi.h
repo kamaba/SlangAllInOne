@@ -164,6 +164,18 @@ void (*draw_sky)(const float* top_bottom);
      * 不参与逐帧 enter/exit；NULL = 后端无亲和性要求（防御性跳过）。*/
     int  (*thread_acquire)(void);
     int  (*thread_release)(void);
+
+    /* ---- cubemap（doc/13 §2.1 第一步，2026-11-17）----
+     * faces6 = 6 面 RGBA8 **top-down** 连续块（每面 w*h*4；面序 GL 约定
+     * +X,-X,+Y,-Y,+Z,-Z；行翻转由注册表层逐面完成，本层原样上传）。
+     * 返回后端纹理句柄（0 = 失败）。D3D11/VK 槽 NULL（调用点判空跳过，
+     * P6 draw_sky 同款）。cube 采样着色器变体（gen 头）与描述符槽
+     * 消费随专项后续步。 */
+    void* (*texture_create_cube)(int w, int h, const unsigned char* faces6);
+    /* cubemap 天空绘制（doc/13 §2.1 第二步）：tex = texture_create_cube
+     * 产物；全屏 quad 按视线采样 cube（GL/GLES 实现，D3D11/VK NULL）。
+     * 状态处理与 draw_sky 一致（关深度/混合，画完恢复）。 */
+    void (*draw_sky_cube)(void* tex);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

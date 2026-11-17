@@ -70,6 +70,24 @@
             ret RenderTexture( h, 0, 0 )
         }
 
+        # createCubeTexture(ptr, w, h) —— cubemap 纹理（doc/13 §2.1 第一步）
+        # ptr 指向 6 面 RGBA8 top-down 连续块（每面 w*h*4；面序 GL 约定
+        # +X,-X,+Y,-Y,+Z,-Z）。GL/GLES 后端落地；D3D11/VK 返回 null。
+        # cube 采样着色器变体随专项后续步。
+        public static RenderTexture createCubeTexture( Int64 ptr, Int32 width, Int32 height )
+        {
+            if ptr == 0 || width <= 0 || height <= 0
+            {
+                ret null
+            }
+            Int64 h = RenderTexture.ffiTextureCreateCube( width, height, ptr )
+            if h == 0
+            {
+                ret null
+            }
+            ret RenderTexture( h, width, height )
+        }
+
         public bool destroy()
         {
             if this._handle == 0
@@ -93,6 +111,12 @@
 
         @DllStaticImport( "sl_render_lib", "slr_texture_create_rgba", "i32,i32,ptr->i64" )
         static Int64 ffiTextureCreateRgba( Int32 w, Int32 h, Int64 dataPtr )
+        {
+            ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_texture_create_cube", "i32,i32,ptr->i64" )
+        static Int64 ffiTextureCreateCube( Int32 w, Int32 h, Int64 dataPtr )
         {
             ret 0
         }

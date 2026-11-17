@@ -24,6 +24,11 @@ Project
         # jvm.dll 运行期），未装 JDK 时运行期报错退出；装机后恢复这两行。
         #JavaTest.fun();
 
+        # TypeScriptNodeV8Test：@typescript_nodev8 块（Node.js V8 引擎 + TypeScript 类型擦除；
+        # V/J/D/S 通道 + TS 语法 + JS 异常桥接 SL try-catch + 异常后栈恢复）。
+        # 前置：本机 node.exe（PATH）；用例集自 test\TypeScriptNodeV8\Main.sl 移植。
+        TypeScriptNodeV8Test.fun();
+
         # CPlusClangTest：@cplus_clang 块（Front 导出期经 clang++/cl 合并编译成
         # SLCpp.dll，labelExec 固定原型派发）+ 块内 SLCPP_EXPORT 导出函数
         # FFI 直调（@DllImport 别名绑定 + slffi 契约校验）。

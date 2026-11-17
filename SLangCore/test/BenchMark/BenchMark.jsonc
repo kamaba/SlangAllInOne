@@ -39,6 +39,7 @@
       { "path": "CSharpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "JavaBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "JsBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "TypeScriptBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "PythonBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
@@ -99,13 +100,33 @@
       ]
     },
     "javascript_quickjs": {
-      "name": "javascript_runtime_use_quickjs_engine",
+      "name": "typescript_runtime_use_quickjs_engine",
       "version": "0.1.0",
       "path": "plugin/javascript_quickjs",
       "enabled": true,
       "abi": 1,
       "prefix": "sl_javascript_quickjs_",
       "lib": "../../../../plugin/javascript_quickjs/package/windows/cvm_javascript_quickjs.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // typescript_nodev8：TypeScriptBench 13 项共享基准经此插件执行（Node.js V8 引擎
+    // + TypeScript 原生类型擦除，与 QuickJS 解释执行对照）。Front 导出期免
+    // 编译部署 <libDir>\scripts\Entry_N.mts（块产物 scripts\ 共享部署位，
+    // 后编译覆盖——运行 BenchMark 前须最后编译本工程，同 SLCpp.dll /
+    // java classes / pysrc 行为）。运行时依赖本机 node.exe（PATH），
+    // 无则块运行期报 -102（onUnavailable=warn 不阻断）。
+    "typescript_nodev8": {
+      "name": "typescript_runtime_use_nodejs_v8_engine",
+      "version": "0.1.0",
+      "path": "plugin/typescript_nodev8",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_typescript_nodev8_",
+      "lib": "../../../../plugin/typescript_nodev8/package/windows/cvm_typescript_nodev8.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

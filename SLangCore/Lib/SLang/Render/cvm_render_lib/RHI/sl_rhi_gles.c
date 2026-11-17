@@ -24,7 +24,7 @@
 /* 固化头槽位一致性编译期检查：枚举 gen 段长度必须正好覆盖 SLR_GEN_SETS
  * 全表（不匹配 = 枚举与固化头版本脱节，编译期即爆）*/
 typedef char slr_gen_slot_check[
-    (SLR_GEN_EFFECT_COUNT * 2 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
+    (SLR_GEN_EFFECT_COUNT * 2 + 1 == SLR_PROG_COUNT - SLR_PROG_GEN_BASE) ? 1 : -1];
 
 /* ===================================================================== */
 /* GL 类型 / 常量（与 sl_rhi_gl.c 相同；ES 3.0 core 值一致）               */
@@ -63,6 +63,9 @@ typedef ptrdiff_t   GLsizeiptr;
 #define GL_DYNAMIC_DRAW           0x88E8
 #define GL_UNIFORM_BUFFER         0x8A11
 #define GL_TEXTURE_2D             0x0DE1
+#define GL_TEXTURE_CUBE_MAP             0x8513
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X  0x8515
+#define GL_TEXTURE_WRAP_R               0x8072
 #define GL_TEXTURE0               0x84C0
 #define GL_TEXTURE1               0x84C1
 #define GL_TEXTURE2               0x84C2   /* N2a：shadow depth 采样单元 */
@@ -427,6 +430,19 @@ static const char* FS_POST =
     "  oCol = vec4(c, 1.0);\n"
     "}\n";
 
+/* doc/13 §2.1 第二步：cubemap 天空——全屏 quad 视线方向采样（ESSL；
+ * 正交相机朝 -Z：dir = normalize(x, y, -1)）*/
+static const char* FS_SKY_CUBE =
+    "#version 300 es\n"
+    "precision highp float;\n"
+    "in vec2 vUv;\n"
+    "out vec4 oCol;\n"
+    "uniform highp samplerCube uCube;\n"
+    "void main(){\n"
+    "  vec3 dir = normalize(vec3(vUv.x * 2.0 - 1.0, vUv.y * 2.0 - 1.0, -1.0));\n"
+    "  oCol = vec4(texture(uCube, dir).rgb, 1.0);\n"
+    "}\n";
+
 /* P6 渐变天空：uv.y 0(底)->1(顶) 线性插值（vUv 原点在左下）*/
 static const char* FS_SKY =
     "#version 300 es\n"
@@ -501,6 +517,7 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
     if (!make_program(SLR_PROG_SKY,  VS_FULL,  FS_SKY))   return 0;
+    if (!make_program(SLR_PROG_SKY_CUBE, VS_FULL, FS_SKY_CUBE)) return 0;
 
     /* v3.5 固化效果槽：5 效果 × 2 变体（固化 ESSL300 源运行期编译，
      * 与内建程序同一 make_program 路径——编译/链接失败同样致命）*/
@@ -539,6 +556,7 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
     s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
     s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
+    s_uni[SLR_PROG_SKY_CUBE].tex   = p_glGetUniformLocation(s_progs[SLR_PROG_SKY_CUBE], "uCube");
     s_uni[SLR_PROG_POST].src  = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSrc");
     s_uni[SLR_PROG_POST].bright = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uBrightness");
     s_uni[SLR_PROG_POST].sat    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSaturation");
@@ -567,6 +585,8 @@ static int gl_make_shared(void)
     p_glUniform1i(s_uni[SLR_PROG_BLIT].src, 0);
     p_glUseProgram(s_progs[SLR_PROG_POST]);
     p_glUniform1i(s_uni[SLR_PROG_POST].src, 0);
+    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
+    p_glUniform1i(s_uni[SLR_PROG_SKY_CUBE].tex, 0);
     p_glUseProgram(0);
 
     /* PerDraw UBO：块绑定 0，全局一次 */
@@ -825,6 +845,30 @@ static void gl_texture_destroy(void* tex)
     if (t) p_glDeleteTextures(1, &t);
 }
 
+/* cubemap：faces6 = 6 面 RGBA8 bottom-up 连续块（注册表层已逐面翻行）。
+ * GLES 纹理函数与 GL 同 procs（sl_gl_procs.h 共用）；CUBE_MAP 常量
+ * GLES2 起可用 */
+static void* gl_texture_create_cube(int w, int h, const unsigned char* faces6)
+{
+    GLuint t = 0;
+    int face;
+    p_glGenTextures(1, &t);
+    p_glBindTexture(GL_TEXTURE_CUBE_MAP, t);
+    for (face = 0; face < 6; ++face)
+    {
+        const unsigned char* f = faces6 + (size_t)face * (size_t)w * (size_t)h * 4;
+        p_glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, (GLint)GL_RGBA8,
+                       w, h, 0, GL_RGBA, 0x1401, f);
+    }
+    p_glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (GLint)GL_LINEAR);
+    p_glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, (GLint)GL_LINEAR);
+    p_glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_EDGE);
+    p_glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_EDGE);
+    p_glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, (GLint)GL_CLAMP_TO_EDGE);
+    p_glBindTexture(GL_TEXTURE_2D, 0);
+    return (void*)(intptr_t)t;
+}
+
 /* ===================================================================== */
 /* 管线 pass（与 GL 后端逐行同构：GL 语义即 GLES 语义）                     */
 /* ===================================================================== */
@@ -1040,6 +1084,25 @@ static void gl_draw_sky(const float* tb)
     p_glBindVertexArray(s_meshes[2].vao);
     p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
     p_glBindVertexArray(0);
+    p_glUseProgram(0);
+    p_glDepthMask(GL_TRUE);
+    p_glEnable(GL_DEPTH_TEST);
+}
+
+/* cubemap 天空（doc/13 §2.1 第二步）：状态处理与渐变天空一致；
+ * cube 纹理走纹理单元 0 */
+static void gl_draw_sky_cube(void* tex)
+{
+    p_glDisable(GL_DEPTH_TEST);
+    p_glDepthMask(GL_FALSE);
+    p_glDisable(GL_BLEND);
+    p_glActiveTexture(GL_TEXTURE0);
+    p_glBindTexture(GL_TEXTURE_CUBE_MAP, (GLuint)(intptr_t)tex);
+    p_glUseProgram(s_progs[SLR_PROG_SKY_CUBE]);
+    p_glBindVertexArray(s_meshes[2].vao);
+    p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
+    p_glBindVertexArray(0);
+    p_glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     p_glUseProgram(0);
     p_glDepthMask(GL_TRUE);
     p_glEnable(GL_DEPTH_TEST);
@@ -1437,6 +1500,9 @@ static const SlrRhi s_rhi_gles =
     /* N3 线程亲和（context 移交）*/
     gl_thread_acquire,
     gl_thread_release,
+    /* doc/13 §2.1 cubemap（GLES 后端）*/
+    gl_texture_create_cube,
+    gl_draw_sky_cube,
 };
 
 const SlrRhi* slr_rhi_gles(void) { return &s_rhi_gles; }

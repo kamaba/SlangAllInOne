@@ -5,8 +5,10 @@
 # RenderObject 同步 / 相机灯光下发，doc/09 §2 步骤 7~10）随 P2 合批器
 # 落地后接入；当前 tick 为无头循环（CI / 烘焙 / 逻辑验证可用）。
 #
-# 宿主接入（doc/09 §3）：QT QTimer(16) 回调里调 app.tick(0.016f)；
-# 命令行 / 无头循环直接 while 调 tick。引擎层不绑定窗口系统。
+# 宿主接入（doc/09 §3）：QT QTimer(16) 回调里调 app.tick(-1)（引擎用 C
+# 单调钟自动实测帧间隔——推荐；传正数秒 = 旧固定 dt 形态，仍兼容）。
+# 引擎层不绑定窗口系统。时间推进状态机 = time/TimeService（doc/18），
+# 脚本读数走 EngineTime static 快照（deltaTime 字段保留为兼容镜像）。
 import Std;
 import Math;
 import SLangRender;
@@ -24,8 +26,11 @@ public class Application
     public Int32 maxFixedSteps = 5
     # 单帧 dt 上限（切后台回来一帧巨量 dt 裁剪）
     public Float32 maxDeltaTime = 0.1f
-    # 上帧实际推进量（脚本可读；替代 Time.deltaTime 的 v1 形态）
+    # 上帧实际推进量（脚本可读；兼容镜像 = EngineTime.deltaTime）
     public Float32 deltaTime = 0.0f
+    # 时间服务（doc/18）：帧推进状态机 + 固定步长累加器 + 域时钟
+    # （render/physics/logic/audio/video 挂接对齐）。init 时创建。
+    public TimeService time = null
     # 碰撞系统（P3）：null = 禁用；赋实例后每个固定步自动 step（Enter/
     # Stay/Exit 必须在固定步长判定——doc/11 §4.3）
     public CollisionSystem collisionSystem = null
@@ -37,7 +42,6 @@ public class Application
     # 再收集批次——doc/07 §3.2 关键顺序）
     public AnimSystem animSystem = null
 
-    Float32 _fixedAcc = 0.0f
     List<Behaviour> _frameBehaviours = null
 
     # ── 构造 / 生命周期 ──────────────────────────────────
@@ -50,17 +54,22 @@ public class Application
         this.maxFixedSteps = 5
         this.maxDeltaTime = 0.1f
         this.deltaTime = 0.0f
-        this._fixedAcc = 0.0f
+        this.time = null
         this.collisionSystem = null
         this.physicsSystem = null
         this.animSystem = null
         this._frameBehaviours = List<Behaviour>(64)
     }
 
-    # 初始化：建默认场景（渲染后端由调用方按需初始化，本类不绑定 Render）
+    # 初始化：建默认场景 + 时间服务（渲染后端由调用方按需初始化，本类不绑定 Render）
     public bool init()
     {
         this.activeScene = Scene( "Main" )
+        if this.time == null
+        {
+            this.time = TimeService()
+        }
+        EngineTime.service = this.time
         ret true
     }
 
@@ -69,28 +78,27 @@ public class Application
     public void loadScene( Scene s )
     {
         this.activeScene = s
-        this._fixedAcc = 0.0f
+        if this.time != null
+        {
+            this.time.resetAccumulators()
+        }
         this._frameBehaviours.clear()
     }
 
     # ── 一帧（doc/09 §2 无头子集：1~6 + 11 步）──────────
+    # rawDt：正数秒 = 旧固定 dt 形态（兼容）；-1 = 引擎用 C 单调钟自动实测
+    # （推荐宿主形态——真实帧间隔贯穿逻辑/渲染/音频/视频/物理）。
     public void tick( Float32 rawDt )
     {
-        # 1) 时间推进：上限裁剪 + 暂停 + timeScale
-        Float32 dt = rawDt
-        if dt > this.maxDeltaTime
+        # 1) 时间推进（doc/18 TimeService：裁剪/暂停/timeScale/快照/固定步长累加）
+        if this.time == null
         {
-            dt = this.maxDeltaTime
+            this.time = TimeService()
+            EngineTime.service = this.time
         }
-        if dt < 0.0f
-        {
-            dt = 0.0f
-        }
-        if this.paused
-        {
-            dt = 0.0f
-        }
-        dt = dt * this.timeScale
+        this.time.syncConfig( this.paused, this.timeScale, this.fixedDt, this.maxDeltaTime, this.maxFixedSteps )
+        this.time.advanceFrame( rawDt )
+        Float32 dt = this.time.deltaTime
         this.deltaTime = dt
 
         if this.activeScene == null
@@ -102,10 +110,8 @@ public class Application
         this._frameBehaviours.clear()
         this.activeScene.collectBehaviours( this._frameBehaviours )
 
-        # 3) fixedUpdate ×N（固定步长累加器）
-        Float32 acc = this._fixedAcc + dt
-        Int32 steps = 0
-        while acc >= this.fixedDt && steps < this.maxFixedSteps
+        # 3) fixedUpdate ×N（固定步长累加器，doc/18 TimeService 承载）
+        while this.time.pendingFixedSteps > 0
         {
             Int32 i = 0
             Int32 n = this._frameBehaviours.length
@@ -128,14 +134,8 @@ public class Application
             {
                 this.collisionSystem.step( this.activeScene )
             }
-            acc = acc - this.fixedDt
-            steps = steps + 1
+            this.time.consumeFixedStep()
         }
-        if steps >= this.maxFixedSteps && acc > this.fixedDt
-        {
-            acc = 0.0f
-        }
-        this._fixedAcc = acc
 
         # 4) start（首次）+ update：按树序（dt=0 / paused 时逻辑不推进）
         if dt > 0.0f
@@ -178,6 +178,10 @@ public class Application
         # 6) 变换刷新（一致性入口）
         this.activeScene.updateTransforms()
 
+        # 7) 帧尾固定步插值系数（渲染侧读 EngineTime.fixedAlpha 做
+        #    上一固定步状态与当前状态间的插值——物理/渲染解耦另一半）
+        this.time.updateFixedAlpha()
+
         # 11) 帧尾：延迟销毁收口
         this.activeScene.processDestroys()
 
@@ -207,7 +211,10 @@ public class Application
             this.activeScene.processDestroys()
         }
         this.activeScene = null
-        this._fixedAcc = 0.0f
+        if this.time != null
+        {
+            this.time.resetAccumulators()
+        }
         this._frameBehaviours.clear()
         this.deltaTime = 0.0f
     }

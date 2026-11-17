@@ -2505,6 +2505,9 @@ static const SlrRhi s_rhi_vk =
     /* N3 线程亲和（无 context 绑定要求，no-op）*/
     vk_thread_nop,
     vk_thread_nop,
+    /* doc/13 §2.1 cubemap：VK 后端未实现（调用点判 NULL 跳过）*/
+    NULL,
+    NULL,
 };
 
 const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

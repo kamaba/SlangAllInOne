@@ -23,6 +23,16 @@
 
 SlrPipeline s_pipes[SLR_MAX_PIPES];
 
+/* doc/13 §2.1 诊断：最近一帧天空绘制模式（0=未画 1=渐变 2=cube），
+ * slr_sky_last_mode 读取（C printf 跨 VM 不可靠，改状态通道） */
+static int s_sky_last_mode = 0;
+
+int slr_sky_last_mode(int64_t pipe)
+{
+    (void)pipe;
+    return s_sky_last_mode;
+}
+
 /* ===================================================================== */
 /* 数学辅助（管线专用）                                                    */
 /* ===================================================================== */
@@ -187,6 +197,7 @@ int64_t slr_pipeline_create(int w, int h)
             p->sky_on = 0;
             p->sky_top[0] = 0.0f;    p->sky_top[1] = 0.0f;    p->sky_top[2] = 0.0f;
             p->sky_bottom[0] = 0.0f; p->sky_bottom[1] = 0.0f; p->sky_bottom[2] = 0.0f;
+            p->sky_cube = 0;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
             if (!pipeline_make_targets(p, w, h))
             {
@@ -299,6 +310,16 @@ int slr_pipeline_set_sky_on(int64_t h, int on)
     SlrPipeline* p = pipe_from_handle(h);
     if (!p) { set_error(SLR_E_PIPELINE); return 0; }
     p->sky_on = on ? 1 : 0;
+    return 1;
+}
+
+/* doc/13 §2.1 第二步：cubemap 天空纹理句柄（非 0 且后端支持 draw_sky_cube
+ * 时，阶段 7 天空绘制改走 cube 采样路径；0 = 回退渐变路径） */
+int slr_pipeline_set_sky_cube(int64_t h, int64_t tex)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    p->sky_cube = tex;
     return 1;
 }
 
@@ -949,12 +970,39 @@ static int stage_render_shader_chunks(SlrPipeline* p)
                             p->h, c->clear_flags, c->clear_color);
         /* P6 渐变天空：清屏后、物体绘制前画全屏渐变（无深度写入），
          * 仅当相机确实清了颜色位才画（避免叠加在未清的残影上）*/
-        if (p->sky_on && (c->clear_flags & SLR_CLEAR_COLOR) && g_rhi->draw_sky)
+        if (p->sky_on && (c->clear_flags & SLR_CLEAR_COLOR))
         {
-            float tb[6];
-            tb[0] = p->sky_top[0];    tb[1] = p->sky_top[1];    tb[2] = p->sky_top[2];
-            tb[3] = p->sky_bottom[0]; tb[4] = p->sky_bottom[1]; tb[5] = p->sky_bottom[2];
-            g_rhi->draw_sky(tb);
+            if (p->sky_cube && g_rhi->draw_sky_cube)
+            {
+                /* doc/13 §2.1 第二步：cubemap 天空（GL/GLES）——句柄解析
+                 * 失败静默回退渐变（不报错不打断帧） */
+                SlrTexRes* ct = tex_from_handle(p->sky_cube);
+                if (ct) { g_rhi->draw_sky_cube(ct->rhi_tex); s_sky_last_mode = 2; }
+                else if (g_rhi->draw_sky)
+                {
+                    float tb[6];
+                    tb[0] = p->sky_top[0];    tb[1] = p->sky_top[1];    tb[2] = p->sky_top[2];
+                    tb[3] = p->sky_bottom[0]; tb[4] = p->sky_bottom[1]; tb[5] = p->sky_bottom[2];
+                    g_rhi->draw_sky(tb);
+                    s_sky_last_mode = 1;
+                }
+            }
+            else if (g_rhi->draw_sky)
+            {
+                float tb[6];
+                tb[0] = p->sky_top[0];    tb[1] = p->sky_top[1];    tb[2] = p->sky_top[2];
+                tb[3] = p->sky_bottom[0]; tb[4] = p->sky_bottom[1]; tb[5] = p->sky_bottom[2];
+                g_rhi->draw_sky(tb);
+                s_sky_last_mode = 1;
+            }
+            else
+            {
+                s_sky_last_mode = 0;
+            }
+        }
+        else
+        {
+            s_sky_last_mode = 0;
         }
         g_rhi->set_state(0);
         while (i < end)

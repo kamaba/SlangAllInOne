@@ -1,0 +1,84 @@
+{
+  "project": {
+    "name": "Test",
+    "desc": "SimGameEngine unified test harness - fourteen suites (Engine/Batch/Collision/Module/Systems/Ffi/Physics/Anim/2D/Volume/Import/Gjk/Shape/Time) in one project, suite selection via Test.runSuite constant (0=all, 1..14=single)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 7,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  // 测试包自带 C 库构建 + 预载：引擎 slb 引用不透传 vmDllImports（P2 同款
+  // 透传缺口），消费方需在 references 之外自行声明；MSBuild 构建后 dll 落
+  // 本测试包目录，cvm 加载即预载 → FFI 绑定生效
+  "dllImports":
+  [
+    { "path": "sl_sim_engine_lib.dll", "name": "sl_sim_engine_lib", "alias": "sl_sim_engine_lib", "static": "sl_sim_engine_lib" }
+  ],
+  "vmDlls": [
+    { "project": "../cvm_sim_engine_lib/cvm_sl_engine_lib.vcxproj", "name": "sl_sim_engine_lib.dll", "configuration": "Debug", "platform": "x64" }
+  ],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      // 套件源码在前（被 Test.sl 依赖），入口最后
+      { "path": "suites/SimEngineTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 1 },
+      { "path": "suites/SimBatchTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 2 },
+      { "path": "suites/SimCollisionTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 3 },
+      { "path": "suites/SimModuleTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 4 },
+      { "path": "suites/SimSystemsTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 5 },
+      { "path": "suites/SimFfiTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 6 },
+      { "path": "suites/SimPhysicsTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 7 },
+      { "path": "suites/SimAnimTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 8 },
+      { "path": "suites/Sim2DTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimVolumeTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimImportTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimGjkTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimShapeTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimTimeTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "Test.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 10 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    // 顺序规则：Core/Std/Math 必须在最前（doc/10 §1.3，跨模块静态 mangle 根因）
+    { "path": "../../../../Lib/Core", "name": "Core" },
+    { "path": "../../../../Lib/Std", "name": "Std" },
+    { "path": "../../../../Lib/Math", "name": "Math" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
+    // SimModuleTest/SimSystemsTest 需要 Render/Audio（不使用者无影响）
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangRender/SLangRender.module.json", "name": "SLangRender" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangAudio/SLangAudio.module.json", "name": "SLangAudio" }
+  ],
+  "struct": [
+  ],
+  "export": {
+    "moduleName": "Test",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 2,
+    "includeMetadata": true
+  }
+}

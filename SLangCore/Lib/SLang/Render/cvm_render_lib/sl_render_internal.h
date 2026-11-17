@@ -91,7 +91,10 @@ enum
      * 零编译）；VK 降级映射 PFLAT/PTEX（SPIR-V 未含光照，绘制不报错
      * 仅无该效果）。*/
     SLR_PROG_GEN_BASE,
-    SLR_PROG_COUNT = SLR_PROG_GEN_BASE + 10   /* 10 = SLR_GEN_EFFECT_COUNT*2 */
+    /* doc/13 §2.1 第二步：cubemap 天空（全屏 quad 按视线方向采样 cube；
+     * 尾部追加不动既有槽序——gen 固化槽检查宏同步 +1）*/
+    SLR_PROG_SKY_CUBE,
+    SLR_PROG_COUNT = SLR_PROG_GEN_BASE + 11   /* 10 = SLR_GEN_EFFECT_COUNT*2，+1 = SKY_CUBE */
 };
 
 /* v3.5 固化槽位寻址：效果 0..4 × 变体 0=TEX / 1=FLAT，
@@ -205,7 +208,7 @@ typedef struct
 /* ===================================================================== */
 /* 资源结构                                                                */
 /* ===================================================================== */
-typedef struct { int used, w, h; void* rhi_tex; } SlrTexRes;
+typedef struct { int used, w, h; int is_cube; void* rhi_tex; } SlrTexRes;
 
 typedef struct
 {
@@ -335,6 +338,9 @@ typedef struct
     int   sky_on;
     float sky_top[3];
     float sky_bottom[3];
+    /* doc/13 §2.1 第二步：cubemap 天空纹理句柄（0 = 走渐变路径；
+     * set_sky_cube 写入，stage 7 天空绘制按它分派 draw_sky_cube）*/
+    int64_t sky_cube;
 
     /* N4a 软光追：场景状态（RaySet* 命令累积写）+ 输出纹理（RayRender
      * 命令产出并写入描述符槽；纹理归管线持有，pipeline_release_targets

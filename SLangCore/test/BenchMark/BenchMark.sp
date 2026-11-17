@@ -27,6 +27,10 @@ Project
         JavaBench.fun()
         JsBench.fun()
 
+        # TypeScript 基准（typescript_nodev8 插件：外接 node.exe V8 JIT，与
+        # QuickJS 解释执行对照；scripts\ 共享部署位，本工程须最后编译）
+        TypeScriptBench.fun()
+
         # C/C++ 原生基准（cplus_clang 插件：C 惯用指针版 + C++ 惯用对象版，
         # 逐项同算法同规模对齐；编译产物 SLCpp.dll 共享部署位，运行前本工程
         # 须最后编译）

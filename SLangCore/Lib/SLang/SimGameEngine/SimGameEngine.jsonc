@@ -98,6 +98,10 @@
       { "path": "VolumeProfile.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "VolumeStack.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "Volume.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- P8 完整导入器（doc/16 §5）：统一 JSON 资源 → Scene 建树挂组件
+      //      （胶水层；JSON 解析由 Core Json 内建承担，无新增 C 函数）----
+      { "path": "ImportReport.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "SceneImporter.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       // ---- system/ 系统总逻辑层（仿 Unity 系统总管；doc/09 §2 帧序驱动）----
       { "path": "system/CollisionSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 24 },
       { "path": "system/PhysicsSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 25 },
@@ -110,7 +114,16 @@
       // ---- C99 原生库绑定与封装（sl_sim_engine_lib：时间周期 + 节点注册表）----
       { "path": "EngineFfi.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 31 },
       { "path": "EngineClock.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 32 },
-      { "path": "NodeRegistry.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 33 }
+      { "path": "NodeRegistry.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 33 },
+      // ---- P9 固定形状库（doc/17）：常量表 -> 数据容器 -> 工厂门面
+      //      （计算核心在 C：sle_shape_counts/sle_shape_build，EngineFfi 绑定）----
+      { "path": "shape/ShapeTypes.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 34 },
+      { "path": "shape/ShapeMesh.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 35 },
+      { "path": "shape/ShapeFactory.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 36 },
+      // ---- 时间同步（doc/18）：TimeService 推进状态机 -> EngineTime static 快照
+      //      （域时钟 render/physics/logic/audio/video；C 单调钟统一基准）----
+      { "path": "time/TimeService.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 37 },
+      { "path": "time/EngineTime.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 38 }
     ]
   },
   "compileFilter": {
@@ -173,7 +186,17 @@
     // P8 Volume（doc/14）
     { "class": "VolumeProfile" },
     { "class": "Volume" },
-    { "class": "VolumeStack" }
+    { "class": "VolumeStack" },
+    // P8 完整导入器（doc/16 §5）
+    { "class": "ImportReport" },
+    { "class": "SceneImporter" },
+    // P9 固定形状库（doc/17）
+    { "class": "ShapeTypes" },
+    { "class": "ShapeMesh" },
+    { "class": "ShapeFactory" },
+    // 时间同步（doc/18）
+    { "class": "TimeService" },
+    { "class": "EngineTime" }
   ],
   "export": {
     "moduleName": "SimGameEngine",

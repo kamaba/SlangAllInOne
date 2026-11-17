@@ -85,6 +85,14 @@ BenchCollector
         BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT）", testType, testParam, timeMs * 1000L )
     }
 
+    # JavaScriptV8：与 recordJs 同口径（SL 侧整块毫秒计时 ×1000 存 us）。
+    # 引擎为 Node.js V8（typescript_nodev8 插件外接 node.exe keep-alive 子进程，
+    # TypeScript 原生类型擦除执行）——V8 有 JIT，与 QuickJS 解释执行形成对照。
+    static recordTs( string testType, string testParam, long timeMs )
+    {
+        BenchCollector.record( "TypeScript", "TypeScript / Node.js V8（typescript_nodev8 插件外接 node.exe 子进程）", "V8 JIT 默认优化，TS 原生类型擦除", testType, testParam, timeMs * 1000L )
+    }
+
     # Python：参数为微秒（CPython 块内 perf_counter_ns 纳秒精确计时——ns 粒度
     # 超 int32 出通道上限（>2.1s 子项在解释执行下普遍超限，参照 C++
     # RegExpBench 先例），块内统一 //1000 折算 us 回传；模块导入在 run() 外
@@ -160,13 +168,14 @@ BenchCollector
         md = md + BenchCollector.langRow( "CSharp" )
         md = md + BenchCollector.langRow( "Java" )
         md = md + BenchCollector.langRow( "JavaScript" )
+        md = md + BenchCollector.langRow( "TypeScript" )
         md = md + BenchCollector.langRow( "Python" )
         md = md + nl
 
         # 多语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和，us 域）
         md = md + "## 耗时对比总表（自适应单位，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
-        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript | Python |" + nl
-        md = md + "|----------|------|----|---|-----|--------|------|------------|--------|" + nl
+        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript | JavaScriptV8 | Python |" + nl
+        md = md + "|----------|------|----|---|-----|--------|------|------------|--------------|--------|" + nl
         List<BenchEntry> rows = BenchCollector.collectRows()
         for i = 0, i < rows.length, i++
         {
@@ -184,6 +193,7 @@ BenchCollector
             md = md + " " + BenchCollector.timeCell( row.testType, "CSharp" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "Java" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "TypeScript" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "Python" ) + " |" + nl
         }
         md = md + nl

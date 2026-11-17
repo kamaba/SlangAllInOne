@@ -137,6 +137,9 @@ SLR_API int     slr_render_frame(int64_t ctx, float r, float g, float b, int64_t
 /* ================= v2：纹理（全局注册表） ================= */
 /* SL 传入 top-down RGBA8 像素块（内部翻行为 GL bottom-up 上传） */
 SLR_API int64_t slr_texture_create_rgba(int w, int h, int64_t data_ptr);
+/* cubemap：faces6 = 6 面 RGBA8 top-down 连续块（每面 w*h*4，面序
+ * +X,-X,+Y,-Y,+Z,-Z），返回句柄（0 = 失败；d3d11/vk 后端不支持） */
+SLR_API int64_t slr_texture_create_cube(int w, int h, int64_t data_ptr);
 /* 从图片文件（PNG/JPEG/BMP 等，WIC 解码）创建纹理，返回句柄 */
 SLR_API int64_t slr_texture_load_file(const char* path_utf8);
 SLR_API int     slr_texture_destroy(int64_t tex);
@@ -188,6 +191,12 @@ SLR_API int     slr_pipeline_set_clear_color(int64_t p, float r, float g, float 
 SLR_API int     slr_pipeline_set_sky_top(int64_t p, float r, float g, float b);
 SLR_API int     slr_pipeline_set_sky_bottom(int64_t p, float r, float g, float b);
 SLR_API int     slr_pipeline_set_sky_on(int64_t p, int on);
+/* doc/13 §2.1 第二步：cubemap 天空纹理句柄（0 = 回退渐变路径） */
+SLR_API int     slr_pipeline_set_sky_cube(int64_t p, int64_t tex);
+/* 诊断：最近一帧天空绘制模式（0=未画 1=渐变 2=cube 采样） */
+SLR_API int     slr_sky_last_mode(int64_t pipe);
+/* 诊断：最近一次 draw_sky_cube 的 glGetError（-1 = 未调用过） */
+SLR_API int     slr_sky_draw_diag(int64_t pipe);
 /* 后处理：亮度 / 饱和度 / 暗角（enable=0 时纯拷贝） */
 SLR_API int     slr_pipeline_set_post(int64_t p, int enable,
                                       float brightness, float saturation, float vignette);

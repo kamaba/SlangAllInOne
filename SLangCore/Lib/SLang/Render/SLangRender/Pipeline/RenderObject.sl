@@ -192,6 +192,19 @@ namespace SLang
             ret ok
         }
 
+        # destroyById(pipeHandle, id) —— 按 (管线句柄, 对象句柄) 直接销毁。
+        # 给宿主侧句柄池用：跨模块对象存 SL List 会污染实例字段
+        #（_pipe/_id 读脏值 → destroy 静默失败，RenderSystem 烘焙组实测），
+        # 宿主应只存 Int64 句柄、帧尾经本入口销毁。
+        public static bool destroyById( Int64 pipeHandle, Int64 id )
+        {
+            if pipeHandle == 0 || id == 0
+            {
+                ret false
+            }
+            ret RenderObject.ffiObjectDestroy( pipeHandle, id )
+        }
+
         # ── FFI 绑定 ──────────────────────────────────────────────
 
         @DllStaticImport( "sl_render_lib", "slr_object_set_visible", "i64,i64,i32->bool" )

@@ -135,6 +135,50 @@ done:
     return handle;
 }
 
+/* cubemap 纹理注册：faces6 = 6 面 RGBA8 **top-down** 连续块（每面
+ * w*h*4；面序 +X,-X,+Y,-Y,+Z,-Z GL 约定）-> 逐面翻行(bottom-up) ->
+ * RHI texture_create_cube -> 注册表占位（is_cube=1）。调用方须已
+ * rhi_enter。返回句柄（0 = 失败）。d3d11/vk 后端 RHI 槽 NULL ->
+ * texture_create_cube 为 NULL -> 返回 0 + 错误码（doc/13 §2.1）。 */
+int64_t slr_texture_create_cube(int w, int h, int64_t data_ptr)
+{
+    int i;
+    int face;
+    unsigned char* flipped;
+    size_t faceBytes;
+    void* rhi_tex;
+    if (w <= 0 || h <= 0 || !data_ptr) { set_error(SLR_E_BAD_PARAM); return 0; }
+    if (!g_rhi || !g_rhi->texture_create_cube) { set_error(SLR_E_BACKEND); return 0; }
+    if (!rhi_enter()) return 0;
+    faceBytes = (size_t)w * (size_t)h * 4;
+    flipped = (unsigned char*)malloc(faceBytes * 6);
+    if (!flipped) { set_error(SLR_E_MEMORY); rhi_exit(); return 0; }
+    for (face = 0; face < 6; face++)
+    {
+        const unsigned char* src = (const unsigned char*)(intptr_t)data_ptr + faceBytes * (size_t)face;
+        unsigned char* dst = flipped + faceBytes * (size_t)face;
+        for (i = 0; i < h; i++)
+            memcpy(dst + (size_t)(h - 1 - i) * (size_t)w * 4, src + (size_t)i * (size_t)w * 4, (size_t)w * 4);
+    }
+    rhi_tex = g_rhi->texture_create_cube(w, h, flipped);
+    free(flipped);
+    if (!rhi_tex) { set_error(SLR_E_TEXTURE); rhi_exit(); return 0; }
+    for (i = 0; i < SLR_MAX_TEX; i++)
+    {
+        if (s_textures[i].used) continue;
+        memset(&s_textures[i], 0, sizeof(SlrTexRes));
+        s_textures[i].used = 1; s_textures[i].w = w; s_textures[i].h = h;
+        s_textures[i].is_cube = 1;
+        s_textures[i].rhi_tex = rhi_tex;
+        rhi_exit();
+        return (int64_t)(i + 1);
+    }
+    g_rhi->texture_destroy(rhi_tex);
+    set_error(SLR_E_LIMIT);
+    rhi_exit();
+    return 0;
+}
+
 int slr_texture_destroy(int64_t tex)
 {
     SlrTexRes* t;

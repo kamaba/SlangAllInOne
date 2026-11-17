@@ -1,8 +1,32 @@
 # SimGameEngine · 14 Volume 效果处理
 
-> 状态：Volume 系统【设计稿】；Render 侧后处理基础【已落盘】，Volume 参数栈【未开始】。
+> 状态：**Volume 参数栈 v1 已落盘（2026-11-17，引擎层）**：`VolumeProfile`/`Volume`/`VolumeStack` + `system/VolumeSystem.compute` + `RenderSystem.applyPost`；**混合数学核心在 C**（`sl_sim_engine_lib.sle_volume_blend`：排序 + 掩码 lerp，SL 侧只组块/解块——复用专项约定「重计算下沉 FFI」）；Bloom/Tonemap/DOF/Fog 存参数不下发（需 Render HDR 链路，M5）。
 > 前置阅读：`13-天空盒与环境.md`、`05-合批与RenderObject提交.md`、`06-相机光照与探针.md`。
 > 依据：`../Render/doc/07-Implemented-Features.md` §3（P2 Feature 机制未开始）、`../Render/doc/11-Pass-System.md`、`../Render/doc/13-Usage-Guide.md`。
+
+---
+
+## 0. v1 落盘形态（2026-11-17）
+
+| 能力 | 状态 | 落点 |
+|---|---|---|
+| VolumeProfile 资源 | ✅ | `VolumeProfile.sl`：post 三参 + `hasXxx` 掩码（**缺省=不修改**）+ Bloom/Tonemap/DOF/Fog 存参数不下发（`unsupportedCount()` 统计） |
+| Volume 组件 | ✅ | `Volume.sl`：profile/isGlobal/priority（值大者覆盖优先）/weight/blendDistance/influenceBounds + `weightAt(camPos)`（范围内满权重、外扩段线性衰减、范围外 0；straight-line 方法） |
+| C 混合核心 | ✅ | `sle_volume_blend(inPtr, count, outPtr)`：稳定插入排序（全局优先 → priority 升序 → 距离升序）+ 掩码字段 `lerp(cur, v, weight)`，自中性 (1,1,1) 起；块布局 11 float/Volume（sle_engine.c 头注释）；绑定失败 SL 兜底线性混合（VolumeSystem 检测 <0 降级） |
+| VolumeStack + System | ✅ | `VolumeStack.sl`（三参 + contributing + hasEffect）+ `system/VolumeSystem.compute(scene, camPos)`（显式栈收集 + 平行数组 + Memory 组块 → C → 解块；诊断 lastCollected/lastCulled） |
+| 下发 Render | ✅ | `RenderSystem.applyPost(st)` → `pipe.setPostEffect(enable, b, s, v)`（contributing=0 → 关闭后处理） |
+| 多相机隔离 | ✅（用法级） | 每相机各自 `compute` 一份栈（§4 参数栈按相机隔离） |
+| Bloom/Tonemap/DOF/Fog | ❌ 存参数不下发 | 需 Render HDR 中间缓冲（M5）；`unsupportedCount` 防误判 |
+
+用法：
+
+```sl
+VolumeSystem vs = VolumeSystem()
+VolumeStack st = vs.compute( scene, camPos )   # 每相机一次
+rs.applyPost( st )                             # renderFrame 之前写完（§4 帧序）
+```
+
+---
 
 ---
 
@@ -154,7 +178,7 @@ room.weight = 0.7f
 
 ## 7. 已知坑与注意
 
-1. **Volume 参数栈未落盘**：写了 Volume 组件不会改变画面；在 Render 完成 P2 之前只能改 Render 现成的 4 个后处理参数。
+1. **~~Volume 参数栈未落盘~~ → v1 已落盘（2026-11-17）**：post 三参全链路可用（C 混合核心 + applyPost 下发）；Bloom/Tonemap/DOF/Fog 仍存参数不下发（Render HDR 链路 M5）。
 2. **不要把所有效果都塞一个全局 Volume**：按「全局基调 + 局部覆盖」分层，调试时逐层开关更容易定位。
 3. **字段缺省语义是「不修改」**：实现时若误写成默认值 0，低优先级 Volume 的配置会被高优先级 Volume 意外清零。
 4. **枚举不插值**：Tonemapping 模式切换会跳变，需要过渡时应做交叉淡入而非对枚举插值。

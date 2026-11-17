@@ -104,6 +104,10 @@ typedef struct SlrRhi
                          int enabled, float brightness, float saturation, float vignette);
     /* 阶段 12：全屏拷贝 post -> final */
     void (*blit)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h);
+/* P6 渐变天空：相机清屏后画全屏渐变 quad（top_bottom = [tr,tg,tb,br,bg,bb]）；
+ * 调用点已绑好目标 FBO/视口/scissor——实现只切状态 + program + draw，
+ * 不得改 FBO/视口；无深度写入（物体随后正常覆盖）。可 NULL（判空调用）*/
+void (*draw_sky)(const float* top_bottom);
     /* 阶段 13：回读（top-down RGBA8 写入 dst_ptr 指向的 w*h*4 块）*/
     void (*readback)(SlrRhiTarget* t, int w, int h, int64_t dst_ptr);
 

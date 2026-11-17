@@ -63,7 +63,7 @@ RenderGraph 资源图自动屏障、GPU driven culling（indirect draw + compute
 | 7 | VertexBuffer.fromMesh | 只按 32B stride 建空 buffer：数据未上传，且 stride 与 VertexInputLayout.standard 的 48B 不一致 | interleave 48B + 真上传（03 §4.11） |
 | 8 | GfxDevice.createD3D11 | D3D11 无描述符堆却调 createDescriptorHeaps | 删除该分支调用（03 §4.2） |
 | 9 | GfxCapabilities.query | 只传 desc.backend，deviceName/vendor 等永远空 | `slr_caps_query` 整块写出（03 §4.2） |
-| 10 | HlslLibrary 各源码 | 源码首行 `#include Common` 非法 HLSL，DXC 编译必失败 | 删除该行；拼接由工厂完成（03 §4.4） |
+| 10 | HlslLibrary 各源码 | ~~源码首行 `#include Common` 非法 HLSL，DXC 编译必失败~~ **✅ 已修复（2026-11-16）**：8 处 `#include Common` + 1 处 `#include Lighting` 全部删除，拼接由 litShader() 等工厂完成（03 §4.4）；全库已无 `#include` 行 |
 | 11 | RenderPass.begin/end | ctx.cmd 可能为 null（beginCommandBuffer 未先调）时 NPE 风险 | render 协议保证或判空 |
 | 12 | Camera.aspect | 无任何代码维护它，投影矩阵用错误宽高比 | 管线每帧按 RT 尺寸写入（03 §4.11） |
 

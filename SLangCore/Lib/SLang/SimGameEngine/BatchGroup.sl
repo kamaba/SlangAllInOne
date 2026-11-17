@@ -1,6 +1,7 @@
 import Core;
 import Std;
 import Math;
+import SLangRender;
 
 # ============================================================================
 # BatchGroup — 一个合批组（P2）

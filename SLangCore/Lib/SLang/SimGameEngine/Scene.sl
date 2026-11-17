@@ -11,6 +11,7 @@
 # 多场景：同一时刻允许多个 Scene，只有被 Application 激活的参与帧循环。
 import Std;
 import Math;
+import SLangRender;
 public class Scene
 {
     public string name = "Scene"
@@ -59,13 +60,18 @@ public class Scene
     }
 
     # ── 创建 ─────────────────────────────────────────────
-    # 建节点挂到根
+    # 建节点挂到根（name 快照注册进 C99 节点注册表——O(1) 哈希按名查）
     public GameObject createObject( string objName )
     {
         GameObject go = GameObject()
         go.name = objName
         go._scene = this
         this._roots.add( go )
+        Int64 rid = NodeRegistry.registerNode( objName, "", 0 )
+        if rid > 0
+        {
+            go.nodeId = rid
+        }
         ret go
     }
 
@@ -88,6 +94,13 @@ public class Scene
         }
         go.parent = parent
         parent._children.add( go )
+        # Transform 层级同步（统一版 Transform 走 parentNode 世界累乘链）
+        go.transform.parentNode = parent.transform
+        Int64 rid = NodeRegistry.registerNode( objName, "", 0 )
+        if rid > 0
+        {
+            go.nodeId = rid
+        }
         ret go
     }
 
@@ -123,8 +136,48 @@ public class Scene
         ret parts
     }
 
+    # 按 C 注册表 id 找节点（显式栈遍历——不用递归，doc/10 §6）
+    GameObject findByNodeId( Int64 targetId )
+    {
+        List<GameObject> stack = List<GameObject>( 16 )
+        Int32 ri = this._roots.length - 1
+        while ri > 0 - 1
+        {
+            stack.add( this._roots[ri] )
+            ri = ri - 1
+        }
+        while stack.length > 0
+        {
+            Int32 lastIdx = stack.length - 1
+            GameObject cur = stack[lastIdx]
+            stack.removeAt( lastIdx )
+            if cur == null
+            {
+                continue
+            }
+            if cur.nodeId == targetId
+            {
+                ret cur
+            }
+            Int32 ci = cur.childCount - 1
+            while ci > 0 - 1
+            {
+                GameObject ch = cur.getChild( ci )
+                if ch != null
+                {
+                    stack.add( ch )
+                }
+                ci = ci - 1
+            }
+        }
+        ret null
+    }
+
+
     # ── 查找 ─────────────────────────────────────────────
-    # 全局路径查找 "Root/Child/Leaf"（首段在根节点中匹配）
+    # 全局路径查找 "Root/Child/Leaf"（首段在根节点中匹配）。
+    # 裸名单段：先走 C99 注册表哈希查 id（O(1)），命中再按 nodeId 遍历
+    # 比对（doc/11 §3.1 空间网格远期项的前置能力）
     public GameObject find( string path )
     {
         if path == null || path.length == 0
@@ -135,6 +188,20 @@ public class Scene
         if segs.length == 0
         {
             ret null
+        }
+        if segs.length == 1
+        {
+            Int64 nid = NodeRegistry.findByName( segs[0] )
+            if nid > 0
+            {
+                GameObject hit = this.findByNodeId( nid )
+                if hit != null
+                {
+                    ret hit
+                }
+            }
+            # C 哈希 miss 或命中其他场景同名节点（注册表全局唯一，跨场景
+            # 重名时本场景节点 nodeId=0 不入表）→ 回退本场景树内按名查找
         }
         Int32 i = 0
         Int32 n = this._roots.length

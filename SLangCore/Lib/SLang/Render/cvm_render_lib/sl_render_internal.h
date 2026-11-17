@@ -75,6 +75,7 @@ enum
     SLR_PROG_PTEX,       /* 管线：PerDraw 缓冲 + 纹理          */
     SLR_PROG_BLIT,       /* 全屏拷贝                          */
     SLR_PROG_POST,       /* 后处理                            */
+    SLR_PROG_SKY,        /* P6：渐变天空背景（全屏 quad，无深度写入）*/
     /* v3.4 Phong：v3.3 光照 + Blinn-Phong 伪 3D 高光（uSpec[64] 消费）。
      * 尾部追加不动既有槽序（VK 固化表依赖顺序；VK 将新槽降级映射到
      * PFLAT/PTEX —— SPIR-V 未含光照/高光，绘制不报错仅无 Phong 效果）*/
@@ -327,6 +328,13 @@ typedef struct
     float clear_color[4];
     int post_enabled;
     float post_brightness, post_saturation, post_vignette;
+
+    /* P6 渐变天空背景：sky_on=1 时每个相机的清屏（COLOR 位）之后画全屏
+     * 渐变 quad（顶->底线性插值，无深度写入，物体随后正常覆盖）；
+     * set_sky_color / set_sky_on 写入 */
+    int   sky_on;
+    float sky_top[3];
+    float sky_bottom[3];
 
     /* N4a 软光追：场景状态（RaySet* 命令累积写）+ 输出纹理（RayRender
      * 命令产出并写入描述符槽；纹理归管线持有，pipeline_release_targets

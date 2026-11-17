@@ -16,6 +16,7 @@
 #   onEnable/onDisable（仅 isEnabled=true 的 Behaviour）。
 import Std;
 import Math;
+import SLangRender;
 public class GameObject extends Component
 {
     # 节点变换（创建即有，禁止移除）
@@ -26,6 +27,8 @@ public class GameObject extends Component
     public Int32 layer = 0
     # 延迟销毁标记（destroy() 置位，Scene.processDestroys() 帧尾收口）
     public bool pendingDestroy = false
+    # C99 节点注册表 id（Scene.createObject 注册；destroy 注销；0 = 未注册）
+    public Int64 nodeId = 0
 
     List<GameObject> _children = null
     Scene _scene = null
@@ -38,7 +41,9 @@ public class GameObject extends Component
         this.name = "GameObject"
         this.tag = "Untagged"
         this.transform = Transform()
-        this.transform.gameObject = this
+        # 统一版 Transform（SLangRender，2026-11-17 合并）：层级经
+        # transform.parentNode（Transform 级父链）由宿主在各层级变更点同步；
+        # Component 树 parent（组件挂载关系）照旧指向本 GameObject。
         this.transform.parent = this
         this.components.add( this.transform )
         this.activeSelf = true
@@ -132,6 +137,8 @@ public class GameObject extends Component
         # 挂到新父
         this.parent = newParent
         newParent._children.add( this )
+        # Transform 层级同步（统一版 Transform 走 parentNode 世界累乘链）
+        this.transform.parentNode = newParent.transform
         if this._scene == null
         {
             this._scene = newParent._scene
@@ -243,6 +250,11 @@ public class GameObject extends Component
         }
         bool wasActive = this.getActiveInHierarchy()
         this.activeSelf = value
+        # C99 节点注册表活跃标志同步（注册过的节点）
+        if this.nodeId > 0
+        {
+            NodeRegistry.setActive( this.nodeId, value )
+        }
         bool nowActive = this.getActiveInHierarchy()
         if wasActive != nowActive
         {
@@ -297,6 +309,12 @@ public class GameObject extends Component
             ret
         }
         this.pendingDestroy = true
+        # C99 节点注册表：注销（立即；后续帧注册表查询不再命中）
+        if this.nodeId > 0
+        {
+            NodeRegistry.unregister( this.nodeId )
+            this.nodeId = 0
+        }
         if this.getActiveInHierarchy()
         {
             this._settleActivation( false )
@@ -327,6 +345,7 @@ public class GameObject extends Component
             this._scene.removeRoot( this )
         }
         this.parent = null
+        this.transform.parentNode = null
         # doc/03：setParent(null) = 移到根 —— 有场景归属则挂回根列表
         if this._scene != null
         {
@@ -449,6 +468,7 @@ public class GameObject extends Component
             this._scene.removeRoot( this )
         }
         this.parent = null
+        this.transform.parentNode = null
         ret true
     }
 

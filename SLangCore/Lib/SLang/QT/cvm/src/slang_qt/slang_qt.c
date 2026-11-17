@@ -482,6 +482,7 @@ SLQT_API int64_t slqt_toolbar_create_sl(int64_t p, const char* t) { return slqt_
 SLQT_API void    slqt_mainwindow_add_toolbar_sl(int64_t win, int64_t tb) { slqt_be_mainwindow_add_toolbar(win, tb); }
 SLQT_API int64_t slqt_toolbar_add_action_sl(int64_t tb, const char* t) { return slqt_be_toolbar_add_action(tb, t); }
 SLQT_API void    slqt_toolbar_add_separator_sl(int64_t tb) { slqt_be_toolbar_add_separator(tb); }
+SLQT_API void    slqt_toolbar_add_widget_sl(int64_t tb, int64_t w) { slqt_be_toolbar_add_widget(tb, w); }
 
 SLQT_API int64_t slqt_dock_create_sl(int64_t p, const char* t) { return slqt_be_dock_create(p, t); }
 SLQT_API void    slqt_mainwindow_add_dock_sl(int64_t win, int64_t dock, int32_t area) { slqt_be_mainwindow_add_dock(win, dock, area); }

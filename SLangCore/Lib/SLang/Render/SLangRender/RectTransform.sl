@@ -1,5 +1,10 @@
 import Math;
 # UI 矩形变换：在 Transform 之上提供锚点 / 轴心 / 尺寸等 2D 布局能力。
+# 2026-11-17 迁回 SLangRender（Transform 统一版合并）：引擎自有 Transform
+# 删除、统一复用 Render.Transform 后，本类随基类回归 Render 模块——
+# 同模块 extends Transform 不再有跨模块同名继承链问题（P5 迁出时的
+# 结构性断点已随引擎侧同名类删除而消失）。引擎 UIBehaviour/UISystem
+# 经 SLangRender slb 引用消费。
 # 2D 量统一使用 Math 库的 Float32_2。
 public class RectTransform extends Transform
 {
@@ -85,8 +90,10 @@ public class RectTransform extends Transform
     }
 
     # ── 命中检测 ─────────────────────────────────────────
-    # 点是否落在矩形范围内（point 与 anchoredPosition 同一坐标系）
-    public bool containsPoint( Float32_2 point )
+    # 点是否落在矩形范围内（point 与 anchoredPosition 同一坐标系）。
+    # 命名 hitTest（原 containsPoint）：方法名与 Core 容器 contains 家族
+    # 无关，纯粹规避同名混读；P5 实证可用于 UIBehaviour 委托调用。
+    public bool hitTest( Float32_2 point )
     {
         Float32_2 tl = this.topLeft()
         # && 链最多 2 个运算符，拆成 X/Y 两段再合并

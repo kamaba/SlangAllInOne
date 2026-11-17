@@ -265,6 +265,7 @@ int64_t slqt_be_toolbar_create(int64_t parent, const char* title) { (void)parent
 void    slqt_be_mainwindow_add_toolbar(int64_t win, int64_t tb) { (void)win;(void)tb; }
 int64_t slqt_be_toolbar_add_action(int64_t tb, const char* text) { (void)tb;(void)text; return slqt_register(NULL); }
 void    slqt_be_toolbar_add_separator(int64_t tb) { (void)tb; }
+void    slqt_be_toolbar_add_widget(int64_t tb, int64_t w) { (void)tb;(void)w; }
 
 int64_t slqt_be_dock_create(int64_t parent, const char* title) { (void)parent;(void)title; return slqt_register(NULL); }
 void    slqt_be_mainwindow_add_dock(int64_t win, int64_t dock, int32_t area) { (void)win;(void)dock;(void)area; }

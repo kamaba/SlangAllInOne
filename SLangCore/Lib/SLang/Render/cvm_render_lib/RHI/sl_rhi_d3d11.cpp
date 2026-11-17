@@ -1277,6 +1277,8 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_draw_item,
     d3d_post_process,
     d3d_blit,
+    /* P6 draw_sky：D3D11 后端未实现（调用点判 NULL 跳过）*/
+    NULL,
     d3d_readback,
     d3d_v1_clear,
     d3d_v1_draw,

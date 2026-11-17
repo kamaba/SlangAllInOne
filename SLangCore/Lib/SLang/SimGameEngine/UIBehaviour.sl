@@ -1,4 +1,10 @@
 # UI 行为基类：在 Behaviour 之上补充指针 / 拖拽等交互事件。
+# RectTransform 已迁入本模块（2026-11-16，双模块同名 Transform 继承链致
+# 跨模块成员解析失败，doc/08 §3.1）；事件分发由 system/UISystem 经
+# SystemSimEngineCallHook 按名派发到最派生 override（跨模块 CallVirt
+# 不派发消费方 override，直接调本类钩子不可靠）。
+import Math;
+import SLangRender;
 public class UIBehaviour extends Behaviour
 {
     public RectTransform rectTransform = null
@@ -56,14 +62,15 @@ public class UIBehaviour extends Behaviour
     }
 
     # ── 命中检测 ─────────────────────────────────────────
-    # 点是否落在矩形内（position / rect 均为 UI 空间）
-    public bool containsPoint( Float32_2 position )
+    # 点是否落在矩形内（position / rect 均为 UI 空间）；
+    # 委托 rectTransform.hitTest（null 直接返回 false）
+    public bool hitTest( Float32_2 position )
     {
         if this.rectTransform == null
         {
             ret false
         }
-        ret this.rectTransform.containsPoint( position )
+        ret this.rectTransform.hitTest( position )
     }
 
     public void setInteractable( bool value )

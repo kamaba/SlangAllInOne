@@ -183,6 +183,11 @@ SLR_API int64_t slr_pipeline_frame_count(int64_t p);
 SLR_API int     slr_pipeline_set_camera(int64_t p, int cull_mask,
                                         float l, float r, float b, float t);
 SLR_API int     slr_pipeline_set_clear_color(int64_t p, float r, float g, float b, float a);
+/* P6 渐变天空背景：顶/底色（RGB 0..1）分两个导出（SL 侧 FFI 参数数
+ * 实证上限），生效点 = 阶段 7 每相机清屏后全屏渐变 quad */
+SLR_API int     slr_pipeline_set_sky_top(int64_t p, float r, float g, float b);
+SLR_API int     slr_pipeline_set_sky_bottom(int64_t p, float r, float g, float b);
+SLR_API int     slr_pipeline_set_sky_on(int64_t p, int on);
 /* 后处理：亮度 / 饱和度 / 暗角（enable=0 时纯拷贝） */
 SLR_API int     slr_pipeline_set_post(int64_t p, int enable,
                                       float brightness, float saturation, float vignette);

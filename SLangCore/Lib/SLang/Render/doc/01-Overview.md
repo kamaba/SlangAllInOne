@@ -55,7 +55,7 @@
 - 游戏对象状态机、脚本生命周期驱动（MonoBehaviour 那套由宿主引擎负责）
 - 场景图 / 序列化 / 资产数据库（渲染引擎只接收「已组装好的可见物列表」）
 - 音频（现有 `Audio/` 目录建议迁出 Render 库，见 03 §4.13）
-- UI 布局系统（`RectTransform/UIBehaviour` 仅保留为宿主侧适配数据，渲染引擎只提供 2D 绘制路径）
+- UI 布局系统（`RectTransform` 已于 2026-11-16 迁往 SimGameEngine 模块——双模块同名 `Transform` 继承链致跨模块成员解析失败；`UIBehaviour`/事件分发同属宿主引擎，渲染引擎只提供 2D 绘制路径）
 - 多线程渲染（v1 单线程录制，接口为多线程预留）
 
 ### 1.3 引擎边界（对外契约）
@@ -122,7 +122,7 @@ Render/
 │   │   # 原 Render/SLangRender/{Color,ColorUInt8}.sl 已删除（两文件此前未入 compileFiles）
 │   ├── Vertex.sl Mesh.sl Material.sl Texture.sl Shader.sl          # 增强（03 §4.11）
 │   ├── Renderer.sl Camera/ Camera.sl Light.sl Config.sl            # 增强
-│   ├── Behaviour.sl UIBehaviour.sl RectTransform.sl                 # 标注宿主适配层
+│   ├── Behaviour.sl UIBehaviour.sl RectTransform.sl                 # 宿主适配层（均已迁出：Behaviour/UIBehaviour 早已不在本模块；RectTransform 2026-11-16 迁往 SimGameEngine）
 │   └── Render.sl                 # 兼容层：内部转发到 RenderPipelineManager（03 §4.12）
 ├── Image/                        # （已删除）图像编解码独立为 SLangImage 模块（SLang\Image\SLImage\），
 │                                 #  Render.jsonc 经 references 引入；纹理数据流见 06 §1.1/§6

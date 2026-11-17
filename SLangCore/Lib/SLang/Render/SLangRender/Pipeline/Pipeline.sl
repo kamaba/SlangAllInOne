@@ -244,6 +244,32 @@ namespace SLang
             ret RenderPipeline.ffiSetClearColor( this._handle, r, g, b, a )
         }
 
+        # ── P6 渐变天空背景 ─────────────────────────────────────
+        # 顶/底 RGB（0..1）；每相机清屏（COLOR 位）后画全屏渐变 quad，
+        # 物体随后正常覆盖（无深度写入）。默认关——setSkyEnabled(1) 开。
+        # 生效端为 C 管线 slr_pipeline_set_sky_color/set_sky_on。
+        public bool setSkyColor( Float32 topR, Float32 topG, Float32 topB,
+            Float32 bottomR, Float32 bottomG, Float32 bottomB )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            bool ok1 = RenderPipeline.ffiSetSkyTop( this._handle, topR, topG, topB )
+            bool ok2 = RenderPipeline.ffiSetSkyBottom( this._handle, bottomR, bottomG, bottomB )
+            bool both = ok1 && ok2
+            ret both
+        }
+
+        public bool setSkyEnabled( Int32 on )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetSkyOn( this._handle, on )
+        }
+
         # setPostEffect(enable, brightness, saturation, vignette)
         #   enable=0 纯拷贝；vignette 0..1 暗角强度
         public bool setPostEffect( Int32 enable, Float32 brightness, Float32 saturation, Float32 vignette )
@@ -683,6 +709,15 @@ namespace SLang
 
         @DllStaticImport( "sl_render_lib", "slr_pipeline_set_clear_color", "i64,f32,f32,f32,f32->bool" )
         static bool ffiSetClearColor( Int64 p, Float32 r, Float32 g, Float32 b, Float32 a )
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_sky_top", "i64,f32,f32,f32->bool" )
+        static bool ffiSetSkyTop( Int64 p, Float32 r, Float32 g, Float32 b )
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_sky_bottom", "i64,f32,f32,f32->bool" )
+        static bool ffiSetSkyBottom( Int64 p, Float32 r, Float32 g, Float32 b )
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_sky_on", "i64,i32->bool" )
+        static bool ffiSetSkyOn( Int64 p, Int32 on )
         {
             ret false
         }

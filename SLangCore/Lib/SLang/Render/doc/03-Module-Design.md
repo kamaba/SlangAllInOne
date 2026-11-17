@@ -144,7 +144,7 @@ public class ConstantBuffer extends GpuBuffer
 
 **职责**：HLSL 源码管理、编译为 ShaderModule、反射参数、变体、缓存。
 
-**现状**：`HlslLibrary` 已内置 Common/Lighting/Lit/Unlit/DepthOnly/Skybox/PostProcess 源码（拼接式 include）。**Bug**：各源码首行 `#include Common` 是非法 HLSL（DXC 会报错）——拼接已经做了，include 行必须删除（05 §2.1-#10）。`Shader.sl`（按名编译的轻量版）与 `Hlsl.sl` 双轨，按 D2 统一。`ShaderModule.compile` 期望后端返回 `ShaderModule` 对象——跨绑定传 SL 对象不可靠，改为返回句柄 + 参数表写出。
+**现状**：`HlslLibrary` 已内置 Common/Lighting/Lit/Unlit/DepthOnly/Skybox/PostProcess 源码（拼接式 include）。~~**Bug**：各源码首行 `#include Common` 是非法 HLSL~~ **✅ 已修复（2026-11-16，05 §2.1-#10）**：9 处 include 行全部删除，拼接由工厂完成。`Shader.sl`（按名编译的轻量版）与 `Hlsl.sl` 双轨，按 D2 统一。`ShaderModule.compile` 期望后端返回 `ShaderModule` 对象——跨绑定传 SL 对象不可靠，改为返回句柄 + 参数表写出。
 
 **需要写**：
 

@@ -16,5 +16,8 @@ namespace SLang
         public Int64 addAction( string text ) { ret SLang.QT.ffi_toolbarAddAction( this.handle, text ) }
 
         public void addSeparator() { SLang.QT.ffi_toolbarAddSeparator( this.handle ) }
+
+        # 2026-11-16 第四十四轮：把任意控件（工程名 QLabel / 配置 QComboBox）放进工具栏
+        public void addWidget( SLang.QWidget w ) { SLang.QT.ffi_toolbarAddWidget( this.handle, w.handle ) }
     }
 }

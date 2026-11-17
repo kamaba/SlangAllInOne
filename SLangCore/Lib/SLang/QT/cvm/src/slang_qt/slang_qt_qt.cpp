@@ -1990,6 +1990,13 @@ void slqt_be_toolbar_add_separator(int64_t tb)
     if (bar) bar->addSeparator();
 }
 
+void slqt_be_toolbar_add_widget(int64_t tb, int64_t w)
+{
+    auto* bar = qobject_cast<QToolBar*>((QObject*)slqt_resolve(tb));
+    QWidget* widget = asWidget(w);
+    if (bar && widget) bar->addWidget(widget);
+}
+
 /* ── Dock（QDockWidget 自由停靠面板）──────────────────────────────────── */
 
 int64_t slqt_be_dock_create(int64_t parent, const char* title)

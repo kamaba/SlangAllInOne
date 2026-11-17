@@ -2489,6 +2489,8 @@ static const SlrRhi s_rhi_vk =
     vk_draw_item,
     vk_post_process,
     vk_blit,
+    /* P6 draw_sky：VK 后端未实现（调用点判 NULL 跳过）*/
+    NULL,
     vk_readback,
     vk_v1_clear,
     vk_v1_draw,

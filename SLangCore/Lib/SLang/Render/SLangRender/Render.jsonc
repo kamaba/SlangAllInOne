@@ -66,6 +66,9 @@
       { "path": "Shader.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 8 },
       { "path": "Material.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 9 },
       { "path": "Transform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 10 },
+      // RectTransform 回归本模块（2026-11-17 Transform 统一版合并：引擎自有
+      // Transform 删除后，同模块 extends Transform 无跨模块同名继承链问题；
+      // 原 P5 迁出断点 doc/08 §3.1 已消失）
       { "path": "RectTransform.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 11 },
       { "path": "Renderer.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 12 },
       { "path": "Ray.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 13 },

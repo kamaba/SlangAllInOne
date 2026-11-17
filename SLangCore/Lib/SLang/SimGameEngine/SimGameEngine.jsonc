@@ -10,10 +10,21 @@
   "source": {
     "root": "."
   },
-  // 本模块为纯 SL 库模块：无 FFI / 无原生库。渲染提交走引用方工程的
-  // SLangRender 模块（doc/05）。
-  "dllImports": [],
-  "vmDlls": [],
+  // C99 原生库（2026-11-16）：sl_sim_engine_lib.dll —— 时间周期（单调时钟 /
+  // 帧标记 / 定时器表）与节点管理（注册表：id 分配 / 哈希按名查找 / 活跃标志）。
+  // "static" 非空时 cvm 加载模块即预载 dll 并注册 FFI.StaticLibrary，
+  // EngineFfi.sl 的 @DllStaticImport 静态调用点改写为直调绑定；绑定失败走
+  // SL 函数体兜底（0/-1/""，EngineFfi.libVersionString() == "" 即兜底征兆）。
+  // C 实现：cvm_sim_engine_lib/sle_engine.c（sle_* 纯 C ABI，无外部依赖）。
+  "dllImports":
+  [
+    { "path": "sl_sim_engine_lib.dll", "name": "sl_sim_engine_lib", "alias": "sl_sim_engine_lib", "static": "sl_sim_engine_lib" }
+  ],
+  // vmDlls 构建规则：导出模块时 Front 用 MSBuild 编译本 VS 工程，并把
+  // sl_sim_engine_lib.dll 拷到与 SimGameEngine.module.json 同目录。
+  "vmDlls": [
+    { "project": "cvm_sim_engine_lib/cvm_sl_engine_lib.vcxproj", "name": "sl_sim_engine_lib.dll", "configuration": "Debug", "platform": "x64" }
+  ],
   // systemCalls：SystemSimEngineCallHook —— 生命周期钩子动态派发（C VM 内建
   // 符号 vm_sys_component_call_hook，见 csimple_lang component_system_method.c）。
   // 背景：跨模块基类引用（slb）的 SL CallVirt 虚分发不派发到消费方模块的
@@ -21,6 +32,8 @@
   // 引擎内所有对 Behaviour 钩子的调用一律走本系统调用按名派发。
   "systemCalls": [
     { "name": "SystemSimEngineCallHook", "returnType": "bool", "params": ["object", "string"], "isVariadic": false, "cvmFunction": "vm_sys_component_call_hook" },
+    { "name": "SystemSimEngineCallHook1", "returnType": "bool", "params": ["object", "string", "object"], "isVariadic": false, "cvmFunction": "vm_sys_component_call_hook1" },
+    { "name": "SystemSimEngineCallHook2", "returnType": "bool", "params": ["object", "string", "object", "object"], "isVariadic": false, "cvmFunction": "vm_sys_component_call_hook2" },
     { "name": "SystemSimEngineSetEnabled", "returnType": "void", "params": ["object", "bool"], "isVariadic": false, "cvmFunction": "vm_sys_component_set_enabled" },
     { "name": "SystemSimEngineGetEnabled", "returnType": "bool", "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_component_get_enabled" }
   ],
@@ -35,8 +48,11 @@
   },
   "compileFiles": {
     "files": [
-      // ---- P0 场景核心（依赖序：Transform -> GameObject -> Scene）----
-      { "path": "Transform.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 1 },
+      // ---- P0 场景核心（依赖序：GameObject -> Scene）----
+      // Transform / RectTransform 已合并入 SLangRender.Transform 统一版
+      //（2026-11-17：引擎自有 Transform/RectTransform 删除，全仓复用
+      // Render 侧类；引擎文件经 import SLangRender 消费，GameObject 层级
+      // 同步 transform.parentNode——见 GameObject.sl）
       { "path": "GameObject.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 2 },
       { "path": "Scene.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 3 },
       // ---- 生命周期基类与空间工具（既有草稿，随 P0 入编译集）----
@@ -53,10 +69,48 @@
       { "path": "MeshRef.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 10 },
       { "path": "MaterialRef.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 11 },
       { "path": "BatchGroup.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 12 },
-      { "path": "Batcher.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 13 }
-      // UIBehaviour.sl 暂不入编译集（依赖待建：RectTransform 位于 SLangRender
-      // 模块，需 module 引用；双模块根级 Transform/Ray 同名冲突待专项验证，
-      // 见 doc/10 §5 P5 与 doc/08 §3.1）
+      { "path": "Batcher.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 13 },
+      // ---- P3 碰撞检测（doc/11；不做 Collider 基类——Behaviour 子类字段
+      // 读规避，见 doc/10 §6；窄相 kind 分派替代多态）----
+      { "path": "ContactInfo.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 14 },
+      { "path": "ContactPair.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 15 },
+      { "path": "BoxCollider.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 16 },
+      { "path": "SphereCollider.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 17 },
+      { "path": "CapsuleCollider.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 18 },
+      { "path": "MeshCollider.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 19 },
+      // ---- P4 轻量物理（doc/12；Rigidbody 组件 + 顺序冲量求解）----
+      { "path": "Rigidbody.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 19 },
+      // ---- P5 动画/特效/探针 + UI（doc/06/07/08；RectTransform 已迁入
+      //      本模块，UIBehaviour 同模块直用）----
+      { "path": "AnimationClip.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 19 },
+      { "path": "Animation.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 20 },
+      { "path": "Effect.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 21 },
+      { "path": "Probes.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 22 },
+      { "path": "UIBehaviour.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- P7 2D 渲染（doc/15）：排序层表 + 精灵组件 + 瓦片地图
+      //      （依赖序：SortingLayers -> SpriteRenderer/Tilemap -> RenderSystem）----
+      { "path": "SortingLayers.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "SpriteRenderer.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "Tilemap.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- P8 Volume（doc/14）：混合数学在 C（sle_volume_blend），
+      //      SL 侧只做数据类与组块/解块（依赖序：Profile/Stack -> Volume ->
+      //      system/VolumeSystem -> RenderSystem.applyPost）----
+      { "path": "VolumeProfile.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "VolumeStack.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "Volume.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- system/ 系统总逻辑层（仿 Unity 系统总管；doc/09 §2 帧序驱动）----
+      { "path": "system/CollisionSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 24 },
+      { "path": "system/PhysicsSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 25 },
+      { "path": "system/AnimSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 26 },
+      { "path": "system/UISystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 27 },
+      { "path": "system/RenderSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 28 },
+      { "path": "system/VolumeSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 28 },
+      { "path": "system/AudioSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 29 },
+      { "path": "system/Systems.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 30 },
+      // ---- C99 原生库绑定与封装（sl_sim_engine_lib：时间周期 + 节点注册表）----
+      { "path": "EngineFfi.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 31 },
+      { "path": "EngineClock.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 32 },
+      { "path": "NodeRegistry.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 33 }
     ]
   },
   "compileFilter": {
@@ -70,17 +124,25 @@
     }
   },
   "references": [
+    // 顺序规则（2026-11-16 实证）：Core/Std/Math 必须在最前——后续引用
+    // 的跨模块静态方法签名 mangle 依赖基础类型元数据先注册，否则参数
+    // 类型错 mangle 成 Core.Object（IR not found，doc/10 §1.3）。
     // Memory.alloc / List / Array / String.toFormat 等来自 Core
     //（本 jsonc 位于 SLangCore\Lib\SLang\SimGameEngine\，上 2 级到 SLangCore\Lib\）
     { "path": "../../Core", "name": "Core" },
     // Component 基类（Std 根级类，裸名可见）
     { "path": "../../Std", "name": "Std" },
     // Float32_2/3、Float32_4x4、Quaternion、MatrixUtil（TRS / 刚体求逆）
-    { "path": "../../Math", "name": "Math" }
+    { "path": "../../Math", "name": "Math" },
+    // SLangRender / SLangAudio —— 双模块同名专项实证：同名 Transform/Ray/
+    // Material 模块作用域隔离不冲突；引擎模块可消费两模块的类
+    //（slb 引用形态；消费方静态方法跨模块调用见 doc/10 §6 可用形态）
+    { "path": "..\\..\\..\\..\\out\\export\\SLangRender\\SLangRender.module.slb", "name": "SLangRender" },
+    { "path": "..\\..\\..\\..\\out\\export\\SLangAudio\\SLangAudio.module.slb", "name": "SLangAudio" }
   ],
   "struct": [
     // 场景核心（根级类型，引用方裸名可见，同 Std Component 先例）
-    { "class": "Transform" },
+    // Transform / RectTransform 统一由 SLangRender 导出（2026-11-17 合并）
     { "class": "GameObject" },
     { "class": "Scene" },
     { "class": "Application" },
@@ -95,7 +157,23 @@
     { "class": "MeshRef" },
     { "class": "MaterialRef" },
     { "class": "BatchGroup" },
-    { "class": "Batcher" }
+    { "class": "Batcher" },
+    // P3 碰撞检测
+    { "class": "ContactInfo" },
+    { "class": "ContactPair" },
+    { "class": "BoxCollider" },
+    { "class": "SphereCollider" },
+    { "class": "CapsuleCollider" },
+    { "class": "MeshCollider" },
+    { "class": "CollisionSystem" },
+    // P7 2D 渲染
+    { "class": "SortingLayers" },
+    { "class": "SpriteRenderer" },
+    { "class": "Tilemap" },
+    // P8 Volume（doc/14）
+    { "class": "VolumeProfile" },
+    { "class": "Volume" },
+    { "class": "VolumeStack" }
   ],
   "export": {
     "moduleName": "SimGameEngine",

@@ -185,7 +185,7 @@ struct SlrRhiTarget            /* GLES 渲染目标 = FBO + 颜色纹理 + 可�
     GLuint depth_tex;   /* N2a shadow：可采样深度纹理（仅 shadow 目标非 0）*/
 };
 
-typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; } GlProgUni;
+typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; int sky_top, sky_bottom; } GlProgUni;
 typedef struct { GLuint vao, vbo; int count; } GlMesh;
 
 /* ES 3.0 深度清屏是 glClearDepthf（float），共享清单里的 glClearDepth
@@ -427,6 +427,16 @@ static const char* FS_POST =
     "  oCol = vec4(c, 1.0);\n"
     "}\n";
 
+/* P6 渐变天空：uv.y 0(底)->1(顶) 线性插值（vUv 原点在左下）*/
+static const char* FS_SKY =
+    "#version 300 es\n"
+    "precision highp float;\n"
+    "in vec2 vUv;\n"
+    "out vec4 oCol;\n"
+    "uniform vec3 uTop;\n"
+    "uniform vec3 uBottom;\n"
+    "void main(){ oCol = vec4(mix(uBottom, uTop, vUv.y), 1.0); }\n";
+
 static int compile_stage(GLuint prog, GLenum kind, const char* src)
 {
     GLuint sh = p_glCreateShader(kind);
@@ -490,6 +500,7 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_PHONG_TEX,  VS_PSCENE, FS_PHONG_TEX))  return 0;
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
+    if (!make_program(SLR_PROG_SKY,  VS_FULL,  FS_SKY))   return 0;
 
     /* v3.5 固化效果槽：5 效果 × 2 变体（固化 ESSL300 源运行期编译，
      * 与内建程序同一 make_program 路径——编译/链接失败同样致命）*/
@@ -525,6 +536,9 @@ static int gl_make_shared(void)
     }
 
     s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
+    s_uni[SLR_PROG_BLIT].src  = p_glGetUniformLocation(s_progs[SLR_PROG_BLIT], "uSrc");
+    s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
+    s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
     s_uni[SLR_PROG_POST].src  = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSrc");
     s_uni[SLR_PROG_POST].bright = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uBrightness");
     s_uni[SLR_PROG_POST].sat    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSaturation");
@@ -1012,6 +1026,25 @@ static void gl_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
     p_glUseProgram(0);
 }
 
+/* P6 渐变天空：在 camera_begin 之后调用——FBO/视口/scissor 已就位，
+ * 只切状态 + program + draw；无深度写入（物体随后正常覆盖）。状态由
+ * 调用点紧随的 set_state(0) 重置兜底 */
+static void gl_draw_sky(const float* tb)
+{
+    p_glDisable(GL_DEPTH_TEST);
+    p_glDepthMask(GL_FALSE);
+    p_glDisable(GL_BLEND);
+    p_glUseProgram(s_progs[SLR_PROG_SKY]);
+    p_glUniform3f(s_uni[SLR_PROG_SKY].sky_top, tb[0], tb[1], tb[2]);
+    p_glUniform3f(s_uni[SLR_PROG_SKY].sky_bottom, tb[3], tb[4], tb[5]);
+    p_glBindVertexArray(s_meshes[2].vao);
+    p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
+    p_glBindVertexArray(0);
+    p_glUseProgram(0);
+    p_glDepthMask(GL_TRUE);
+    p_glEnable(GL_DEPTH_TEST);
+}
+
 /* 回读 + 行翻 top-down（glReadPixels 产出 bottom-up，原地交换行序）*/
 static void gl_readback(SlrRhiTarget* t, int w, int h, int64_t dst_ptr)
 {
@@ -1135,6 +1168,7 @@ static int load_all_gles_procs(void)
     LOAD_GL(glUseProgram);
     LOAD_GL(glGetUniformLocation);
     LOAD_GL(glUniform1f);
+    LOAD_GL(glUniform3f);
     LOAD_GL(glUniform1i);
     LOAD_GL(glUniform4f);
     LOAD_GL(glUniformMatrix4fv);
@@ -1388,6 +1422,7 @@ static const SlrRhi s_rhi_gles =
     gl_draw_item,
     gl_post_process,
     gl_blit,
+    gl_draw_sky,
     gl_readback,
     gl_v1_clear,
     gl_v1_draw,

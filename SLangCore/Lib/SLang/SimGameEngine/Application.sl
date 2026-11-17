@@ -9,6 +9,7 @@
 # 命令行 / 无头循环直接 while 调 tick。引擎层不绑定窗口系统。
 import Std;
 import Math;
+import SLangRender;
 public class Application
 {
     # 当前激活场景（帧序只遍历它）
@@ -25,6 +26,16 @@ public class Application
     public Float32 maxDeltaTime = 0.1f
     # 上帧实际推进量（脚本可读；替代 Time.deltaTime 的 v1 形态）
     public Float32 deltaTime = 0.0f
+    # 碰撞系统（P3）：null = 禁用；赋实例后每个固定步自动 step（Enter/
+    # Stay/Exit 必须在固定步长判定——doc/11 §4.3）
+    public CollisionSystem collisionSystem = null
+    # 物理系统（P4）：null = 禁用；启用时物理步内部驱动碰撞检测（积分→
+    # 检测→接触求解，doc/12 §3 顺序），collisionSystem 可为 null（无碰撞
+    # 响应的自由运动）
+    public PhysicsSystem physicsSystem = null
+    # 动画系统（P5）：null = 禁用；每帧在 start/update 段之前采样（先采样
+    # 再收集批次——doc/07 §3.2 关键顺序）
+    public AnimSystem animSystem = null
 
     Float32 _fixedAcc = 0.0f
     List<Behaviour> _frameBehaviours = null
@@ -40,6 +51,9 @@ public class Application
         this.maxDeltaTime = 0.1f
         this.deltaTime = 0.0f
         this._fixedAcc = 0.0f
+        this.collisionSystem = null
+        this.physicsSystem = null
+        this.animSystem = null
         this._frameBehaviours = List<Behaviour>(64)
     }
 
@@ -104,6 +118,16 @@ public class Application
                 }
                 i = i + 1
             }
+            # 物理步（P4）：内部先积分再驱动碰撞检测再求解接触（doc/12 §3）；
+            # 未启物理时保留纯碰撞步（P3 行为不变）
+            if this.physicsSystem != null
+            {
+                this.physicsSystem.step( this.activeScene, this.fixedDt, this.collisionSystem )
+            }
+            elif this.collisionSystem != null
+            {
+                this.collisionSystem.step( this.activeScene )
+            }
             acc = acc - this.fixedDt
             steps = steps + 1
         }
@@ -116,6 +140,11 @@ public class Application
         # 4) start（首次）+ update：按树序（dt=0 / paused 时逻辑不推进）
         if dt > 0.0f
         {
+            # 动画采样（P5）：先采样再跑 update 钩子（doc/07 §3.2 顺序）
+            if this.animSystem != null
+            {
+                this.animSystem.update( this.activeScene, dt )
+            }
             Int32 i = 0
             Int32 n = this._frameBehaviours.length
             while i < n
@@ -151,6 +180,10 @@ public class Application
 
         # 11) 帧尾：延迟销毁收口
         this.activeScene.processDestroys()
+
+        # 12) C99 时间周期帧标记（每帧采样一次——EngineClock.mark 的帧间隔
+        # 即本 tick 实际耗时；贯穿逻辑/渲染/音频/物理的统一时钟）
+        EngineClock.mark()
     }
 
     # ── 收尾 ─────────────────────────────────────────────

@@ -142,11 +142,11 @@ public class HlslLibrary
     }
 
     # ── Lit：顶点 ────────────────────────────────────────
+    # 注意：源码不含 #include（非法 HLSL）——common()/lighting() 拼接由
+    # 工厂（litShader 等）完成（doc/03 §4.4、doc/05 Roadmap #10）
     public static string litVertexSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "Varyings VSMain(Attributes input)" + "\n"
+        string s = "Varyings VSMain(Attributes input)" + "\n"
         s = s + "{" + "\n"
         s = s + "    Varyings output;" + "\n"
         s = s + "    output.positionWS = TransformObjectToWorld(input.positionOS);" + "\n"
@@ -161,10 +161,7 @@ public class HlslLibrary
     # ── Lit：像素 ────────────────────────────────────────
     public static string litPixelSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "#include Lighting" + "\n"
-        s = s + "" + "\n"
-        s = s + "float4 PSMain(Varyings input) : SV_Target" + "\n"
+        string s = "float4 PSMain(Varyings input) : SV_Target" + "\n"
         s = s + "{" + "\n"
         s = s + "    float metallic  = _SurfaceParams.x;" + "\n"
         s = s + "    float roughness = clamp(1.0 - _SurfaceParams.y, 0.045, 1.0);" + "\n"
@@ -189,9 +186,7 @@ public class HlslLibrary
     # ── Unlit ───────────────────────────────────────────
     public static string unlitVertexSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "Varyings VSMain(Attributes input)" + "\n"
+        string s = "Varyings VSMain(Attributes input)" + "\n"
         s = s + "{" + "\n"
         s = s + "    Varyings output;" + "\n"
         s = s + "    output.positionWS = TransformObjectToWorld(input.positionOS);" + "\n"
@@ -205,9 +200,7 @@ public class HlslLibrary
 
     public static string unlitPixelSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "float4 PSMain(Varyings input) : SV_Target" + "\n"
+        string s = "float4 PSMain(Varyings input) : SV_Target" + "\n"
         s = s + "{" + "\n"
         s = s + "    float4 tex = _MainTex.Sample(sampler_MainTex, input.uv);" + "\n"
         s = s + "    float3 color = tex.rgb * _BaseColor.rgb + _EmissionColor.rgb;" + "\n"
@@ -219,9 +212,7 @@ public class HlslLibrary
     # ── DepthOnly（Z-Prepass / ShadowCaster 共用）──────────
     public static string depthOnlyVertexSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "cbuffer UnityShadow : register(b4)" + "\n"
+        string s = "cbuffer UnityShadow : register(b4)" + "\n"
         s = s + "{" + "\n"
         s = s + "    float4x4 unity_MatrixLP;" + "\n"
         s = s + "    float4   _ShadowParams;" + "\n"
@@ -238,9 +229,7 @@ public class HlslLibrary
     # 深度只需要写深度，像素着色器可以为空（AlphaTest 时再开）
     public static string depthOnlyPixelSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "void PSMain(Varyings input)" + "\n"
+        string s = "void PSMain(Varyings input)" + "\n"
         s = s + "{" + "\n"
         s = s + "    float4 tex = _MainTex.Sample(sampler_MainTex, input.uv);" + "\n"
         s = s + "    clip(tex.a * _BaseColor.a - _SurfaceParams.z);" + "\n"
@@ -251,9 +240,7 @@ public class HlslLibrary
     # ── Skybox ──────────────────────────────────────────
     public static string skyboxVertexSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "struct SkyboxVaryings" + "\n"
+        string s = "struct SkyboxVaryings" + "\n"
         s = s + "{" + "\n"
         s = s + "    float4 positionCS : SV_POSITION;" + "\n"
         s = s + "    float3 direction  : TEXCOORD0;" + "\n"
@@ -274,9 +261,7 @@ public class HlslLibrary
 
     public static string skyboxPixelSource()
     {
-        string s = "#include Common" + "\n"
-        s = s + "" + "\n"
-        s = s + "TextureCube _SkyboxCubemap : register(t1);" + "\n"
+        string s = "TextureCube _SkyboxCubemap : register(t1);" + "\n"
         s = s + "" + "\n"
         s = s + "struct SkyboxVaryings" + "\n"
         s = s + "{" + "\n"

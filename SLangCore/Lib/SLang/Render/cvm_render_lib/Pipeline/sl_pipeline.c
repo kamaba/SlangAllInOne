@@ -183,6 +183,10 @@ int64_t slr_pipeline_create(int w, int h)
             ray_scene_reset(&p->ray);
             p->clear_color[0] = 0.06f; p->clear_color[1] = 0.06f;
             p->clear_color[2] = 0.10f; p->clear_color[3] = 1.0f;
+            /* P6 渐变天空默认关 */
+            p->sky_on = 0;
+            p->sky_top[0] = 0.0f;    p->sky_top[1] = 0.0f;    p->sky_top[2] = 0.0f;
+            p->sky_bottom[0] = 0.0f; p->sky_bottom[1] = 0.0f; p->sky_bottom[2] = 0.0f;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
             if (!pipeline_make_targets(p, w, h))
             {
@@ -267,6 +271,34 @@ int slr_pipeline_set_clear_color(int64_t h, float r, float g, float b, float a)
     p->cameras[0].clear_color[1] = g;
     p->cameras[0].clear_color[2] = b;
     p->cameras[0].clear_color[3] = a;
+    return 1;
+}
+
+/* P6 渐变天空背景：颜色（顶/底 RGB 0..1）+ 开关（默认关）。
+ * 生效点 = 阶段 7 每相机清屏（COLOR 位）之后画全屏渐变 quad。
+ * 顶/底分两个导出——SL 侧 DllStaticImport 实证 7 参绑定返回 false
+ * （5 参 set_clear_color 先例封顶），拆成 4 参形态 */
+int slr_pipeline_set_sky_top(int64_t h, float r, float g, float b)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    p->sky_top[0] = r; p->sky_top[1] = g; p->sky_top[2] = b;
+    return 1;
+}
+
+int slr_pipeline_set_sky_bottom(int64_t h, float r, float g, float b)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    p->sky_bottom[0] = r; p->sky_bottom[1] = g; p->sky_bottom[2] = b;
+    return 1;
+}
+
+int slr_pipeline_set_sky_on(int64_t h, int on)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    p->sky_on = on ? 1 : 0;
     return 1;
 }
 
@@ -915,6 +947,15 @@ static int stage_render_shader_chunks(SlrPipeline* p)
         /* RHI：相机视口 + 可选局部清屏（GL: scissor / D3D11: 清屏 quad）*/
         g_rhi->camera_begin(p->rt_scene, c->vp_x, c->vp_y, c->vp_w, c->vp_h,
                             p->h, c->clear_flags, c->clear_color);
+        /* P6 渐变天空：清屏后、物体绘制前画全屏渐变（无深度写入），
+         * 仅当相机确实清了颜色位才画（避免叠加在未清的残影上）*/
+        if (p->sky_on && (c->clear_flags & SLR_CLEAR_COLOR) && g_rhi->draw_sky)
+        {
+            float tb[6];
+            tb[0] = p->sky_top[0];    tb[1] = p->sky_top[1];    tb[2] = p->sky_top[2];
+            tb[3] = p->sky_bottom[0]; tb[4] = p->sky_bottom[1]; tb[5] = p->sky_bottom[2];
+            g_rhi->draw_sky(tb);
+        }
         g_rhi->set_state(0);
         while (i < end)
         {

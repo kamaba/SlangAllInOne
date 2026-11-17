@@ -681,6 +681,8 @@ namespace SLang
         public static Int64 ffi_toolbarAddAction( Int64 tb, string text ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_toolbar_add_separator_sl" )
         public static void ffi_toolbarAddSeparator( Int64 tb ) {}
+        @DllStaticImport( "slang_qt", "slqt_toolbar_add_widget_sl" )
+        public static void ffi_toolbarAddWidget( Int64 tb, Int64 w ) {}
 
         # Dock：QDockWidget（自由停靠；area = Qt::DockWidgetArea 位值）
         @DllStaticImport( "slang_qt", "slqt_dock_create_sl" )

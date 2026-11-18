@@ -33,8 +33,20 @@ public class RenderSystem
     # 横向半宽 = viewSize × aspect（aspect = pixW / pixH）。
     Int32 pixW = 0
     Int32 pixH = 0
+    # ── 镜头方向（Alt+拖拽旋转，2026-11-18）────────────────
+    # yaw/pitch 为弧度，朝向约定同 engine sle_cam_basis（yaw=0 朝 -Z）。
+    # useViewRotation=false（默认）时所有换算走旧的正交路径，行为逐字节
+    # 不变；置 true 后世界顶点先投到相机 right/up/fwd 基再正交投影，
+    # 3D 形状与坐标轴箭头随镜头一起转。
+    public Float32 camYaw = 0.0f
+    public Float32 camPitch = 0.0f
+    public Float32_3 cameraEye = Float32_3.zero()
+    public bool useViewRotation = false
 
     SLang.RenderPipeline _pipe = null
+    # UI 叠加相机（层次 31，后画且只清深度）——让 FairyGUI UI 永远盖在
+    # 3D 场景之上，无需改 C 层深度钳制规则。
+    SLang.RenderCamera _uiCam = null
     public string lastError = ""
     # 对象句柄池（**只存 Int64**——跨模块对象存 SL List 会污染实例字段，
     # destroy 静默失败：RenderSystem 烘焙组实测，QT 轮同族坑）
@@ -80,6 +92,8 @@ public class RenderSystem
         this._pipe = p
         this.pixW = width
         this.pixH = height
+        # 默认相机剔除 layer 31（留给 UI 叠加相机独占）
+        this._pipe.setCamera( 0x7FFFFFFF, 0.0f - 1.0f, 1.0f, 0.0f - 1.0f, 1.0f )
         ret true
     }
 
@@ -102,6 +116,10 @@ public class RenderSystem
         {
             this.pixW = width
             this.pixH = height
+            if this._uiCam != null
+            {
+                this._uiCam.setViewport( 0, 0, width, height )
+            }
         }
         ret ok
     }
@@ -124,6 +142,34 @@ public class RenderSystem
             ret 10.0f
         }
         ret a
+    }
+
+    # 世界点 → 相机视图空间 (vx,vy,vz)。基向量与 engine sle_cam_basis 同式：
+    # fwd=(sy*cp, sp, -cy*cp) right=(cy,0,sy) up=cross(right,fwd)。
+    # 返回 Float32_3(vx,vy,vz)；调用方用 vx/(aspect*viewSize), vy/viewSize 投影。
+    Float32_3 worldToView( Float32_3 wp )
+    {
+        Float32 cy = Mathf.cos( this.camYaw )
+        Float32 sy = Mathf.sin( this.camYaw )
+        Float32 cp = Mathf.cos( this.camPitch )
+        Float32 sp = Mathf.sin( this.camPitch )
+        Float32 fx = sy * cp
+        Float32 fy = sp
+        Float32 fz = 0.0f - cy * cp
+        Float32 rx = cy
+        Float32 rz = sy
+        # up = cross(right, fwd)
+        Float32 ux = 0.0f * fz - rz * fy
+        Float32 uy = rz * fx - rx * fz
+        Float32 uz = rx * fy - 0.0f * fx
+        Float32_3 ce = this.cameraEye
+        Float32 dx = wp.x - ce.x
+        Float32 dy = wp.y - ce.y
+        Float32 dz = wp.z - ce.z
+        Float32 vx = dx * rx + dy * 0.0f + dz * rz
+        Float32 vy = dx * ux + dy * uy + dz * uz
+        Float32 vz = dx * fx + dy * fy + dz * fz
+        ret Float32_3( vx, vy, vz )
     }
 
     # ── P6 渐变天空背景 ─────────────────────────────────
@@ -177,9 +223,12 @@ public class RenderSystem
         ret this._pipe
     }
 
-    # ── P8 Volume：参数栈下发（doc/14 §5 过渡映射）────────
+    # ── P8 Volume：参数栈下发（doc/14 §5；v1.1 参数块）────
     # contributing=0 → 后处理关闭（enable=0 纯拷贝）；混合数学在 C
-    # （VolumeSystem.compute → sle_volume_blend），本方法只做门面转发。
+    # （VolumeSystem.compute → sle_volume_blend），本方法只把栈值组块
+    # 经 setPostParams 下发（13 float 布局见 Pipeline.sl setPostParams）。
+    # grainSeed 用引擎统一帧号 EngineTime.frameCount 驱动（与逻辑/物理同帧号，
+    # 不再依赖渲染管线自己的帧计数）。
     public bool applyPost( VolumeStack st )
     {
         if this._pipe == null
@@ -190,16 +239,41 @@ public class RenderSystem
         {
             ret false
         }
+        Int64 blk = Memory.alloc( 52 )
+        if blk == 0
+        {
+            ret false
+        }
         Int32 en = 0
         if st.contributing > 0
         {
             en = 1
         }
-        ret this._pipe.setPostEffect( en, st.brightness, st.saturation, st.vignette )
+        Memory.writeF32( blk, 0, en.toFloat32() )
+        Memory.writeF32( blk, 4, st.brightness )
+        Memory.writeF32( blk, 8, st.contrast )
+        Memory.writeF32( blk, 12, st.saturation )
+        Memory.writeF32( blk, 16, st.vignette )
+        Memory.writeF32( blk, 20, st.vignetteSmooth )
+        Memory.writeF32( blk, 24, st.hueShift )
+        Memory.writeF32( blk, 28, st.grain )
+        Memory.writeF32( blk, 32, EngineTime.frameCount.toFloat32() )
+        Memory.writeF32( blk, 36, st.tonemap.toFloat32() )
+        Memory.writeF32( blk, 40, st.filterR )
+        Memory.writeF32( blk, 44, st.filterG )
+        Memory.writeF32( blk, 48, st.filterB )
+        bool ok = this._pipe.setPostParams( blk )
+        Memory.free( blk )
+        ret ok
     }
 
     # 场景光源收集（v2.13）：sync 每帧先收集 LightData 写管线光照槽 0..7
     public Int32 lightCount = 0
+
+    # 可选 Volume 集成（Unity VolumeManager 同款，doc/14 §4）：非空时
+    # sync 每帧按相机位置 compute 参数栈并 applyPost（renderFrame 之前
+    # 写完）；null = 不启用（调用方自行 applyPost 的旧用法不受影响）
+    public VolumeSystem volumeSystem = null
 
     # 场景 → RenderObject 同步（直通组）；返回本帧提交对象数
     public Int32 sync( Scene scene )
@@ -210,6 +284,12 @@ public class RenderSystem
         }
         this.recycle()
         this.applyLights( scene )
+        if this.volumeSystem != null
+        {
+            Float32_3 cc = this.cameraCenter
+            VolumeStack vst = this.volumeSystem.compute( scene, cc )
+            this.applyPost( vst )
+        }
         this.batcher.collect( scene, this.cullMask )
         this.batcher.build()
         Float32 ax = this.aspectX()
@@ -236,11 +316,26 @@ public class RenderSystem
                     # 纵向半高 = viewSize（Unity orthographicSize 语义），
                     # 横向半宽 = viewSize × aspect —— 窗口非方形时内容
                     # 不被拉伸，只是视野横向变宽/变窄。
-                    Float32 dxw = wp.x - cxw
-                    Float32 dyw = wp.y - cyw
-                    Float32 nx = dxw / hw
-                    Float32 ny = dyw / this.viewSize
-                    ro.setPosition( nx, ny, wp.z )
+                    # useViewRotation=true 时先投到相机 right/up/fwd 基，
+                    # 3D 内置网格（如箭头 gizmo）随镜头 yaw/pitch 转向。
+                    Float32 nx = 0.0f
+                    Float32 ny = 0.0f
+                    Float32 nz = wp.z
+                    if this.useViewRotation
+                    {
+                        Float32_3 v = this.worldToView( wp )
+                        nx = v.x / hw
+                        ny = v.y / this.viewSize
+                        nz = v.z
+                    }
+                    else
+                    {
+                        Float32 dxw = wp.x - cxw
+                        Float32 dyw = wp.y - cyw
+                        nx = dxw / hw
+                        ny = dyw / this.viewSize
+                    }
+                    ro.setPosition( nx, ny, nz )
                     ro.setRotationZ( wrz )
                     Float32 swx = ws.x / hw
                     Float32 swy = ws.y / this.viewSize
@@ -284,7 +379,7 @@ public class RenderSystem
                 {
                     Int64 srcPtr = Memory.alloc( vn * 12 )
                     Int64 dstPtr = Memory.alloc( vn * 16 )
-                    Int64 cptr = Memory.alloc( 12 )
+                    Int64 cptr = Memory.alloc( 36 )
                     bool blocksOk = ( srcPtr != 0 ) && ( dstPtr != 0 )
                     bool allOk = blocksOk && ( cptr != 0 )
                     if allOk
@@ -294,21 +389,47 @@ public class RenderSystem
                         {
                             Float32_3 v = baked[vi]
                             Int32 off = vi * 12
-                            # x 预缩放（绕相机中心）：bake 的 NDC_x = (x'-cx)/viewSize，
-                            # 令 x' = cx + (x-cx)/aspect 后等效 (x-cx)/(viewSize×aspect)，
-                            # 与直通组横向映射一致（非方形窗口不拉伸）
-                            Float32 vx = v.x
-                            Float32 bx = cxw + ( vx - cxw ) / ax
-                            Memory.writeF32( srcPtr, off + 0, bx )
+                            Memory.writeF32( srcPtr, off + 0, v.x )
                             Memory.writeF32( srcPtr, off + 4, v.y )
                             Memory.writeF32( srcPtr, off + 8, v.z )
                             vi = vi + 1
                         }
-                        Memory.writeF32( cptr, 0, cxw )
-                        Memory.writeF32( cptr, 4, cyw )
-                        Memory.writeF32( cptr, 8, 0.0f )
-                        EngineFfi.libOrthoBake( cptr, this.viewSize, srcPtr, vn, dstPtr )
-                        Int32 slot = this._bakeCursor % 4
+                        if this.useViewRotation
+                        {
+                            # cam9：[eye3, yaw, pitch, viewSize, aspect, pad, pad]
+                            # C 侧内建视图基投影 + aspect，勿再 x 预缩放
+                            Float32_3 ce = this.cameraEye
+                            Memory.writeF32( cptr, 0, ce.x )
+                            Memory.writeF32( cptr, 4, ce.y )
+                            Memory.writeF32( cptr, 8, ce.z )
+                            Memory.writeF32( cptr, 12, this.camYaw )
+                            Memory.writeF32( cptr, 16, this.camPitch )
+                            Memory.writeF32( cptr, 20, this.viewSize )
+                            Memory.writeF32( cptr, 24, ax )
+                            EngineFfi.libOrthoBakeView( cptr, srcPtr, vn, dstPtr )
+                        }
+                        else
+                        {
+                            # x 预缩放（绕相机中心）：bake 的 NDC_x = (x'-cx)/viewSize，
+                            # 令 x' = cx + (x-cx)/aspect 后等效 (x-cx)/(viewSize×aspect)，
+                            # 与直通组横向映射一致（非方形窗口不拉伸）
+                            vi = 0
+                            while vi < vn
+                            {
+                                Float32_3 v = baked[vi]
+                                Int32 off = vi * 12
+                                Float32 bx = cxw + ( v.x - cxw ) / ax
+                                Memory.writeF32( srcPtr, off + 0, bx )
+                                vi = vi + 1
+                            }
+                            Memory.writeF32( cptr, 0, cxw )
+                            Memory.writeF32( cptr, 4, cyw )
+                            Memory.writeF32( cptr, 8, 0.0f )
+                            EngineFfi.libOrthoBake( cptr, this.viewSize, srcPtr, vn, dstPtr )
+                        }
+                        # 槽 3 预留给 FairyGUI UI 层（submitUiMesh），场景
+                        # 烘焙组只在 0..2 轮转，避免两组互相覆盖网格。
+                        Int32 slot = this._bakeCursor % 3
                         this._bakeCursor = this._bakeCursor + 1
                         bool up = this._pipe.uploadMesh( slot, dstPtr, vn )
                         if up
@@ -463,6 +584,62 @@ public class RenderSystem
         bool ok = this._pipe.uploadMesh( slot, ptr, n )
         Memory.free( ptr )
         ret ok
+    }
+
+    # ── FairyGUI UI 网格提交（slot 3，与场景烘焙组 0..2 隔离）────
+    # vertsPtr 指向 pos2+uv2 交错块（stride 16B），顶点 xy 已是 NDC；
+    # 单个 RenderObject 承载整张 UI 网格（图集同一纹理，按三角形顺序
+    # 绘制即层级顺序）。UI 对象独占 layer 31，由后画且只清深度的叠加
+    # 相机渲染，因此不受 3D 场景深度/天空影响。对象句柄登记进 _objIds，
+    # 随下次 sync() 回收；调用时机固定为 sync() 之后、frame() 之前。
+    void ensureUiCamera()
+    {
+        if this._uiCam != null
+        {
+            ret
+        }
+        if this._pipe == null
+        {
+            ret
+        }
+        SLang.RenderCamera cam = this._pipe.addCamera( 10 )
+        if cam == null
+        {
+            ret
+        }
+        cam.setCullMask( 0x80000000 )
+        cam.setExtents( 0.0f - 1.0f, 1.0f, 0.0f - 1.0f, 1.0f )
+        cam.setViewport( 0, 0, this.pixW, this.pixH )
+        cam.setClearFlags( 2 )
+        this._uiCam = cam
+    }
+
+    public bool submitUiMesh( Int64 vertsPtr, Int32 vertCount,
+        SLang.RenderTexture tex, Float32 r, Float32 g, Float32 b, Float32 a, Int32 queue )
+    {
+        if this._pipe == null || vertsPtr == 0 || vertCount <= 0
+        {
+            ret false
+        }
+        bool up = this._pipe.uploadMesh( 3, vertsPtr, vertCount )
+        if !up
+        {
+            ret false
+        }
+        this.ensureUiCamera()
+        SLang.RenderObject ro = this._pipe.addObject( 4 + 3 )
+        if ro == null
+        {
+            ret false
+        }
+        ro.setTexture( tex )
+        ro.setColor( r, g, b, a )
+        ro.setQueue( queue )
+        ro.setLayer( 31 )
+        ro.setPosition( 0.0f, 0.0f, 0.0f )
+        ro.setScale( 1.0f, 1.0f )
+        this._objIds.add( ro.handle )
+        ret true
     }
 
     # ── P7 2D：精灵收集（doc/15 §3）──────────────────────
@@ -754,6 +931,17 @@ public class RenderSystem
     }
 
 
+    # 渲染时间解析（doc/18 v1.1）：time < 0 = 读引擎统一时间快照
+    # （scaled elapsedTime，与逻辑/物理同帧基准）；>= 0 = 旧显式时间兼容。
+    public Float32 resolveTime( Float32 time )
+    {
+        if time < 0.0f
+        {
+            ret EngineTime.elapsedTime
+        }
+        ret time
+    }
+
     # 渲染一帧到 dstPtr 原生块（RGBA8，供 QT/宿主上屏）
     public bool frame( Float32 time, Int64 dstPtr )
     {
@@ -761,7 +949,7 @@ public class RenderSystem
         {
             ret false
         }
-        ret this._pipe.renderFrame( time, dstPtr )
+        ret this._pipe.renderFrame( this.resolveTime( time ), dstPtr )
     }
 
     # 帧尾回收本帧 RenderObject（句柄池由 Render 侧管理；按 Int64 句柄
@@ -805,6 +993,11 @@ public class RenderSystem
     {
         this.recycle()
         this.recycle2D()
+        if this._uiCam != null
+        {
+            this._uiCam.destroy()
+            this._uiCam = null
+        }
         if this._pipe != null
         {
             this._pipe.destroy()

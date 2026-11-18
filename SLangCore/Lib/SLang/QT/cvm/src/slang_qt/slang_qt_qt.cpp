@@ -546,8 +546,21 @@ static int slqt_key_slot(int32_t key)
     case 0x01000014: return 130; /* Right */
     case 0x01000015: return 131; /* Down */
     case 0x01000000: return 132; /* Escape */
+    case 0x01000230: return 133; /* Alt (Qt::Key_Alt) */
+    case 0x01000020: return 134; /* Shift */
+    case 0x01000021: return 135; /* Control */
     default: return -1;
     }
+}
+/* 2026-11-18：Alt 是修饰键，Qt 通常不单独派发 keyPressEvent，
+ * 故在鼠标事件过滤器里用 modifiers() 实时同步到槽 133（Alt+拖拽必然
+ * 伴随鼠标事件）。SL 侧 SceneDemo.KEY_ALT=16777264=0x01000230 映射到
+ * 同一槽，keyDown(KEY_ALT) 即可读到真实 Alt 态。 */
+static void slqt_sync_modifiers(Qt::KeyboardModifiers mods)
+{
+    s_slqt_keys[133] = (mods & Qt::AltModifier) ? 1 : 0;
+    s_slqt_keys[134] = (mods & Qt::ShiftModifier) ? 1 : 0;
+    s_slqt_keys[135] = (mods & Qt::ControlModifier) ? 1 : 0;
 }
 static void slqt_key_set(int32_t key, int32_t down)
 {
@@ -593,6 +606,9 @@ int64_t slqt_be_keywidget_create(int64_t p) { QWidget* parent = p ? asWidget(p) 
  * wheel_take 读后清零，避免 trampoline 重入 VM 路径。 */
 static int s_slqt_mouse_x = 0;
 static int s_slqt_mouse_y = 0;
+/* 局部坐标（相对接收事件的控件；UI 命中测试用——全局坐标含窗口边框偏移） */
+static int s_slqt_mouse_lx = 0;
+static int s_slqt_mouse_ly = 0;
 static int s_slqt_mouse_left = 0;
 static int s_slqt_mouse_right = 0;
 static int s_slqt_wheel_acc = 0;
@@ -609,6 +625,9 @@ public:
             QMouseEvent* e = static_cast<QMouseEvent*>(ev);
             s_slqt_mouse_x = (int)e->globalPosition().x();
             s_slqt_mouse_y = (int)e->globalPosition().y();
+            s_slqt_mouse_lx = (int)e->position().x();
+            s_slqt_mouse_ly = (int)e->position().y();
+            slqt_sync_modifiers(e->modifiers());
             break;
         }
         case QEvent::MouseButtonPress:
@@ -616,6 +635,9 @@ public:
             QMouseEvent* e = static_cast<QMouseEvent*>(ev);
             s_slqt_mouse_x = (int)e->globalPosition().x();
             s_slqt_mouse_y = (int)e->globalPosition().y();
+            s_slqt_mouse_lx = (int)e->position().x();
+            s_slqt_mouse_ly = (int)e->position().y();
+            slqt_sync_modifiers(e->modifiers());
             if (e->button() == Qt::LeftButton) s_slqt_mouse_left = 1;
             if (e->button() == Qt::RightButton) s_slqt_mouse_right = 1;
             break;
@@ -623,6 +645,7 @@ public:
         case QEvent::MouseButtonRelease:
         {
             QMouseEvent* e = static_cast<QMouseEvent*>(ev);
+            slqt_sync_modifiers(e->modifiers());
             if (e->button() == Qt::LeftButton) s_slqt_mouse_left = 0;
             if (e->button() == Qt::RightButton) s_slqt_mouse_right = 0;
             break;
@@ -652,6 +675,8 @@ static void slqt_mouse_install(void)
 
 int32_t slqt_be_mouse_x(void) { return s_slqt_mouse_x; }
 int32_t slqt_be_mouse_y(void) { return s_slqt_mouse_y; }
+int32_t slqt_be_mouse_local_x(void) { return s_slqt_mouse_lx; }
+int32_t slqt_be_mouse_local_y(void) { return s_slqt_mouse_ly; }
 int32_t slqt_be_mouse_down(int32_t button) { return button == 1 ? s_slqt_mouse_left : (button == 2 ? s_slqt_mouse_right : 0); }
 int32_t slqt_be_mouse_wheel_take(void) { int v = s_slqt_wheel_acc; s_slqt_wheel_acc = 0; return v; }
 

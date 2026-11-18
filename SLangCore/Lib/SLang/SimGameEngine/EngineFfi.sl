@@ -159,6 +159,16 @@ public class EngineFfi
         ret 0 - 1
     }
 
+    # 带镜头 yaw/pitch 的正交烘焙投影（Alt+拖拽旋转镜头）：cam9 =
+    # [eyeX,eyeY,eyeZ, yawRad,pitchRad, viewSize, aspect, pad, pad]；
+    # 世界 float3 → NDC pos2+uv2（stride 16B，C 侧内建 aspect 与视图旋转）。
+    # 返回处理点数（>=0）；绑定失败兜底 -1。
+    @DllStaticImport( "sl_sim_engine_lib", "sle_ortho_bake_view", "i64,i64,i32,i64->i32" )
+    public static Int32 libOrthoBakeView( Int64 camPtr, Int64 srcPtr, Int32 count, Int64 dstPtr )
+    {
+        ret 0 - 1
+    }
+
     # ── 形状生成（P9 shape 库；计算核心在 C，doc/17；SL 侧只组块/解块）──
     # libShapeCounts：outPtr 填 [vertCount, triCount] 两个 Int32。返回 0 成功
     # / -1 形状号非法 / -2 参数非法；绑定失败兜底 -1（ShapeFactory 返回 null）。

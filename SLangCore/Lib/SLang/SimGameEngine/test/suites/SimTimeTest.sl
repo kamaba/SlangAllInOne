@@ -327,6 +327,61 @@ public class SimTimeTest
         app.shutdown()
     }
 
+    # ── T14. 外部播放头上报 + 帧尾统一域收口（doc/18 v1.1）──
+    static void testExternalClockSync()
+    {
+        TimeService t = fresh( 0.0625f, 0.125f, 5 )
+        Int64 head = EngineClock.nowUs() - 250000
+        t.reportAudioHead( head, true )
+        t.reportVideoHead( head, false )
+        check( t.hasAudioHead(), "T14 audio head registered" )
+        check( t.hasVideoHead(), "T14 video head registered" )
+        check( t.audioHeadUs() == head, "T14 audio head value" )
+        check( t.videoHeadUs() == head, "T14 video head value" )
+        t.syncExternalClocks()
+        check( t.syncedAudioCount == 1, "T14 audio sync once" )
+        check( t.syncedVideoCount == 1, "T14 video sync once" )
+        Int64 offA = t.domainOffset( 4 )
+        Int64 wantA = head - EngineClock.nowUs()
+        bool okA = ( offA - wantA > -5000 ) && ( offA - wantA < 5000 )
+        check( okA, "T14 audio snap offset = head - master" )
+        Int64 nowA = t.domainNowUs( 4 )
+        bool okNow = ( nowA - head > -5000 ) && ( nowA - head < 5000 )
+        check( okNow, "T14 audio domain now tracks playback head" )
+        Int64 off0 = t.domainOffset( 5 )
+        t.reportVideoHead( head, false )
+        t.syncExternalClocks()
+        Int64 moved = t.domainOffset( 5 ) - off0
+        bool bounded = ( moved <= t.maxNudgeUs ) && ( moved >= 0 - t.maxNudgeUs )
+        check( bounded, "T14 video nudge bounded by maxNudgeUs" )
+        t.clearExternalHeads()
+        check( t.hasAudioHead() == false, "T14 clear heads audio" )
+        check( t.hasVideoHead() == false, "T14 clear heads video" )
+    }
+
+    # ── T15. 视频钟 / 渲染统一时间门面（贯穿闭环）──────────
+    static void testCycleFacades()
+    {
+        Application app = Application()
+        app.init()
+        check( app.videoClock != null, "T15 VideoClock created on init" )
+        Int64 head = EngineClock.nowUs() - 125000
+        bool ok = app.videoClock.reportHeadUs( head, true )
+        check( ok, "T15 VideoClock report head" )
+        check( app.videoClock.reportCount == 1, "T15 VideoClock report count" )
+        check( app.videoClock.hasHead(), "T15 VideoClock has head" )
+        app.tick( 0.0625f )
+        check( app.time.syncedVideoCount == 1, "T15 frame tail synced video domain" )
+        Int64 vn = app.videoClock.nowUs()
+        bool okV = ( vn - head > -5000 ) && ( vn - head < 5000 )
+        check( okV, "T15 video domain follows reported head" )
+        RenderSystem rs = RenderSystem()
+        check( near( rs.resolveTime( 0.0f - 1.0f ), EngineTime.elapsedTime ),
+            "T15 render frame uses EngineTime.elapsedTime" )
+        check( near( rs.resolveTime( 0.25f ), 0.25f ), "T15 explicit render time kept" )
+        app.shutdown()
+    }
+
     public static void run()
     {
         Console.println( "" )
@@ -344,6 +399,8 @@ public class SimTimeTest
         testDomainClamp()
         testApplicationIntegration()
         testEngineTimeDomainFacades()
+        testExternalClockSync()
+        testCycleFacades()
         Console.println( "===== SimTimeTest PASS=" + _pass.toString() + " FAIL=" + _fail.toString() + " =====" )
     }
 }

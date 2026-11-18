@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="DemoUI" width="480" height="480">
+  <group name="PanelGroup" x="60" y="60" w="360" h="200">
+    <image name="bg" src="panel" x="0" y="0" w="360" h="200" scale9="1" color="#FFFFFF" alpha="1" />
+    <image name="icon1" src="icon" x="20" y="20" w="48" h="48" scale9="0" color="#FFFFFF" alpha="1" />
+    <image name="btn1" src="btn" x="100" y="20" w="140" h="44" scale9="1" color="#FFFFFF" alpha="1" />
+    <image name="swatch" src="white" x="20" y="110" w="90" h="44" scale9="0" color="#FF8040" alpha="0.85" />
+    <text name="label" x="130" y="110" w="180" h="30" text="FairyGUI XML UI" color="#FFFFFF" alpha="1" />
+  </group>
+  <image name="banner" src="panel" x="60" y="300" w="360" h="80" scale9="1" color="#80C0FF" alpha="1" />
+  <image name="badge" src="icon" x="390" y="320" w="48" h="48" scale9="0" color="#FFFFFF" alpha="1" />
+</component>

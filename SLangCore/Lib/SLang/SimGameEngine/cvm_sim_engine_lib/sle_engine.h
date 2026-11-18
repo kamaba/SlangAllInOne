@@ -73,6 +73,15 @@ SLE_API int32_t sle_gjk_mtv(const float* a, int32_t na, const float* b, int32_t 
 /* ── 正交烘焙投影（P7 烘焙组提交；世界 float3 → NDC pos2+uv2）── */
 SLE_API int32_t sle_ortho_bake(const float* center, float viewSize, const float* src, int32_t count, float* dst);
 
+/* ── 带镜头 yaw/pitch 的正交烘焙投影（Alt+拖拽旋转镜头）────────
+ * cam 块 9 float：[eyeX,eyeY,eyeZ, yawRad,pitchRad, viewSize, aspect,
+ *   pad0, pad1]。朝向约定与 sle_camera_project 同族（yaw=0 朝 -Z）。
+ * 世界点先按 (p-eye) 投到相机 right/up/fwd 基，再用正交
+ *   ndc = (vx/(aspect*viewSize), vy/viewSize) 投影（无透视除）；
+ * dst 每点 4 float [ndcX,ndcY,u,v]（u/v 恒 0），与 sle_ortho_bake 同布局。
+ * 返回处理点数（参数非法 -1）。 */
+SLE_API int32_t sle_ortho_bake_view(const float* cam, const float* src, int32_t count, float* dst);
+
 /* ── 输入状态表（Qt::Key 键码；字母/数字区直接映射，方向键族压缩槽）── */
 SLE_API int32_t sle_input_set_key(int32_t key, int32_t down);
 SLE_API int32_t sle_input_down(int32_t key);
@@ -85,7 +94,7 @@ SLE_API int32_t sle_camera_project(const float* cam, const float* src, int32_t c
 
 /* ── 形状生成（P9 shape 库；计算核心；形状表与参数布局见 sle_engine.c）──
  * type：0 Cube / 1 Plane / 2 Sprite / 3 Sphere / 4 Cylinder / 5 Cone /
- *       6 Torus / 7 Prism / 8 Pipe / 9 Arch / 10 Stair（与 SL ShapeTypes 常量一致）。
+ *       6 Torus / 7 Prism / 8 Pipe / 9 Arch / 10 Stair / 11 Door（与 SL ShapeTypes 常量一致）。
  * params：float 参数块（各形状参数个数见 sle_shape_dims）；整型参数以 float 传入。
  * sle_shape_counts：out 填 [vertCount, triCount]；返回 0 成功 / -1 形状号 / -2 参数。
  * sle_shape_build：dst 布局 [pos 3V | nrm 3V | uv 2V]（float），tris 3T 个

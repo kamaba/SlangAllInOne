@@ -35,4 +35,7 @@ public class ShapeTypes
     public static Int32 ARCH = 9
     # 直梯沿 +Z 上升整梯居中（steps,width,stepHeight,depth）
     public static Int32 STAIR = 10
+    # 门框：左立柱 + 右立柱 + 顶梁三盒组装，中间门洞（ProBuilder Door 同款；
+    # sx,sy,sz,lintel,legWidth —— lintel 顶梁高、legWidth 立柱宽）
+    public static Int32 DOOR = 11
 }

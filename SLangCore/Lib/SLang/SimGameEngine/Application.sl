@@ -41,6 +41,10 @@ public class Application
     # 动画系统（P5）：null = 禁用；每帧在 start/update 段之前采样（先采样
     # 再收集批次——doc/07 §3.2 关键顺序）
     public AnimSystem animSystem = null
+    # 音频系统（可选）：挂上后每帧自动把播放头上报时间服务（doc/18 v1.1）
+    public AudioSystem audioSystem = null
+    # 视频域时钟门面（init 自动创建；后端只管上报播放头）
+    public VideoClock videoClock = null
 
     List<Behaviour> _frameBehaviours = null
 
@@ -58,6 +62,8 @@ public class Application
         this.collisionSystem = null
         this.physicsSystem = null
         this.animSystem = null
+        this.audioSystem = null
+        this.videoClock = null
         this._frameBehaviours = List<Behaviour>(64)
     }
 
@@ -70,6 +76,11 @@ public class Application
             this.time = TimeService()
         }
         EngineTime.service = this.time
+        if this.videoClock == null
+        {
+            this.videoClock = VideoClock()
+        }
+        this.videoClock.attach( this.time )
         ret true
     }
 
@@ -96,6 +107,11 @@ public class Application
             this.time = TimeService()
             EngineTime.service = this.time
         }
+        if this.videoClock == null
+        {
+            this.videoClock = VideoClock()
+        }
+        this.videoClock.attach( this.time )
         this.time.syncConfig( this.paused, this.timeScale, this.fixedDt, this.maxDeltaTime, this.maxFixedSteps )
         this.time.advanceFrame( rawDt )
         Float32 dt = this.time.deltaTime
@@ -185,8 +201,16 @@ public class Application
         # 11) 帧尾：延迟销毁收口
         this.activeScene.processDestroys()
 
-        # 12) C99 时间周期帧标记（每帧采样一次——EngineClock.mark 的帧间隔
-        # 即本 tick 实际耗时；贯穿逻辑/渲染/音频/物理的统一时钟）
+        # 12) 外部播放头收口：音频源 / 视频后端只上报，域偏移统一在此帧尾
+        # 折算（nudge 渐变 / seek snap），避免多处改 offset 互相打架。
+        if this.audioSystem != null
+        {
+            this.audioSystem.syncClock( this.time )
+        }
+        this.time.syncExternalClocks()
+
+        # 13) C99 时间周期帧标记（每帧采样一次——EngineClock.mark 的帧间隔
+        # 即本 tick 实际耗时；贯穿逻辑/渲染/音频/视频/物理的统一时钟）
         EngineClock.mark()
     }
 

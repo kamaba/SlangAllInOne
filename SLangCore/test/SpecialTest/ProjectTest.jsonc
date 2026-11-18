@@ -32,6 +32,7 @@
       { "path": "JavaTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "JavaTest2.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "CPlusClangTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "MasmX64Test.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
       { "path": "PythonTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "TypeScriptNodeV8Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
@@ -169,6 +170,29 @@
       "abi": 1,
       "prefix": "sl_cplus_clang_",
       "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "disable",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // masm_x64（蓝本 cplus_clang 同构第三实例，MASM x64 汇编域）：
+    // lib 字符串直给（相对包路径，CVM 侧基准 = module.json 所在目录拼
+    // sl_plugin_resolver_join_lib_path），从 plugin 原位加载。块体在
+    // Front 导出期经插件 frontend（SLPF v3）生成 Entry_N.asm → ml64
+    // 汇编 + trampoline C 编译合并链接 → SLMasm.dll 部署插件 dll 同目录
+    //（package/windows/）；运行期 labelExec 装载 + GetProcAddress
+    //（"<entry>_main"）固定原型调用（SLMasmValue = SLLabelValue 镜像）。
+    // prefix 必须显式 = 实际符号前缀 "sl_masm_x64_"（plugin.jsonc
+    // entry.prefix），缺省 id+"_" 会解析不到六件套符号。
+    "masm_x64_DISABLED": {
+      "name": "masm_x64_native_engine",
+      "version": "0.1.0",
+      "path": "plugin/masm_x64",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_masm_x64_",
+      "lib": "../../../../plugin/masm_x64/package/windows/cvm_masm_x64.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "disable",
       "capabilities": [

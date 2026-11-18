@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package name="MainMenu" designWidth="480" designHeight="480">
+  <atlas name="menu" file="atlas@menu.png" width="512" height="256">
+    <sprite name="panel" x="0" y="0" w="120" h="80" scale9="20,20,20,20" />
+    <sprite name="btn" x="128" y="0" w="80" h="32" scale9="12,12,8,8" />
+    <sprite name="title" x="0" y="96" w="240" h="40" scale9="0,0,0,0" />
+    <sprite name="label0" x="0" y="160" w="200" h="16" scale9="0,0,0,0" />
+    <sprite name="label1" x="0" y="178" w="200" h="16" scale9="0,0,0,0" />
+    <sprite name="label2" x="0" y="196" w="200" h="16" scale9="0,0,0,0" />
+    <sprite name="label3" x="0" y="214" w="200" h="16" scale9="0,0,0,0" />
+    <sprite name="label4" x="0" y="232" w="200" h="16" scale9="0,0,0,0" />
+    <sprite name="white" x="480" y="240" w="8" h="8" scale9="0,0,0,0" />
+  </atlas>
+  <components>
+    <component name="MainMenu" file="MainMenu.xml" />
+  </components>
+</package>

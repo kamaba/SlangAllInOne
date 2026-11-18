@@ -2158,9 +2158,11 @@ static void vk_full_pass(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
 }
 
 static void vk_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
-                            int enabled, float bright, float sat, float vig)
+                            const float* prm)
 {
-    vk_full_pass(dst, src, w, h, enabled, bright, sat, vig);
+    /* v1 push-constant 着色器只消费 enable/brightness/saturation/vignette
+     * （新字段 contrast/filter/hue/grain/tonemap 需 SPIR-V 重产，M5） */
+    vk_full_pass(dst, src, w, h, prm[0] > 0.5f ? 1 : 0, prm[1], prm[3], prm[4]);
 }
 
 static void vk_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)

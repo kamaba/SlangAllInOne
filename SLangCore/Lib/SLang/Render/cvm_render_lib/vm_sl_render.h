@@ -204,6 +204,13 @@ SLR_API int     slr_sky_prog_handle(int64_t pipe);
 /* 后处理：亮度 / 饱和度 / 暗角（enable=0 时纯拷贝） */
 SLR_API int     slr_pipeline_set_post(int64_t p, int enable,
                                       float brightness, float saturation, float vignette);
+/* 后处理参数块（v2 Unity Color Adjustments 风，doc/14 v1.1）：prm 13 float
+ * [0]enable  [1]brightness  [2]contrast  [3]saturation  [4]vignette
+ * [5]vigSmooth  [6]hueShift(deg)  [7]grain  [8]grainSeed  [9]tonemap(0/1)
+ * [10]filterR [11]filterG [12]filterB
+ * 中性值（1,1,1,0,1,0,0,0,1,1,1）= 旧三参行为逐位一致；GL/GLES 全量消费，
+ * VK/D3D11 v1 着色器只吃 enable/brightness/saturation/vignette。 */
+SLR_API int     slr_pipeline_set_post_params(int64_t p, const float* prm);
 
 /* ---- 场景对象 ---- */
 SLR_API int64_t slr_object_create(int64_t p, int mesh_kind);

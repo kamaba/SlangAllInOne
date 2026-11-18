@@ -97,6 +97,11 @@ namespace SLang
         public static Int32 ffi_mouseX() { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_mouse_y_sl" )
         public static Int32 ffi_mouseY() { ret 0 }
+        # 相对渲染控件（QLabel）的局部坐标：FairyGUI UI 命中测试用
+        @DllStaticImport( "slang_qt", "slqt_mouse_local_x_sl" )
+        public static Int32 ffi_mouseLocalX() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mouse_local_y_sl" )
+        public static Int32 ffi_mouseLocalY() { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_mouse_down_sl" )
         public static Int32 ffi_mouseDown( Int32 button ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_mouse_wheel_take_sl" )

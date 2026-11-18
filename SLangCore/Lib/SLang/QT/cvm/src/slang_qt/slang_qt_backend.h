@@ -41,6 +41,9 @@ int32_t slqt_be_key_down(int32_t key);
  * wheel_take：返回自上次调用累计滚轮格数并清零（上滚 +1 / 下滚 -1） */
 int32_t slqt_be_mouse_x(void);
 int32_t slqt_be_mouse_y(void);
+/* 相对事件接收控件（QLabel 渲染面）的局部坐标：UI 点击命中测试用 */
+int32_t slqt_be_mouse_local_x(void);
+int32_t slqt_be_mouse_local_y(void);
 int32_t slqt_be_mouse_down(int32_t button);
 int32_t slqt_be_mouse_wheel_take(void);
 void    slqt_be_widget_set_parent(int64_t h, int64_t parent);

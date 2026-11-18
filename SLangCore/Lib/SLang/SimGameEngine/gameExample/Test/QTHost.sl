@@ -17,11 +17,11 @@ public class QTHost
     {
         appHandle = SLang.QT.ffi_appCreate()
         windowHandle = SLang.QT.ffi_keyWidgetCreate( 0 )
-        SLang.QT.ffi_widgetSetText( windowHandle, "SceneDemo - SceneManager / MaterialBall / Shape / PureTest" )
+        SLang.QT.ffi_widgetSetText( windowHandle, "SceneDemo - [5] RotateTest ground+cube+sun, RMB drag rotate" )
         SLang.QT.ffi_widgetSetGeometry( windowHandle, 80, 80, 500, 566 )
         infoHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( infoHandle, 8, 6, 484, 44 )
-        SLang.QT.ffi_widgetSetText( infoHandle, "1/2/3/4 scenes | LMB drag pan, WASD move, wheel zoom | O save JSON, Esc quit" )
+        SLang.QT.ffi_widgetSetText( infoHandle, "CLICK scene to enter | M back to menu | 1-5 scenes | LMB pan, RMB ROTATE, WASD, wheel | G axes, F ui fmt, Esc quit" )
         labelHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( labelHandle, 8, 52, 484, 484 )
         SLang.QT.ffi_widgetShow( windowHandle )
@@ -57,6 +57,17 @@ public class QTHost
     public static Int32 mouseY()
     {
         ret SLang.QT.ffi_mouseY()
+    }
+
+    # 渲染面（QLabel）局部坐标：FairyGUI 菜单点击命中用
+    public static Int32 mouseLocalX()
+    {
+        ret SLang.QT.ffi_mouseLocalX()
+    }
+
+    public static Int32 mouseLocalY()
+    {
+        ret SLang.QT.ffi_mouseLocalY()
     }
 
     public static Int32 mouseDown( Int32 button )

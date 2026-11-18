@@ -111,7 +111,7 @@ struct SlrRhiTarget            /* GL 渲染目标 = FBO + 颜色纹理 + 可选�
     GLuint depth_tex;   /* N2a shadow：可采样深度纹理（仅 shadow 目标非 0）*/
 };
 
-typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; int sky_top, sky_bottom; } GlProgUni;
+typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; int contrast, vigsm, hue, grain, seed, tmap, filt; int sky_top, sky_bottom; } GlProgUni;
 typedef struct { GLuint vao, vbo; int count; } GlMesh;
 
 static GLuint       s_progs[SLR_PROG_COUNT];
@@ -368,16 +368,39 @@ static const char* FS_POST =
     "out vec4 oCol;\n"
     "uniform sampler2D uSrc;\n"
     "uniform float uBrightness;\n"
+    "uniform float uContrast;\n"
     "uniform float uSaturation;\n"
     "uniform float uVignette;\n"
+    "uniform float uVigSmooth;\n"
+    "uniform float uHueShift;\n"
+    "uniform float uGrain;\n"
+    "uniform float uGrainSeed;\n"
+    "uniform int   uTonemap;\n"
+    "uniform vec3  uColorFilter;\n"
+    "float hashg(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }\n"
+    "vec3 hueRot(vec3 c, float a){\n"
+    "  vec3 k = vec3(0.57735);\n"
+    "  float cs = cos(a), sn = sin(a);\n"
+    "  return c*cs + cross(k, c)*sn + k*dot(k, c)*(1.0-cs);\n"
+    "}\n"
     "void main(){\n"
     "  vec3 c = texture(uSrc, vUv).rgb;\n"
     "  c *= uBrightness;\n"
+    "  c *= uColorFilter;\n"
+    "  c = mix(vec3(0.5), c, uContrast);\n"
+    "  c = hueRot(c, radians(uHueShift));\n"
     "  float l = dot(c, vec3(0.299, 0.587, 0.114));\n"
     "  c = mix(vec3(l), c, uSaturation);\n"
+    "  if (uTonemap == 1) { c = c / (1.0 + c); }\n"
     "  vec2 d = vUv - vec2(0.5);\n"
-    "  c *= 1.0 - uVignette * (d.x*d.x + d.y*d.y) * 2.67;\n"
-    "  oCol = vec4(c, 1.0);\n"
+    "  float r2 = d.x*d.x + d.y*d.y;\n"
+    "  float sExp = mix(0.6, 1.0, clamp(uVigSmooth, 0.0, 1.0));\n"
+    "  c *= 1.0 - uVignette * pow(r2, sExp) * 2.67;\n"
+    "  if (uGrain > 0.0) {\n"
+    "    float g = hashg(vUv * vec2(1280.0, 720.0) + uGrainSeed) - 0.5;\n"
+    "    c += g * uGrain;\n"
+    "  }\n"
+    "  oCol = vec4(clamp(c, vec3(0.0), vec3(1.0)), 1.0);\n"
     "}\n";
 
 /* P6 渐变天空：uv.y 0(底)->1(顶) 线性插值（vUv 原点在左下）*/
@@ -513,6 +536,13 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_POST].bright = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uBrightness");
     s_uni[SLR_PROG_POST].sat    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uSaturation");
     s_uni[SLR_PROG_POST].vig     = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uVignette");
+    s_uni[SLR_PROG_POST].contrast = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uContrast");
+    s_uni[SLR_PROG_POST].vigsm   = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uVigSmooth");
+    s_uni[SLR_PROG_POST].hue     = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uHueShift");
+    s_uni[SLR_PROG_POST].grain   = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uGrain");
+    s_uni[SLR_PROG_POST].seed    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uGrainSeed");
+    s_uni[SLR_PROG_POST].tmap    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uTonemap");
+    s_uni[SLR_PROG_POST].filt    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uColorFilter");
     s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
     s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
 
@@ -984,8 +1014,9 @@ static int gl_mesh_upload(int slot, const float* verts, int vert_count)
 }
 
 static void gl_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
-                            int enabled, float bright, float sat, float vig)
+                            const float* prm)
 {
+    int enabled = prm[0] > 0.5f ? 1 : 0;
     p_glDisable(GL_SCISSOR_TEST);   /* 全屏 pass 不受相机 scissor 限制 */
     p_glDisable(GL_DEPTH_TEST);
     p_glDisable(GL_BLEND);
@@ -994,9 +1025,18 @@ static void gl_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
     if (enabled)
     {
         p_glUseProgram(s_progs[SLR_PROG_POST]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].bright, bright);
-        p_glUniform1f(s_uni[SLR_PROG_POST].sat, sat);
-        p_glUniform1f(s_uni[SLR_PROG_POST].vig, vig);
+        /* prm 布局见 vm_sl_render.h set_post_params：[1]b [2]c [3]s [4]v
+         * [5]vigSmooth [6]hue [7]grain [8]seed [9]tonemap [10..12]filter */
+        p_glUniform1f(s_uni[SLR_PROG_POST].bright, prm[1]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].contrast, prm[2]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].sat, prm[3]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].vig, prm[4]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].vigsm, prm[5]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].hue, prm[6]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].grain, prm[7]);
+        p_glUniform1f(s_uni[SLR_PROG_POST].seed, prm[8]);
+        p_glUniform1i(s_uni[SLR_PROG_POST].tmap, prm[9] > 0.5f ? 1 : 0);
+        p_glUniform3f(s_uni[SLR_PROG_POST].filt, prm[10], prm[11], prm[12]);
     }
     else
     {

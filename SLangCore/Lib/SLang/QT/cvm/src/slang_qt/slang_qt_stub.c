@@ -44,6 +44,8 @@ int32_t slqt_be_key_down(int32_t key) { (void)key; return 0; }
 /* 2026-11-18：鼠标轮询 stub —— headless 下无鼠标事件，全返回 0 */
 int32_t slqt_be_mouse_x(void) { return 0; }
 int32_t slqt_be_mouse_y(void) { return 0; }
+int32_t slqt_be_mouse_local_x(void) { return 0; }
+int32_t slqt_be_mouse_local_y(void) { return 0; }
 int32_t slqt_be_mouse_down(int32_t button) { (void)button; return 0; }
 int32_t slqt_be_mouse_wheel_take(void) { return 0; }
 void    slqt_be_widget_set_parent(int64_t h, int64_t p) { (void)h; (void)p; }

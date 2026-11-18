@@ -134,6 +134,41 @@ public class SimFfiTest
         check( NodeRegistry.isActive( b.nodeId ) == false, "F4h setActive syncs registry" )
     }
 
+    # ── 5. 带镜头旋转的正交烘焙投影（Alt+拖拽镜头）──────────────
+    static void testOrthoBakeView()
+    {
+        # cam9 = [eye3, yaw, pitch, viewSize, aspect, pad, pad]
+        Int64 cam = Memory.alloc( 36 )
+        Int64 src = Memory.alloc( 12 )
+        Int64 dst = Memory.alloc( 16 )
+        if cam == 0 || src == 0 || dst == 0
+        {
+            check( false, "F5a alloc" )
+            ret
+        }
+        # 世界点 (2,0,0)，相机在原点，viewSize=2 aspect=1
+        Memory.writeF32( src, 0, 2.0f )
+        Memory.writeF32( src, 4, 0.0f )
+        Memory.writeF32( src, 8, 0.0f )
+        Memory.writeF32( cam, 20, 2.0f )   # viewSize
+        Memory.writeF32( cam, 24, 1.0f )   # aspect
+        # yaw=0 pitch=0 → ndcX = 2/2 = 1
+        Memory.writeF32( cam, 12, 0.0f )
+        Memory.writeF32( cam, 16, 0.0f )
+        Int32 n0 = EngineFfi.libOrthoBakeView( cam, src, 1, dst )
+        check( n0 == 1, "F5b bake returns count" )
+        Float32 nx0 = Memory.readFloat32( dst, 0 )
+        check( nx0 > 0.98f && nx0 < 1.02f, "F5c yaw0 ndcX=1 got=" + nx0.toString() )
+        # yaw=+90°：+X 转到 fwd 方向 → 屏幕 x≈0
+        Memory.writeF32( cam, 12, 1.5707963f )
+        Int32 n1 = EngineFfi.libOrthoBakeView( cam, src, 1, dst )
+        Float32 nx1 = Memory.readFloat32( dst, 0 )
+        check( n1 == 1 && nx1 > 0.0f - 0.02f && nx1 < 0.02f, "F5d yaw90 ndcX=0 got=" + nx1.toString() )
+        Memory.free( cam )
+        Memory.free( src )
+        Memory.free( dst )
+    }
+
     public static void run()
     {
         Console.println( "=== SimFfiTest (sl_sim_engine_lib FFI smoke) ===" )
@@ -141,6 +176,7 @@ public class SimFfiTest
         testTimer()
         testRegistryDirect()
         testGameObjectIntegration()
+        testOrthoBakeView()
         Console.println( "PASS=" + _pass.toString() + " FAIL=" + _fail.toString() )
     }
 

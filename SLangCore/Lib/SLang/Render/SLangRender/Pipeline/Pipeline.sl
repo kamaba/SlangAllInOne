@@ -305,6 +305,22 @@ namespace SLang
             ret RenderPipeline.ffiSetPost( this._handle, enable, brightness, saturation, vignette )
         }
 
+        # setPostParams(prmPtr) —— 后处理参数块 v2（Unity Color Adjustments 风，
+        # doc/14 v1.1）：prm 指向 13 float 块
+        #   [0]enable [1]brightness [2]contrast [3]saturation [4]vignette
+        #   [5]vigSmooth [6]hueShift(deg) [7]grain [8]grainSeed [9]tonemap(0/1)
+        #   [10..12]colorFilter RGB
+        # 中性值 = 旧三参行为逐位一致；GL/GLES 全量消费，VK/D3D11 只吃
+        # enable/brightness/saturation/vignette（doc/14 §5 兼容表）
+        public bool setPostParams( Int64 prmPtr )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetPostParams( this._handle, prmPtr )
+        }
+
         # ── 场景对象 ─────────────────────────────────────────────
 
         public RenderObject addObject( Int32 meshKind )
@@ -781,6 +797,12 @@ namespace SLang
 
         @DllStaticImport( "sl_render_lib", "slr_pipeline_set_post", "i64,i32,f32,f32,f32->bool" )
         static bool ffiSetPost( Int64 p, Int32 enable, Float32 brightness, Float32 saturation, Float32 vignette )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_post_params", "i64,ptr->bool" )
+        static bool ffiSetPostParams( Int64 p, Int64 prmPtr )
         {
             ret false
         }

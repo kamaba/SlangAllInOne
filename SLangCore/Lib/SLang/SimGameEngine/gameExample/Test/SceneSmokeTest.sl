@@ -2,6 +2,7 @@ import Core;
 import Std;
 import Math;
 import SimGameEngine;
+import SLangRender;
 
 # 无窗口冒烟（SceneDemo 工程的一种运行模式，`slang run ... -- smoke` 进入）：
 # 按路径加载三个 scene.json、验证脚本挂载、跑帧、导出落盘再回读。
@@ -62,6 +63,13 @@ public class SceneSmokeTest
             sm.tick( 0.016f )
             i = i + 1
         }
+        # 坐标轴箭头验证：ShapeGallery 里形状节点挂的 AxisGizmoScript
+        # 若被 C VM 驱动，pushAxisAt 会往 SceneDemo.vertsX 灌入顶点。
+        if file == "ShapeGallery.scene.json"
+        {
+            SceneSmokeTest.check( SceneDemo.vertsX.length > 0,
+                tag + " axis gizmo verts=" + SceneDemo.vertsX.length.toString() )
+        }
         string json = sm.toJson( null )
         bool hasJson = json.length > 20
         SceneSmokeTest.check( hasJson, tag + " export json" )
@@ -100,12 +108,90 @@ public class SceneSmokeTest
         Console.println( "[smoke] " + tag + " OK" )
     }
 
+    static string fairyDir()
+    {
+        string cwd = IO.Directory.getCurrentDirectory()
+        string p1 = cwd + "/assets/fairygui/Demo"
+        if File.exists( p1 + "/package.xml" )
+        {
+            ret p1
+        }
+        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/Demo"
+    }
+
+    static void runFairy()
+    {
+        SLang.Render.initialize()
+        FairyPackage p = FairyPackage()
+        bool ok = p.load( SceneSmokeTest.fairyDir() )
+        SceneSmokeTest.check( ok, "FairyGUI package load" )
+        if !ok
+        {
+            Console.println( "  err=" + p.lastError )
+            ret
+        }
+        SceneSmokeTest.check( p.sprites.length == 4, "FairyGUI atlas sprites=" + p.sprites.length.toString() )
+        SceneSmokeTest.check( p.quads.length == 7, "FairyGUI component quads=" + p.quads.length.toString() )
+        SceneSmokeTest.check( p.designW == 480 && p.designH == 480, "FairyGUI design resolution" )
+        FairyUIRenderer r = FairyUIRenderer()
+        r.pkg = p
+        Int32 verts = 0
+        Int32 i = 0
+        while i < p.quads.length
+        {
+            FairyQuad fq = p.quads[i]
+            verts = verts + r.vertCountOf( fq )
+            i = i + 1
+        }
+        SceneSmokeTest.check( verts == 186, "FairyGUI mesh verts=" + verts.toString() )
+        FairyPackage bp = FairyPackage()
+        bool fuiOk = bp.loadFui( SceneSmokeTest.fairyDir() )
+        SceneSmokeTest.check( fuiOk, "FairyGUI fui package load" )
+        if fuiOk
+        {
+            SceneSmokeTest.check( bp.sprites.length == 4, "FairyGUI fui sprites=" + bp.sprites.length.toString() )
+            SceneSmokeTest.check( bp.quads.length == 7, "FairyGUI fui quads=" + bp.quads.length.toString() )
+            Int32 bverts = 0
+            Int32 j = 0
+            while j < bp.quads.length
+            {
+                FairyQuad bq = bp.quads[j]
+                bverts = bverts + r.vertCountOf( bq )
+                j = j + 1
+            }
+            SceneSmokeTest.check( bverts == verts, "FairyGUI fui/XML shared mesh verts=" + bverts.toString() )
+        }
+        # 主入口菜单包 + 命中测试（5 个场景按钮）
+        FairyPackage mp = FairyPackage()
+        string menuPath = "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/MainMenu"
+        bool mok = mp.load( menuPath )
+        SceneSmokeTest.check( mok, "FairyGUI main menu package load" )
+        if mok
+        {
+            SceneSmokeTest.check( mp.quads.length == 13, "FairyGUI menu quads=" + mp.quads.length.toString() )
+            FairyUIRenderer mr = FairyUIRenderer()
+            mr.pkg = mp
+            Int32 k = 0
+            while k < 5
+            {
+                Int32 my = 174 + k * 58
+                string hit = mr.hitTestLocal( 240, my, 480, 480 )
+                Int32 idx = FairyUIRenderer.menuIndex( hit, "menu_" )
+                SceneSmokeTest.check( idx == k, "FairyGUI menu hit " + k.toString() + " got " + idx.toString() )
+                k = k + 1
+            }
+            string outHit = mr.hitTestLocal( 10, 10, 480, 480 )
+            SceneSmokeTest.check( outHit.length == 0, "FairyGUI menu outside hit" )
+        }
+    }
+
     public static void run()
     {
         SceneSmokeTest.runOne( "MaterialBall.scene.json", 4, 8, "MaterialBall" )
-        SceneSmokeTest.runOne( "ShapeGallery.scene.json", 9, 14, "ShapeGallery" )
+        SceneSmokeTest.runOne( "ShapeGallery.scene.json", 11, 16, "ShapeGallery" )
         SceneSmokeTest.runOne( "PureTest.scene.json", 2, 2, "PureTest" )
         SceneSmokeTest.runOne( "MaterialGallery.scene.json", 30, 28, "MaterialGallery" )
+        SceneSmokeTest.runFairy()
         Console.println( "=== SceneManager smoke PASS=" + SceneSmokeTest._pass.toString()
             + " FAIL=" + SceneSmokeTest._fail.toString() + " ===" )
         if SceneSmokeTest._fail > 0

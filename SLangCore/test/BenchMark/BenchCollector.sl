@@ -46,7 +46,6 @@ BenchCollector
 
     static record( string language, string languageDesc, string optDesc, string testType, string testParam, long timeUs )
     {
-        Console.println("PROBE-C " + language + " timeUs=[" + timeUs.toString() + "]")
         if BenchCollector._entries == null
         {
             BenchCollector._entries = List<BenchEntry>()

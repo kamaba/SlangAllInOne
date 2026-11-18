@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MainMenu" width="480" height="480">
+  <image name="bg" src="panel" x="28" y="28" w="424" h="424" scale9="1" />
+  <image name="titlePanel" src="panel" x="52" y="48" w="376" h="74" scale9="1" />
+  <image name="title" src="title" x="120" y="66" w="240" h="40" scale9="0" />
+  <group name="MenuGroup" x="0" y="0" w="480" h="480">
+    <image name="menu_0" src="btn" x="76" y="150" w="328" h="48" scale9="1" />
+    <image name="menu_0" src="label0" x="106" y="164" w="200" h="16" scale9="0" />
+    <image name="menu_1" src="btn" x="76" y="208" w="328" h="48" scale9="1" />
+    <image name="menu_1" src="label1" x="106" y="222" w="200" h="16" scale9="0" />
+    <image name="menu_2" src="btn" x="76" y="266" w="328" h="48" scale9="1" />
+    <image name="menu_2" src="label2" x="106" y="280" w="200" h="16" scale9="0" />
+    <image name="menu_3" src="btn" x="76" y="324" w="328" h="48" scale9="1" />
+    <image name="menu_3" src="label3" x="106" y="338" w="200" h="16" scale9="0" />
+    <image name="menu_4" src="btn" x="76" y="382" w="328" h="48" scale9="1" />
+    <image name="menu_4" src="label4" x="106" y="396" w="200" h="16" scale9="0" />
+  </group>
+</component>

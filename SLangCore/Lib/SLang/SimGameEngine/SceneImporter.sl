@@ -490,6 +490,71 @@ public class SceneImporter
             rep.cameraCount = rep.cameraCount + 1
             ret
         }
+        if ctype == "Volume"
+        {
+            # v1.1：Volume 组件 + VolumeProfile（doc/14 §2，Unity 同款场景组件
+            # 形态）。键缺省 = 掩码不置位 = 不修改（字段级存在性判断）。
+            Volume vol = Volume()
+            JsonValue vgNode = comp.select("isGlobal")
+            vol.isGlobal = vgNode.asBool( true )
+            JsonValue vpNode = comp.select("priority")
+            vol.priority = vpNode.asInt32( 0 )
+            JsonValue vwNode = comp.select("weight")
+            vol.weight = vwNode.asFloat32( 1.0f )
+            JsonValue vbdNode = comp.select("blendDistance")
+            vol.blendDistance = vbdNode.asFloat32( 0.0f )
+            VolumeProfile pf = VolumeProfile()
+            JsonValue pbNode = comp.select("brightness")
+            if !pbNode.isNull()
+            {
+                pf.setBrightness( pbNode.asFloat32( 1.0f ) )
+            }
+            JsonValue pcNode = comp.select("contrast")
+            if !pcNode.isNull()
+            {
+                pf.setContrast( pcNode.asFloat32( 1.0f ) )
+            }
+            JsonValue psNode = comp.select("saturation")
+            if !psNode.isNull()
+            {
+                pf.setSaturation( psNode.asFloat32( 1.0f ) )
+            }
+            JsonValue phNode = comp.select("hueShift")
+            if !phNode.isNull()
+            {
+                pf.setHueShift( phNode.asFloat32( 0.0f ) )
+            }
+            JsonValue pvrNode = comp.select("filterR")
+            JsonValue pvgNode = comp.select("filterG")
+            JsonValue pvbNode = comp.select("filterB")
+            if !pvrNode.isNull() || !pvgNode.isNull() || !pvbNode.isNull()
+            {
+                pf.setColorFilter( pvrNode.asFloat32( 1.0f ), pvgNode.asFloat32( 1.0f ), pvbNode.asFloat32( 1.0f ) )
+            }
+            JsonValue pvNode = comp.select("vignette")
+            if !pvNode.isNull()
+            {
+                pf.setVignette( pvNode.asFloat32( 1.0f ) )
+            }
+            JsonValue pvsNode = comp.select("vignetteSmooth")
+            if !pvsNode.isNull()
+            {
+                pf.setVignetteSmooth( pvsNode.asFloat32( 1.0f ) )
+            }
+            JsonValue pgNode = comp.select("grain")
+            if !pgNode.isNull()
+            {
+                pf.setGrain( pgNode.asFloat32( 0.0f ) )
+            }
+            JsonValue ptNode = comp.select("tonemap")
+            if !ptNode.isNull()
+            {
+                pf.setTonemap( ptNode.asInt32( 0 ) )
+            }
+            vol.profile = pf
+            go.addComponent( vol )
+            ret
+        }
         if ctype == "Light"
         {
             # v2.13：LightData 光源组件（RenderSystem.sync 每帧收集写管线槽）

@@ -44,6 +44,18 @@ public class TimeService
     # nudge 单次最大校正量（微秒）——音频/视频渐变对齐防爆音
     Int64 maxNudgeUs = 2000
 
+    # 外部播放头（音频/视频后端上报；每帧 syncExternalClocks 统一收口）
+    Int64 _audioHeadUs = 0
+    Int64 _videoHeadUs = 0
+    bool _hasAudioHead = false
+    bool _hasVideoHead = false
+    bool _snapAudioNext = false
+    bool _snapVideoNext = false
+    Int64 lastAudioDriftUs = 0
+    Int64 lastVideoDriftUs = 0
+    Int32 syncedAudioCount = 0
+    Int32 syncedVideoCount = 0
+
     Int64 _lastNowUs = 0
     bool _hasLastNow = false
 
@@ -73,6 +85,16 @@ public class TimeService
             i = i + 1
         }
         this.maxNudgeUs = 2000
+        this._audioHeadUs = 0
+        this._videoHeadUs = 0
+        this._hasAudioHead = false
+        this._hasVideoHead = false
+        this._snapAudioNext = false
+        this._snapVideoNext = false
+        this.lastAudioDriftUs = 0
+        this.lastVideoDriftUs = 0
+        this.syncedAudioCount = 0
+        this.syncedVideoCount = 0
         this._lastNowUs = 0
         this._hasLastNow = false
     }
@@ -221,17 +243,18 @@ public class TimeService
         ret now - last
     }
 
-    # 立即对齐：offset = 主钟 - 外部源播放头（音频/视频 seek 后用）
+    # 立即对齐：offset = 外部源播放头 - 主钟（音频/视频 seek 后用）。
+    # 域时刻 = 主钟 + offset，故对齐后 domainNowUs == 源播放头。
     public void snapDomain( Int32 domain, Int64 sourceNowUs )
     {
         Int64 d = this.domainIndex( domain )
         Int64 master = EngineClock.nowUs()
         Array<Int64> offs = this._domainOffsetUs
-        offs[ d ] = master - sourceNowUs
+        offs[ d ] = sourceNowUs - master
     }
 
     # 渐变对齐：offset 向 targetOffset 每次最多移动 maxNudgeUs（音频/视频
-    # 每帧微调防爆音；调用方按 drift 反向取 target）
+    # 每帧微调防爆音；消除漂移时 target = 当前offset - domainDriftUs）
     public void nudgeDomain( Int32 domain, Int64 targetOffsetUs )
     {
         Int64 d = this.domainIndex( domain )
@@ -250,12 +273,107 @@ public class TimeService
         offs[ d ] = cur + diff
     }
 
-    # 漂移查询：主钟 - 外部源 - 当前偏移（> 0 = 域落后主钟）
+    # 漂移查询：域时刻 - 外部源 = 主钟 + 偏移 - 源（> 0 = 域超前源，
+    # 需减小偏移；= 0 即对齐）。与 domainNowUs 同一符号约定。
     public Int64 domainDriftUs( Int32 domain, Int64 sourceNowUs )
     {
         Int64 master = EngineClock.nowUs()
         Int64 off = this.domainOffset( domain )
-        ret master - sourceNowUs - off
+        ret master + off - sourceNowUs
+    }
+
+    # ── 外部播放头上报 + 每帧统一收口（doc/18 v1.1 贯穿音频/视频）──
+    # 后端只上报「播放头微秒」，不直接改域偏移；统一在 Application.tick
+    # 帧尾 syncExternalClocks 处理，避免多处 nudge 互相打架。
+    # snapNow=true = seek/重置后一步对齐；否则渐变（防爆音/掉帧）。
+    public void reportAudioHead( Int64 headUs, bool snapNow )
+    {
+        this._audioHeadUs = headUs
+        this._hasAudioHead = true
+        if snapNow
+        {
+            this._snapAudioNext = true
+        }
+    }
+
+    public void reportVideoHead( Int64 headUs, bool snapNow )
+    {
+        this._videoHeadUs = headUs
+        this._hasVideoHead = true
+        if snapNow
+        {
+            this._snapVideoNext = true
+        }
+    }
+
+    public Int64 audioHeadUs()
+    {
+        ret this._audioHeadUs
+    }
+
+    public Int64 videoHeadUs()
+    {
+        ret this._videoHeadUs
+    }
+
+    public bool hasAudioHead()
+    {
+        ret this._hasAudioHead
+    }
+
+    public bool hasVideoHead()
+    {
+        ret this._hasVideoHead
+    }
+
+    public void clearExternalHeads()
+    {
+        this._hasAudioHead = false
+        this._hasVideoHead = false
+        this._snapAudioNext = false
+        this._snapVideoNext = false
+        this.lastAudioDriftUs = 0
+        this.lastVideoDriftUs = 0
+    }
+
+    # 帧尾统一同步：把本帧上报的播放头折算进域偏移。
+    # nudge 目标 = 当前偏移 + drift（drift = 主钟 - 源 - 偏移）。
+    public void syncExternalClocks()
+    {
+        if this._hasAudioHead
+        {
+            Int64 head = this._audioHeadUs
+            Int64 drift = this.domainDriftUs( 4, head )
+            this.lastAudioDriftUs = drift
+            if this._snapAudioNext
+            {
+                this.snapDomain( 4, head )
+                this._snapAudioNext = false
+            }
+            else
+            {
+                Int64 off = this.domainOffset( 4 )
+                this.nudgeDomain( 4, off - drift )
+            }
+            this.syncedAudioCount = this.syncedAudioCount + 1
+        }
+        if this._hasVideoHead
+        {
+            Int64 head = this._videoHeadUs
+            Int64 drift = this.domainDriftUs( 5, head )
+            this.lastVideoDriftUs = drift
+            if this._snapVideoNext
+            {
+                this.snapDomain( 5, head )
+                this._snapVideoNext = false
+            }
+            else
+            {
+                Int64 off = this.domainOffset( 5 )
+                this.nudgeDomain( 5, off - drift )
+            }
+            this.syncedVideoCount = this.syncedVideoCount + 1
+        }
     }
 
     public Int64 domainOffset( Int32 domain )

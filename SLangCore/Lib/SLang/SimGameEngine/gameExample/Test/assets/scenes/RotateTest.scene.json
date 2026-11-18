@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "scene": "RotateTest",
+  "nodes": [
+    {
+      "id": 1, "parent": 0, "name": "Ground", "tag": "Ground", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, -1.5, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 0 },
+        { "type": "MeshRenderer", "material": "mat_ground", "color": [0.30, 0.46, 0.28], "renderQueue": 1999, "castShadow": false },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 0, "sx": 24.0, "sy": 0.1, "sz": 24.0 }
+      ]
+    },
+    {
+      "id": 2, "parent": 0, "name": "Cube", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0.5, -0.5], "localRotation": [0, 0, 0, 1], "localScale": [1.5, 1.5, 1.0] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_quad", "meshKind": 1, "meshSlot": -1 },
+        { "type": "MeshRenderer", "material": "mat_cube", "color": [0.95, 0.55, 0.22], "renderQueue": 2001, "castShadow": true },
+        { "type": "Script", "script": "AxisGizmoScript" }
+      ]
+    },
+    {
+      "id": 200, "parent": 0, "name": "Sun", "tag": "Light", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "Light", "lightType": 0, "color": [1, 0.96, 0.9], "intensity": 1.1, "dirX": 0.45, "dirY": 0.85, "shadowQuality": 1, "shadowBias": 0.002, "shadowStrength": 0.5 }
+      ]
+    }
+  ]
+}

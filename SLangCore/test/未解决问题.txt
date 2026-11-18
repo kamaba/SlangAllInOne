@@ -14,11 +14,6 @@ macOs /iOS的环境
 10. 接入kotlin
 
 
-引擎层增加材质球的显示 显示27种不同材质的显示。
-增加shape库  增加固定的shape的形状库。  可以 参考这个  D:\project\com\virtualhuman_application\Library\PackageCache\com.unity.probuilder@5.2.3   这个现在还没有提供一些基础数据吧，你把这个里边已经有的东西 然后同步写到shape的固定开关库里边吧 单开一个引擎
-后处理的文档貌似还没写吧
-UI的话，使用 FairyGUI 的编辑器，然后 在引擎的2d渲染上边再包装一层，然后显示UI
-
 D:\project\lang\SlangAllInOne\SLangCore\test\BenchMark 这个里边，如果使用其它语言，需要不计算我的语言中间的时间 ，而是只计算那个语言自己的时间  而且里边的好多没有显示时间 在导出的报告里边
 优化循环
 优化函数调用  分jit和非jit两种  现在看看是否可以优化非jit的方式 
@@ -31,9 +26,7 @@ QTCodeEditor
 5. 
 
 SLang GameEngine
-1. 引擎层需要有时间同步的时间周期 会贯穿渲染，音频，视频，游戏逻辑，物理 等环境
-2. 音频现在底层是有了，但在有了时间周期引入后，增加对某个AudioSource的play/pause/resume/stop等 操作 还有就是增加时间 的播放速率
-3. 
+1. 增加Editor和runtime两种形态， Editor包括runtime  反正就是像Unity3d一样，里边也可以 配置 static if 的global.marco的功能判断 SLangEngineEditor的宏进行判断  
 
 Unity的机制
 1. 有了对应的类 并且命名空间与Unity3d里边CSharp里边的类同命名空间+类名
@@ -46,8 +39,6 @@ Unity的机制
 2. 增加选中文件夹下，扫描里边slang的工程 也就是jsonc的文件，然后对比里边的格式 然后如果符合就认为是合法的工程，然后显示在解决方案列表里边，下边显示 关联的文件
 3. 点击这个解决方案 右键会弹出【配置】  点击后，会有个专门管理这个jsonc的页，把jsonc里边的框架 或者是结构放到最左边，内容放到最右边，显示 即使没有的内容，也要在左边显示这个菜单 点击后，可以对这个进行调节，像不同的属于要显示不同的UI，比如像namespace/class的管理，需要有个树一样的结构或者是分层结构的东西管理 
 4. 运行当前工程 
-
-关于lib目录，要查找，要优化在
 
 
 

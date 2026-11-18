@@ -133,7 +133,11 @@
       // ---- 时间同步（doc/18）：TimeService 推进状态机 -> EngineTime static 快照
       //      （域时钟 render/physics/logic/audio/video；C 单调钟统一基准）----
       { "path": "time/TimeService.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 37 },
-      { "path": "time/EngineTime.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 38 }
+      { "path": "time/EngineTime.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 38 },
+      { "path": "time/VideoClock.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 39 },
+      // ---- FairyGUI 适配层：XML 包 -> 图集 uvRect/九宫格/组层级 -> 自定义网格
+      //      （依赖 RenderSystem.submitUiMesh，priority 靠后）----
+      { "path": "ui/FairyGUI.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 40 }
     ]
   },
   "compileFilter": {
@@ -213,7 +217,12 @@
     { "class": "TimeService" },
     { "class": "EngineTime" },
     // 输入系统（SnakeGame）
-    { "class": "InputSystem" }
+    { "class": "InputSystem" },
+    // FairyGUI 适配层
+    { "class": "FairySprite" },
+    { "class": "FairyQuad" },
+    { "class": "FairyPackage" },
+    { "class": "FairyUIRenderer" }
   ],
   "export": {
     "moduleName": "SimGameEngine",

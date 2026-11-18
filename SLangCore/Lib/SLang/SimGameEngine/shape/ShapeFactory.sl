@@ -233,4 +233,18 @@ public class ShapeFactory
         ShapeMesh m = ShapeFactory.build( 10, p )
         ret m
     }
+
+    # 门框（type 11，ProBuilder Door 同款）：左立柱 + 右立柱 + 顶梁三盒组装，
+    # 中间门洞。lintel 顶梁高（< sy），legWidth 立柱宽（< sx/2）。
+    public static ShapeMesh door( Float32 sx, Float32 sy, Float32 sz, Float32 lintel, Float32 legWidth )
+    {
+        Array<Float32> p = Array<Float32>( 5 )
+        p[0] = sx
+        p[1] = sy
+        p[2] = sz
+        p[3] = lintel
+        p[4] = legWidth
+        ShapeMesh m = ShapeFactory.build( 11, p )
+        ret m
+    }
 }

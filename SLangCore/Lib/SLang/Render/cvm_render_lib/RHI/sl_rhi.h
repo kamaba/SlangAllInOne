@@ -99,9 +99,11 @@ typedef struct SlrRhi
      * VK 后端固化 SPIR-V 不含实例索引，内部降级为 n 次单实例 draw */
     void (*draw_item)(int prog, int slot, int mesh, int instance_count);
 
-    /* 阶段 11：后处理（enabled=0 走纯拷贝）scene -> post */
+    /* 阶段 11：后处理（enabled=0 走纯拷贝）scene -> post；prm = 13 float
+     * 参数块（布局见 vm_sl_render.h slr_pipeline_set_post_params）——
+     * GL/GLES 全量消费，VK/D3D11 v1 着色器只解 enable/brightness/sat/vig */
     void (*post_process)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
-                         int enabled, float brightness, float saturation, float vignette);
+                         const float* prm);
     /* 阶段 12：全屏拷贝 post -> final */
     void (*blit)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h);
 /* P6 渐变天空：相机清屏后画全屏渐变 quad（top_bottom = [tr,tg,tb,br,bg,bb]）；

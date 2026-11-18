@@ -430,9 +430,24 @@ static int cmd_replay_locked(SlrPipeline* p, const unsigned char* base,
         }
         case SLR_CMD_POST_PROCESS:
         {
-            int enabled = (int)args[ai];
-            g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h, enabled,
-                                floats[fi], floats[fi + 1], floats[fi + 2]);
+            /* 命令三参覆盖 pipeline 同名字段；其余（contrast/filter/hue/
+             * grain/tonemap/vigSmooth）沿用 set_post_params 写入的管线值
+             * （未设置 = 中性 → 与旧三参行为逐位一致） */
+            float cb[13];
+            cb[0] = (float)(int)args[ai];
+            cb[1] = floats[fi];
+            cb[2] = p->post_contrast;
+            cb[3] = floats[fi + 1];
+            cb[4] = floats[fi + 2];
+            cb[5] = p->post_vig_smooth;
+            cb[6] = p->post_hue;
+            cb[7] = p->post_grain;
+            cb[8] = p->post_grain_seed;
+            cb[9] = (float)p->post_tonemap;
+            cb[10] = p->post_filter[0];
+            cb[11] = p->post_filter[1];
+            cb[12] = p->post_filter[2];
+            g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h, cb);
             p->program_switches++;
             p->draw_calls++;
             break;

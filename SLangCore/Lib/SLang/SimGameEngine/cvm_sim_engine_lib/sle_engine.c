@@ -480,23 +480,33 @@ int32_t sle_node_active(int64_t id)
     return s_nodes[idx].active;
 }
 
-/* ── Volume 参数栈混合（计算核心，doc/14 §3）────────────────
- * 输入块布局（每 Volume 11 个 float，SLE_VOLUME_STRIDE 紧凑排布）：
+/* ── Volume 参数栈混合（计算核心，doc/14 §3；v1.1 扩参）────────
+ * 输入块布局（每 Volume 24 个 float，SLE_VOLUME_STRIDE 紧凑排布）：
  *   [0] weight         有效权重 [0,1]（<=0 不贡献）
  *   [1] priority       升序（值大者排后 = 后应用 = 覆盖优先）
  *   [2] isGlobal       0/1（全局优先于局部）
  *   [3] camDist        到相机距离（同键子序近者先；全局填 0）
  *   [4] hasBrightness  [5] brightness
- *   [6] hasSaturation  [7] saturation
- *   [8] hasVignette    [9] vignette
- *   [10] reserved      0
- * 输出块（3 float）：[0] brightness [1] saturation [2] vignette
+ *   [6] hasContrast    [7] contrast
+ *   [8] hasSaturation  [9] saturation
+ *   [10] hasVignette   [11] vignette
+ *   [12] hasVigSmooth  [13] vigSmooth
+ *   [14] hasHueShift   [15] hueShift（角度制）
+ *   [16] hasGrain      [17] grain
+ *   [18] hasTonemap    [19] tonemap（0/1；枚举不插值，直接覆盖）
+ *   [20] hasFilter     [21] filterR [22] filterG [23] filterB
+ * 输出块（11 float）：[0] brightness [1] contrast [2] saturation
+ *   [3] vignette [4] vigSmooth [5] hueShift [6] grain [7] tonemap
+ *   [8..10] filter RGB（enable 由 SL 侧 contributing 决定，不下发）
  * 语义：按（全局优先, priority 升序, camDist 升序, 输入序稳定）排序后，
- * 自中性默认 (1,1,1) 起逐 Volume 对**已配置字段** lerp(cur, v, weight)——
+ * 自中性默认起逐 Volume 对**已配置字段** lerp(cur, v, weight)——
  * 未配置字段保留当前值（掩码语义，doc/14 §3.1）；排序靠后者覆盖优先。
+ * 中性值：brightness/contrast/saturation/filter = 1、hueShift/grain/
+ * tonemap = 0、vigSmooth = 1、**vignette = 0**（无配置 = 无暗角，
+ * v1.1 修正 v1 的 1.0 起点误语义）。
  * 返回：贡献 Volume 数（weight>0）；参数非法返回 0。SL 侧绑定失败走
  * 兜底体返回 -1（VolumeSystem 据此降级 SL 线性混合）。 */
-#define SLE_VOLUME_STRIDE 11
+#define SLE_VOLUME_STRIDE 24
 #define SLE_VOLUME_MAX 256
 
 static int sle_vol_before(const float* a, const float* b)
@@ -525,9 +535,9 @@ SLE_API int32_t sle_volume_blend(const float* in, int32_t count, float* out)
     int32_t n = count;
     int32_t i;
     int32_t used = 0;
-    float br = 1.0f;
-    float sa = 1.0f;
-    float vi = 1.0f;
+    float br = 1.0f, ct = 1.0f, sa = 1.0f, vi = 0.0f, vs = 1.0f;
+    float hu = 0.0f, gr = 0.0f, tm = 0.0f;
+    float fr = 1.0f, fg = 1.0f, fb = 1.0f;
     if (in == NULL || out == NULL || count <= 0)
     {
         return 0;
@@ -557,23 +567,26 @@ SLE_API int32_t sle_volume_blend(const float* in, int32_t count, float* out)
         {
             continue;
         }
-        if (v[4] > 0.5f)
+        if (v[4] > 0.5f)  { br = sle_vol_lerp(br, v[5], v[0]); }
+        if (v[6] > 0.5f)  { ct = sle_vol_lerp(ct, v[7], v[0]); }
+        if (v[8] > 0.5f)  { sa = sle_vol_lerp(sa, v[9], v[0]); }
+        if (v[10] > 0.5f) { vi = sle_vol_lerp(vi, v[11], v[0]); }
+        if (v[12] > 0.5f) { vs = sle_vol_lerp(vs, v[13], v[0]); }
+        if (v[14] > 0.5f) { hu = sle_vol_lerp(hu, v[15], v[0]); }
+        if (v[16] > 0.5f) { gr = sle_vol_lerp(gr, v[17], v[0]); }
+        if (v[18] > 0.5f) { tm = v[19]; }  /* 枚举覆盖不插值 */
+        if (v[20] > 0.5f)
         {
-            br = sle_vol_lerp(br, v[5], v[0]);
-        }
-        if (v[6] > 0.5f)
-        {
-            sa = sle_vol_lerp(sa, v[7], v[0]);
-        }
-        if (v[8] > 0.5f)
-        {
-            vi = sle_vol_lerp(vi, v[9], v[0]);
+            fr = sle_vol_lerp(fr, v[21], v[0]);
+            fg = sle_vol_lerp(fg, v[22], v[0]);
+            fb = sle_vol_lerp(fb, v[23], v[0]);
         }
         ++used;
     }
-    out[0] = br;
-    out[1] = sa;
-    out[2] = vi;
+    out[0] = br;  out[1] = ct;  out[2] = sa;
+    out[3] = vi;  out[4] = vs;  out[5] = hu;
+    out[6] = gr;  out[7] = tm;
+    out[8] = fr;  out[9] = fg;  out[10] = fb;
     return used;
 }
 
@@ -1105,6 +1118,50 @@ SLE_API int32_t sle_camera_project(const float* cam, const float* src, int32_t c
     return visCount;
 }
 
+/* ── 带镜头 yaw/pitch 的正交烘焙投影（Alt+拖拽旋转镜头）────────
+ * cam 块 9 float：[eyeX,eyeY,eyeZ, yawRad,pitchRad, viewSize, aspect,
+ *   pad0, pad1]。世界点先投到相机 right/up/fwd 基（复用 sle_cam_basis），
+ * 再正交投影 ndc=(vx/(aspect*viewSize), vy/viewSize)，无透视除。
+ * dst 每点 4 float [ndcX,ndcY,u,v]（u/v 恒 0），与 sle_ortho_bake 同布局
+ * —— 直接喂 RenderPipeline.uploadMesh（pos2+uv2 stride 16B）。
+ * 返回处理点数（参数非法 -1）。 */
+SLE_API int32_t sle_ortho_bake_view(const float* cam, const float* src, int32_t count, float* dst)
+{
+    float eye[3];
+    float fwd[3];
+    float right[3];
+    float up[3];
+    float viewSize;
+    float aspect;
+    int32_t i;
+    if (cam == NULL || src == NULL || dst == NULL || count <= 0)
+    {
+        return -1;
+    }
+    viewSize = cam[5];
+    aspect = cam[6];
+    if (viewSize <= 0.0f || aspect <= 0.0f)
+    {
+        return -1;
+    }
+    sle_cam_basis(cam, eye, fwd, right, up);
+    for (i = 0; i < count; ++i)
+    {
+        const float* p = src + i * 3;
+        float* o = dst + i * 4;
+        float dx = p[0] - eye[0];
+        float dy = p[1] - eye[1];
+        float dz = p[2] - eye[2];
+        float vx = dx * right[0] + dy * right[1] + dz * right[2];
+        float vy = dx * up[0] + dy * up[1] + dz * up[2];
+        o[0] = vx / (aspect * viewSize);
+        o[1] = vy / viewSize;
+        o[2] = 0.0f; /* u */
+        o[3] = 0.0f; /* v */
+    }
+    return count;
+}
+
 /* ── GJK/MTV 接触法线与穿透深度（26 方向采样，doc/11）────────
  * 前置：调用方先 sle_gjk_intersect 确认相交（本函数不做布尔判定，
  * 返回 0 = 采样全负 → 实为未相交）。对 26 个单位方向 u（6 轴 + 12 棱
@@ -1209,6 +1266,9 @@ SLE_API int32_t sle_ortho_bake(const float* center, float viewSize, const float*
  *   8  Pipe     radius,height,thickness,segments      空心管（内外壁+双环端盖）
  *   9  Arch     angleDeg,radius,width,thickness,segments 拱带（XY 竖直弧带，宽 = Z 向）
  *  10  Stair    steps,width,stepHeight,depth          直梯（沿 +Z 上升，整梯居中）
+ *  11  Door     sx,sy,sz,lintel,legWidth              门框（ProBuilder Door：左立柱
+ *                                                + 右立柱 + 顶梁三盒组装，lintel
+ *                                                顶梁高、legWidth 立柱宽、中间门洞）
  * 输出布局：dst = [pos 3V | nrm 3V | uv 2V]（float 连续块），tris = 3T int32。
  * 两段式调用：先 sle_shape_counts 拿 V/T 分配缓冲，再 sle_shape_build 填充。
  * =========================================================================== */
@@ -1224,8 +1284,9 @@ SLE_API int32_t sle_ortho_bake(const float* center, float viewSize, const float*
 #define SLE_SHAPE_PIPE     8
 #define SLE_SHAPE_ARCH     9
 #define SLE_SHAPE_STAIR    10
+#define SLE_SHAPE_DOOR     11
 
-#define SLE_SHAPE_TYPE_MAX 10
+#define SLE_SHAPE_TYPE_MAX 11
 
 /* 顶点写入游标（build 一次性填充用） */
 typedef struct
@@ -1400,6 +1461,12 @@ static int sle_shape_dims(int32_t type, const float* p, int32_t pc,
         if (steps < 1) { steps = 1; }
         if (steps > 256) { return -2; }
         *vout = 24 * steps; *tout = 12 * steps;
+        return 0;
+    case SLE_SHAPE_DOOR:
+        if (pc < 5 || p[0] <= 0.0f || p[1] <= 0.0f || p[2] <= 0.0f ||
+            p[3] <= 0.0f || p[4] <= 0.0f ||
+            p[3] >= p[1] || p[4] >= p[0] * 0.5f) { return -2; }
+        *vout = 72; *tout = 36; /* 三盒组装：左立柱 + 右立柱 + 顶梁 */
         return 0;
     default:
         return -1;
@@ -1892,6 +1959,23 @@ static void sle_shape_stair(SleW* w, const float* p)
     }
 }
 
+/* Door（type 11）：ProBuilder Door 同款门框——左立柱 + 右立柱 + 顶梁三盒
+ * 组装，中间为门洞。p = [sx, sy, sz, lintel, legWidth]（全尺寸，中心原点）：
+ * lintel = 顶梁高度（0 < lintel < sy），legWidth = 立柱宽（0 < leg < sx/2），
+ * 门洞宽 = sx - 2*leg、门洞高 = sy - lintel。 */
+static void sle_shape_door(SleW* w, const float* p)
+{
+    float sx = p[0], sy = p[1], sz = p[2];
+    float lintel = p[3], leg = p[4];
+    float hx = sx * 0.5f, hy = sy * 0.5f, hz = sz * 0.5f;
+    /* 左立柱 */
+    sle_box(w, 0.0f - hx, leg - hx, 0.0f - hy, hy, 0.0f - hz, hz);
+    /* 右立柱 */
+    sle_box(w, hx - leg, hx, 0.0f - hy, hy, 0.0f - hz, hz);
+    /* 顶梁（横跨两立柱之间） */
+    sle_box(w, leg - hx, hx - leg, hy - lintel, hy, 0.0f - hz, hz);
+}
+
 SLE_API int32_t sle_shape_counts(int32_t type, const float* params, int32_t paramCount, int32_t* out)
 {
     int32_t v, t, err;
@@ -1945,6 +2029,7 @@ SLE_API int32_t sle_shape_build(int32_t type, const float* params, int32_t param
     case SLE_SHAPE_PIPE:     sle_shape_pipe(&w, params); break;
     case SLE_SHAPE_ARCH:     sle_shape_arch(&w, params); break;
     case SLE_SHAPE_STAIR:    sle_shape_stair(&w, params); break;
+    case SLE_SHAPE_DOOR:     sle_shape_door(&w, params); break;
     default:
         return -1;
     }

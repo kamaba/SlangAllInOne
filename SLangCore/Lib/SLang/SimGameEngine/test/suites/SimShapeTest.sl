@@ -429,6 +429,46 @@ public class SimShapeTest
         checkData( m, "S1 stair" )
     }
 
+    # ── S1.11 Door 门框（三盒组装：左右立柱 + 顶梁）───────
+    static void testDoor()
+    {
+        Array<Float32> p5 = pf( 2.0f, 3.0f, 0.8f, 0.6f, 0.5f )
+        Array<Float32> p = cut( p5, 5 )
+        # 三盒 = 3*24V = 72；3*12T = 36
+        ShapeMesh m = buildOk( 11, p, 72, 36, "S1 door" )
+        if m == null
+        {
+            ret
+        }
+        Array<Float32> pos = m.getPositions()
+        int n3 = m.vertexCount() * 3
+        # 粗界：x∈[-1,1] y∈[-1.5,1.5] z∈[-0.4,0.4]（整框居中）
+        Int32 bad = 0
+        Int32 i = 0
+        while i < n3
+        {
+            Float32 x = pos[ i ]
+            Float32 y = pos[ i + 1 ]
+            Float32 z = pos[ i + 2 ]
+            if x > 1.0f || x < 0.0f - 1.0f || y > 1.5f || y < 0.0f - 1.5f || z > 0.4f || z < 0.0f - 0.4f
+            {
+                bad = bad + 1
+            }
+            i = i + 3
+        }
+        check( bad == 0, "S1 door bounds centered" )
+        checkData( m, "S1 door" )
+        # 参数非法：lintel >= sy / legWidth >= sx/2
+        Array<Float32> q5 = pf( 2.0f, 3.0f, 0.8f, 3.0f, 0.5f )
+        Array<Float32> q = cut( q5, 5 )
+        ShapeMesh m2 = ShapeFactory.build( 11, q )
+        check( m2 == null, "S4 door lintel>=sy returns null" )
+        Array<Float32> r5 = pf( 2.0f, 3.0f, 0.8f, 0.6f, 1.0f )
+        Array<Float32> r = cut( r5, 5 )
+        ShapeMesh m3 = ShapeFactory.build( 11, r )
+        check( m3 == null, "S4 door leg>=sx/2 returns null" )
+    }
+
     # ── S2. 消费出口：applyTo(MeshRef) / toMesh() ─────────
     static void testConsumers()
     {
@@ -534,6 +574,7 @@ public class SimShapeTest
         testPipe()
         testArch()
         testStair()
+        testDoor()
         testConsumers()
         testConvenience()
         testErrors()

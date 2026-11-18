@@ -1,6 +1,7 @@
 # SimGameEngine · 14 Volume 效果处理
 
-> 状态：**Volume 参数栈 v1 已落盘（2026-11-17，引擎层）**：`VolumeProfile`/`Volume`/`VolumeStack` + `system/VolumeSystem.compute` + `RenderSystem.applyPost`；**混合数学核心在 C**（`sl_sim_engine_lib.sle_volume_blend`：排序 + 掩码 lerp，SL 侧只组块/解块——复用专项约定「重计算下沉 FFI」）；Bloom/Tonemap/DOF/Fog 存参数不下发（需 Render HDR 链路，M5）。
+> 状态：**v1.1 已落盘（2026-11-18，Unity Color Adjustments 风扩参）**：后处理参数从三参扩到 **11 项可下发**（brightness/contrast/saturation/hueShift/colorFilter RGB/vignette/vignetteSmooth/grain/tonemap Reinhard）——C 渲染库新增 `slr_pipeline_set_post_params`（13 float 参数块）+ GL/GLES 着色器全量消费（VK/D3D11 v1 着色器只解 enable/brightness/saturation/vignette，其余静默忽略待 SPIR-V/DXBC 重产 M5）；引擎侧 VolumeProfile/VolumeStack/VolumeSystem 块布局 11→24 float、`RenderSystem.applyPost` 改参数块下发 + `volumeSystem` 字段自动集成（sync 每帧按相机 compute+apply，Unity VolumeManager 同款）；SceneImporter 支持 `Volume` 场景组件；**中性暗角语义修正为 0**（v1 的 1.0 起点是误语义——无配置 = 无暗角）。Bloom/DOF/Fog 仍存参数不下发（HDR 链路 M5）；Tonemapping 仅 Reinhard LDR 近似（ACES 需 HDR）。
+> 使用者文档：`md/lib/SimGameEngine/post-processing.md`（只写用法/规则/坑）。
 > 前置阅读：`13-天空盒与环境.md`、`05-合批与RenderObject提交.md`、`06-相机光照与探针.md`。
 > 依据：`../Render/doc/07-Implemented-Features.md` §3（P2 Feature 机制未开始）、`../Render/doc/11-Pass-System.md`、`../Render/doc/13-Usage-Guide.md`。
 
@@ -10,13 +11,15 @@
 
 | 能力 | 状态 | 落点 |
 |---|---|---|
-| VolumeProfile 资源 | ✅ | `VolumeProfile.sl`：post 三参 + `hasXxx` 掩码（**缺省=不修改**）+ Bloom/Tonemap/DOF/Fog 存参数不下发（`unsupportedCount()` 统计） |
-| Volume 组件 | ✅ | `Volume.sl`：profile/isGlobal/priority（值大者覆盖优先）/weight/blendDistance/influenceBounds + `weightAt(camPos)`（范围内满权重、外扩段线性衰减、范围外 0；straight-line 方法） |
-| C 混合核心 | ✅ | `sle_volume_blend(inPtr, count, outPtr)`：稳定插入排序（全局优先 → priority 升序 → 距离升序）+ 掩码字段 `lerp(cur, v, weight)`，自中性 (1,1,1) 起；块布局 11 float/Volume（sle_engine.c 头注释）；绑定失败 SL 兜底线性混合（VolumeSystem 检测 <0 降级） |
-| VolumeStack + System | ✅ | `VolumeStack.sl`（三参 + contributing + hasEffect）+ `system/VolumeSystem.compute(scene, camPos)`（显式栈收集 + 平行数组 + Memory 组块 → C → 解块；诊断 lastCollected/lastCulled） |
-| 下发 Render | ✅ | `RenderSystem.applyPost(st)` → `pipe.setPostEffect(enable, b, s, v)`（contributing=0 → 关闭后处理） |
+| VolumeProfile 资源 | ✅ v1.1 | `VolumeProfile.sl`：11 项可下发字段 + `hasXxx` 掩码（**缺省=不修改**）+ Bloom/DOF/Fog 存参数不下发（`unsupportedCount()` 统计） |
+| Volume 组件 | ✅ | `Volume.sl`：profile/isGlobal/priority（值大者覆盖优先）/weight/blendDistance/influenceBounds + `weightAt(camPos)`（范围内满权重、外扩段线性衰减、范围外 0；straight-line 方法）；**SceneImporter 支持 `Volume` 场景组件** |
+| C 混合核心 | ✅ v1.1 | `sle_volume_blend(inPtr, count, outPtr)`：稳定插入排序（全局优先 → priority 升序 → 距离升序）+ 掩码字段 `lerp(cur, v, weight)`、tonemap 枚举覆盖不插值；块布局 **24 float/Volume**、输出 11 float（sle_engine.c 头注释）；中性暗角 = 0 |
+| VolumeStack + System | ✅ v1.1 | `VolumeStack.sl`（11 字段 + contributing + hasEffect）+ `system/VolumeSystem.compute(scene, camPos)`（显式栈收集 + 平行数组 + Memory 组块 → C → 解块；诊断 lastCollected/lastCulled） |
+| 下发 Render | ✅ v1.1 | `RenderSystem.applyPost(st)` → 13 float 参数块 → `pipe.setPostParams(ptr)`（contributing=0 → 关闭后处理；grainSeed = 管线帧计数）；**`RenderSystem.volumeSystem` 非空时 sync 自动 compute+apply（Unity VolumeManager 同款）** |
 | 多相机隔离 | ✅（用法级） | 每相机各自 `compute` 一份栈（§4 参数栈按相机隔离） |
-| Bloom/Tonemap/DOF/Fog | ❌ 存参数不下发 | 需 Render HDR 中间缓冲（M5）；`unsupportedCount` 防误判 |
+| Tonemapping | ✅（LDR 近似） | mode 1 = Reinhard `c/(1+c)`（LDR 缓冲近似；ACES 需 HDR M5） |
+| Bloom/DOF/Fog | ❌ 存参数不下发 | 需 Render HDR 中间缓冲（M5）；`unsupportedCount` 防误判 |
+| 渲染库着色器 | ✅ v1.1 | `slr_pipeline_set_post_params`（13 float 块）+ GL/GLES FS_POST 全量消费（中性值 = 旧三参行为逐位一致）；VK/D3D11 只解四参（SPIR-V/DXBC 重产 M5） |
 
 用法：
 

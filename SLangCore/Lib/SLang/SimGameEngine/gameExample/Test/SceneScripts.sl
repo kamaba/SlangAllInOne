@@ -43,16 +43,38 @@ public class SphereMeshScript extends Behaviour
         {
             sm.applyTo( mr )
         }
+        o.addComponent( AxisGizmoScript() )
+    }
+}
+
+# 坐标轴箭头脚本：挂在有网格的节点上，每帧用 owner 的局部位置生成
+# XYZ 三轴箭头顶点（数值交给 SceneDemo 汇总，走烘焙组视图旋转）。
+public class AxisGizmoScript extends Behaviour
+{
+    override void update()
+    {
+        GameObject o = this.owner
+        if o == null
+        {
+            ret
+        }
+        Transform t = o.transform
+        Float32_3 p = t.localPosition
+        SceneDemo.pushAxisAt( p )
     }
 }
 
 # 形状展厅：shape 号 + 尺寸，从固定形状库构建对应网格
 # 形状号（ShapeFactory/doc/17 形状表）：0 cube / 3 sphere / 4 cylinder /
-# 5 cone / 6 torus / 7 prism / 8 pipe；参数个数按 C 侧形状表精确给出。
+# 5 cone / 6 torus / 7 prism / 8 pipe / 11 door；参数个数按 C 侧形状表精确给出。
 public class ShapeMeshScript extends Behaviour
 {
     public Int32 shape = 0
     public Float32 size = 1.0f
+    # 非等比尺寸（可选）：>0 时覆盖 size 的等比三轴值（地面等扁平形状用）
+    public Float32 sx = 0.0f
+    public Float32 sy = 0.0f
+    public Float32 sz = 0.0f
 
     override void start()
     {
@@ -69,7 +91,17 @@ public class ShapeMeshScript extends Behaviour
         Float32 s = this.size
         Int32 kind = this.shape
         Array<Float32> par = null
-        if kind == 3
+        if kind == 1
+        {
+            # PLANE(XZ 平面地面)：width,height,cols,rows
+            Array<Float32> p = Array<Float32>( 4 )
+            p[0] = s
+            p[1] = s
+            p[2] = 1.0f
+            p[3] = 1.0f
+            par = p
+        }
+        elif kind == 3
         {
             Array<Float32> p = Array<Float32>( 3 )
             p[0] = s * 0.55f
@@ -112,13 +144,44 @@ public class ShapeMeshScript extends Behaviour
             p[3] = 14.0f
             par = p
         }
+        elif kind == 11
+        {
+            Array<Float32> p = Array<Float32>( 5 )
+            p[0] = s
+            p[1] = s * 1.5f
+            p[2] = s * 0.5f
+            p[3] = s * 0.3f
+            p[4] = s * 0.28f
+            par = p
+        }
         else
         {
-            # 0 cube / 7 prism：三轴尺寸
+            # 0 cube / 7 prism：三轴尺寸（sx/sy/sz>0 时非等比覆盖）
             Array<Float32> p = Array<Float32>( 3 )
-            p[0] = s
-            p[1] = s
-            p[2] = s
+            if this.sx > 0.0f
+            {
+                p[0] = this.sx
+            }
+            else
+            {
+                p[0] = s
+            }
+            if this.sy > 0.0f
+            {
+                p[1] = this.sy
+            }
+            else
+            {
+                p[1] = s
+            }
+            if this.sz > 0.0f
+            {
+                p[2] = this.sz
+            }
+            else
+            {
+                p[2] = s
+            }
             par = p
         }
         ShapeMesh sm = ShapeFactory.build( kind, par )
@@ -126,6 +189,7 @@ public class ShapeMeshScript extends Behaviour
         {
             sm.applyTo( mr )
         }
+        o.addComponent( AxisGizmoScript() )
     }
 }
 
@@ -260,9 +324,22 @@ public class SceneScriptFactories
         ShapeMeshScript s = ShapeMeshScript()
         JsonValue sn = cfg.select("shape")
         JsonValue zn = cfg.select("size")
+        JsonValue xn = cfg.select("sx")
+        JsonValue yn = cfg.select("sy")
+        JsonValue z2 = cfg.select("sz")
         s.shape = sn.asInt32( 0 )
         s.size = zn.asFloat32( 1.0f )
+        s.sx = xn.asFloat32( 0.0f )
+        s.sy = yn.asFloat32( 0.0f )
+        s.sz = z2.asFloat32( 0.0f )
         sink.value = s
+    }
+
+    # 坐标轴箭头脚本工厂（给内置网格节点挂箭头，走 singleObject 光照路径）
+    public static void makeAxis( JsonValue cfg, ScriptResult sink )
+    {
+        AxisGizmoScript a = AxisGizmoScript()
+        sink.value = a
     }
 
     public static void makeSpin( JsonValue cfg, ScriptResult sink )

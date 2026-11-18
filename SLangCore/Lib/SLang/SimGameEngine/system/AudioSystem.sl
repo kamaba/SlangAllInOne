@@ -19,6 +19,8 @@ public class AudioSystem
 {
     public bool ready = false
     public string lastError = ""
+    # 当前主通道音源（playSource 成功时登记；供帧尾时钟同步读取播放头）
+    public Audio.AudioSource activeSource = null
 
     # 后端就绪（waveOut/wasapi；失败原因见 lastError）
     public bool init()
@@ -79,7 +81,52 @@ public class AudioSystem
         {
             this.lastError = Audio.AudioIO.lastErrorText()
         }
+        else
+        {
+            this.activeSource = src
+        }
         ret ok
+    }
+
+    # ── 时间同步（doc/18 v1.1）────────────────────────────
+    # 每帧由 Application.tick 帧尾调用；把当前音源播放头（秒→微秒）上报
+    # 给时间服务，域偏移的渐变对齐统一由 TimeService.syncExternalClocks 收口。
+    # snapNow=true = seek/换曲后一步对齐（正常播放请保持 false 防爆音）。
+    public bool syncClock( TimeService svc )
+    {
+        if svc == null || this.activeSource == null
+        {
+            ret false
+        }
+        if this.activeSource.isPlaying == false
+        {
+            ret false
+        }
+        Float32 sec = this.activeSource.time
+        if sec < 0.0f
+        {
+            sec = 0.0f
+        }
+        Int64 headUs = SystemConvertInt64( sec * 1000000.0f )
+        svc.reportAudioHead( headUs, false )
+        ret true
+    }
+
+    # seek / 换曲后用：一步把音频域时钟对齐到当前播放头
+    public bool snapClock( TimeService svc )
+    {
+        if svc == null || this.activeSource == null
+        {
+            ret false
+        }
+        Float32 sec = this.activeSource.time
+        if sec < 0.0f
+        {
+            sec = 0.0f
+        }
+        Int64 headUs = SystemConvertInt64( sec * 1000000.0f )
+        svc.reportAudioHead( headUs, true )
+        ret true
     }
 
     public string probeFile( string path )
@@ -96,5 +143,6 @@ public class AudioSystem
     {
         Audio.AudioIO.shutdown()
         this.ready = false
+        this.activeSource = null
     }
 }

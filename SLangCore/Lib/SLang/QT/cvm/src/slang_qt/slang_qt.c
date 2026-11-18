@@ -267,6 +267,8 @@ SLQT_API int32_t slqt_key_down_sl(int32_t key) { return slqt_be_key_down(key); }
 /* 2026-11-18：鼠标轮询（全局坐标；button 1=左 2=右；wheel_take 读后清零） */
 SLQT_API int32_t slqt_mouse_x_sl(void) { return slqt_be_mouse_x(); }
 SLQT_API int32_t slqt_mouse_y_sl(void) { return slqt_be_mouse_y(); }
+SLQT_API int32_t slqt_mouse_local_x_sl(void) { return slqt_be_mouse_local_x(); }
+SLQT_API int32_t slqt_mouse_local_y_sl(void) { return slqt_be_mouse_local_y(); }
 SLQT_API int32_t slqt_mouse_down_sl(int32_t button) { return slqt_be_mouse_down(button); }
 SLQT_API int32_t slqt_mouse_wheel_take_sl(void) { return slqt_be_mouse_wheel_take(); }
 SLQT_API void    slqt_widget_set_parent_sl(int64_t h, int64_t p) { slqt_be_widget_set_parent(h, p); }

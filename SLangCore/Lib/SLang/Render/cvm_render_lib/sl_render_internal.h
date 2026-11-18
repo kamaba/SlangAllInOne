@@ -329,8 +329,18 @@ typedef struct
     float shadow_bias, shadow_strength;/* 防 acne 偏移 / 阴影强度（0..1）*/
 
     float clear_color[4];
+    /* 后处理参数（v2 Unity Color Adjustments 风：doc/14 v1.1）——中性值 =
+     * 旧行为（contrast=1 / filter=(1,1,1) / hue=0 / grain=0 / vigSmooth=1
+     * 时逐位等价旧三参公式）；set_post / set_post_params 写入 */
     int post_enabled;
     float post_brightness, post_saturation, post_vignette;
+    float post_contrast;                /* 对比度（0..2+，1 = 不变）        */
+    float post_vig_smooth;              /* 暗角柔度（0..1，1 = 旧标准曲线） */
+    float post_hue;                     /* 色相偏移（角度制，0 = 不变）     */
+    float post_grain;                   /* 胶片颗粒强度（0 = 关）           */
+    float post_grain_seed;              /* 颗粒随机种子（时间驱动）         */
+    int   post_tonemap;                 /* 0 = 关 / 1 = Reinhard（LDR 近似）*/
+    float post_filter[3];               /* 颜色滤片（乘法 tint，1,1,1 = 不变）*/
 
     /* P6 渐变天空背景：sky_on=1 时每个相机的清屏（COLOR 位）之后画全屏
      * 渐变 quad（顶->底线性插值，无深度写入，物体随后正常覆盖）；

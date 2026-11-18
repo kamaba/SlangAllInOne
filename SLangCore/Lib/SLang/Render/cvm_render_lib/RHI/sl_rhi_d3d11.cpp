@@ -1043,10 +1043,14 @@ static int d3d_mesh_upload(int slot, const float* verts, int vert_count)
 
 /* 阶段 11：scene -> post（enabled=0 纯拷贝）*/
 static void d3d_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
-                             int enabled, float bright, float sat, float vig)
+                             const float* prm)
 {
     UINT stride = 16, offset = 0;
     float fx[4];
+    /* v1 DXBC 着色器只消费 brightness/saturation/vignette（cb_fx[3] 预留；
+     * 新字段 contrast/filter/hue/grain/tonemap 需 HLSL 重产，M5） */
+    int enabled = prm[0] > 0.5f ? 1 : 0;
+    float bright = prm[1], sat = prm[3], vig = prm[4];
     d3d_unbind_srv();
     s_ctx->OMSetRenderTargets(1, &dst->rtv, NULL);
     d3d_full_viewport(w, h);

@@ -205,6 +205,14 @@ int64_t slr_pipeline_create(int w, int h)
             p->sky_bottom[0] = 0.0f; p->sky_bottom[1] = 0.0f; p->sky_bottom[2] = 0.0f;
             p->sky_cube = 0;
             p->post_brightness = 1.0f; p->post_saturation = 1.0f; p->post_vignette = 0.0f;
+            /* v2 Unity Color Adjustments 风：中性值 = 旧三参行为逐位一致 */
+            p->post_contrast = 1.0f;
+            p->post_vig_smooth = 1.0f;
+            p->post_hue = 0.0f;
+            p->post_grain = 0.0f;
+            p->post_grain_seed = 0.0f;
+            p->post_tonemap = 0;
+            p->post_filter[0] = 1.0f; p->post_filter[1] = 1.0f; p->post_filter[2] = 1.0f;
             if (!pipeline_make_targets(p, w, h))
             {
                 pipeline_release_targets(p);
@@ -239,6 +247,8 @@ int slr_pipeline_destroy(int64_t h)
 int slr_pipeline_resize(int64_t h, int w, int hh)
 {
     SlrPipeline* p;
+    int oldw, oldh;
+    int ci;
     p = pipe_from_handle(h);
     /* N3：先等在途流回放完成（worker 可能正持有旧目标回放；SL 主线程
      * 不会并发提交，drain 后重建目标安全）。未启用 async 时 no-op。*/
@@ -246,6 +256,7 @@ int slr_pipeline_resize(int64_t h, int w, int hh)
     if (!rhi_enter()) return 0;
     if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
     if (w <= 0 || hh <= 0) { set_error(SLR_E_BAD_PARAM); rhi_exit(); return 0; }
+    oldw = p->w; oldh = p->h;
     pipeline_release_targets(p);
     if (!pipeline_make_targets(p, w, hh))
     {
@@ -255,6 +266,30 @@ int slr_pipeline_resize(int64_t h, int w, int hh)
         return 0;
     }
     p->w = w; p->h = hh;
+    /* 关键：相机 viewport/scissor 必须跟随新渲染目标尺寸。此前 resize
+     * 只重建 FBO + 改 p->w/p->h，相机 vp_w/vp_h 仍是旧值（create 时的
+     * 480x480），阶段 7/9 的 glViewport/glScissor 仍按旧矩形 → 新 RT
+     * 只有左下角旧尺寸区域有内容，其余黑屏、移动时被裁剪。
+     * 整幅视口（默认相机 & 多相机全屏）直接置新尺寸避免舍入误差；
+     * 其余（显式分屏相机）按新旧尺寸比例缩放，兼容局部视口。*/
+    for (ci = 0; ci < SLR_MAX_CAMERAS; ci++)
+    {
+        SlrCamera* c = &p->cameras[ci];
+        if (!c->used) continue;
+        if (c->vp_x == 0 && c->vp_y == 0 && c->vp_w == oldw && c->vp_h == oldh)
+        {
+            c->vp_w = w; c->vp_h = hh;
+        }
+        else if (oldw > 0 && oldh > 0)
+        {
+            c->vp_x = (int)(c->vp_x * w / oldw);
+            c->vp_y = (int)(c->vp_y * hh / oldh);
+            c->vp_w = (int)(c->vp_w * w / oldw);
+            c->vp_h = (int)(c->vp_h * hh / oldh);
+            if (c->vp_w < 1) c->vp_w = 1;
+            if (c->vp_h < 1) c->vp_h = 1;
+        }
+    }
     rhi_exit();
     return 1;
 }
@@ -268,14 +303,16 @@ int64_t slr_pipeline_frame_count(int64_t h)
 
 int slr_pipeline_set_camera(int64_t h, int cull_mask, float l, float r, float b, float t)
 {
-    SlrPipeline* p = pipe_from_handle(h);
-    SlrCamera* c;
-    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
-    /* 兼容 v2：写默认相机（槽 0） */
-    c = &p->cameras[0];
-    c->cull_mask = cull_mask;
-    c->cam_l = l; c->cam_r = r; c->cam_b = b; c->cam_t = t;
-    return 1;
+    {
+        SlrPipeline* p = pipe_from_handle(h);
+        SlrCamera* c;
+        if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+        /* 兼容 v2：写默认相机（槽 0） */
+        c = &p->cameras[0];
+        c->cull_mask = cull_mask;
+        c->cam_l = l; c->cam_r = r; c->cam_b = b; c->cam_t = t;
+        return 1;
+    }
 }
 
 int slr_pipeline_set_clear_color(int64_t h, float r, float g, float b, float a)
@@ -358,6 +395,31 @@ int slr_pipeline_set_post(int64_t h, int enable, float brightness, float saturat
     p->post_brightness = brightness;
     p->post_saturation = saturation;
     p->post_vignette = vignette;
+    return 1;
+}
+
+int slr_pipeline_set_post_params(int64_t h, const float* prm)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    if (prm == NULL)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        return 0;
+    }
+    p->post_enabled     = prm[0] > 0.5f ? 1 : 0;
+    p->post_brightness  = prm[1];
+    p->post_contrast    = prm[2];
+    p->post_saturation  = prm[3];
+    p->post_vignette    = prm[4];
+    p->post_vig_smooth  = prm[5];
+    p->post_hue         = prm[6];
+    p->post_grain       = prm[7];
+    p->post_grain_seed  = prm[8];
+    p->post_tonemap     = prm[9] > 0.5f ? 1 : 0;
+    p->post_filter[0]   = prm[10];
+    p->post_filter[1]   = prm[11];
+    p->post_filter[2]   = prm[12];
     return 1;
 }
 
@@ -1127,10 +1189,23 @@ static int stage_assemble_rendered_layers(SlrPipeline* p)
 /* 11 后处理（RHI：scene -> post，enabled=0 纯拷贝） */
 static int stage_post_process(SlrPipeline* p)
 {
+    float prm[13];
     p->last_stage = 11;
-    g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h,
-                        p->post_enabled, p->post_brightness,
-                        p->post_saturation, p->post_vignette);
+    /* v2 参数块（13 float，布局见 vm_sl_render.h set_post_params 注释） */
+    prm[0]  = (float)p->post_enabled;
+    prm[1]  = p->post_brightness;
+    prm[2]  = p->post_contrast;
+    prm[3]  = p->post_saturation;
+    prm[4]  = p->post_vignette;
+    prm[5]  = p->post_vig_smooth;
+    prm[6]  = p->post_hue;
+    prm[7]  = p->post_grain;
+    prm[8]  = p->post_grain_seed;
+    prm[9]  = (float)p->post_tonemap;
+    prm[10] = p->post_filter[0];
+    prm[11] = p->post_filter[1];
+    prm[12] = p->post_filter[2];
+    g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h, prm);
     p->program_switches++;
     p->draw_calls++;
     return 1;

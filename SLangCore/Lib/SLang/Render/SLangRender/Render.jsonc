@@ -74,7 +74,6 @@
       { "path": "Ray.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 13 },
       // RenderLight —— 光照槽门面（根级类，2026-11-18 分层定稿：替代组件式
       // Light；Engine 实体光源 LightData.applyTo 布局与本类一致）
-      { "path": "Camera/RenderLight.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 15 },
       // ---- RHI 层草稿（依赖序：资源 -> 设备 -> 命令 -> 管线状态）----
       { "path": "Pipeline/GfxBackend.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 16 },
       { "path": "Pipeline/GpuResource.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 17 },

@@ -53,7 +53,6 @@ CSharpBench
             $us <- (int)acc;
         }
         Console.println("========== Fibonacci (CSharp) (end) ==========")
-        Console.println("PROBE-A us=[" + us.toString() + "]")
         BenchCollector.recordCSharp("Fibonacci", "fib(0..21) 递归求和（块内 Stopwatch us）", us)
     }
 

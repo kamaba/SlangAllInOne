@@ -2,8 +2,10 @@ import Std
 
 # ============================================================================
 # TypeScriptBench — TypeScript 版基准（@typescript_nodev8(){} 内联块，Node.js V8 引擎）
-# 13 项基准与 SL/C#/Java/JS(QuickJS) 版逐项对齐：相同算法 / 迭代次数 / 运算
-# 序列 / 输出行格式，计时用 Date.now()（毫秒口径同 Environment.sys.nowMillis）。
+# 13 项基准与 SL/C#/Java/JS(QuickJS) 版逐项对齐：相同算法 / 迭代次数 /
+# 运算序列 / 输出行格式。计时：块内 performance.now() 自身计时（亚毫秒
+# 精度 ms 累计，出通道 ×1000 折 us 回传 SL 侧 recordTs——不含引擎调用/
+# node 子进程拉起/部署开销，与 C/C++/Python 口径一致）。
 # 引擎为外接 node.exe keep-alive 子进程（V8 JIT），与 QuickJS 解释执行对照；
 # 块体为 TypeScript（形参带类型标注，Node >= 22.6 原生类型擦除，零 tsc）：
 # 块体被包裹进 export async function run(...): Promise<void>（ESM .mts），
@@ -18,131 +20,95 @@ TypeScriptBench
 {
     static fun()
     {
-        # SL 侧整块计时包裹各子项（含引擎调用开销，首轮另含 node 子进程拉起），
-        # 逐项记录进 BenchCollector（语言列 JavaScriptV8，与 QuickJS 对照）
-        t = Environment.sys.nowMillis()
+        # 各子项块内 performance.now 自身计时（出通道 ×1000 折 us 回传），方法内直接记录进 BenchCollector
         TypeScriptBench.fibonacci()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("Fibonacci", "fib(0..21) 递归求和（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.eqBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("EqBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.loopBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("Loop", "3子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.levenshtein()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("Levenshtein", "levenshtein x5000（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.dataTypes()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("DataTypes", "5子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.stringBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("StringBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.regExpBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("RegExpBench", "8子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.nQueens()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("NQueens", "n=11 单轮 + n=9 x10（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.sieve()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("Sieve", "1e6 单轮 + 5e5 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.quickSort()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("QuickSort", "quicksort 3e4 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.matrixMul()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("MatrixMul", "matmul 100x100 x3（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.binaryTree()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("BinaryTree", "depth12 x10 + depth16 x2（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         TypeScriptBench.mandelbrot()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordTs("Mandelbrot", "mandelbrot 240x180 x3（整块含引擎开销）", t)
     }
 
     # 1. Fibonacci：fib(0..21) 递归求和（= 17711），TS 形参类型标注
     static fibonacci()
     {
         Console.println("========== Fibonacci (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             function fib(n: number): number
             {
                 return n <= 1 ? n : fib(n - 1) + fib(n - 2);
             }
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             let sum: number = 0;
             for (let i: number = 0; i < 22; i++)
             {
                 sum += fib(i);
             }
-            console.log("fib(0..21) sum = " + sum + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("fib(0..21) sum = " + sum + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== Fibonacci (TS/V8) (end) ==========")
+        BenchCollector.recordTs("Fibonacci", "fib(0..21) 递归求和（块内 performance.now us）", us)
     }
 
     # 2. EqBench：四种类型相等比较循环（i32/i64/f64/bool）
     static eqBench()
     {
         Console.println("========== EqBench (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let k: number = 0;
             let s: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             while (k !== 2000000)
             {
                 s += k;
                 k++;
             }
-            console.log("i32 != 2e6 = " + s + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("i32 != 2e6 = " + s + "  [" + dt.toFixed(3) + " ms]");
             let k64: number = 0;
             let s64: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             while (k64 !== 2000000)
             {
                 s64 += k64;
                 k64++;
             }
-            console.log("i64 != 2e6 = " + s64 + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("i64 != 2e6 = " + s64 + "  [" + dt.toFixed(3) + " ms]");
             let kd: number = 0.0;
             let sd: number = 0.0;
-            t0 = Date.now();
+            t0 = performance.now();
             while (kd !== 2000000.0)
             {
                 sd += kd;
                 kd += 1.0;
             }
-            console.log("f64 != 2e6 = " + sd + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("f64 != 2e6 = " + sd + "  [" + dt.toFixed(3) + " ms]");
             let b: boolean = true;
             let cnt: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 1000000; i++)
             {
                 if (b === true)
@@ -150,17 +116,24 @@ TypeScriptBench
                     cnt++;
                 }
             }
-            console.log("bool == 1e6 = " + cnt + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("bool == 1e6 = " + cnt + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== EqBench (TS/V8) (end) ==========")
+        BenchCollector.recordTs("EqBench", "4子项（块内 performance.now us）", us)
     }
 
     # 3. Loop：数组求和 / while / 步进 for 三段
     static loopBench()
     {
         Console.println("========== Loop (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let n: number = 1000;
             let arr: number[] = new Array(n);
             for (let i: number = 0; i < n; i++)
@@ -168,7 +141,7 @@ TypeScriptBench
                 arr[i] = i * i;
             }
             let total: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let j: number = 0; j < 3000; j++)
             {
                 let s: number = 0;
@@ -178,33 +151,44 @@ TypeScriptBench
                 }
                 total += s;
             }
-            console.log("array sum x3000 = " + total + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("array sum x3000 = " + total + "  [" + dt.toFixed(3) + " ms]");
             let wsum: number = 0;
             let k: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             while (k < 5000000)
             {
                 wsum += k;
                 k++;
             }
-            console.log("while sum 5e6 = " + wsum + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("while sum 5e6 = " + wsum + "  [" + dt.toFixed(3) + " ms]");
             let stepSum: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 1000000; i += 7)
             {
                 stepSum += i;
             }
-            console.log("for step +7 1e6 = " + stepSum + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("for step +7 1e6 = " + stepSum + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== Loop (TS/V8) (end) ==========")
+        BenchCollector.recordTs("Loop", "3子项（块内 performance.now us）", us)
     }
 
     # 4. Levenshtein：编辑距离 DP（a,b 固定序列，先单次再 x5000）
     static levenshtein()
     {
         Console.println("========== Levenshtein (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             function distance(a: number[], b: number[]): number
             {
                 let m: number = a.length;
@@ -234,52 +218,67 @@ TypeScriptBench
             let dist: number = distance(a, b);
             console.log("levenshtein(a,b) = " + dist);
             let total: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let r: number = 0; r < 5000; r++)
             {
                 total += distance(a, b);
             }
-            console.log("levenshtein x5000 = " + total + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("levenshtein x5000 = " + total + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== Levenshtein (TS/V8) (end) ==========")
+        BenchCollector.recordTs("Levenshtein", "levenshtein x5000（块内 performance.now us）", us)
     }
 
     # 5. DataTypes：Int32/Int64/Num/混合运算/bool 取模五段
     static dataTypes()
     {
         Console.println("========== DataTypes (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let s32: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let i: number = 0; i < 2000000; i++)
             {
                 s32 += i;
             }
-            console.log("Int32 sum 2e6 = " + s32 + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("Int32 sum 2e6 = " + s32 + "  [" + dt.toFixed(3) + " ms]");
             let s64: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 2000000; i++)
             {
                 s64 += i;
             }
-            console.log("Int64 sum 2e6 = " + s64 + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("Int64 sum 2e6 = " + s64 + "  [" + dt.toFixed(3) + " ms]");
             let sf: number = 0.0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 2000000; i++)
             {
                 sf += i * 1.5;
             }
-            console.log("Num sum 2e6 = " + sf + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("Num sum 2e6 = " + sf + "  [" + dt.toFixed(3) + " ms]");
             let mix: number = 0.0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 1000000; i++)
             {
                 mix = mix + i / 3.0 + i % 7;
             }
-            console.log("Mixed ops 1e6 = " + mix + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("Mixed ops 1e6 = " + mix + "  [" + dt.toFixed(3) + " ms]");
             let count: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 1000000; i++)
             {
                 if (i % 3 === 0 && i % 5 === 0)
@@ -287,40 +286,53 @@ TypeScriptBench
                     count++;
                 }
             }
-            console.log("bool mod 1e6 = " + count + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("bool mod 1e6 = " + count + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== DataTypes (TS/V8) (end) ==========")
+        BenchCollector.recordTs("DataTypes", "5子项（块内 performance.now us）", us)
     }
 
     # 6. StringBench：拼接 / 插值构建 / format / 比较 / 结尾校验
     static stringBench()
     {
         Console.println("========== StringBench (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let s: string = "";
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let i: number = 0; i < 10000; i++)
             {
                 s = s + "ab";
             }
-            console.log("concat 1e4  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("concat 1e4  [" + dt.toFixed(3) + " ms]");
             let t: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 10000; i++)
             {
                 t = "v=" + i + " s=" + (i * 2);
             }
-            console.log("interp 1e4  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("interp 1e4  [" + dt.toFixed(3) + " ms]");
             let u: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 10000; i++)
             {
                 u = i + "-" + (i + 1);
             }
-            console.log("format 1e4  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("format 1e4  [" + dt.toFixed(3) + " ms]");
             let c: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 100000; i++)
             {
                 if (s === t)
@@ -328,10 +340,14 @@ TypeScriptBench
                     c++;
                 }
             }
-            console.log("compare 1e5  count=" + c + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("compare 1e5  count=" + c + "  [" + dt.toFixed(3) + " ms]");
             console.log("concat endswith ab = " + (s.endsWith("ab") && u === u));
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== StringBench (TS/V8) (end) ==========")
+        BenchCollector.recordTs("StringBench", "4子项（块内 performance.now us）", us)
     }
 
     # 7. RegExpBench：编译 / 早命中 / 不命中 / matchAll / replace / 分组 /
@@ -339,8 +355,11 @@ TypeScriptBench
     static regExpBench()
     {
         Console.println("========== RegExpBench (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let chunk: string = "abc123 def456 ghi789 ";
             let text: string = "";
             for (let i: number = 0; i < 4000; i++)
@@ -348,32 +367,38 @@ TypeScriptBench
                 text = text + chunk;
             }
             console.log("text bytes = " + text.length);
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let i: number = 0; i < 2000; i++)
             {
                 new RegExp("([a-z]+)([0-9]+)");
             }
-            console.log("compile x2000  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("compile x2000  [" + dt.toFixed(3) + " ms]");
             let re1: RegExp = new RegExp("def456");
             let hit: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 500; i++)
             {
                 let m1: RegExpExecArray | null = re1.exec(text);
                 hit = m1 !== null ? m1[0] : "";
             }
-            console.log("search hit x500  [" + (Date.now() - t0) + " ms]  value=" + hit);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("search hit x500  [" + dt.toFixed(3) + " ms]  value=" + hit);
             let re2: RegExp = new RegExp("zzz999");
             let miss: boolean = true;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 20; i++)
             {
                 miss = !re2.test(text);
             }
-            console.log("search miss x20  [" + (Date.now() - t0) + " ms]  miss=" + miss);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("search miss x20  [" + dt.toFixed(3) + " ms]  miss=" + miss);
             let re3: RegExp = new RegExp("[a-z]+", "g");
             let words: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 5; i++)
             {
                 words = 0;
@@ -384,19 +409,23 @@ TypeScriptBench
                     words++;
                 }
             }
-            console.log("matchAll x5  [" + (Date.now() - t0) + " ms]  count=" + words);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("matchAll x5  [" + dt.toFixed(3) + " ms]  count=" + words);
             let re4: RegExp = new RegExp("[0-9]+", "g");
             let rep: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 5; i++)
             {
                 rep = text.replace(re4, "\x23");
             }
-            console.log("replace x5  [" + (Date.now() - t0) + " ms]  len=" + rep.length);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("replace x5  [" + dt.toFixed(3) + " ms]  len=" + rep.length);
             let re5: RegExp = new RegExp("([a-z]+)([0-9]+)");
             let g1: string = "";
             let g2: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 200; i++)
             {
                 let m5: RegExpExecArray | null = re5.exec(text);
@@ -406,7 +435,9 @@ TypeScriptBench
                     g2 = m5[2];
                 }
             }
-            console.log("group search x200  [" + (Date.now() - t0) + " ms]  g1=" + g1 + " g2=" + g2);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("group search x200  [" + dt.toFixed(3) + " ms]  g1=" + g1 + " g2=" + g2);
             let chunk2: string = "abc abc def def ";
             let text2: string = "";
             for (let i: number = 0; i < 2000; i++)
@@ -415,7 +446,7 @@ TypeScriptBench
             }
             let re6: RegExp = new RegExp("(\\w+) \\1", "g");
             let pairs: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 10; i++)
             {
                 pairs = 0;
@@ -426,7 +457,9 @@ TypeScriptBench
                     pairs++;
                 }
             }
-            console.log("backref matchAll x10  [" + (Date.now() - t0) + " ms]  count=" + pairs);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("backref matchAll x10  [" + dt.toFixed(3) + " ms]  count=" + pairs);
             let chunk3: string = "中文测试123 ";
             let text3: string = "";
             for (let i: number = 0; i < 2000; i++)
@@ -435,23 +468,30 @@ TypeScriptBench
             }
             let re7: RegExp = new RegExp("测试[0-9]+");
             let zh: string = "";
-            t0 = Date.now();
+            t0 = performance.now();
             for (let i: number = 0; i < 100; i++)
             {
                 let m7: RegExpExecArray | null = re7.exec(text3);
                 zh = m7 !== null ? m7[0] : "";
             }
-            console.log("utf8 search x100  [" + (Date.now() - t0) + " ms]  value=" + zh);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("utf8 search x100  [" + dt.toFixed(3) + " ms]  value=" + zh);
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== RegExpBench (TS/V8) (end) ==========")
+        BenchCollector.recordTs("RegExpBench", "8子项（块内 performance.now us）", us)
     }
 
     # 8. NQueens：n=11 单轮（2680）+ n=9 x10 轮（3520）
     static nQueens()
     {
         Console.println("========== NQueens (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             function place(queens: number[], row: number, n: number): number
             {
                 if (row === n)
@@ -483,28 +523,37 @@ TypeScriptBench
                 let queens: number[] = new Array(n);
                 return place(queens, 0, n);
             }
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             let solutions: number = solve(11);
-            console.log("nqueens(11) solutions = " + solutions + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("nqueens(11) solutions = " + solutions + "  [" + dt.toFixed(3) + " ms]");
             let total: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let r: number = 0; r < 10; r++)
             {
                 total += solve(9);
             }
-            console.log("nqueens(9) x10 = " + total + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("nqueens(9) x10 = " + total + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== NQueens (TS/V8) (end) ==========")
+        BenchCollector.recordTs("NQueens", "n=11 单轮 + n=9 x10（块内 performance.now us）", us)
     }
 
     # 9. Sieve：1e6 单轮（78498）+ 5e5 x5 轮（207690）
     static sieve()
     {
         Console.println("========== Sieve (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let primes: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             let comp1: number[] = new Array(1000001).fill(0);
             for (let i: number = 2; i <= 1000000; i++)
             {
@@ -522,9 +571,11 @@ TypeScriptBench
                     }
                 }
             }
-            console.log("sieve 1e6 primes = " + primes + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("sieve 1e6 primes = " + primes + "  [" + dt.toFixed(3) + " ms]");
             let total: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let r: number = 0; r < 5; r++)
             {
                 let comp2: number[] = new Array(500001).fill(0);
@@ -547,17 +598,24 @@ TypeScriptBench
                 }
                 total += cnt;
             }
-            console.log("sieve 5e5 x5 = " + total + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("sieve 5e5 x5 = " + total + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== Sieve (TS/V8) (end) ==========")
+        BenchCollector.recordTs("Sieve", "1e6 单轮 + 5e5 x5（块内 performance.now us）", us)
     }
 
     # 10. QuickSort：3e4 元素 x5 轮（LCG 数据生成不计时，逐轮计时累计）
     static quickSort()
     {
         Console.println("========== QuickSort (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             function sort(a: number[], lo: number, hi: number): void
             {
                 if (lo >= hi)
@@ -592,7 +650,6 @@ TypeScriptBench
             let n: number = 30000;
             let rounds: number = 5;
             let arr: number[] = new Array(n);
-            let totalMs: number = 0;
             let checksum: number = 0;
             for (let r: number = 0; r < rounds; r++)
             {
@@ -602,9 +659,9 @@ TypeScriptBench
                     seed = (seed * 16807) % 2147483647;
                     arr[i] = seed;
                 }
-                let t0: number = Date.now();
+                let t0: number = performance.now();
                 sort(arr, 0, n - 1);
-                totalMs += Date.now() - t0;
+                acc += performance.now() - t0;
                 for (let i: number = 0; i < n; i++)
                 {
                     checksum += arr[i];
@@ -617,17 +674,22 @@ TypeScriptBench
                     }
                 }
             }
-            console.log("quicksort 3e4 x5  [" + totalMs + " ms]  checksum = " + checksum);
+            console.log("quicksort 3e4 x5  [" + acc.toFixed(3) + " ms]  checksum = " + checksum);
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== QuickSort (TS/V8) (end) ==========")
+        BenchCollector.recordTs("QuickSort", "quicksort 3e4 x5（块内 performance.now us）", us)
     }
 
     # 11. MatrixMul：100x100 x3 轮（填充不计时，校验和）
     static matrixMul()
     {
         Console.println("========== MatrixMul (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let n: number = 100;
             let rounds: number = 3;
             let a: number[] = new Array(n * n).fill(0);
@@ -641,7 +703,7 @@ TypeScriptBench
                     b[i * n + j] = (i * 7 + j * 3) % 100;
                 }
             }
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let r: number = 0; r < rounds; r++)
             {
                 for (let i: number = 0; i < n; i++)
@@ -657,23 +719,29 @@ TypeScriptBench
                     }
                 }
             }
-            let elapsed: number = Date.now() - t0;
+            let elapsed: number = performance.now() - t0;
+            acc += elapsed;
             let checksum: number = 0;
             for (let i: number = 0; i < n * n; i++)
             {
                 checksum += c[i];
             }
             console.log("matmul 100x100 x3  [" + elapsed + " ms]  checksum = " + checksum);
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== MatrixMul (TS/V8) (end) ==========")
+        BenchCollector.recordTs("MatrixMul", "matmul 100x100 x3（块内 performance.now us）", us)
     }
 
     # 12. BinaryTree：depth12 x10 轮 + depth16 x2 轮（构建 + 求和）
     static binaryTree()
     {
         Console.println("========== BinaryTree (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             interface TreeNode { value: number; left: TreeNode | null; right: TreeNode | null }
             function build(depth: number, value: number): TreeNode | null
             {
@@ -695,38 +763,47 @@ TypeScriptBench
                 return node.value + checksum(node.left) + checksum(node.right);
             }
             let total: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let r: number = 0; r < 10; r++)
             {
                 let root: TreeNode | null = build(12, r + 1);
                 total += checksum(root);
             }
-            console.log("tree depth12 x10 checksum = " + total + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("tree depth12 x10 checksum = " + total + "  [" + dt.toFixed(3) + " ms]");
             let total2: number = 0;
-            t0 = Date.now();
+            t0 = performance.now();
             for (let r: number = 0; r < 2; r++)
             {
                 let root: TreeNode | null = build(16, r + 1);
                 total2 += checksum(root);
             }
-            console.log("tree depth16 x2 checksum = " + total2 + "  [" + (Date.now() - t0) + " ms]");
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("tree depth16 x2 checksum = " + total2 + "  [" + dt.toFixed(3) + " ms]");
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== BinaryTree (TS/V8) (end) ==========")
+        BenchCollector.recordTs("BinaryTree", "depth12 x10 + depth16 x2（块内 performance.now us）", us)
     }
 
     # 13. Mandelbrot：240x180 x3 轮（iterSum/inside 跨轮累加）
     static mandelbrot()
     {
         Console.println("========== Mandelbrot (TS/V8) (start) ==========")
+        long us = 0L
         @typescript_nodev8()
         {
+            let acc: number = 0;
+            let dt: number = 0;
             let w: number = 240;
             let h: number = 180;
             let maxIter: number = 150;
             let rounds: number = 3;
             let iterSum: number = 0;
             let insideCount: number = 0;
-            let t0: number = Date.now();
+            let t0: number = performance.now();
             for (let r: number = 0; r < rounds; r++)
             {
                 for (let py: number = 0; py < h; py++)
@@ -753,8 +830,12 @@ TypeScriptBench
                     }
                 }
             }
-            console.log("mandelbrot 240x180 x3  [" + (Date.now() - t0) + " ms]  iterSum = " + iterSum + "  inside = " + insideCount);
+            dt = performance.now() - t0;
+            acc += dt;
+            console.log("mandelbrot 240x180 x3  [" + dt.toFixed(3) + " ms]  iterSum = " + iterSum + "  inside = " + insideCount);
+            $us <- Math.round(acc * 1000);
         }
         Console.println("========== Mandelbrot (TS/V8) (end) ==========")
+        BenchCollector.recordTs("Mandelbrot", "mandelbrot 240x180 x3（块内 performance.now us）", us)
     }
 }

@@ -14,11 +14,14 @@ macOs /iOS的环境
 10. 接入kotlin
 
 
-配置里边增加是否打开Console的配置文件 。
 引擎层增加材质球的显示 显示27种不同材质的显示。
-增加shape库  增加固定的shape的形状库。  可以 参考这个  D:\project\com\virtualhuman_application\Library\PackageCache\com.unity.probuilder@5.2.3   这个现在还没有提供一些基础数据吧，你把这个里边已经有的东西 然后同步写到shape的固定开关库里边吧
+增加shape库  增加固定的shape的形状库。  可以 参考这个  D:\project\com\virtualhuman_application\Library\PackageCache\com.unity.probuilder@5.2.3   这个现在还没有提供一些基础数据吧，你把这个里边已经有的东西 然后同步写到shape的固定开关库里边吧 单开一个引擎
 后处理的文档貌似还没写吧
 UI的话，使用 FairyGUI 的编辑器，然后 在引擎的2d渲染上边再包装一层，然后显示UI
+
+D:\project\lang\SlangAllInOne\SLangCore\test\BenchMark 这个里边，如果使用其它语言，需要不计算我的语言中间的时间 ，而是只计算那个语言自己的时间  而且里边的好多没有显示时间 在导出的报告里边
+优化循环
+优化函数调用  分jit和非jit两种  现在看看是否可以优化非jit的方式 
 
 QTCodeEditor
 1. 解决方案区，没有右键区

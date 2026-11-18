@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "scene": "PureTest",
+  "nodes": [
+    {
+      "id": 1, "parent": 0, "name": "TestRoot", "tag": "Test", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "Script", "script": "ProbeScript", "label": "root", "every": 30 }
+      ]
+    },
+    {
+      "id": 2, "parent": 1, "name": "Marker", "tag": "Test", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, -3, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_quad", "meshKind": 1, "meshSlot": -1, "vertices": [[-1,-1,0],[-1,1,0],[1,1,0],[-1,-1,0],[1,1,0],[1,-1,0]] },
+        { "type": "MeshRenderer", "material": "mat_white", "color": [0.92, 0.92, 0.92], "renderQueue": 2000, "castShadow": false },
+        { "type": "BoxCollider", "center": [0,0,0], "size": [2,2,0], "isTrigger": true },
+        { "type": "Rigidbody", "mass": 1.0, "useGravity": false },
+        { "type": "Script", "script": "ProbeScript", "label": "marker", "every": 60 }
+      ]
+    }
+  ]
+}

@@ -528,6 +528,8 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `config` | `Debug`/`Release` | `Release` | exe 载荷模板的 C VM 构建树 |
 | `includeLibs` | bool | `true` | 是否携带 `lib\` 官方标准库 |
 | `libs` | string[] | 空=全量 | 精简携带清单（Core/Std/Math）；含 Math 自动附带 `math_lib.dll` |
+| `gui` | bool | `false` | GUI 应用形态：true 打 PE 子系统补丁为 Windows/GUI，双击不弹 cmd 窗口 |
+| `console` | bool（三态） | 未配置 | 是否弹 Console 窗口；未配置沿用 `gui`，`true` 双击必弹，`false` 双击必不弹。从 shell/cmd 启动不受影响。详见 `publish-guide.md` §5.2 |
 
 ### 4.17 `spm` —— 包管理（spm.exe，2026-10-29 落地、2026-10-30 独立工程）
 

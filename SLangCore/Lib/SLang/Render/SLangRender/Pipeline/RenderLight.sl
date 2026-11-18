@@ -1,11 +1,26 @@
 import Std;
 import Math;
-# 光源组件：方向光 / 点光 / 聚光 + 颜色 / 强度 / 范围。
-# 数学类型使用 Math 库的 Float32 系列。
-public class Light extends Component
+# ============================================================================
+# RenderLight —— 管线光照槽门面（Render 层唯一光照表示，2026-11-18 分层定稿）
+# ----------------------------------------------------------------------------
+# 与 RenderCamera 同款的「渲染槽位门面」形态：本类只承载「写入渲染管线
+# 光照槽（slot 0..7）的最终数据」+ applyTo 直写，不含任何实体/场景语义。
+#
+# 分层契约（Engine -> Render 数据流）：
+#   引擎层（SimGameEngine）持有带 Transform / 灯形状等属性的实体光源
+#   （LightData：场景节点组件，方向/位置随节点变换、聚光锥角/范围/阴影
+#   参数等），经引擎逻辑（场景同步、灯光摆动脚本等）处理后，在每帧
+#   RenderSystem.sync 里把「最终光照参数」写入 Render 层槽位 ——
+#   LightData.applyTo 与本类 applyTo 的参数块布局完全一致
+#   （vm_sl_render.h v3.3：平行光 10 项 / 聚光 10 项）。
+#   即：Engine 的 Light/Camera 是「对象」，Render 的 RenderLight/
+#   RenderCamera 是「数据」。本类不继承 Component、不挂 Transform、
+#   不做衰减/锥角采样等实体逻辑（那些属于引擎层）。
+# ============================================================================
+public class RenderLight
 {
-    # 光照类型
-    public Int32 type = 0   # 0 = Directional, 1 = Point, 2 = Spot
+    # 光照类型：0 = Directional, 1 = Point（预留槽）, 2 = Spot
+    public Int32 type = 0
 
     public Color color = Color.white()
 
@@ -20,18 +35,17 @@ public class Light extends Component
 
     # 阴影
     public bool castShadow = false
-    # N2a 阴影质量：0 = 旧 2D 投影黑斑（默认）；1 = shadow map
+    # 阴影质量：0 = 旧 2D 投影黑斑（默认）；1 = shadow map
     # （光空间深度图 + shader PCF；仅平行光生效，VK 后端按 0 回退）
     public Float32 shadowQuality = 0.0f
-    # N2b CSM 参数（0 = 管线默认 bias 0.002 / strength 0.35 / 单级联）：
-    # shadowBias 防 acne 深度偏移；shadowStrength 阴影强度覆盖（0..1，
-    # 原 v3.4 字段未消费——复用为管线强度覆盖）；shadowCascades
-    # 级联数（1 = 单级；4 = CSM 4 级联 v 分段 0.05/0.25/0.6/1.0）
+    # CSM 参数（0 = 管线默认 bias 0.002 / strength 0.35 / 单级联）：
+    # shadowBias 防 acne 深度偏移；shadowStrength 阴影强度覆盖（0..1）；
+    # shadowCascades 级联数（1 = 单级；4 = CSM 4 级联 v 分段 0.05/0.25/0.6/1.0）
     public Float32 shadowBias = 0.0f
     public Float32 shadowStrength = 0.0f
     public Float32 shadowCascades = 0.0f
 
-    # ── 显式光照参数（applyTo 写管线槽用；无 Transform 时的方向/位置）──
+    # ── 显式光照参数（applyTo 写管线槽用）──────────────────
     # dirX/dirY：平行光 = 表面 -> 光源方向；聚光 = 光轴方向（光源 -> 外）
     # posX/posY：聚光世界位置
     public Float32 dirX = 1.0f
@@ -39,7 +53,7 @@ public class Light extends Component
     public Float32 posX = 0.0f
     public Float32 posY = 0.0f
 
-    # ── 构造 / 预设 ──────────────────────────────────────
+    # ── 构造 / 类型判定 ──────────────────────────────────
     public void _init_()
     {
         this.type = 0
@@ -58,7 +72,6 @@ public class Light extends Component
         this.posY = 0.0f
     }
 
-    # ── 类型判定 ─────────────────────────────────────────
     public get bool isDirectional()
     {
         ret this.type == 0
@@ -79,93 +92,19 @@ public class Light extends Component
         this.type = lightType
     }
 
-    # ── 方向 ─────────────────────────────────────────────
-    # 方向光：从 Transform 旋转推出光照方向（默认沿 +Z 照射）
-    public get Float32_3 direction()
-    {
-        Component c = this.getComponent<Transform>()
-        if c is Transform t
-        {
-            ret t.forward()
-        }
-        ret Float32_3.forward()
-    }
-
-    public get Float32_3 worldPosition()
-    {
-        Component c = this.getComponent<Transform>()
-        if c is Transform t
-        {
-            ret t.worldPosition()
-        }
-        ret Float32_3.zero()
-    }
-
-    # ── 着色参数 ─────────────────────────────────────────
-    # 返回用于着色器的颜色 * 强度
-    public Color effectiveColor()
-    {
-        ret this.color.clone()._mul_( this.intensity ) as Color
-    }
-
-    # 点光 / 聚光衰减（距离平方反比，带范围截断）
-    public Float32 attenuation( Float32 distance )
-    {
-        if this.type == 0
-        {
-            ret 1.0f
-        }
-        if this.lightRange > 0.0f && distance >= this.lightRange
-        {
-            ret 0.0f
-        }
-        Float32 d = Mathf.max( distance, 0.0001f )
-        Float32 atten = 1.0f / ( 1.0f + d * d )
-        if this.lightRange > 0.0f
-        {
-            Float32 k = 1.0f - Mathf.clamp( distance / this.lightRange, 0.0f, 1.0f )
-            atten = atten * k * k
-        }
-        ret atten
-    }
-
-    # 聚光锥角衰减（worldPoint 为被照点）
-    public Float32 spotAttenuation( Float32_3 worldPoint )
-    {
-        if this.type != 2
-        {
-            ret 1.0f
-        }
-        Float32_3 toPoint = worldPoint._sub_( this.worldPosition() ) as Float32_3
-        Float32 dist = toPoint.length()
-        if dist <= 0.0001f
-        {
-            ret 1.0f
-        }
-        toPoint = toPoint.normalize()
-        Float32 cosAngle = toPoint.dot( this.direction() )
-        Float32 cosEdge = Mathf.cos( Mathf.radians( this.spotAngle ) )
-        if cosAngle <= cosEdge
-        {
-            ret 0.0f
-        }
-        Float32 t = ( cosAngle - cosEdge ) / ( 1.0f - cosEdge )
-        ret t * t
-    }
-
     # ── 预设工厂 ─────────────────────────────────────────
-    public static Light directional( Color c, Float32 intensity )
+    public static RenderLight directional( Color c, Float32 intensity )
     {
-        Light l = Light()
+        RenderLight l = RenderLight()
         l.type = 0
         l.color = c.clone()
         l.intensity = intensity
         ret l
     }
 
-    public static Light point( Color c, Float32 intensity, Float32 lightRange )
+    public static RenderLight point( Color c, Float32 intensity, Float32 lightRange )
     {
-        Light l = Light()
+        RenderLight l = RenderLight()
         l.type = 1
         l.color = c.clone()
         l.intensity = intensity
@@ -173,9 +112,9 @@ public class Light extends Component
         ret l
     }
 
-    public static Light spot( Color c, Float32 intensity, Float32 lightRange, Float32 spotAngleDegrees )
+    public static RenderLight spot( Color c, Float32 intensity, Float32 lightRange, Float32 spotAngleDegrees )
     {
-        Light l = Light()
+        RenderLight l = RenderLight()
         l.type = 2
         l.color = c.clone()
         l.intensity = intensity
@@ -187,7 +126,7 @@ public class Light extends Component
     # ── 管线接入 ─────────────────────────────────────────
     # applyTo(pipe, slot) —— 把本光源写入管线光照槽（经 Memory 参数块 ->
     # RenderPipeline.setLightParams FFI；布局见 vm_sl_render.h v3.3：
-    # 平行光 6 项 / 聚光 10 项）。参数块为类级静态暂存（单线程 VM 复用）。
+    # 平行光 10 项 / 聚光 10 项）。参数块为类级静态暂存（单线程 VM 复用）。
     static Int64 _applyPtr = 0
 
     public bool applyTo( SLang.RenderPipeline pipe, Int32 slot )
@@ -196,15 +135,15 @@ public class Light extends Component
         {
             ret false
         }
-        if Light._applyPtr == 0
+        if RenderLight._applyPtr == 0
         {
-            Light._applyPtr = Memory.alloc( 40 )
-            if Light._applyPtr == 0
+            RenderLight._applyPtr = Memory.alloc( 40 )
+            if RenderLight._applyPtr == 0
             {
                 ret false
             }
         }
-        Int64 p = Light._applyPtr
+        Int64 p = RenderLight._applyPtr
         # 跨模块成员先落局部变量（着色器路径同款规避）
         Float32 cr = this.color.r
         Float32 cg = this.color.g
@@ -244,7 +183,7 @@ public class Light extends Component
 
     override string toString()
     {
-        ret String.toFormat( "Light(type={0}, color={1}, intensity={2})",
+        ret String.toFormat( "RenderLight(type={0}, color={1}, intensity={2})",
             this.type.toString(), this.color.toString(), this.intensity.toString() )
     }
 }

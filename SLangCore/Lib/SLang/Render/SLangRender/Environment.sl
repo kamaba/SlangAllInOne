@@ -209,9 +209,8 @@ public class RenderEnvironment
         env.argCapacity = CommandBuffer.CAP_ARGS
         env.floatCapacity = CommandBuffer.CAP_FLOATS
         env.transparentQueueMin = CommandBuffer.QUEUE_TRANSPARENT_MIN
-        # P4 帧级统计（最近一次 submitPasses 的 Pass / Feature 执行数）
-        env.passCount = ScriptableRenderContext.lastPassCount
-        env.featureCount = ScriptableRenderContext.lastFeatureRunCount
+        # P4 帧级统计字段随 SRP 草稿链移除（2026-11-18）：passCount/
+        # featureCount 保留字段恒 0（快照形状兼容），不再有数据源
         ret env
     }
 

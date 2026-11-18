@@ -99,6 +99,32 @@ powershell -File SLangCore\Lib\SLang\QT\cvm\deploy-qt.ps1 -Combo full -Targets s
 SnakeGame.exe` 是从 publish 时附加的 payload 加载模块，必须重新 `slang publish`
 （右键发布即可），否则跑的还是旧逻辑。
 
+## 运行秒退 / 0xC0000409（2026-11-18 排障结论）
+
+现象：`slang run out\export\SnakeGame\SnakeGame.module.slb` 秒退（qwindows，exit 0）
+或崩 0xC0000409（offscreen）；发布链路本身正常（`slang publish` EXIT=0、发布包
+exe 实测正常）。
+
+**根因 = 开发态槽位的 `slang_qt.dll` 是陈旧构建**（哈希 !=
+`out\export\SLangQT\slang_qt.dll`，两者相差十几分钟的重编）。FFI 预载到旧 dll
+后行为不稳。**与 PATH/CWD 无关**（对照实验证实）。
+
+修法（二选一）：
+
+```powershell
+# 1) 自愈脚本（推荐：每次运行前自动按哈比对齐 export 槽位的 dll）
+powershell -File SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\run-dev.ps1
+powershell -File run-dev.ps1 -Offscreen   # 无头验证
+powershell -File run-dev.ps1 -Debug       # slang run --debug-server
+
+# 2) 手工覆盖
+copy SlangAllInOne\out\export\SLangQT\slang_qt.dll SlangAllInOne\out\export\SnakeGame\
+```
+
+验证记录（2026-11-18）：同步 dll 后 dev 态 offscreen / 真窗口两种方式均进入
+60Hz 事件循环持续运行；`slang publish` 与 `--mode exe` 两变体 EXIT=0，
+发布包 exe 离屏启动正常。
+
 ## VSCode 调试 / 发布（2026-11-17 修复）
 
 - **调试连不上**：DAP adapter 等 C VM debug-server hello 原本只给 20 秒；
@@ -137,3 +163,13 @@ pixels 左上采样 = (31,36,31,255) 深绿背景（非 0 透明），画面含�
 方向键控制（←↑→↓）；吃红色食物 +10 分并变长（初始额外生长 2 格）；
 撞墙/撞身结束，按 R 重开。网格 16×16，步进 150ms，输出 320×320 RGBA8
 经 QLabel 随窗口缩放。
+
+## 注意事项 / 已知约束
+
+- **烘焙组数量不得超过 4**：引擎 RHI 动态网格槽只有 4 个（`SLR_CUSTOM_MESHES=4`），
+  `RenderSystem` 按组轮转上传，第 5 组会与第 1 组落在同一个槽互相覆盖，导致
+  渲染异常（曾表现为食物格消失）。因此棋盘深/浅、蛇、食物合并为 4 个材质组
+  ——蛇头与蛇身使用同一材质色，不再单独高亮。若需新增第五种颜色，须走
+  `singleObject` 直通路径或扩展 RHI 槽位数。
+- **上下方向**：屏幕 Y 经渲染回读做了行翻转，网格 y 增大即屏幕向上；方向键
+  映射与之一致（↑ → `dirY=+1`），并禁止 180° 直接反向。

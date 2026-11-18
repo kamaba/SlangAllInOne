@@ -90,6 +90,23 @@ namespace SLang
         # Function 回调不稳）；键码 = Qt::Key 枚举值。
         @DllStaticImport( "slang_qt", "slqt_key_down_sl" )
         public static Int32 ffi_keyDown( Int32 key ) { ret 0 }
+        # 2026-11-18：鼠标轮询（QApplication 全局事件过滤器捕获，坐标 =
+        # 全局屏幕像素，拖拽算差值即可不受窗口移动影响）。button：1=左键
+        # 2=右键；wheelTake 返回自上次调用累计滚轮格数并清零（上 +1 / 下 -1）。
+        @DllStaticImport( "slang_qt", "slqt_mouse_x_sl" )
+        public static Int32 ffi_mouseX() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mouse_y_sl" )
+        public static Int32 ffi_mouseY() { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mouse_down_sl" )
+        public static Int32 ffi_mouseDown( Int32 button ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_mouse_wheel_take_sl" )
+        public static Int32 ffi_mouseWheelTake() { ret 0 }
+        # 2026-11-18：控件尺寸轮询（动态分辨率配套；客户区像素，
+        # 顶层窗口 = 客户区；stub/异常返回 0，消费方判 >0）。
+        @DllStaticImport( "slang_qt", "slqt_widget_width_sl" )
+        public static Int32 ffi_widgetWidth( Int64 h ) { ret 0 }
+        @DllStaticImport( "slang_qt", "slqt_widget_height_sl" )
+        public static Int32 ffi_widgetHeight( Int64 h ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_widget_set_parent_sl" )
         public static void ffi_widgetSetParent( Int64 h, Int64 parent ) {}
         @DllStaticImport( "slang_qt", "slqt_widget_set_text_sl" )

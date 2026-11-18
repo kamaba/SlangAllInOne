@@ -35,7 +35,9 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
     "config":     "Release", // C VM 构建树（exe 模板来源；缺省 Release）
     "includeLibs": true,      // 是否携带 lib\ 标准库（缺省 true）
     "libs":       [],         // 精简携带清单（空 = Core/Std/Math 全量；含 Math 自动附带 math_lib.dll）
-    "gui":        false       // GUI 应用形态（缺省 false 控制台 exe；见 §5.1）
+    "gui":        false,      // GUI 应用形态（缺省 false 控制台 exe；见 §5.1）
+    "console":    null        // 是否弹 Console 窗口（三态；未配置=null 沿用 gui；
+                              //   true 双击弹 Console / false 双击不弹；见 §5.2）
   }
 }
 ```
@@ -48,6 +50,7 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
 | `includeLibs` | bool | `true` | 是否把官方标准库拷进发布目录 `lib\`。应用引用 Core/Std/Math 时必须为 true |
 | `libs` | string[] | `[]`=全量 | `includeLibs=true` 时生效；如 `["Core","Std"]` 只带这两件（Math 附带 `math_lib.dll`）。缺库仅 `[WARN]` 不中断（工程可能不引用它） |
 | `gui` | bool | `false` | GUI 应用形态：true 时发布把 exe 的 PE 子系统从 Console(3) 补丁为 Windows(2)——启动/双击**不再弹 cmd 窗口**（WebUI 浏览器窗等 GUI 应用用，见 §5.1）。CLI `--gui` 强制开 |
+| `console` | bool（三态） | 未配置 | **是否弹 Console 窗口**（见 §5.2）。未配置 = 完全沿用 `gui` 既有行为（零破坏）；`true` = 双击必弹 Console（保留 Console 子系统，即使 `gui:true`）；`false` = 双击必不弹（强制打 GUI 子系统补丁，即使 `gui:false`）。从 linux shell / windows cmd 启动不受本配置影响，一律走系统原行为 |
 
 产物命名：`export.moduleName` > `project.name` > `.sp` 文件名，逐级回退。
 
@@ -157,6 +160,27 @@ jsonc `publish.gui: true`（或 CLI `--gui` 强制开）：
   - `Console.println` / `SL_NO_PAUSE` / stdin 重定向语义均不变。
 - **验证链**（WebUITest，`gui: true` 已配）：发布后查 `PE subsystem = 2`；
   终端跑 exe 日志可见 + 浏览器窗弹出 + 套件 `RESULT: PASS`；双击无 cmd 窗。
+
+### 5.2 Console 窗口配置（`publish.console`，三态）
+
+`publish.console` 与 `gui` 同属发布配置，专门决定**双击启动**（无父终端）时
+是否弹 Console 窗口；三态语义保证「未配置零行为变化」：
+
+| `publish.console` | PE 子系统结果 | 双击启动 | 从 cmd / shell 启动 |
+|---|---|---|---|
+| 未配置（缺省） | 由 `gui` 决定（同原行为） | 由 `gui` 决定 | 走系统原行为 |
+| `true` | 强制保留 Console(3)，不打 GUI 补丁（即使 `gui:true`） | 弹 Console 窗口 | 沿用父终端，不新开窗口 |
+| `false` | 强制补丁为 Windows/GUI(2)（即使 `gui:false`） | 不弹 Console | 沿用父终端，不新开窗口 |
+
+- **shell/cmd 不受影响**：子系统字段只决定「进程创建时是否自动分配控制台」。
+  从 Windows cmd / PowerShell / linux shell 启动时已有终端——Console 子系统
+  直接继承，GUI 子系统由 C VM `app_attach_parent_console()` 用
+  `AttachConsole(ATTACH_PARENT_PROCESS)` 挂回并重绑 std 流；两条链日志都照常
+  可见，不额外弹窗。故 `console` 配置在 shell/cmd 形态下等价无操作。
+- **与 `gui` 的关系**：显式 `console` 优先级高于 `gui`；未配置时 `gui` 仍按
+  §5.1 原样生效。两者都只作用于 exe 产物（mode=slb 时无 exe 不受影响）。
+- **非 Windows**：exe 模式当前仅 Windows；`slang run <slb>` / `slang <工程>`
+  在 linux shell 下本就是终端进程，与本配置无关。
 
 ## 6. 流程与依赖
 

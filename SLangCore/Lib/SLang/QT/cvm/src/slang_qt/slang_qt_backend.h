@@ -36,11 +36,21 @@ int64_t slqt_be_widget_create(int64_t parent);
 int64_t slqt_be_keywidget_create(int64_t parent);
 /* 按键当前按下状态（0/1）；Qt::Key 键码，供每帧轮询，绕开 FFI trampoline */
 int32_t slqt_be_key_down(int32_t key);
+/* ── 鼠标轮询（QApplication 全局事件过滤器捕获，坐标 = 全局屏幕像素）──
+ * x/y = 最近一次鼠标位置；down(button)：1=左键 2=右键；
+ * wheel_take：返回自上次调用累计滚轮格数并清零（上滚 +1 / 下滚 -1） */
+int32_t slqt_be_mouse_x(void);
+int32_t slqt_be_mouse_y(void);
+int32_t slqt_be_mouse_down(int32_t button);
+int32_t slqt_be_mouse_wheel_take(void);
 void    slqt_be_widget_set_parent(int64_t h, int64_t parent);
 void    slqt_be_widget_set_text(int64_t h, const char* t);
 const char* slqt_be_widget_text(int64_t h);
 void    slqt_be_widget_set_geometry(int64_t h, int32_t x, int32_t y, int32_t w, int32_t hh);
 void    slqt_be_widget_resize(int64_t h, int32_t w, int32_t hh);
+/* 控件尺寸轮询（2026-11-18 动态分辨率配套；客户区像素） */
+int32_t slqt_be_widget_width(int64_t h);
+int32_t slqt_be_widget_height(int64_t h);
 void    slqt_be_widget_show(int64_t h);
 void    slqt_be_widget_hide(int64_t h);
 void    slqt_be_widget_set_enabled(int64_t h, int32_t on);

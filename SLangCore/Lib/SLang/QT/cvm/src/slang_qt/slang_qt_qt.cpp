@@ -89,6 +89,7 @@
 #include <QRegularExpression>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <QFont>
@@ -443,6 +444,9 @@ static int slqt_be_platform_dir(char* out, size_t out_size)
     return 1;
 }
 
+/* 全局鼠标过滤器安装（实现见 SlangKeyWidget 段之后；app_create 先装） */
+static void slqt_mouse_install(void);
+
 int64_t slqt_be_app_create(void)
 {
     if (!g_app)
@@ -481,6 +485,7 @@ int64_t slqt_be_app_create(void)
             }
         }
     }
+    slqt_mouse_install();
     return slqt_register(g_app);
 }
 
@@ -579,7 +584,76 @@ protected:
     }
 };
 
-int64_t slqt_be_keywidget_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; return slqt_register(new SlangKeyWidget(parent)); }
+int64_t slqt_be_keywidget_create(int64_t p) { QWidget* parent = p ? asWidget(p) : nullptr; slqt_mouse_install(); return slqt_register(new SlangKeyWidget(parent)); }
+
+/* ── 2026-11-18：全局鼠标轮询（QApplication 事件过滤器，无 moc）────
+ * 用全局坐标 + 应用级过滤：子控件（如 QLabel）会拦截/吞掉鼠标事件，
+ * widget 级 mouseMoveEvent 收不全；过滤器挂在 qApp 上后任何控件下的
+ * 移动/按下/滚轮都能捕获。SL 侧每帧轮询（与 slqt_be_key_down 同款），
+ * wheel_take 读后清零，避免 trampoline 重入 VM 路径。 */
+static int s_slqt_mouse_x = 0;
+static int s_slqt_mouse_y = 0;
+static int s_slqt_mouse_left = 0;
+static int s_slqt_mouse_right = 0;
+static int s_slqt_wheel_acc = 0;
+
+class SlangMouseFilter : public QObject
+{
+public:
+    bool eventFilter(QObject* obj, QEvent* ev) override
+    {
+        switch (ev->type())
+        {
+        case QEvent::MouseMove:
+        {
+            QMouseEvent* e = static_cast<QMouseEvent*>(ev);
+            s_slqt_mouse_x = (int)e->globalPosition().x();
+            s_slqt_mouse_y = (int)e->globalPosition().y();
+            break;
+        }
+        case QEvent::MouseButtonPress:
+        {
+            QMouseEvent* e = static_cast<QMouseEvent*>(ev);
+            s_slqt_mouse_x = (int)e->globalPosition().x();
+            s_slqt_mouse_y = (int)e->globalPosition().y();
+            if (e->button() == Qt::LeftButton) s_slqt_mouse_left = 1;
+            if (e->button() == Qt::RightButton) s_slqt_mouse_right = 1;
+            break;
+        }
+        case QEvent::MouseButtonRelease:
+        {
+            QMouseEvent* e = static_cast<QMouseEvent*>(ev);
+            if (e->button() == Qt::LeftButton) s_slqt_mouse_left = 0;
+            if (e->button() == Qt::RightButton) s_slqt_mouse_right = 0;
+            break;
+        }
+        case QEvent::Wheel:
+        {
+            QWheelEvent* e = static_cast<QWheelEvent*>(ev);
+            if (e->angleDelta().y() > 0) s_slqt_wheel_acc += 1;
+            else if (e->angleDelta().y() < 0) s_slqt_wheel_acc -= 1;
+            break;
+        }
+        default: break;
+        }
+        (void)obj;
+        return false; /* 不消费，事件继续派发 */
+    }
+};
+static SlangMouseFilter* s_slqt_mouse_filter = nullptr;
+
+static void slqt_mouse_install(void)
+{
+    if (s_slqt_mouse_filter) return;
+    if (!QApplication::instance()) return;
+    s_slqt_mouse_filter = new SlangMouseFilter();
+    QApplication::instance()->installEventFilter(s_slqt_mouse_filter);
+}
+
+int32_t slqt_be_mouse_x(void) { return s_slqt_mouse_x; }
+int32_t slqt_be_mouse_y(void) { return s_slqt_mouse_y; }
+int32_t slqt_be_mouse_down(int32_t button) { return button == 1 ? s_slqt_mouse_left : (button == 2 ? s_slqt_mouse_right : 0); }
+int32_t slqt_be_mouse_wheel_take(void) { int v = s_slqt_wheel_acc; s_slqt_wheel_acc = 0; return v; }
 
 void slqt_be_widget_set_parent(int64_t h, int64_t p)
 {
@@ -613,6 +687,9 @@ const char* slqt_be_widget_text(int64_t h)
 
 void slqt_be_widget_set_geometry(int64_t h, int32_t x, int32_t y, int32_t w, int32_t hh) { QWidget* o = asWidget(h); if (o) o->setGeometry(x, y, w, hh); }
 void slqt_be_widget_resize(int64_t h, int32_t w, int32_t hh) { QWidget* o = asWidget(h); if (o) o->resize(w, hh); }
+/* 2026-11-18：控件尺寸轮询（动态分辨率；顶层窗口=客户区尺寸） */
+int32_t slqt_be_widget_width(int64_t h) { QWidget* o = asWidget(h); return o ? o->width() : 0; }
+int32_t slqt_be_widget_height(int64_t h) { QWidget* o = asWidget(h); return o ? o->height() : 0; }
 void slqt_be_widget_show(int64_t h) { QWidget* o = asWidget(h); if (o) o->show(); }
 void slqt_be_widget_hide(int64_t h) { QWidget* o = asWidget(h); if (o) o->hide(); }
 void slqt_be_widget_set_enabled(int64_t h, int32_t on) { QWidget* o = asWidget(h); if (o) o->setEnabled(on != 0); }

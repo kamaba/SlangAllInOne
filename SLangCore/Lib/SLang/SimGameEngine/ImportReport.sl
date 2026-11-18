@@ -28,7 +28,9 @@ public class ImportReport
     public Int32 cameraCount = 0
     public Int32 lightCount = 0
     public Int32 spriteCount = 0
+    public Int32 scriptCount = 0
     public Int32 skippedCount = 0
+    public Int32 textureCount = 0
 
     List<string> _meshIds = List<string>( 4 )
 

@@ -264,11 +264,19 @@ SLQT_API int32_t slqt_object_is_valid_sl(int64_t h) { return slqt_be_object_is_v
 SLQT_API int64_t slqt_widget_create_sl(int64_t p) { return slqt_be_widget_create(p); }
 SLQT_API int64_t slqt_keywidget_create_sl(int64_t p) { return slqt_be_keywidget_create(p); }
 SLQT_API int32_t slqt_key_down_sl(int32_t key) { return slqt_be_key_down(key); }
+/* 2026-11-18：鼠标轮询（全局坐标；button 1=左 2=右；wheel_take 读后清零） */
+SLQT_API int32_t slqt_mouse_x_sl(void) { return slqt_be_mouse_x(); }
+SLQT_API int32_t slqt_mouse_y_sl(void) { return slqt_be_mouse_y(); }
+SLQT_API int32_t slqt_mouse_down_sl(int32_t button) { return slqt_be_mouse_down(button); }
+SLQT_API int32_t slqt_mouse_wheel_take_sl(void) { return slqt_be_mouse_wheel_take(); }
 SLQT_API void    slqt_widget_set_parent_sl(int64_t h, int64_t p) { slqt_be_widget_set_parent(h, p); }
 SLQT_API void    slqt_widget_set_text_sl(int64_t h, const char* t) { slqt_be_widget_set_text(h, t); }
 SLQT_API const char* slqt_widget_text_sl(int64_t h) { return slqt_be_widget_text(h); }
 SLQT_API void    slqt_widget_set_geometry_sl(int64_t h, int32_t x, int32_t y, int32_t w, int32_t hh) { slqt_be_widget_set_geometry(h, x, y, w, hh); }
 SLQT_API void    slqt_widget_resize_sl(int64_t h, int32_t w, int32_t hh) { slqt_be_widget_resize(h, w, hh); }
+/* 2026-11-18：控件尺寸轮询（动态分辨率配套） */
+SLQT_API int32_t slqt_widget_width_sl(int64_t h) { return slqt_be_widget_width(h); }
+SLQT_API int32_t slqt_widget_height_sl(int64_t h) { return slqt_be_widget_height(h); }
 SLQT_API void    slqt_widget_show_sl(int64_t h) { slqt_be_widget_show(h); }
 SLQT_API void    slqt_widget_hide_sl(int64_t h) { slqt_be_widget_hide(h); }
 SLQT_API void    slqt_widget_set_enabled_sl(int64_t h, int32_t on) { slqt_be_widget_set_enabled(h, on); }

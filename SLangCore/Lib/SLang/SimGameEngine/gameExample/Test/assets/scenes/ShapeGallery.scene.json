@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "scene": "ShapeGallery",
+  "nodes": [
+    {
+      "id": 1, "parent": 0, "name": "Shape_Cube", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [-9, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 0 },
+        { "type": "MeshRenderer", "material": "mat_cyan", "color": [0.16, 0.82, 0.86], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 0, "size": 2.0 },
+        { "type": "Script", "script": "SpinScript", "speed": 0.5, "bob": 0.0 }
+      ]
+    },
+    {
+      "id": 2, "parent": 0, "name": "Shape_Sphere", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [-6, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 1 },
+        { "type": "MeshRenderer", "material": "mat_orange", "color": [0.96, 0.52, 0.16], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 3, "size": 1.6 },
+        { "type": "Script", "script": "SpinScript", "speed": -0.7, "bob": 0.4 }
+      ]
+    },
+    {
+      "id": 3, "parent": 0, "name": "Shape_Cylinder", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [-3, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 2 },
+        { "type": "MeshRenderer", "material": "mat_purple", "color": [0.62, 0.34, 0.88], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 4, "size": 1.5 },
+        { "type": "Script", "script": "SpinScript", "speed": 0.9, "bob": 0.0 }
+      ]
+    },
+    {
+      "id": 5, "parent": 0, "name": "Shape_Cone", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 4 },
+        { "type": "MeshRenderer", "material": "mat_green", "color": [0.36, 0.86, 0.42], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 5, "size": 1.6 },
+        { "type": "Script", "script": "SpinScript", "speed": 0.8, "bob": 0.2 }
+      ]
+    },
+    {
+      "id": 4, "parent": 0, "name": "Shape_Torus", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [3, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 3 },
+        { "type": "MeshRenderer", "material": "mat_pink", "color": [0.94, 0.36, 0.62], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 6, "size": 1.6 },
+        { "type": "Script", "script": "SpinScript", "speed": -1.2, "bob": 0.2 }
+      ]
+    },
+    {
+      "id": 6, "parent": 0, "name": "Shape_Prism", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [6, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 5 },
+        { "type": "MeshRenderer", "material": "mat_yellow", "color": [0.92, 0.85, 0.3], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 7, "size": 1.7 },
+        { "type": "Script", "script": "SpinScript", "speed": 1.1, "bob": 0.0 }
+      ]
+    },
+    {
+      "id": 7, "parent": 0, "name": "Shape_Pipe", "tag": "Shape", "layer": 0, "active": true,
+      "transform": { "localPosition": [9, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_custom", "meshKind": 4, "meshSlot": 6 },
+        { "type": "MeshRenderer", "material": "mat_blue", "color": [0.3, 0.52, 0.9], "renderQueue": 2000, "castShadow": true },
+        { "type": "Script", "script": "ShapeMeshScript", "shape": 8, "size": 1.4 },
+        { "type": "Script", "script": "SpinScript", "speed": -0.6, "bob": 0.3 }
+      ]
+    },
+    {
+      "id": 200, "parent": 0, "name": "Sun", "tag": "Light", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "Light", "lightType": 0, "color": [1, 0.96, 0.88], "intensity": 1.0, "dirX": 0.55, "dirY": 0.8, "shadowQuality": 1, "shadowBias": 0.002, "shadowStrength": 0.45 }
+      ]
+    },
+    {
+      "id": 201, "parent": 0, "name": "SpotLamp", "tag": "Light", "layer": 0, "active": true,
+      "transform": { "localPosition": [0, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "Light", "lightType": 2, "color": [0.45, 0.6, 1], "intensity": 1.2, "posX": 3, "posY": 7, "dirX": 0.15, "dirY": -1, "spotAngle": 40, "range": 30 }
+      ]
+    }
+  ]
+}

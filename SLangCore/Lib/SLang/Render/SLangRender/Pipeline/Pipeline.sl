@@ -387,7 +387,7 @@ namespace SLang
             ret RenderPipeline.ffiObjectCount( this._handle )
         }
 
-        # ── 光照（管线光照槽表；高层入口见 Light.applyTo）────────
+        # ── 光照（管线光照槽表；高层入口见 RenderLight.applyTo）──────
         # 每管线 MAX_LIGHTS 个光照槽，着色器消费首个启用的平行光 +
         # 首个聚光（2D 世界系逐像素：直射光按物体朝向 ndl、聚光按
         # 世界坐标锥角 + 距离衰减）。默认无光照 + ambient=1.0 时
@@ -399,7 +399,7 @@ namespace SLang
 
         # setLightParams(slot, type, paramsPtr) —— 低层 FFI 直通：
         # paramsPtr 指向 float 参数块（Memory.writeF32 填充，
-        # 布局见 vm_sl_render.h v3.3 注释；Light.applyTo 封装）
+        # 布局见 vm_sl_render.h v3.3 注释；RenderLight.applyTo 封装）
         public bool setLightParams( Int32 slot, Int32 type, Int64 paramsPtr )
         {
             if this._handle == 0
@@ -648,10 +648,8 @@ namespace SLang
         }
 
         # renderCameraScene(fd) —— 以 FrameData 驱动一帧（P0 转发 runStages；
-        # P3 起双重路由：注册了活动 CameraRenderPipeline（SLang.Render.
-        # usePipeline）且帧数据完备（fd.culling 非空）且句柄一致时，转交
-        # CameraRenderPipeline.render（P1 context submit 流程包装）；否则
-        # legacy runStages —— 既有 Phase 全部零变化）
+        # 2026-11-18：SRP 草稿链（CameraRenderPipeline 资产层路由）已整体
+        # 移除，本方法恒走 13 阶段 runStages，语义 = FrameData 快照驱动）
         public bool renderCameraScene( FrameData fd )
         {
             if this._handle == 0
@@ -665,21 +663,6 @@ namespace SLang
             if fd.dstPixels == 0
             {
                 ret false
-            }
-            # P3 路由：活动管线 + 数据完备 + 句柄一致 -> 新管线实例
-            if fd.culling != null
-            {
-                if fd.culling.count() > 0
-                {
-                    CameraRenderPipeline active = SLang.Render.currentPipeline()
-                    if active != null
-                    {
-                        if active.pipelineHandle() == this._handle
-                        {
-                            ret active.render( fd )
-                        }
-                    }
-                }
             }
             ret this.runStages( fd.time, fd.dstPixels )
         }

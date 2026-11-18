@@ -38,11 +38,21 @@ int32_t slqt_be_object_is_valid(int64_t h) { return (h >= 0) ? 1 : 0; }
 
 int64_t slqt_be_widget_create(int64_t p) { (void)p; return slqt_register(NULL); }
 int64_t slqt_be_keywidget_create(int64_t p) { (void)p; return slqt_register(NULL); }
+/* 2026-11-18 补存量缺口：SnakeGame 轮只编了 -Qt 版，stub 缺 key 轮询实现 */
+int32_t slqt_be_key_down(int32_t key) { (void)key; return 0; }
+
+/* 2026-11-18：鼠标轮询 stub —— headless 下无鼠标事件，全返回 0 */
+int32_t slqt_be_mouse_x(void) { return 0; }
+int32_t slqt_be_mouse_y(void) { return 0; }
+int32_t slqt_be_mouse_down(int32_t button) { (void)button; return 0; }
+int32_t slqt_be_mouse_wheel_take(void) { return 0; }
 void    slqt_be_widget_set_parent(int64_t h, int64_t p) { (void)h; (void)p; }
 void    slqt_be_widget_set_text(int64_t h, const char* t) { (void)h; (void)t; }
 const char* slqt_be_widget_text(int64_t h) { (void)h; return g_empty; }
 void    slqt_be_widget_set_geometry(int64_t h, int32_t x, int32_t y, int32_t w, int32_t hh) { (void)h;(void)x;(void)y;(void)w;(void)hh; }
 void    slqt_be_widget_resize(int64_t h, int32_t w, int32_t hh) { (void)h;(void)w;(void)hh; }
+int32_t slqt_be_widget_width(int64_t h) { (void)h; return 0; }
+int32_t slqt_be_widget_height(int64_t h) { (void)h; return 0; }
 void    slqt_be_widget_show(int64_t h) { (void)h; }
 void    slqt_be_widget_hide(int64_t h) { (void)h; }
 void    slqt_be_widget_set_enabled(int64_t h, int32_t on) { (void)h;(void)on; }

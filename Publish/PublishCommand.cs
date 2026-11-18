@@ -79,6 +79,16 @@ internal static class PublishCommand
         }
         bool includeLibs = opts.IncludeLibs ?? pub.IncludeLibs;
         bool gui = opts.Gui ?? pub.Gui;
+        /* Console 三态（publish.console）：未配置(null) = 沿用 gui 既有行为；
+         * 显式 true/false 覆盖 gui 对 PE 子系统的决定（true 保 Console 子系统
+         * 双击弹窗 / false 打 GUI 补丁不弹）。从 linux shell / windows cmd 启动
+         * 不受影响——子系统只决定进程创建时是否自动分配控制台，已有终端时
+         * Console 继承父控制台 / GUI 由 C VM AttachConsole 挂回，原行为一致
+         * （publish-guide.md §5.2）。 */
+        bool? console = pub.Console;
+        /* CLI --gui 仍是最高优先级的「强制无 cmd 窗口」覆盖（§3），
+         * 其后才是显式 console，最后回落 gui。 */
+        bool windowsSubsystem = opts.Gui == true ? true : (console.HasValue ? !console.Value : gui);
 
         /* Step 3: 发布目录（jsonc 目录 = sp 所在目录；清空重建避免陈旧文件）。
          * 注意 ProjectManager.projectPath 语义 = 工程目录（ProjectCompile.
@@ -142,10 +152,15 @@ internal static class PublishCommand
                     string appExe = Path.Combine(publishDir, moduleName + ".exe");
                     AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
                     Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
-                    if (gui)
+                    if (windowsSubsystem)
                     {
                         PatchSubsystemWindows(appExe);
-                        Console.WriteLine($"[OK]  gui:  PE subsystem Console -> Windows (no cmd window; see publish-guide.md §5)");
+                        string reason = opts.Gui == true ? "--gui" : (console.HasValue ? "console=false" : "gui");
+                        Console.WriteLine($"[OK]  {reason}:  PE subsystem Console -> Windows (no cmd window on double-click; see publish-guide.md §5.1)");
+                    }
+                    else if (console == true)
+                    {
+                        Console.WriteLine("[OK]  console=true:  keep PE subsystem Console (cmd window on double-click; shell/cmd launch unchanged)");
                     }
 
                     /* C VM exe 唯一动态依赖（delay-load）：按布局规则落

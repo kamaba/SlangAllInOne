@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "scene": "MaterialBall",
+  "nodes": [
+    {
+      "id": 1, "parent": 0, "name": "Ball_Red", "tag": "Ball", "layer": 0, "active": true,
+      "transform": { "localPosition": [-6, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_sphere", "meshKind": 4, "meshSlot": 0 },
+        { "type": "MeshRenderer", "material": "mat_red", "color": [0.92, 0.20, 0.18], "renderQueue": 2000, "castShadow": false },
+        { "type": "Script", "script": "SphereMeshScript", "radius": 2.0, "segU": 12, "segV": 8 },
+        { "type": "Script", "script": "SpinScript", "speed": 0.7, "bob": 0.5 }
+      ]
+    },
+    {
+      "id": 2, "parent": 0, "name": "Ball_Green", "tag": "Ball", "layer": 0, "active": true,
+      "transform": { "localPosition": [-2, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_sphere", "meshKind": 4, "meshSlot": 1 },
+        { "type": "MeshRenderer", "material": "mat_green", "color": [0.18, 0.82, 0.30], "renderQueue": 2000, "castShadow": false },
+        { "type": "Script", "script": "SphereMeshScript", "radius": 2.0, "segU": 12, "segV": 8 },
+        { "type": "Script", "script": "SpinScript", "speed": -0.9, "bob": 0.8 }
+      ]
+    },
+    {
+      "id": 3, "parent": 0, "name": "Ball_Blue", "tag": "Ball", "layer": 0, "active": true,
+      "transform": { "localPosition": [2, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_sphere", "meshKind": 4, "meshSlot": 2 },
+        { "type": "MeshRenderer", "material": "mat_blue", "color": [0.20, 0.42, 0.92], "renderQueue": 2000, "castShadow": false },
+        { "type": "Script", "script": "SphereMeshScript", "radius": 2.0, "segU": 12, "segV": 8 },
+        { "type": "Script", "script": "SpinScript", "speed": 1.1, "bob": 0.3 }
+      ]
+    },
+    {
+      "id": 4, "parent": 0, "name": "Ball_Yellow", "tag": "Ball", "layer": 0, "active": true,
+      "transform": { "localPosition": [6, 0, 0], "localRotation": [0, 0, 0, 1], "localScale": [1, 1, 1] },
+      "components": [
+        { "type": "MeshFilter", "mesh": "mesh_sphere", "meshKind": 4, "meshSlot": 3 },
+        { "type": "MeshRenderer", "material": "mat_yellow", "color": [0.95, 0.78, 0.18], "renderQueue": 2000, "castShadow": false },
+        { "type": "Script", "script": "SphereMeshScript", "radius": 2.0, "segU": 12, "segV": 8 },
+        { "type": "Script", "script": "SpinScript", "speed": -0.5, "bob": 0.6 }
+      ]
+    }
+  ]
+}

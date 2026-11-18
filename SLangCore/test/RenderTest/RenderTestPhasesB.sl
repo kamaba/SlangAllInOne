@@ -50,7 +50,7 @@ public class RenderTestPhasesB
             Console.println( "[gen] FAIL: setAmbient" )
             ret false
         }
-        Light sun = Light.directional( Color.white(), 0.9f )
+        RenderLight sun = RenderLight.directional( Color.white(), 0.9f )
         sun.dirX = 1.0f
         sun.dirY = 0.0f
         if sun.applyTo( pipe, 0 ) == false
@@ -572,16 +572,16 @@ public class RenderTestPhasesB
             ret false
         }
 
-        # 光照：环境光 + 直射光 + 聚光（Light.applyTo 写管线槽）
+        # 光照：环境光 + 直射光 + 聚光（RenderLight.applyTo 写管线槽）
         if pipe.setAmbient( 0.25f ) == false
         {
             Console.println( "[light] FAIL: setAmbient" )
             ret false
         }
-        Light sun = Light.directional( Color.white(), 0.9f )
+        RenderLight sun = RenderLight.directional( Color.white(), 0.9f )
         if sun == null
         {
-            Console.println( "[light] FAIL: Light.directional" )
+            Console.println( "[light] FAIL: RenderLight.directional" )
             ret false
         }
         sun.dirX = 1.0f
@@ -591,10 +591,10 @@ public class RenderTestPhasesB
             Console.println( "[light] FAIL: directional applyTo - " + SLang.Render.errorString() )
             ret false
         }
-        Light lamp = Light.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.2f, 1.3f, 30.0f )
+        RenderLight lamp = RenderLight.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.2f, 1.3f, 30.0f )
         if lamp == null
         {
-            Console.println( "[light] FAIL: Light.spot" )
+            Console.println( "[light] FAIL: RenderLight.spot" )
             ret false
         }
         lamp.posX = 0.0f
@@ -784,10 +784,10 @@ public class RenderTestPhasesB
             Console.println( "[light] FAIL: phong setAmbient" )
             ret false
         }
-        Light sun2 = Light.directional( Color.white(), 0.5f )
+        RenderLight sun2 = RenderLight.directional( Color.white(), 0.5f )
         if sun2 == null
         {
-            Console.println( "[light] FAIL: phong Light.directional" )
+            Console.println( "[light] FAIL: phong RenderLight.directional" )
             ret false
         }
         sun2.dirX = 1.0f
@@ -956,10 +956,10 @@ public class RenderTestPhasesB
         }
 
         # 平行光：shadowQuality=1 启用 shadow map（N2a）
-        Light sun = Light.directional( Color.white(), 0.9f )
+        RenderLight sun = RenderLight.directional( Color.white(), 0.9f )
         if sun == null
         {
-            Console.println( "[shadow2] FAIL: Light.directional" )
+            Console.println( "[shadow2] FAIL: RenderLight.directional" )
             ret false
         }
         sun.dirX = 1.0f
@@ -1108,10 +1108,10 @@ public class RenderTestPhasesB
         }
 
         # 平行光：shadowQuality=1 + 4 级联（N2b CSM）
-        Light sun = Light.directional( Color.white(), 0.9f )
+        RenderLight sun = RenderLight.directional( Color.white(), 0.9f )
         if sun == null
         {
-            Console.println( "[csm] FAIL: Light.directional" )
+            Console.println( "[csm] FAIL: RenderLight.directional" )
             ret false
         }
         sun.dirX = 1.0f

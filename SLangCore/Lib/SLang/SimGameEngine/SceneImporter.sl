@@ -31,6 +31,52 @@ public class SceneImporter
     public Int32 customSlotCount = 4
     Int32 _slotCursor = 0
 
+    # 脚本工厂注册表（doc/19）：scene.json 的 {type:"Script",script:"<短名>"}
+    # 节点按注册名找到工厂，工厂收到该组件 JSON（可读自定义参数），返回
+    # Behaviour 实例并挂到节点——等价 Unity「场景里挂 MonoBehaviour」。
+    # 工厂形态：void(JsonValue cfg, ScriptResult out)——Function 是唯一可作为
+    # List 元素的委托类型（Func<> 字段形式已废弃，MetaCoreCallIssue13）。
+    List<string> _scriptNames = null
+    List<Function> _scriptFactories = null
+
+    public void _init_()
+    {
+        this.customSlotBase = 4
+        this.customSlotCount = 4
+        this._slotCursor = 0
+        this._scriptNames = List<string>( 8 )
+        this._scriptFactories = List<Function>( 8 )
+    }
+
+    public void registerScript( string name, Function factory )
+    {
+        if name == null || name.length == 0 || factory == null
+        {
+            ret
+        }
+        if this._scriptNames.indexOf( name ) >= 0
+        {
+            ret
+        }
+        this._scriptNames.add( name )
+        this._scriptFactories.add( factory )
+    }
+
+    # 直读单个 scene.json 文件（SceneManager 按路径加载用；目录入口仍走 loadDir）
+    public ImportReport loadFile( string sceneFilePath )
+    {
+        ImportReport rep = ImportReport()
+        bool has = File.exists( sceneFilePath )
+        if !has
+        {
+            rep.lastError = "scene file not readable: " + sceneFilePath
+            ret rep
+        }
+        string text = File.readAllText( sceneFilePath )
+        ImportReport outRep = this.parseCore( 1, text )
+        ret outRep
+    }
+
     Int32 nextSlot()
     {
         Int32 s = this.customSlotBase + this._slotCursor
@@ -292,10 +338,30 @@ public class SceneImporter
             MeshRef mr = MeshRef()
             mr.meshKind = 4
             mr.meshSlot = this.nextSlot()
+            JsonValue kindNode = comp.select("meshKind")
+            JsonValue slotNode = comp.select("meshSlot")
+            mr.meshKind = kindNode.asInt32( mr.meshKind )
+            mr.meshSlot = slotNode.asInt32( mr.meshSlot )
             go.addComponent( mr )
             JsonValue meshNode = comp.select("mesh")
             string meshId = meshNode.asString( "" )
             rep.addMeshId( meshId )
+            # SceneExporter 回写的顶点块：还原到 MeshRef 走 Batcher 烘焙路径
+            JsonValue verticesNode = comp.select("vertices")
+            Array<JsonValue> vs = verticesNode.children()
+            if vs.length > 0
+            {
+                List<Float32_3> vl = List<Float32_3>( vs.length )
+                Int32 vi = 0
+                while vi < vs.length
+                {
+                    JsonValue vp = vs[vi]
+                    Float32_3 vv = SceneImporter.jsonVec3( vp, 0.0f, 0.0f, 0.0f )
+                    vl.add( vv )
+                    vi = vi + 1
+                }
+                mr.setVertices( vl )
+            }
             rep.meshCount = rep.meshCount + 1
             ret
         }
@@ -308,10 +374,70 @@ public class SceneImporter
             md.renderQueue = rqNode.asInt32( 2000 )
             JsonValue csNode = comp.select("castShadow")
             md.castShadow = csNode.asBool( false )
+            JsonValue colorNode = comp.select("color")
+            Float32_3 col = SceneImporter.jsonVec3( colorNode, 1.0f, 1.0f, 1.0f )
+            md.color = col
+            # v2.13：材质模型 / 高光锐度 / 贴图（texture 绝对路径或相对场景
+            # 目录的文件；装载失败保持 null = 纯色，不中止导入）
+            JsonValue mmNode = comp.select("materialModel")
+            md.materialModel = mmNode.asInt32( 0 )
+            JsonValue shNode = comp.select("shininess")
+            md.shininess = shNode.asFloat32( 32.0f )
+            JsonValue txNode = comp.select("texture")
+            string texPath = txNode.asString( "" )
+            if texPath != ""
+            {
+                SLang.RenderTexture tex = SLang.RenderTexture.loadFile( texPath )
+                md.texture = tex
+                if tex == null
+                {
+                    rep.skippedCount = rep.skippedCount + 1
+                }
+                else
+                {
+                    rep.textureCount = rep.textureCount + 1
+                }
+            }
             MaterialRef mref = MaterialRef()
             mref.material = md
             go.addComponent( mref )
             rep.materialCount = rep.materialCount + 1
+            ret
+        }
+        if ctype == "CapsuleCollider"
+        {
+            CapsuleCollider cc = CapsuleCollider()
+            JsonValue cNode = comp.select("center")
+            JsonValue rNode = comp.select("radius")
+            JsonValue hNode = comp.select("height")
+            JsonValue trigNode = comp.select("isTrigger")
+            cc.center = SceneImporter.jsonVec3( cNode, 0.0f, 0.0f, 0.0f )
+            cc.radius = rNode.asFloat32( 0.5f )
+            cc.height = hNode.asFloat32( 2.0f )
+            cc.isTrigger = trigNode.asBool( false )
+            go.addComponent( cc )
+            rep.colliderCount = rep.colliderCount + 1
+            ret
+        }
+        if ctype == "Script"
+        {
+            JsonValue scriptNode = comp.select("script")
+            string scriptName = scriptNode.asString( "" )
+            Int32 idx = this._scriptNames.indexOf( scriptName )
+            if idx >= 0
+            {
+                Function f = this._scriptFactories[idx]
+                ScriptResult holder = ScriptResult()
+                f( comp, holder )
+                Behaviour inst = holder.value
+                if inst != null
+                {
+                    go.addComponent( inst )
+                    rep.scriptCount = rep.scriptCount + 1
+                    ret
+                }
+            }
+            rep.skippedCount = rep.skippedCount + 1
             ret
         }
         if ctype == "Rigidbody"
@@ -366,7 +492,44 @@ public class SceneImporter
         }
         if ctype == "Light"
         {
-            # 引擎无 Light 组件——计数登记（LightProbe/直接光随 Render 消费）
+            # v2.13：LightData 光源组件（RenderSystem.sync 每帧收集写管线槽）
+            LightData ld = LightData()
+            JsonValue ltNode = comp.select("lightType")
+            Int32 lt = ltNode.asInt32( 0 )
+            if lt < 0
+            {
+                lt = 0
+            }
+            if lt > 2
+            {
+                lt = 2
+            }
+            ld.type = lt
+            JsonValue lcNode = comp.select("color")
+            ld.color = SceneImporter.jsonVec3( lcNode, 1.0f, 1.0f, 1.0f )
+            JsonValue liNode = comp.select("intensity")
+            ld.intensity = liNode.asFloat32( 1.0f )
+            JsonValue ldxNode = comp.select("dirX")
+            ld.dirX = ldxNode.asFloat32( 1.0f )
+            JsonValue ldyNode = comp.select("dirY")
+            ld.dirY = ldyNode.asFloat32( 0.0f )
+            JsonValue lpxNode = comp.select("posX")
+            ld.posX = lpxNode.asFloat32( 0.0f )
+            JsonValue lpyNode = comp.select("posY")
+            ld.posY = lpyNode.asFloat32( 0.0f )
+            JsonValue lsaNode = comp.select("spotAngle")
+            ld.spotAngle = lsaNode.asFloat32( 30.0f )
+            JsonValue lrNode = comp.select("range")
+            ld.lightRange = lrNode.asFloat32( 0.0f )
+            JsonValue lsqNode = comp.select("shadowQuality")
+            ld.shadowQuality = lsqNode.asFloat32( 0.0f )
+            JsonValue lsbNode = comp.select("shadowBias")
+            ld.shadowBias = lsbNode.asFloat32( 0.0f )
+            JsonValue lstNode = comp.select("shadowStrength")
+            ld.shadowStrength = lstNode.asFloat32( 0.0f )
+            JsonValue lscNode = comp.select("shadowCascades")
+            ld.shadowCascades = lscNode.asFloat32( 0.0f )
+            go.addComponent( ld )
             rep.lightCount = rep.lightCount + 1
             ret
         }

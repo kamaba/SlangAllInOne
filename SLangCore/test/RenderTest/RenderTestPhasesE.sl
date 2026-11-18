@@ -38,19 +38,10 @@ public class RenderTestPhasesE
             Console.println( "[env] FAIL: gpu renderer string missing" )
             ret false
         }
-        # P4 帧级统计（PASS/FEATURE/ASSET 已跑：passes=4 / feature runs>=1）
-        if env.passCount < 1 || env.passCount > 16
-        {
-            Console.println( "[env] FAIL: passCount expect 1..16, got " + env.passCount.toString() )
-            ret false
-        }
-        if env.featureCount < 1
-        {
-            Console.println( "[env] FAIL: featureCount expect >=1 (FEATURE/ASSET ran), got " + env.featureCount.toString() )
-            ret false
-        }
+        # P4 帧级统计字段随 SRP 草稿链移除（2026-11-18）：passCount/
+        # featureCount 保留恒 0（快照形状兼容，不再断言非零）
         Console.println( "[env] frame stats: passes=" + env.passCount.toString() + " featureRuns=" + env.featureCount.toString() )
-        Console.println( "[env] Phase ENV: PASS (available + gl current + hardware + resources + config + frame stats displayed)" )
+        Console.println( "[env] Phase ENV: PASS (available + gl current + hardware + resources + config)" )
         ret true
     }
 

@@ -5,8 +5,9 @@ import Math;
 # Ray.sl —— 软光追射线层（N4a，对应 C 侧 Pipeline/sl_ray.c）
 #
 # 三类角色：
-#   Ray       —— 射线（origin/direction；屏幕拾取用，Camera.screenPointToRay
-#                的返回类型，保持既有 API 不变）；
+#   Ray       —— 射线（origin/direction；屏幕拾取/射线投射的返回类型，
+#                原 Camera.screenPointToRay 产出；组件式 Camera 已随 SRP
+#                草稿链移除，本类保持既有 API 不变）；
 #   RayHit    —— 求交记录（t / 命中点 / 法线 / 材质：球下标或地面）；
 #   RaySphere / RayScene —— 场景描述 + SL 参考实现。
 #

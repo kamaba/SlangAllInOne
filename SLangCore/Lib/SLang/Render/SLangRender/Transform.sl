@@ -2,7 +2,8 @@ import Std;
 import Math;
 # 变换组件（统一版，2026-11-17 合并）：
 #   - Render 原语义保留：Quaternion 全 3D 旋转（rotate/lookAt/rotateAxis 等）
-#     + parentNode 父链（Camera/Light/Renderer 消费不变）；
+#     + parentNode 父链（Renderer 等组件消费不变；组件式 Camera/Light 已随
+#       SRP 草稿链移除，实体相机/光源归引擎层）；
 #   - 引擎 API 面并入（SimGameEngine P0~P7 原自有 Transform 删除，统一复用
 #     本类）：setPosition/setRotationZ/setScale/rotateZ/localMatrix/worldMatrix/
 #     worldRotationZ/worldScale/localPosition 别名 + Z 轴精确路径；
@@ -132,7 +133,7 @@ public class Transform extends Component
         ret MatrixUtil.trs( this.position, this.rotation, this.localScale )
     }
 
-    # 本地 -> 世界（含父级链；Quaternion 路径，Camera/Renderer 消费不变）
+    # 本地 -> 世界（含父级链；Quaternion 路径，Renderer 消费不变）
     public get Float32_4x4 localToWorldMatrix()
     {
         Float32_4x4 local1 = MatrixUtil.trs( this.position, this.rotation, this.localScale )

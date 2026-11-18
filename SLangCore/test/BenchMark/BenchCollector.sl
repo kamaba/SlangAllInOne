@@ -5,10 +5,10 @@ import Std
 #
 # 数据模型：
 #   data BenchEntry -- 单条计时记录（语言类型 / 语言使用说明 / 优化选项 /
-#                      测试类型 / 测试参数 / 运行时间 ms）
-#   BenchCollector  -- 静态 List<BenchEntry> 采集器：四个语言的 record
-#                      便捷入口（SL 原生逐段计时；C#/Java/JS 插件块整块
-#                      计时，含引擎调用开销，首轮另含编译部署）。
+#                      测试类型 / 测试参数 / 运行时间 us）
+#   BenchCollector  -- 静态 List<BenchEntry> 采集器：八个语言的 record
+#                      便捷入口（SL 原生逐段计时；其余语言均为块内自身
+#                      计时经出通道回传，不含引擎装载/编译部署开销）。
 #
 # 报告生成：
 #   BenchCollector.generateReport() 在 BenchMark.sp 结尾调用一次：
@@ -46,6 +46,7 @@ BenchCollector
 
     static record( string language, string languageDesc, string optDesc, string testType, string testParam, long timeUs )
     {
+        Console.println("PROBE-C " + language + " timeUs=[" + timeUs.toString() + "]")
         if BenchCollector._entries == null
         {
             BenchCollector._entries = List<BenchEntry>()
@@ -61,36 +62,39 @@ BenchCollector
     }
 
     # ---------- 各语言便捷入口 ----------
-    # SL/CSharp/Java/JS：参数为毫秒（SL 侧 nowMillis 整块计时粒度所限），
-    # 内部 ×1000 换 us 存储；C/C++：参数为块内 QPC/steady_clock 纳秒精确
-    # 值（经出通道回传，不含装载开销），入口 /1000 折算 us。
+    # SL：参数为毫秒（SL 侧 nowMillis 计时粒度所限），内部 ×1000 换 us；
+    # CSharp/Java/JS/TS：参数为块内自身计时回传的微秒（Stopwatch /
+    # nanoTime / Date.now / performance.now，经出通道回传，不含引擎
+    # 装载/编译部署开销）直存；C/C++：参数为块内 QPC/steady_clock 纳秒
+    # 精确值（经出通道回传），入口 /1000 折算 us。
 
     static recordSL( string testType, string testParam, long timeMs )
     {
-        BenchCollector.record( "SL", "SLang 自研语言，SL VM 字节码解释执行", "VM 默认（无 JIT）", testType, testParam, timeMs * 1000L )
+        BenchCollector.record( "SL", "SLang 自研语言，SL VM 字节码执行", "VM JIT 默认开启（--no-jit 关闭）", testType, testParam, timeMs * 1000L )
     }
 
-    static recordCSharp( string testType, string testParam, long timeMs )
+    static recordCSharp( string testType, string testParam, long timeUs )
     {
-        BenchCollector.record( "CSharp", "C# / mono 运行时（csharp_mono 插件内嵌）", "Mono JIT 默认优化", testType, testParam, timeMs * 1000L )
+        BenchCollector.record( "CSharp", "C# / mono 运行时（csharp_mono 插件内嵌）", "Mono JIT 默认优化，块内 Stopwatch us 计时", testType, testParam, timeUs )
     }
 
-    static recordJava( string testType, string testParam, long timeMs )
+    static recordJava( string testType, string testParam, long timeUs )
     {
-        BenchCollector.record( "Java", "Java 17 / Hotspot 运行时（java_hotspot 插件内嵌）", "HotSpot 分层 JIT", testType, testParam, timeMs * 1000L )
+        BenchCollector.record( "Java", "Java 17 / Hotspot 运行时（java_hotspot 插件内嵌）", "HotSpot 分层 JIT，块内 nanoTime us 计时", testType, testParam, timeUs )
     }
 
-    static recordJs( string testType, string testParam, long timeMs )
+    static recordJs( string testType, string testParam, long timeUs )
     {
-        BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT）", testType, testParam, timeMs * 1000L )
+        BenchCollector.record( "JavaScript", "JavaScript / QuickJS 2024-01-13（javascript_quickjs 插件内嵌）", "QuickJS 解释器（无 JIT），块内 Date.now ms 计时（×1000 存 us）", testType, testParam, timeUs )
     }
 
-    # JavaScriptV8：与 recordJs 同口径（SL 侧整块毫秒计时 ×1000 存 us）。
-    # 引擎为 Node.js V8（typescript_nodev8 插件外接 node.exe keep-alive 子进程，
-    # TypeScript 原生类型擦除执行）——V8 有 JIT，与 QuickJS 解释执行形成对照。
-    static recordTs( string testType, string testParam, long timeMs )
+    # TypeScript（语言列 JavaScriptV8，与 QuickJS 对照）：与 recordCSharp 同口径
+    # （块内 us 直存）。引擎为 Node.js V8（typescript_nodev8 插件外接 node.exe
+    # keep-alive 子进程，TypeScript 原生类型擦除执行）——V8 有 JIT，块内
+    # performance.now 亚毫秒精度计时，与 QuickJS 解释执行形成对照。
+    static recordTs( string testType, string testParam, long timeUs )
     {
-        BenchCollector.record( "TypeScript", "TypeScript / Node.js V8（typescript_nodev8 插件外接 node.exe 子进程）", "V8 JIT 默认优化，TS 原生类型擦除", testType, testParam, timeMs * 1000L )
+        BenchCollector.record( "TypeScript", "TypeScript / Node.js V8（typescript_nodev8 插件外接 node.exe 子进程）", "V8 JIT 默认优化，TS 原生类型擦除，块内 performance.now us 计时", testType, testParam, timeUs )
     }
 
     # Python：参数为微秒（CPython 块内 perf_counter_ns 纳秒精确计时——ns 粒度
@@ -154,9 +158,9 @@ BenchCollector
         md = md + "- 生成时间: " + dt.year.toString() + "-" + BenchCollector.pad2( dt.month ) + "-" + BenchCollector.pad2( dt.day )
         md = md + " " + BenchCollector.pad2( dt.hour ) + ":" + BenchCollector.pad2( dt.minute ) + ":" + BenchCollector.pad2( dt.second ) + nl
         md = md + "- 数据条目: " + BenchCollector._entries.length.toString() + " 条" + nl
-        md = md + "- 计时口径: 时间存储单位一律微秒；SL/CSharp/Java/JS 为 SL 侧整块毫秒计时（×1000 存 us，粒度毫秒）；C/C++ 为块内 QPC/steady_clock 纳秒精确计时（经出通道回传，/1000 存 us，不含装载开销；原始 ns 见运行日志）；Python 为块内 perf_counter_ns 纳秒精确计时（ns 超 int32 出通道上限，块内 //1000 回传 us 直存；原始 ns 明细见运行日志）" + nl
+        md = md + "- 计时口径: 时间存储单位一律微秒；SL 为 SL 侧 nowMillis 毫秒计时（×1000 存 us）；其余语言均为块内自身计时经出通道回传（不含引擎装载/编译部署开销）——C/C++ QPC/steady_clock ns（/1000 存 us，原始 ns 见运行日志）、CSharp Stopwatch（us）、Java System.nanoTime（ns /1000 折 us）、JS QuickJS Date.now（ms ×1000 存 us，粒度毫秒）、TS performance.now（亚毫秒 ms ×1000 折 us）、Python perf_counter_ns（块内 //1000 回传 us，原始 ns 见运行日志）" + nl
         md = md + "- 单元格显示自适应单位（us 值过大时折算 ms），附录保留原始微秒值" + nl
-        md = md + "- C/C++/CSharp/Java/JavaScript/Python 为插件块计时，首轮另含编译部署" + nl + nl
+        md = md + "- C/C++/CSharp/Java/JavaScript/TypeScript/Python 均为块内自身计时；CSharp/Java/TypeScript 首轮块内另含运行时 JIT/解释预热" + nl + nl
 
         # 语言与优化说明表（取各语言首条记录的说明）
         md = md + "## 语言与优化说明" + nl + nl

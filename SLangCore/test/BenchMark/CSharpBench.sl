@@ -2,8 +2,9 @@ import Std
 
 # ============================================================================
 # CSharpBench — C# 版基准（@csharp_mono(){} 内联块，mono 运行时）
-# 13 项基准与 SL 版逐项对齐：相同算法 / 迭代次数 / 运算序列 / 输出行格式，
-# 计时用 Stopwatch（毫秒口径同 Environment.sys.nowMillis）。
+# 13 项基准与 SL 版逐项对齐：相同算法 / 迭代次数 / 运算序列 / 输出行格式。
+# 计时：块内 Stopwatch 自身计时（us 粒度，经出通道 $us 回传 SL 侧
+# recordCSharp——不含引擎调用/装载/部署开销，与 C/C++/Python 口径一致）。
 # 递归类算法（fib/levenshtein/nqueens/quicksort/binarytree/mandelbrot 的
 # 算法主体）在 CsExtra/SlBenchLib.cs（jsonc plugins.csharp_mono.sources
 # 合并编译进 SLAtSign.dll），块内头区 using SlBench; 即可调用。
@@ -14,103 +15,62 @@ CSharpBench
 {
     static fun()
     {
-        # SL 侧整块计时包裹各子项（含引擎调用开销，首轮另含编译部署），逐项记录进 BenchCollector
-        t = Environment.sys.nowMillis()
+        # 各子项块内 Stopwatch 自身计时（us 粒度，经出通道回传），方法内直接记录进 BenchCollector
         CSharpBench.fibonacci()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("Fibonacci", "fib(0..21) 递归求和（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.eqBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("EqBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.loopBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("Loop", "3子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.levenshtein()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("Levenshtein", "levenshtein x5000（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.dataTypes()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("DataTypes", "5子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.stringBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("StringBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.regExpBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("RegExpBench", "8子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.nQueens()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("NQueens", "n=11 单轮 + n=9 x10（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.sieve()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("Sieve", "1e6 单轮 + 5e5 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.quickSort()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("QuickSort", "quicksort 3e4 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.matrixMul()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("MatrixMul", "matmul 100x100 x3（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.binaryTree()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("BinaryTree", "depth12 x10 + depth16 x2（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         CSharpBench.mandelbrot()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordCSharp("Mandelbrot", "mandelbrot 240x180 x3（整块含引擎开销）", t)
     }
 
     # 1. Fibonacci：fib(0..21) 递归求和（= 17711）
     static fibonacci()
     {
         Console.println("========== Fibonacci (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = Stopwatch.StartNew();
             long sum = 0L;
             for (int i = 0; i < 22; i++)
             {
                 sum += Bench.Fib(i);
             }
-            long ms = sw.ElapsedMilliseconds;
-            Console.WriteLine("fib(0..21) sum = " + sum + "  [" + ms + " ms]");
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
+            Console.WriteLine("fib(0..21) sum = " + sum + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== Fibonacci (CSharp) (end) ==========")
+        Console.println("PROBE-A us=[" + us.toString() + "]")
+        BenchCollector.recordCSharp("Fibonacci", "fib(0..21) 递归求和（块内 Stopwatch us）", us)
     }
 
     # 2. EqBench：四种类型相等比较循环（i32/i64/f64/bool）
     static eqBench()
     {
         Console.println("========== EqBench (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
             int k = 0;
             int s = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             while (k != 2000000)
             {
@@ -121,6 +81,8 @@ CSharpBench
             Console.WriteLine("i32 != 2e6 = " + s + "  [" + sw.ElapsedMilliseconds + " ms]");
             long k64 = 0L;
             long s64 = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             while (k64 != 2000000L)
             {
@@ -131,6 +93,8 @@ CSharpBench
             Console.WriteLine("i64 != 2e6 = " + s64 + "  [" + sw.ElapsedMilliseconds + " ms]");
             double kd = 0.0;
             double sd = 0.0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             while (kd != 2000000.0)
             {
@@ -141,6 +105,8 @@ CSharpBench
             Console.WriteLine("f64 != 2e6 = " + sd + "  [" + sw.ElapsedMilliseconds + " ms]");
             bool b = true;
             int cnt = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 1000000; i++)
             {
@@ -150,18 +116,23 @@ CSharpBench
                 }
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("bool == 1e6 = " + cnt + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== EqBench (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("EqBench", "4子项（块内 Stopwatch us）", us)
     }
 
     # 3. Loop：数组求和 / while / 步进 for 三段
     static loopBench()
     {
         Console.println("========== Loop (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
             int n = 1000;
             int[] arr = new int[n];
@@ -170,6 +141,8 @@ CSharpBench
                 arr[i] = i * i;
             }
             long total = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int j = 0; j < 3000; j++)
             {
@@ -184,6 +157,8 @@ CSharpBench
             Console.WriteLine("array sum x3000 = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
             long wsum = 0L;
             int k = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             while (k < 5000000)
             {
@@ -193,51 +168,67 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("while sum 5e6 = " + wsum + "  [" + sw.ElapsedMilliseconds + " ms]");
             long stepSum = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 1000000; i += 7)
             {
                 stepSum += i;
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("for step +7 1e6 = " + stepSum + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== Loop (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("Loop", "3子项（块内 Stopwatch us）", us)
     }
 
     # 4. Levenshtein：编辑距离 DP（a,b 固定序列，先单次再 x5000）
     static levenshtein()
     {
         Console.println("========== Levenshtein (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             int[] a = new int[] { 10, 20, 30, 40, 50, 60 };
             int[] b = new int[] { 10, 25, 30, 35, 40, 50, 65 };
             int dist = Bench.Distance(a, b);
             Console.WriteLine("levenshtein(a,b) = " + dist);
             Stopwatch sw = new Stopwatch();
             long total = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 5000; r++)
             {
                 total += Bench.Distance(a, b);
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("levenshtein x5000 = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== Levenshtein (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("Levenshtein", "levenshtein x5000（块内 Stopwatch us）", us)
     }
 
     # 5. DataTypes：Int32/Int64/Num/混合运算/bool 取模五段
     static dataTypes()
     {
         Console.println("========== DataTypes (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
             int s32 = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 2000000; i++)
             {
@@ -246,6 +237,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("Int32 sum 2e6 = " + s32 + "  [" + sw.ElapsedMilliseconds + " ms]");
             long s64 = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 2000000; i++)
             {
@@ -254,6 +247,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("Int64 sum 2e6 = " + s64 + "  [" + sw.ElapsedMilliseconds + " ms]");
             double sf = 0.0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 2000000; i++)
             {
@@ -262,6 +257,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("Num sum 2e6 = " + sf + "  [" + sw.ElapsedMilliseconds + " ms]");
             double mix = 0.0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 1000000; i++)
             {
@@ -270,6 +267,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("Mixed ops 1e6 = " + mix + "  [" + sw.ElapsedMilliseconds + " ms]");
             int count = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 1000000; i++)
             {
@@ -279,20 +278,27 @@ CSharpBench
                 }
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("bool mod 1e6 = " + count + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== DataTypes (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("DataTypes", "5子项（块内 Stopwatch us）", us)
     }
 
     # 6. StringBench：拼接 / 插值构建 / format / 比较 / 结尾校验
     static stringBench()
     {
         Console.println("========== StringBench (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
             string s = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 10000; i++)
             {
@@ -301,6 +307,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("concat 1e4  [" + sw.ElapsedMilliseconds + " ms]");
             string t = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 10000; i++)
             {
@@ -309,6 +317,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("interp 1e4  [" + sw.ElapsedMilliseconds + " ms]");
             string u = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 10000; i++)
             {
@@ -317,6 +327,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("format 1e4  [" + sw.ElapsedMilliseconds + " ms]");
             int c = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 100000; i++)
             {
@@ -327,9 +339,12 @@ CSharpBench
             }
             sw.Stop();
             Console.WriteLine("compare 1e5  count=" + c + "  [" + sw.ElapsedMilliseconds + " ms]");
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("concat endswith ab = " + (s == u ? "true" : "false"));
+            $us <- (int)acc;
         }
         Console.println("========== StringBench (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("StringBench", "4子项（块内 Stopwatch us）", us)
     }
 
     # 7. RegExpBench：编译 / 早命中 / 不命中 / matchAll / replace / 分组 /
@@ -337,10 +352,12 @@ CSharpBench
     static regExpBench()
     {
         Console.println("========== RegExpBench (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using System.Diagnostics;
             using System.Text.RegularExpressions;
+            long acc = 0L;
             string chunk = "abc123 def456 ghi789 ";
             string text = "";
             for (int i = 0; i < 4000; i++)
@@ -349,6 +366,8 @@ CSharpBench
             }
             Console.WriteLine("text bytes = " + text.Length);
             Stopwatch sw = new Stopwatch();
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 2000; i++)
             {
@@ -358,6 +377,8 @@ CSharpBench
             Console.WriteLine("compile x2000  [" + sw.ElapsedMilliseconds + " ms]");
             Regex re1 = new Regex("def456");
             string hit = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 500; i++)
             {
@@ -368,6 +389,8 @@ CSharpBench
             Console.WriteLine("search hit x500  [" + sw.ElapsedMilliseconds + " ms]  value=" + hit);
             Regex re2 = new Regex("zzz999");
             bool miss = true;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 20; i++)
             {
@@ -377,6 +400,8 @@ CSharpBench
             Console.WriteLine("search miss x20  [" + sw.ElapsedMilliseconds + " ms]  miss=" + (miss ? "true" : "false"));
             Regex re3 = new Regex("[a-z]+");
             int words = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 5; i++)
             {
@@ -386,6 +411,8 @@ CSharpBench
             Console.WriteLine("matchAll x5  [" + sw.ElapsedMilliseconds + " ms]  count=" + words);
             Regex re4 = new Regex("[0-9]+");
             string rep = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 5; i++)
             {
@@ -396,6 +423,8 @@ CSharpBench
             Regex re5 = new Regex("([a-z]+)([0-9]+)");
             string g1 = "";
             string g2 = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 200; i++)
             {
@@ -413,6 +442,8 @@ CSharpBench
             }
             Regex re6 = new Regex("(\\w+) \\1");
             int pairs = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 10; i++)
             {
@@ -428,6 +459,8 @@ CSharpBench
             }
             Regex re7 = new Regex("测试[0-9]+");
             string zh = "";
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int i = 0; i < 100; i++)
             {
@@ -435,65 +468,87 @@ CSharpBench
                 zh = m7.Success ? m7.Value : "";
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("utf8 search x100  [" + sw.ElapsedMilliseconds + " ms]  value=" + zh);
+            $us <- (int)acc;
         }
         Console.println("========== RegExpBench (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("RegExpBench", "8子项（块内 Stopwatch us）", us)
     }
 
     # 8. NQueens：n=11 单轮（2680）+ n=9 x10 轮（3520）
     static nQueens()
     {
         Console.println("========== NQueens (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             int solutions = Bench.Solve(11);
             sw.Stop();
             Console.WriteLine("nqueens(11) solutions = " + solutions + "  [" + sw.ElapsedMilliseconds + " ms]");
             int total = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 10; r++)
             {
                 total += Bench.Solve(9);
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("nqueens(9) x10 = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== NQueens (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("NQueens", "n=11 单轮 + n=9 x10（块内 Stopwatch us）", us)
     }
 
     # 9. Sieve：1e6 单轮（78498）+ 5e5 x5 轮（207690）
     static sieve()
     {
         Console.println("========== Sieve (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             int primes = Bench.CountPrimes(1000000);
             sw.Stop();
             Console.WriteLine("sieve 1e6 primes = " + primes + "  [" + sw.ElapsedMilliseconds + " ms]");
             int total = 0;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 5; r++)
             {
                 total += Bench.CountPrimes(500000);
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("sieve 5e5 x5 = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== Sieve (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("Sieve", "1e6 单轮 + 5e5 x5（块内 Stopwatch us）", us)
     }
 
     # 10. QuickSort：3e4 元素 x5 轮（LCG 数据生成不计时，逐轮计时累计）
     static quickSort()
     {
         Console.println("========== QuickSort (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
@@ -501,7 +556,7 @@ CSharpBench
             int n = 30000;
             int rounds = 5;
             long[] arr = new long[n];
-            long totalMs = 0L;
+            long totalUs = 0L;
             long checksum = 0L;
             Stopwatch sw = new Stopwatch();
             for (int r = 0; r < rounds; r++)
@@ -515,7 +570,7 @@ CSharpBench
                 sw.Restart();
                 Bench.Sort(arr, 0, n - 1);
                 sw.Stop();
-                totalMs += sw.ElapsedMilliseconds;
+                totalUs += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
                 for (int i = 0; i < n; i++)
                 {
                     checksum += arr[i];
@@ -528,19 +583,23 @@ CSharpBench
                     }
                 }
             }
-            Console.WriteLine("quicksort 3e4 x5  [" + totalMs + " ms]  checksum = " + checksum);
+            Console.WriteLine("quicksort 3e4 x5  [" + totalUs + " us]  checksum = " + checksum);
+            $us <- (int)totalUs;
         }
         Console.println("========== QuickSort (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("QuickSort", "quicksort 3e4 x5（块内 Stopwatch us）", us)
     }
 
     # 11. MatrixMul：100x100 x3 轮（填充不计时，Int64 校验和）
     static matrixMul()
     {
         Console.println("========== MatrixMul (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             int n = 100;
             int rounds = 3;
             int[] a = new int[n * n];
@@ -555,6 +614,8 @@ CSharpBench
                 }
             }
             Stopwatch sw = new Stopwatch();
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < rounds; r++)
             {
@@ -566,21 +627,28 @@ CSharpBench
             {
                 checksum += c[i];
             }
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("matmul 100x100 x3  [" + sw.ElapsedMilliseconds + " ms]  checksum = " + checksum);
+            $us <- (int)acc;
         }
         Console.println("========== MatrixMul (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("MatrixMul", "matmul 100x100 x3（块内 Stopwatch us）", us)
     }
 
     # 12. BinaryTree：depth12 x10 轮 + depth16 x2 轮（构建 + 求和）
     static binaryTree()
     {
         Console.println("========== BinaryTree (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             Stopwatch sw = new Stopwatch();
             long total = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 10; r++)
             {
@@ -590,6 +658,8 @@ CSharpBench
             sw.Stop();
             Console.WriteLine("tree depth12 x10 checksum = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
             long total2 = 0L;
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 2; r++)
             {
@@ -597,19 +667,24 @@ CSharpBench
                 total2 += Bench.Checksum(root);
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("tree depth16 x2 checksum = " + total2 + "  [" + sw.ElapsedMilliseconds + " ms]");
+            $us <- (int)acc;
         }
         Console.println("========== BinaryTree (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("BinaryTree", "depth12 x10 + depth16 x2（块内 Stopwatch us）", us)
     }
 
     # 13. Mandelbrot：240x180 x3 轮（iterSum/inside 跨轮累加）
     static mandelbrot()
     {
         Console.println("========== Mandelbrot (CSharp) (start) ==========")
+        long us = 0L
         @csharp_mono()
         {
             using SlBench;
             using System.Diagnostics;
+            long acc = 0L;
             int w = 240;
             int h = 180;
             int maxIter = 150;
@@ -617,14 +692,19 @@ CSharpBench
             long iterSum = 0L;
             int insideCount = 0;
             Stopwatch sw = new Stopwatch();
+            sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < rounds; r++)
             {
                 iterSum += Bench.Render(w, h, maxIter, ref insideCount);
             }
             sw.Stop();
+            acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             Console.WriteLine("mandelbrot 240x180 x3  [" + sw.ElapsedMilliseconds + " ms]  iterSum = " + iterSum + "  inside = " + insideCount);
+            $us <- (int)acc;
         }
         Console.println("========== Mandelbrot (CSharp) (end) ==========")
+        BenchCollector.recordCSharp("Mandelbrot", "mandelbrot 240x180 x3（块内 Stopwatch us）", us)
     }
 }

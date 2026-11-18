@@ -9,7 +9,8 @@ import Math;
 #                固定容量 8 层全局覆盖栈，栈顶 enabled 者生效）
 #
 # 执行链（P1 之上零新增提交路径）：
-#   ScriptableRenderContext.submitPasses 在 Pass 间隙按注入点遍历 Feature 表
+#   SRP 草稿链（submitPasses 注入点遍历）已移除；Feature 命令预录
+#   （preRecord/replayInto）与 Volume 栈消费保持不变
 #   （==/!= 整型派发）；Feature.execute 把命令录进 P1 的共享命令流——C 侧
 #   slr_cmd_execute_stream 单流整包回放，统计口径与单流直提完全一致
 #   （sl_cmd.c 帧级前置 memset：PerDraw 槽/描述符表每次调用重置，全部命令
@@ -115,7 +116,7 @@ public class VolumeProfile
 # ============================================================================
 # VolumeStack —— 全局参数覆盖栈（固定容量 8 层；栈顶 enabled 的 Profile 生效）
 # ----------------------------------------------------------------------------
-# 单例实例模式（同 RenderPipelineManager._instance 先例——SL 静态字段可靠
+# 单例实例模式（SL 静态字段可靠
 # 形态是「静态自类型引用」，静态 Array 无先例不用）；对外静态转发。
 # ============================================================================
 public class VolumeStack
@@ -245,12 +246,13 @@ public class RenderFeature
         this.perDrawSlot = 63
     }
 
-    # execute —— 按 featureType 派发（命令录进共享命令流 cmd）
-    public void execute( ScriptableRenderContext ctx, CommandBuffer cmd )
+    # execute —— 按 featureType 派发（命令录进共享命令流 cmd；
+    # 2026-11-18：SRP 草稿链移除后 execute 只消费 CommandBuffer）
+    public void execute( CommandBuffer cmd )
     {
         if this.featureType == RenderFeature.TYPE_COLOR_OVERLAY
         {
-            this.executeColorOverlay( ctx, cmd )
+            this.executeColorOverlay( cmd )
         }
         # TYPE_BASE：无操作（用户自定义类型在此扩展派发分支）
     }
@@ -276,7 +278,7 @@ public class RenderFeature
     # (PFLAT, 自身槽, QUAD, -1, 透明, queue 3000, z 0.1)。
     # 回放位置：注入点决定（AfterPost = postProcess 之后、blit 之前，
     # 画进 rt_post 后随 blit 进 final——「后处理之后再覆盖」语义）。
-    void executeColorOverlay( ScriptableRenderContext ctx, CommandBuffer cmd )
+    void executeColorOverlay( CommandBuffer cmd )
     {
         # 每次 execute 重录（Volume 栈内容可逐帧变化，不缓存参数）
         this.preRecord()
@@ -356,7 +358,7 @@ public class CustomPass extends RenderFeature
 #   ColorOverlayFeature f = ColorOverlayFeature()
 #   f.injectionPoint = EInjectionPoint.AfterPost
 #   f.perDrawSlot = 3                       # 避开场景 PerDraw 槽
-#   ctx.addFeature( f )                     # ScriptableRenderContext
+#   feature.preRecord() 后经 CommandBuffer.replayInto 并流提交
 #   ctx.submitPasses()                      # Pass 间隙自动执行
 # 参数可被全局 Volume 覆盖：VolumeProfile vp = ...; VolumeStack.push( vp )
 public class ColorOverlayFeature extends CustomPass

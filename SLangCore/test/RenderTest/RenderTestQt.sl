@@ -199,10 +199,10 @@ public class RenderTestQt
         }
         if RenderTest._lamp == null
         {
-            RenderTest._lamp = Light.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.6f, 2.4f, 38.0f )
+            RenderTest._lamp = RenderLight.spot( Color( 1.0f, 0.85f, 0.55f, 1.0f ), 1.6f, 2.4f, 38.0f )
             if RenderTest._lamp == null
             {
-                Console.println( "[ui] FAIL: Light.spot" )
+                Console.println( "[ui] FAIL: RenderLight.spot" )
                 ret false
             }
         }

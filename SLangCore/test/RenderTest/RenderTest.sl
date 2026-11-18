@@ -17,7 +17,7 @@ public class RenderTest
     public static Int32 _texH = 256
     # v3.4：QT 演示聚光灯（暖色，slot 0）—— onTick 每帧摇晃位置 +
     # 强度脉动后 applyTo 重写光照槽（阴影/锥光随灯实时跟随）
-    public static Light _lamp = null
+    public static RenderLight _lamp = null
 
     public static void main()
     {
@@ -66,23 +66,11 @@ public class RenderTest
         # Phase INST：GPU 实例化合批（N1：64 实例 1 draw vs 64 draw 像素一致）
         bool phaseInst = RenderTestPhasesC.runInstancing()
 
-        # Phase PASS：Pass 序列提交（Opaque/Transparent/Post/Blit 四 Pass 单流）
-        bool phasePass = RenderTestPhasesC.runPassSubmit()
-
-        # Phase FEATURE：Feature 注入（AfterPost 全屏色块 + Volume 覆盖栈）
-        bool phaseFeature = RenderTestPhasesD.runFeatureInject()
-
-        # Phase ASSET：RenderPipeline 资产层（资产 -> 实例 -> Render(FrameData)）
-        bool phaseAsset = RenderTestPhasesD.runAssetPipeline()
-
-        # Phase ENV：渲染环境查询（支持情况 / 当前选择 / 硬件 / 资源 / 配置 / 帧级统计）
+        # Phase ENV：渲染环境查询（支持情况 / 当前选择 / 硬件 / 资源 / 配置）
         bool phaseEnv = RenderTestPhasesE.runEnvironmentQuery()
 
         # Phase RTPOOL：RT 句柄池（同尺寸复用 / releaseAll）
         bool phaseRtpool = RenderTestPhasesD.runRtPool()
-
-        # Phase FS：FrameSettings（后处理开关 / 透明序策略 / 目标缩放）
-        bool phaseFs = RenderTestPhasesD.runFrameSettings()
 
         # Phase DATA：数据层快照（CullingData / FrameData / PassData）
         bool phaseData = RenderTestPhasesE.runDataSnapshot()
@@ -151,12 +139,8 @@ public class RenderTest
         Console.println( "phase G  (frozen shaders)   : " + ( phaseG ? "PASS" : "FAIL" ) )
         Console.println( "phase CB (command buffer)   : " + ( phaseCB ? "PASS" : "FAIL" ) )
         Console.println( "phase INST(gpu instancing)  : " + ( phaseInst ? "PASS" : "FAIL" ) )
-        Console.println( "phase PASS(pass sequence)   : " + ( phasePass ? "PASS" : "FAIL" ) )
-        Console.println( "phase FEATURE(custom pass)  : " + ( phaseFeature ? "PASS" : "FAIL" ) )
-        Console.println( "phase ASSET(pipeline asset) : " + ( phaseAsset ? "PASS" : "FAIL" ) )
         Console.println( "phase ENV(render env)       : " + ( phaseEnv ? "PASS" : "FAIL" ) )
         Console.println( "phase RTPOOL(rt handle pool): " + ( phaseRtpool ? "PASS" : "FAIL" ) )
-        Console.println( "phase FS  (frame settings)   : " + ( phaseFs ? "PASS" : "FAIL" ) )
         Console.println( "phase DATA(data layer)       : " + ( phaseData ? "PASS" : "FAIL" ) )
         Console.println( "phase RAY (software raytr)   : " + ( phaseRay ? "PASS" : "FAIL" ) )
         Console.println( "phase ASYNC(async submit)   : " + ( phaseAsync ? "PASS" : "FAIL" ) )
@@ -210,27 +194,11 @@ public class RenderTest
         {
             allOk = false
         }
-        if !phasePass
-        {
-            allOk = false
-        }
-        if !phaseFeature
-        {
-            allOk = false
-        }
-        if !phaseAsset
-        {
-            allOk = false
-        }
         if !phaseEnv
         {
             allOk = false
         }
         if !phaseRtpool
-        {
-            allOk = false
-        }
-        if !phaseFs
         {
             allOk = false
         }

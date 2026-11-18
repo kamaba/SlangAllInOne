@@ -49,7 +49,7 @@ public class Renderer extends Component
     # model 为本地 -> 世界矩阵，viewProjection 由相机提供
     # 说明：旧全局 Render.drawMesh 已随 13 阶段管线改造移除（Render.sl 现为
     # 生命周期/诊断门面）；绘制提交统一走 CommandBuffer.drawMesh /
-    # ScriptableRenderContext 通道。保留兼容签名，返回 false 表示未接入管线。
+    # 管线通道（SRP 草稿链已移除）。保留兼容签名，返回 false 表示未接入管线。
     public bool render( Float32_4x4 model, Float32_4x4 viewProjection )
     {
         if !this.isVisible || this.mesh == null || this.material == null

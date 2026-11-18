@@ -2,8 +2,9 @@ import Std
 
 # ============================================================================
 # JavaBench — Java 版基准（@java_hotspot(){} 内联块，Hotspot 运行时）
-# 13 项基准与 SL 版逐项对齐：相同算法 / 迭代次数 / 运算序列 / 输出行格式，
-# 计时用 System.nanoTime() 毫秒口径（同 Environment.sys.nowMillis）。
+# 13 项基准与 SL 版逐项对齐：相同算法 / 迭代次数 / 运算序列 / 输出行格式。
+# 计时：块内 System.nanoTime() 自身计时（ns 累计，出通道 /1000 折 us 回传
+# SL 侧 recordJava——不含引擎调用/装载/部署开销，与 C/C++/Python 口径一致）。
 # java_hotspot 插件不支持 jsonc sources 段，递归类算法以块内局部类承载
 #（块体经 javac --release 17 编译部署到插件 classes 目录后加载执行）。
 # 注意：SL 层禁行内 # 注释（只整行使用）；块内字符串禁字面 # 字符
@@ -17,79 +18,31 @@ JavaBench
 {
     static fun()
     {
-        # SL 侧整块计时包裹各子项（含引擎调用开销，首轮另含编译部署），逐项记录进 BenchCollector
-        t = Environment.sys.nowMillis()
+        # 各子项块内 nanoTime 自身计时（出通道 /1000 折 us 回传），方法内直接记录进 BenchCollector
         JavaBench.fibonacci()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("Fibonacci", "fib(0..21) 递归求和（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.eqBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("EqBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.loopBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("Loop", "3子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.levenshtein()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("Levenshtein", "levenshtein x5000（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.dataTypes()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("DataTypes", "5子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.stringBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("StringBench", "4子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.regExpBench()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("RegExpBench", "8子项整块（含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.nQueens()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("NQueens", "n=11 单轮 + n=9 x10（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.sieve()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("Sieve", "1e6 单轮 + 5e5 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.quickSort()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("QuickSort", "quicksort 3e4 x5（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.matrixMul()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("MatrixMul", "matmul 100x100 x3（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.binaryTree()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("BinaryTree", "depth12 x10 + depth16 x2（整块含引擎开销）", t)
-
-        t = Environment.sys.nowMillis()
         JavaBench.mandelbrot()
-        t = Environment.sys.nowMillis() - t
-        BenchCollector.recordJava("Mandelbrot", "mandelbrot 240x180 x3（整块含引擎开销）", t)
     }
 
     # 1. Fibonacci：fib(0..21) 递归求和（= 17711）
     static fibonacci()
     {
         Console.println("========== Fibonacci (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             class FibB
             {
                 int fib(int n)
@@ -104,17 +57,24 @@ JavaBench
             {
                 sum += fb.fib(i);
             }
-            System.out.println("fib(0..21) sum = " + sum + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("fib(0..21) sum = " + sum + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== Fibonacci (Java) (end) ==========")
+        BenchCollector.recordJava("Fibonacci", "fib(0..21) 递归求和（块内 nanoTime us）", us)
     }
 
     # 2. EqBench：四种类型相等比较循环（i32/i64/f64/bool）
     static eqBench()
     {
         Console.println("========== EqBench (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int k = 0;
             int s = 0;
             long t0 = System.nanoTime();
@@ -123,7 +83,9 @@ JavaBench
                 s += k;
                 k++;
             }
-            System.out.println("i32 != 2e6 = " + s + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("i32 != 2e6 = " + s + "  [" + dt / 1000000L + " ms]");
             long k64 = 0L;
             long s64 = 0L;
             t0 = System.nanoTime();
@@ -132,7 +94,9 @@ JavaBench
                 s64 += k64;
                 k64++;
             }
-            System.out.println("i64 != 2e6 = " + s64 + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("i64 != 2e6 = " + s64 + "  [" + dt / 1000000L + " ms]");
             double kd = 0.0;
             double sd = 0.0;
             t0 = System.nanoTime();
@@ -141,7 +105,9 @@ JavaBench
                 sd += kd;
                 kd += 1.0;
             }
-            System.out.println("f64 != 2e6 = " + sd + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("f64 != 2e6 = " + sd + "  [" + dt / 1000000L + " ms]");
             boolean b = true;
             int cnt = 0;
             t0 = System.nanoTime();
@@ -152,17 +118,24 @@ JavaBench
                     cnt++;
                 }
             }
-            System.out.println("bool == 1e6 = " + cnt + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("bool == 1e6 = " + cnt + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== EqBench (Java) (end) ==========")
+        BenchCollector.recordJava("EqBench", "4子项（块内 nanoTime us）", us)
     }
 
     # 3. Loop：数组求和 / while / 步进 for 三段
     static loopBench()
     {
         Console.println("========== Loop (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int n = 1000;
             int[] arr = new int[n];
             for (int i = 0; i < n; i++)
@@ -180,7 +153,9 @@ JavaBench
                 }
                 total += s;
             }
-            System.out.println("array sum x3000 = " + total + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("array sum x3000 = " + total + "  [" + dt / 1000000L + " ms]");
             long wsum = 0L;
             int k = 0;
             t0 = System.nanoTime();
@@ -189,24 +164,33 @@ JavaBench
                 wsum += k;
                 k++;
             }
-            System.out.println("while sum 5e6 = " + wsum + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("while sum 5e6 = " + wsum + "  [" + dt / 1000000L + " ms]");
             long stepSum = 0L;
             t0 = System.nanoTime();
             for (int i = 0; i < 1000000; i += 7)
             {
                 stepSum += i;
             }
-            System.out.println("for step +7 1e6 = " + stepSum + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("for step +7 1e6 = " + stepSum + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== Loop (Java) (end) ==========")
+        BenchCollector.recordJava("Loop", "3子项（块内 nanoTime us）", us)
     }
 
     # 4. Levenshtein：编辑距离 DP（a,b 固定序列，先单次再 x5000）
     static levenshtein()
     {
         Console.println("========== Levenshtein (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             class LevB
             {
                 int distance(int[] a, int[] b)
@@ -260,45 +244,60 @@ JavaBench
             {
                 total += lb.distance(a, b);
             }
-            System.out.println("levenshtein x5000 = " + total + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("levenshtein x5000 = " + total + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== Levenshtein (Java) (end) ==========")
+        BenchCollector.recordJava("Levenshtein", "levenshtein x5000（块内 nanoTime us）", us)
     }
 
     # 5. DataTypes：Int32/Int64/Num/混合运算/bool 取模五段
     static dataTypes()
     {
         Console.println("========== DataTypes (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int s32 = 0;
             long t0 = System.nanoTime();
             for (int i = 0; i < 2000000; i++)
             {
                 s32 += i;
             }
-            System.out.println("Int32 sum 2e6 = " + s32 + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("Int32 sum 2e6 = " + s32 + "  [" + dt / 1000000L + " ms]");
             long s64 = 0L;
             t0 = System.nanoTime();
             for (int i = 0; i < 2000000; i++)
             {
                 s64 += i;
             }
-            System.out.println("Int64 sum 2e6 = " + s64 + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("Int64 sum 2e6 = " + s64 + "  [" + dt / 1000000L + " ms]");
             double sf = 0.0;
             t0 = System.nanoTime();
             for (int i = 0; i < 2000000; i++)
             {
                 sf += i * 1.5;
             }
-            System.out.println("Num sum 2e6 = " + sf + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("Num sum 2e6 = " + sf + "  [" + dt / 1000000L + " ms]");
             double mix = 0.0;
             t0 = System.nanoTime();
             for (int i = 0; i < 1000000; i++)
             {
                 mix = mix + i / 3.0 + i % 7;
             }
-            System.out.println("Mixed ops 1e6 = " + mix + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("Mixed ops 1e6 = " + mix + "  [" + dt / 1000000L + " ms]");
             int count = 0;
             t0 = System.nanoTime();
             for (int i = 0; i < 1000000; i++)
@@ -308,38 +307,51 @@ JavaBench
                     count++;
                 }
             }
-            System.out.println("bool mod 1e6 = " + count + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("bool mod 1e6 = " + count + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== DataTypes (Java) (end) ==========")
+        BenchCollector.recordJava("DataTypes", "5子项（块内 nanoTime us）", us)
     }
 
     # 6. StringBench：拼接 / 插值构建 / format / 比较 / 结尾校验
     static stringBench()
     {
         Console.println("========== StringBench (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             String s = "";
             long t0 = System.nanoTime();
             for (int i = 0; i < 10000; i++)
             {
                 s = s + "ab";
             }
-            System.out.println("concat 1e4  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("concat 1e4  [" + dt / 1000000L + " ms]");
             String t = "";
             t0 = System.nanoTime();
             for (int i = 0; i < 10000; i++)
             {
                 t = "v=" + i + " s=" + (i * 2);
             }
-            System.out.println("interp 1e4  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("interp 1e4  [" + dt / 1000000L + " ms]");
             String u = "";
             t0 = System.nanoTime();
             for (int i = 0; i < 10000; i++)
             {
                 u = String.format("%d-%d", i, i + 1);
             }
-            System.out.println("format 1e4  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("format 1e4  [" + dt / 1000000L + " ms]");
             int c = 0;
             t0 = System.nanoTime();
             for (int i = 0; i < 100000; i++)
@@ -349,20 +361,27 @@ JavaBench
                     c++;
                 }
             }
-            System.out.println("compare 1e5  count=" + c + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("compare 1e5  count=" + c + "  [" + dt / 1000000L + " ms]");
             System.out.println("concat endswith ab = " + s.equals(u));
+            $us <- acc / 1000L;
         }
         Console.println("========== StringBench (Java) (end) ==========")
+        BenchCollector.recordJava("StringBench", "4子项（块内 nanoTime us）", us)
     }
 
     # 7. RegExpBench：编译 / 命中 / 未命中 / 全量 / 替换 / 分组 / 反向引用 / UTF8
     static regExpBench()
     {
         Console.println("========== RegExpBench (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
             import java.util.regex.Matcher;
             import java.util.regex.Pattern;
+            long acc = 0L;
+            long dt = 0L;
             System.setOut(new java.io.PrintStream(new java.io.FileOutputStream(java.io.FileDescriptor.out), true, java.nio.charset.StandardCharsets.UTF_8));
             String chunk = "abc123 def456 ghi789 ";
             String text = "";
@@ -376,7 +395,9 @@ JavaBench
             {
                 Pattern.compile("([a-z]+)([0-9]+)");
             }
-            System.out.println("compile x2000  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("compile x2000  [" + dt / 1000000L + " ms]");
             Pattern re1 = Pattern.compile("def456");
             String hit = "";
             t0 = System.nanoTime();
@@ -385,7 +406,9 @@ JavaBench
                 Matcher m1 = re1.matcher(text);
                 hit = m1.find() ? m1.group() : "";
             }
-            System.out.println("search hit x500  [" + (System.nanoTime() - t0) / 1000000L + " ms]  value=" + hit);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("search hit x500  [" + dt / 1000000L + " ms]  value=" + hit);
             Pattern re2 = Pattern.compile("zzz999");
             boolean miss = true;
             t0 = System.nanoTime();
@@ -393,7 +416,9 @@ JavaBench
             {
                 miss = !re2.matcher(text).find();
             }
-            System.out.println("search miss x20  [" + (System.nanoTime() - t0) / 1000000L + " ms]  miss=" + miss);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("search miss x20  [" + dt / 1000000L + " ms]  miss=" + miss);
             Pattern re3 = Pattern.compile("[a-z]+");
             int words = 0;
             t0 = System.nanoTime();
@@ -406,7 +431,9 @@ JavaBench
                     words++;
                 }
             }
-            System.out.println("matchAll x5  [" + (System.nanoTime() - t0) / 1000000L + " ms]  count=" + words);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("matchAll x5  [" + dt / 1000000L + " ms]  count=" + words);
             Pattern re4 = Pattern.compile("[0-9]+");
             String rep = "";
             t0 = System.nanoTime();
@@ -414,7 +441,9 @@ JavaBench
             {
                 rep = re4.matcher(text).replaceAll("\u0023");
             }
-            System.out.println("replace x5  [" + (System.nanoTime() - t0) / 1000000L + " ms]  len=" + rep.length());
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("replace x5  [" + dt / 1000000L + " ms]  len=" + rep.length());
             Pattern re5 = Pattern.compile("([a-z]+)([0-9]+)");
             String g1 = "";
             String g2 = "";
@@ -428,7 +457,9 @@ JavaBench
                     g2 = m5.group(2);
                 }
             }
-            System.out.println("group search x200  [" + (System.nanoTime() - t0) / 1000000L + " ms]  g1=" + g1 + " g2=" + g2);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("group search x200  [" + dt / 1000000L + " ms]  g1=" + g1 + " g2=" + g2);
             String chunk2 = "abc abc def def ";
             String text2 = "";
             for (int i = 0; i < 2000; i++)
@@ -447,7 +478,9 @@ JavaBench
                     pairs++;
                 }
             }
-            System.out.println("backref matchAll x10  [" + (System.nanoTime() - t0) / 1000000L + " ms]  count=" + pairs);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("backref matchAll x10  [" + dt / 1000000L + " ms]  count=" + pairs);
             String chunk3 = "中文测试123 ";
             String text3 = "";
             for (int i = 0; i < 2000; i++)
@@ -462,17 +495,24 @@ JavaBench
                 Matcher m7 = re7.matcher(text3);
                 zh = m7.find() ? m7.group() : "";
             }
-            System.out.println("utf8 search x100  [" + (System.nanoTime() - t0) / 1000000L + " ms]  value=" + zh);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("utf8 search x100  [" + dt / 1000000L + " ms]  value=" + zh);
+            $us <- acc / 1000L;
         }
         Console.println("========== RegExpBench (Java) (end) ==========")
+        BenchCollector.recordJava("RegExpBench", "8子项（块内 nanoTime us）", us)
     }
 
     # 8. NQueens：n=11 单轮（2680）+ n=9 x10 轮（3520）
     static nQueens()
     {
         Console.println("========== NQueens (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             class NQB
             {
                 int solve(int n)
@@ -510,24 +550,33 @@ JavaBench
             NQB nqb = new NQB();
             long t0 = System.nanoTime();
             int solutions = nqb.solve(11);
-            System.out.println("nqueens(11) solutions = " + solutions + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("nqueens(11) solutions = " + solutions + "  [" + dt / 1000000L + " ms]");
             int total = 0;
             t0 = System.nanoTime();
             for (int r = 0; r < 10; r++)
             {
                 total += nqb.solve(9);
             }
-            System.out.println("nqueens(9) x10 = " + total + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("nqueens(9) x10 = " + total + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== NQueens (Java) (end) ==========")
+        BenchCollector.recordJava("NQueens", "n=11 单轮 + n=9 x10（块内 nanoTime us）", us)
     }
 
     # 9. Sieve：1e6 单轮（78498）+ 5e5 x5 轮（207690）
     static sieve()
     {
         Console.println("========== Sieve (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int primes = 0;
             long t0 = System.nanoTime();
             int[] comp1 = new int[1000001];
@@ -547,7 +596,9 @@ JavaBench
                     }
                 }
             }
-            System.out.println("sieve 1e6 primes = " + primes + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("sieve 1e6 primes = " + primes + "  [" + dt / 1000000L + " ms]");
             int total = 0;
             t0 = System.nanoTime();
             for (int r = 0; r < 5; r++)
@@ -572,17 +623,24 @@ JavaBench
                 }
                 total += cnt;
             }
-            System.out.println("sieve 5e5 x5 = " + total + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("sieve 5e5 x5 = " + total + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== Sieve (Java) (end) ==========")
+        BenchCollector.recordJava("Sieve", "1e6 单轮 + 5e5 x5（块内 nanoTime us）", us)
     }
 
     # 10. QuickSort：3e4 元素 x5 轮（LCG 数据生成不计时，逐轮计时累计）
     static quickSort()
     {
         Console.println("========== QuickSort (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             class QSB
             {
                 void sort(long[] a, int lo, int hi)
@@ -621,7 +679,7 @@ JavaBench
             int n = 30000;
             int rounds = 5;
             long[] arr = new long[n];
-            long totalMs = 0L;
+            long totalUs = 0L;
             long checksum = 0L;
             for (int r = 0; r < rounds; r++)
             {
@@ -633,7 +691,7 @@ JavaBench
                 }
                 long t0 = System.nanoTime();
                 qsb.sort(arr, 0, n - 1);
-                totalMs += (System.nanoTime() - t0) / 1000000L;
+                totalUs += (System.nanoTime() - t0) / 1000L;
                 for (int i = 0; i < n; i++)
                 {
                     checksum += arr[i];
@@ -646,17 +704,22 @@ JavaBench
                     }
                 }
             }
-            System.out.println("quicksort 3e4 x5  [" + totalMs + " ms]  checksum = " + checksum);
+            System.out.println("quicksort 3e4 x5  [" + totalUs + " us]  checksum = " + checksum);
+            $us <- totalUs;
         }
         Console.println("========== QuickSort (Java) (end) ==========")
+        BenchCollector.recordJava("QuickSort", "quicksort 3e4 x5（块内 nanoTime us）", us)
     }
 
     # 11. MatrixMul：100x100 x3 轮（填充不计时，Int64 校验和）
     static matrixMul()
     {
         Console.println("========== MatrixMul (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int n = 100;
             int rounds = 3;
             int[] a = new int[n * n];
@@ -686,23 +749,29 @@ JavaBench
                     }
                 }
             }
-            long elapsed = (System.nanoTime() - t0) / 1000000L;
+            long elapsed = (System.nanoTime() - t0) / 1000L;
+            acc += elapsed;
             long checksum = 0L;
             for (int i = 0; i < n * n; i++)
             {
                 checksum += c[i];
             }
-            System.out.println("matmul 100x100 x3  [" + elapsed + " ms]  checksum = " + checksum);
+            System.out.println("matmul 100x100 x3  [" + elapsed + " us]  checksum = " + checksum);
+            $us <- acc;
         }
         Console.println("========== MatrixMul (Java) (end) ==========")
+        BenchCollector.recordJava("MatrixMul", "matmul 100x100 x3（块内 nanoTime us）", us)
     }
 
     # 12. BinaryTree：depth12 x10 轮 + depth16 x2 轮（构建 + 求和）
     static binaryTree()
     {
         Console.println("========== BinaryTree (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             class BN
             {
                 long value;
@@ -743,7 +812,9 @@ JavaBench
                 BN root = btb.build(12, r + 1);
                 total += btb.checksum(root);
             }
-            System.out.println("tree depth12 x10 checksum = " + total + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("tree depth12 x10 checksum = " + total + "  [" + dt / 1000000L + " ms]");
             long total2 = 0L;
             t0 = System.nanoTime();
             for (int r = 0; r < 2; r++)
@@ -751,17 +822,24 @@ JavaBench
                 BN root = btb.build(16, r + 1);
                 total2 += btb.checksum(root);
             }
-            System.out.println("tree depth16 x2 checksum = " + total2 + "  [" + (System.nanoTime() - t0) / 1000000L + " ms]");
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("tree depth16 x2 checksum = " + total2 + "  [" + dt / 1000000L + " ms]");
+            $us <- acc / 1000L;
         }
         Console.println("========== BinaryTree (Java) (end) ==========")
+        BenchCollector.recordJava("BinaryTree", "depth12 x10 + depth16 x2（块内 nanoTime us）", us)
     }
 
     # 13. Mandelbrot：240x180 x3 轮（iterSum/inside 跨轮累加）
     static mandelbrot()
     {
         Console.println("========== Mandelbrot (Java) (start) ==========")
+        long us = 0L
         @java_hotspot()
         {
+            long acc = 0L;
+            long dt = 0L;
             int w = 240;
             int h = 180;
             int maxIter = 150;
@@ -795,8 +873,12 @@ JavaBench
                     }
                 }
             }
-            System.out.println("mandelbrot 240x180 x3  [" + (System.nanoTime() - t0) / 1000000L + " ms]  iterSum = " + iterSum + "  inside = " + insideCount);
+            dt = System.nanoTime() - t0;
+            acc += dt;
+            System.out.println("mandelbrot 240x180 x3  [" + dt / 1000000L + " ms]  iterSum = " + iterSum + "  inside = " + insideCount);
+            $us <- acc / 1000L;
         }
         Console.println("========== Mandelbrot (Java) (end) ==========")
+        BenchCollector.recordJava("Mandelbrot", "mandelbrot 240x180 x3（块内 nanoTime us）", us)
     }
 }

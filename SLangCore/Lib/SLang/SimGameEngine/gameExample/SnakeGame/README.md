@@ -4,16 +4,18 @@
 
 ```
 QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
-├ 键盘：SlangKeyWidget（slang_qt 后端新增子类）→ SIG_KEY_PRESSED/RELEASED
-│       （int 载荷 = Qt::Key 枚举值）→ SnakeGame.keyPressed/Released
-│       → C 输入状态表（sl_sim_engine_lib.sle_input_set_key，无 VM 状态）
+├ 键盘：SlangKeyWidget（slang_qt 子类）keyPress/Release → C++ 按键状态表
+│       （s_slqt_keys[256]，Qt::Key 压缩到槽）；SL 每帧轮询 QTHost.keyDown
+│       → SLang.QT.ffi_keyDown → slqt_key_down_sl 读状态表（跨模块回调不稳，
+│       输入主路径改为轮询 + 边沿检测；R 重开）
 ├ 帧循环：QTimer(16ms) → SnakeGame.frameTick（QTHost.startHost 内 exec 阻塞驱动）
-│   1) InputSystem 边沿读方向（防 180° 反向）+ 150ms 蛇步进
-│   2) 每步重建 3 组烘焙顶点（背景 256 格 / 蛇身 / 食物，各单色 MaterialData）
-│      → MeshRef.setVertices → 正交烘焙路径（C sle_ortho_bake → uploadMesh
-│        MESH_CUSTOM = SimSystemsTest S10 已验证形态）
+│   1) 轮询读方向键（防 180° 反向）+ 150ms 蛇步进；R 键重开
+│   2) 每帧重建 5 组烘焙顶点（棋盘格深/浅背景各 128 格 / 蛇身 / 蛇头高亮 /
+│      食物，各单色 MaterialData）→ MeshRef.setVertices → 正交烘焙路径
+│      （C sle_ortho_bake → uploadMesh MESH_CUSTOM = SimSystemsTest S10 形态）
 │   3) rs.frame → RGBA8 块 → QLabel.setPixmapRgba 上屏（scaledContents 随窗缩放）
-└ InputSystem（引擎）：C 状态表 down/pressed 双区 + endFrame 清边沿
+│   4) 状态栏 setInfo("Score / Len / GAME OVER")（QTHost.infoHandle QLabel）
+└ InputSystem（引擎）：endFrame 清边沿（键盘主路径已改轮询，C 输入表保留兼容）
 ```
 
 ## 文件
@@ -46,6 +48,14 @@ QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
    Qt6Core.dll 走错分支崩溃）；-Qt 版 Qt 依赖经静态/PATH 解析（QTTest 验证无需
    目录内 Qt6 dll）。运行真窗口需 -Qt 版 dll（build-slqt.ps1 -Qt）+ 可选
    deploy-qt.ps1 部署 Qt 运行时。
+10. **键盘输入走轮询，不走信号 trampoline**：SIG_KEY_PRESSED/RELEASED 经 FFI
+    回调跨模块重入 VM 不稳（补 `_dispatchIntCb` 映射仍不触发）；改为 C++ 侧
+    `s_slqt_keys` 状态表 + `slqt_key_down_sl` 导出，SL 每帧轮询 + 边沿检测。
+    按键需保持 ≥1 个帧周期（16ms）才被轮询捕获——真人按键天然满足；自动化
+    脚本瞬间 down+up 会被漏掉，须在中间 Sleep ≥50ms。
+11. **QLabel 纯色网格需多 MeshRef**：单 MeshRef 的多色顶点只取首色（材质单色），
+    故棋盘格深/浅、蛇身/蛇头/食物各建一个节点 + 独立 MaterialData，每帧
+    `setVertices` 各自分组顶点。
 
 ## 构建 / 运行
 
@@ -99,10 +109,28 @@ SnakeGame.exe` 是从 publish 时附加的 payload 加载模块，必须重新 `
   装配仅约 6 秒、本就在 20 秒内，故此前一直可用。
 - **发布跑不起来**：jsonc 原缺 `publish`/`qtRuntime` 段 → publish 只带 3 个
   Qt dll → 真窗口崩。补齐两段后 VSCode 右键「发布工程」产物开箱即跑。
+- **发布后窗口空白（有窗口无画面）**：三个独立坑叠加，均已修：
+  ① `QTHost` 原建两个 parent=0 顶层窗口且几何完全重合，空的那个盖住挂了
+  label 的那个 → 改为单窗口（SlangKeyWidget 作主窗口，label 为其子控件）。
+  ② **发布包缺 `sl_render_lib.dll`**：publish 只扫描「直接引用模块」导出
+  目录里的原生库，SLangRender 是 SimGameEngine 的传递依赖故被漏掉 →
+  渲染 FFI 静默失败、pixels 全 0（透明）→ QLabel 白底。修复=在 jsonc
+  `references` 里**显式列出 SLangRender**（path 指向其 module.slb），
+  publish 即把它连同 sl_render_lib.dll 打进 `lib\windows\`。
+  ③ 启动需约 25 秒（C VM 装配 29 个包 + 逐方法字节码预热），窗口出现后
+  画面才逐帧渲染；等待期间勿误判为卡死（VSCode 调试侧已有进度提示）。
 
 验证记录（2026-11-17）：debug-server 26.5 秒连上、收到 hello、`initialize`
-返回 ok:true；发布包 `SnakeGame.exe` 真窗口启动、60Hz 帧循环持续运行（2 秒
-CPU ≈1.7s），无崩溃无错误。此前 offscreen+stub 全链路冒烟亦通过。
+返回 ok:true；发布包 `SnakeGame.exe` 真窗口启动、60Hz 帧循环持续运行，
+pixels 左上采样 = (31,36,31,255) 深绿背景（非 0 透明），画面含蛇/食物像素，
+`lib\windows` 同时具备 sl_render_lib.dll + sl_sim_engine_lib.dll，无打点残留。
+此前 offscreen+stub 全链路冒烟亦通过。
+
+验证记录（2026-11-18，视觉/交互增强收尾）：源码清除 `lastKey` 诊断字段与
+状态栏 `Key:` 显示；`slang compile --format binary` + `slang publish` 重编重发
+均 EXIT=0，发布 exe 与 slb 时间戳刷新。真窗口截图确认：棋盘格深/浅背景、
+绿色蛇身/高亮蛇头、红色食物、状态栏 `Score / Len / GAME OVER` 全部正常，
+无 `Key:` 残留。键盘轮询方案（上一轮实证按 R 重置有效）本轮未改动逻辑。
 
 ## 玩法
 

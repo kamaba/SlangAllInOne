@@ -14,6 +14,7 @@ public class QTHost
     static Int64 appHandle = 0
     static Int64 keyWHandle = 0
     static Int64 labelHandle = 0
+    static Int64 infoHandle = 0
     static Int64 timerHandle = 0
 
     # key bridge (int payload = Qt::Key) -> engine input state table (C)
@@ -50,12 +51,18 @@ public class QTHost
         # 整个遮住 -> 截图只见空白标题窗，游戏画面永远不可见。
         keyWHandle = SLang.QT.ffi_keyWidgetCreate( 0 )
         SLang.QT.ffi_widgetSetText( keyWHandle, "SnakeGame - SimGameEngine + SLangQT" )
-        SLang.QT.ffi_widgetSetGeometry( keyWHandle, 80, 80, 500, 520 )
+        SLang.QT.ffi_widgetSetGeometry( keyWHandle, 80, 80, 500, 566 )
+        # info bar (top): score / status text; QLabel setText via widgetSetText
+        infoHandle = SLang.QT.ffi_labelCreate( keyWHandle )
+        SLang.QT.ffi_widgetSetGeometry( infoHandle, 10, 6, 480, 40 )
+        SLang.QT.ffi_widgetSetText( infoHandle, "Score: 0    Use arrow keys / R to restart" )
+        # game canvas (square, below info bar)
         labelHandle = SLang.QT.ffi_labelCreate( keyWHandle )
-        SLang.QT.ffi_widgetSetGeometry( labelHandle, 10, 10, 480, 480 )
+        SLang.QT.ffi_widgetSetGeometry( labelHandle, 10, 48, 480, 480 )
         SLang.QT.connect( keyWHandle, SLang.QT.SIG_KEY_PRESSED, keyPressHandler )
         SLang.QT.connect( keyWHandle, SLang.QT.SIG_KEY_RELEASED, keyReleaseHandler )
         SLang.QT.ffi_widgetShow( keyWHandle )
+        SLang.QT.ffi_widgetShow( infoHandle )
         SLang.QT.ffi_widgetShow( labelHandle )
         timerHandle = SLang.QT.timer( 16, false, frameHandler )
         SLang.QT.ffi_timerStart( timerHandle, 16 )
@@ -66,5 +73,19 @@ public class QTHost
     public static void blit( Int64 ptr, Int32 w, Int32 h )
     {
         SLang.QT.ffi_labelSetPixmapRgba( labelHandle, ptr, w, h )
+    }
+
+    # setInfo - update the top score/status bar text
+    public static void setInfo( string text )
+    {
+        SLang.QT.ffi_widgetSetText( infoHandle, text )
+    }
+
+    # keyDown - poll current pressed state (Qt::Key) via SLangQT FFI.
+    # Kept in QTHost (the only file importing SLangQT) to avoid the
+    # double namespace SLang import conflict in SnakeGame.sl.
+    public static Int32 keyDown( Int32 key )
+    {
+        ret SLang.QT.ffi_keyDown( key )
     }
 }

@@ -526,7 +526,34 @@ int64_t slqt_be_widget_create(int64_t p) { QWidget* parent = p ? asWidget(p) : n
  * SlangKeyWidget : QWidget，覆盖 keyPressEvent/keyReleaseEvent（无 moc，
  * 同 SlangCodeEdit 模式）；回调由 connect(SIG_KEY_PRESSED/RELEASED) 注入，
  * int 载荷 = Qt::Key 枚举值（QKeyEvent::key()）。StrongFocus + 点击聚焦
- * 才能收键；未设回调时透传 Qt 默认。 */
+ * 才能收键；未设回调时透传 Qt 默认。
+ * 另：按键状态表供游戏每帧轮询（slqt_be_key_down），绕开 FFI trampoline
+ * 重入 VM 的不可靠路径；键码 Qt::Key → 槽：字母/数字直接 <128，方向键
+ * 0x01000012..15 压到 128..131，Escape 132。 */
+static unsigned char s_slqt_keys[256];
+static int slqt_key_slot(int32_t key)
+{
+    if (key >= 0 && key < 128) return key;
+    switch (key)
+    {
+    case 0x01000012: return 128; /* Left */
+    case 0x01000013: return 129; /* Up */
+    case 0x01000014: return 130; /* Right */
+    case 0x01000015: return 131; /* Down */
+    case 0x01000000: return 132; /* Escape */
+    default: return -1;
+    }
+}
+static void slqt_key_set(int32_t key, int32_t down)
+{
+    int slot = slqt_key_slot(key);
+    if (slot >= 0) s_slqt_keys[slot] = down ? 1 : 0;
+}
+int32_t slqt_be_key_down(int32_t key)
+{
+    int slot = slqt_key_slot(key);
+    return slot >= 0 ? s_slqt_keys[slot] : 0;
+}
 class SlangKeyWidget : public QWidget
 {
 public:
@@ -540,11 +567,13 @@ public:
 protected:
     void keyPressEvent(QKeyEvent* e) override
     {
+        slqt_key_set((int32_t)e->key(), 1);
         if (pressCb) { pressCb(cbSlot, (int64_t)e->key()); e->accept(); return; }
         QWidget::keyPressEvent(e);
     }
     void keyReleaseEvent(QKeyEvent* e) override
     {
+        slqt_key_set((int32_t)e->key(), 0);
         if (releaseCb) { releaseCb(cbSlot, (int64_t)e->key()); e->accept(); return; }
         QWidget::keyReleaseEvent(e);
     }
@@ -602,9 +631,8 @@ int32_t slqt_be_label_set_pixmap(int64_t h, int64_t ptr, int32_t len) { (void)h;
  * scaledContents 让 label 随窗口缩放；qobject_cast 过滤非 QLabel 句柄。 */
 int32_t slqt_be_label_set_pixmap_rgba(int64_t h, int64_t ptr, int32_t w, int32_t hh)
 {
-    fprintf(stderr, "[QTPX] h=%lld ptr=%lld w=%d h=%d\n", (long long)h, (long long)ptr, w, hh); fflush(stderr);
     auto* o = qobject_cast<QLabel*>((QObject*)slqt_resolve(h));
-    if (!o || !ptr || w <= 0 || hh <= 0) { fprintf(stderr, "[QTPX] reject o=%p\n", (void*)o); fflush(stderr); return 0; }
+    if (!o || !ptr || w <= 0 || hh <= 0) return 0;
     QImage img((const uchar*)(uintptr_t)ptr, w, hh, (qsizetype)w * 4, QImage::Format_RGBA8888);
     if (img.isNull()) return 0;
     o->setPixmap(QPixmap::fromImage(img));
@@ -1128,9 +1156,7 @@ int64_t slqt_be_timer_create(int32_t ms, int32_t single, int64_t dispatchCb, int
     QTimer* t = new QTimer(nullptr);
     t->setSingleShot(single != 0);
     QObject::connect(t, &QTimer::timeout, [=]() {
-        fprintf(stderr, "[QTTIMER] fire cb=%lld slot=%lld\n", (long long)dispatchCb, (long long)slot); fflush(stderr);
         ((void (*)(int64_t))dispatchCb)(slot);
-        fprintf(stderr, "[QTTIMER] fire done\n"); fflush(stderr);
     });
     if (ms > 0) t->start(ms);
     return slqt_register(t);

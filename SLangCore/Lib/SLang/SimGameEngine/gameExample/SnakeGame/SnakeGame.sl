@@ -18,11 +18,17 @@ public class SnakeGame
 
     static RenderSystem rs = null
     static Scene scene = null
-    static MeshRef bgRef = null
+    static MeshRef bgDarkRef = null
+    static MeshRef bgLightRef = null
     static MeshRef snakeRef = null
+    # RHI 动态网格槽只有 4 个（SLR_CUSTOM_MESHES=4）；烘焙组必须 ≤4。
+    # 蛇头与蛇身共用同一材质组（同一颜色），避免第 5 组与棋盘深色组
+    # 落在同一 slot 互相覆盖 —— 那会让食物（第 5 组）顶点覆盖棋盘、
+    # 且食物因 z 相同被深度测试剔除而不显示。
     static MeshRef foodRef = null
     static Int64 pixels = 0
     static InputSystem input = null
+    static string lastInfo = ""
 
     static List<Int32> body = List<Int32>( 0 )
     static Int32 dirX = 1
@@ -36,41 +42,33 @@ public class SnakeGame
     static Int32 growLeft = 0
     static Int32 score = 0
 
+    # create a colored mesh node; returns its MeshRef so caller stores it.
+    # (method call NOT used as an argument anywhere - results land in locals)
+    static MeshRef makeNode( string name, Float32_3 color )
+    {
+        GameObject node = scene.createObject( name )
+        node.layer = 0
+        MeshRef mr = MeshRef()
+        mr.meshKind = 1
+        node.addComponent( mr )
+        MaterialRef mat = MaterialRef()
+        MaterialData md = MaterialData()
+        md.color = color
+        mat.material = md
+        node.addComponent( mat )
+        ret mr
+    }
+
     static void buildNodes()
     {
-        GameObject bgNode = scene.createObject( "SnakeBG" )
-        bgNode.layer = 0
-        bgRef = MeshRef()
-        bgRef.meshKind = 1
-        bgNode.addComponent( bgRef )
-        MaterialRef bmr = MaterialRef()
-        MaterialData bmd = MaterialData()
-        Float32_3 bcol = Float32_3( 0.12f, 0.14f, 0.12f )
-        bmd.color = bcol
-        bmr.material = bmd
-        bgNode.addComponent( bmr )
-        GameObject snNode = scene.createObject( "SnakeBody" )
-        snNode.layer = 0
-        snakeRef = MeshRef()
-        snakeRef.meshKind = 1
-        snNode.addComponent( snakeRef )
-        MaterialRef smr = MaterialRef()
-        MaterialData smd = MaterialData()
-        Float32_3 scol = Float32_3( 0.2f, 0.85f, 0.3f )
-        smd.color = scol
-        smr.material = smd
-        snNode.addComponent( smr )
-        GameObject fdNode = scene.createObject( "SnakeFood" )
-        fdNode.layer = 0
-        foodRef = MeshRef()
-        foodRef.meshKind = 1
-        fdNode.addComponent( foodRef )
-        MaterialRef fmr = MaterialRef()
-        MaterialData fmd = MaterialData()
-        Float32_3 fcol = Float32_3( 0.9f, 0.25f, 0.2f )
-        fmd.color = fcol
-        fmr.material = fmd
-        fdNode.addComponent( fmr )
+        Float32_3 cDark = Float32_3( 0.10f, 0.12f, 0.10f )
+        Float32_3 cLight = Float32_3( 0.17f, 0.20f, 0.17f )
+        Float32_3 cBody = Float32_3( 0.20f, 0.75f, 0.30f )
+        Float32_3 cFood = Float32_3( 0.95f, 0.30f, 0.25f )
+        bgDarkRef = makeNode( "BGDark", cDark )
+        bgLightRef = makeNode( "BGLight", cLight )
+        snakeRef = makeNode( "SnakeBody", cBody )
+        foodRef = makeNode( "SnakeFood", cFood )
     }
 
     static void spawnFood()
@@ -128,21 +126,52 @@ public class SnakeGame
         EngineFfi.libInputSetKey( key, 0 )
     }
 
+    static void updateInfo()
+    {
+        string text = "Score: " + score.toString() + "    Len: " + body.length.toString()
+        if !alive
+        {
+            text = text + "    GAME OVER - press R to restart"
+        }
+        if text != lastInfo
+        {
+            lastInfo = text
+            QTHost.setInfo( text )
+        }
+    }
+
+    # 轮询式按键边沿（绕开 SIG_KEY_* FFI trampoline 跨模块回调不稳）
+    static bool prevUp = false
+    static bool prevDn = false
+    static bool prevLf = false
+    static bool prevRt = false
+    static bool prevR = false
+
     static void frameTick()
     {
         Int32 kUp = InputSystem.KEY_UP
         Int32 kDn = InputSystem.KEY_DOWN
         Int32 kLf = InputSystem.KEY_LEFT
         Int32 kRt = InputSystem.KEY_RIGHT
-        if input.wasPressed( kUp )
-        {
-            if dirY != 1
-            {
-                pendX = 0
-                pendY = 0 - 1
-            }
-        }
-        if input.wasPressed( kDn )
+        Int32 kR = 82
+        Int32 dUp = QTHost.keyDown( kUp )
+        Int32 dDn = QTHost.keyDown( kDn )
+        Int32 dLf = QTHost.keyDown( kLf )
+        Int32 dRt = QTHost.keyDown( kRt )
+        Int32 dR = QTHost.keyDown( kR )
+        bool pUp = dUp == 1 && !prevUp
+        bool pDn = dDn == 1 && !prevDn
+        bool pLf = dLf == 1 && !prevLf
+        bool pRt = dRt == 1 && !prevRt
+        bool pR = dR == 1 && !prevR
+        prevUp = dUp == 1
+        prevDn = dDn == 1
+        prevLf = dLf == 1
+        prevRt = dRt == 1
+        prevR = dR == 1
+        # 屏幕 Y 经 RHI 行翻转：grid y 增大 = 屏幕向上。
+        # 故 ↑ 对应 dirY=+1（grid y 增），↓ 对应 dirY=-1；并禁止 180° 反向。
+        if pUp
         {
             if dirY != 0 - 1
             {
@@ -150,7 +179,15 @@ public class SnakeGame
                 pendY = 1
             }
         }
-        if input.wasPressed( kLf )
+        if pDn
+        {
+            if dirY != 1
+            {
+                pendX = 0
+                pendY = 0 - 1
+            }
+        }
+        if pLf
         {
             if dirX != 1
             {
@@ -158,7 +195,7 @@ public class SnakeGame
                 pendY = 0
             }
         }
-        if input.wasPressed( kRt )
+        if pRt
         {
             if dirX != 0 - 1
             {
@@ -166,8 +203,7 @@ public class SnakeGame
                 pendY = 0
             }
         }
-        Int32 kR = 82
-        if input.wasPressed( kR )
+        if pR
         {
             resetGame()
         }
@@ -186,6 +222,7 @@ public class SnakeGame
         Int32 w2 = OUTW
         Int32 h2 = OUTH
         QTHost.blit( pixels, w2, h2 )
+        SnakeGame.updateInfo()
         input.endFrame()
     }
 
@@ -244,7 +281,8 @@ public class SnakeGame
 
     static void rebuildVerts()
     {
-        List<Float32_3> bg = List<Float32_3>( 0 )
+        List<Float32_3> bd = List<Float32_3>( 0 )
+        List<Float32_3> bl = List<Float32_3>( 0 )
         List<Float32_3> sn = List<Float32_3>( 0 )
         List<Float32_3> fd = List<Float32_3>( 0 )
         Int32 g2 = GRID
@@ -254,11 +292,21 @@ public class SnakeGame
             Int32 gx = 0
             while gx < g2
             {
-                pushCell( bg, gx, gy )
+                Int32 checker = ( gx + gy ) % 2
+                if checker == 0
+                {
+                    pushCell( bd, gx, gy )
+                }
+                else
+                {
+                    pushCell( bl, gx, gy )
+                }
                 gx = gx + 1
             }
             gy = gy + 1
         }
+        # 蛇头与蛇身合并到同一顶点列表 —— 同材质同组，烘焙组总数 = 4
+        # （棋盘深/浅 + 蛇 + 食物），与 RHI 的 4 个动态槽一一对应。
         Int32 i = 0
         Int32 n = body.length
         while i < n
@@ -272,7 +320,8 @@ public class SnakeGame
         Int32 fx = foodIdx % GRID
         Int32 fy = foodIdx / GRID
         pushCell( fd, fx, fy )
-        bgRef.setVertices( bg )
+        bgDarkRef.setVertices( bd )
+        bgLightRef.setVertices( bl )
         snakeRef.setVertices( sn )
         foodRef.setVertices( fd )
     }

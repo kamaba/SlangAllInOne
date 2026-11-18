@@ -263,6 +263,7 @@ SLQT_API int64_t slqt_object_delete_sl(int64_t h) { slqt_be_object_delete(h); re
 SLQT_API int32_t slqt_object_is_valid_sl(int64_t h) { return slqt_be_object_is_valid(h); }
 SLQT_API int64_t slqt_widget_create_sl(int64_t p) { return slqt_be_widget_create(p); }
 SLQT_API int64_t slqt_keywidget_create_sl(int64_t p) { return slqt_be_keywidget_create(p); }
+SLQT_API int32_t slqt_key_down_sl(int32_t key) { return slqt_be_key_down(key); }
 SLQT_API void    slqt_widget_set_parent_sl(int64_t h, int64_t p) { slqt_be_widget_set_parent(h, p); }
 SLQT_API void    slqt_widget_set_text_sl(int64_t h, const char* t) { slqt_be_widget_set_text(h, t); }
 SLQT_API const char* slqt_widget_text_sl(int64_t h) { return slqt_be_widget_text(h); }

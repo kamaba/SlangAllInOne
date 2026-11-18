@@ -34,6 +34,8 @@ int32_t slqt_be_object_is_valid(int64_t h);
 int64_t slqt_be_widget_create(int64_t parent);
 /* 键盘接收面板（SlangKeyWidget；键事件由 connect(SIG_KEY_*) 注入回调） */
 int64_t slqt_be_keywidget_create(int64_t parent);
+/* 按键当前按下状态（0/1）；Qt::Key 键码，供每帧轮询，绕开 FFI trampoline */
+int32_t slqt_be_key_down(int32_t key);
 void    slqt_be_widget_set_parent(int64_t h, int64_t parent);
 void    slqt_be_widget_set_text(int64_t h, const char* t);
 const char* slqt_be_widget_text(int64_t h);

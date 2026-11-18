@@ -49,6 +49,11 @@
     { "path": "../../../../../SLangCore/Lib/Std", "name": "Std" },
     { "path": "../../../../../SLangCore/Lib/Math", "name": "Math" },
     { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
+    // SLangRender 是 SimGameEngine 的传递依赖（RenderSystem -> RenderPipeline），
+    // 必须直接列出：publish 只扫描「直接引用模块」导出目录里的原生库，
+    // 不沿传递依赖收集。缺这条 -> 发布包 lib\windows 没有 sl_render_lib.dll，
+    // 运行期渲染 FFI 静默失败、pixels 全 0 -> QLabel 白窗口。
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangRender/SLangRender.module.slb", "name": "SLangRender" },
     { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
   ],
   "struct": [

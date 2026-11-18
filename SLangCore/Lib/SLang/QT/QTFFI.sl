@@ -85,6 +85,11 @@ namespace SLang
         public static Int64 ffi_widgetCreate( Int64 parent ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_keywidget_create_sl" )
         public static Int64 ffi_keyWidgetCreate( Int64 parent ) { ret 0 }
+        # 2026-11-17 SnakeGame：按键当前按下态（0/1），供每帧轮询。
+        # 绕开 SIG_KEY_* 的 FFI trampoline 重入 VM 路径（该路径跨模块
+        # Function 回调不稳）；键码 = Qt::Key 枚举值。
+        @DllStaticImport( "slang_qt", "slqt_key_down_sl" )
+        public static Int32 ffi_keyDown( Int32 key ) { ret 0 }
         @DllStaticImport( "slang_qt", "slqt_widget_set_parent_sl" )
         public static void ffi_widgetSetParent( Int64 h, Int64 parent ) {}
         @DllStaticImport( "slang_qt", "slqt_widget_set_text_sl" )
@@ -552,6 +557,11 @@ namespace SLang
             if ( signalId == SIG_BROWSER_NAVIGATED ) { cb = _dispatchIntCb }
             if ( signalId == SIG_LIST_CONTEXT ) { cb = _dispatchIntCb }
             if ( signalId == SIG_TEXT_CONTEXT ) { cb = _dispatchIntCb }
+            # 2026-11-17 SnakeGame：键盘信号带 int 载荷（Qt::Key），必须走
+            # _dispatchInt（i64,i64->void）；漏映射会回退到无参 _dispatchVoid，
+            # C++ 侧 pressCb(slot,key) 两参调用被当单参、handler 无参调用静默失败。
+            if ( signalId == SIG_KEY_PRESSED ) { cb = _dispatchIntCb }
+            if ( signalId == SIG_KEY_RELEASED ) { cb = _dispatchIntCb }
             if ( cb == 0 ) { ret 0 }
             _handlers.add( handler )
             Int64 slot = ( _handlers.length - 1 ) as Int64

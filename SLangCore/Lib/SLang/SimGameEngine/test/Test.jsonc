@@ -1,7 +1,7 @@
 {
   "project": {
     "name": "Test",
-    "desc": "SimGameEngine unified test harness - fourteen suites (Engine/Batch/Collision/Module/Systems/Ffi/Physics/Anim/2D/Volume/Import/Gjk/Shape/Time) in one project, suite selection via Test.runSuite constant (0=all, 1..14=single)",
+    "desc": "SimGameEngine unified test harness - fifteen suites (Engine/Batch/Collision/Module/Systems/Ffi/Physics/Anim/2D/Volume/Import/Gjk/Shape/Time/SceneAdditive) in one project, suite selection via Test.runSuite constant (0=all, 1..15=single)",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 7,
@@ -46,6 +46,9 @@
       { "path": "suites/SimGjkTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimShapeTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimTimeTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+{ "path": "suites/SimSceneAdditiveTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+{ "path": "suites/SimInputTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimUICanvasTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "Test.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 10 }
     ]
   },

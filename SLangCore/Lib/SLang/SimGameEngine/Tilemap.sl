@@ -40,6 +40,10 @@ public class Tilemap extends Behaviour
     # doc/10 §6），-1 = 空）
     List<Int32> _tiles = List<Int32>( 0 )
 
+    # tile 属性表（按 tile 图集索引，2026-11-19 补全；bit0 = solid 实心/
+    # 阻挡，其余位业务自定义）。默认全 0 = 非实心；空格(-1)恒非实心。
+    List<Int32> _flags = List<Int32>( 0 )
+
     # 分配/重置格子（全部填 -1 = 空）
     public void resize( Int32 w, Int32 h )
     {
@@ -146,8 +150,20 @@ public class Tilemap extends Behaviour
     # 格子 (x,y) 的世界中心（挂载节点 worldPosition 为格子 (0,0) 左下角）
     public Float32_3 cellCenterWorld( Int32 x, Int32 y )
     {
+        Float32_3 origin = Tilemap.originOf( this )
+        Float32 fx = x.toFloat32()
+        Float32 fy = y.toFloat32()
+        Float32 halfSize = this.cellSize * 0.5f
+        Float32 cx = origin.x + fx * this.cellSize + halfSize
+        Float32 cy = origin.y + fy * this.cellSize + halfSize
+        ret Float32_3( cx, cy, origin.z )
+    }
+
+    # 挂载节点世界原点（格 (0,0) 左下角；无节点 = 世界原点）
+    static Float32_3 originOf( Tilemap tm )
+    {
         Float32_3 origin = Float32_3.zero()
-        GameObject ow = this.owner
+        GameObject ow = tm.owner
         if ow != null
         {
             Transform t = ow.transform
@@ -156,12 +172,93 @@ public class Tilemap extends Behaviour
                 origin = t.worldPosition()
             }
         }
-        Float32 fx = x.toFloat32()
-        Float32 fy = y.toFloat32()
-        Float32 halfSize = this.cellSize * 0.5f
-        Float32 cx = origin.x + fx * this.cellSize + halfSize
-        Float32 cy = origin.y + fy * this.cellSize + halfSize
-        ret Float32_3( cx, cy, origin.z )
+        ret origin
+    }
+
+    # ── world→cell 换算（俯视网格类游戏语义，doc/15 §9）────
+    # cell = floor((world - origin) / cellSize)；越界格也返回计算值
+    #（负数格 = 地图外，调用方用 inBounds 判定）；cellSize <= 0 返回 0。
+    public Int32 cellXAtWorld( Float32 wx )
+    {
+        Float32_3 origin = Tilemap.originOf( this )
+        Float32 cs = this.cellSize
+        if cs <= 0.0f
+        {
+            ret 0
+        }
+        Float32 fx = Mathf.floor( ( wx - origin.x ) / cs )
+        ret fx.toInt32()
+    }
+
+    public Int32 cellYAtWorld( Float32 wy )
+    {
+        Float32_3 origin = Tilemap.originOf( this )
+        Float32 cs = this.cellSize
+        if cs <= 0.0f
+        {
+            ret 0
+        }
+        Float32 fy = Mathf.floor( ( wy - origin.y ) / cs )
+        ret fy.toInt32()
+    }
+
+    # ── tile 属性表（按 tile 图集索引；bit0 = solid）────────
+    # 写入（静态承载扩容循环——Behaviour 子类循环坑，doc/10 §6）
+    public void setTileFlag( Int32 tileIndex, Int32 flags )
+    {
+        Tilemap.setTileFlagOf( this, tileIndex, flags )
+    }
+
+    public static void setTileFlagOf( Tilemap tm, Int32 tileIndex, Int32 flags )
+    {
+        if tileIndex < 0
+        {
+            ret
+        }
+        List<Int32> fl = tm._flags
+        Int32 n = fl.length
+        while n < tileIndex + 1
+        {
+            fl.add( 0 )
+            n = n + 1
+        }
+        fl.removeAt( tileIndex )
+        fl.insert( tileIndex, flags )
+    }
+
+    # 读取（越界/未登记 = 0 = 非实心）
+    public Int32 tileFlag( Int32 tileIndex )
+    {
+        ret Tilemap.tileFlagOf( this, tileIndex )
+    }
+
+    public static Int32 tileFlagOf( Tilemap tm, Int32 tileIndex )
+    {
+        if tileIndex < 0
+        {
+            ret 0
+        }
+        List<Int32> fl = tm._flags
+        Int32 n = fl.length
+        if tileIndex > n - 1
+        {
+            ret 0
+        }
+        Int32 v = fl[tileIndex]
+        ret v
+    }
+
+    # 格 (x,y) 是否实心：tile >= 0 且属性 bit0 == 1（空格恒非实心）
+    public bool isSolidAt( Int32 x, Int32 y )
+    {
+        Int32 t = this.getTile( x, y )
+        if t < 0
+        {
+            ret false
+        }
+        Int32 f = Tilemap.tileFlagOf( this, t )
+        Int32 bit = f & 1
+        ret bit == 1
     }
 
     # ── 顶点烘焙 ─────────────────────────────────────────

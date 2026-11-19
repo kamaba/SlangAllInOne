@@ -470,34 +470,9 @@ public class SimPhysicsTest
         check( rb.velocity.y < 0.0f - 3.0f, "PH14c tangent (y) component kept (vy=" + rb.velocity.y.toString() + ")" )
     }
 
-    # 临时诊断：PH1 逐步 y/速度/接触数（修复 33 项 fixedDt 回归用，验证后删）
-    static void debugPH1()
-    {
-        Application app = makeWorld()
-        makeGround( app.activeScene )
-        GameObject ball = makeBall( app.activeScene, "Ball", 0.0f, 5.0f, 0.5f )
-        Rigidbody rb = bodyOf( ball )
-        Int32 i = 0
-        while i < 300
-        {
-            app.tick( 0.0166667f )
-            if ( i >= 120 && i <= 155 ) || i == 40 || i == 60 || i == 70 || i > 290
-            {
-                Transform t = ball.transform
-                Float32_3 p = t.localPosition
-                Rigidbody rb2 = ball.getComponent<Rigidbody>()
-                bool same = rb2 == rb
-                Console.println( "[DBG] step=" + i.toString() + " y=" + p.y.toString() + " vy=" + rb.velocity.y.toString() + " mass=" + rb.mass.toString() + " rbSame=" + same.toString() + " bp=" + app.collisionSystem.broadphaseChecks.toString() + " nh=" + app.collisionSystem.narrowphaseHits.toString() + " ct=" + app.physicsSystem.contactCountLast.toString() )
-            }
-            i = i + 1
-        }
-        app.shutdown()
-    }
-
     public static void run()
     {
         Console.println( "=== SimPhysicsTest (SimGameEngine P4 physics smoke) ===" )
-        debugPH1()
         testFallAndRest()
         testBounceDecay()
         testFrameRateIndependence()

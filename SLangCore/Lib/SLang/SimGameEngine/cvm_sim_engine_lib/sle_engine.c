@@ -659,6 +659,9 @@ static int sle_input_slot(int32_t key)
     case 0x01000013: return 135; /* Up    (Qt::Key_Up    = 0x01000013) */
     case 0x01000014: return 136; /* Right (Qt::Key_Right = 0x01000014) */
     case 0x01000015: return 137; /* Down  (Qt::Key_Down  = 0x01000015) */
+    case 0x01000021: return 138; /* Ctrl  (Qt::Key_Control = 0x01000021) */
+    case 0x01000076: return 139; /* F12   (Qt::Key_F12    = 0x01000076) */
+    case 0x01000010: return 140; /* Home  (Qt::Key_Home   = 0x01000010) */
     default: return -1;
     }
 }
@@ -666,13 +669,17 @@ static int sle_input_slot(int32_t key)
 SLE_API int32_t sle_input_set_key(int32_t key, int32_t down)
 {
     int slot = sle_input_slot(key);
+    int prev;
     if (slot < 0)
     {
         return 0;
     }
+    prev = s_input_down[slot];
     s_input_down[slot] = down ? 1 : 0;
-    if (down)
+    if (down && !prev)
     {
+        /* 仅真按下沿置位：QT 键盘自动重复（按住连发 down=1）不去重会把
+         * wasPressed 边沿语义破坏成持续真 */
         s_input_pressed[slot] = 1;
     }
     return 1;
@@ -690,10 +697,85 @@ SLE_API int32_t sle_input_pressed(int32_t key)
     return slot >= 0 ? s_input_pressed[slot] : 0;
 }
 
+/* ── 鼠标状态表（与键盘同线程无锁；注入方 = QT 宿主桥每帧采样，查询方 =
+ * 游戏逻辑）。按钮号直接作槽位（1=左键 2=右键，0..7）；坐标 = 窗口客户
+ * 区像素（QT 全局事件过滤器口径）；滚轮累计，wheel_take 读后清零。 */
+#define SLE_MOUSE_BUTTONS 8
+static unsigned char s_mouse_down[SLE_MOUSE_BUTTONS];
+static unsigned char s_mouse_pressed[SLE_MOUSE_BUTTONS];
+static int32_t s_mouse_x = 0;
+static int32_t s_mouse_y = 0;
+static int32_t s_mouse_wheel = 0;
+
 SLE_API int32_t sle_input_end_frame(void)
 {
     memset(s_input_pressed, 0, sizeof(s_input_pressed));
+    memset(s_mouse_pressed, 0, sizeof(s_mouse_pressed));
     return 1;
+}
+
+SLE_API int32_t sle_input_set_mouse_button(int32_t button, int32_t down)
+{
+    int prev;
+    if (button < 0 || button >= SLE_MOUSE_BUTTONS)
+    {
+        return 0;
+    }
+    prev = s_mouse_down[button];
+    s_mouse_down[button] = down ? 1 : 0;
+    if (down && !prev)
+    {
+        s_mouse_pressed[button] = 1;
+    }
+    return 1;
+}
+
+SLE_API int32_t sle_input_set_mouse_pos(int32_t x, int32_t y)
+{
+    s_mouse_x = x;
+    s_mouse_y = y;
+    return 1;
+}
+
+SLE_API int32_t sle_input_set_mouse_wheel(int32_t delta)
+{
+    s_mouse_wheel += delta;
+    return 1;
+}
+
+SLE_API int32_t sle_input_mouse_button(int32_t button)
+{
+    if (button < 0 || button >= SLE_MOUSE_BUTTONS)
+    {
+        return 0;
+    }
+    return s_mouse_down[button];
+}
+
+SLE_API int32_t sle_input_mouse_pressed(int32_t button)
+{
+    if (button < 0 || button >= SLE_MOUSE_BUTTONS)
+    {
+        return 0;
+    }
+    return s_mouse_pressed[button];
+}
+
+SLE_API int32_t sle_input_mouse_x(void)
+{
+    return s_mouse_x;
+}
+
+SLE_API int32_t sle_input_mouse_y(void)
+{
+    return s_mouse_y;
+}
+
+SLE_API int32_t sle_input_mouse_wheel_take(void)
+{
+    int32_t v = s_mouse_wheel;
+    s_mouse_wheel = 0;
+    return v;
 }
 
 static void sle_support_diff(const float* A, int32_t na, const float* B, int32_t nb, const float* d, float* w)
@@ -2038,4 +2120,58 @@ SLE_API int32_t sle_shape_build(int32_t type, const float* params, int32_t param
         return -4; /* 内部计数漂移守卫 */
     }
     return w.v;
+}
+
+/* ============================================================================
+ * UI 图层叠加（doc/08 §8）—— 引擎层「相机输出 → 图层合成」计算核心。
+ * dst/layer 均为 top-down RGBA8（w*h*4），逐像素按 mode 混合：
+ *   mode 0 ALPHA     : out = layer*sa + dst*(1-sa), sa = layer.a * alpha
+ *   mode 1 ADD       : out.rgb = min(255, dst.rgb + layer.rgb*alpha)
+ *   mode 2 MULTIPLY  : out.rgb = dst.rgb * (1 - alpha + alpha*layer.rgb/255)
+ * alpha 钳制到 [0,1]。返回处理像素数（参数非法返回 0/-1）。
+ * ========================================================================= */
+SLE_API int32_t sle_layer_composite(uint8_t* dst, const uint8_t* layer,
+    int32_t count, float alpha, int32_t mode)
+{
+    int32_t i;
+    int32_t a;
+    if (!dst || !layer || count <= 0) return -1;
+    if (alpha < 0.0f) alpha = 0.0f;
+    if (alpha > 1.0f) alpha = 1.0f;
+    a = (int32_t)(alpha * 255.0f + 0.5f);
+    for (i = 0; i < count; ++i)
+    {
+        int32_t o = i * 4;
+        int32_t dr = dst[o], dg = dst[o+1], db = dst[o+2], da = dst[o+3];
+        int32_t lr = layer[o], lg = layer[o+1], lb = layer[o+2], la = layer[o+3];
+        int32_t sa = la * a / 255;
+        int32_t nr, ng, nb, na;
+        if (mode == 1)
+        {
+            nr = dr + lr * a / 255; ng = dg + lg * a / 255; nb = db + lb * a / 255;
+            if (nr > 255) nr = 255; if (ng > 255) ng = 255; if (nb > 255) nb = 255;
+        }
+        else if (mode == 2)
+        {
+            int32_t ia = 255 - a;
+            nr = dr * (ia + a * lr / 255) / 255;
+            ng = dg * (ia + a * lg / 255) / 255;
+            nb = db * (ia + a * lb / 255) / 255;
+        }
+        else
+        {
+            int32_t isa = 255 - sa;
+            nr = (lr * sa + dr * isa) / 255;
+            ng = (lg * sa + dg * isa) / 255;
+            nb = (lb * sa + db * isa) / 255;
+        }
+        na = sa + da * (255 - sa) / 255;
+        if (nr < 0) nr = 0; if (nr > 255) nr = 255;
+        if (ng < 0) ng = 0; if (ng > 255) ng = 255;
+        if (nb < 0) nb = 0; if (nb > 255) nb = 255;
+        if (na < 0) na = 0; if (na > 255) na = 255;
+        dst[o] = (uint8_t)nr; dst[o+1] = (uint8_t)ng;
+        dst[o+2] = (uint8_t)nb; dst[o+3] = (uint8_t)na;
+    }
+    return count;
 }

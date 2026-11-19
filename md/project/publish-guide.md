@@ -80,6 +80,11 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
     ├── MyApp.module.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
     ├── <Ref>.module.slb     # 引用 stage：moduleReferences 非系统库引用平铺拷入
     │                        #（C VM 引用回退链 basename 直查命中；如 SLangServer）
+    │                        # 含**插件 refModule**（MasmX64 / CPlusClang 等
+    │                        # 无名引用：moduleReferences 只有 uuid+path，
+    │                        # 按 path basename 反推模块名 stage）——缺件
+    │                        # 时 @tag 出通道包装（ChannelOutInt 等）运行时
+    │                        # 落到空体桩、时间/返回值全为 null
     ├── lib\                 # 关联件统一目录（布局规则 2026-10-22 平台细分）
     │   ├── Core.module.slb  # includeLibs=true：标准库 slb 平铺（平台无关）
     │   ├── Std.module.slb
@@ -117,8 +122,12 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 > 目录可承载不同平台运行体，运行时按 `sl_platform_dir_name()` 查当前平台
 > 子目录（平铺 lib\ 为兼容位）；③ **引用模块自动 stage**——moduleReferences
 > 非系统库引用平铺拷入发布目录（内嵌相对路径在发布布局必然错位，装载期
-> 静默跳过曾致 ServerP1Test 全线失效）。决策记录与机制 =
-> [package-layout.md](package-layout.md) §六。
+> 静默跳过曾致 ServerP1Test 全线失效）；**含插件 refModule 无名引用**——插件
+> 导出的 moduleReferences 条目仅有 uuid+path（无 name），发布侧按 path
+> basename 反推模块名（`../MasmX64/MasmX64.module` → `MasmX64`）后同样平铺
+> stage；漏 stage 时发布包内 `@tag` 出通道包装方法无方法体，`ChannelOutInt`
+> 类返回值静默变 null（BenchMark 发布包 ASM 列全空即此因，2026-11-19 修）。
+> 决策记录与机制 = [package-layout.md](package-layout.md) §六。
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
 

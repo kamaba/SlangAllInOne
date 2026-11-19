@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="snake_main" width="480" height="480">
+  <group name="menu">
+    <image name="m_panel" src="panel_bg" x="60" y="70" w="360" h="380" scale9="1"/>
+    <image name="m_title" src="t_title" x="176" y="82" w="128" h="57"/>
+    <image name="m_menu_0" src="btn" x="140" y="300" w="200" h="44" scale9="1"/>
+    <image name="m_t_start" src="t_start" x="195.5" y="306" w="89" h="32"/>
+    <image name="m_menu_1" src="btn" x="140" y="356" w="200" h="44" scale9="1"/>
+    <image name="m_t_rank" src="t_rank" x="205" y="362" w="70" h="32"/>
+    <image name="m_chk_sound" src="chk_on" x="110" y="414" w="24" h="24"/>
+    <image name="m_t_sound" src="t_sound" x="140" y="417" w="43" h="28"/>
+    <image name="m_chk_music" src="chk_on" x="240" y="414" w="24" h="24"/>
+    <image name="m_t_music" src="t_music" x="270" y="417" w="59" h="28"/>
+    <loader name="m_logo" file="logo.png" tw="96" th="96" x="76" y="130" w="88" h="88"/>
+    <go3d name="m_go3d" file="go3d.png" tw="128" th="128" x="250" y="124" w="150" h="150"/>
+    <graph name="m_g1" color="#3fa03f" x="76" y="234" w="88" h="10"/>
+    <graph name="m_g2" color="#c8a03f" x="76" y="252" w="66" h="10"/>
+    <graph name="m_g3" color="#c04040" x="76" y="270" w="44" h="10"/>
+  </group>
+  <group name="hud">
+    <image name="h_bar" src="panel_bg" x="0" y="0" w="480" h="44" scale9="1"/>
+    <image name="h_t_time" src="t_time" x="14" y="12" w="40" h="26"/>
+    <image name="h_t_score" src="t_score" x="200" y="12" w="40" h="26"/>
+    <image name="h_t_back" src="t_back" x="412.5" y="8" w="43" h="28"/>
+    <image name="h_menu_2" src="btn" x="398" y="6" w="72" h="32" scale9="1"/>
+    <image name="h_t_hint" src="t_hint" x="180" y="458" w="62" h="23"/>
+    <image name="h_t_paused" src="t_paused" x="202" y="222.5" w="76" h="35"/>
+    <image name="h_pause" src="panel_bg" x="140" y="190" w="200" h="100" scale9="1"/>
+  </group>
+  <group name="rank">
+    <image name="r_panel" src="panel_bg" x="40" y="30" w="400" h="420" scale9="1"/>
+    <image name="r_t_over" src="t_over" x="191" y="96" w="98" h="35"/>
+    <image name="r_t_title" src="t_ranktitle" x="202" y="52" w="76" h="35"/>
+    <image name="r_t_nodata" src="t_nodata" x="197.5" y="250" w="85" h="31"/>
+    <image name="r_t_c1" src="t_colname" x="78" y="116" w="43" h="28"/>
+    <image name="r_t_c2" src="t_score" x="150" y="118" w="40" h="26"/>
+    <image name="r_t_c3" src="t_time" x="280" y="118" w="40" h="26"/>
+    <image name="r_t_back" src="t_back" x="218.5" y="407" w="43" h="28"/>
+    <image name="r_menu_3" src="btn" x="190" y="402" w="100" h="38" scale9="1"/>
+  </group>
+</component>

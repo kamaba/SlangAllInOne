@@ -53,7 +53,10 @@ extern "C" {
 #define SLR_MAX_TEX     64
 #define SLR_MAX_CAMERAS 8
 #define SLR_MAX_LIGHTS  8    /* 管线光照槽（着色器消费首个平行光 + 首个聚光）*/
-#define SLR_CUSTOM_MESHES 4   /* 动态网格槽（对象 mesh = 4 + slot 路由）*/
+#define SLR_CUSTOM_MESHES 10  /* 动态网格槽（对象 mesh = 4 + slot 路由）；
+                                 2026-11-19 4→8：棋盘 4 烘焙组 + FairyGUI UI 槽；
+                                 8→10：FairyGUI v2 多纹理组（UI 槽 7..13 =
+                                 图集 + loader/graph/go3d 独立纹理组）*/
 #define SLR_CUSTOM_MAX_VERTS 4096
 
 /* clear_flags 位定义（相机清屏选项） */

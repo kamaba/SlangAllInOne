@@ -209,3 +209,50 @@ BasicHLSL11（MIT）供对照，运行时材质模型仍走已固化槽位。
 （首个参数为 `smoke` 走冒烟，否则走窗口）。
 
 构建与运行命令见 `gameExample/Test/README.md`。
+
+---
+
+## 6. Additive 子场景（v2.14，2026-11-19）
+
+Unity `LoadSceneMode.Additive` 语义落地（`SceneManager` 新增 API）：
+
+```sl
+SceneManager sm = SceneManager()
+sm.load( "assets/scenes/Main.scene.json" )          # 主场景（内容不释放）
+sm.loadAdditive( "assets/scenes/UiLayer.scene.json" )   # 并入子场景 1
+sm.loadAdditiveText( subJson )                       # 内存文本并入子场景 2
+sm.unloadAdditive( "UiLayer" )                       # 按名卸载，主场景不动
+```
+
+**实现模型（合并式）**：子场景经 `SceneImporter` 独立建树后，把其根节点
+**并入 activeScene**（`Scene.addRoot` + 子树 `_scene` 重指）。因此：
+
+- 主场景内容不释放、不卸载，节点继续可 `find`；
+- 子场景 Behaviour/物理/动画经 activeScene **自动参与同一帧循环**
+  （无需多场景 tick 调度）；
+- `unloadAdditive(name)` 走既有延迟销毁链（destroy 登记 →
+  `processDestroys` 收口），只销毁该子场景并入的根子树。
+
+**API 速查**：
+
+| API | 说明 |
+|---|---|
+| `loadAdditive(path)` / `loadAdditiveText(text)` | 并入子场景，返回其 Scene（失败 null + lastError） |
+| `unloadAdditive(name)` | 按名卸载；未装载名报错 |
+| `subSceneCount()` / `subSceneName(i)` / `isSubLoaded(name)` | 登记查询 |
+| `load(path)` / `loadText(text)` | **单模式**：替换 activeScene 并清空全部子场景登记（Unity 单模式语义） |
+
+**约束与已知边界**：
+
+1. 子场景名 = scene.json 的 `name` 字段，**同名单例**——重复加载报
+   `sub scene already loaded`（Unity 允许同名多实例，这里为按名卸载的
+   键唯一性收紧）。
+2. 子场景根节点并入后与主场景共享同一 NodeRegistry 命名空间——根节点
+   与主场景节点重名时后到者 `nodeId=0` 不入 C 哈希表（`find` 回退树内
+   按名扫描仍可用），建议子场景根节点名加前缀防撞。
+3. 子场景的 Script 组件走同一 `registerScript` 注册表（装载前注册）。
+4. `unload()` 整体关闭时子场景登记一并清空。
+
+**测试**：第 15 套 `SimSceneAdditiveTest`（并入/多子场景共存/同名守卫/
+按名卸载只销毁子场景节点/单模式清空登记），36 项全绿
+（`test/Test.sl` `runSuite=15` 单跑）。

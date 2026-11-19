@@ -47,6 +47,9 @@ public class RenderSystem
     # UI 叠加相机（层次 31，后画且只清深度）——让 FairyGUI UI 永远盖在
     # 3D 场景之上，无需改 C 层深度钳制规则。
     SLang.RenderCamera _uiCam = null
+    # FairyGUI UI 持久对象（submitUiMeshTex 按 slot 一对象；不入 _objIds
+    # 回收池）。_uiObjIds[slot-7]，2026-11-19 多纹理 UI 改造。
+    List<Int64> _uiObjIds = List<Int64>( 0 )
     public string lastError = ""
     # 对象句柄池（**只存 Int64**——跨模块对象存 SL List 会污染实例字段，
     # destroy 静默失败：RenderSystem 烘焙组实测，QT 轮同族坑）
@@ -142,6 +145,31 @@ public class RenderSystem
             ret 10.0f
         }
         ret a
+    }
+
+    # ── 无头像素尺寸登记（CameraRig2D 适配消费，2026-11-19）──
+    # 不经管线 resize（无 FBO 副作用），只登记 w/h 供 aspect/像素
+    # 完美缩放换算；宿主/测试在 init 之前或无管线时调用。
+    public void setPixelSize( Int32 w, Int32 h )
+    {
+        this.pixW = w
+        this.pixH = h
+    }
+
+    public Int32 pixelWidth()
+    {
+        ret this.pixW
+    }
+
+    public Int32 pixelHeight()
+    {
+        ret this.pixH
+    }
+
+    # aspectX 公开门面（跨类消费走本方法，不直调私有换算）
+    public Float32 aspectValue()
+    {
+        ret this.aspectX()
     }
 
     # 世界点 → 相机视图空间 (vx,vy,vz)。基向量与 engine sle_cam_basis 同式：
@@ -427,9 +455,11 @@ public class RenderSystem
                             Memory.writeF32( cptr, 8, 0.0f )
                             EngineFfi.libOrthoBake( cptr, this.viewSize, srcPtr, vn, dstPtr )
                         }
-                        # 槽 3 预留给 FairyGUI UI 层（submitUiMesh），场景
-                        # 烘焙组只在 0..2 轮转，避免两组互相覆盖网格。
-                        Int32 slot = this._bakeCursor % 3
+                        # 2026-11-19 第四轮根修：SLR_CUSTOM_MESHES 4→8 后，
+                        # 烘焙组恢复全量 %4 轮转（0..3）——原 %3 轮转下第 4 组
+                        # （食物）覆盖 slot 0 的网格（棋盘暗格整层丢失，实测
+                        # 帧网格只有浅格）；UI 网格固定用 slot 7。
+                        Int32 slot = this._bakeCursor % 4
                         this._bakeCursor = this._bakeCursor + 1
                         bool up = this._pipe.uploadMesh( slot, dstPtr, vn )
                         if up
@@ -586,13 +616,19 @@ public class RenderSystem
         ret ok
     }
 
-    # ── FairyGUI UI 网格提交（slot 3，与场景烘焙组 0..2 隔离）────
+    # ── FairyGUI UI 网格提交（slot 7，与场景烘焙组 0..3 隔离）────
     # vertsPtr 指向 pos2+uv2 交错块（stride 16B），顶点 xy 已是 NDC；
     # 单个 RenderObject 承载整张 UI 网格（图集同一纹理，按三角形顺序
-    # 绘制即层级顺序）。UI 对象独占 layer 31，由后画且只清深度的叠加
-    # 相机渲染，因此不受 3D 场景深度/天空影响。对象句柄登记进 _objIds，
-    # 随下次 sync() 回收；调用时机固定为 sync() 之后、frame() 之前。
-    void ensureUiCamera()
+    # 绘制即层级顺序）。持久对象：一次创建终身持有（不入 _objIds 回收
+    # 池），每帧只重传 mesh 槽内容。调用时机固定为 sync() 之后、
+    # frame() 之前。
+    # 2026-11-19 第五轮定案（layer 31 必须回归）：UI 全部 quad 顶点 z=0
+    # → 深度全同，主相机（layer 0）路径下第一个 quad 写深度后其余 quad
+    # 全被 GL_LESS 剔除 → 「只有面板底、无标题/按钮」。第四轮「layer 31
+    # 无 UI 像素」的结论是误诊（当时真因 = 池下标 bug 把静态 quad 清零）。
+    # layer 31 走 UI 叠加相机：camera_begin 每帧 depth-only 清屏 →
+    # 全部 quad 深度测试必过，按三角形顺序即层级顺序。
+    public void ensureUiCamera()
     {
         if this._uiCam != null
         {
@@ -617,28 +653,56 @@ public class RenderSystem
     public bool submitUiMesh( Int64 vertsPtr, Int32 vertCount,
         SLang.RenderTexture tex, Float32 r, Float32 g, Float32 b, Float32 a, Int32 queue )
     {
+        Int64 th = 0
+        if tex != null
+        {
+            th = tex.handle
+        }
+        ret this.submitUiMeshTex( 7, vertsPtr, vertCount, th, r, g, b, a, queue )
+    }
+
+    # 多纹理 UI 提交（2026-11-19 FairyGUI v2）：slot = 7..13（4+slot =
+    # mesh 槽，SLR_CUSTOM_MESHES=10）；每个 slot 一个持久对象（纹理/
+    # 颜色建时定，mesh 内容每帧重传）→ 按纹理分组的多对象 UI，管线按
+    # 对象序（提交序 = texIndex 序）绘制。
+    public bool submitUiMeshTex( Int32 slot, Int64 vertsPtr, Int32 vertCount,
+        Int64 texHandle, Float32 r, Float32 g, Float32 b, Float32 a, Int32 queue )
+    {
         if this._pipe == null || vertsPtr == 0 || vertCount <= 0
         {
             ret false
         }
-        bool up = this._pipe.uploadMesh( 3, vertsPtr, vertCount )
+        if slot < 7 || slot > 13
+        {
+            ret false
+        }
+        bool up = this._pipe.uploadMesh( slot, vertsPtr, vertCount )
         if !up
         {
             ret false
         }
         this.ensureUiCamera()
-        SLang.RenderObject ro = this._pipe.addObject( 4 + 3 )
-        if ro == null
+        Int32 ui = slot - 7
+        while this._uiObjIds.length <= ui
         {
-            ret false
+            this._uiObjIds.add( 0 )
         }
-        ro.setTexture( tex )
-        ro.setColor( r, g, b, a )
-        ro.setQueue( queue )
-        ro.setLayer( 31 )
-        ro.setPosition( 0.0f, 0.0f, 0.0f )
-        ro.setScale( 1.0f, 1.0f )
-        this._objIds.add( ro.handle )
+        Int64 oid = this._uiObjIds[ui]
+        if oid == 0
+        {
+            SLang.RenderObject ro = this._pipe.addObject( 4 + slot )
+            if ro == null
+            {
+                ret false
+            }
+            ro.setTextureHandle( texHandle )
+            ro.setColor( r, g, b, a )
+            ro.setQueue( queue )
+            ro.setLayer( 31 )
+            ro.setPosition( 0.0f, 0.0f, 0.5f )
+            ro.setScale( 1.0f, 1.0f )
+            this._uiObjIds[ui] = ro.handle
+        }
         ret true
     }
 
@@ -952,6 +1016,16 @@ public class RenderSystem
         ret this._pipe.renderFrame( this.resolveTime( time ), dstPtr )
     }
 
+    # 管线统计透传（诊断用；id = SLang.RenderPipeline.STAT_*）
+    public Int32 stat( Int32 id )
+    {
+        if this._pipe == null
+        {
+            ret 0 - 1
+        }
+        ret this._pipe.stat( id )
+    }
+
     # 帧尾回收本帧 RenderObject（句柄池由 Render 侧管理；按 Int64 句柄
     # 直接销毁——跨模块对象实例入 List 会污染字段，doc/10 §6）
     void recycle()
@@ -993,6 +1067,22 @@ public class RenderSystem
     {
         this.recycle()
         this.recycle2D()
+        Int32 ui = 0
+        Int32 un = this._uiObjIds.length
+        while ui < un
+        {
+            Int64 oid = this._uiObjIds[ui]
+            if oid != 0
+            {
+                if this._pipe != null
+                {
+                    SLang.RenderObject.destroyById( this._pipe.handle, oid )
+                }
+                this._uiObjIds[ui] = 0
+            }
+            ui = ui + 1
+        }
+        this._uiObjIds.clear()
         if this._uiCam != null
         {
             this._uiCam.destroy()

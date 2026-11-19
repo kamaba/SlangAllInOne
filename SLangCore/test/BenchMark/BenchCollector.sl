@@ -6,7 +6,7 @@ import Std
 # 数据模型：
 #   data BenchEntry -- 单条计时记录（语言类型 / 语言使用说明 / 优化选项 /
 #                      测试类型 / 测试参数 / 运行时间 us）
-#   BenchCollector  -- 静态 List<BenchEntry> 采集器：八个语言的 record
+#   BenchCollector  -- 静态 List<BenchEntry> 采集器：九个语言的 record
 #                      便捷入口（SL 原生逐段计时；其余语言均为块内自身
 #                      计时经出通道回传，不含引擎装载/编译部署开销）。
 #
@@ -115,6 +115,16 @@ BenchCollector
         BenchCollector.record( "C++", "C++ 惯用法（@cplus_clang 块，对象/STL/RAII）", "MSVC cl /O2 原生编译，块内 ns 精确计时（cplus_clang 插件）", testType, testParam, timeNs / 1000L )
     }
 
+    # ASM（x86-64 MASM）：参数为 SL 侧 nowMillis 包住整个 masm 块调用的耗时
+    #（纳秒，SL ms×1e6）——asm 出通道 $ns<-rax 回传本机实测拿到 0（报告 ASM 列
+    # 空），按约定改用 SL 计时。入口 /1000 折算 us；块内 QPC printf 原始 ns
+    # 仍见运行日志（精确算法耗时参考）。含 trampoline 调用开销，口径略异于
+    # C/C++ 净算法耗时。
+    static recordMasm( string testType, string testParam, long timeNs )
+    {
+        BenchCollector.record( "ASM", "x86-64 MASM 汇编（@masm_x64 块，手写指令）", "ml64 原生汇编（含 AVX2 SIMD 专列），SL 侧 nowMillis 整块计时（asm 出通道回传失效兜底）", testType, testParam, timeNs / 1000L )
+    }
+
     # ---------- 报告生成 ----------
 
     static generateReport()
@@ -157,7 +167,7 @@ BenchCollector
         md = md + "- 生成时间: " + dt.year.toString() + "-" + BenchCollector.pad2( dt.month ) + "-" + BenchCollector.pad2( dt.day )
         md = md + " " + BenchCollector.pad2( dt.hour ) + ":" + BenchCollector.pad2( dt.minute ) + ":" + BenchCollector.pad2( dt.second ) + nl
         md = md + "- 数据条目: " + BenchCollector._entries.length.toString() + " 条" + nl
-        md = md + "- 计时口径: 时间存储单位一律微秒；SL 为 SL 侧 nowMillis 毫秒计时（×1000 存 us）；其余语言均为块内自身计时经出通道回传（不含引擎装载/编译部署开销）——C/C++ QPC/steady_clock ns（/1000 存 us，原始 ns 见运行日志）、CSharp Stopwatch（us）、Java System.nanoTime（ns /1000 折 us）、JS QuickJS Date.now（ms ×1000 存 us，粒度毫秒）、TS performance.now（亚毫秒 ms ×1000 折 us）、Python perf_counter_ns（块内 //1000 回传 us，原始 ns 见运行日志）" + nl
+        md = md + "- 计时口径: 时间存储单位一律微秒；SL 为 SL 侧 nowMillis 毫秒计时（×1000 存 us）；C/C++/CSharp/Java/JS/TS/Python 为块内自身计时经出通道回传（不含引擎装载/编译部署开销）——C/C++ QPC/steady_clock ns（/1000 存 us，原始 ns 见运行日志）、CSharp Stopwatch（us）、Java System.nanoTime（ns /1000 折 us）、JS QuickJS Date.now（ms ×1000 存 us，粒度毫秒）、TS performance.now（亚毫秒 ms ×1000 折 us）、Python perf_counter_ns（块内 //1000 回传 us，原始 ns 见运行日志）；ASM 因出通道回传失效改用 SL 侧 nowMillis 整块计时（含 trampoline 开销，ms×1000 存 us，块内 QPC printf 原始 ns 见运行日志）" + nl
         md = md + "- 单元格显示自适应单位（us 值过大时折算 ms），附录保留原始微秒值" + nl
         md = md + "- C/C++/CSharp/Java/JavaScript/TypeScript/Python 均为块内自身计时；CSharp/Java/TypeScript 首轮块内另含运行时 JIT/解释预热" + nl + nl
 
@@ -168,6 +178,7 @@ BenchCollector
         md = md + BenchCollector.langRow( "SL" )
         md = md + BenchCollector.langRow( "C" )
         md = md + BenchCollector.langRow( "C++" )
+        md = md + BenchCollector.langRow( "ASM" )
         md = md + BenchCollector.langRow( "CSharp" )
         md = md + BenchCollector.langRow( "Java" )
         md = md + BenchCollector.langRow( "JavaScript" )
@@ -177,8 +188,8 @@ BenchCollector
 
         # 多语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和，us 域）
         md = md + "## 耗时对比总表（自适应单位，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
-        md = md + "| 测试类型 | 参数 | SL | C | C++ | CSharp | Java | JavaScript | JavaScriptV8 | Python |" + nl
-        md = md + "|----------|------|----|---|-----|--------|------|------------|--------------|--------|" + nl
+        md = md + "| 测试类型 | 参数 | SL | C | C++ | ASM | CSharp | Java | JavaScript | JavaScriptV8 | Python |" + nl
+        md = md + "|----------|------|----|---|-----|-----|--------|------|------------|--------------|--------|" + nl
         List<BenchEntry> rows = BenchCollector.collectRows()
         for i = 0, i < rows.length, i++
         {
@@ -193,6 +204,7 @@ BenchCollector
             md = md + " " + BenchCollector.timeCell( row.testType, "SL" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "C" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "C++" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "ASM" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "CSharp" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "Java" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |"

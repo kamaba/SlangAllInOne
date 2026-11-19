@@ -47,7 +47,19 @@
       // SimGameEngine（传递 SLangRender 的 SLang namespace）与 SLangQT 的
       // import 平面「SLang」重名冲突（MetaCoreMemberNameImportConflict）
       { "path": "QTHost.sl", "group": "game", "tag": "game", "ignore": false, "priority": 0 },
-      { "path": "SnakeGame.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 }
+      { "path": "SnakeGame.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 },
+      // SnakeSfx.sl 独立解析（import 平面仅 SLangAudio），音效一次性播放 +
+      // 资源目录探测；wav 资源由 make-sfx.ps1 生成到 sfx\
+      { "path": "SnakeSfx.sl", "group": "game", "tag": "game", "ignore": false, "priority": 2 },
+      // SnakeFairy.sl：FairyGUI 界面层（菜单/HUD/排行榜；依赖引擎 ui/ 动态
+      // quad API + QTHost 鼠标门面；fairyui\ 资源由 make-fairyui.ps1 生成）
+      { "path": "SnakeFairy.sl", "group": "game", "tag": "game", "ignore": false, "priority": 3 },
+      // SceneInspector.sl：场景层级检视器（Ctrl+F12；QTreeWidget 路径树 +
+      // QTextEdit 详情，选择轮询式；QT 操作全经 QTHost 包装）
+      { "path": "SceneInspector.sl", "group": "game", "tag": "game", "ignore": false, "priority": 4 },
+      // Go3DDemo.sl：GoWrapper 等价演示（CPU 软渲染旋转立方体 → go3d
+      // 元素纹理原位更新；绑定时引用 pkg/RenderTexture/Mathf）
+      { "path": "Go3DDemo.sl", "group": "game", "tag": "game", "ignore": false, "priority": 5 }
     ]
   },
   "references": [
@@ -62,12 +74,20 @@
     // 不沿传递依赖收集。缺这条 -> 发布包 lib\windows 没有 sl_render_lib.dll，
     // 运行期渲染 FFI 静默失败、pixels 全 0 -> QLabel 白窗口。
     { "path": "D:/project/lang/SlangAllInOne/out/export/SLangRender/SLangRender.module.slb", "name": "SLangRender" },
+    // SLangAudio 直接引用（SnakeSfx 消费 namespace Audio）：除跨模块静态
+    // 形态约束外，publish 只按「直接引用模块」导出目录收集原生库 ——
+    // 缺这条发布包 lib\windows 没有 sl_audio_lib.dll，音效静默失效
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangAudio/SLangAudio.module.slb", "name": "SLangAudio" },
     { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
   ],
   "struct": [
     // 类为根级（源文件无 namespace 块——jsonc namespace 包装会导致方法不注册）
     { "class": "SnakeGame" },
-    { "class": "QTHost" }
+    { "class": "QTHost" },
+    { "class": "SnakeSfx" },
+    { "class": "SnakeFairy" },
+    { "class": "SceneInspector" },
+    { "class": "Go3DDemo" }
   ],
   "export": {
     "moduleName": "SnakeGame",

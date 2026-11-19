@@ -65,6 +65,12 @@ SLE_API int32_t sle_node_active(int64_t id);
 /* ── Volume 参数栈混合（计算核心；块布局与语义见 sle_engine.c 实现）── */
 SLE_API int32_t sle_volume_blend(const float* in, int32_t count, float* out);
 
+/* ── UI 图层叠加（计算核心；top-down RGBA8，doc/08 §8）──
+ * dst/layer: w*h*4 字节；count = w*h；mode 0=ALPHA 1=ADD 2=MULTIPLY；
+ * alpha 钳制 [0,1]；返回处理像素数，参数非法 -1。 */
+SLE_API int32_t sle_layer_composite(uint8_t* dst, const uint8_t* layer,
+    int32_t count, float alpha, int32_t mode);
+
 /* ── GJK 凸点集相交（计算核心；float3 紧凑块，语义见 sle_engine.c）── */
 SLE_API int32_t sle_points_transform(const float* m, const float* src, int32_t count, float* dst);
 SLE_API int32_t sle_gjk_intersect(const float* a, int32_t na, const float* b, int32_t nb);
@@ -87,6 +93,18 @@ SLE_API int32_t sle_input_set_key(int32_t key, int32_t down);
 SLE_API int32_t sle_input_down(int32_t key);
 SLE_API int32_t sle_input_pressed(int32_t key);
 SLE_API int32_t sle_input_end_frame(void);
+
+/* ── 鼠标状态表（2026-11-19 统一输入桥）：按钮号 1=左 2=右（0..7 槽），
+ * 坐标 = 窗口客户区像素，滚轮累计 wheel_take 读后清零；end_frame 同步
+ * 清鼠标按下边沿。 */
+SLE_API int32_t sle_input_set_mouse_button(int32_t button, int32_t down);
+SLE_API int32_t sle_input_set_mouse_pos(int32_t x, int32_t y);
+SLE_API int32_t sle_input_set_mouse_wheel(int32_t delta);
+SLE_API int32_t sle_input_mouse_button(int32_t button);
+SLE_API int32_t sle_input_mouse_pressed(int32_t button);
+SLE_API int32_t sle_input_mouse_x(void);
+SLE_API int32_t sle_input_mouse_y(void);
+SLE_API int32_t sle_input_mouse_wheel_take(void);
 
 /* ── 透视相机投影（doc/13 §2.1 专项；cam9 = eye3/yaw/pitch/tanHalf/aspect/
  *    near/far；dst 每点 8 float [ndcX,ndcY,depth01,visible,viewZ,projX,projY,0]）── */

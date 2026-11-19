@@ -469,9 +469,16 @@ internal static class PublishCommand
                 + Path.DirectorySeparatorChar;
             foreach (var r in refsEl.EnumerateArray())
             {
-                if (!r.TryGetProperty("name", out var nameEl))
-                    continue;
-                string name = nameEl.GetString() ?? "";
+                string name = r.TryGetProperty("name", out var nameEl)
+                    ? (nameEl.GetString() ?? "")
+                    : "";
+                /* 插件 refModule 引用（如 `../MasmX64/MasmX64.module`）导出时
+                 * 只有 uuid+path、无 name——不 stage 则发布包里缺该模块，
+                 * 其包装方法在运行时落到主模块里的空体桩（`@tag` 出通道
+                 * 包装如 ChannelOutInt 返回 null，报表时间列全空；BenchMark
+                 * 发布实测 ASM 列缺失）。按 path basename 反推模块名补齐。 */
+                if (name.Length == 0)
+                    name = InferReferenceNameFromPath(r);
                 if (name.Length == 0 || SystemModuleNames.Contains(name) || repoRoot == null)
                     continue;
                 /* spm 包形态引用（QTTest 实录 2026-11-02）：引用 path 指进工程
@@ -602,6 +609,29 @@ internal static class PublishCommand
             /* stage 失败不阻断主流程（C VM 装载期按回退链解析，可诊断） */
             Console.WriteLine("[WARN] reference staging failed: " + ex.Message);
         }
+    }
+
+    /// <summary>未命名引用（插件 refModule：module.json 只导出 uuid+path）
+    /// 按 path basename 反推模块名：`../MasmX64/MasmX64.module` → `MasmX64`。</summary>
+    static string InferReferenceNameFromPath(JsonElement r)
+    {
+        if (!r.TryGetProperty("path", out var pathEl))
+            return "";
+        string? raw = pathEl.GetString();
+        if (string.IsNullOrWhiteSpace(raw))
+            return "";
+        string file = raw.Replace('\\', '/').TrimEnd('/');
+        int slash = file.LastIndexOf('/');
+        string baseName = slash >= 0 ? file[(slash + 1)..] : file;
+        if (baseName.EndsWith(".module", StringComparison.OrdinalIgnoreCase))
+            baseName = baseName[..^".module".Length];
+        else
+        {
+            int dot = baseName.LastIndexOf('.');
+            if (dot > 0)
+                baseName = baseName[..dot];
+        }
+        return baseName;
     }
 
     /// <summary>字符串直给 lib 插件的 cvm 运行位 stage（Step 7b）。遍历工程

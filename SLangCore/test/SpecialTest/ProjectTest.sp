@@ -40,7 +40,9 @@ Project
         # labelExec 固定原型派发；通道 MS x64 ABI 寄存器直传）。
         # 前置：先跑 plugin\masm_x64\cvm\build-masm-x64.ps1；MSVC 工具集
         #（cl + ml64 同目录）本机可用。
-        #MasmX64Test.fun();
+        MasmX64Test.fun();
+
+
 
         # PythonTest：@python_cpython 块（Front 导出期免编译部署 .py 到插件
         # package\windows\pysrc\，CVM 内嵌 CPython 运行期 import 执行）。

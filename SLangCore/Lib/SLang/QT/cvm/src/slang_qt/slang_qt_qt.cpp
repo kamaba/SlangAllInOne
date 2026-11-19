@@ -549,6 +549,9 @@ static int slqt_key_slot(int32_t key)
     case 0x01000230: return 133; /* Alt (Qt::Key_Alt) */
     case 0x01000020: return 134; /* Shift */
     case 0x01000021: return 135; /* Control */
+    case 0x01000004: return 136; /* Return/Enter (Qt::Key_Return) */
+    case 0x01000076: return 137; /* F12 (Qt::Key_F12) */
+    case 0x01000010: return 138; /* Home (Qt::Key_Home = 0x01000010) */
     default: return -1;
     }
 }

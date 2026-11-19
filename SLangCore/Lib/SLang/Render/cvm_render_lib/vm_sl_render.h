@@ -137,6 +137,7 @@ SLR_API int     slr_render_frame(int64_t ctx, float r, float g, float b, int64_t
 /* ================= v2：纹理（全局注册表） ================= */
 /* SL 传入 top-down RGBA8 像素块（内部翻行为 GL bottom-up 上传） */
 SLR_API int64_t slr_texture_create_rgba(int w, int h, int64_t data_ptr);
+SLR_API int     slr_texture_update_rgba(int64_t tex, int64_t data_ptr);
 /* cubemap：faces6 = 6 面 RGBA8 top-down 连续块（每面 w*h*4，面序
  * +X,-X,+Y,-Y,+Z,-Z），返回句柄（0 = 失败；d3d11/vk 后端不支持） */
 SLR_API int64_t slr_texture_create_cube(int w, int h, int64_t data_ptr);

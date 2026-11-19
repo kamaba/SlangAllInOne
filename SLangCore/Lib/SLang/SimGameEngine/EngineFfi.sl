@@ -217,9 +217,76 @@ public class EngineFfi
         ret 0 - 1
     }
 
-    @DllStaticImport( "sl_sim_engine_lib", "sle_input_end_frame", "i32->i32" )
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_end_frame", "->i32" )
     public static Int32 libInputEndFrame()
     {
         ret 0 - 1
+    }
+
+    # ── 鼠标状态表（2026-11-19 统一输入桥；QT 宿主桥注入/游戏查询）────
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_set_mouse_button", "i32,i32->i32" )
+    public static Int32 libInputSetMouseButton( Int32 button, Int32 down )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_set_mouse_pos", "i32,i32->i32" )
+    public static Int32 libInputSetMousePos( Int32 x, Int32 y )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_set_mouse_wheel", "i32->i32" )
+    public static Int32 libInputSetMouseWheel( Int32 delta )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_mouse_button", "i32->i32" )
+    public static Int32 libMouseButton( Int32 button )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_mouse_pressed", "i32->i32" )
+    public static Int32 libMousePressed( Int32 button )
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_mouse_x", "->i32" )
+    public static Int32 libMouseX()
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_mouse_y", "->i32" )
+    public static Int32 libMouseY()
+    {
+        ret 0 - 1
+    }
+
+    @DllStaticImport( "sl_sim_engine_lib", "sle_input_mouse_wheel_take", "->i32" )
+    public static Int32 libMouseWheelTake()
+    {
+        ret 0 - 1
+    }
+
+    # ── UI 图层叠加（doc/08 §8；计算核心 sle_layer_composite）───────
+    # dst/layer 为 top-down RGBA8 块（count=w*h 像素）；mode 0=ALPHA
+    # 1=ADD 2=MULTIPLY；返回处理像素数，绑定失败兜底 -1。
+    @DllStaticImport( "sl_sim_engine_lib", "sle_layer_composite", "i64,i64,i32,f32,i32->i32" )
+    public static Int32 libLayerComposite( Int64 dstPtr, Int64 layerPtr, Int32 count, Float32 alpha, Int32 mode )
+    {
+        ret 0 - 1
+    }
+
+    # ── SLangRender 纹理直绑（GoWrapper 通路，2026-11-19）──────────
+    # dll-name 直绑绕开跨模块静态 mangle 限制（i64/ptr 参数不可走
+    # 跨模块静态）——dll 是 sl_render_lib（渲染库）非引擎库。
+    @DllStaticImport( "sl_render_lib", "slr_texture_update_rgba", "i64,ptr->bool" )
+    public static bool libTextureUpdateRgba( Int64 tex, Int64 dataPtr )
+    {
+        ret false
     }
 }

@@ -906,9 +906,13 @@ static void gl_set_state(int transparent)
     else
     {
         p_glDisable(GL_BLEND);
-        p_glEnable(GL_DEPTH_TEST);
-        p_glDepthFunc(GL_LESS);
-        p_glDepthMask(GL_TRUE);
+        /* 2026-11-19 根修：本引擎 ortho 管线的投影 z 行为 (0,0,-1,0) 且
+         * 顶点 z 恒为 0（bake 顶点无 z 分量、物体 z 在模型平移里但被顶
+         * 点 z=0 归零）→ 所有物体 gl_Position.z=0、深度全同（0.5），
+         * 深度测试下「先画者赢」其余全被 GL_LESS 剔除（蛇/食物/暗格消
+         * 失的根因）。2D 画家算法设计下层级 = 绘制序，关闭深度测试。 */
+        p_glDisable(GL_DEPTH_TEST);
+        p_glDepthMask(GL_FALSE);
     }
 }
 
@@ -963,6 +967,7 @@ static void gl_draw_item(int prog, int slot, int mesh, int instance_count)
         return;
     }
     if (instance_count < 1) instance_count = 1;
+    /* TEMP-DIAG: 每次绘制调用（棋盘排查；确认后移除） */
     if (slot < 0 || slot + instance_count > 64)
     {
         set_error_detail(SLR_E_BAD_PARAM, "instance slots exceed PerDraw bounds");
@@ -973,7 +978,11 @@ static void gl_draw_item(int prog, int slot, int mesh, int instance_count)
         prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
         prog >= SLR_PROG_GEN_BASE)
         p_glUniform1i(s_uni[prog].obj_index, slot);
-    /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源 */
+    /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源。
+     * 注意：不得在此重设采样器 uniform——FLAT 变体的 s_uni[].tex 未
+     * 查询（=-1 语义但静态初始 0），误设会把 location 0（恰为
+     * uObjIndex）覆盖成 1，所有物体颜色全变成 slot 1 的颜色
+     * （2026-11-19 SnakeGame 棋盘变亮绿的根因）。 */
     p_glBindVertexArray(m->vao);
     if (instance_count > 1)
         p_glDrawArraysInstanced(GL_TRIANGLES, 0, m->count, instance_count);
@@ -1257,6 +1266,7 @@ static int load_all_gl_procs(void)
     LOAD_GL(glLinkProgram);
     LOAD_GL(glGetProgramiv);
     LOAD_GL(glGetProgramInfoLog);
+    LOAD_GL(glGetUniformiv);
     LOAD_GL(glDeleteProgram);
     LOAD_GL(glUseProgram);
     LOAD_GL(glGetUniformLocation);

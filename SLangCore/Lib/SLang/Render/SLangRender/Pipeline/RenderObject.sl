@@ -136,6 +136,16 @@ namespace SLang
             ret RenderObject.ffiSetTexture( this._pipe, this._id, h )
         }
 
+        # 句柄直设（多纹理 UI：FairyPackage 纹理组句柄，2026-11-19）
+        public bool setTextureHandle( Int64 tex )
+        {
+            if this._pipe == 0 || this._id == 0
+            {
+                ret false
+            }
+            ret RenderObject.ffiSetTexture( this._pipe, this._id, tex )
+        }
+
         public bool setAnimated( Int32 mode, Float32 speed )
         {
             if this._pipe == 0 || this._id == 0

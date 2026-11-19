@@ -4,7 +4,7 @@
     "desc": "SLang game engine scene/node/component layer - GameObject tree + Transform(TRS) + Scene + Behaviour lifecycle + headless Application frame loop; batching submits to SLangRender (see doc/)",
     "mainVersion": 0,
     "subVersion": 1,
-    "buildVersion": 6,
+    "buildVersion": 7,
     "buildSubVersion": 0
   },
   "source": {
@@ -92,6 +92,11 @@
       { "path": "SortingLayers.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "SpriteRenderer.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "Tilemap.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- P7 2D 游戏类型支撑（2026-11-19，doc/15 §9）：宽高比适配 rig
+      //      + 视差层 + tile 碰撞生成（依赖 Tilemap/RenderSystem，同组靠后）----
+      { "path": "CameraRig2D.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "ParallaxLayer.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "TileColliderBaker.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       // ---- P8 Volume（doc/14）：混合数学在 C（sle_volume_blend），
       //      SL 侧只做数据类与组块/解块（依赖序：Profile/Stack -> Volume ->
       //      system/VolumeSystem -> RenderSystem.applyPost）----
@@ -119,6 +124,8 @@
       { "path": "system/UISystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 27 },
       { "path": "system/RenderSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 28 },
       { "path": "system/VolumeSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 28 },
+      // UICanvasSystem 依赖 RenderSystem（configure 写管线相机）+ EngineFfi（C 叠加核心）
+      { "path": "system/UICanvasSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 28 },
       { "path": "system/AudioSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 29 },
       { "path": "system/Systems.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 30 },
       // ---- C99 原生库绑定与封装（sl_sim_engine_lib：时间周期 + 节点注册表）----
@@ -135,9 +142,14 @@
       { "path": "time/TimeService.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 37 },
       { "path": "time/EngineTime.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 38 },
       { "path": "time/VideoClock.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 39 },
-      // ---- FairyGUI 适配层：XML 包 -> 图集 uvRect/九宫格/组层级 -> 自定义网格
-      //      （依赖 RenderSystem.submitUiMesh，priority 靠后）----
-      { "path": "ui/FairyGUI.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 40 }
+      // ---- UI 画布管理节点（doc/08 §8；数据面，落地由 UICanvasSystem）----
+      { "path": "ui/UICanvas.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 26 },
+      // ---- FairyGUI 适配层（2026-11-18 自 FairyGUI.sl 拆分三文件）----
+      // Types（数据结构+解析）-> Package（XML/fui 加载）-> Renderer（顶点/提交/命中）
+      //（依赖 RenderSystem.submitUiMesh，priority 靠后）
+      { "path": "ui/FairyTypes.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 38 },
+      { "path": "ui/FairyPackage.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 39 },
+      { "path": "ui/FairyUIRenderer.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 40 }
     ]
   },
   "compileFilter": {
@@ -197,6 +209,10 @@
     { "class": "SortingLayers" },
     { "class": "SpriteRenderer" },
     { "class": "Tilemap" },
+    // P7 2D 游戏类型支撑（doc/15 §9）
+    { "class": "CameraRig2D" },
+    { "class": "ParallaxLayer" },
+    { "class": "TileColliderBaker" },
     // P8 Volume（doc/14）
     { "class": "VolumeProfile" },
     { "class": "Volume" },
@@ -218,6 +234,9 @@
     { "class": "EngineTime" },
     // 输入系统（SnakeGame）
     { "class": "InputSystem" },
+    // UI 画布管理节点 + 系统层编排（doc/08 §8）
+    { "class": "UICanvas" },
+    { "class": "UICanvasSystem" },
     // FairyGUI 适配层
     { "class": "FairySprite" },
     { "class": "FairyQuad" },

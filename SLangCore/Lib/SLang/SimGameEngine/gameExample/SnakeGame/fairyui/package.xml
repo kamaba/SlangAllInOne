@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package name="snakeui" designWidth="480" designHeight="480">
+  <atlas file="atlas.png" width="512" height="512">
+    <sprite name="panel_bg" x="0" y="0" w="48" h="48" scale9="12,12,12,12"/>
+    <sprite name="btn" x="52" y="0" w="48" h="28" scale9="12,10,12,10"/>
+    <sprite name="chk_on" x="104" y="0" w="20" h="20"/>
+    <sprite name="chk_off" x="128" y="0" w="20" h="20"/>
+    <sprite name="white" x="152" y="0" w="4" h="4"/>
+    <sprite name="d0" x="0" y="32" w="12" h="20"/>
+    <sprite name="d1" x="12" y="32" w="12" h="20"/>
+    <sprite name="d2" x="24" y="32" w="12" h="20"/>
+    <sprite name="d3" x="36" y="32" w="12" h="20"/>
+    <sprite name="d4" x="48" y="32" w="12" h="20"/>
+    <sprite name="d5" x="60" y="32" w="12" h="20"/>
+    <sprite name="d6" x="72" y="32" w="12" h="20"/>
+    <sprite name="d7" x="84" y="32" w="12" h="20"/>
+    <sprite name="d8" x="96" y="32" w="12" h="20"/>
+    <sprite name="d9" x="108" y="32" w="12" h="20"/>
+    <sprite name="dcolon" x="120" y="32" w="8" h="20"/>
+    <sprite name="t_title" x="0" y="64" w="128" h="57"/>
+    <sprite name="t_start" x="138" y="64" w="89" h="32"/>
+    <sprite name="t_rank" x="237" y="64" w="70" h="32"/>
+    <sprite name="t_sound" x="317" y="64" w="43" h="28"/>
+    <sprite name="t_music" x="370" y="64" w="59" h="28"/>
+    <sprite name="t_time" x="439" y="64" w="40" h="26"/>
+    <sprite name="t_score" x="0" y="131" w="40" h="26"/>
+    <sprite name="t_colname" x="50" y="131" w="43" h="28"/>
+    <sprite name="t_nodata" x="103" y="131" w="85" h="31"/>
+    <sprite name="t_paused" x="198" y="131" w="76" h="35"/>
+    <sprite name="t_over" x="284" y="131" w="98" h="35"/>
+    <sprite name="t_ranktitle" x="392" y="131" w="76" h="35"/>
+    <sprite name="t_back" x="0" y="176" w="43" h="28"/>
+    <sprite name="t_hint" x="53" y="176" w="62" h="23"/>
+  </atlas>
+  <components>
+    <component name="snake_main" file="component.xml"/>
+  </components>
+</package>

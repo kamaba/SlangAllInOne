@@ -26,6 +26,9 @@ public class Systems
     public CollisionSystem collision = CollisionSystem()
     public RenderSystem render = RenderSystem()
     public AudioSystem audio = AudioSystem()
+    # UI 画布系统（Unity Canvas/Camera Stack 的引擎层对应物，doc/08 §8）：
+    # 收集画布节点 → 编排相机 → 相机输出图层叠加。
+    public UICanvasSystem canvas = UICanvasSystem()
 
     # 初始化全部子系统（渲染 w×h 离屏目标 + 音频后端）；
     # 返回 false 时逐项排查（render.ready / audio.ready / audio.lastError）
@@ -49,10 +52,28 @@ public class Systems
         ret this.render.sync( scene )
     }
 
+    # UI 画布编排（Unity Canvas/Camera Stack；doc/08 §8）：
+    # 收集场景里的 UICanvas 管理节点 → 把模式落到管线相机。
+    # 调用时机：sync 之后、frame 之前（相机参数须在 renderFrame 前写定）。
+    # 返回成功配置的画布数（-1 = 渲染系统未就绪）。
+    public Int32 setupCanvas( Scene scene )
+    {
+        this.canvas.collect( scene )
+        ret this.canvas.configure( this.render )
+    }
+
     # 出帧（RGBA8 → dstPtr 原生块）
     public bool frame( Float32 time, Int64 dstPtr )
     {
         ret this.render.frame( time, dstPtr )
+    }
+
+    # 引擎层图层叠加：把一张相机输出的 RGBA8 图层合成到已渲染的帧缓冲。
+    # dstPtr = frame() 的输出块；layerPtr = 另一相机/离屏管线的输出块；
+    # mode 0=ALPHA 1=ADD 2=MULTIPLY（见 UICanvasSystem.BLEND_*）。
+    public bool compositeLayer( Int64 dstPtr, Int64 layerPtr, Int32 w, Int32 h, Float32 alpha, Int32 mode )
+    {
+        ret this.canvas.composite( dstPtr, layerPtr, w, h, alpha, mode )
     }
 
     public void shutdown()

@@ -43,16 +43,12 @@ public class Bounds
     }
 
     # ── 运算符重载 ───────────────────────────────────────
-    override bool _eq_( Object obj1 )
+    override bool _eq_( Bounds b )
     {
-        if obj1 is Bounds b
-        {
-            ret this.min._eq_( b.min ) && this.max._eq_( b.max )
-        }
-        ret false
+        ret this.min._eq_( b.min ) && this.max._eq_( b.max )
     }
 
-    override bool _ne_( Object obj1 )
+    override bool _ne_( Bounds obj1 )
     {
         ret !this._eq_( obj1 )
     }

@@ -102,6 +102,29 @@
             ret ok
         }
 
+        # 原位更新纹理像素（GoWrapper 通路，2026-11-19）：句柄不变、
+        # 重建式重上传（C 侧销毁旧 GL 纹理同槽位重占）。RGBA8 top-down
+        # 契约同 createRgba；尺寸 = 纹理原始尺寸，缓冲须整块有效。
+        public bool updatePixels( Int64 dataPtr )
+        {
+            if this._handle == 0 || dataPtr == 0
+            {
+                ret false
+            }
+            ret RenderTexture.ffiTextureUpdateRgba( this._handle, dataPtr )
+        }
+
+        # 纹理尺寸（GoWrapper 软件渲染缓冲对齐用）
+        public Int32 textureWidth()
+        {
+            ret this._width
+        }
+
+        public Int32 textureHeight()
+        {
+            ret this._height
+        }
+
         override string toString()
         {
             ret "RenderTexture(" + this._width.toString() + "x" + this._height.toString() + ")"
@@ -125,6 +148,12 @@
         static Int64 ffiTextureLoadFile( string path )
         {
             ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_texture_update_rgba", "i64,ptr->bool" )
+        static bool ffiTextureUpdateRgba( Int64 tex, Int64 dataPtr )
+        {
+            ret false
         }
 
         @DllStaticImport( "sl_render_lib", "slr_texture_destroy", "i64->bool" )

@@ -276,6 +276,241 @@ public class Sim2DTest
         check( v0ok, "D12d first vertex at node origin" )
     }
 
+    # ── D13. RenderSystem 无头像素尺寸登记（宽高比适配前置）──
+    static void testPixelSize()
+    {
+        RenderSystem rs = RenderSystem()
+        check( rs.pixelWidth() == 0, "D13a default width 0" )
+        rs.setPixelSize( 1280, 720 )
+        check( rs.pixelWidth() == 1280, "D13b width registered" )
+        check( rs.pixelHeight() == 720, "D13c height registered" )
+        rs.setPixelSize( 1600, 900 )
+        Float32 a = rs.aspectValue()
+        bool aok = ( a > 1.77f ) && ( a < 1.78f )
+        check( aok, "D13d aspect 16:9" )
+        rs.setPixelSize( 720, 1280 )
+        Float32 a2 = rs.aspectValue()
+        bool a2ok = ( a2 > 0.56f ) && ( a2 < 0.57f )
+        check( a2ok, "D13e portrait aspect" )
+    }
+
+    # ── D14. CameraRig2D 宽高比三模式 ──────────────────
+    static void testRigFitModes()
+    {
+        RenderSystem rs = RenderSystem()
+        rs.setPixelSize( 1600, 900 )
+        CameraRig2D rig = CameraRig2D()
+        rig.fitMode = 0
+        rig.refSize = 5.4f
+        Float32 v0 = rig.applyViewSize( rs )
+        check( v0 == 5.4f, "D14a matchHeight refSize" )
+        check( rs.viewSize == 5.4f, "D14b viewSize written" )
+        rig.fitMode = 1
+        rig.refSize = 8.0f
+        Float32 v1 = rig.applyViewSize( rs )
+        # 8 / (1600/900) = 4.5
+        bool v1ok = ( v1 > 4.49f ) && ( v1 < 4.51f )
+        check( v1ok, "D14c matchWidth refW/aspect" )
+        rig.fitMode = 2
+        rig.refPixelHeight = 300
+        Float32 v2 = rig.applyViewSize( rs )
+        # scale = floor(900/300)=3 → span 300 → half 150
+        check( v2 == 150.0f, "D14d pixelPerfect scale 3" )
+        rig.refPixelHeight = 400
+        Float32 v3 = rig.applyViewSize( rs )
+        # scale = floor(2.25)=2 → span 450 → half 225
+        check( v3 == 225.0f, "D14e pixelPerfect scale 2" )
+        rs.setPixelSize( 640, 200 )
+        rig.refPixelHeight = 300
+        Float32 v4 = rig.applyViewSize( rs )
+        # scale = 0 → 下限 1 → half 100
+        check( v4 == 100.0f, "D14f pixelPerfect min scale" )
+    }
+
+    # ── D15. 跟随 + 边界钳制 + 平滑 ────────────────────
+    static void testRigFollowClamp()
+    {
+        Scene scene = Scene( "D15" )
+        GameObject go = scene.createObject( "Player" )
+        RenderSystem rs = RenderSystem()
+        rs.setPixelSize( 800, 400 )
+        CameraRig2D rig = CameraRig2D()
+        rig.target = go
+        rig.fitMode = 0
+        rig.refSize = 5.0f
+        Transform t = go.transform
+        Float32_3 p = Float32_3( 100.0f, 50.0f, 0.0f )
+        t.setPosition( p )
+        # 首帧硬切跟随（无边界）
+        rig.update( rs, 0.016f )
+        check( rs.cameraCenter.x == 100.0f, "D15a follow hard x" )
+        check( rs.cameraCenter.y == 50.0f, "D15b follow hard y" )
+        # 边界钳制：viewSize=5 aspect=2 → 半视野 (10,5)
+        rig.useBounds = true
+        rig.boundMinX = 0.0f
+        rig.boundMaxX = 20.0f
+        rig.boundMinY = 0.0f
+        rig.boundMaxY = 10.0f
+        rig.update( rs, 0.016f )
+        check( rs.cameraCenter.x == 10.0f, "D15c clamp x" )
+        check( rs.cameraCenter.y == 5.0f, "D15d clamp y" )
+        # 目标在自由区：不钳
+        Float32_3 p2 = Float32_3( 10.0f, 5.0f, 0.0f )
+        t.setPosition( p2 )
+        rig.update( rs, 0.016f )
+        check( rs.cameraCenter.x == 10.0f, "D15e center free" )
+        # 地图纵向小于视野：居中（span 4 < 10 → y=2）
+        rig.boundMaxY = 4.0f
+        Float32_3 p3 = Float32_3( 10.0f, 3.0f, 0.0f )
+        t.setPosition( p3 )
+        rig.update( rs, 0.016f )
+        check( rs.cameraCenter.y == 2.0f, "D15f small map centers" )
+        # 平滑：τ=0.1 dt=0.1 → f=1-e^-1≈0.632；x 10→12
+        rig.boundMaxY = 10.0f
+        rig.useBounds = false
+        rig.smoothTime = 0.1f
+        Float32_3 p4 = Float32_3( 12.0f, 4.0f, 0.0f )
+        t.setPosition( p4 )
+        rig.update( rs, 0.1f )
+        Float32 sx = rs.cameraCenter.x
+        bool sxok = ( sx > 11.2f ) && ( sx < 11.3f )
+        check( sxok, "D15g smooth lerp x" )
+        # snap 后硬切
+        rig.snap()
+        rig.update( rs, 0.1f )
+        check( rs.cameraCenter.x == 12.0f, "D15h snap hard cut" )
+    }
+
+    # ── D16. world→cell 换算（原点跟随节点）────────────
+    static void testWorldToCell()
+    {
+        Scene scene = Scene( "D16" )
+        GameObject go = scene.createObject( "Map" )
+        Tilemap tm = Tilemap()
+        tm.resize( 4, 4 )
+        go.addComponent( tm )
+        Transform t = go.transform
+        Float32_3 p = Float32_3( 10.0f, 5.0f, 0.0f )
+        t.setPosition( p )
+        check( tm.cellXAtWorld( 10.5f ) == 0, "D16a cell x at origin" )
+        check( tm.cellXAtWorld( 12.5f ) == 2, "D16b cell x +2" )
+        check( tm.cellYAtWorld( 7.5f ) == 2, "D16c cell y +2" )
+        check( tm.cellXAtWorld( 9.9f ) == 0 - 1, "D16d negative cell" )
+        check( tm.cellXAtWorld( 14.5f ) == 4, "D16e beyond width" )
+        Float32_3 cc = tm.cellCenterWorld( 2, 1 )
+        bool ccok = ( cc.x == 12.5f ) && ( cc.y == 6.5f )
+        check( ccok, "D16f cell center roundtrip" )
+    }
+
+    # ── D17. tile 属性表（solid 位）────────────────────
+    static void testTileFlags()
+    {
+        Scene scene = Scene( "D17" )
+        GameObject go = scene.createObject( "Map" )
+        Tilemap tm = Tilemap()
+        tm.resize( 3, 2 )
+        tm.setTile( 0, 0, 1 )
+        tm.setTile( 1, 0, 2 )
+        tm.setTile( 0, 1, 3 )
+        go.addComponent( tm )
+        check( tm.tileFlag( 1 ) == 0, "D17a unregistered flag 0" )
+        tm.setTileFlag( 1, 1 )
+        tm.setTileFlag( 2, 2 )
+        check( tm.tileFlag( 1 ) == 1, "D17b flag set" )
+        check( tm.tileFlag( 2 ) == 2, "D17c flag multi-bit" )
+        check( tm.tileFlag( 99 ) == 0, "D17d oob index 0" )
+        check( tm.isSolidAt( 0, 0 ), "D17e tile1 solid" )
+        check( !tm.isSolidAt( 1, 0 ), "D17f tile2 bit0 clear" )
+        check( !tm.isSolidAt( 0, 1 ), "D17g tile3 unsolid" )
+        tm.setTileFlag( 2, 1 )
+        check( tm.isSolidAt( 1, 0 ), "D17h tile2 solid after flag" )
+        tm.setTile( 2, 0, 0 - 1 )
+        check( !tm.isSolidAt( 2, 0 ), "D17i empty cell unsolid" )
+        # 稀疏索引扩容
+        tm.setTileFlag( 5, 1 )
+        check( tm.tileFlag( 5 ) == 1, "D17j sparse grow" )
+        check( tm.tileFlag( 3 ) == 0, "D17k gap default 0" )
+        tm.setTileFlag( 0 - 1, 7 )
+        check( tm.tileFlag( 7 ) == 0, "D17l negative index ignored" )
+    }
+
+    # ── D18. tile 实心格行合并碰撞体 ───────────────────
+    static void testColliderBaker()
+    {
+        Scene scene = Scene( "D18" )
+        GameObject mapGo = scene.createObject( "Map" )
+        Tilemap tm = Tilemap()
+        tm.resize( 4, 2 )
+        # 行 0：格 0,1 一段（len2）+ 格 3 一段（len1）；格 2 空
+        tm.setTile( 0, 0, 1 )
+        tm.setTile( 1, 0, 1 )
+        tm.setTile( 3, 0, 2 )
+        # 行 1：格 0
+        tm.setTile( 0, 1, 1 )
+        tm.setTileFlag( 1, 1 )
+        tm.setTileFlag( 2, 1 )
+        mapGo.addComponent( tm )
+        GameObject parent = scene.createObject( "Colliders" )
+        Int32 made = TileColliderBaker.bakeRowColliders( scene, tm, parent, "Seg" )
+        check( made == 3, "D18a three runs" )
+        check( parent.childCount == 3, "D18b three children" )
+        GameObject seg0 = parent.getChild( 0 )
+        BoxCollider bc = seg0.getComponent<BoxCollider>()
+        check( bc != null, "D18c collider attached" )
+        # 段 0：格 0..1 行 0 → center (1.0, 0.5)
+        Transform t0 = seg0.transform
+        Float32_3 p0 = t0.localPosition
+        check( p0.x == 1.0f, "D18d run center x" )
+        check( p0.y == 0.5f, "D18e run center y" )
+        Float32_3 s0 = bc.size
+        check( s0.x == 2.0f, "D18f run size len2" )
+        # 段 2：行 1 格 0 → center (0.5, 1.5)
+        GameObject seg2 = parent.getChild( 2 )
+        Transform t2 = seg2.transform
+        Float32_3 p2 = t2.localPosition
+        check( p2.x == 0.5f, "D18g row1 run x" )
+        check( p2.y == 1.5f, "D18h row1 run y" )
+    }
+
+    # ── D19. ParallaxLayer 视差系数 ────────────────────
+    static void testParallaxLayer()
+    {
+        Scene scene = Scene( "D19" )
+        GameObject bg = scene.createObject( "BG" )
+        ParallaxLayer pl = ParallaxLayer()
+        pl.factorX = 0.5f
+        pl.factorY = 1.0f
+        bg.addComponent( pl )
+        Transform t = bg.transform
+        Float32_3 p = Float32_3( 10.0f, 4.0f, 0.0f )
+        t.setPosition( p )
+        # 首次 apply 自动捕获基准位
+        Float32_3 cam0 = Float32_3.zero()
+        pl.apply( cam0 )
+        Float32_3 bp = pl.basePosition()
+        bool bpok = ( bp.x == 10.0f ) && ( bp.y == 4.0f )
+        check( bpok, "D19a base captured" )
+        # 相机 (4,2)：dx = 4*(1-0.5)=2, dy = 2*(1-1)=0 → (12,4)
+        Float32_3 cam1 = Float32_3( 4.0f, 2.0f, 0.0f )
+        pl.apply( cam1 )
+        Float32_3 p1 = t.worldPosition()
+        bool p1ok = ( p1.x == 12.0f ) && ( p1.y == 4.0f )
+        check( p1ok, "D19b parallax offset" )
+        # factor 0：完全贴屏（base + camOffset 全量）
+        pl.factorX = 0.0f
+        pl.factorY = 0.0f
+        pl.apply( cam1 )
+        Float32_3 p2 = t.worldPosition()
+        bool p2ok = ( p2.x == 14.0f ) && ( p2.y == 6.0f )
+        check( p2ok, "D19c factor 0 glued" )
+        # factor 1：随世界（不动）
+        pl.factorX = 1.0f
+        pl.factorY = 1.0f
+        pl.apply( cam1 )
+        Float32_3 p3 = t.worldPosition()
+        check( p3.x == 10.0f, "D19d factor 1 static" )
+    }
+
     public static void run()
     {
         testSortingLayers()
@@ -290,6 +525,13 @@ public class Sim2DTest
         testBakeAll()
         testBakeCulling()
         testWorldOrigin()
+        testPixelSize()
+        testRigFitModes()
+        testRigFollowClamp()
+        testWorldToCell()
+        testTileFlags()
+        testColliderBaker()
+        testParallaxLayer()
         Console.println( "Sim2DTest: PASS=" + _pass.toString() + " FAIL=" + _fail.toString() )
     }
 

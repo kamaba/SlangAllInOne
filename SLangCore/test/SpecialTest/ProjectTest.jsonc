@@ -32,7 +32,7 @@
       { "path": "JavaTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "JavaTest2.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "CPlusClangTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
-      { "path": "MasmX64Test.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
+      { "path": "MasmX64Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "PythonTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "TypeScriptNodeV8Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
@@ -185,7 +185,7 @@
     //（"<entry>_main"）固定原型调用（SLMasmValue = SLLabelValue 镜像）。
     // prefix 必须显式 = 实际符号前缀 "sl_masm_x64_"（plugin.jsonc
     // entry.prefix），缺省 id+"_" 会解析不到六件套符号。
-    "masm_x64_DISABLED": {
+    "masm_x64": {
       "name": "masm_x64_native_engine",
       "version": "0.1.0",
       "path": "plugin/masm_x64",

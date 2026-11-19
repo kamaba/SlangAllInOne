@@ -22,6 +22,9 @@ import Std;
 #       12 = SimGjkTest       Mesh GJK（C 核心直测/点变换/旋转体/窄相精化）
 #       13 = SimShapeTest     固定形状库（11 形状规模/法线/绕序/消费出口/错误路径）
 #       14 = SimTimeTest      统一时间同步（推进/固定步长/alpha/域时钟/Application 集成）
+#       15 = SimSceneAdditiveTest  Additive 子场景（并入/共存/卸载/主场景不动）
+#       16 = SimInputTest     统一输入（键盘边沿/自动重复去重/鼠标/滚轮/帧管线）
+#       17 = SimUICanvasTest  UI 画布两模式（系统叠加/相机赋值）+ 引擎层图层叠加
 #   2. 注释开关：把 runAll() 里不想要的 runXxx() 调用行注释掉即可
 # 汇总：每套跑完打印各自 PASS=/FAIL=，入口末尾打印 TOTAL 并统一判退出码
 #      （任何 FAIL → OS.Kernel.exit(1)；原各套不再单独退出）
@@ -34,7 +37,7 @@ public class Test
     static Int32 _pass = 0
     static Int32 _fail = 0
 
-    # ── 选套开关：0=全部；1..14=单套（套件表见文件头注释）──
+    # ── 选套开关：0=全部；1..17=单套（套件表见文件头注释）──
     static Int32 runSuite = 0
 
     static bool selected( Int32 no )
@@ -228,9 +231,48 @@ public class Test
         _fail = _fail + SimTimeTest.failCount()
     }
 
+    static void runSceneAdditive()
+    {
+        if !selected( 15 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [15] SimSceneAdditiveTest -----" )
+        SimSceneAdditiveTest.run()
+        _pass = _pass + SimSceneAdditiveTest.passCount()
+        _fail = _fail + SimSceneAdditiveTest.failCount()
+    }
+
+    static void runInput()
+    {
+        if !selected( 16 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [16] SimInputTest -----" )
+        SimInputTest.run()
+        _pass = _pass + SimInputTest.passCount()
+        _fail = _fail + SimInputTest.failCount()
+    }
+
+    static void runUICanvas()
+    {
+        if !selected( 17 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [17] SimUICanvasTest -----" )
+        SimUICanvasTest.run()
+        _pass = _pass + SimUICanvasTest.passCount()
+        _fail = _fail + SimUICanvasTest.failCount()
+    }
+
     public static void run()
     {
-        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..14=single) ===" )
+        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..17=single) ===" )
         runEngine()
         runBatch()
         runCollision()
@@ -245,6 +287,9 @@ public class Test
         runGjk()
         runShape()
         runTime()
+        runSceneAdditive()
+        runInput()
+        runUICanvas()
         Console.println( "" )
         Console.println( "=== TOTAL PASS=" + _pass.toString() + " FAIL=" + _fail.toString() + " ===" )
         if _fail > 0

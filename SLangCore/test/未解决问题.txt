@@ -5,18 +5,13 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 增加
 macOs /iOS的环境 
 
-1. 接一个asm 
-2. Php的接入
-3. Go语言的接入
+1. Php的接入
+2. Go语言的接入
 
-5. R语言的接入
-9. 接入dart 
-10. 接入kotlin
+3. R语言的接入
+4. 接入dart 
+5. 接入kotlin
 
-
-D:\project\lang\SlangAllInOne\SLangCore\test\BenchMark 这个里边，如果使用其它语言，需要不计算我的语言中间的时间 ，而是只计算那个语言自己的时间  而且里边的好多没有显示时间 在导出的报告里边
-优化循环
-优化函数调用  分jit和非jit两种  现在看看是否可以优化非jit的方式 
 
 QTCodeEditor
 1. 解决方案区，没有右键区
@@ -72,6 +67,14 @@ ffmpeg的dll 引入  要制作成modules
 在aot的中，处理llvm内置的一些结构，在生成这个数据后，要有一个id的概念，也就是定义这个对象的hashCode 虽然是在llvm里边生成的，也要有这个概念，因为这个在 llvm的.struct转成VMObject一类的时候，要先检查vm里边有没有这个，如果没有，再去创建VMObject 而且这个不受内存gc管理，因为这个还属于llvm  所以Object.sl 你看下是不是要增加一个int _hashCode这样的概念呀，是不是这样更合理  你确定下，原来好像我看着是用的指针进行hash运算的，这种方式确定可以吗？
 sl_aot_skeleton_new_inner这个函数的话，原来的llvm生成的数据，是不是可以在转换的类中 member_data可以复用，然后 这个VMObject不进行gc拖管更合理。
 MLIR把结构体，也就是我设计 的class/data/enum 要转化成对应的 llvm.struct   在变的过程，最好还能在这个结构里边带上一些其它的信息，比较类的id, 名称, 如果模板类，需要把模板的成员也变成一个指针（Int64)放在里边 最好还有一个字段去描述这个指针的，这样，不可以使用llvm.struct 去对应我的class/data/enum 了
+
+【VM 专项 · 最高优】Release VM 跨模块对象字段读损坏（2026-11-18 登记自引擎 33 项 fixedDt 回归根因定位）
+1. 现象：Release 构建（is_debug=0）下，跨模块方法返回的类对象（如 Math.Float32_3 的 _add_/_sub_、SimGameEngine.Bounds.fromCenterSize）在调用方读字段得到垃圾（恒 32 / 空 toString / 退化为实参值），且同地址反复分配（对象被过早回收）；关闭 LTO 时同一位置直接 AV read NULL（0xc0000005）。
+2. 边界：Debug VM 全绿（引擎 14 套 698/0）；MathTest（纯 Math 引用，无引擎）Release 613/0 全绿；引擎+多模块引用场景必现。v2.12（2026-11-17，runtime_slots.c / runtime_value_convert.c / runtime_dispatch.c / runtime_call.c / vm_call_frame.c 五文件改动轮）引入，10-29 的 version_0.0.51 Release 正常。
+3. 已排除：SLVM_FAST_RETURN（关闭无效）、SL_X86_64_ASM（MSVC 不启用）、LTO（关闭仍坏且转崩溃）、模块 slb/目录引用形态统一（无效）、Math._sub_ 写法（三种形态都坏）、ARC 认领路径（FREE-ARC/CLAIM 零命中，owned=0）。
+4. 影响面：引擎测试 33 项（Physics 25 / Collision 3 / GJK 4 / Anim 1）；游戏示例与 publish 应用未受影响（未用物理）。
+5. 过渡方案：引擎测试链用 Debug VM 验证（csimple_lang\build\Debug\bin\csimple_lang.exe run <slb>，PASS=698 FAIL=0）。
+6. 修复方向：审读上述五文件中 is_debug=0 独有的快路径（Super D2 族 / leaf 直执行 / 字段读 ret 行→栈链路），重点验证「方法返回的新对象在返回链路上的 ARC/行槽配平」与「跨模块类布局/字段 offset 解析」。诊断手段已就绪：vm_frame_pop 返回行日志（FRP）、vm_object_free 追踪（s_vm_trace_frees）、最小复现=Test 模块调 Math.Float32_3._add_ 后读字段。
 
 制作http server相关的逻辑  
 然后做一个网站  包括，首页，下载，运行，关于  插件管理中心    主版本/插件/包 要在后管平台分开管理  前端页显示，需要使用数据库的数据显示内容， 跑起来wasm  增加贡献的功能，显示捐助

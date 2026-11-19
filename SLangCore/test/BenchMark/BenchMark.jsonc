@@ -42,6 +42,7 @@
       { "path": "TypeScriptBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "MasmBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "PythonBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
@@ -147,6 +148,26 @@
       "abi": 1,
       "prefix": "sl_cplus_clang_",
       "lib": "../../../../plugin/cplus_clang/package/windows/cvm_cplus_clang.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // masm_x64：MasmBench 基准（Loop/EqBench/Fibonacci 三项共享基准同口径
+    // 跨语言对拍 + SimdAVX2 专列）经此插件在 Front 导出期生成 Entry_N.asm →
+    // ml64 汇编 + trampoline 合并链接 SLMasm.dll 部署插件 dll 同目录；块内
+    // QueryPerformanceCounter/Frequency ns 计时经出通道回传。SLMasm.dll 与
+    // SLCpp.dll 同款共享部署位（后编译覆盖）——运行 BenchMark 前须最后编译
+    // 本工程。运行时依赖 MSVC 工具集（ml64 探测序 SL_ML64/PATH/cl 同目录）。
+    "masm_x64": {
+      "name": "masm_x64_native_engine",
+      "version": "0.1.0",
+      "path": "plugin/masm_x64",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_masm_x64_",
+      "lib": "../../../../plugin/masm_x64/package/windows/cvm_masm_x64.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

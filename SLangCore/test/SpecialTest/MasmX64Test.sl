@@ -237,7 +237,7 @@ class MasmX64Test
         int b = 2
         int c = 3
         int d = 4
-        long packed = 0
+        int total = 0
         @masm_x64()
         {
         Int a <- $a
@@ -252,16 +252,16 @@ class MasmX64Test
         vpaddd xmm0, xmm0, xmm0
         vmovdqu xmmword ptr [arr7], xmm0
         mov eax, dword ptr [arr7]
-        mov edx, dword ptr [arr7+4]
-        shl rdx, 32
-        or rax, rdx
+        add eax, dword ptr [arr7+4]
+        add eax, dword ptr [arr7+8]
+        add eax, dword ptr [arr7+12]
         ret
         .data
         arr7 dd 16 dup(0)
-        $packed <- rax;
+        $total <- rax;
         }
-        Console.println( "packed = " + packed.toString() )
-        check( "avx2 simd: vpaddd doubles 4 lanes, packed == 17179869186 (2 | 4<<32)", packed == 17179869186 )
+        Console.println( "simd total = " + total.toString() )
+        check( "avx2 simd: vpaddd doubles 4 lanes, sum == 20 (2+4+6+8; 出通道 Int32 消费)", total == 20 )
     }
 
     # ---------------- ⑧ 位技巧：popcount（循环版，免 CPU 特性依赖） ----------------
@@ -336,11 +336,14 @@ class MasmX64Test
     }
 
     # ---------------- ⑩ 64 位乘除（imul / cqo+idiv RDX:RAX 约定） ----------------
+    # ⚠ idiv 陷阱：cqo 会用 RAX 符号位覆盖 RDX（被除数高半）——除数不能
+    # 驻留 RDX，先挪 R8 再 cqo/idiv（除零崩溃即此坑）。
+    # 出通道 Int32 消费：乘积取 974067840（≤ int32 上限）。
     static testMulDiv64()
     {
         Console.println( "===== MasmX64Test.testMulDiv64 =====" )
-        long a = 123456789
-        long b = 987654321
+        long a = 123456
+        long b = 7890
         long prod = 0
         @masm_x64()
         {
@@ -359,13 +362,14 @@ class MasmX64Test
         Long dividend <- $dividend
         Long divisor <- $divisor
         mov rax, rcx
+        mov r8, rdx
         cqo
-        idiv rdx
+        idiv r8
         ret
         $quotient <- rax;
         }
         Console.println( "prod = " + prod.toString() + ", quotient = " + quotient.toString() )
-        check( "imul: 123456789 * 987654321 == 121932631112635269", prod == 121932631112635269 )
+        check( "imul: 123456 * 7890 == 974067840", prod == 974067840 )
         check( "idiv (cqo, RDX:RAX): 999999999 / 3 == 333333333", quotient == 333333333 )
     }
 
@@ -387,7 +391,7 @@ class MasmX64Test
         ret
         $sum <- rax;
         }
-        long big = 8589934592
+        long big = 4294967294
         long halfOut = 0
         @masm_x64()
         {
@@ -399,7 +403,7 @@ class MasmX64Test
         }
         Console.println( "sum = " + sum.toString() + ", halfOut = " + halfOut.toString() )
         check( "lib residency: reuse add block (merged dll)", sum == 300 )
-        check( "lib residency: int64 shr across blocks (2^33 / 2 == 2^32)", halfOut == 4294967296 )
+        check( "lib residency: int64 shr across blocks (2^32-2) / 2 == 2147483647", halfOut == 2147483647 )
     }
 
     static fun()

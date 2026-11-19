@@ -9,7 +9,9 @@ QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
 │       → SLang.QT.ffi_keyDown → slqt_key_down_sl 读状态表（跨模块回调不稳，
 │       输入主路径改为轮询 + 边沿检测；R 重开）
 ├ 帧循环：QTimer(16ms) → SnakeGame.frameTick（QTHost.startHost 内 exec 阻塞驱动）
-│   1) 轮询读方向键（防 180° 反向）+ 150ms 蛇步进；R 键重开
+│   1) 状态机（菜单/游戏/结束，2026-11-19）：菜单 Enter/Space 开局；游戏中
+│      轮询读方向键（防 180° 反向）+ 150ms 蛇步进；死亡进结束态，R 重开
+│   1b) SnakeSfx.update() 每帧回收一次性音效播放器（吃食/死亡/开局三种）
 │   2) 每帧重建 5 组烘焙顶点（棋盘格深/浅背景各 128 格 / 蛇身 / 蛇头高亮 /
 │      食物，各单色 MaterialData）→ MeshRef.setVertices → 正交烘焙路径
 │      （C sle_ortho_bake → uploadMesh MESH_CUSTOM = SimSystemsTest S10 形态）
@@ -26,6 +28,12 @@ QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
 | `SnakeGame.sp` | **入口工程**（`_main_() { SnakeGame.run() }`——**无 sp 的 _main_ 模块入口不被调用**） |
 | `SnakeGame.sl` | 游戏逻辑（全 static 形态；QT 对象不在此文件——见 QTHost 坑说明） |
 | `QTHost.sl` | QT 宿主门面（**纯 FFI 句柄形态**，见下「双 SLang namespace 冲突」） |
+| `SnakeSfx.sl` | 音效封装（SLangAudio `Audio.AudioSource.playOneShot` + 每帧 `update()` 回收 + BGM 主通道 loop；无声卡/缺资源静音降级；`dataDir()` 供排行榜落盘） |
+| `SnakeFairy.sl` | FairyGUI 界面层（主菜单 / 游戏内 HUD / 排行榜 + 数字 glyph 池 + 鼠标交互；经引擎 `FairyPackage` 动态 quad API 操作，不直写 `FairyQuad` 字段） |
+| `make-sfx.ps1` | 音效 wav 生成器（22050Hz 单声道 16bit：eat/die/start/move/bgm 五枚，写入 `sfx\`；bgm=6 秒方波琶音循环） |
+| `make-fairyui.ps1` | FairyGUI 资产生成器（System.Drawing 合成 `fairyui\atlas.png` + `package.xml` + `component.xml`；中文文案经 Unicode 码点拼装——PS 脚本保持纯 ASCII） |
+| `sfx\*.wav` / `fairyui\*` | 运行期资源（候选目录探测：`<cwd>/sfx·/fairyui` → `<cwd>/SLangCore/...` → 源码树绝对路径兜底） |
+| `sfx\rank.txt` | 排行榜持久化（每行 `score,seconds`，死亡时追加；显示时分数降序 top8） |
 
 ## 关键坑（全部实证，后续示例必读）
 
@@ -60,7 +68,10 @@ QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
 ## 构建 / 运行
 
 ```powershell
-# 1) 引擎（含 InputSystem + C 输入表）
+# 0) 资产（音效 wav + FairyGUI 图集/包 XML，可随时重跑）
+powershell -File SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\make-sfx.ps1
+powershell -File SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\make-fairyui.ps1
+# 1) 引擎（含 InputSystem + C 输入表 + FairyGUI 动态 quad API）
 slang compile SLangCore\Lib\SLang\SimGameEngine\SimGameEngine.jsonc --format binary
 # 2) QT 模块（-Qt 真后端；真窗口必须有此版，不能用 stub）
 powershell -File SLangCore\Lib\SLang\QT\cvm\build-slqt.ps1 -Qt
@@ -160,9 +171,83 @@ pixels 左上采样 = (31,36,31,255) 深绿背景（非 0 透明），画面含�
 
 ## 玩法
 
+**FairyGUI 界面（2026-11-19 第二轮，全部经引擎 FairyGUI 适配层渲染）**：
+- **主菜单**（`m_` 组）：贪吃蛇标题、`开始游戏` 按钮（直接进局）、`排行榜`
+  按钮、`声音` checkbox（音效开关）、`背景乐` checkbox（BGM 开关）。
+- **游戏内 HUD**（`h_` 组）：顶栏 `时间`（mm:ss，暂停冻结）+ `分数` +
+  右上角 `返回` 按钮（回主界面，不退出应用，2026-11-19 第三轮改）；
+  底部 `空格暂停` 提示；暂停时中央 `已暂停` 面板。
+- **排行榜**（`r_` 组）：每局分数+时间记录到 `sfx\rank.txt`，打开时按分数
+  降序显示 top8（列头 名次/分数/时间；无记录显示 `暂无记录`；数字走
+  glyph 池）；游戏结束自动进排行榜并叠加 `游戏结束` 标题，`返回` 按钮
+  回主菜单。
+- 键盘等效：Enter/Space 开局、空格暂停/继续、R（结束后）重开；鼠标点击
+  按钮经 `FairyUIRenderer.hitTopLocal`（只认 `menu_`/`chk` 命中，跳过标签
+  与隐藏 quad）。
+
+**屏幕自动适配（2026-11-19，SceneDemo 动态分辨率同款）**：每帧探测顶层窗口
+客户区尺寸，变化时重排 QT 控件（信息条通栏 / 方形画布 / 覆盖层随边长）并
+同步渲染分辨率（`rs.resize` + 像素块重分配，钳 128..1024；画布恒方形 →
+aspect=1，NDC 行为不变）。stub/异常返回 0 时自动跳过（无头环境安全）。
+
 方向键控制（←↑→↓）；吃红色食物 +10 分并变长（初始额外生长 2 格）；
-撞墙/撞身结束，按 R 重开。网格 16×16，步进 150ms，输出 320×320 RGBA8
-经 QLabel 随窗口缩放。
+撞墙/撞身结束，按 R 重开。网格 16×16，步进 150ms。`viewSize=100`（世界
+可视 [−20,180]，网格四周 20 单位边距，顶部边距正好容纳 HUD 顶栏）。
+
+## 音效（2026-11-19）
+
+- 五枚：start（开局双音上行）、move（每步「滴」声 880Hz 50ms，走**专用
+  常驻音源** Play() 即停即重播——此前 playOneShot 每步新建 waveOut 设备，
+  短音被设备延迟吞掉听不见，第三轮根修）、eat（上行方波 blip）、
+  die（下行锯齿扫频）、bgm（6 秒方波琶音循环，独立音源 loop，音量 40%）。
+- 声音/背景乐 checkbox 实时开关（`SnakeSfx.setSfxEnabled/setBgmEnabled`）。
+- 资源：`make-sfx.ps1` 合成 `sfx\` 下 wav，纯确定性合成、可随时重跑。
+
+## FairyGUI 界面实现要点（2026-11-19）
+
+- 适配层文本 = 图集白块占位（无运行时字体）→ 静态标签（开始游戏/排行榜/
+  声音/背景乐/时间/分数/退出/已暂停/游戏结束/返回/空格暂停）在
+  `make-fairyui.ps1` 里用 System.Drawing 预渲染进图集；动态值（时间/分数/
+  排行行）走**数字 glyph 池**：引擎 `FairyPackage.addQuad/quadSetSprite/
+  quadSetRect/quadSetHidden`（本轮新增的动态 quad API）+ `d0..d9/dcolon`
+  字形槽位复用，游戏模块不直写 `FairyQuad` 字段（跨模块对象污染坑）。
+- checkbox 换装 = `quadSetSprite(idx, "chk_on"/"chk_off")`。
+- 显隐 = 组前缀（`m_`/`h_`/`r_`）遍历 `quadSetHidden`（x 挪画布外裁剪）。
+- 引擎侧新增：`FairyPackage` 动态 quad API + home 位置表；`FairyUIRenderer.
+  hitTopLocal`（动态命中：跳过隐藏 quad，只认名字含 `menu_`/`chk` 的项）+
+  `nameHas` 子串助手。
+- 链路：`SnakeSfx.sl`（独立 import SLangAudio）→ `Audio.AudioClip.loadFile`
+  （跨模块静态仅 string 参数可用，doc/10 §6）→ `Audio.AudioSource`
+  `playOneShot`（实例方法）+ 每帧 `update()` 回收播完的一次性播放器。
+- 降级：无声卡 / 找不到 sfx 目录 / 解码失败 → 全静音不报错
+  （`SnakeSfx.statusText()` 可查原因）。
+- 部署：
+  - 开发态：`run-dev.ps1` 已自动把 `out\export\SLangAudio\sl_audio_lib.dll`
+    按 MD5 对齐到 `out\export\SnakeGame`（FFI 裸名解析靠模块目录进 PATH）。
+  - 发布态：jsonc `references` 已显式列 SLangAudio → publish 把
+    `sl_audio_lib.dll` 打进 `lib\windows\`；**另需把 `sfx\` 目录拷到
+    `publish\release\`**（publish 不带 SL 资产，仅打原生库）。
+
+验证记录（2026-11-19，声音 + UI 状态机）：`slang compile --format binary`
+EXIT=0（新增 SnakeSfx.sl + SLangAudio 引用）；VM 冒烟输出
+`[sfx] ready (3 clips from ...gameExample/SnakeGame/sfx)` 证实 sl_audio_lib
+FFI 预载 + 三枚 wav 解码装载成功；offscreen 起进程 8 秒存活无秒退（run-dev
+已自动对齐 slang_qt.dll 与 sl_audio_lib.dll）。真窗口实机运行与发布重打由
+开发者执行（发布需拷 `sfx\` 到 `publish\release\`）。
+
+验证记录（2026-11-19 第二轮，「声音没出来」根修 + 移动音效 + 屏幕自适应）：
+- 根因 = sfx 目录探测候选不足：CWD 在 `d:\project\lang` 等上层目录时
+  `<cwd>/sfx` 与 `<cwd>/SLangCore/...` 都落空 → init 静默失败 → 全静音。
+  修复 = 加源码树绝对路径兜底（SceneDemo findSceneDir 同款）+ run-dev.ps1
+  `Set-Location $root` 固定 CWD。CWD=d:\project\lang 复测输出
+  `[sfx] ready (4 clips from D:/.../SnakeGame/sfx)` 实证通过。
+- 新增 move.wav（转向 30ms 轻 tick，半音量），重发布 EXIT=0，sfx 四枚已
+  拷到 publish\release\sfx\，lib\windows 三 dll（slang_qt/sl_render/
+  sl_audio）齐备。
+- 屏幕自适应：每帧 ffi_widgetWidth/Height 探测（0=stub 跳过），变化才
+  layoutUi + rs.resize + 像素块重分配（SceneDemo 同款防抖：变化才重建）。
+  ⚠ 冒烟注意：VM 装配约 25~30 秒才进游戏逻辑，起进程后至少等 50 秒再收
+  输出，过早 kill 会因 stdout 缓冲丢失而误判无输出。
 
 ## 注意事项 / 已知约束
 

@@ -191,6 +191,28 @@ int slr_texture_destroy(int64_t tex)
     return 1;
 }
 
+/* 原位更新纹理像素（GoWrapper 通路，2026-11-19）：句柄/槽位不变，
+ * 重建式实现 = 销毁旧 RHI 纹理 -> texture_register 同槽位重占
+ *（免 RHI vtable 改动；RGBA8 top-down 契约同 create）。
+ * 每帧调用成本 = 整纹理重上传（demo 128x128 可接受）。 */
+SLR_API int slr_texture_update_rgba(int64_t tex, int64_t data_ptr)
+{
+    SlrTexRes* t;
+    int w, h;
+    int64_t nh;
+    if (!data_ptr) { set_error(SLR_E_BAD_PARAM); return 0; }
+    if (!rhi_enter()) return 0;
+    t = tex_from_handle(tex);
+    if (!t) { set_error(SLR_E_TEXTURE); rhi_exit(); return 0; }
+    w = t->w;
+    h = t->h;
+    g_rhi->texture_destroy(t->rhi_tex);
+    memset(t, 0, sizeof(SlrTexRes));
+    nh = texture_register(w, h, (const unsigned char*)(intptr_t)data_ptr);
+    rhi_exit();
+    return nh != 0;
+}
+
 int slr_texture_count(void)
 {
     int i, n = 0;

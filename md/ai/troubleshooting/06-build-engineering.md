@@ -449,3 +449,29 @@
 - **两个 Front/工具坑**：① `fillCodes(g7, "help", codes(VIEW_WELCOME, ...))` 传静态字段常量作实参触发 `MetaCoreCallNotSupportNotSupport`（Call link parse failed），改字面量 `53` 即过（同第二十一轮「实参复杂表达式」族）；② 测试期用 PowerShell `Set-Content -Encoding UTF8` 改 `settings.json` 会带 UTF-8 BOM，`Text.Json.load` 解析失败导致 MRU 读空（表现为欢迎页左侧空列表）——配置文件必须无 BOM 写入（`[System.IO.File]::WriteAllText` + `UTF8Encoding($false)`），这不是产品 bug。
 - **验证**：`slang publish --mode exe --cvm Release` EXIT=0（exe 16:59:12）；UI Automation 实测欢迎页子窗 `[欢迎使用 SLang CodeEditor]` 显示、左侧 3 条最近目录全部列出、QListWidget currentRowChanged 触发（输出区 `[welcome] onFolderRow` + `[scan]`）——链路闭环。
 - **已知边界**：AOT 发布 exe 附带一个 ConsoleWindowClass 控制台窗（stdout/日志），会在前台盖住部分界面；Qt MDI 子窗 `showMaximized()` 在多个子窗并存时不保证铺满（既有行为，所有代码子窗如此），欢迎页与代码窗并列。二者均属既有架构，不影响功能。
+
+### [2026-11-18] 第四十三轮：masm_x64 插件接入（@masm_x64(){} 内联汇编——三个实测坑：ABI 位置配对 / cqo 覆盖 RDX / 出通道 Int32 截断）
+
+- **背景**：按 cplus_clang 蓝本同构接入第三实例 `plugin/masm_x64`（id/tag/prefix 全量命名 = masm_x64，用户拍板自审阅稿 asm_ 更名）。三目录 + SLPF v3 双契约 + 六件套 labelExec + refModule 全链路零 Front/CVM 改动；`build-masm-x64.ps1` 一键三件套，Front 导出期「AtSignLabel: build success (14 block(s)) → SLMasm.dll」。
+- **坑一（ABI 误判，编译期无感知、运行期 AV）**：入通道寄存器映射起初按「分族计数制」（整型族数 RCX/RDX/R8/R9、浮点族数 XMM0-3，两族独立计数）设计——**MS x64 ABI 实为按参数位置配对**（位置 1..4 = RCX/XMM0、RDX/XMM1、R8/XMM2、R9/XMM3，整型取该位 GP、浮点取该位 XMM，空位弃用）。混合通道 `Long,Double,String` 真实映射 = RCX、**XMM1**、**R8**（RDX/XMM0 空置），按分族制读 XMM0/RDX → 读到野值（AV read target=0x3，地址即残留寄存器值）。trampoline 走 MSVC 正常 C 调用所以永远正确——错的是 parse 侧给用户的映射注释与测试用例；修正后 ⑥ 用例（`mixed = 29`）成为位置配对的回归锁。教训：**ABI 契约以编译器行为为准（trampoline 一致性可交叉验证），文档语义先于用例写死前必须用混合类型用例实测**。
+- **坑二（idiv 陷阱，SL 侧无法防护）**：测试用例 `mov rax, rcx; cqo; idiv rdx` 除法崩溃（0xC0000094 除零）——`cqo` 会把 RAX 符号位填进 **RDX**，把第 2 位置的除数（RDX）覆盖成 0。修正：除数先挪 `mov r8, rdx` 再 `cqo; idiv r8`。这是纯用户汇编坑，插件无法兜底（正是「汇编写错 = 进程崩溃」红线的实例）；用例保留为陷阱回归锁并在使用文档 §4 显著列出。
+- **坑三（出通道 Int32 截断消费）**：`$v <- rax;` 的 int 出值经 Front 脱糖 ChannelOutInt 在 SL 侧**按 Int32 截断**（同 cplus 既有限制，蓝本 ③ 用例值恰好 < 2^31 所以从未暴露）——⑦ SIMD 用例返回 `2 | (4<<32) = 17179869186` 被截成 2。修正口径：**int/long 出通道的出值必须 ≤ 2147483647**（double 出值同理选截断无损值）；用例改为四车道求和（20）。该约束已写入使用文档与设计文档 §1.3。
+- **次生坑（排障方法论）**：验证期 CPlusClangTest 突然三连死在第一个块（exit 1 无输出）——A/B（禁用 masm 全量接入）复现同点位失败，证明与 masm 无关；最终定位为**早前 ⑥ AV 崩溃残留的僵尸进程**（slang.exe/node.exe 挂起占用）干扰后续运行，`Stop-Process` 清理后 CPlus 29/0、Python 13/0 全恢复。教训：**进程崩溃型用例跑完后先查僵尸进程再跑长套件**；A/B 对照法对「环境态漂移 vs 代码回归」的判别依旧最有效。
+- **交付物**：`plugin/masm_x64/`（含 MASM_X64_PLUGIN_DESIGN.md 设计+决策+坑复盘）、`SpecialTest/MasmX64Test.sl` 11 法 14 断言（plain+EXTERN printf/int 出/int64/double sqrtsd/string 大写+`.data`/三类型混合位置配对/AVX2 vpaddd/popcount×2/CPUID vendor+push rbx/imul+idiv/库驻留×2）全绿 `passed=14 failed=0`；文档同步 = plugin README + `md/plugins/MasmX64.md`（R21 使用口径）+ PLUGIN_SYSTEM_DESIGN §2.2d + PLUGIN_TEMPLATE §1 实例行。
+
+### [2026-11-18] 第四十四轮：MasmBench 递归 fib 校验和错乱（易失寄存器跨 call 存活——「反汇编全对、语义全错」的 ABI 教科书案例）
+
+- **现象**：BenchMark 接入 MasmBench 后，Loop/EqBench/SimdAVX2 三块校验与计时全对，唯 Fibonacci 递归块 `fib(0..21) x100` 得 12100——恰好是 sum(ceil(i/2))×100，即 f(n) 退化成 f(n-2)+1。
+- **排障弯路（方法论警示）**：反汇编（dumpbin /disasm）逐指令核对——obj、链接后 exe、SLMasm.dll 三层机器码全部「正确」；cdb 单步前 40 条下降链与回卷逐指令正确；甚至独立最小复现（裸 .asm + C main，不含任何 VM/插件层）复现同样错值——一度陷入「机器码不可能产生该结果」的悖论。cdb 断点日志（每帧 add 时的 rdx 恒为 1）才揭示真相。
+- **根因**：递归助手 `F_fib` 把 f(n-1) 暂存 **RDX（易失寄存器）**后发起第二次递归 `call`——递归子树内部同样执行 `mov rdx, rax`，把暂存值毁成子树残留的 1。于是每层 add 变成 f(n-2)+1。**指令序列、跳转、栈平衡全部正确，错的是调用约定语义：易失寄存器的值不得跨 call 存活。**「反汇编正确」只能排除编码错，不能证明 ABI 语义对——排障时不要被逐指令核对的全绿麻痹。
+- **修复**：f(n-1) 改存非易失寄存器 RBX（`push rbx` 入、`pop rbx` 出配对）；修后校验和 = (fib(23)-1)×100 = 2865600 ✓（恒等式 sum(0..n)=fib(n+2)-1 反推期望值——手算 22 项累加两次都错，恒等式一次就对）。该用例保留为「易失寄存器跨 call」回归锁。
+- **交付物**：MasmBench 四基准（Loop/EqBench/Fibonacci 共享口径 + SimdAVX2 专列）全绿，BenchCollector 增 recordMasm 与 ASM 列，报告多语言对比总表 ASM 上线（量级：Loop ASM ~3ms vs SL ~20s、EqBench ~2ms vs SL ~2.8s、Fibonacci ~9ms vs SL ~151ms、SimdAVX2 ~1ms 专列）；块内计时走 EXTERN QueryPerformanceCounter/Frequency（kernel32 符号经 cl 默认库解析，printf 同链已验证）。
+- **通用教训**：① 汇编排障「反汇编全对」≠「语义对」——调用约定（易失/非易失、栈对齐、shadow space）是反汇编看不见的语义层，凡有 call 的汇编体先按 ABI 自查暂存值归属；② 校验和先算恒等式再手工累加；③ cdb 断点条件日志（bp + .printf + gc）比单步适合抓「深层偶发/系统性错值」；④ 最小独立复现（裸 asm + C main）对隔离 VM/插件层极有效——本例它直接证明问题在汇编自身。
+
+### [2026-11-19] 第四十五轮：发布包 BenchMark 报告缺 ASM 时间列（插件 refModule 未 stage——出通道包装空体返回 null）
+
+- **现象**：`slang publish` 产出的 BenchMark 应用跑完生成的 `report/BenchmarkReport_*.md` 里，ASM 列（Loop/EqBench/Fibonacci/SimdAVX2）时间单元格为空或缺行；同期 C/C++/CSharp 等列正常（因 `publish\<Ref>\` 下有 11-07 的陈旧 refModule 目录兜底），仅 masm（新插件）无对应目录。
+- **定位过程**：① 同工程用开发树 CLI 编译 + `csimple_lang.exe run` 一切正常 → 排除 MasmBench/汇编计时本身；② 给 `sl_atsign_invoke` 与 `sl_atsign_channel_out_int` 加 stderr 插桩：发布包内各块 `exec` 后 out 值 marshal 正确（`out_type=1`、ns 有值），但 `AtSignChannelOutInt` 从未被调用 → SL 侧 `ns` 为 null；③ 对比 module.json：脱糖 IR 里 `ns = ChannelOutInt(entry)` 是 `CallStatic` 到 refModule 方法，主模块内该方法是 **instructionList 为空**的桩，真实方法体在 `../<插件名>/<插件名>.module` 引用模块里；④ 发布包 `moduleReferences` 中插件 refModule 条目**只有 uuid+path、没有 name**，而 `StageReferencedModules` 首行 `if (!TryGetProperty("name")) continue;` 直接跳过 → 引用模块未随包，静态调用落到空体桩，返回值 null。出通道包装对所有 `@tag` 插件通用（CPlusClang/MasmX64/Python…），陈旧目录存在时被掩盖，新插件必现。
+- **修复**：`Publish/PublishCommand.cs` `StageReferencedModules` 增加 `InferReferenceNameFromPath`——无名引用按 path basename 反推模块名（`../MasmX64/MasmX64.module` → `MasmX64`）后走既有平铺 stage 链（导出树候选 → Lib 家族 → path 回退 → 平铺 `*.module.*` 进发布目录，C VM basename 直查命中）。
+- **验证**：`dotnet run --project SlangAllInOne -- publish BenchMark.sp --dest D:\bench_pub8` → 7 个插件 refModule 全部 `staged flat into publish`；发布包 `BenchMark.exe` 跑完报告全列齐全（ASM：Loop 3ms / EqBench 2ms / Fibonacci 9ms / SimdAVX2 1ms），与开发树直跑一致。
+- **通用教训**：① 发布产物与开发树的行为差异优先查「引用模块/插件运行位是否随包」——主模块里的 refModule 方法只是空壳，**方法体来自 `../<名>/<名>.module`**，缺件不报错、只静默返回 null；② 插桩点放在「跨界值 marshal 之后、SL 侧消费之前」能一次区分 marshal 错与消费链断裂；③ 发布产物验证必须跑「真实入口 + 端到端产物（报告文件）」，不能只看进程退出码。

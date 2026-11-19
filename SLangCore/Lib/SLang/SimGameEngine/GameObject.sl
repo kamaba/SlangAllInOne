@@ -53,6 +53,25 @@ public class GameObject extends Component
         this._scene = null
     }
 
+    public void _init_( string _name )
+    {
+        this.parent = null
+        this.components = List<Component>(8)
+        this.name = _name
+        this.tag = "Untagged"
+        this.transform = Transform()
+        # 统一版 Transform（SLangRender，2026-11-17 合并）：层级经
+        # transform.parentNode（Transform 级父链）由宿主在各层级变更点同步；
+        # Component 树 parent（组件挂载关系）照旧指向本 GameObject。
+        this.transform.parent = this
+        this.components.add( this.transform )
+        this.activeSelf = true
+        this.layer = 0
+        this.pendingDestroy = false
+        this._children = List<GameObject>(8)
+        this._scene = null
+    }
+
     # ── 工厂 ─────────────────────────────────────────────
     # 独立节点（不属于任何场景）；需要进场景用 Scene.createObject
     public static GameObject create( string name )
@@ -193,6 +212,22 @@ public class GameObject extends Component
                 SystemSimEngineCallHook( b, "onEnable" )
             }
         }
+    }
+
+    # ── 组件枚举（跨模块消费入口；components 是字段，跨模块字段链
+    # （go.components.length / [i]）会崩 ParseStatements——必须走方法）──
+    public Int32 componentCount()
+    {
+        ret this.components.length
+    }
+
+    public Component componentAt( Int32 index )
+    {
+        if index < 0 || index >= this.components.length
+        {
+            ret null
+        }
+        ret this.components[index]
     }
 
     # 移除组件（Transform 不可移除）；Behaviour 走 onDisable + dispose

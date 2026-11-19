@@ -34,6 +34,9 @@ public class InputSystem
     public static Int32 KEY_DOWN = 16777237    # Qt::Key_Down  = 0x01000015
     public static Int32 KEY_SPACE = 32
     public static Int32 KEY_ESCAPE = 16777216  # Qt::Key_Escape = 0x01000000
+    public static Int32 KEY_CTRL = 16777249    # Qt::Key_Control = 0x01000021
+    public static Int32 KEY_F12 = 16777334     # Qt::Key_F12    = 0x01000076
+    public static Int32 KEY_HOME = 16777232    # Qt::Key_Home   = 0x01000010
 
     public bool isDown( Int32 key )
     {
@@ -57,7 +60,62 @@ public class InputSystem
         EngineFfi.libInputSetKey( key, d )
     }
 
-    # 帧尾清边沿（游戏主循环每帧末调一次）
+    # ── 鼠标（2026-11-19 统一输入桥）────────────────────────────
+    # 注入方 = QT 宿主桥（QTHost.pumpMouse 每帧采样 QT 轮询 FFI 写入
+    # C 表）；查询方 = 游戏逻辑。按钮号 1=左 2=右；坐标 = 窗口客户区
+    # 像素；滚轮 take 读后清零；按下边沿 endFrame 同步清。
+    public static Int32 MOUSE_LEFT = 1
+    public static Int32 MOUSE_RIGHT = 2
+
+    public bool mouseDown( Int32 button )
+    {
+        Int32 v = EngineFfi.libMouseButton( button )
+        ret v == 1
+    }
+
+    public bool mousePressed( Int32 button )
+    {
+        Int32 v = EngineFfi.libMousePressed( button )
+        ret v == 1
+    }
+
+    public Int32 mouseX()
+    {
+        ret EngineFfi.libMouseX()
+    }
+
+    public Int32 mouseY()
+    {
+        ret EngineFfi.libMouseY()
+    }
+
+    public Int32 mouseWheelTake()
+    {
+        ret EngineFfi.libMouseWheelTake()
+    }
+
+    # ── 注入侧（宿主桥专用；游戏逻辑不走这里）───────────
+    public void setMouseButton( Int32 button, bool down )
+    {
+        Int32 d = 0
+        if down
+        {
+            d = 1
+        }
+        EngineFfi.libInputSetMouseButton( button, d )
+    }
+
+    public void setMousePos( Int32 x, Int32 y )
+    {
+        EngineFfi.libInputSetMousePos( x, y )
+    }
+
+    public void addMouseWheel( Int32 delta )
+    {
+        EngineFfi.libInputSetMouseWheel( delta )
+    }
+
+    # 帧尾清边沿（游戏主循环每帧末调一次；键盘+鼠标按下边沿一并清）
     public void endFrame()
     {
         EngineFfi.libInputEndFrame()

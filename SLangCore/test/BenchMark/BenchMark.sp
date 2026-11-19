@@ -7,7 +7,7 @@ Project
         Console.println("===== BenchMark _main_ start =====")
         nowMs = Environment.sys.nowMillis()
 
-        #HelloWorld.fun()
+        HelloWorld.fun()
         Fibonacci.fun()
         EqBench.fun()
         Loop.fun()
@@ -36,6 +36,11 @@ Project
         # 须最后编译）
         CBench.fun()
         CppBench.fun()
+
+        # x86-64 MASM 汇编基准（masm_x64 插件：Loop/EqBench/Fibonacci 三项
+        # 共享基准同口径跨语言对拍 + SimdAVX2 专列；块内 QPC ns 计时经出
+        # 通道回传。编译产物 SLMasm.dll 共享部署位，运行前本工程须最后编译）
+        MasmBench.fun()
 
         # Python 惯用基准（python_cpython 插件：块内 perf_counter_ns 计时
         # 经出通道 us 回传；pysrc 共享部署位，本工程须最后编译——同上）

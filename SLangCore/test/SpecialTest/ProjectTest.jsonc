@@ -34,6 +34,7 @@
       { "path": "CPlusClangTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "MasmX64Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "PythonTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "PhpTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "TypeScriptNodeV8Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AOT.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
@@ -215,6 +216,29 @@
       "abi": 1,
       "prefix": "sl_python_cpython_",
       "lib": "../../../../plugin/python_cpython/package/windows/cvm_python_cpython.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // php_embed：块体经 frontend（SLPF v3 契约）在 Front 导出期免编译部署
+    // 为 <libDir>\phpsrc\Entry_N.php（function run 源码，PHP 解释型无需工具
+    // 链）；labelExec 运行期经 php_bridge（php_embed_init + 全局唯一函数
+    // 重命名 sl_php_entry_<N>_v<K> + zend_eval_string + zend_call_function）
+    // 执行。运行时依赖 vendored php8ts.dll（PHP 8.4 TS x64，与插件 dll 同
+    // 目录，LoadLibraryEx ALTERED_SEARCH_PATH 自动命中）。prefix =
+    // "sl_php_embed_"（plugin.jsonc entry.prefix）。块内 Boolean 放行
+    //（PHP 原生 bool 编组 INT 0|1）；出通道表达式须加括号规避 Front
+    //「不可以 $ 开头」铁律（见 PhpTest.sl）。
+    "php_embed": {
+      "name": "php_runtime_use_embed_sapi",
+      "version": "0.1.0",
+      "path": "plugin/php_embed",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_php_embed_",
+      "lib": "../../../../plugin/php_embed/package/windows/cvm_php_embed.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

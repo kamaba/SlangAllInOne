@@ -29,6 +29,14 @@ public class GameObject extends Component
     public bool pendingDestroy = false
     # C99 节点注册表 id（Scene.createObject 注册；destroy 注销；0 = 未注册）
     public Int64 nodeId = 0
+    # ECS 模式（doc/20，opt-in）：true 时本节点只承载数据组件；渲染数据由
+    # world 持有，逻辑由 world.logic 集中调度，节点不再收集 Behaviour。
+    public bool useEcs = false
+    # 名称避开 world —— 子类 Camera.worldToCameraMatrix 内有同名局部变量，
+    # SLang 会把局部变量当字段解析而污染整条调用链（doc/20 §6）
+    public EcsWorld ecsWorld = null
+    # 最近一次被 ECS 模式拒绝挂载的组件类型（便于诊断误挂逻辑）
+    public string lastEcsReject = ""
 
     # 子节点表 / 所属场景：public 以便 GameObject 子类（Camera/Light）在
     # _init_ 中复制节点初始化（SLang 子类构造不自动调用父类 _init_，doc/10 §6）
@@ -51,6 +59,9 @@ public class GameObject extends Component
         this.activeSelf = true
         this.layer = 0
         this.pendingDestroy = false
+        this.useEcs = false
+        this.ecsWorld = null
+        this.lastEcsReject = ""
         this._children = List<GameObject>(8)
         this._scene = null
     }
@@ -70,6 +81,9 @@ public class GameObject extends Component
         this.activeSelf = true
         this.layer = 0
         this.pendingDestroy = false
+        this.useEcs = false
+        this.ecsWorld = null
+        this.lastEcsReject = ""
         this._children = List<GameObject>(8)
         this._scene = null
     }
@@ -188,6 +202,61 @@ public class GameObject extends Component
         if comp == null
         {
             ret
+        }
+        # ECS 模式（doc/20）：渲染数据拔离到 world，数据进世界数据仓，
+        # 逻辑进集中逻辑系统；其它 Behaviour 一律拒绝（节点只挂 Data）。
+        # Transform 等结构组件落回下面的常规挂载路径。
+        EcsWorld ecsCtx = this.ecsWorld
+        if ecsCtx == null && this.useEcs
+        {
+            ecsCtx = EcsWorld.active
+        }
+        bool routed = false
+        if ecsCtx != null
+        {
+            MeshRef mesh = comp as MeshRef
+            if mesh != null
+            {
+                ecsCtx.setRenderData( this, mesh, null )
+                routed = true
+            }
+            if !routed
+            {
+                MaterialRef mref = comp as MaterialRef
+                if mref != null
+                {
+                    ecsCtx.setRenderData( this, null, mref )
+                    routed = true
+                }
+            }
+            if !routed
+            {
+                EcsData datum = comp as EcsData
+                if datum != null
+                {
+                    ecsCtx.addData( this, datum )
+                    routed = true
+                }
+            }
+            if !routed
+            {
+                EcsLogic item = comp as EcsLogic
+                if item != null
+                {
+                    ecsCtx.addLogic( item, this )
+                    routed = true
+                }
+            }
+            if routed
+            {
+                ret
+            }
+            Transform tcomp = comp as Transform
+            if tcomp == null
+            {
+                this.lastEcsReject = comp.type.toString()
+                ret
+            }
         }
         string tname = comp.type.toString()
         Int32 i = 0

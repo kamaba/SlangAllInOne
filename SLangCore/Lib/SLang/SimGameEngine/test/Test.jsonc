@@ -50,6 +50,8 @@
 { "path": "suites/SimInputTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimUICanvasTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimCameraLightTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimEcsTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimGizmoTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "Test.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 10 }
     ]
   },

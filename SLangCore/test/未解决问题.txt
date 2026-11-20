@@ -5,12 +5,9 @@ VSCode里边，如果识别到是变量，在右键的时候，要弹出一个�
 增加
 macOs /iOS的环境 
 
-1. Php的接入
-2. Go语言的接入
-
+1. Go语言的接入
+2. 接入dart 
 3. R语言的接入
-4. 接入dart 
-5. 接入kotlin
 
 
 QTCodeEditor
@@ -19,6 +16,23 @@ QTCodeEditor
 3. 代码显示区域右边有5-10个字符没有显示出来
 4. 在快捷图标区，要和VS一样显示，当前的选中工程
 5. 
+
+现在这里边像GameObject 要增加渲染基础的一些  要仿着Unity渲染坐标系 编辑器状态的一些 渲染，像 坐标xyz的 红绿蓝 方向箭头  还有选中时的rotation时候的圆， 还有缩放时候的scale   还有摄像机2d/3d的形象,  还有Light 也要模拟Unity3d 的光，有2d/3d的图标
+
+
+现在要把R语言的一些特性引入，我的目标就是 可以像R语言一样 整合数据，然后在各种图形显示这些数据的整合，还是请写.md文档 ，然后再写
+
+
+先增加MotionVectors的机制 增加完了再增加 增加AA的处理 先增加一个FxAA  msaa的都增加下吧
+增加延时处理方案
+增加ecs系统，基本思路就是 GameObject 如果使用了ecs系统，GameObject 的渲染部分要拔离出去，  然后GameObject只允许挂Data类型的数据，如果挂逻辑，逻辑会放到一个总的逻辑系统中处理，处理完后，然后处理完逻辑后， GameObject会自动分层，把能合并的合并后，然后 整体的在渲染层进行渲染
+增加wasm的机制，然后可以跑我现在的贪吃蛇的游戏
+
+ffmpeg的dll 引入  要制作成media模块  把这块模板，整合成一个如果有视频，则要显示窗口
+
+找一个轻量级的 webview一类的，做成 dll  要制作成modules
+
+在WebUI上制作 Scratch
 
 SLang GameEngine
 1. 制作 wasm 的渲染内容  整合到WebUI里边
@@ -59,17 +73,6 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 frontend然后再进行优化。
 官方第三方库:
 
-先增加data CameraData的数据 然后Camera extends GameObject bind CameraData 里边 然后增加许多矩阵变化的方法   同样的Light也是这样的处理 Light extends GameObject bind LightData 
-先增加MotionVectors的机制 增加完了再增加 增加AA的处理 先增加一个FxAA  msaa的都增加下吧
-增加延时处理方案
-增加ecs系统，基本思路就是 GameObject 如果使用了ecs系统，GameObject 的渲染部分要拔离出去，  然后GameObject只允许挂Data类型的数据，如果挂逻辑，逻辑会放到一个总的逻辑系统中处理，处理完后，然后处理完逻辑后， GameObject会自动分层，把能合并的合并后，然后 整体的在渲染层进行渲染
-增加wasm的机制，然后可以跑我现在的贪吃蛇的游戏
-
-ffmpeg的dll 引入  要制作成media模块  把这块模板，整合成一个如果有视频，则要显示窗口
-
-找一个轻量级的 webview一类的，做成 dll  要制作成modules
-
-在WebUI上制作 Scratch
 
 
 在aot的中，处理llvm内置的一些结构，在生成这个数据后，要有一个id的概念，也就是定义这个对象的hashCode 虽然是在llvm里边生成的，也要有这个概念，因为这个在 llvm的.struct转成VMObject一类的时候，要先检查vm里边有没有这个，如果没有，再去创建VMObject 而且这个不受内存gc管理，因为这个还属于llvm  所以Object.sl 你看下是不是要增加一个int _hashCode这样的概念呀，是不是这样更合理  你确定下，原来好像我看着是用的指针进行hash运算的，这种方式确定可以吗？

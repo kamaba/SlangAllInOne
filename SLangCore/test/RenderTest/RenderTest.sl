@@ -88,7 +88,9 @@ public class RenderTest
         Int32 phaseAudPlay = RenderTestAudio.runAudioPlaybackSmoke()
         Int32 phaseAudSrc = RenderTestAudio.runAudioSource()
 
-        Int32 phaseB = RenderTestQt.runQtWindow()
+        # ── Phase W：WebUI 窗口 + WebGL 帧流整合（替代 Phase B Qt 窗口；
+        # RenderTestQt.runQtWindow 保留但不再调用，随 SLangQT 依赖降级 SKIP）──
+        Int32 phaseW = RenderTestWebUI.runWebUIWindow()
 
         string dText = "FAIL"
         if phaseD == 2
@@ -117,14 +119,14 @@ public class RenderTest
         {
             gText = "SKIP"
         }
-        string bText = "FAIL"
-        if phaseB == 2
+        string wText = "FAIL"
+        if phaseW == 2
         {
-            bText = "PASS"
+            wText = "PASS"
         }
-        elif phaseB == 1
+        elif phaseW == 1
         {
-            bText = "SKIP"
+            wText = "SKIP"
         }
         Console.println( "========== GLRenderTest summary ==========" )
         Console.println( "phase D  (d3d11 same-effect) : " + dText )
@@ -167,7 +169,7 @@ public class RenderTest
             asText = "SKIP"
         }
         Console.println( "phase AUD-SRC (audio source): " + asText )
-        Console.println( "phase B  (QT window)         : " + bText )
+        Console.println( "phase W  (WebUI WebGL)       : " + wText )
         # 终判：主流程全绿 + D3D11/VK 可用即 PASS，GLES 允许 SKIP（环境无 GLES 库）
         bool allOk = phaseA
         if !phaseL
@@ -214,7 +216,7 @@ public class RenderTest
         {
             allOk = false
         }
-        if phaseB == 0
+        if phaseW == 0
         {
             allOk = false
         }

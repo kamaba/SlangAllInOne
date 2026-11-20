@@ -31,7 +31,8 @@
       { "path": "RenderTestPhasesB.sl", "group": "render", "tag": "base", "ignore": false, "priority": 7 },
       { "path": "RenderTestPhasesC.sl", "group": "render", "tag": "base", "ignore": false, "priority": 8 },
       { "path": "RenderTestPhasesD.sl", "group": "render", "tag": "base", "ignore": false, "priority": 9 },
-      { "path": "RenderTestPhasesE.sl", "group": "render", "tag": "base", "ignore": false, "priority": 10 }
+      { "path": "RenderTestPhasesE.sl", "group": "render", "tag": "base", "ignore": false, "priority": 10 },
+      { "path": "RenderTestWebUI.sl", "group": "render", "tag": "base", "ignore": false, "priority": 11 }
     ]
   },
   "compileFilter": {
@@ -60,7 +61,11 @@
     // SLangAudio 模块（out/export/SLangAudio：module.json + slb +
     // sl_audio_lib.dll；路径引用同 ImageTest 的 SLangImage 模式）：
     // probe / 整段解码（AudioClip）/ 流式（AudioStream）/ 播放（waveOut）
-    { "path": "../../../out/export/SLangAudio/SLangAudio.module.json" }
+    { "path": "../../../out/export/SLangAudio/SLangAudio.module.json" },
+    // SLangWebUI 模块（Phase W WebUI 窗口 + WebGL 帧流；webui_lib.dll 随模块目录）
+    { "path": "../../../SLangCore/Lib/SLang/WebUI/export/SLangWebUI/SLangWebUI.module.json" },
+    // SLangImage 模块（Phase W 原生 JPEG 编码：libEncodeMem 直通帧指针）
+    { "path": "../../../out/export/SLangImage/SLangImage.module.json" }
   ],
   "struct": [
   ],

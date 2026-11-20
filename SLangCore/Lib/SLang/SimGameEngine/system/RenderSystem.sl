@@ -21,6 +21,9 @@ import SLangRender;
 public class RenderSystem
 {
     public Batcher batcher = Batcher()
+    # ECS 渲染源（doc/20，opt-in）：非 null 时 sync 直接提交 world 已分层
+    # 合并好的 EcsLayer（复用同一套 RenderObject 写入逻辑），旧路径不变。
+    public EcsWorld ecsSource = null
     public Int32 cullMask = 0x7FFFFFFF
     public Int32 bakedSkipped = 0
     public Int32 lastSubmitted = 0
@@ -318,18 +321,29 @@ public class RenderSystem
             VolumeStack vst = this.volumeSystem.compute( scene, cc )
             this.applyPost( vst )
         }
-        this.batcher.collect( scene, this.cullMask )
-        this.batcher.build()
+        Batcher submitBatcher = this.batcher
+        if this.ecsSource != null
+        {
+            # ECS 路径：逻辑已由 Application 跑完，这里只做分层合并与提交
+            this.ecsSource.cullMask = this.cullMask
+            this.ecsSource.buildLayers()
+            submitBatcher = this.ecsSource.layerBatcher
+        }
+        else
+        {
+            submitBatcher.collect( scene, this.cullMask )
+            submitBatcher.build()
+        }
         Float32 ax = this.aspectX()
         Float32 cxw = this.cameraCenter.x
         Float32 cyw = this.cameraCenter.y
         Float32 hw = this.viewSize * ax
         Int32 i = 0
-        Int32 n = this.batcher.groupCount()
+        Int32 n = submitBatcher.groupCount()
         Int32 submitted = 0
         while i < n
         {
-            BatchGroup g = this.batcher.groupAt( i )
+            BatchGroup g = submitBatcher.groupAt( i )
             if g.singleObject
             {
                 GameObject go = g.soleMember

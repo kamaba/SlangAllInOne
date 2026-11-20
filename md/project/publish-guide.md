@@ -127,6 +127,12 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 > basename 反推模块名（`../MasmX64/MasmX64.module` → `MasmX64`）后同样平铺
 > stage；漏 stage 时发布包内 `@tag` 出通道包装方法无方法体，`ChannelOutInt`
 > 类返回值静默变 null（BenchMark 发布包 ASM 列全空即此因，2026-11-19 修）。
+> 🔥 **引用清单双来源（2026-11-20）**：module.json 的 moduleReferences 优先；
+> json 副本不可用时（Release FrontEnd 淘汰 json 导出，`binary+json` 一律按
+> binary 处理）**回落 jsonc references**（Front 进程内已解析，path 相对工程
+> 目录，目录/文件两形态都解析）——不再以 json 产物存在为前置条件。此前
+> Release 包 publish 因 json 缺失整体静默跳过引用 stage，发布包缺全部引用
+> 模块与 FFI dll，GUI exe 秒退（SnakeGame 实录）。
 > 决策记录与机制 = [package-layout.md](package-layout.md) §六。
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
@@ -207,6 +213,10 @@ slang publish <工程>
 
 **引用 stage 的源目录解析链**（`PublishCommand.StageReferencedModules`，2026-10-30
 WebUITest 实录定稿）——非系统库引用（如 SLangWebUI）按名按序解析产物源：
+
+> 🔥 2026-11-20 起引用清单双来源：module.json 的 `moduleReferences` 优先；
+> json 副本缺失（Release FrontEnd 淘汰 json 导出）时回落 jsonc `references`
+> （path 相对工程目录，目录/文件两形态都解析），stage 不再以 json 产物为前置。
 
 1. 标准导出树 `out\export\<名>\`（须实含 `*.module.*` 产物，同名陈旧空壳被拒）；
 2. `SLangCore\Lib\**\export\<名>\` —— **库家族导出位**（权威产物树，slb+json+

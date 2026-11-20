@@ -63,12 +63,20 @@ public class SceneSmokeTest
             sm.tick( 0.016f )
             i = i + 1
         }
-        # 坐标轴箭头验证：ShapeGallery 里形状节点挂的 AxisGizmoScript
-        # 若被 C VM 驱动，pushAxisAt 会往 SceneDemo.vertsX 灌入顶点。
+        # 编辑器 Gizmo 验证：ShapeGallery 里形状节点挂的 AxisGizmoScript
+        # 若被 C VM 驱动，pushAxisAt 会经 GizmoSystem 往 X 色缓冲灌入顶点。
         if file == "ShapeGallery.scene.json"
         {
-            SceneSmokeTest.check( SceneDemo.vertsX.length > 0,
-                tag + " axis gizmo verts=" + SceneDemo.vertsX.length.toString() )
+            if SceneDemo.gs == null
+            {
+                SceneDemo.gs = GizmoSystem()
+            }
+            SceneDemo.gs.setMode( GizmoTypes.MODE_MOVE )
+            SceneDemo.beginAxisFrame()
+            sm.tick( 0.016f )
+            Int32 gv = SceneDemo.gs.vertexCountAt( 0 )
+            SceneSmokeTest.check( gv > 0,
+                tag + " axis gizmo verts=" + gv.toString() )
         }
         string json = sm.toJson( null )
         bool hasJson = json.length > 20

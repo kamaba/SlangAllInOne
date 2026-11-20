@@ -105,6 +105,16 @@ BenchCollector
         BenchCollector.record( "Python", "Python / CPython 3.14 内嵌（python_cpython 插件）", "CPython 字节码解释器（无 JIT），块内 perf_counter_ns 计时（us 回传）", testType, testParam, timeUs )
     }
 
+    # PHP：参数为微秒（2026-11-20 修订：php 出通道 $us <- (...) 回传在 AOT
+    # 发布包（BenchMark.exe）实测失效——块内 echo 正常、毒化 long 回传致报告
+    # PHP 列全空；源码树 slang.exe 运行正常。参照 MasmBench asm 出通道失效
+    # 先例，统计值改用 SL 侧 nowMillis 整块计时兜底（ms×1000 存 us，含块
+    # trampoline 调用开销）；块内 hrtime(true) printf 原始 us 见运行日志）。
+    static recordPhp( string testType, string testParam, long timeUs )
+    {
+        BenchCollector.record( "PHP", "PHP 8.4 / embed SAPI 内嵌（php_embed 插件，vendored php8ts.dll TS x64）", "PHP Zend 字节码解释器（无 JIT），SL 侧 nowMillis 整块计时（php 出通道回传在 AOT 发布包失效兜底，块内 hrtime 原始 us 见运行日志）", testType, testParam, timeUs )
+    }
+
     static recordC( string testType, string testParam, long timeNs )
     {
         BenchCollector.record( "C", "C 惯用法（@cplus_clang 块，malloc/裸指针/函数指针）", "MSVC cl /O2 原生编译，块内 ns 精确计时（cplus_clang 插件）", testType, testParam, timeNs / 1000L )
@@ -167,9 +177,9 @@ BenchCollector
         md = md + "- 生成时间: " + dt.year.toString() + "-" + BenchCollector.pad2( dt.month ) + "-" + BenchCollector.pad2( dt.day )
         md = md + " " + BenchCollector.pad2( dt.hour ) + ":" + BenchCollector.pad2( dt.minute ) + ":" + BenchCollector.pad2( dt.second ) + nl
         md = md + "- 数据条目: " + BenchCollector._entries.length.toString() + " 条" + nl
-        md = md + "- 计时口径: 时间存储单位一律微秒；SL 为 SL 侧 nowMillis 毫秒计时（×1000 存 us）；C/C++/CSharp/Java/JS/TS/Python 为块内自身计时经出通道回传（不含引擎装载/编译部署开销）——C/C++ QPC/steady_clock ns（/1000 存 us，原始 ns 见运行日志）、CSharp Stopwatch（us）、Java System.nanoTime（ns /1000 折 us）、JS QuickJS Date.now（ms ×1000 存 us，粒度毫秒）、TS performance.now（亚毫秒 ms ×1000 折 us）、Python perf_counter_ns（块内 //1000 回传 us，原始 ns 见运行日志）；ASM 因出通道回传失效改用 SL 侧 nowMillis 整块计时（含 trampoline 开销，ms×1000 存 us，块内 QPC printf 原始 ns 见运行日志）" + nl
+        md = md + "- 计时口径: 时间存储单位一律微秒；SL 为 SL 侧 nowMillis 毫秒计时（×1000 存 us）；C/C++/CSharp/Java/JS/TS/Python 为块内自身计时经出通道回传（不含引擎装载/编译部署开销）——C/C++ QPC/steady_clock ns（/1000 存 us，原始 ns 见运行日志）、CSharp Stopwatch（us）、Java System.nanoTime（ns /1000 折 us）、JS QuickJS Date.now（ms ×1000 存 us，粒度毫秒）、TS performance.now（亚毫秒 ms ×1000 折 us）、Python perf_counter_ns（块内 //1000 回传 us，原始 ns 见运行日志）；PHP/ASM 因出通道回传失效改用 SL 侧 nowMillis 整块计时（含块 trampoline 调用开销，ms×1000 存 us，块内 hrtime/QPC printf 原始值见运行日志）" + nl
         md = md + "- 单元格显示自适应单位（us 值过大时折算 ms），附录保留原始微秒值" + nl
-        md = md + "- C/C++/CSharp/Java/JavaScript/TypeScript/Python 均为块内自身计时；CSharp/Java/TypeScript 首轮块内另含运行时 JIT/解释预热" + nl + nl
+        md = md + "- C/C++/CSharp/Java/JavaScript/TypeScript/Python 均为块内自身计时，PHP/ASM 为 SL 侧整块计时；CSharp/Java/TypeScript 首轮块内另含运行时 JIT/解释预热" + nl + nl
 
         # 语言与优化说明表（取各语言首条记录的说明）
         md = md + "## 语言与优化说明" + nl + nl
@@ -184,12 +194,13 @@ BenchCollector
         md = md + BenchCollector.langRow( "JavaScript" )
         md = md + BenchCollector.langRow( "TypeScript" )
         md = md + BenchCollector.langRow( "Python" )
+        md = md + BenchCollector.langRow( "PHP" )
         md = md + nl
 
         # 多语言对比总表：按测试类型归并（一行一个测试，各语言该测试全部子项耗时求和，us 域）
         md = md + "## 耗时对比总表（自适应单位，越小越快，单元格为该测试全部子项耗时合计）" + nl + nl
-        md = md + "| 测试类型 | 参数 | SL | C | C++ | ASM | CSharp | Java | JavaScript | JavaScriptV8 | Python |" + nl
-        md = md + "|----------|------|----|---|-----|-----|--------|------|------------|--------------|--------|" + nl
+        md = md + "| 测试类型 | 参数 | SL | C | C++ | ASM | CSharp | Java | JavaScript | JavaScriptV8 | Python | PHP |" + nl
+        md = md + "|----------|------|----|---|-----|-----|--------|------|------------|--------------|--------|-----|" + nl
         List<BenchEntry> rows = BenchCollector.collectRows()
         for i = 0, i < rows.length, i++
         {
@@ -209,7 +220,8 @@ BenchCollector
             md = md + " " + BenchCollector.timeCell( row.testType, "Java" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "JavaScript" ) + " |"
             md = md + " " + BenchCollector.timeCell( row.testType, "TypeScript" ) + " |"
-            md = md + " " + BenchCollector.timeCell( row.testType, "Python" ) + " |" + nl
+            md = md + " " + BenchCollector.timeCell( row.testType, "Python" ) + " |"
+            md = md + " " + BenchCollector.timeCell( row.testType, "PHP" ) + " |" + nl
         }
         md = md + nl
 

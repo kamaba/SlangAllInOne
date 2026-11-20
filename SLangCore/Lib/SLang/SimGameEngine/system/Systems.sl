@@ -30,6 +30,18 @@ public class Systems
     # 收集画布节点 → 编排相机 → 相机输出图层叠加。
     public UICanvasSystem canvas = UICanvasSystem()
 
+    # ECS 一键接线（doc/20）：把世界挂到 Application（逻辑/分层由帧循环驱动）
+    # 同时设为 RenderSystem 的提交源（渲染层整体消费分层合并结果）。
+    public void bindEcs( Application app, EcsWorld world )
+    {
+        if world == null
+        {
+            ret
+        }
+        world.attach( app )
+        this.render.ecsSource = world
+    }
+
     # 初始化全部子系统（渲染 w×h 离屏目标 + 音频后端）；
     # 返回 false 时逐项排查（render.ready / audio.ready / audio.lastError）
     public bool init( Int32 width, Int32 height )

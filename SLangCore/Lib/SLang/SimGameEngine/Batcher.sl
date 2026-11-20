@@ -24,6 +24,9 @@ import Math;
 public class Batcher
 {
     public Int32 maxObjectsPerBatch = 256
+    # ECS 数据源（doc/20）：非 null 时 collectEcs 从世界数据仓读渲染数据，
+    # 生成的组为 EcsLayer；传统路径保持 null，行为逐字节不变。
+    EcsWorld _ecsSource = null
 
     List<BatchGroup> _groups = List<BatchGroup>( 8 )
     List<GameObject> _candGo = List<GameObject>( 32 )
@@ -81,6 +84,7 @@ public class Batcher
         this._candColor.clear()
         this._candVert0.clear()
         this._groups.clear()
+        this._ecsSource = null
     }
 
     # ── CollectVisible（键数据一次读全）──────────────────
@@ -181,6 +185,84 @@ public class Batcher
                     ci = ci - 1
                 }
             }
+        }
+        this.sortCandidates()
+    }
+
+    # ── CollectEcs（doc/20 §4）─────────────────────────────
+    # 与 collect 同构，唯一差别：渲染数据从 EcsWorld 数据仓取（节点上已拔离），
+    # 且生成的组是 EcsLayer（带分层序号/合并计数）。键值仍一次读全进平行数组，
+    # 后续 sort/build 不触碰跨模块对象图。
+    public void collectEcs( EcsWorld world, Int32 cullMask )
+    {
+        this.clear()
+        if world == null
+        {
+            ret
+        }
+        this._ecsSource = world
+        Int32 ei = 0
+        Int32 en = world.entityCount()
+        while ei < en
+        {
+            GameObject cur = world.entityAt( ei )
+            if cur != null
+            {
+                bool active = cur.getActiveInHierarchy()
+                if active
+                {
+                    Int32 layer = cur.layer
+                    Int32 layerBit = 1 << layer
+                    Int32 masked = layerBit & cullMask
+                    if masked != 0
+                    {
+                        MeshRef mr = world.meshOf( cur )
+                        if mr != null
+                        {
+                            if mr.visible
+                            {
+                                MaterialRef mref = world.materialOf( cur )
+                                if mref != null
+                                {
+                                    MaterialData mat = mref.material
+                                    if mat != null
+                                    {
+                                        Int32 q = mref.renderQueue
+                                        if q < 1
+                                        {
+                                            q = mat.renderQueue
+                                        }
+                                        this._candGo.add( cur )
+                                        this._candMesh.add( mr )
+                                        this._candMat.add( mref )
+                                        this._candQueue.add( q )
+                                        this._candMatData.add( mat )
+                                        this._candProgram.add( mat.programId )
+                                        this._candTexture.add( mat.textureId )
+                                        this._candKind.add( mr.meshKind )
+                                        this._candSlot.add( mr.meshSlot )
+                                        this._candLayer.add( layer )
+                                        this._candAnimMode.add( mref.animatedMode )
+                                        this._candSpecular.add( mat.specular )
+                                        this._candAnimSpeed.add( mref.animatedSpeed )
+                                        this._candShadow.add( mat.castShadow )
+                                        this._candColorOv.add( mref.instanceColorOverride )
+                                        if mref.instanceColorOverride
+                                        {
+                                            this._candColor.add( mref.instanceColor )
+                                        }
+                                        else
+                                        {
+                                            this._candColor.add( mat.color )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            ei = ei + 1
         }
         this.sortCandidates()
     }
@@ -300,11 +382,34 @@ public class Batcher
             }
             i = i + 1
         }
+        # ECS 分层收口：给每个 EcsLayer 落序号与合并计数
+        Int32 gi = 0
+        Int32 gn = this._groups.length
+        while gi < gn
+        {
+            BatchGroup bg = this._groups[gi]
+            EcsLayer el = bg as EcsLayer
+            if el != null
+            {
+                el.finish( gi )
+            }
+            gi = gi + 1
+        }
     }
 
     BatchGroup newGroup( Int32 i, GameObject go, MeshRef mr )
     {
-        BatchGroup g = BatchGroup()
+        BatchGroup g = null
+        if this._ecsSource != null
+        {
+            EcsLayer layer = EcsLayer()
+            layer.layerIndex = this._groups.length
+            g = layer
+        }
+        else
+        {
+            g = BatchGroup()
+        }
         g.material = this._candMatData[i]
         g.programId = this._candProgram[i]
         g.textureId = this._candTexture[i]
@@ -317,6 +422,7 @@ public class Batcher
         g.animatedMode = this._candAnimMode[i]
         g.animatedSpeed = this._candAnimSpeed[i]
         g.color = this._candColor[i]
+        g.ecsSource = this._ecsSource
         this._groups.add( g )
         ret g
     }

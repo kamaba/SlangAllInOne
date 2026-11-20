@@ -12,8 +12,14 @@ public class QTHost
     static Int64 infoHandle = 0
     static Int64 labelHandle = 0
     static Int64 timerHandle = 0
+    # 顶部菜单栏（Ctrl+Home 切换显示；菜单项「显示辅助 Gizmo」切 Gizmo 开关）
+    static Int64 menuBarHandle = 0
+    static Int64 gizmoMenuHandle = 0
+    static Int64 gizmoActionHandle = 0
+    static bool menuVisible = false
 
-    public static void startHost( Function frameHandler )
+    # toggleGizmoHandler = static void()，菜单动作触发回调（切 Gizmo 显示开关）
+    public static void startHost( Function frameHandler, Function toggleGizmoHandler )
     {
         appHandle = SLang.QT.ffi_appCreate()
         windowHandle = SLang.QT.ffi_keyWidgetCreate( 0 )
@@ -21,15 +27,40 @@ public class QTHost
         SLang.QT.ffi_widgetSetGeometry( windowHandle, 80, 80, 500, 566 )
         infoHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( infoHandle, 8, 6, 484, 44 )
-        SLang.QT.ffi_widgetSetText( infoHandle, "CLICK scene to enter | M back to menu | 1-5 scenes | LMB pan, RMB ROTATE, WASD, wheel | G axes, F ui fmt, Esc quit" )
+        SLang.QT.ffi_widgetSetText( infoHandle, "CLICK scene to enter | M back to menu | 1-5 scenes | LMB pan, RMB ROTATE, WASD, wheel | G axes, F ui fmt, Ctrl+Home menu, Esc quit" )
         labelHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( labelHandle, 8, 52, 484, 484 )
+        # 顶部菜单栏：QMenuBar 作普通 QWidget 子控件放窗口最顶（非 QMainWindow
+        # 不走 setMenuBar）。Ctrl+Home 切换显示；菜单项「显示辅助 Gizmo」
+        # 经 SIG_TRIGGERED 连到 toggleGizmoHandler（无参 void trampoline）。
+        menuBarHandle = SLang.QT.ffi_menubarCreate()
+        SLang.QT.ffi_widgetSetParent( menuBarHandle, windowHandle )
+        SLang.QT.ffi_widgetSetGeometry( menuBarHandle, 0, 0, 500, 26 )
+        gizmoMenuHandle = SLang.QT.ffi_menuCreate( menuBarHandle, "辅助 Gizmo" )
+        gizmoActionHandle = SLang.QT.ffi_menuAddAction( gizmoMenuHandle, "显示辅助 Gizmo" )
+        SLang.QT.connect( gizmoActionHandle, SLang.QT.SIG_TRIGGERED, toggleGizmoHandler )
+        SLang.QT.ffi_widgetHide( menuBarHandle )
         SLang.QT.ffi_widgetShow( windowHandle )
         SLang.QT.ffi_widgetShow( infoHandle )
         SLang.QT.ffi_widgetShow( labelHandle )
         timerHandle = SLang.QT.timer( 16, false, frameHandler )
         SLang.QT.ffi_timerStart( timerHandle, 16 )
         SLang.QT.ffi_appExec()
+    }
+
+    # Ctrl+Home 切换菜单栏显示
+    public static void toggleMenuBar()
+    {
+        if menuVisible
+        {
+            SLang.QT.ffi_widgetHide( menuBarHandle )
+            menuVisible = false
+        }
+        else
+        {
+            SLang.QT.ffi_widgetShow( menuBarHandle )
+            menuVisible = true
+        }
     }
 
     public static void blit( Int64 ptr, Int32 w, Int32 h )

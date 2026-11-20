@@ -44,6 +44,7 @@
       { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "MasmBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "PythonBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "PhpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
@@ -189,6 +190,27 @@
       "abi": 1,
       "prefix": "sl_python_cpython_",
       "lib": "../../../../plugin/python_cpython/package/windows/cvm_python_cpython.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // php_embed：PhpBench 13 项共享基准经此插件执行（Front 导出期免编译
+    // 部署 <libDir>\phpsrc\Entry_N.php，运行期 PHP embed SAPI 驻留解释器
+    // zend_eval_string + zend_call_function，块内 hrtime(true) 计时经出
+    // 通道以 us 回传）。块产物 phpsrc\ 与 pysrc / SLCpp.dll / java classes
+    // 同款共享部署位（后编译覆盖）——运行 BenchMark 前须最后编译本工程。
+    // 运行时 vendored php8ts.dll（PHP 8.4 TS x64）随插件包齐备，无需本机
+    // 另装 PHP。出通道表达式加括号规避 Front「不可以 $ 开头」铁律。
+    "php_embed": {
+      "name": "php_runtime_use_embed_sapi",
+      "version": "0.1.0",
+      "path": "plugin/php_embed",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_php_embed_",
+      "lib": "../../../../plugin/php_embed/package/windows/cvm_php_embed.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

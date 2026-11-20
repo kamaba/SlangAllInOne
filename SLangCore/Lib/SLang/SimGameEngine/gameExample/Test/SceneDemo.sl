@@ -34,17 +34,15 @@ public class SceneDemo
     static Float32 camPitch = 0.0f
     static Int32 KEY_ALT = 16777264   # Qt::Key_Alt = 0x01000230
     static Int32 KEY_SHIFT = 16777248 # Qt::Key_Shift = 0x01000020
+    static Int32 KEY_CTRL = 16777249  # Qt::Key_Control = 0x01000021
+    static Int32 KEY_HOME = 16777232  # Qt::Key_Home = 0x01000010
     static Float32 ROT_SPEED = 0.008f  # 每像素弧度
-    # 坐标轴箭头 gizmo 显示开关（G 键切换；箭头脚本读此静态开关）
+    static bool prevHome = false       # Ctrl+Home 边沿检测
+    # 编辑器 Gizmo（引擎层 GizmoSystem：XYZ 轴箭头 / 旋转环 / 缩放柄 +
+    # 相机·光源 2D/3D 图标）。G 键循环 move→rotate→scale→none。
+    static GizmoSystem gs = null
     public static bool showAxes = true
     static bool prevG = false
-    # 箭头三色网格（全局 3 个 MeshRef，汇总所有形状节点的该轴箭头）
-    static MeshRef axisX = null
-    static MeshRef axisY = null
-    static MeshRef axisZ = null
-    static List<Float32_3> vertsX = List<Float32_3>( 0 )
-    static List<Float32_3> vertsY = List<Float32_3>( 0 )
-    static List<Float32_3> vertsZ = List<Float32_3>( 0 )
     # 动态分辨率状态（Unity OnResize 语义：窗口变 → 渲染目标/像素块/
     # 显示 label 同步变）
     static Int32 renderW = 480
@@ -278,7 +276,24 @@ public class SceneDemo
         string mb = QTHost.mouseDown( 1 ).toString()
         string rmb = QTHost.mouseDown( 2 ).toString()
         string mxy = QTHost.mouseX().toString() + "," + QTHost.mouseY().toString()
-        s = s + "   yaw=" + yaw + " pitch=" + pit + " alt=" + alt + " lmb=" + mb + " rmb=" + rmb + " xy=" + mxy + " axes=" + SceneDemo.showAxes.toString()
+        string gizmoMode = "none"
+        if SceneDemo.gs != null
+        {
+            Int32 gm = SceneDemo.gs.currentMode()
+            if gm == GizmoTypes.MODE_MOVE
+            {
+                gizmoMode = "move"
+            }
+            elif gm == GizmoTypes.MODE_ROTATE
+            {
+                gizmoMode = "rotate"
+            }
+            elif gm == GizmoTypes.MODE_SCALE
+            {
+                gizmoMode = "scale"
+            }
+        }
+        s = s + "   yaw=" + yaw + " pitch=" + pit + " alt=" + alt + " lmb=" + mb + " rmb=" + rmb + " xy=" + mxy + " gizmo=" + gizmoMode
         if SceneDemo.inMenu
         {
             s = "CLICK A SCENE  |  " + s
@@ -343,95 +358,63 @@ public class SceneDemo
         }
     }
 
-    # ── 坐标轴箭头 gizmo（数值层：只吃 Float32_3，不碰 GameObject.transform）──
-    static void pushArrow( List<Float32_3> dst, Float32_3 org,
-        Float32_3 dir, Float32_3 up, Float32 len, Float32 width )
-    {
-        Float32 sx = dir.y * up.z - dir.z * up.y
-        Float32 sy = dir.z * up.x - dir.x * up.z
-        Float32 sz = dir.x * up.y - dir.y * up.x
-        Float32 hw = width * 0.5f
-        Float32 b0x = org.x + sx * hw
-        Float32 b0y = org.y + sy * hw
-        Float32 b0z = org.z + sz * hw
-        Float32 b1x = org.x - sx * hw
-        Float32 b1y = org.y - sy * hw
-        Float32 b1z = org.z - sz * hw
-        Float32 tLen = len * 0.72f
-        Float32 e0x = org.x + dir.x * tLen + sx * hw
-        Float32 e0y = org.y + dir.y * tLen + sy * hw
-        Float32 e0z = org.z + dir.z * tLen + sz * hw
-        Float32 e1x = org.x + dir.x * tLen - sx * hw
-        Float32 e1y = org.y + dir.y * tLen - sy * hw
-        Float32 e1z = org.z + dir.z * tLen - sz * hw
-        dst.add( Float32_3( b0x, b0y, b0z ) )
-        dst.add( Float32_3( e0x, e0y, e0z ) )
-        dst.add( Float32_3( e1x, e1y, e1z ) )
-        dst.add( Float32_3( b0x, b0y, b0z ) )
-        dst.add( Float32_3( e1x, e1y, e1z ) )
-        dst.add( Float32_3( b1x, b1y, b1z ) )
-        Float32 px = org.x + dir.x * len
-        Float32 py = org.y + dir.y * len
-        Float32 pz = org.z + dir.z * len
-        dst.add( Float32_3( e0x + sx * hw, e0y + sy * hw, e0z + sz * hw ) )
-        dst.add( Float32_3( e1x - sx * hw, e1y - sy * hw, e1z - sz * hw ) )
-        dst.add( Float32_3( px, py, pz ) )
-    }
-
-    # 每帧起点：清空三色顶点缓冲
+    # ── 编辑器 Gizmo（引擎层 GizmoSystem）─────────────────
+    # 坐标轴脚本每帧把各节点局部位置报给 pushAxisAt，GizmoSystem 按当前
+    # mode（G 键循环 move/rotate/scale）在三色缓冲累积几何；相机/光图标
+    # 每帧在场景锚点位置追加。begin/end 包裹脚本 tick，endFrame 写回 MeshRef。
     static void beginAxisFrame()
     {
-        SceneDemo.vertsX.clear()
-        SceneDemo.vertsY.clear()
-        SceneDemo.vertsZ.clear()
+        if SceneDemo.gs != null
+        {
+            SceneDemo.gs.beginFrame()
+        }
     }
 
-    # 箭头脚本回调：把一个节点的局部位置转成三轴箭头顶点追加到缓冲
+    # 坐标轴脚本回调：按当前模式在 p 处累积变换 gizmo 几何
     static void pushAxisAt( Float32_3 p )
     {
-        SceneDemo.pushArrow( SceneDemo.vertsX, p,
-            Float32_3( 1.0f, 0.0f, 0.0f ), Float32_3( 0.0f, 1.0f, 0.0f ), 1.2f, 0.16f )
-        SceneDemo.pushArrow( SceneDemo.vertsY, p,
-            Float32_3( 0.0f, 1.0f, 0.0f ), Float32_3( 1.0f, 0.0f, 0.0f ), 1.2f, 0.16f )
-        SceneDemo.pushArrow( SceneDemo.vertsZ, p,
-            Float32_3( 0.0f, 0.0f, 1.0f ), Float32_3( 0.0f, 1.0f, 0.0f ), 1.2f, 0.16f )
+        if SceneDemo.gs == null || !SceneDemo.showAxes
+        {
+            ret
+        }
+        SceneDemo.gs.drawTransform( p )
     }
 
-    # 每帧终点：把汇总顶点写进三个全局 MeshRef
+    # 相机 / 光源图标：编辑器形象演示（场景锚点固定位置）
+    static void pushEditorIcons()
+    {
+        if SceneDemo.gs == null || !SceneDemo.showAxes
+        {
+            ret
+        }
+        Float32_3 camP = Float32_3( 0.0f - 4.5f, 3.6f, 0.0f )
+        Float32_3 litP = Float32_3( 4.5f, 3.6f, 0.0f )
+        SceneDemo.gs.drawCamera( camP, false )
+        Int32 lt = GizmoTypes.LIGHT_SPOT
+        SceneDemo.gs.drawLight( litP, lt, false )
+    }
+
     static void endAxisFrame()
     {
-        if SceneDemo.axisX != null
+        if SceneDemo.gs != null
         {
-            SceneDemo.axisX.setVertices( SceneDemo.vertsX )
-        }
-        if SceneDemo.axisY != null
-        {
-            SceneDemo.axisY.setVertices( SceneDemo.vertsY )
-        }
-        if SceneDemo.axisZ != null
-        {
-            SceneDemo.axisZ.setVertices( SceneDemo.vertsZ )
+            SceneDemo.gs.endFrame()
         }
     }
 
-    # 建三个全局箭头节点（loadScene 后调用，scene 由外部传入避免字段链）
+    # 菜单「显示辅助 Gizmo」动作回调（SIG_TRIGGERED trampoline，无参 void）
+    static void toggleGizmoMenu()
+    {
+        SceneDemo.showAxes = !SceneDemo.showAxes
+    }
+
+    # loadScene 后绑定 gizmo 节点到新场景（GizmoSystem 内部建六色 MeshRef）
     static void createAxisNodes( Scene scene )
     {
-        SceneDemo.axisX = SceneDemo.makeAxisMesh( scene, "AxisGizmo_X", Float32_3( 1.0f, 0.15f, 0.15f ) )
-        SceneDemo.axisY = SceneDemo.makeAxisMesh( scene, "AxisGizmo_Y", Float32_3( 0.15f, 0.9f, 0.2f ) )
-        SceneDemo.axisZ = SceneDemo.makeAxisMesh( scene, "AxisGizmo_Z", Float32_3( 0.2f, 0.4f, 1.0f ) )
-    }
-
-    static MeshRef makeAxisMesh( Scene scene, string name, Float32_3 color )
-    {
-        GameObject go = scene.createObject( name )
-        MeshRef mr = MeshRef.create( 0 )
-        go.addComponent( mr )
-        MaterialData mat = MaterialData.create( name + "_mat" )
-        mat.color = color
-        MaterialRef mref = MaterialRef.create( mat )
-        go.addComponent( mref )
-        ret mr
+        if SceneDemo.gs != null
+        {
+            SceneDemo.gs.attach( scene )
+        }
     }
 
     # ── 相机操作（每帧调用，写回 SL 侧权威值）────────────────────
@@ -562,6 +545,8 @@ public class SceneDemo
         Int32 kg = QTHost.keyDown( 71 )
         Int32 kf = QTHost.keyDown( 70 )
         Int32 km = QTHost.keyDown( 77 )
+        Int32 kh = QTHost.keyDown( SceneDemo.KEY_HOME )
+        Int32 kc = QTHost.keyDown( SceneDemo.KEY_CTRL )
         bool p1 = k1 == 1 && !SceneDemo.prev1
         bool p2 = k2 == 1 && !SceneDemo.prev2
         bool p3 = k3 == 1 && !SceneDemo.prev3
@@ -580,9 +565,39 @@ public class SceneDemo
         SceneDemo.prevG = kg == 1
         SceneDemo.prevF = kf == 1
         SceneDemo.prevM = km == 1
+        # Ctrl+Home：Home 按下沿且 Ctrl 处于按下 → 切换顶部菜单栏显示
+        bool ph = kh == 1 && !SceneDemo.prevHome
+        if ph && kc == 1
+        {
+            QTHost.toggleMenuBar()
+        }
+        SceneDemo.prevHome = kh == 1
         if pg
         {
-            SceneDemo.showAxes = !SceneDemo.showAxes
+            # G 键循环 gizmo 模式：move → rotate → scale → none → move
+            # 切到非 none 时自动恢复 showAxes（菜单开关关掉后 G 键仍能重新打开）
+            Int32 m = GizmoTypes.MODE_NONE
+            if SceneDemo.gs != null
+            {
+                Int32 cm = SceneDemo.gs.currentMode()
+                if cm == GizmoTypes.MODE_NONE
+                {
+                    m = GizmoTypes.MODE_MOVE
+                }
+                elif cm == GizmoTypes.MODE_MOVE
+                {
+                    m = GizmoTypes.MODE_ROTATE
+                }
+                elif cm == GizmoTypes.MODE_ROTATE
+                {
+                    m = GizmoTypes.MODE_SCALE
+                }
+                SceneDemo.gs.setMode( m )
+            }
+            if m != GizmoTypes.MODE_NONE
+            {
+                SceneDemo.showAxes = true
+            }
         }
         if pf
         {
@@ -639,19 +654,8 @@ public class SceneDemo
         SceneDemo.updateCamera()
         SceneDemo.beginAxisFrame()
         SceneDemo.sm.tick( -1.0f )
+        SceneDemo.pushEditorIcons()
         SceneDemo.endAxisFrame()
-        if SceneDemo.axisX != null
-        {
-            SceneDemo.axisX.visible = SceneDemo.showAxes
-        }
-        if SceneDemo.axisY != null
-        {
-            SceneDemo.axisY.visible = SceneDemo.showAxes
-        }
-        if SceneDemo.axisZ != null
-        {
-            SceneDemo.axisZ.visible = SceneDemo.showAxes
-        }
         SceneDemo.rs.sync( SceneDemo.sm.activeScene )
         # FairyGUI UI 网格必须在 sync() 之后提交（sync 开头会回收上一帧
         # RenderObject），且顶点 xy 已是 NDC，不受 3D 相机旋转影响。
@@ -716,6 +720,8 @@ public class SceneDemo
         Console.println( "[scene] scenes at " + SceneDemo.baseDir )
         SceneDemo.rs = RenderSystem()
         SceneDemo.rs.init( 480, 480 )
+        # 编辑器 Gizmo 系统（默认 move 模式；G 键循环切模式）
+        SceneDemo.gs = GizmoSystem()
         # Unity VolumeManager 同款：sync 每帧按相机位置 compute + applyPost
         # （场景里有 Volume 组件才生效，doc/14 §4）
         SceneDemo.rs.volumeSystem = VolumeSystem()
@@ -730,6 +736,6 @@ public class SceneDemo
         SceneDemo.initMenuUI()
         SceneDemo.loadScene( 4 )
         SceneDemo.inMenu = true
-        QTHost.startHost( SceneDemo.frameTick )
+        QTHost.startHost( SceneDemo.frameTick, SceneDemo.toggleGizmoMenu )
     }
 }

@@ -195,11 +195,10 @@ internal static class PublishCommand
          * 原样相对路径在发布目录必然错位——装载期静默跳过会让引用方
          * 全线失效（ServerP1Test 实录）。按 CSimpleVMTest 同款把导出
          * 产物 stage 进发布目录，C VM 装载器回退链 <pkg>\<name>.module.json
-         * basename 直查即命中（slb 优先重定向）。 */
-        if (result.ModuleJsonPath != null && File.Exists(result.ModuleJsonPath))
-        {
-            StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot, projectDir);
-        }
+         * basename 直查即命中（slb 优先重定向）。
+         * module.json 不可用时（Release FrontEnd 淘汰 json 副本，2026-11-19）
+         * 内部回落 jsonc references——不再以 json 产物存在为前置条件。 */
+        StageReferencedModules(result.ModuleJsonPath, publishDir, repoRoot, projectDir);
 
         /* Step 7: 插件产物（Front 导出已按 plugin\<id>\ 布局落到模块
          * export 目录；整目录拷贝，应用 exe 相对自身目录解析）。 */
@@ -456,29 +455,59 @@ internal static class PublishCommand
     /// 导出目录里的原生库（webui_lib.dll 等）按布局规则落 lib\&lt;平台&gt;\
     /// ——C VM 两条链均命中：FFI sl_ffi_lib_load 发布布局回退
     /// （&lt;exe&gt;\lib\&lt;平台&gt;\）与 vm_sys_ffi_static_lib_register 的
-    /// pkg_dir/&lt;平台&gt;/basename。未找到仅提示不阻断。</summary>
-    static void StageReferencedModules(string moduleJsonPath, string publishDir, string? repoRoot, string projectDir)
+    /// pkg_dir/&lt;平台&gt;/basename。未找到仅提示不阻断。
+    /// 引用清单双来源：module.json 的 moduleReferences 优先（Front 导出期
+    /// 的权威指针）；json 副本不可用时（Release FrontEnd 一律按 binary 导出，
+    /// 2026-11-19 json 淘汰）回落 jsonc references（Front 进程内已解析，
+    /// path 相对工程目录）——SnakeGame 发布实录：json 缺失曾致本步整体
+    /// 静默跳过，发布包缺全部引用模块与 FFI dll，exe 秒退。</summary>
+    static void StageReferencedModules(string? moduleJsonPath, string publishDir, string? repoRoot, string projectDir)
     {
         try
         {
-            using var doc = JsonDocument.Parse(File.ReadAllText(moduleJsonPath));
-            if (!doc.RootElement.TryGetProperty("moduleReferences", out var refsEl))
-                return;
-            string baseDir = Path.GetDirectoryName(Path.GetFullPath(moduleJsonPath)) ?? ".";
+            string baseDir;
+            var refs = new List<(string Name, string? Path)>();
+            if (moduleJsonPath != null && File.Exists(moduleJsonPath))
+            {
+                using var doc = JsonDocument.Parse(File.ReadAllText(moduleJsonPath));
+                if (!doc.RootElement.TryGetProperty("moduleReferences", out var refsEl))
+                    return;
+                baseDir = Path.GetDirectoryName(Path.GetFullPath(moduleJsonPath)) ?? ".";
+                foreach (var r in refsEl.EnumerateArray())
+                {
+                    string name = r.TryGetProperty("name", out var nameEl)
+                        ? (nameEl.GetString() ?? "")
+                        : "";
+                    /* 插件 refModule 引用（如 `../MasmX64/MasmX64.module`）导出时
+                     * 只有 uuid+path、无 name——不 stage 则发布包里缺该模块，
+                     * 其包装方法在运行时落到主模块里的空体桩（`@tag` 出通道
+                     * 包装如 ChannelOutInt 返回 null，报表时间列全空；BenchMark
+                     * 发布实测 ASM 列缺失）。按 path basename 反推模块名补齐。 */
+                    string? rp = r.TryGetProperty("path", out var pathEl0) ? pathEl0.GetString() : null;
+                    if (name.Length == 0)
+                        name = InferReferenceNameFromPath(rp);
+                    refs.Add((name, rp));
+                }
+            }
+            else
+            {
+                var cfgRefs = ProjectManager.config?.References;
+                if (cfgRefs == null || cfgRefs.Count == 0)
+                    return;
+                baseDir = projectDir;
+                foreach (var r in cfgRefs)
+                {
+                    string name = r.Name;
+                    if (name.Length == 0)
+                        name = InferReferenceNameFromPath(r.Path);
+                    refs.Add((name, string.IsNullOrWhiteSpace(r.Path) ? null : r.Path));
+                }
+                Console.WriteLine("[info] reference staging: module.json unavailable (release FrontEnd exports slb only); using jsonc references");
+            }
             string modulesRoot = Path.GetFullPath(Path.Combine(projectDir, "modules"))
                 + Path.DirectorySeparatorChar;
-            foreach (var r in refsEl.EnumerateArray())
+            foreach (var (name, refPath) in refs)
             {
-                string name = r.TryGetProperty("name", out var nameEl)
-                    ? (nameEl.GetString() ?? "")
-                    : "";
-                /* 插件 refModule 引用（如 `../MasmX64/MasmX64.module`）导出时
-                 * 只有 uuid+path、无 name——不 stage 则发布包里缺该模块，
-                 * 其包装方法在运行时落到主模块里的空体桩（`@tag` 出通道
-                 * 包装如 ChannelOutInt 返回 null，报表时间列全空；BenchMark
-                 * 发布实测 ASM 列缺失）。按 path basename 反推模块名补齐。 */
-                if (name.Length == 0)
-                    name = InferReferenceNameFromPath(r);
                 if (name.Length == 0 || SystemModuleNames.Contains(name) || repoRoot == null)
                     continue;
                 /* spm 包形态引用（QTTest 实录 2026-11-02）：引用 path 指进工程
@@ -490,22 +519,18 @@ internal static class PublishCommand
                  * 里从 out\export 扫来的原生库（vmDlls 回填的 STUB）盖过
                  * modules\ 里的权威拷贝——发布包运行期行为错乱（QTTest 无窗
                  * 口实录）。跳过，交 Step 8 唯一携带。 */
-                if (r.TryGetProperty("path", out var spmPathEl))
+                if (!string.IsNullOrWhiteSpace(refPath))
                 {
-                    string? spmPath = spmPathEl.GetString();
-                    if (!string.IsNullOrWhiteSpace(spmPath))
+                    try
                     {
-                        try
+                        string full = Path.GetFullPath(Path.Combine(baseDir, refPath));
+                        if (full.StartsWith(modulesRoot, StringComparison.OrdinalIgnoreCase))
                         {
-                            string full = Path.GetFullPath(Path.Combine(baseDir, spmPath));
-                            if (full.StartsWith(modulesRoot, StringComparison.OrdinalIgnoreCase))
-                            {
-                                Console.WriteLine($"[OK]  reference: {name} (spm package form; carried by modules\\ copy)");
-                                continue;
-                            }
+                            Console.WriteLine($"[OK]  reference: {name} (spm package form; carried by modules\\ copy)");
+                            continue;
                         }
-                        catch (Exception) { /* 路径解析异常走常规平铺 stage */ }
                     }
+                    catch (Exception) { /* 路径解析异常走常规平铺 stage */ }
                 }
                 string[] exportRoots =
                 {
@@ -539,19 +564,17 @@ internal static class PublishCommand
                     catch (IOException) { }
                     catch (UnauthorizedAccessException) { }
                 }
-                /* 回退：引用 path 字段（相对主 module.json 目录）指向的权威导出树。 */
-                if (srcDir == null && r.TryGetProperty("path", out var pathEl))
+                /* 回退：引用 path 字段指向的权威导出树（module.json 形态相对
+                 * 主 module.json 目录、恒指模块文件；jsonc 回落形态相对工程
+                 * 目录，可能直指导出目录本身——两形态都解析）。 */
+                if (srcDir == null && !string.IsNullOrWhiteSpace(refPath))
                 {
-                    string? rp = pathEl.GetString();
-                    if (!string.IsNullOrWhiteSpace(rp))
+                    string full = Path.GetFullPath(Path.Combine(baseDir, refPath));
+                    string? d = Directory.Exists(full) ? full : Path.GetDirectoryName(full);
+                    if (d != null && Directory.Exists(d)
+                        && Directory.GetFiles(d, "*.module.*").Length > 0)
                     {
-                        string full = Path.GetFullPath(Path.Combine(baseDir, rp));
-                        string? d = Path.GetDirectoryName(full);
-                        if (d != null && Directory.Exists(d)
-                            && Directory.GetFiles(d, "*.module.*").Length > 0)
-                        {
-                            srcDir = d;
-                        }
+                        srcDir = d;
                     }
                 }
                 if (srcDir == null)
@@ -613,11 +636,8 @@ internal static class PublishCommand
 
     /// <summary>未命名引用（插件 refModule：module.json 只导出 uuid+path）
     /// 按 path basename 反推模块名：`../MasmX64/MasmX64.module` → `MasmX64`。</summary>
-    static string InferReferenceNameFromPath(JsonElement r)
+    static string InferReferenceNameFromPath(string? raw)
     {
-        if (!r.TryGetProperty("path", out var pathEl))
-            return "";
-        string? raw = pathEl.GetString();
         if (string.IsNullOrWhiteSpace(raw))
             return "";
         string file = raw.Replace('\\', '/').TrimEnd('/');

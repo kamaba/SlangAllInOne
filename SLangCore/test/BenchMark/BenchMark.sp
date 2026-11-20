@@ -46,6 +46,11 @@ Project
         # 经出通道 us 回传；pysrc 共享部署位，本工程须最后编译——同上）
         PythonBench.fun()
 
+        # PHP 惯用基准（php_embed 插件：统计值 SL 侧 nowMillis 整块计时——php
+        # 出通道回传在 AOT 发布包失效兜底，参照 MasmBench；phpsrc 共享部署位，
+        # 本工程须最后编译——同上。vendored php8ts.dll 随包齐备，无需本机另装 PHP）
+        PhpBench.fun()
+
         nowMs = Environment.sys.nowMillis() - nowMs
         Console.println("===== BenchMark _main_ end [$nowMs.toString() ms] =====")
 

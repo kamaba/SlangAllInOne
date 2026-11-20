@@ -36,6 +36,8 @@ public class BatchGroup
     public Float32_3 color = Float32_3( 1.0f, 1.0f, 1.0f )
     public Int32 assetId = 0
     public MaterialData material = null
+    # ECS 路径的数据源（doc/20）：非 null 时顶点取自世界数据仓而非节点组件
+    public EcsWorld ecsSource = null
 
     public bool singleObject = false
     public GameObject soleMember = null
@@ -58,7 +60,15 @@ public class BatchGroup
         while i < n
         {
             GameObject go = this.members[i]
-            MeshRef mr = go.getComponent<MeshRef>()
+            MeshRef mr = null
+            if this.ecsSource != null
+            {
+                mr = this.ecsSource.meshOf( go )
+            }
+            else
+            {
+                mr = go.getComponent<MeshRef>()
+            }
             if mr == null
             {
                 ret

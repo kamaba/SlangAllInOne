@@ -45,6 +45,9 @@ public class Application
     public AudioSystem audioSystem = null
     # 视频域时钟门面（init 自动创建；后端只管上报播放头）
     public VideoClock videoClock = null
+    # ECS 世界（doc/20，opt-in）：null = 旧 GameObject/Behaviour 链路不变；
+    # 非 null 时逻辑由 world.logic 集中调度，变换刷新后自动分层合并。
+    public EcsWorld ecsWorld = null
 
     List<Behaviour> _frameBehaviours = null
 
@@ -64,6 +67,7 @@ public class Application
         this.animSystem = null
         this.audioSystem = null
         this.videoClock = null
+        this.ecsWorld = null
         this._frameBehaviours = List<Behaviour>(64)
     }
 
@@ -150,6 +154,11 @@ public class Application
             {
                 this.collisionSystem.step( this.activeScene )
             }
+            # ECS 集中逻辑（固定步）：与 Behaviour.fixedUpdate 同拍
+            if this.ecsWorld != null
+            {
+                this.ecsWorld.fixedLogic()
+            }
             this.time.consumeFixedStep()
         }
 
@@ -189,10 +198,25 @@ public class Application
                 }
                 i = i + 1
             }
+
+            # 5b) ECS 集中逻辑（doc/20）：所有节点的逻辑在此统一跑完，
+            #     之后才进入分层合并——保证批次读到的已是本帧终态数据。
+            if this.ecsWorld != null
+            {
+                this.ecsWorld.updateLogic( dt )
+                this.ecsWorld.lateLogic( dt )
+            }
         }
 
         # 6) 变换刷新（一致性入口）
         this.activeScene.updateTransforms()
+
+        # 6b) ECS 自动分层 + 合并（doc/20）：逻辑已跑完且世界变换已刷新，
+        #     复用 Batcher 键排序聚组，结果供 RenderSystem 直接提交。
+        if this.ecsWorld != null
+        {
+            this.ecsWorld.buildLayers()
+        }
 
         # 7) 帧尾固定步插值系数（渲染侧读 EngineTime.fixedAlpha 做
         #    上一固定步状态与当前状态间的插值——物理/渲染解耦另一半）
@@ -240,6 +264,11 @@ public class Application
             this.time.resetAccumulators()
         }
         this._frameBehaviours.clear()
+        if this.ecsWorld != null
+        {
+            this.ecsWorld.clear()
+            this.ecsWorld = null
+        }
         this.deltaTime = 0.0f
     }
 

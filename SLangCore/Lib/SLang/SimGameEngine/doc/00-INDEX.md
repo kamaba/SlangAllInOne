@@ -1,6 +1,6 @@
 # SimGameEngine 文档索引
 
-> 版本：v2.16（19 章设计稿，2026-11-19；v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
+> 版本：v2.18（21 章设计稿，2026-11-20；v2.18 新增第 21 章编辑器 Gizmo——GizmoTypes/GizmoGeometry/GizmoSystem 三件套：三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 几何走 MeshRef 烘焙路径零 C 改动，SceneDemo 接入 G 键循环模式，第 20 套 SimGizmoTest；前序 v2.17 新增第 20 章 ECS 系统——GameObject 渲染数据拔离 + 只挂 Data + 逻辑集中调度 + 自动分层合并 + 渲染层整体提交，第 19 套 SimEcsTest；前序 v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
 > 定位：SLang 游戏引擎「场景 / 节点 / 组件」层的设计与使用契约。
 > 配套渲染文档：`../Render/doc/01-Overview.md` 起（Render 只负责「可见物 + 相机 + 光源 → 像素」）。
 
@@ -15,6 +15,7 @@
 - 用组件把 Transform / Mesh / Material / Shader / Animation / Effect 绑到节点上（Unity 的 Component）；
 - 用 Behaviour 钩子驱动脚本生命周期（Unity 的 MonoBehaviour）；
 - 按 Shader + Material 把 Mesh 归组、合并，再写进 RenderObject 提交给 Render；
+- 可选 ECS 模式：节点只挂数据、逻辑集中调度、渲染数据由世界分层合并后整体提交（第 20 章）；
 - 用节点类型区分 Camera / Light / Probe / UI 等特殊对象；
 - 用碰撞体与固定步长物理处理重叠、接触与刚体运动（第 11/12 章）；
 - 用天空盒、环境光与 Volume 参数栈组织画面氛围（第 13/14 章）；
@@ -26,7 +27,7 @@
 
 ---
 
-## 2. 文档清单（16 章 + 索引）
+## 2. 文档清单（21 章 + 索引）
 
 | 编号 | 文件 | 内容 | 读者 |
 |---|---|---|---|
@@ -49,8 +50,10 @@
 | 17 | `17-固定形状库.md` | P9 固定形状库（11 形状 / C 两段式构建 / 消费出口 / 坑） | 用形状生成网格的人 |
 | 18 | `18-时间同步.md` | TimeService / EngineTime / 域时钟 / Application 帧序接入 | 写主循环的人 |
 | 19 | `19-场景导出与SceneManager.md` | Scene→scene.json 导出、按路径加载场景、脚本挂载、帧循环门面、round-trip 与坑 | 写场景/关卡逻辑的人 |
+| 20 | `20-ECS系统.md` | opt-in ECS 模式：渲染数据拔离 / 只挂 Data / 逻辑集中调度 / 自动分层合并 / 渲染层整体提交 | 写批量实体与渲染管线的人 |
+| 21 | `21-编辑器Gizmo.md` | GizmoTypes / GizmoGeometry / GizmoSystem：三轴箭头 / 旋转环 / 缩放手柄 / 相机·光 2D·3D 图标，纯 SL 几何 + 帧生命周期 + 状态机 | 写编辑器/调试可视化的人 |
 
-阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 UI 两模式/相机叠加可读 `08 §8`。
+阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19 → 20 → 21`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 UI 两模式/相机叠加可读 `08 §8`，只关心编辑器辅助渲染可读 `21`。
 
 ---
 
@@ -65,6 +68,10 @@
 | 【依赖待建】 | 两侧都已存在，但工程引用 / 绑定关系尚未建立 | 如 `UIBehaviour` → `RectTransform` |
 
 现状一句话（2026-11-16，P0~P5 端到端 + C99 原生库 + P7 引擎层 v1）：模块已是可编译、可导出、可运行的库模块（`SimGameEngine.sp/.jsonc`，产物 `out/export/SimGameEngine/`）。【已落盘】= 场景核心五件（`Transform` / `GameObject` / `Scene` / `Application` / `Behaviour`）+ 空间工具三件（`Bounds` / `Plane` / `Ray`）+ P2 渲染资源五件（`MaterialData` / `MeshRef` / `MaterialRef` / `BatchGroup` / `Batcher` 合批数据层）+ P3 碰撞六件（`ContactInfo` / `ContactPair` / `BoxCollider` / `SphereCollider` / `CapsuleCollider` / `CollisionSystem`）+ P4 物理两件（`Rigidbody` / `PhysicsSystem`：半隐式欧拉 + 顺序冲量 + 休眠）+ P5 动画/UI 六件（`AnimationClip` / `Animation` / `Effect` / `LightProbe` / `ReflectionProbe` / `UIBehaviour` + `RectTransform`（自 SLangRender 迁入）+ `AnimSystem` / `UISystem`）+ **P7 2D 三件（`SortingLayers` / `SpriteRenderer` / `Tilemap` + `RenderSystem.collect2D/sync2D`，doc/15 §0）** + C99 原生库三件（`EngineClock` / `Timer` / `NodeRegistry`，底层 `sl_sim_engine_lib.dll`）+ 五个 C VM 系统调用（`SystemSimEngineCallHook` / `CallHook1` / `CallHook2` / `SetEnabled` / `GetEnabled`）；九套测试 343 项全绿（`SimEngineTest` 60 / `SimBatchTest` 28 / `SimCollisionTest` 52 / `SimModuleTest` 11 / `SimSystemsTest` 14 / `SimFfiTest` 24 / `SimPhysicsTest` 33 / `SimAnimTest` 66 / `Sim2DTest` 55，统一入口 `test/Test.sl`）。仍为【设计稿】：Mesh GJK/BVH 精确碰撞、cubemap 天空盒全链路、Probe 采样/混合、Volume、2D 的翻转 UV / 图集 UV / uploadMesh 合批提交（P6~P8 剩余段）。Render 侧仍是【已落盘】的可运行模块。
+
+补充（v2.17）：【已落盘】新增 ECS 模式五件（`EcsData` / `EcsLogic` / `EcsLogicSystem` / `EcsLayer` / `EcsWorld`，doc/20）——opt-in 启用后节点只留数据、逻辑集中调度、渲染数据由世界分层合并后整体提交；第 19 套 `SimEcsTest` 48 项绿，统一入口累计 928 PASS / 33 FAIL（33 为 v2.11 既有 fixedDt 回归）。
+
+补充（v2.18）：【已落盘】新增编辑器 Gizmo 三件（`GizmoTypes` 常量+调色板 / `GizmoGeometry` 纯几何生成 / `GizmoSystem` 状态机+六色槽提交，doc/21）——三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 三角形几何走既有 `MeshRef` 烘焙渲染路径（零 C 库改动）；SceneDemo 接入（G 键循环 move→rotate→scale→none，信息条显示模式，替换原手工三色轴缓冲）；第 20 套 `SimGizmoTest` 35 项绿，统一入口累计 963 PASS / 33 FAIL（33 为 v2.11 既有 fixedDt 回归），SceneDemo 冒烟 50/50。
 
 ---
 
@@ -86,11 +93,13 @@
 | UI / Canvas / RectTransform | UIBehaviour + RectTransform | `RectTransform.sl`（在 Render 模块内） | 部分落盘 / 依赖待建 |
 | Bounds / Plane / Ray | Bounds / Plane / Ray | — | 已落盘 |
 | SRP Batcher | 合批器（第 05 章） | C 层 PerDraw std140 分组批已落盘；SRP Batcher 式合批未承诺 | 设计稿 |
+| ECS（DOTS 式） | EcsWorld / EcsData / EcsLogic（第 20 章） | 无（Render 只收 RenderObject） | 已落盘（opt-in） |
 | Collider / Rigidbody | Collider / Rigidbody 组件 | 无（Render 不处理物理） | 设计稿 |
 | Skybox / Environment | Skybox 组件 + `setAmbient` | Skybox shader 素材有 bug、Pass 未接入 13 阶段；`setAmbient` 已落盘 | 部分落盘 |
 | Volume / VolumeProfile | Volume 组件 + 参数栈 | PostProcessPass 已落盘（亮度/饱和度/暗角）；Volume 参数栈 P2 未开始 | 设计稿 |
 | SpriteRenderer / Tilemap | SpriteRenderer / Tilemap + 排序层 | `MESH_QUAD` / `uploadMesh` / 正交 `setCamera` 已落盘 | 部分落盘 |
 | AssetDatabase / 编辑器资源管线 | 第 16 章导出器 + `SceneImporter` | 无（纯资源层，不进渲染） | 导出器落点已核实 / 本体设计稿 |
+| Editor Gizmos / Handles（编辑态渲染） | GizmoSystem / GizmoGeometry / GizmoTypes（第 21 章） | 走既有 `MeshRef` 顶点烘焙 → RenderObject，无专用图元 | 已落盘（纯显示，无拾取） |
 
 ---
 
@@ -98,6 +107,8 @@
 
 | 日期 | 版本 | 变更 |
 |---|---|---|
+| 2026-11-20 | v2.18 | **编辑器 Gizmo 落盘（doc/21，零 C 改动）**：新增 `gizmo/` 三件——`GizmoTypes`（模式/轴/图标常量 + 调色板方法）、`GizmoGeometry`（纯 SL 三角形几何：方向箭头/旋转圆环/缩放手柄/相机 2D·3D 图标/平行光·点光·聚光图标，细长四边形模拟线段）、`GizmoSystem`（六色槽状态机 + 帧生命周期 begin/draw/end + 相机·光图标 + 诊断 getters），几何经 `MeshRef.setVertices` 走既有 Batcher/sync 烘焙路径；`SimGizmoTest` 35 项（第 20 套），二十套 **963 PASS / 33 FAIL**（33 为既有 fixedDt 回归）。SceneDemo 接入：手工三色轴缓冲改为 GizmoSystem 委托，G 键循环 move→rotate→scale→none、信息条显示模式、场景锚点画相机/光图标；**Ctrl+Home 顶部菜单栏（QMenuBar 子控件形态）+「辅助 Gizmo」菜单下「显示辅助 Gizmo」action 切 showAxes 全局开关**（QTHost.startHost 增 toggleGizmoHandler 无参回调，SIG_TRIGGERED 连接）；GUI 实跑验证：窗口正常渲染、数字键切场景、Ctrl+Home 弹出菜单、点 action 后 objs=7→2（gizmo 网格节点从提交链移除）确认开关生效、进程稳定无崩溃；冒烟 50/50。坑：`half` 是词法保留字（参数改名 `hh`）；跨模块 static 几何函数有签名风险，SceneDemo 与测试一律走 GizmoSystem 实例方法消费；冒烟测试原引用已删的 `SceneDemo.vertsX` 同步改为 `gs.vertexCountAt(0)` |
+| 2026-11-20 | v2.17 | **ECS 模式落盘（doc/20）**：新增 `ecs/` 五件（EcsData 纯数据 / EcsLogic 逻辑组件 / EcsLogicSystem 集中调度 / EcsLayer 分层结果 / EcsWorld 实体+数据仓+分层）；GameObject 的 MeshRef/MaterialRef 在注册时拔离到世界 ECS 模式只挂 Data（其它 Behaviour 拒绝），逻辑统一由 world.logic 按 order 调度；Batcher 增 collectEcs + EcsLayer 分层收口，RenderSystem 增 ecsSource 直接提交分层结果（零 C 库改动）；Systems.bindEcs 一键接线；Application 固定步/帧逻辑/变换后分层三处接入；`SimEcsTest` 48 项（第 19 套），十九套 928 PASS / 33 FAIL（33 为既有 fixedDt 回归）。坑：`bind`/`label` 保留字；GameObject 新字段名避开 `world`（与 Camera 局部同名会污染解析链）；跨模块 List 下标先落局部变量；顺手修 `SimSystemsTest` 重复变量声明 |
 | 2026-11-16 | v0.1 | 初版 10 章：按 Render 的「纯渲染引擎」边界切出宿主引擎职责，完成节点树 / 组件 / 合批 / 相机光照 / 动画特效 / UI / 帧循环的整体设计整合 |
 | 2026-11-16 | v0.2 | 补 5 篇独立文档：碰撞与触发器、物理引擎、天空盒与环境、Volume 效果处理、2D 渲染；同步总纲 / 路线 / 术语对照 |
 | 2026-11-16 | v0.3 | 补第 16 章：Unity 原生格式解析判定（不可行 → 自建导出系统）、Editor 导出器落点与 JSON schema、引擎侧 SceneImporter 与坐标约定 |

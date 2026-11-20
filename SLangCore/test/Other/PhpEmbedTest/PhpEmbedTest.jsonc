@@ -1,0 +1,82 @@
+{
+  "project":
+  {
+    "name": "PhpEmbedTest",
+    "desc": "php_embed plugin e2e smoke (isolated PhpTest.sl from SpecialTest)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "../../SpecialTest/PhpTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ]
+  },
+  "plugins": {
+    "php_embed": {
+      "name": "php_runtime_use_embed_sapi",
+      "version": "0.1.0",
+      "path": "plugin/php_embed",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_php_embed_",
+      "lib": "../../../../plugin/php_embed/package/windows/cvm_php_embed.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    }
+  },
+  "systemCalls": [
+    { "name": "AtSignLabelCall",     "returnType": "Int32", "params": ["Int32"], "isVariadic": true,  "cvmFunction": "atsign:label" },
+    { "name": "AtSignLabelCallVoid", "returnType": "Void",  "params": ["Int32"], "isVariadic": true,  "cvmFunction": "atsign:label" }
+  ],
+  "references": [
+    { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" }
+  ],
+  "export": {
+    "moduleName": "PhpEmbedTest",
+    "outputDir": "../../../../out/export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": true,
+      "token": true,
+      "node": true,
+      "file": true,
+      "meta": true,
+      "ir": true
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "outputDir": "publish"
+  }
+}

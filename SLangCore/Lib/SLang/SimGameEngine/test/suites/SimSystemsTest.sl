@@ -252,7 +252,6 @@ public class SimSystemsTest
             Int64 chandle = skyCube.handle()
             bool s1 = sys.render.setSkyCube( chandle )
             Console.println( "DBG step2 setSkyCube ret=" + s1.toString() )
-            bool s1 = sys.render.setSkyCube( chandle )
             check( s1, "S16c setSkyCube accepted" )
             sys.render.setSkyEnabled( true )
             Console.println( "DBG step3 before cube frame" )

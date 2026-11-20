@@ -21,7 +21,8 @@ QTCodeEditor
 5. 
 
 SLang GameEngine
-1. 增加Editor和runtime两种形态， Editor包括runtime  反正就是像Unity3d一样，里边也可以 配置 static if 的global.marco的功能判断 SLangEngineEditor的宏进行判断  
+1. 制作 wasm 的渲染内容  整合到WebUI里边
+
 
 Unity的机制
 1. 有了对应的类 并且命名空间与Unity3d里边CSharp里边的类同命名空间+类名
@@ -47,7 +48,7 @@ Unity的机制
 spm 也要可以下载插件  和包有点类似，但插件是优先下载的slang下边的plugins的目录下的，
 
 Monitor需要 在底层增加 条件+断点功能，也就是监视某个变量 变化到条件后，立马暂停 都是明的方法
-增加FrameData的概念
+增加FrameData的概念  FrameData<T>的一个类 可以往里边传任意值，这个值传入后，每次变化的时候，都要记录变化时间点，还有frameCount的两个数，而且 要增加一个FrameData管理类，在注册后，可以记录FrameData一个历史的长度 ，比如设置了FrameData记录100次 则在这里边 FrameData变化一百次的数字。
 
 写更多的使用用例，测试cvm的功能点。
 jsonc整体，增加 AOT, Mix, PureCVM,
@@ -57,8 +58,15 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 
 frontend然后再进行优化。
 官方第三方库:
-libcurl 要制作成modules
-ffmpeg的dll 引入  要制作成modules
+
+先增加data CameraData的数据 然后Camera extends GameObject bind CameraData 里边 然后增加许多矩阵变化的方法   同样的Light也是这样的处理 Light extends GameObject bind LightData 
+先增加MotionVectors的机制 增加完了再增加 增加AA的处理 先增加一个FxAA  msaa的都增加下吧
+增加延时处理方案
+增加ecs系统，基本思路就是 GameObject 如果使用了ecs系统，GameObject 的渲染部分要拔离出去，  然后GameObject只允许挂Data类型的数据，如果挂逻辑，逻辑会放到一个总的逻辑系统中处理，处理完后，然后处理完逻辑后， GameObject会自动分层，把能合并的合并后，然后 整体的在渲染层进行渲染
+增加wasm的机制，然后可以跑我现在的贪吃蛇的游戏
+
+ffmpeg的dll 引入  要制作成media模块  把这块模板，整合成一个如果有视频，则要显示窗口
+
 找一个轻量级的 webview一类的，做成 dll  要制作成modules
 
 在WebUI上制作 Scratch

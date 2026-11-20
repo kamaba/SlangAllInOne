@@ -4,6 +4,8 @@
 
 > **文档写作约定（R21，2026-11-06 用户定稿）**：写「使用文档」（`md/syntax/` 语法篇、`md/lib/` 库篇、工程/配置/命令使用说明等）时，**只写规则说明、使用用例、可用方法、使用技巧与已知坑**；禁止分析源码、讲 FrontEnd / C VM 内部处理、贴源码路径与行号、列实现细节或测试用例索引。实现性内容只放 `md/ai/`、`csimple_lang/md/design/`、troubleshooting 等 AI/设计/复盘文档。完整规则见根目录 `AGENTS.md` §2 R21。
 
+> **SimGameEngine 命名约定（R22，2026-11-19 用户定稿）**：`SlangCore\Lib\SLang\SimGameEngine\` 下新增/改名的方法、组件、字段，命名**优先贴合 Unity3D 同类 API**，Unity 无对应的再参考 LayaBox，两者都无才自造；大小写/`get`·`set` 前缀沿用 SLang 风格。只约束引擎对外 API。完整规则见根目录 `AGENTS.md` §2 R22。
+
 | 文件 | 用途 |
 |------|------|
 | `故障排查流程.md` | **默认首选（统一主文档）**：整项目问题定位顺序 + Front 代码解析流程 + 语法规则备忘 + 复盘分片路由索引与追加模板（复盘正文在 [troubleshooting/](./troubleshooting/) 8 个分片） |

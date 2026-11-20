@@ -30,8 +30,10 @@ public class GameObject extends Component
     # C99 节点注册表 id（Scene.createObject 注册；destroy 注销；0 = 未注册）
     public Int64 nodeId = 0
 
-    List<GameObject> _children = null
-    Scene _scene = null
+    # 子节点表 / 所属场景：public 以便 GameObject 子类（Camera/Light）在
+    # _init_ 中复制节点初始化（SLang 子类构造不自动调用父类 _init_，doc/10 §6）
+    public List<GameObject> _children = null
+    public Scene _scene = null
 
     # ── 构造 ─────────────────────────────────────────────
     public void _init_()

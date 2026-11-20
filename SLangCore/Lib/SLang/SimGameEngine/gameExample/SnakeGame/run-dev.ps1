@@ -22,20 +22,33 @@ if (-not (Test-Path -LiteralPath (Join-Path $modDir 'SnakeGame.module.slb'))) {
     & $slang compile (Join-Path $root 'SnakeGame.jsonc') --format binary --no-banner
     if ($LASTEXITCODE -ne 0) { throw "[run-dev] compile failed" }
 }
-# keep dev-slot slang_qt.dll fresh (same fix as 2026-11-18)
-$qtSrc = [System.IO.Path]::GetFullPath((Join-Path $modDir '..\SLangQT\slang_qt.dll'))
-$qtDst = Join-Path $modDir 'slang_qt.dll'
-if ((Test-Path -LiteralPath $qtSrc) -and ((Get-FileHash -LiteralPath $qtSrc -Algorithm MD5).Hash -ne (Get-FileHash -LiteralPath $qtDst -Algorithm MD5).Hash)) {
-    Copy-Item -LiteralPath $qtSrc -Destination $qtDst -Force
-    Write-Host "[run-dev] refreshed stale slang_qt.dll from export slot"
+# keep dev-slot native dlls fresh (2026-11-19 generalized): any engine/library
+# recompile re-stages its export-slot dll, but the copy in out\export\SnakeGame
+# goes stale -> FFI binds an old binary (missing new exports, e.g. the engine's
+# sle_layer_composite) -> game fails to run. Refresh every native dll that has
+# a source slot. Keys = source dir name; values = dll file names.
+$syncMap = [ordered]@{
+    'SLangQT'      = @('slang_qt.dll')
+    'SLangAudio'   = @('sl_audio_lib.dll')
+    'SimGameEngine'= @('sl_sim_engine_lib.dll')
+    'SLangRender'  = @('sl_render_lib.dll')
 }
-# keep dev-slot sl_audio_lib.dll fresh (SnakeSfx, 2026-11-19): the audio FFI
-# resolves the dll by bare name, PATH search covers the module dir.
-$auSrc = [System.IO.Path]::GetFullPath((Join-Path $modDir '..\SLangAudio\sl_audio_lib.dll'))
-$auDst = Join-Path $modDir 'sl_audio_lib.dll'
-if ((Test-Path -LiteralPath $auSrc) -and ((-not (Test-Path -LiteralPath $auDst)) -or ((Get-FileHash -LiteralPath $auSrc -Algorithm MD5).Hash -ne (Get-FileHash -LiteralPath $auDst -Algorithm MD5).Hash))) {
-    Copy-Item -LiteralPath $auSrc -Destination $auDst -Force
-    Write-Host "[run-dev] refreshed sl_audio_lib.dll from export slot"
+foreach ($slot in $syncMap.Keys) {
+    foreach ($dll in $syncMap[$slot]) {
+        $src = [System.IO.Path]::GetFullPath((Join-Path $modDir ('..\' + $slot + '\' + $dll)))
+        $dst = Join-Path $modDir $dll
+        if (-not (Test-Path -LiteralPath $src)) { continue }
+        $needCopy = $false
+        if (-not (Test-Path -LiteralPath $dst)) {
+            $needCopy = $true
+        } else {
+            $needCopy = (Get-FileHash -LiteralPath $src -Algorithm MD5).Hash -ne (Get-FileHash -LiteralPath $dst -Algorithm MD5).Hash
+        }
+        if ($needCopy) {
+            Copy-Item -LiteralPath $src -Destination $dst -Force
+            Write-Host ("[run-dev] refreshed stale {0} from {1} export slot" -f $dll, $slot)
+        }
+    }
 }
 if ($Offscreen) { $env:QT_QPA_PLATFORM = 'offscreen' }
 $env:PATH = $modDir + ';' + $env:PATH

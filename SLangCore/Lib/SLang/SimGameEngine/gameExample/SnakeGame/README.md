@@ -67,6 +67,13 @@ QT 窗口（SLangQT：QApplication/QWidget/QLabel/QTimer，slang_qt.dll）
 
 ## 构建 / 运行
 
+> ⏱ **启动要等约 50~60 秒，别误判为"卡死 / 界面没出来"**：C VM 装配 29 个包
+> （SimGameEngine + SLangQT + Core/Std/Math + 传递依赖）+ 逐方法字节码预热
+> 很慢。期间 CPU 跑满、音效可能已先响（音效初始化在装配早期），但 Qt 游戏
+> 窗口要等装配完成才创建。判定标准 = 进程主窗口标题变为
+> `SnakeGame - SimGameEngine + SLangQT`（不是 `...slang.exe` 控制台占位窗）。
+> 过早 kill 会因 stdout 全缓冲丢失而看不到任何输出。
+
 ```powershell
 # 0) 资产（音效 wav + FairyGUI 图集/包 XML，可随时重跑）
 powershell -File SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\make-sfx.ps1
@@ -110,31 +117,38 @@ powershell -File SLangCore\Lib\SLang\QT\cvm\deploy-qt.ps1 -Combo full -Targets s
 SnakeGame.exe` 是从 publish 时附加的 payload 加载模块，必须重新 `slang publish`
 （右键发布即可），否则跑的还是旧逻辑。
 
-## 运行秒退 / 0xC0000409（2026-11-18 排障结论）
+## 运行秒退 / 0xC0000409 / 跑不起来（2026-11-18 发现，2026-11-19 推广）
 
-现象：`slang run out\export\SnakeGame\SnakeGame.module.slb` 秒退（qwindows，exit 0）
-或崩 0xC0000409（offscreen）；发布链路本身正常（`slang publish` EXIT=0、发布包
-exe 实测正常）。
+现象：`slang run out\export\SnakeGame\SnakeGame.module.slb` 秒退（qwindows，exit 0）、
+崩 0xC0000409（offscreen），或重编引擎后整个工程跑不起来；发布链路本身正常
+（`slang publish` EXIT=0、发布包 exe 实测正常，因它从各 export 槽位现取 dll）。
 
-**根因 = 开发态槽位的 `slang_qt.dll` 是陈旧构建**（哈希 !=
-`out\export\SLangQT\slang_qt.dll`，两者相差十几分钟的重编）。FFI 预载到旧 dll
-后行为不稳。**与 PATH/CWD 无关**（对照实验证实）。
+**根因 = 开发态槽位 `out\export\SnakeGame\` 里的原生 dll 陈旧**（哈希 != 对应
+export 槽位）。FFI 预载到旧 dll 后缺少新导出符号（如引擎重编后新增的
+`sle_layer_composite`）或行为不稳。**与 PATH/CWD 无关**（对照实验证实）。
+2026-11-19 实例：UI 画布改动重编 SimGameEngine 后，`sl_sim_engine_lib.dll`、
+`sl_render_lib.dll` 双双陈旧 → 工程跑不起来；`run-dev.ps1` 当时只同步
+`slang_qt.dll`/`sl_audio_lib.dll`，漏掉这两个。
 
 修法（二选一）：
 
 ```powershell
-# 1) 自愈脚本（推荐：每次运行前自动按哈比对齐 export 槽位的 dll）
+# 1) 自愈脚本（推荐：每次运行前自动按哈希对齐所有 export 槽位 dll）
 powershell -File SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\run-dev.ps1
 powershell -File run-dev.ps1 -Offscreen   # 无头验证
 powershell -File run-dev.ps1 -Debug       # slang run --debug-server
+# 现在自动同步 4 组：slang_qt / sl_audio_lib / sl_sim_engine_lib / sl_render_lib
 
-# 2) 手工覆盖
+# 2) 手工覆盖（按哈希从各槽位拷齐）
 copy SlangAllInOne\out\export\SLangQT\slang_qt.dll SlangAllInOne\out\export\SnakeGame\
+copy SlangAllInOne\out\export\SLangAudio\sl_audio_lib.dll SlangAllInOne\out\export\SnakeGame\
+copy SlangAllInOne\out\export\SimGameEngine\sl_sim_engine_lib.dll SlangAllInOne\out\export\SnakeGame\
+copy SlangAllInOne\out\export\SLangRender\sl_render_lib.dll SlangAllInOne\out\export\SnakeGame\
 ```
 
-验证记录（2026-11-18）：同步 dll 后 dev 态 offscreen / 真窗口两种方式均进入
-60Hz 事件循环持续运行；`slang publish` 与 `--mode exe` 两变体 EXIT=0，
-发布包 exe 离屏启动正常。
+验证记录（2026-11-19）：`run-dev.ps1 -Offscreen` 自动刷新两枚陈旧 dll 后进入
+60Hz 事件循环；`slang publish --mode both --config Release` EXIT=0，发布包
+`lib\windows` 四枚原生 dll 哈希全部与源槽位一致，exe 真/offscreen 均持续运行。
 
 ## VSCode 调试 / 发布（2026-11-17 修复）
 

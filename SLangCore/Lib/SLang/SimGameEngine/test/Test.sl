@@ -25,6 +25,7 @@ import Std;
 #       15 = SimSceneAdditiveTest  Additive 子场景（并入/共存/卸载/主场景不动）
 #       16 = SimInputTest     统一输入（键盘边沿/自动重复去重/鼠标/滚轮/帧管线）
 #       17 = SimUICanvasTest  UI 画布两模式（系统叠加/相机赋值）+ 引擎层图层叠加
+#       18 = SimCameraLightTest  Camera/Light 实体（extends GameObject + Data 组件）+ 矩阵方法
 #   2. 注释开关：把 runAll() 里不想要的 runXxx() 调用行注释掉即可
 # 汇总：每套跑完打印各自 PASS=/FAIL=，入口末尾打印 TOTAL 并统一判退出码
 #      （任何 FAIL → OS.Kernel.exit(1)；原各套不再单独退出）
@@ -37,7 +38,7 @@ public class Test
     static Int32 _pass = 0
     static Int32 _fail = 0
 
-    # ── 选套开关：0=全部；1..17=单套（套件表见文件头注释）──
+    # ── 选套开关：0=全部；1..18=单套（套件表见文件头注释）──
     static Int32 runSuite = 0
 
     static bool selected( Int32 no )
@@ -270,9 +271,22 @@ public class Test
         _fail = _fail + SimUICanvasTest.failCount()
     }
 
+    static void runCameraLight()
+    {
+        if !selected( 18 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [18] SimCameraLightTest -----" )
+        SimCameraLightTest.run()
+        _pass = _pass + SimCameraLightTest.passCount()
+        _fail = _fail + SimCameraLightTest.failCount()
+    }
+
     public static void run()
     {
-        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..17=single) ===" )
+        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..18=single) ===" )
         runEngine()
         runBatch()
         runCollision()
@@ -290,6 +304,7 @@ public class Test
         runSceneAdditive()
         runInput()
         runUICanvas()
+        runCameraLight()
         Console.println( "" )
         Console.println( "=== TOTAL PASS=" + _pass.toString() + " FAIL=" + _fail.toString() + " ===" )
         if _fail > 0

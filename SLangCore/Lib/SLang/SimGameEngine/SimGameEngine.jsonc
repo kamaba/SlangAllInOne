@@ -107,6 +107,12 @@
       //      （胶水层；JSON 解析由 Core Json 内建承担，无新增 C 函数）----
       { "path": "ImportReport.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "LightData.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      // ---- Camera / Light 实体（Unity 风格：extends GameObject + Data 组件；
+      //      2026-11-19。只建结构 + 矩阵方法，未接 RenderSystem 消费链路）----
+      //      依赖序：CameraData(Behaviour) -> Camera(GameObject) / Light(LightData)
+      { "path": "CameraData.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "Camera.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
+      { "path": "Light.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       { "path": "SceneImporter.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 23 },
       // ---- 场景导出 + SceneManager（doc/19）：Scene→scene.json 与
       //      Unity 式按路径加载/脚本挂载/帧循环门面（依赖序：Exporter →
@@ -220,6 +226,10 @@
     // P8 完整导入器（doc/16 §5）
     { "class": "ImportReport" },
     { "class": "LightData" },
+    // Camera / Light 实体 + 相机数据组件（Unity 风格）
+    { "class": "CameraData" },
+    { "class": "Camera" },
+    { "class": "Light" },
     { "class": "SceneImporter" },
     // 场景导出 + 管理门面（doc/19）
     { "class": "ScriptResult" },

@@ -119,3 +119,5 @@
 /SLangCore/Lib/SLang/SimGameEngine/cvm_sim_engine_lib/bin
 /SLangCore/Lib/SLang/SimGameEngine/gameExample/SnakeGame/publish
 /SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/publish
+/SLangCore/Lib/SLang/SimGameEngine/test/build
+/SLangCore/Lib/SLang/SimGameEngine/gameExample/SnakeGame/build

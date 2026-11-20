@@ -9,16 +9,18 @@
   //   2) QT：  powershell -File SLangCore\Lib\SLang\QT\cvm\build-slqt.ps1 -Qt
   //            （-DeployQt gui 额外部署 Qt6 运行时到模块槽位）
   //   3) 游戏：slang compile SLangCore\Lib\SLang\SimGameEngine\gameExample\SnakeGame\SnakeGame.jsonc --format binary
-  //   4) 运行：slang run out\export\SnakeGame\SnakeGame.module.slb
+  //   4) 运行：powershell -File run-dev.ps1 （或 slang run out\export\SnakeGame\SnakeGame.module.slb）
   //      （方向键控制，R 重开）
   //
-  // ⚠ 2026-11-18 排障结论（「发布不了 / 运行调试秒退 0xC0000409」根因）：
+  // ⚠ 2026-11-18 发现 / 2026-11-19 推广（「跑不起来 / 秒退 0xC0000409」根因）：
   //   发布链路本身没问题（slang publish SnakeGame.sp EXIT=0，发布包 exe 实测
-  //   正常）。真凶 = out\export\SnakeGame\slang_qt.dll 是**陈旧构建**（哈希 !=
-  //   out\export\SLangQT\slang_qt.dll）：FFI 预载到旧 dll 后运行秒退（qwindows）
-  //   或崩 0xC0000409（offscreen）。自愈 = run-dev.ps1（每次运行前按哈希比对
-  //   export 槽位自动刷新）；手工修法 = 把 export 槽位的 slang_qt.dll 覆盖到
-  //   out\export\SnakeGame。运行调试用：powershell -File run-dev.ps1 [-Offscreen|-Debug]。
+  //   正常，因它从各 export 槽位现取 dll）。真凶 = out\export\SnakeGame\ 里的
+  //   **原生 dll 陈旧**（哈希 != 对应 export 槽位）：重编引擎/渲染库后
+  //   sl_sim_engine_lib.dll / sl_render_lib.dll（及 slang_qt / sl_audio_lib）
+  //   滞留旧版，FFI 预载到旧 dll 缺新导出符号 → 跑不起来/秒退/0xC0000409。
+  //   自愈 = run-dev.ps1（每次运行前按哈希比对，自动同步 4 组 export 槽位 dll）；
+  //   手工修法 = 把 4 个源槽位 dll 覆盖到 out\export\SnakeGame（见 README）。
+  //   运行调试一律用：powershell -File run-dev.ps1 [-Offscreen|-Debug]。
   "project": {
     "name": "SnakeGame",
     "desc": "Snake game example on SimGameEngine + SLangQT (QT window, engine ortho bake render path, InputSystem)",

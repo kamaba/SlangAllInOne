@@ -170,7 +170,7 @@ public class Shape
 
     override bool _ne_( Shape obj1 )
     {
-        ret !this.equals( other )
+        ret !this.equals( obj1 )
     }
 
     Shape clone()

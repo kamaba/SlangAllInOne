@@ -2582,24 +2582,24 @@ public class Tensor
         {
             if axis == 0
             {
-                Int32 rows = 0
-                Int32 cols = ts[0].cols()
+                Int32 nr = 0
+                Int32 nc = ts[0].cols()
                 for k = 0, k < n, k++
                 {
-                    if ts[k].rank() != 2 || ts[k].cols() != cols
+                    if ts[k].rank() != 2 || ts[k].cols() != nc
                     {
                         ret null
                     }
-                    rows += ts[k].rows()
+                    nr += ts[k].rows()
                 }
-                Tensor r2 = Tensor( rows, cols )
+                Tensor r2 = Tensor( nr, nc )
                 Int32 off = 0
                 for k = 0, k < n, k++
                 {
                     ts[k].ensureHostFresh()
                     for i = 0, i < ts[k].rows(), i++
                     {
-                        for j = 0, j < cols, j++
+                        for j = 0, j < nc, j++
                         {
                             r2.setAt( off + i, j, ts[k].at( i, j ) )
                         }
@@ -2610,22 +2610,22 @@ public class Tensor
             }
             if axis == 1
             {
-                Int32 rows = ts[0].rows()
-                Int32 cols = 0
+                Int32 nr = ts[0].rows()
+                Int32 nc = 0
                 for k = 0, k < n, k++
                 {
-                    if ts[k].rank() != 2 || ts[k].rows() != rows
+                    if ts[k].rank() != 2 || ts[k].rows() != nr
                     {
                         ret null
                     }
-                    cols += ts[k].cols()
+                    nc += ts[k].cols()
                 }
-                Tensor r3 = Tensor( rows, cols )
+                Tensor r3 = Tensor( nr, nc )
                 Int32 off = 0
                 for k = 0, k < n, k++
                 {
                     ts[k].ensureHostFresh()
-                    for i = 0, i < rows, i++
+                    for i = 0, i < nr, i++
                     {
                         for j = 0, j < ts[k].cols(), j++
                         {

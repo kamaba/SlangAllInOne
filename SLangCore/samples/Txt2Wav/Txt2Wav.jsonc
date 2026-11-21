@@ -1,0 +1,61 @@
+{
+  // Txt2Wav — 英文文本转语音（txt → wav）示例
+  // 混合路线：Tacotron 风格神经管线（Embedding + GRU + 注意力 + Postnet）
+  //           + 规则注入参数（无需预训练权重，开箱出声）
+  // 声码器：谱合成 + Griffin-Lim，计算走 Tensora（cpu / gpu_cuda 自适应）
+  // 构建：slang Txt2Wav.jsonc（编译 + 运行一体）
+  "project": {
+    "name": "Txt2Wav",
+    "desc": "English text-to-speech sample: text -> G2P -> neural encoder/decoder (rule-initialized) -> spectral synth + Griffin-Lim vocoder -> wav, runs on cpu or gpu_cuda via Tensora",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "Txt2WavG2p.sl",     "group": "txt2wav", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "Txt2WavModel.sl",   "group": "txt2wav", "tag": "base", "ignore": false, "priority": 1 },
+      { "path": "Txt2WavVocoder.sl", "group": "txt2wav", "tag": "base", "ignore": false, "priority": 2 },
+      { "path": "Txt2Wav.sl",        "group": "txt2wav", "tag": "main", "ignore": false, "priority": 3 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  "references": [
+    { "path": "../../../out/export/Core/Core.module.slb" },
+    { "path": "../../../out/export/Std/Std.module.slb" },
+    { "path": "../../../out/export/Math/Math.module.slb" },
+    { "path": "../../../out/export/Tensora/Tensora.module.slb" },
+    { "path": "../../../out/export/SLangAudio/SLangAudio.module.slb" }
+  ],
+  "struct": [
+    { "class": "Txt2WavLexicon" },
+    { "class": "Txt2WavFrontend" },
+    { "class": "Txt2WavEncoder" },
+    { "class": "Txt2WavDecoder" },
+    { "class": "Txt2WavVocoder" },
+    { "class": "Txt2WavEngine" },
+    { "class": "Txt2Wav" }
+  ]
+}

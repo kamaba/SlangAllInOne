@@ -23,6 +23,7 @@
   "compileFiles": {
     "files": [
       { "path": "TensorTest.sl",    "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "BackendTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AutogradTest.sl",  "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "CnnTest.sl",       "group": "tensora", "tag": "cnn",  "ignore": false, "priority": 0 },
       { "path": "NnTest.sl",        "group": "tensora", "tag": "nn",   "ignore": false, "priority": 0 },
@@ -50,12 +51,14 @@
   },
   "references": [
     { "path": "./lib/Core.module.slb" },
+    { "path": "./lib/Std.module.slb" },
     { "path": "./lib/Math.module.slb" },
-    { "path": "../../../out/export/Tensora/Tensora.module.json" }
+    { "path": "../../../out/export/Tensora/Tensora.module.slb" }
   ],
   "struct": [
     { "namespace": "TensoraTest", "children": [
       { "class": "TensorTest" },
+      { "class": "BackendTest" },
       { "class": "AutogradTest" },
       { "class": "CnnTest" },
       { "class": "NnTest" },

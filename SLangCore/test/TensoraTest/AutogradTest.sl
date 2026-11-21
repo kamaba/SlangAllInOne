@@ -27,7 +27,7 @@ AutogradTest
         y.backward()
 
         # a*b+c = 10 -> y = 100 ; da = 2*10*3 = 60 ; db = 2*10*2 = 40 ; dc = 2*10 = 20
-        check( "y==100", y.data.at( 0 ) == 100.0f )
+        check( "y==100", y.tensor.at( 0 ) == 100.0f )
         check( "da==60", a.grad.at( 0 ) == 60.0f )
         check( "db==40", b.grad.at( 0 ) == 40.0f )
         check( "dc==20", c.grad.at( 0 ) == 20.0f )
@@ -44,11 +44,11 @@ AutogradTest
         y.backward()
 
         # X·W == X，relu 全通，sum = 1+2+3+4 = 10
-        check( "y==10", y.data.at( 0 ) == 10.0f )
+        check( "y==10", y.tensor.at( 0 ) == 10.0f )
         check( "dx all==1", x.grad.at( 0 ) == 1.0f && x.grad.at( 3 ) == 1.0f )
         # dW = Xᵀ · ones = [4,6 ; 4,6]
-        check( "dw[0,0]==4", w.grad.get( 0, 0 ) == 4.0f )
-        check( "dw[1,1]==6", w.grad.get( 1, 1 ) == 6.0f )
+        check( "dw[0,0]==4", w.grad.at( 0, 0 ) == 4.0f )
+        check( "dw[1,1]==6", w.grad.at( 1, 1 ) == 6.0f )
     }
 
     # 广播回传：把 [2,2] 的梯度还原到 [1,2] 的偏置上
@@ -62,9 +62,9 @@ AutogradTest
         y.backward()
 
         # y = (1*1 + 1*2) * 2 行 = 6 ；dbias 每行贡献 [1,1]，累计 2 行 -> [2,2]
-        check( "y==6", y.data.at( 0 ) == 6.0f )
-        check( "dbias[0,0]==2", bias.grad.get( 0, 0 ) == 2.0f )
-        check( "dbias[0,1]==2", bias.grad.get( 0, 1 ) == 2.0f )
+        check( "y==6", y.tensor.at( 0 ) == 6.0f )
+        check( "dbias[0,0]==2", bias.grad.at( 0, 0 ) == 2.0f )
+        check( "dbias[0,1]==2", bias.grad.at( 0, 1 ) == 2.0f )
     }
 
     # softmax + log 的梯度：d logits = softmax - onehot
@@ -76,12 +76,12 @@ AutogradTest
         Variable y = p.log().scale( 1.0f )
 
         Array<Int32> labels = [ 2 ]
-        Tensor g = Loss.crossEntropyGrad( logits.data, labels )
+        Tensor g = Loss.crossEntropyGrad( logits.tensor, labels )
         # 手动把 g 灌进去走一遍反传（模拟训练里的 loss 梯度）
-        Variable loss = logits.mul( Tensor.matrix( [ g.get( 0, 0 ), g.get( 0, 1 ), g.get( 0, 2 ) ], 1, 3 ) ).sum()
+        Variable loss = logits.mul( Variable.of( Tensor.matrix( [ g.at( 0, 0 ), g.at( 0, 1 ), g.at( 0, 2 ) ], 1, 3 ) ) ).sum()
         loss.backward()
 
-        global.println( "softmax -> " + p.data.toString() )
+        global.println( "softmax -> " + p.tensor.toString() )
         check( "grad != null", logits.grad != null )
         check( "grad sum ~= 0", TensorMath.abs( logits.grad.sum() - g.sum() ) < 0.0001f )
     }

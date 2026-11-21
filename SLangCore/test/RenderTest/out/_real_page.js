@@ -1,0 +1,1 @@
+>(function(){var d=document.getElementById('fps');d.textContent='probe js ran';try{tick();d.textContent='tick called';}catch(e){d.textContent='tick err:'+e;}setTimeout(function(){try{shutdown();}catch(e){d.textContent='shutdown err:'+e;}},5000);})();

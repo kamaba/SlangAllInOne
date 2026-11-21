@@ -28,6 +28,7 @@ import Std;
 #       18 = SimCameraLightTest  Camera/Light 实体（extends GameObject + Data 组件）+ 矩阵方法
 #       19 = SimEcsTest          ECS 模式（渲染拔离/数据仓/集中逻辑/分层合并/统一提交）
 #       20 = SimGizmoTest        编辑器 Gizmo（三模式几何/相机·光图标/状态机/槽读写）
+#       21 = SimPrefabTest       Prefab 子树 JSON 保存/加载/实例化（复用 Scene 读写）
 #   2. 注释开关：把 runAll() 里不想要的 runXxx() 调用行注释掉即可
 # 汇总：每套跑完打印各自 PASS=/FAIL=，入口末尾打印 TOTAL 并统一判退出码
 #      （任何 FAIL → OS.Kernel.exit(1)；原各套不再单独退出）
@@ -40,7 +41,7 @@ public class Test
     static Int32 _pass = 0
     static Int32 _fail = 0
 
-    # ── 选套开关：0=全部；1..20=单套（套件表见文件头注释）──
+    # ── 选套开关：0=全部；1..21=单套（套件表见文件头注释）──
     static Int32 runSuite = 0
 
     static bool selected( Int32 no )
@@ -312,9 +313,22 @@ public class Test
         _fail = _fail + SimGizmoTest.failCount()
     }
 
+    static void runPrefab()
+    {
+        if !selected( 21 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [21] SimPrefabTest -----" )
+        SimPrefabTest.run()
+        _pass = _pass + SimPrefabTest.passCount()
+        _fail = _fail + SimPrefabTest.failCount()
+    }
+
     public static void run()
     {
-        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..20=single) ===" )
+        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..21=single) ===" )
         runEngine()
         runBatch()
         runCollision()
@@ -335,6 +349,7 @@ public class Test
         runCameraLight()
         runEcs()
         runGizmo()
+        runPrefab()
         Console.println( "" )
         Console.println( "=== TOTAL PASS=" + _pass.toString() + " FAIL=" + _fail.toString() + " ===" )
         if _fail > 0

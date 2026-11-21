@@ -77,6 +77,14 @@ public class SceneExporter
         ret s
     }
 
+    # 标量浮点：Release JIT 下高频 Float32.toString() 可能返回 null，
+    # 统一走 toFormat（doc/19 §坑）。
+    static string f( Float32 v )
+    {
+        string s = String.toFormat( "{0}", v )
+        ret s
+    }
+
     static string quat( Quaternion q )
     {
         string x = q.x.toString()
@@ -232,6 +240,87 @@ public class SceneExporter
         {
             ret "{\"type\":\"SpriteRenderer\"}"
         }
+        # v1.1：LightData（SceneImporter 的 Light 分支对称——此前落在
+        # 下面的 Behaviour 兜底里被写成 Script 短名，round-trip 丢光源）
+        LightData ld = c as LightData
+        if ld != null
+        {
+            string col = SceneExporter.vec3( ld.color.x, ld.color.y, ld.color.z )
+            string ty = ld.type.toString()
+            string it = SceneExporter.f( ld.intensity )
+            string o = "{\"type\":\"Light\",\"lightType\":" + ty + ",\"color\":" + col
+            o = o + ",\"intensity\":" + it
+            o = o + ",\"dirX\":" + SceneExporter.f( ld.dirX )
+            o = o + ",\"dirY\":" + SceneExporter.f( ld.dirY )
+            o = o + ",\"posX\":" + SceneExporter.f( ld.posX )
+            o = o + ",\"posY\":" + SceneExporter.f( ld.posY )
+            o = o + ",\"spotAngle\":" + SceneExporter.f( ld.spotAngle )
+            o = o + ",\"range\":" + SceneExporter.f( ld.lightRange )
+            o = o + ",\"shadowQuality\":" + SceneExporter.f( ld.shadowQuality )
+            o = o + ",\"shadowBias\":" + SceneExporter.f( ld.shadowBias )
+            o = o + ",\"shadowStrength\":" + SceneExporter.f( ld.shadowStrength )
+            o = o + ",\"shadowCascades\":" + SceneExporter.f( ld.shadowCascades )
+            ret o + "}"
+        }
+        # v1.1：Volume + VolumeProfile（只写 hasXxx=1 的字段——缺省
+        # = 不修改，与 SceneImporter 的 select 判空语义对称）
+        Volume vol = c as Volume
+        if vol != null
+        {
+            string glob = "false"
+            if vol.isGlobal
+            {
+                glob = "true"
+            }
+            string pri = vol.priority.toString()
+            string wt = SceneExporter.f( vol.weight )
+            string bd = SceneExporter.f( vol.blendDistance )
+            string o = "{\"type\":\"Volume\",\"isGlobal\":" + glob + ",\"priority\":" + pri
+            o = o + ",\"weight\":" + wt + ",\"blendDistance\":" + bd
+            VolumeProfile prof = vol.profile
+            if prof != null
+            {
+                if prof.hasBrightness
+                {
+                    o = o + ",\"brightness\":" + SceneExporter.f( prof.brightness )
+                }
+                if prof.hasContrast
+                {
+                    o = o + ",\"contrast\":" + SceneExporter.f( prof.contrast )
+                }
+                if prof.hasSaturation
+                {
+                    o = o + ",\"saturation\":" + SceneExporter.f( prof.saturation )
+                }
+                if prof.hasHueShift
+                {
+                    o = o + ",\"hueShift\":" + SceneExporter.f( prof.hueShift )
+                }
+                if prof.hasFilter
+                {
+                    o = o + ",\"filterR\":" + SceneExporter.f( prof.filterR )
+                    o = o + ",\"filterG\":" + SceneExporter.f( prof.filterG )
+                    o = o + ",\"filterB\":" + SceneExporter.f( prof.filterB )
+                }
+                if prof.hasVignette
+                {
+                    o = o + ",\"vignette\":" + SceneExporter.f( prof.vignette )
+                }
+                if prof.hasVignetteSmooth
+                {
+                    o = o + ",\"vignetteSmooth\":" + SceneExporter.f( prof.vignetteSmooth )
+                }
+                if prof.hasGrain
+                {
+                    o = o + ",\"grain\":" + SceneExporter.f( prof.grain )
+                }
+                if prof.hasTonemap
+                {
+                    o = o + ",\"tonemap\":" + prof.tonemapMode.toString()
+                }
+            }
+            ret o + "}"
+        }
         Behaviour bh = c as Behaviour
         if bh != null
         {
@@ -293,26 +382,15 @@ public class SceneExporter
         ret o
     }
 
-    # ── 公共出口 ─────────────────────────────────────────
-    public static string toJson( Scene scene )
+    # ── 共用序列化核心：DFS 顺序 + 平坦节点数组 ──────────
+    # Scene 与 Prefab 共用：输入任意「根列表」，输出 scene.json 同构
+    # 的 {version,scene,nodes} 文本（Prefab 只是单根的特例）。
+    static string nodesToJson( string name, List<GameObject> order, List<Int32> parents )
     {
-        List<GameObject> order = List<GameObject>( 16 )
-        List<Int32> parents = List<Int32>( 16 )
-        Int32 ri = 0
-        Int32 rn = scene.rootCount
-        while ri < rn
-        {
-            GameObject root = scene.getRoot( ri )
-            if root != null
-            {
-                SceneExporter.collect( root, 0, order, parents )
-            }
-            ri = ri + 1
-        }
         string sname = ""
-        if scene.name != null
+        if name != null
         {
-            sname = SceneExporter.esc( scene.name )
+            sname = SceneExporter.esc( name )
         }
         string o = "{\n  \"version\": 1,\n  \"scene\": \"" + sname + "\",\n  \"nodes\": ["
         Int32 i = 0
@@ -335,6 +413,51 @@ public class SceneExporter
         }
         o = o + "]\n}\n"
         ret o
+    }
+
+    # ── 公共出口 ─────────────────────────────────────────
+    public static string toJson( Scene scene )
+    {
+        List<GameObject> order = List<GameObject>( 16 )
+        List<Int32> parents = List<Int32>( 16 )
+        Int32 ri = 0
+        Int32 rn = scene.rootCount
+        while ri < rn
+        {
+            GameObject root = scene.getRoot( ri )
+            if root != null
+            {
+                SceneExporter.collect( root, 0, order, parents )
+            }
+            ri = ri + 1
+        }
+        string sname = ""
+        if scene.name != null
+        {
+            sname = scene.name
+        }
+        string text = SceneExporter.nodesToJson( sname, order, parents )
+        ret text
+    }
+
+    # Prefab：单个 GameObject 子树 → scene.json 同构文本（单根 parent=0）。
+    # 名字缺省用根节点名；读取侧直接走 SceneImporter.parseCore，零重复代码。
+    public static string toJsonRoot( GameObject root, string prefabName )
+    {
+        if root == null
+        {
+            ret ""
+        }
+        List<GameObject> order = List<GameObject>( 16 )
+        List<Int32> parents = List<Int32>( 16 )
+        SceneExporter.collect( root, 0, order, parents )
+        string name = prefabName
+        if name == null || name.length == 0
+        {
+            name = root.name
+        }
+        string text = SceneExporter.nodesToJson( name, order, parents )
+        ret text
     }
 
     public static bool save( Scene scene, string path )

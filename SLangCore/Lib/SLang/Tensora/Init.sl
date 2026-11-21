@@ -1,3 +1,4 @@
+import Math;
 # Init —— 权重初始化器
 #
 # 约定：2D 权重形状为 [fanOut, fanIn]（与 Dense 一致，forward = x · Wᵀ + b）
@@ -74,13 +75,13 @@ public class Init
             Float32 acc = 0.0f
             for r = 0, r < rows, r++
             {
-                Float32 v = t.get( r, c )
+                Float32 v = t.at( r, c )
                 acc = acc + v * v
             }
             Float32 norm = Mathf.sqrt( acc ) + 0.0000001f
             for r = 0, r < rows, r++
             {
-                t.set( r, c, t.get( r, c ) / norm )
+                t.setAt( r, c, t.at( r, c ) / norm )
             }
         }
         ret t
@@ -89,7 +90,7 @@ public class Init
     # ── 就地填充（已有张量时用这些）───────────────────────
     public static void fillUniform( Tensor t, Float32 lo, Float32 hi )
     {
-        Rng rng = Rng.global()
+        Rng rng = Rng.current()
         for i = 0, i < t.size(), i++
         {
             t.setAt( i, rng.uniform( lo, hi ) )
@@ -98,7 +99,7 @@ public class Init
 
     public static void fillNormal( Tensor t, Float32 mean, Float32 std )
     {
-        Rng rng = Rng.global()
+        Rng rng = Rng.current()
         for i = 0, i < t.size(), i++
         {
             t.setAt( i, rng.normal( mean, std ) )

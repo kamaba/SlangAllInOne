@@ -2510,6 +2510,17 @@ static const SlrRhi s_rhi_vk =
     /* doc/13 §2.1 cubemap：VK 后端未实现（调用点判 NULL 跳过）*/
     NULL,
     NULL,
+    /* v3.6 AA + MotionVectors：VK 后端未实现（SPIR-V 冻结不含 FXAA/
+     * MOTION；MSAA render pass samples 硬编码 1）——管线层判 NULL：
+     * MSAA 回退单采样、motion pass 跳过 */
+    NULL,
+    NULL,
+    NULL,
+    /* v3.7 TAA：VK 后端不支持（SPIR-V 冻结无重投影 shader）——管线层
+     * set_taa 返回 0，输出 = 当前帧（无时域累积）*/
+    NULL,
+    /* v3.8 Motion Blur：VK 冻结 SPIR-V + 无速度图——管线层返回 0 */
+    NULL,
 };
 
 const SlrRhi* slr_rhi_vk(void) { return &s_rhi_vk; }

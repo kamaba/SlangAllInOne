@@ -10,7 +10,6 @@
 public class Vocab
 {
     public List<string> items = null
-    public Map<string, Int32> index = null
 
     public Int32 padId = 0
     public Int32 unkId = 1
@@ -20,36 +19,53 @@ public class Vocab
     public void _init_()
     {
         this.items = List<string>()
-        this.index = Map<string, Int32>()
         this.add( "<pad>" )
         this.add( "<unk>" )
         this.add( "<bos>" )
         this.add( "<eos>" )
     }
 
+    # 线性查找词 id：Map<string,Int32> 的值类型下标在 MetaCore 不支持
+    # （模板 _getItem_ 解析失败），词表规模小，线性查找可接受
+    Int32 findWord( string word )
+    {
+        List<string> its = this.items
+        int n = its.length
+        for i = 0, i < n, i++
+        {
+            string w = its._getItem_( i )
+            if w == word
+            {
+                ret i
+            }
+        }
+        ret -1
+    }
+
     # 返回词的 id；已存在则直接返回旧 id
     public Int32 add( string word )
     {
-        if this.index.containsKey( word )
+        Int32 found = this.findWord( word )
+        if found >= 0
         {
-            ret this.index[word]
+            ret found
         }
         Int32 id = this.items.length
         this.items.add( word )
-        this.index.add( word, id )
         ret id
     }
 
     public bool contains( string word )
     {
-        ret this.index.containsKey( word )
+        ret this.findWord( word ) >= 0
     }
 
     public Int32 idOf( string word )
     {
-        if this.index.containsKey( word )
+        Int32 found = this.findWord( word )
+        if found >= 0
         {
-            ret this.index[word]
+            ret found
         }
         ret this.unkId
     }
@@ -60,11 +76,12 @@ public class Vocab
         {
             ret "<unk>"
         }
-        if id >= this.items.length
+        List<string> its2 = this.items
+        if id >= its2.length
         {
             ret "<unk>"
         }
-        ret this.items[id]
+        ret its2._getItem_( id )
     }
 
     public get int size()
@@ -74,10 +91,11 @@ public class Vocab
 
     public Array<string> toArray()
     {
-        Array<string> arr = Array<string>( this.items.length )
-        for i = 0, i < this.items.length, i++
+        List<string> src = this.items
+        Array<string> arr = Array<string>( src.length )
+        for i = 0, i < src.length, i++
         {
-            arr[i] = this.items[i]
+            arr[i] = src._getItem_( i )
         }
         ret arr
     }
@@ -109,30 +127,44 @@ public class Tokenizer
 
     # ── 建表 ─────────────────────────────────────────────
     # 词级：按空白切分，过滤低频词
+    # 计数用平行 List 实现：Map 下标写在 MetaCore 不受支持（ParseDefineMetaType
+    # 拒绝非 Array 下标目标），词表规模小，线性查找可接受
     public void build( Array<string> texts, Int32 minFreq )
     {
-        Map<string, Int32> freq = Map<string, Int32>()
+        List<string> words = List<string>()
+        List<Int32> counts = List<Int32>()
         for i = 0, i < texts.length, i++
         {
             Array<string> ws = this.split( texts[i] )
             for j = 0, j < ws.length, j++
             {
                 string w = ws[j]
-                if freq.containsKey( w )
+                int pos = -1
+                for k = 0, k < words.length, k++
                 {
-                    freq[w] = freq[w] + 1
+                    string wk = words._getItem_( k )
+                    if wk == w
+                    {
+                        pos = k
+                    }
+                }
+                if pos < 0
+                {
+                    words.add( w )
+                    counts.add( 1 )
                 }
                 else
                 {
-                    freq.add( w, 1 )
+                    Int32 ck = counts[pos]
+                    counts.fill( ck + 1, pos, 1 )
                 }
             }
         }
-        List<string> keys = freq.keys()
-        for i = 0, i < keys.length, i++
+        for i = 0, i < words.length, i++
         {
-            string w = keys[i]
-            if freq[w] >= minFreq
+            string w = words[i]
+            Int32 c = counts[i]
+            if c >= minFreq
             {
                 this.vocab.add( w )
             }
@@ -157,7 +189,7 @@ public class Tokenizer
     # ── 切分 ─────────────────────────────────────────────
     public Array<string> split( string text )
     {
-        List<string> out = List<string>()
+        List<string> outV = List<string>()
         string cur = ""
         for i = 0, i < text.length(), i++
         {
@@ -166,7 +198,7 @@ public class Tokenizer
             {
                 if cur != ""
                 {
-                    out.add( cur )
+                    outV.add( cur )
                     cur = ""
                 }
             }
@@ -177,12 +209,12 @@ public class Tokenizer
         }
         if cur != ""
         {
-            out.add( cur )
+            outV.add( cur )
         }
-        Array<string> arr = Array<string>( out.length )
-        for i = 0, i < out.length, i++
+        Array<string> arr = Array<string>( outV.length )
+        for i = 0, i < outV.length, i++
         {
-            arr[i] = out[i]
+            arr[i] = outV._getItem_( i )
         }
         ret arr
     }
@@ -209,7 +241,8 @@ public class Tokenizer
         Array<Int32> ids = Array<Int32>( tokens.length )
         for i = 0, i < tokens.length, i++
         {
-            ids[i] = this.vocab.idOf( tokens[i] )
+            string tk = tokens._getItem_( i )
+            ids[i] = this.vocab.idOf( tk )
         }
         ret ids
     }
@@ -233,14 +266,15 @@ public class Tokenizer
         string s = ""
         for i = 0, i < ids.length, i++
         {
+            Int32 idv = ids[i]
             # 跳过 <pad> / <bos> / <eos>
-            if ids[i] != this.vocab.padId
+            if idv != this.vocab.padId
             {
-                if ids[i] != this.vocab.bosId
+                if idv != this.vocab.bosId
                 {
-                    if ids[i] != this.vocab.eosId
+                    if idv != this.vocab.eosId
                     {
-                        s = s + this.vocab.wordOf( ids[i] )
+                        s = s + this.vocab.wordOf( idv )
                     }
                 }
             }

@@ -28,7 +28,7 @@ TransformerModelTest
         Tensor t = Tensor( sp )
         for i = 0, i < ids.length, i++
         {
-            t.set( i, 0, SystemConvertFloat32( ids[i] ) )
+            t.setAt( i, 0, SystemConvertFloat32( ids[i] ) )
         }
         ret t
     }
@@ -97,7 +97,7 @@ TransformerModelTest
 
         Tensor proba = model.predictProba( seqs[0] )
         Tensor colSum = proba.sumAlong( 1 )
-        check( "proba sum ~ 1", colSum.get( 0, 0 ) > 0.99f )
+        check( "proba sum ~ 1", colSum.at( 0, 0 ) > 0.99f )
 
         Array<Int32> pred = model.predictLabels( seqs )
         check( "predict count == 2", pred.length == 2 )

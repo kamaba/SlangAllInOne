@@ -324,6 +324,165 @@ public class SceneManager
         ret text
     }
 
+    # ── Prefab（v2.19，Unity 预制体）───────────────────────────
+    # Prefab 文件 = scene.json 同构的 {version:1, scene:<名>, nodes:[...]}，
+    # 只是根列表只有一个（GameObject 子树）。读取直接复用 SceneImporter.
+    # parseCore，写入复用 SceneExporter.collect/nodeOf——两边零重复代码。
+    # 每次 instantiate 都从 JSON 重新建对象树（JSON id 自动重映射、节点
+    # 重新注册 NodeRegistry），因此同一个 Prefab 可反复实例化。
+
+    # 子树 → Prefab JSON 文本（prefabName 空则用根节点名）
+    public string prefabToJson( GameObject root, string prefabName )
+    {
+        if root == null
+        {
+            this.lastError = "prefab root is null"
+            ret ""
+        }
+        string text = SceneExporter.toJsonRoot( root, prefabName )
+        if text == ""
+        {
+            this.lastError = "prefab serialize failed"
+        }
+        ret text
+    }
+
+    # 子树 → 文件
+    public bool prefabSave( GameObject root, string path, string prefabName )
+    {
+        if path == null || path.length == 0
+        {
+            this.lastError = "empty prefab path"
+            ret false
+        }
+        string text = this.prefabToJson( root, prefabName )
+        if text == ""
+        {
+            ret false
+        }
+        bool done = File.writeAllText( path, text )
+        if !done
+        {
+            this.lastError = "prefab write failed: " + path
+        }
+        ret done
+    }
+
+    # 从文本解析 Prefab（不并入 activeScene，仅得到模板/检查用 Scene）。
+    # 失败 lastError 说明原因，返回 null。
+    public Scene prefabLoadText( string json )
+    {
+        if json == null || json.length == 0
+        {
+            this.lastError = "empty prefab json"
+            ret null
+        }
+        ImportReport rep = this._importer.parseCore( 1, json )
+        if !rep.ok || rep.scene == null
+        {
+            this.lastError = rep.lastError
+            ret null
+        }
+        this.lastError = ""
+        ret rep.scene
+    }
+
+    # 从文件解析 Prefab（同上，不并入场景）
+    public Scene prefabLoad( string path )
+    {
+        if path == null || path.length == 0 || !File.exists( path )
+        {
+            this.lastError = "prefab file not found: " + path
+            ret null
+        }
+        string json = File.readAllText( path )
+        Scene s = this.prefabLoadText( json )
+        ret s
+    }
+
+    # 从模板 Scene 实例化到 parent（parent=null → activeScene 根）。
+    # 返回第一个根节点；整棵子树的 _scene 重指到目标场景，NodeRegistry
+    # id 保持 parseCore 时注册的值（随节点走，无需二次注册）。
+    public GameObject prefabInstantiate( Scene template, GameObject parent )
+    {
+        if template == null
+        {
+            this.lastError = "prefab template is null"
+            ret null
+        }
+        Array<GameObject> roots = template.roots()
+        Int32 count = roots.length
+        if count == 0
+        {
+            this.lastError = "prefab has no roots"
+            ret null
+        }
+        Scene target = this.activeScene
+        if parent != null && parent._scene != null
+        {
+            target = parent._scene
+        }
+        if target == null
+        {
+            this.lastError = "no target scene"
+            ret null
+        }
+        GameObject first = null
+        Int32 i = 0
+        while i < count
+        {
+            GameObject r = roots[i]
+            if r == null
+            {
+                i = i + 1
+            }
+            else
+            {
+                if parent != null
+                {
+                    r.setParent( parent )
+                }
+                else
+                {
+                    template.removeRoot( r )
+                    target.addRoot( r )
+                }
+                this._rewalkScene( r, target )
+                if first == null
+                {
+                    first = r
+                }
+                i = i + 1
+            }
+        }
+        this.lastError = ""
+        ret first
+    }
+
+    # 一步到位：文件 → 实例化（Prefab 的常用入口）
+    public GameObject instantiate( string path, GameObject parent )
+    {
+        Scene template = this.prefabLoad( path )
+        if template == null
+        {
+            ret null
+        }
+        GameObject inst = this.prefabInstantiate( template, parent )
+        ret inst
+    }
+
+    # 一步到位：文本 → 实例化
+    public GameObject instantiateText( string json, GameObject parent )
+    {
+        Scene template = this.prefabLoadText( json )
+        if template == null
+        {
+            ret null
+        }
+        GameObject inst = this.prefabInstantiate( template, parent )
+        ret inst
+    }
+
     # rawDt=-1 = 引擎单调钟实测（与 Application.tick 同语义）
     public void tick( Float32 rawDt )
     {

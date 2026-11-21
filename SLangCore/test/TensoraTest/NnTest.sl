@@ -33,7 +33,7 @@ NnTest
             Float32 center = SystemConvertFloat32( labels[i] ) * 2.0f
             for j = 0, j < 4, j++
             {
-                x.set( i, j, center + rng.normal( 0.0f, 0.3f ) )
+                x.setAt( i, j, center + rng.normal( 0.0f, 0.3f ) )
             }
         }
         ret x
@@ -143,8 +143,8 @@ NnTest
         Tensor seq = Tensor.random( Shape.matrix( 5, 3 ) )
 
         RNN rnn = RNN( RNNCell( 3, 4 ) )
-        Tensor out = rnn.forward( seq )
-        check( "rnn out == (5,4)", out.rows() == 5 && out.cols() == 4 )
+        Tensor outV = rnn.forward( seq )
+        check( "rnn out == (5,4)", outV.rows() == 5 && outV.cols() == 4 )
 
         LSTMCell lstm = LSTMCell( 3, 4 )
         Tensor h = null
@@ -171,7 +171,7 @@ NnTest
         Tensor idTensor = Tensor( Shape.matrix( 4, 1 ) )
         for i = 0, i < 4, i++
         {
-            idTensor.set( i, 0, SystemConvertFloat32( ids[i] ) )
+            idTensor.setAt( i, 0, SystemConvertFloat32( ids[i] ) )
         }
 
         Embedding emb = Embedding( 50, 16 )

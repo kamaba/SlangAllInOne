@@ -45,20 +45,22 @@ public class History
 
     public Float32 lastTrainLoss()
     {
-        if this.trainLoss.length == 0
+        List<Float32> ls = this.trainLoss
+        if ls.length == 0
         {
             ret 0.0f
         }
-        ret this.trainLoss[ this.trainLoss.length - 1 ]
+        ret ls._getItem_( ls.length - 1 )
     }
 
     public Float32 lastValAcc()
     {
-        if this.valAcc.length == 0
+        List<Float32> va = this.valAcc
+        if va.length == 0
         {
             ret 0.0f
         }
-        ret this.valAcc[ this.valAcc.length - 1 ]
+        ret va._getItem_( va.length - 1 )
     }
 }
 
@@ -151,7 +153,7 @@ public class Trainer
             int batches = 0
             while dl.hasNext()
             {
-                Batch b = dl.next()
+                Batch b = dl.nextBatch()
                 this.trainBatch( b )
                 Tensor pred = this.model.forward( b.x )
                 lossSum = lossSum + this.lossValue( pred, b.y, b.labels )
@@ -187,16 +189,16 @@ public class Trainer
     }
 
     # ── 评估 ─────────────────────────────────────────────
-    public Float32 evaluate( Dataset data )
+    public Float32 evaluate( Dataset ds )
     {
         this.model.eval()
-        DataLoader dl = DataLoader( data, this.batchSize, false, false )
+        DataLoader dl = DataLoader( ds, this.batchSize, false, false )
         dl.reset()
         int hit = 0
         int total = 0
         while dl.hasNext()
         {
-            Batch b = dl.next()
+            Batch b = dl.nextBatch()
             Array<Int32> pred = Metrics.predictLabels( this.model.forward( b.x ) )
             for i = 0, i < pred.length, i++
             {
@@ -215,18 +217,18 @@ public class Trainer
         ret SystemConvertFloat32( hit ) / SystemConvertFloat32( total )
     }
 
-    public Float32 evaluateLoss( Dataset data )
+    public Float32 evaluateLoss( Dataset ds )
     {
         this.model.eval()
-        DataLoader dl = DataLoader( data, this.batchSize, false, false )
+        DataLoader dl = DataLoader( ds, this.batchSize, false, false )
         dl.reset()
-        Float32 sum = 0.0f
+        Float32 acc = 0.0f
         int batches = 0
         while dl.hasNext()
         {
-            Batch b = dl.next()
+            Batch b = dl.nextBatch()
             Tensor pred = this.model.forward( b.x )
-            sum = sum + this.lossValue( pred, b.y, b.labels )
+            acc = acc + this.lossValue( pred, b.y, b.labels )
             batches++
         }
         this.model.train( true )
@@ -234,16 +236,16 @@ public class Trainer
         {
             ret 0.0f
         }
-        ret sum / SystemConvertFloat32( batches )
+        ret acc / SystemConvertFloat32( batches )
     }
 
     # ── 推理 ─────────────────────────────────────────────
     public Tensor predict( Tensor x )
     {
         this.model.eval()
-        Tensor out = this.model.forward( x )
+        Tensor outV = this.model.forward( x )
         this.model.train( true )
-        ret out
+        ret outV
     }
 
     public Array<Int32> predictLabels( Tensor x )

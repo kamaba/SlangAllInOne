@@ -1,4 +1,4 @@
-{
+﻿{
   "project":
   {
     "name": "Tensora",
@@ -27,11 +27,15 @@
   },
   "compileFiles": {
     "files": [
-      // ── 基础：形状 / 数学 / 随机 / 张量 / 初始化 / 算子 ──
-      // 顺序即依赖顺序：Tensor 用到 TensorMath(Math.sl) 与 Rng(Random.sl)
+      // ── 基础：形状 / 类型 / 数学 / 随机 / 设备 / 后端注册 / 张量 ──
+      // 顺序即依赖顺序：Tensor 依赖 TensorMath(Math.sl)、Rng(Random.sl)、
+      // Device、EDtype、BackendError（to() 的 throws 通道）
       { "path": "Shape.sl",   "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
+      { "path": "Dtype.sl",   "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Math.sl",    "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Random.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
+      { "path": "Device.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
+      { "path": "Backends/BackendRegistry.sl", "group": "tensora", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Tensor.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Init.sl",    "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Ops.sl",     "group": "tensora", "tag": "ops",   "ignore": false, "priority": 0 },
@@ -64,10 +68,7 @@
       { "path": "Metrics.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 },
       { "path": "Dataset.sl",   "group": "tensora", "tag": "data",  "ignore": false, "priority": 0 },
       { "path": "Tokenizer.sl", "group": "tensora", "tag": "data",  "ignore": false, "priority": 0 },
-      { "path": "Trainer.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 },
-
-      // ── 设备抽象 ───────────────────────────────────────
-      { "path": "Device.sl", "group": "tensora", "tag": "core", "ignore": false, "priority": 0 }
+      { "path": "Trainer.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -94,6 +95,8 @@
   "struct": [
     { "namespace": "Tensora", "children": [
       { "class": "Shape" },
+      { "class": "EDtype" },
+      { "class": "Dtype" },
       { "class": "Tensor" },
       { "class": "TensorMath" },
       { "class": "Rng" },
@@ -149,7 +152,9 @@
       { "class": "History" },
       { "class": "Trainer" },
       { "class": "EDeviceKind" },
-      { "class": "Device" }
+      { "class": "Device" },
+      { "class": "BackendError" },
+      { "class": "Backends" }
     ]}
   ],
   "export": {

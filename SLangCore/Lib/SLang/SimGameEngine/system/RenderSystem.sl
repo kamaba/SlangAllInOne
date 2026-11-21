@@ -248,6 +248,69 @@ public class RenderSystem
         ret this._pipe.setSkyCube( texHandle )
     }
 
+    # ── v3.6 AA（FXAA + MSAA）+ MotionVectors 门面 ─────────────
+    # setAa(msaa, fxaaOn, fxaaSpan)：转发 pipe.setAa —— MSAA 采样数
+    # {0,1}=关 / 2/4/8（非 2/4/8 按 4），FXAA 内嵌后处理前段开关；
+    # 返回后端实际生效采样数（0 = 单采样，vk 后端恒 0）。
+    public Int32 setAa( Int32 msaa, Int32 fxaaOn, Float32 fxaaSpan )
+    {
+        if this._pipe == null
+        {
+            ret 0
+        }
+        ret this._pipe.setAa( msaa, fxaaOn, fxaaSpan )
+    }
+
+    # setMotionVectors(on)：转发 pipe.setMotionVectors —— 速度 RT 开关
+    # （RG = 速度*0.5+0.5 编码；vk/d3d11 后端不支持，开关无效果）。
+    public bool setMotionVectors( Int32 on )
+    {
+        if this._pipe == null
+        {
+            ret false
+        }
+        ret this._pipe.setMotionVectors( on )
+    }
+
+    # readMotionVectors(dstPtr)：回读速度 RT（w*h*4 top-down RGBA8；
+    # RG 通道 = 速度*0.5+0.5，0.5 = 静止）。motion 未启用/未渲染返回 false。
+    public bool readMotionVectors( Int64 dstPtr )
+    {
+        if this._pipe == null
+        {
+            ret false
+        }
+        ret this._pipe.outputMotionTexture( dstPtr )
+    }
+
+    # ── v3.7 TAA ─────────────────────────────────────────────────
+    # setTaa(on, blend)：转发 pipe.setTaa —— 时域抗锯齿（速度重投影 +
+    # 邻域 clamp 历史 + 按 blend 混合）。on=1 时自动打开 motion；
+    # blend = 当前帧权重（0..1，默认 0.1，越小平滑越重、越大越跟手）。
+    # 返回实际生效开关（后端不支持时 false）。
+    public bool setTaa( Int32 on, Float32 blend )
+    {
+        if this._pipe == null
+        {
+            ret false
+        }
+        ret this._pipe.setTaa( on, blend )
+    }
+
+    # ── v3.8 Motion Blur（后处理链）─────────────────────────
+    # setMotionBlur(on, scale, samples)：转发 pipe.setMotionBlur —— 动态
+    # 模糊（沿速度方向对称快门采样平均），on=1 自动打开 motion；
+    # scale=速度倍率（默认 1.0）；samples=采样数（默认 8）。速度 0 像素
+    # 输出原色；后端不支持时返回 false。
+    public bool setMotionBlur( Int32 on, Float32 scale, Int32 samples )
+    {
+        if this._pipe == null
+        {
+            ret false
+        }
+        ret this._pipe.setMotionBlur( on, scale, samples )
+    }
+
     # 管线句柄访问（诊断/高级用法；消费方直接调 pipe.stat 等）
     public SLang.RenderPipeline pipe()
     {

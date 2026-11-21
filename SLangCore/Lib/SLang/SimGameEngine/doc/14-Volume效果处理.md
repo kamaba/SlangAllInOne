@@ -1,5 +1,8 @@
 # SimGameEngine · 14 Volume 效果处理
 
+> 状态：**v1.4 已落盘（2026-11-20，Motion Blur 动态模糊）**：RHI vtable 加 `motion_blur` 槽（GL/GLES 独立 FS_MB 程序沿速度方向对称快门采样；D3D11/VK NULL——无速度图）；管线阶段 10.6（TAA 后、阶段 11 FXAA/调色前）消费 motion 速度图输出到 rt_mb，post 从 rt_mb 读；导出 `slr_pipeline_set_motion_blur(p,on,scale,samples)` + `SLR_STAT_MOTION_BLUR=22`，自动开 motion；速度≈0 的像素快速路径直出原色（静止零模糊）；RenderTest Phase MB 专项 PASS，全套件 EXIT=0。设计要点：独立 vtable 槽而非改 post_process 签名（规避历史四后端签名漂移坑）。
+> 状态：**v1.3 已落盘（2026-11-20，TAA 时域抗锯齿）**：渲染库新增 `slr_pipeline_set_taa`（开关 + 当前帧权重 blend）与 `slr_pipeline_taa` 阶段导出；RHI vtable 加 `taa_resolve`（GL/GLES 运行期 GLSL/ESSL、D3D11 运行期 HLSL 三纹理全屏 pass，VK NULL）；管线加 history ping-pong 双 RT + 阶段 10.5（MSAA resolve 后、后处理前）：速度图重投影上帧历史 → 3×3 邻域 clamp 防鬼影 → `mix(hist, cur, blend)`；自动开启 motion（无速度图后端拒绝启用）；RenderSystem `setTaa(on, blend)` 门面；RenderTest 新增 Phase TAA（开关统计 / 静止收敛 / 速度重投影 / MSAA+TAA 组合 / 关闭零回归）全绿。
+> 状态：**v1.2 已落盘（2026-11-20，AA + MotionVectors）**：渲染库新增 `slr_pipeline_set_aa` / `slr_pipeline_set_motion` / `slr_pipeline_output_motion_texture` 三导出（FXAA + MSAA + 速度 RT 回读）；后处理参数块 13→16 float（尾部 fxaaOn/fxaaSpanMax）；FS_POST 内嵌 FXAA（GL/GLES ESSL + D3D11 HLSL 运行期消费）；SLR_PROG_MOTION 速度 pass（上帧 MVP 经 PerDrawPrev UBO 绑定点 2）；管线 `SlrPipeline` 加 aa/motion RT 组 + 阶段 9 尾速度 pass + 阶段 11 MSAA resolve；引擎 RenderSystem 三个门面（`setAa` / `setMotionVectors` / `readMotionVectors`）；RenderTest 新 Phase AA + Phase MV 双绿（FXAA 748 px 边缘变化 / MSAA 4x 384 px / 速度 +x=153 -x=102 静止=127、恢复全关逐位一致）。
 > 状态：**v1.1 已落盘（2026-11-18，Unity Color Adjustments 风扩参）**：后处理参数从三参扩到 **11 项可下发**（brightness/contrast/saturation/hueShift/colorFilter RGB/vignette/vignetteSmooth/grain/tonemap Reinhard）——C 渲染库新增 `slr_pipeline_set_post_params`（13 float 参数块）+ GL/GLES 着色器全量消费（VK/D3D11 v1 着色器只解 enable/brightness/saturation/vignette，其余静默忽略待 SPIR-V/DXBC 重产 M5）；引擎侧 VolumeProfile/VolumeStack/VolumeSystem 块布局 11→24 float、`RenderSystem.applyPost` 改参数块下发 + `volumeSystem` 字段自动集成（sync 每帧按相机 compute+apply，Unity VolumeManager 同款）；SceneImporter 支持 `Volume` 场景组件；**中性暗角语义修正为 0**（v1 的 1.0 起点是误语义——无配置 = 无暗角）。Bloom/DOF/Fog 仍存参数不下发（HDR 链路 M5）；Tonemapping 仅 Reinhard LDR 近似（ACES 需 HDR）。
 > 使用者文档：`md/lib/SimGameEngine/post-processing.md`（只写用法/规则/坑）。
 > 前置阅读：`13-天空盒与环境.md`、`05-合批与RenderObject提交.md`、`06-相机光照与探针.md`。
@@ -188,3 +191,91 @@ room.weight = 0.7f
 5. **多相机各自算栈**：把 Volume 参数算成全局单例会导致两个相机的后处理互相串扰。
 6. **后处理作用于天空盒**：第 13 章天空盒是场景内容，会一起被调色；只想改天空时调天空自身参数。
 7. **HDR 链路未就绪**：Bloom / ACES Tonemap 需要 HDR 中间缓冲（Render M5）；在 LDR 回读缓冲上硬做会丢失高光信息。
+
+---
+
+## 8. v1.2 实现记录（2026-11-20，AA + MotionVectors）
+
+### 8.1 C 渲染库改动
+
+| 项 | 落点 | 说明 |
+|---|---|---|
+| FFI 导出 | `slr_pipeline_set_aa(p, msaa, fxaaOn, fxaaSpan)` / `slr_pipeline_set_motion(p, on)` / `slr_pipeline_output_motion_texture(p, dst)` | `vm_sl_render.h` 声明表登记（漏登记 = FFI 静默 false）；setAa 返回实际生效采样数 |
+| 参数块 | `set_post_params` 13→16 float（尾部 `[13]fxaaOn [14]fxaaSpanMax`） | 命令回放 `sl_cmd.c` POST_PROCESS 按 16 组块；旧 13 索引不变 |
+| 程序槽 | `SLR_PROG_MOTION=8`（插在 PHONG_TEX 与 GEN_BASE 之间），GEN_BASE 8→9 | 四后端 make_shared 同步；SL 侧 `PROG_MOTION=8 / PROG_GEN_BASE=9` 同步 |
+| FXAA | FS_POST 内嵌函数（GL/GLES ESSL + D3D11 HLSL 运行期编译） | luma 边缘检测 + 方向 clamp + 5 点混合；**独立于 color-adjustments enable**（enabled=0 走中性色链 + FXAA，enabled=0 且 FXAA=0 仍走 BLIT 逐位旧行为）；VK 冻结 SPIR-V 不消费 |
+| MSAA | `target_create_ms` / `target_resolve` vtable 加槽（GL/GLES/D3D11 实现，VK NULL） | GL 多采样纹理 + blit；GLES ES3.0 无 multitexture → 多采样 RB + blit（destroy 按 samples 分流删 RB）；D3D11 TEXTURE2MS RTV + ResolveSubresource；rt_scene 重建走 make_targets，阶段 11 先 resolve 再后处理 |
+| MotionVectors | `upload_perdraw_prev` vtable 加槽（GL/GLES 实现，D3D11/VK NULL） | PerDrawPrev UBO 绑定点 2（4KB mat4×64）；`SlrPerDraw` 加 prev 矩阵 + obj_prev_valid，每帧阶段 10 快照；阶段 9 尾以 `PROG_MOTION` 重绘所有绘制项输出 top-down RGBA8 速度图（RG = NDC 位移×0.5+0.5）；无上帧位置记 0 |
+| 统计 | `STAT_MV_ENABLED=18 / STAT_MSAA_SAMPLES=19 / STAT_FXAA=20` | 调用方可读实际生效状态（后端回退可见） |
+
+### 8.2 引擎与测试
+
+- `RenderSystem` 三门面：`setAa(Int32,Int32,Float32)` / `setMotionVectors(Int32)` / `readMotionVectors(Int64)`；跨模块只传标量/Int64 句柄（避免命名空间冲突与复杂参数绑定）。
+- RenderTest 新增 `RenderTestPhasesF.sl`（priority 11）挂 `runAa` / `runMotion` 两相位，main 汇总 PASS。
+- 回归结果：Phase AA 748 FXAA 边缘变化像素 / 384 MSAA 4x 变化像素 / 恢复全关逐位一致；Phase MV 静止 (127,127)、+x (153,127)、-x 102、关闭后回读 false。
+
+### 8.3 本次排查记录（存量问题，非本次引入）
+
+- 全套件中 GL 主流程 `SHADOW2`（S_in=255 而非 213）与 `CSM` 稳定 FAIL，但 D3D11 / GLES 后端同断言 PASS。二分实验（禁 MOTION program / PerDrawPrev UBO / FXAA 段、跳过后端切换纯 GL 直跑）均无法消除。
+- **决定性对照：用本次改动前的 Release dll（2026-11-19）跑同一 slb，GL shadow 同样 S_in=255 FAIL** → 判定为 11-19 前后既有的 GL 后端 shadow map 存量回归，与本次 AA/MV 改动无关。未在本轮修复，登记待专项。
+- 坑：vtable 加槽后必须 `/t:Rebuild` 全后端；spm 自愈会用 zip 覆盖已安装 dll，slb + dll + zip 必须同批重打（四处 zip + 两个已安装目录 + 7 个 dll 槽位）。
+- 坑：MSVC 对 GLES 的 `GL_READ_FRAMEBUFFER` 宏未定义（自定义宏表需补 ES3.0 常量）；D3D11 `D3D11_TEX2DMS_RTV` 无 `FirstSlice` 成员。
+
+---
+
+## 9. v1.3 实现记录（2026-11-20，TAA 时域抗锯齿）
+
+### 9.1 算法与数据流
+
+```
+阶段 9  几何 + motion pass（速度图 RG = NDC 位移*0.5+0.5）
+阶段 10 上帧变换快照
+阶段 10.5 TAA：
+   src = MSAA resolve 后颜色（若 MSAA 开）
+   decodedVel = velocity.rg * 2 - 1
+   prevUv = uv - decodedVel * 0.5           （NDC→UV 半幅）
+   histClamped = clamp(history[prevUv], min(3×3 cur), max(3×3 cur))
+   out = mix(histClamped, cur, blend)        （blend = 当前帧权重，默认 0.1）
+   history ping-pong：写 hist[1-idx]，读 hist[idx]，交换；reset=1 首帧直出 cur
+阶段 11 后处理（FXAA / Color Adjustments）消费 TAA 输出
+```
+
+邻域 clamp 是防鬼影关键：物体移动/消失时当前帧 3×3 邻域不含历史颜色，clamp 将其拉回当前色域——代价是剧烈颜色跳变无时域平滑（预期行为）。
+
+### 9.2 后端与回退
+
+| 后端 | taa_resolve | 说明 |
+|---|---|---|
+| GL / GLES | ✅ | 独立 FS_TAA 程序（VS_FULL 复用），sampler 单元 0=cur 1=vel 2=hist，uniform blend/reset/texel |
+| D3D11 | 指针已实现但管线拒绝 | PS_TAA + b5 TaaParams + t0/t1/t2 SRV 已就绪；但 D3D11 无 `upload_perdraw_prev`（motion 不支持 → 无速度图），set_taa 返回 0。待 motion pass 专项后开放 |
+| VK | NULL | SPIR-V 冻结无重投影 shader，set_taa 返回 0 |
+
+### 9.3 验证结果与坑
+
+- Phase TAA 全绿：开关统计（STAT_TAA=1 + motion 自动开）、静止 8 帧平坦区逐位一致（边缘 468/16384 像素 ±2 舍入噪声，来自额外纹理采样 + float mix）、移动帧速度 R=153 重投影输入就绪、MSAA 4x + TAA 组合、关闭零回归。
+- 坑：`rt_taa_cur` 是 `rt_taa_hist[write_idx]` 的别名——`pipeline_release_targets` 若同时销毁二者会**双重释放**（setAa 重建目标的 MSAA+TAA 组合阶段崩溃），修复为只销毁 hist[0]/hist[1]。
+- 坑：vtable 加槽必须 `/t:Rebuild` 全后端；spm 自愈 zip 与已安装目录的 slb/dll 必须同批重打（本轮 4 zip + 2 已安装目录 + 7 dll 槽位）。
+
+---
+
+## 10. v1.4 实现记录（2026-11-20，Motion Blur 动态模糊）
+
+### 10.1 设计取舍
+
+**不改 `post_process` vtable 签名**——历史上改该签名曾导致四后端 obj 增量混链崩溃（`doc/14` v1.1 坑①）。改为 vtable 尾部追加独立 `motion_blur(dst, src, vel, w, h, scale, samples)` 槽，管线放在阶段 10.6（TAA 后、阶段 11 前），输出 rt_mb 供 post 消费。逻辑上仍属后处理链第一环（FXAA/调色之前）。
+
+### 10.2 算法
+
+```
+velocity = vel.rg*2-1（NDC 逐帧位移）
+offset = velocity * 0.5 * scale          （NDC→UV 半幅 × 倍率）
+快速路径：|velocity| ≈ 0 → 直出 src（静止像素零模糊，且无 16-tap 舍入噪声）
+否则：for i in [0,samples): acc += src(uv + offset*(i/(samples-1) - 0.5))
+out = acc / samples                       （对称快门， Samples 钳 4..16）
+```
+
+### 10.3 验证与边界
+
+- Phase MB：开关/统计、静止中心与背景逐位一致（边缘 1px 过渡带 256 px 有邻色抹入——**运动模糊正常行为**，速度残差导致）、运动帧速度 R=150 + 模糊 diff=256、scale 0 对照、关闭零回归。全套件 EXIT=0；SimGameEngine 1009 PASS / 33 FAIL 存量不变。
+- 后端：GL/GLES 实现；D3D11/VK 无速度图（无 `upload_perdraw_prev`），`set_motion_blur` 返回 0——与 TAA 同边界，待 D3D11 motion pass 专项后统一开放。
+- 与 TAA 可叠加：`setTaa(1,...)` + `setMotionBlur(1,...)` → 先稳定边缘再拖影；二者都自动打开 motion 且共享同一张速度图。

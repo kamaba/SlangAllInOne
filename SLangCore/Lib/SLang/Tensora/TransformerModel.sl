@@ -45,8 +45,8 @@ public class SeqPool extends Layer
             Tensor res = Tensor( outShape )
             for j = 0, j < d, j++
             {
-                Float32 v = x.get( 0, j )
-                res.set( 0, j, v )
+                Float32 v = x.at( 0, j )
+                res.setAt( 0, j, v )
             }
             this.outputCache = res
             ret res
@@ -70,8 +70,8 @@ public class SeqPool extends Layer
             Tensor gout = Tensor.zeros( gradShape )
             for j = 0, j < d, j++
             {
-                Float32 g = gradOutput.get( 0, j )
-                gout.set( 0, j, g )
+                Float32 g = gradOutput.at( 0, j )
+                gout.setAt( 0, j, g )
             }
             ret gout
         }
@@ -97,7 +97,7 @@ public class TransformerClassifier extends Module
     Int32 _classCount = 0
     Int32 _dModel = 0
     Int32 _heads = 0
-    Int32 _layers = 0
+    Int32 _layerCount = 0
     Int32 _maxLen = 0
 
     public Embedding embedding = null
@@ -122,7 +122,7 @@ public class TransformerClassifier extends Module
         this._classCount = classCount
         this._dModel = dModel
         this._heads = heads
-        this._layers = layerCount
+        this._layerCount = layerCount
         this._maxLen = maxLen
 
         this.embedding = Embedding( vocabSize, dModel )
@@ -156,7 +156,7 @@ public class TransformerClassifier extends Module
     {
         Tensor x = this.embedding.forward( ids )
         x = this.posEnc.forward( x )
-        for i = 0, i < this._layers, i++
+        for i = 0, i < this._layerCount, i++
         {
             x = this._blocks[i].forward( x )
         }
@@ -171,7 +171,7 @@ public class TransformerClassifier extends Module
         Tensor g = this.head.backward( gradOutput )
         g = this.pool.backward( g )
         g = this.finalNorm.backward( g )
-        for i = this._layers - 1, i >= 0, i--
+        for i = this._layerCount - 1, i >= 0, i--
         {
             g = this._blocks[i].backward( g )
         }

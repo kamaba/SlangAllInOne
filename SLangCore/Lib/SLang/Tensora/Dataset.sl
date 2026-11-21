@@ -1,3 +1,4 @@
+import Math;
 # Dataset / DataLoader / Batch / Normalizer —— 数据管道
 #
 # Dataset   ：特征矩阵 x [N, F] + 标签 y（[N,1] 类别 id 或 [N,C] one-hot）
@@ -63,7 +64,7 @@ public class Dataset
         int mx = 0
         for i = 0, i < this.y.rows(), i++
         {
-            int v = SystemConvertInt32( this.y.get( i, 0 ) )
+            int v = SystemConvertInt32( this.y.at( i, 0 ) )
             if v > mx
             {
                 mx = v
@@ -78,18 +79,18 @@ public class Dataset
         if this.y.cols() > 1
         {
             int best = 0
-            Float32 m = this.y.get( i, 0 )
+            Float32 m = this.y.at( i, 0 )
             for j = 1, j < this.y.cols(), j++
             {
-                if this.y.get( i, j ) > m
+                if this.y.at( i, j ) > m
                 {
-                    m = this.y.get( i, j )
+                    m = this.y.at( i, j )
                     best = j
                 }
             }
             ret best
         }
-        ret SystemConvertInt32( this.y.get( i, 0 ) )
+        ret SystemConvertInt32( this.y.at( i, 0 ) )
     }
 
     Array<Int32> labels()
@@ -113,11 +114,11 @@ public class Dataset
         {
             for j = 0, j < this.x.cols(), j++
             {
-                nx.set( i, j, this.x.get( indices[i], j ) )
+                nx.setAt( i, j, this.x.at( indices[i], j ) )
             }
             for j = 0, j < this.y.cols(), j++
             {
-                ny.set( i, j, this.y.get( indices[i], j ) )
+                ny.setAt( i, j, this.y.at( indices[i], j ) )
             }
         }
         ret Dataset( nx, ny, this.name )
@@ -126,7 +127,7 @@ public class Dataset
     # 原地打乱（保持 x / y 对齐）
     void shuffle()
     {
-        Array<Int32> order = Rng.global().permutation( this.count() )
+        Array<Int32> order = Rng.current().permutation( this.count() )
         Dataset d = this.gather( order )
         this.x = d.x
         this.y = d.y
@@ -167,7 +168,7 @@ public class Dataset
 @Nickname("DataLoader")
 public class DataLoader
 {
-    public Dataset data = null
+    public Dataset ds = null
     public Int32 batchSize = 32
     public bool shuffle = true
     public bool dropLast = false
@@ -176,23 +177,23 @@ public class DataLoader
     int _cursor = 0
     int _batchCount = 0
 
-    public void _init_( Dataset data, Int32 batchSize )
+    public void _init_( Dataset ds, Int32 batchSize )
     {
-        this._init_( data, batchSize, true, false )
+        this._init_( ds, batchSize, true, false )
     }
 
-    public void _init_( Dataset data, Int32 batchSize, bool shuffle, bool dropLast )
+    public void _init_( Dataset ds, Int32 batchSize, bool shuffle, bool dropLast )
     {
-        this.data = data
+        this.ds = ds
         this.batchSize = batchSize
         this.shuffle = shuffle
         this.dropLast = dropLast
-        this._order = Rng.rangeArray( data.count() )
+        this._order = Rng.rangeArray( ds.count() )
         this._cursor = 0
-        this._batchCount = data.count() / batchSize
+        this._batchCount = ds.count() / batchSize
         if !this.dropLast
         {
-            if data.count() % batchSize != 0
+            if ds.count() % batchSize != 0
             {
                 this._batchCount = this._batchCount + 1
             }
@@ -210,7 +211,7 @@ public class DataLoader
         this._cursor = 0
         if this.shuffle
         {
-            this._order = Rng.global().shuffle( this._order )
+            this._order = Rng.current().shuffle( this._order )
         }
     }
 
@@ -224,9 +225,9 @@ public class DataLoader
     {
         int start = i * this.batchSize
         int end = start + this.batchSize
-        if end > this.data.count()
+        if end > this.ds.count()
         {
-            end = this.data.count()
+            end = this.ds.count()
         }
         int n = end - start
         Array<Int32> idx = Array<Int32>( n )
@@ -234,11 +235,12 @@ public class DataLoader
         {
             idx[k] = this._order[ start + k ]
         }
-        Dataset sub = this.data.gather( idx )
+        Dataset sub = this.ds.gather( idx )
         ret Batch( sub.x, sub.y, sub.labels() )
     }
 
-    Batch next()
+    # next 为保留字，改名 nextBatch()
+    Batch nextBatch()
     {
         Batch b = this.at( this._cursor )
         this._cursor = this._cursor + 1
@@ -262,18 +264,18 @@ public class Normalizer
     void fit( Tensor x )
     {
         this.mean = x.sumAlong( 0 ).scale( 1.0f / SystemConvertFloat32( x.rows() ) )
-        Tensor std = Tensor( this.mean.shape() )
+        Tensor stdT = Tensor( this.mean.shape() )
         for j = 0, j < x.cols(), j++
         {
             Float32 acc = 0.0f
             for i = 0, i < x.rows(), i++
             {
-                Float32 d = x.get( i, j ) - this.mean.get( 0, j )
+                Float32 d = x.at( i, j ) - this.mean.at( 0, j )
                 acc = acc + d * d
             }
-            std.set( 0, j, Mathf.sqrt( acc / SystemConvertFloat32( x.rows() ) ) + 0.0000001f )
+            stdT.setAt( 0, j, Mathf.sqrt( acc / SystemConvertFloat32( x.rows() ) ) + 0.0000001f )
         }
-        this.std = std
+        this.std = stdT
     }
 
     Tensor transform( Tensor x )

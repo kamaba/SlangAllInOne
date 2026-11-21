@@ -1,3 +1,4 @@
+import Math;
 # Loss —— 损失函数
 #
 # 约定：
@@ -131,7 +132,7 @@ public class Loss
         Float32 acc = 0.0f
         for i = 0, i < labels.length, i++
         {
-            acc = acc + ( 0.0f - logP.get( i, labels[i] ) )
+            acc = acc + ( 0.0f - logP.at( i, labels[i] ) )
         }
         ret acc / SystemConvertFloat32( labels.length )
     }
@@ -142,7 +143,7 @@ public class Loss
         Tensor p = logits.softmax()
         for i = 0, i < labels.length, i++
         {
-            p.set( i, labels[i], p.get( i, labels[i] ) - 1.0f )
+            p.setAt( i, labels[i], p.at( i, labels[i] ) - 1.0f )
         }
         ret p.scale( 1.0f / SystemConvertFloat32( labels.length ) )
     }
@@ -153,7 +154,7 @@ public class Loss
         Float32 acc = 0.0f
         for i = 0, i < labels.length, i++
         {
-            acc = acc + ( 0.0f - logProbs.get( i, labels[i] ) )
+            acc = acc + ( 0.0f - logProbs.at( i, labels[i] ) )
         }
         ret acc / SystemConvertFloat32( labels.length )
     }

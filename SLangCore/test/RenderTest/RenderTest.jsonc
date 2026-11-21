@@ -32,7 +32,8 @@
       { "path": "RenderTestPhasesC.sl", "group": "render", "tag": "base", "ignore": false, "priority": 8 },
       { "path": "RenderTestPhasesD.sl", "group": "render", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "RenderTestPhasesE.sl", "group": "render", "tag": "base", "ignore": false, "priority": 10 },
-      { "path": "RenderTestWebUI.sl", "group": "render", "tag": "base", "ignore": false, "priority": 11 }
+      { "path": "RenderTestPhasesF.sl", "group": "render", "tag": "base", "ignore": false, "priority": 11 },
+      { "path": "RenderTestWebUI.sl", "group": "render", "tag": "base", "ignore": false, "priority": 12 }
     ]
   },
   "compileFilter": {

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "scene": "Chest",
+  "nodes": [
+    {"id":1,"parent":0,"name":"Chest","tag":"Loot","layer":5,"active":true,"transform":{"localPosition":[1,2,3],"localRotation":[0,0,0,1],"localScale":[1,1,1]},"components":[{"type":"MeshFilter","mesh":"mesh_0","meshKind":0,"meshSlot":-1,"vertices":[[0,0,0],[1,0,0],[0,1,0]]},{"type":"BoxCollider","center":[0,1,0],"size":[2,3,4],"isTrigger":false}]},
+    {"id":2,"parent":1,"name":"Lid","tag":"Untagged","layer":0,"active":true,"transform":{"localPosition":[0,1,0],"localRotation":[0,0,0,1],"localScale":[1,1,1]},"components":[]}
+  ]
+}

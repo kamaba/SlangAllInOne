@@ -88,6 +88,10 @@ typedef ptrdiff_t   GLsizeiptr;
 #define GL_VENDOR                 0x1F00
 #define GL_RENDERER               0x1F01
 #define GL_VERSION                0x1F02
+/* v3.6 MSAA（GL 3.2/3.0 core）*/
+#define GL_TEXTURE_2D_MULTISAMPLE 0x9100
+#define GL_READ_FRAMEBUFFER       0x8CA8
+#define GL_DRAW_FRAMEBUFFER       0x8CA9
 
 #ifndef APIENTRY
 #define APIENTRY
@@ -109,15 +113,23 @@ struct SlrRhiTarget            /* GL 渲染目标 = FBO + 颜色纹理 + 可选�
     int w, h;
     GLuint fbo, tex, rb;
     GLuint depth_tex;   /* N2a shadow：可采样深度纹理（仅 shadow 目标非 0）*/
+    int samples;        /* v3.6 MSAA：>0 = 多采样目标（颜色多采样纹理）*/
 };
 
-typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; int contrast, vigsm, hue, grain, seed, tmap, filt; int sky_top, sky_bottom; } GlProgUni;
+typedef struct { int mvp, color, tex, shadow_tex; int obj_index; int src, bright, sat, vig; int contrast, vigsm, hue, grain, seed, tmap, filt; int sky_top, sky_bottom; int fxaa_on, fxaa_span; } GlProgUni;
 typedef struct { GLuint vao, vbo; int count; } GlMesh;
 
 static GLuint       s_progs[SLR_PROG_COUNT];
 static GlProgUni  s_uni[SLR_PROG_COUNT];
+/* v3.7 TAA：独立程序（不占 s_progs 枚举槽，避免 gen 槽校验平移）*/
+static GLuint       s_prog_taa = 0;
+static struct { int cur, vel, hist, blend, reset, texel; } s_uni_taa;
+/* v3.8 Motion Blur：独立程序（VS_FULL 复用，uSrc=0 uVel=1）*/
+static GLuint       s_prog_mb = 0;
+static struct { int src, vel, scale, samples; } s_uni_mb;
 static GLuint       s_ubo = 0;
 static GLuint       s_ubo_light = 0;   /* LightBlock UBO（绑定点 1）*/
+static GLuint       s_ubo_prev = 0;    /* v3.6 PerDrawPrev UBO（绑定点 2）*/
 static GlMesh      s_meshes[4];
 static GlMesh      s_custom[SLR_CUSTOM_MESHES];   /* 动态网格（mesh id = 4+slot）*/
 static GLuint       s_desc_tex[SLR_DESC_TEX_SLOTS];   /* 描述符槽表（free_shared 前向引用）*/
@@ -377,14 +389,42 @@ static const char* FS_POST =
     "uniform float uGrainSeed;\n"
     "uniform int   uTonemap;\n"
     "uniform vec3  uColorFilter;\n"
+    "uniform int   uFxaaOn;\n"
+    "uniform float uFxaaSpanMax;\n"
     "float hashg(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }\n"
     "vec3 hueRot(vec3 c, float a){\n"
     "  vec3 k = vec3(0.57735);\n"
     "  float cs = cos(a), sn = sin(a);\n"
     "  return c*cs + cross(k, c)*sn + k*dot(k, c)*(1.0-cs);\n"
     "}\n"
+    "vec3 fxaa(vec3 rgbM, vec2 uv, vec2 ts){\n"
+    "  vec3 L = vec3(0.299, 0.587, 0.114);\n"
+    "  vec3 rgbNW = texture(uSrc, uv + vec2(-1.0,-1.0)*ts).rgb;\n"
+    "  vec3 rgbNE = texture(uSrc, uv + vec2( 1.0,-1.0)*ts).rgb;\n"
+    "  vec3 rgbSW = texture(uSrc, uv + vec2(-1.0, 1.0)*ts).rgb;\n"
+    "  vec3 rgbSE = texture(uSrc, uv + vec2( 1.0, 1.0)*ts).rgb;\n"
+    "  float lNW = dot(rgbNW, L), lNE = dot(rgbNE, L);\n"
+    "  float lSW = dot(rgbSW, L), lSE = dot(rgbSE, L), lM = dot(rgbM, L);\n"
+    "  float lMin = min(lM, min(min(lNW, lNE), min(lSW, lSE)));\n"
+    "  float lMax = max(lM, max(max(lNW, lNE), max(lSW, lSE)));\n"
+    "  vec2 dir = vec2(-((lNW + lNE) - (lSW + lSE)), ((lNW + lSW) - (lNE + lSE)));\n"
+    "  float dirReduce = max((lNW + lNE + lSW + lSE) * 0.03125, 0.0078125);\n"
+    "  float rcpMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n"
+    "  dir = clamp(dir * rcpMin, vec2(-uFxaaSpanMax), vec2(uFxaaSpanMax)) * ts;\n"
+    "  vec3 rgbA = 0.5 * (texture(uSrc, uv + dir * (-0.166667)).rgb\n"
+    "                   + texture(uSrc, uv + dir * ( 0.166667)).rgb);\n"
+    "  vec3 rgbB = rgbA * 0.5 + 0.25 * (texture(uSrc, uv + dir * (-0.5)).rgb\n"
+    "                                 + texture(uSrc, uv + dir * ( 0.5)).rgb);\n"
+    "  float lB = dot(rgbB, L);\n"
+    "  if (lB < lMin || lB > lMax) return rgbA;\n"
+    "  return rgbB;\n"
+    "}\n"
     "void main(){\n"
     "  vec3 c = texture(uSrc, vUv).rgb;\n"
+    "  if (uFxaaOn == 1) {\n"
+    "    vec2 ts = 1.0 / vec2(textureSize(uSrc, 0));\n"
+    "    c = fxaa(c, vUv, ts);\n"
+    "  }\n"
     "  c *= uBrightness;\n"
     "  c *= uColorFilter;\n"
     "  c = mix(vec3(0.5), c, uContrast);\n"
@@ -412,6 +452,62 @@ static const char* FS_SKY =
     "uniform vec3 uBottom;\n"
     "void main(){ oCol = vec4(mix(uBottom, uTop, vUv.y), 1.0); }\n";
 
+/* v3.7 TAA：时域累积全屏 pass。uCur=当前帧（已 resolve），uVel=速度图
+ * （RG=速度*0.5+0.5，NDC 空间），uHist=上帧累积；重投影 prevUv =
+ * uv - decodedVel*0.5（NDC→UV 半幅）；3x3 邻域 clamp 历史防鬼影；
+ * uReset=1 首帧直接输出当前帧；uBlend=当前帧权重（默认 0.1）。 */
+static const char* FS_TAA =
+    "#version 330 core\n"
+    "in vec2 vUv;\n"
+    "out vec4 oCol;\n"
+    "uniform sampler2D uCur;\n"
+    "uniform sampler2D uVel;\n"
+    "uniform sampler2D uHist;\n"
+    "uniform float uBlend;\n"
+    "uniform int uReset;\n"
+    "uniform vec2 uTexel;\n"
+    "void main(){\n"
+    "  vec3 c = texture(uCur, vUv).rgb;\n"
+    "  if (uReset == 1) { oCol = vec4(c, 1.0); return; }\n"
+    "  vec2 v = texture(uVel, vUv).rg * 2.0 - 1.0;\n"
+    "  vec2 p = vUv - v * 0.5;\n"
+    "  vec3 mn = c, mx = c;\n"
+    "  for (int y = -1; y <= 1; y++)\n"
+    "  { for (int x = -1; x <= 1; x++)\n"
+    "    { vec3 t = texture(uCur, vUv + vec2(x, y) * uTexel).rgb;\n"
+    "      mn = min(mn, t); mx = max(mx, t); } }\n"
+    "  vec3 h = texture(uHist, clamp(p, vec2(0.0), vec2(1.0))).rgb;\n"
+    "  h = clamp(h, mn, mx);\n"
+    "  oCol = vec4(mix(h, c, uBlend), 1.0);\n"
+    "}\n";
+
+/* v3.8 Motion Blur：沿速度方向的对称快门采样（velocity RG=NDC 速度
+ * *0.5+0.5）；采样数 4..16 运行期 uniform 控制（GLSL 固定上界 16），
+ * 速度 ≈ 0 时全 tap 重合 = 原色（静止像素零模糊）。 */
+static const char* FS_MB =
+    "#version 330 core\n"
+    "in vec2 vUv;\n"
+    "out vec4 oCol;\n"
+    "uniform sampler2D uSrc;\n"
+    "uniform sampler2D uVel;\n"
+    "uniform float uScale;\n"
+    "uniform int uSamples;\n"
+    "void main(){\n"
+    "  vec2 v = texture(uVel, vUv).rg * 2.0 - 1.0;\n"
+    "  vec3 c0 = texture(uSrc, vUv).rgb;\n"
+    "  if (abs(v.x) < 0.0001 && abs(v.y) < 0.0001) { oCol = vec4(c0, 1.0); return; }\n"
+    "  vec2 off = v * 0.5 * uScale;\n"
+    "  float invN = 1.0 / float(uSamples);\n"
+    "  vec3 acc = vec3(0.0);\n"
+    "  for (int i = 0; i < 16; ++i)\n"
+    "  {\n"
+    "    if (i >= uSamples) break;\n"
+    "    float t = (float(i) / float(uSamples - 1)) - 0.5;\n"
+    "    acc += texture(uSrc, vUv + off * t).rgb;\n"
+    "  }\n"
+    "  oCol = vec4(acc * invN, 1.0);\n"
+    "}\n";
+
 /* doc/13 §2.1 第二步：cubemap 天空——全屏 quad 视线方向采样。
  * 正交相机朝 -Z：dir = normalize(x, y, -1)（vUv -> [-1,1] NDC），
  * 中心命中 -Z 面、边缘带 +X/-X/+Y/-Y 分量。透视相机旋转向量随相机专项。 */
@@ -429,6 +525,36 @@ static const char* FS_SKY_CUBE =
     "                          + uCamUp * (vUv.y * 2.0 - 1.0) * uCamTan.y);\n"
     "  oCol = vec4(texture(uCube, dir).rgb, 1.0);\n"
     "}\n";
+
+/* v3.6 MotionVectors：速度 pass 双着色器。VS 同时取当前帧 MVP（PerDraw
+ * 绑定点 0）与上帧 MVP（PerDrawPrev 绑定点 2），输出两套 NDC；FS 编码
+ * RG = 速度*0.5+0.5（0.5 = 静止），B=0 A=1。正交投影 w=1（除法保守保留，
+ * 兼容未来透视投影）。 */
+static const char* VS_MOTION =
+    "#version 330 core\n"
+    "layout(location=0) in vec2 aPos;\n"
+    "layout(location=1) in vec2 aUv;\n"
+    "layout(std140) uniform PerDraw { mat4 uMVP[64]; vec4 uColor[64]; vec4 uWMat[128]; vec4 uSpec[64]; };\n"
+    "layout(std140) uniform PerDrawPrev { mat4 uPrevMVP[64]; };\n"
+    "uniform int uObjIndex;\n"
+    "out vec2 vCur;\n"
+    "out vec2 vPrev;\n"
+    "void main(){\n"
+    "  int obj = uObjIndex + gl_InstanceID;\n"
+    "  vec4 c = uMVP[obj] * vec4(aPos, 0.0, 1.0);\n"
+    "  vec4 p = uPrevMVP[obj] * vec4(aPos, 0.0, 1.0);\n"
+    "  vCur = c.xy / max(c.w, 1e-5);\n"
+    "  vPrev = p.xy / max(p.w, 1e-5);\n"
+    "  gl_Position = c; }\n";
+
+static const char* FS_MOTION =
+    "#version 330 core\n"
+    "in vec2 vCur;\n"
+    "in vec2 vPrev;\n"
+    "out vec4 oCol;\n"
+    "void main(){\n"
+    "  vec2 vel = (vCur - vPrev) * 0.5;\n"
+    "  oCol = vec4(vel + 0.5, 0.0, 1.0); }\n";
 
 static int compile_stage(GLuint prog, GLenum kind, const char* src)
 {
@@ -494,6 +620,43 @@ static int gl_make_shared(void)
     if (!make_program(SLR_PROG_BLIT, VS_FULL,  FS_BLIT))  return 0;
     if (!make_program(SLR_PROG_POST, VS_FULL,  FS_POST))  return 0;
     if (!make_program(SLR_PROG_SKY,  VS_FULL,  FS_SKY))   return 0;
+    if (!make_program(SLR_PROG_MOTION, VS_MOTION, FS_MOTION)) return 0;
+    /* v3.7 TAA：独立程序 + uniform 查询（VS 复用 VS_FULL）*/
+    {
+        GLuint p = p_glCreateProgram();
+        if (!compile_stage(p, GL_VERTEX_SHADER, VS_FULL) ||
+            !compile_stage(p, GL_FRAGMENT_SHADER, FS_TAA) ||
+            !link_program(p)) return 0;
+        s_prog_taa = p;
+        s_uni_taa.cur   = p_glGetUniformLocation(s_prog_taa, "uCur");
+        s_uni_taa.vel   = p_glGetUniformLocation(s_prog_taa, "uVel");
+        s_uni_taa.hist  = p_glGetUniformLocation(s_prog_taa, "uHist");
+        s_uni_taa.blend = p_glGetUniformLocation(s_prog_taa, "uBlend");
+        s_uni_taa.reset = p_glGetUniformLocation(s_prog_taa, "uReset");
+        s_uni_taa.texel = p_glGetUniformLocation(s_prog_taa, "uTexel");
+        /* 采样单元固定：uCur=0 uVel=1 uHist=2（全屏 pass 无描述符表）*/
+        p_glUseProgram(s_prog_taa);
+        p_glUniform1i(s_uni_taa.cur, 0);
+        p_glUniform1i(s_uni_taa.vel, 1);
+        p_glUniform1i(s_uni_taa.hist, 2);
+        p_glUseProgram(0);
+    }
+    /* v3.8 Motion Blur：独立程序（uSrc=0 uVel=1）*/
+    {
+        GLuint p = p_glCreateProgram();
+        if (!compile_stage(p, GL_VERTEX_SHADER, VS_FULL) ||
+            !compile_stage(p, GL_FRAGMENT_SHADER, FS_MB) ||
+            !link_program(p)) return 0;
+        s_prog_mb = p;
+        s_uni_mb.src = p_glGetUniformLocation(s_prog_mb, "uSrc");
+        s_uni_mb.vel = p_glGetUniformLocation(s_prog_mb, "uVel");
+        s_uni_mb.scale = p_glGetUniformLocation(s_prog_mb, "uScale");
+        s_uni_mb.samples = p_glGetUniformLocation(s_prog_mb, "uSamples");
+        p_glUseProgram(s_prog_mb);
+        p_glUniform1i(s_uni_mb.src, 0);
+        p_glUniform1i(s_uni_mb.vel, 1);
+        p_glUseProgram(0);
+    }
     /* SKY_CUBE 不在此创建：init 期创建的该程序在渲染期不产出片段
      *（2026-11-17 差分实证——同上下文现场重建同源码程序即可出图），
      * 改为 draw_sky_cube 懒创建（g_sky_cube_prog），根因登记 doc/13 §2.1 */
@@ -543,8 +706,11 @@ static int gl_make_shared(void)
     s_uni[SLR_PROG_POST].seed    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uGrainSeed");
     s_uni[SLR_PROG_POST].tmap    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uTonemap");
     s_uni[SLR_PROG_POST].filt    = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uColorFilter");
+    s_uni[SLR_PROG_POST].fxaa_on   = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uFxaaOn");
+    s_uni[SLR_PROG_POST].fxaa_span = p_glGetUniformLocation(s_progs[SLR_PROG_POST], "uFxaaSpanMax");
     s_uni[SLR_PROG_SKY].sky_top    = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uTop");
     s_uni[SLR_PROG_SKY].sky_bottom = p_glGetUniformLocation(s_progs[SLR_PROG_SKY], "uBottom");
+    s_uni[SLR_PROG_MOTION].obj_index = p_glGetUniformLocation(s_progs[SLR_PROG_MOTION], "uObjIndex");
 
     /* 采样器常量：管线纹理走 unit 1，全屏拷贝走 unit 0；
      * N2a：uShadowTex 走 unit 2——glUniform1i 只作用于当前绑定 program，
@@ -577,6 +743,8 @@ static int gl_make_shared(void)
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PFLAT], blk, 0);
         blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_PTEX], "PerDraw");
         if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_PTEX], blk, 0);
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_MOTION], "PerDraw");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_MOTION], blk, 0);
         for (i = 0; i < SLR_GEN_EFFECT_COUNT * 2; i++)
         {
             blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_GEN_BASE + i], "PerDraw");
@@ -587,6 +755,20 @@ static int gl_make_shared(void)
         p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo);
         p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrPerDraw), &s_perdraw, GL_DYNAMIC_DRAW);
         p_glBindBufferBase(GL_UNIFORM_BUFFER, 0, s_ubo);
+        p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    /* v3.6 PerDrawPrev UBO：块绑定 2（SLR_PROG_MOTION 消费 uPrevMVP；
+     * 帧级 upload_perdraw_prev 更新。全局常驻绑定——motion pass 直接
+     * draw_item，无需额外绑定步骤）*/
+    {
+        GLuint blk;
+        blk = p_glGetUniformBlockIndex(s_progs[SLR_PROG_MOTION], "PerDrawPrev");
+        if (blk != 0xFFFFFFFFu) p_glUniformBlockBinding(s_progs[SLR_PROG_MOTION], blk, 2);
+        p_glGenBuffers(1, &s_ubo_prev);
+        p_glBindBuffer(GL_UNIFORM_BUFFER, s_ubo_prev);
+        p_glBufferData(GL_UNIFORM_BUFFER, (GLsizeiptr)sizeof(SlrPerDrawPrev), NULL, GL_DYNAMIC_DRAW);
+        p_glBindBufferBase(GL_UNIFORM_BUFFER, 2, s_ubo_prev);
         p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
@@ -665,6 +847,10 @@ static void gl_free_shared(void)
     for (i = 0; i < SLR_PROG_COUNT; i++)
         if (s_progs[i]) p_glDeleteProgram(s_progs[i]);
     memset(s_progs, 0, sizeof(s_progs));
+    if (s_prog_taa) p_glDeleteProgram(s_prog_taa);
+    s_prog_taa = 0;
+    if (s_prog_mb) p_glDeleteProgram(s_prog_mb);
+    s_prog_mb = 0;
     for (i = 0; i < 4; i++)
     {
         if (s_meshes[i].vao) p_glDeleteVertexArrays(1, &s_meshes[i].vao);
@@ -683,6 +869,8 @@ static void gl_free_shared(void)
     s_ubo = 0;
     if (s_ubo_light) p_glDeleteBuffers(1, &s_ubo_light);
     s_ubo_light = 0;
+    if (s_ubo_prev) p_glDeleteBuffers(1, &s_ubo_prev);
+    s_ubo_prev = 0;
 }
 
 /* ===================================================================== */
@@ -733,6 +921,66 @@ static void gl_target_destroy(SlrRhiTarget* t)
     if (t->rb) p_glDeleteRenderbuffers(1, &t->rb);
     if (t->depth_tex) p_glDeleteTextures(1, &t->depth_tex);
     free(t);
+}
+
+/* v3.6 MSAA 多采样目标：颜色 = 多采样纹理（GL_TEXTURE_2D_MULTISAMPLE，
+ * fixed-sample），深度 = 多采样 renderbuffer。多采样纹理不能配采样器
+ * 参数（无 MIN/MAG filter）——采样消费一律走 resolve 后的单采样目标。 */
+static SlrRhiTarget* gl_target_create_ms(int w, int h, int samples)
+{
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
+    GLenum st;
+    if (!t) { set_error(SLR_E_MEMORY); return NULL; }
+    t->w = w; t->h = h; t->fbo = 0; t->tex = 0; t->rb = 0; t->depth_tex = 0;
+    t->samples = samples;
+    p_glGenFramebuffers(1, &t->fbo);
+    p_glGenTextures(1, &t->tex);
+    p_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, t->tex);
+    p_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, (GLint)GL_RGBA8,
+                              w, h, GL_TRUE);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
+    p_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                             GL_TEXTURE_2D_MULTISAMPLE, t->tex, 0);
+    p_glGenRenderbuffers(1, &t->rb);
+    p_glBindRenderbuffer(GL_RENDERBUFFER, t->rb);
+    p_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples,
+                                       GL_DEPTH_COMPONENT24, w, h);
+    p_glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, t->rb);
+    st = p_glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    p_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+    if (st != GL_FRAMEBUFFER_COMPLETE)
+    {
+        p_glDeleteFramebuffers(1, &t->fbo);
+        p_glDeleteTextures(1, &t->tex);
+        p_glDeleteRenderbuffers(1, &t->rb);
+        free(t);
+        set_error(SLR_E_FBO);
+        return NULL;
+    }
+    return t;
+}
+
+/* v3.6 MSAA resolve：src（多采样 FBO）-> dst（单采样 FBO）颜色 blit。
+ * 深度不 resolve（2D 管线深度只用于序约定，后处理消费单采样颜色）。 */
+static void gl_target_resolve(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
+{
+    (void)w; (void)h;
+    p_glBindFramebuffer(GL_READ_FRAMEBUFFER, src->fbo);
+    p_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst->fbo);
+    p_glDisable(GL_SCISSOR_TEST);
+    p_glBlitFramebuffer(0, 0, src->w, src->h, 0, 0, dst->w, dst->h,
+                        GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    p_glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+    p_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+/* v3.6 MotionVectors：PerDrawPrev 帧级块整块上传（UBO 绑定点 2 常驻）*/
+static void gl_upload_perdraw_prev(const void* data, int bytes)
+{
+    p_glBindBufferBase(GL_UNIFORM_BUFFER, 2, s_ubo_prev);
+    p_glBufferSubData(GL_UNIFORM_BUFFER, 0, (GLsizeiptr)bytes, data);
+    p_glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 /* ---- N2a shadow map：depth-only FBO + 可采样深度纹理 ----------------
@@ -976,6 +1224,7 @@ static void gl_draw_item(int prog, int slot, int mesh, int instance_count)
     p_glUseProgram(s_progs[prog]);
     if (prog == SLR_PROG_PFLAT || prog == SLR_PROG_PTEX ||
         prog == SLR_PROG_PHONG_FLAT || prog == SLR_PROG_PHONG_TEX ||
+        prog == SLR_PROG_MOTION ||
         prog >= SLR_PROG_GEN_BASE)
         p_glUniform1i(s_uni[prog].obj_index, slot);
     /* 纹理已由 desc_bind_tex 绑定到 t1（描述符槽），此处不碰资源。
@@ -1026,26 +1275,48 @@ static void gl_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                             const float* prm)
 {
     int enabled = prm[0] > 0.5f ? 1 : 0;
+    int fxaa = prm[13] > 0.5f ? 1 : 0;   /* v3.6：FXAA 独立于 color-adjustments */
     p_glDisable(GL_SCISSOR_TEST);   /* 全屏 pass 不受相机 scissor 限制 */
     p_glDisable(GL_DEPTH_TEST);
     p_glDisable(GL_BLEND);
     p_glBindFramebuffer(GL_FRAMEBUFFER, dst->fbo);
     p_glViewport(0, 0, w, h);
-    if (enabled)
+    if (enabled || fxaa)
     {
         p_glUseProgram(s_progs[SLR_PROG_POST]);
         /* prm 布局见 vm_sl_render.h set_post_params：[1]b [2]c [3]s [4]v
-         * [5]vigSmooth [6]hue [7]grain [8]seed [9]tonemap [10..12]filter */
-        p_glUniform1f(s_uni[SLR_PROG_POST].bright, prm[1]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].contrast, prm[2]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].sat, prm[3]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].vig, prm[4]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].vigsm, prm[5]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].hue, prm[6]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].grain, prm[7]);
-        p_glUniform1f(s_uni[SLR_PROG_POST].seed, prm[8]);
-        p_glUniform1i(s_uni[SLR_PROG_POST].tmap, prm[9] > 0.5f ? 1 : 0);
-        p_glUniform3f(s_uni[SLR_PROG_POST].filt, prm[10], prm[11], prm[12]);
+         * [5]vigSmooth [6]hue [7]grain [8]seed [9]tonemap [10..12]filter。
+         * 仅 FXAA（enabled=0）时颜色链取中性值（b=1 c=1 s=1 v=0 ...
+         * 恒等变换逐位不动像素，输出 = FXAA(src)）。 */
+        if (enabled)
+        {
+            p_glUniform1f(s_uni[SLR_PROG_POST].bright, prm[1]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].contrast, prm[2]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].sat, prm[3]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].vig, prm[4]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].vigsm, prm[5]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].hue, prm[6]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].grain, prm[7]);
+            p_glUniform1f(s_uni[SLR_PROG_POST].seed, prm[8]);
+            p_glUniform1i(s_uni[SLR_PROG_POST].tmap, prm[9] > 0.5f ? 1 : 0);
+            p_glUniform3f(s_uni[SLR_PROG_POST].filt, prm[10], prm[11], prm[12]);
+        }
+        else
+        {
+            p_glUniform1f(s_uni[SLR_PROG_POST].bright, 1.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].contrast, 1.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].sat, 1.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].vig, 0.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].vigsm, 1.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].hue, 0.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].grain, 0.0f);
+            p_glUniform1f(s_uni[SLR_PROG_POST].seed, 0.0f);
+            p_glUniform1i(s_uni[SLR_PROG_POST].tmap, 0);
+            p_glUniform3f(s_uni[SLR_PROG_POST].filt, 1.0f, 1.0f, 1.0f);
+        }
+        /* v3.6 FXAA（prm 16 float 尾部追加）*/
+        p_glUniform1i(s_uni[SLR_PROG_POST].fxaa_on, fxaa);
+        p_glUniform1f(s_uni[SLR_PROG_POST].fxaa_span, prm[14]);
     }
     else
     {
@@ -1073,6 +1344,59 @@ static void gl_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
     p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
     p_glBindVertexArray(0);
     p_glUseProgram(0);
+}
+
+/* v3.7 TAA resolve：cur/vel/hist 三纹理 -> dst（全屏三角）。
+ * 纹理单元 0=cur 1=vel 2=hist；blend = 当前帧权重；reset 首帧跳过历史。 */
+static void gl_taa_resolve(SlrRhiTarget* dst, SlrRhiTarget* cur,
+                           SlrRhiTarget* vel, SlrRhiTarget* hist,
+                           int w, int h, float blend, int reset)
+{
+    p_glDisable(GL_SCISSOR_TEST);
+    p_glDisable(GL_DEPTH_TEST);
+    p_glDisable(GL_BLEND);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, dst->fbo);
+    p_glViewport(0, 0, w, h);
+    p_glUseProgram(s_prog_taa);
+    p_glUniform1f(s_uni_taa.blend, blend);
+    p_glUniform1i(s_uni_taa.reset, reset ? 1 : 0);
+    p_glUniform2f(s_uni_taa.texel, w > 0 ? 1.0f / (float)w : 0.0f,
+                                   h > 0 ? 1.0f / (float)h : 0.0f);
+    p_glActiveTexture(GL_TEXTURE0);
+    p_glBindTexture(GL_TEXTURE_2D, cur->tex);
+    p_glActiveTexture(GL_TEXTURE1);
+    p_glBindTexture(GL_TEXTURE_2D, vel->tex);
+    p_glActiveTexture(GL_TEXTURE2);
+    p_glBindTexture(GL_TEXTURE_2D, reset ? cur->tex : hist->tex);
+    p_glBindVertexArray(s_meshes[2].vao);
+    p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
+    p_glBindVertexArray(0);
+    p_glUseProgram(0);
+    p_glActiveTexture(GL_TEXTURE0);
+}
+
+/* v3.8 Motion Blur：src/vel -> dst（全屏三角），单元 0=src 1=vel */
+static void gl_motion_blur(SlrRhiTarget* dst, SlrRhiTarget* src,
+                           SlrRhiTarget* vel, int w, int h,
+                           float scale, int samples)
+{
+    p_glDisable(GL_SCISSOR_TEST);
+    p_glDisable(GL_DEPTH_TEST);
+    p_glDisable(GL_BLEND);
+    p_glBindFramebuffer(GL_FRAMEBUFFER, dst->fbo);
+    p_glViewport(0, 0, w, h);
+    p_glUseProgram(s_prog_mb);
+    p_glUniform1f(s_uni_mb.scale, scale);
+    p_glUniform1i(s_uni_mb.samples, samples < 4 ? 8 : (samples > 16 ? 16 : samples));
+    p_glActiveTexture(GL_TEXTURE0);
+    p_glBindTexture(GL_TEXTURE_2D, src->tex);
+    p_glActiveTexture(GL_TEXTURE1);
+    p_glBindTexture(GL_TEXTURE_2D, vel->tex);
+    p_glBindVertexArray(s_meshes[2].vao);
+    p_glDrawArrays(GL_TRIANGLES, 0, s_meshes[2].count);
+    p_glBindVertexArray(0);
+    p_glUseProgram(0);
+    p_glActiveTexture(GL_TEXTURE0);
 }
 
 /* P6 渐变天空：在 camera_begin 之后调用——FBO/视口/scissor 已就位，
@@ -1303,6 +1627,11 @@ static int load_all_gl_procs(void)
     LOAD_GL(glColorMask);
     LOAD_GL(glClearDepth);
     LOAD_GL(glDrawBuffers);
+    /* v3.6 MSAA（GL 桌面版；GLES 走多采样 renderbuffer 路径不加载
+     * glTexImage2DMultisample——ES 3.0 无此符号，缺载不致命）*/
+    LOAD_GL(glTexImage2DMultisample);
+    LOAD_GL(glRenderbufferStorageMultisample);
+    LOAD_GL(glBlitFramebuffer);
 #undef LOAD_GL
     if (missing)
     {
@@ -1542,6 +1871,15 @@ static const SlrRhi s_rhi_gl =
     /* doc/13 §2.1 cubemap（GL 后端）*/
     gl_texture_create_cube,
     gl_draw_sky_cube,
+    /* v3.6 AA + MotionVectors（GL：多采样纹理 + glBlitFramebuffer resolve
+     * + PerDrawPrev UBO；FXAA 在 FS_POST 运行期字符串）*/
+    gl_target_create_ms,
+    gl_target_resolve,
+    gl_upload_perdraw_prev,
+    /* v3.7 TAA：独立 FS_TAA 程序 + history ping-pong 消费 */
+    gl_taa_resolve,
+    /* v3.8 Motion Blur：独立 FS_MB 程序 + 速度图消费 */
+    gl_motion_blur,
 };
 
 const SlrRhi* slr_rhi_gl(void) { return &s_rhi_gl; }

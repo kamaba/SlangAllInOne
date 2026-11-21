@@ -124,11 +124,11 @@ CnnTest
         net.add( Dense( 16, 3 ) )                              #      -> 1x3
 
         Tensor x = Tensor.random( Shape.cube( 1, 8, 8 ) )
-        Tensor out = net.forward( x )
-        global.println( "out = " + out.toString() )
-        check( "two-layer out == (1,3)", out.rows() == 1 && out.cols() == 3 )
+        Tensor outV = net.forward( x )
+        global.println( "out = " + outV.toString() )
+        check( "two-layer out == (1,3)", outV.rows() == 1 && outV.cols() == 3 )
 
-        Tensor prob = out.softmax()
+        Tensor prob = outV.softmax()
         global.println( "prob sum ~= " + SystemConvertString( prob.sum() ) )
     }
 
@@ -141,7 +141,7 @@ CnnTest
 
         BatchNorm bn = BatchNorm( 5 )
         Tensor bnOut = bn.forward( x )
-        global.println( "batchnorm out cols mean ~= " + SystemConvertString( bnOut.sumAlong( 0 ).get( 0, 0 ) ) )
+        global.println( "batchnorm out cols mean ~= " + SystemConvertString( bnOut.sumAlong( 0 ).at( 0, 0 ) ) )
 
         LayerNorm ln = LayerNorm( 5 )
         Tensor lnOut = ln.forward( x )
@@ -152,7 +152,7 @@ CnnTest
         Tensor dOut = drop.forward( x )
         drop.train( false )
         Tensor eOut = drop.forward( x )
-        check( "eval mode == input", eOut.get( 0, 0 ) == x.get( 0, 0 ) )
+        check( "eval mode == input", eOut.at( 0, 0 ) == x.at( 0, 0 ) )
         global.println( "dropout train mean ~= " + SystemConvertString( dOut.mean() ) )
     }
 

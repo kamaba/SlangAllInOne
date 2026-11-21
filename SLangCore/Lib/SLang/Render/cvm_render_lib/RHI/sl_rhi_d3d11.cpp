@@ -94,8 +94,11 @@ static ID3D11ShaderResourceView* s_desc_srv[SLR_DESC_TEX_SLOTS];
 static ID3D11Buffer* s_cb_draw = NULL;   /* 7168B：mat4[64] + vec4[64] + wmat[128] */
 static ID3D11Buffer* s_cb_obj = NULL;    /* 16B  : int uObjIndex + pad     */
 static ID3D11Buffer* s_cb_v1 = NULL;     /* 80B  : float4x4 + float4       */
-static ID3D11Buffer* s_cb_fx = NULL;     /* 16B  : 后处理参数 / 清屏色     */
+static ID3D11Buffer* s_cb_fx = NULL;     /* 32B  : 后处理参数(bright/sat/vig/fxaaOn + spanMax/texel) / 清屏色 */
 static ID3D11Buffer* s_cb_light = NULL;  /* 416B : LightBlock（光照 + shadow 参数，N2b 扩 26 vec4）*/
+/* v3.7 TAA：独立 PS + b5 常量缓冲（16B：blend/reset/1/w/1/h）*/
+static ID3D11PixelShader* s_ps_taa = NULL;
+static ID3D11Buffer* s_cb_taa = NULL;
 
 /* 管线状态对象 */
 static ID3D11InputLayout*       s_layout = NULL;
@@ -285,12 +288,63 @@ static const char* HLSL_PS_BLIT =
     "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
     "float4 psBlit(PSIn i) : SV_Target { return tex0.Sample(samp0, i.uv); }\n";
 
+/* v3.7 TAA：t0=cur t1=vel(RG=速度*0.5+0.5) t2=hist；b5=(blend,reset,texel.xy)
+ * 重投影 prevUv = uv - decodedVel*0.5；3x3 邻域 clamp 历史防鬼影。*/
+static const char* HLSL_PS_TAA =
+    "cbuffer TaaParams : register(b5) { float4 uTaa; };\n"
+    "Texture2D texCur : register(t0);\n"
+    "Texture2D texVel : register(t1);\n"
+    "Texture2D texHist : register(t2);\n"
+    "SamplerState samp0 : register(s0);\n"
+    "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
+    "float4 psTaa(PSIn i) : SV_Target {\n"
+    "  float3 c = texCur.Sample(samp0, i.uv).rgb;\n"
+    "  if (uTaa.y > 0.5) return float4(c, 1.0);\n"
+    "  float2 v = texVel.Sample(samp0, i.uv).rg * 2.0 - 1.0;\n"
+    "  float2 p = i.uv - v * 0.5;\n"
+    "  float3 mn = c, mx = c;\n"
+    "  for (int y = -1; y <= 1; y++)\n"
+    "  { for (int x = -1; x <= 1; x++)\n"
+    "    { float3 t = texCur.Sample(samp0, i.uv + float2(x, y) * uTaa.zw).rgb;\n"
+    "      mn = min(mn, t); mx = max(mx, t); } }\n"
+    "  float3 h = texHist.Sample(samp0, saturate(p)).rgb;\n"
+    "  h = clamp(h, mn, mx);\n"
+    "  return float4(lerp(h, c, uTaa.x), 1.0);\n"
+    "}\n";
+
 static const char* HLSL_PS_POST =
-    "cbuffer PerFx : register(b3) { float4 uParams; };\n"
+    /* v3.6：PerFx 扩 32B（uParams.x=bright y=sat z=vig w=fxaaOn；
+     * uFxaa.x=spanMax yz=1/texel）。FXAA 与 GL/GLES FS_POST 公式逐字
+     * 一致（luma 边缘检测 + 方向 clamp + 5 点混合）。 */
+    "cbuffer PerFx : register(b3) { float4 uParams; float4 uFxaa; };\n"
     "Texture2D tex0 : register(t0); SamplerState samp0 : register(s0);\n"
     "struct PSIn { float4 sv : SV_POSITION; float2 uv : TEXCOORD0; };\n"
+    "float3 fxaa3(float3 rgbM, float2 uv, float2 ts){\n"
+    "  float3 L = float3(0.299, 0.587, 0.114);\n"
+    "  float3 rgbNW = tex0.Sample(samp0, uv + float2(-1.0,-1.0)*ts).rgb;\n"
+    "  float3 rgbNE = tex0.Sample(samp0, uv + float2( 1.0,-1.0)*ts).rgb;\n"
+    "  float3 rgbSW = tex0.Sample(samp0, uv + float2(-1.0, 1.0)*ts).rgb;\n"
+    "  float3 rgbSE = tex0.Sample(samp0, uv + float2( 1.0, 1.0)*ts).rgb;\n"
+    "  float lNW = dot(rgbNW, L); float lNE = dot(rgbNE, L);\n"
+    "  float lSW = dot(rgbSW, L); float lSE = dot(rgbSE, L);\n"
+    "  float lM = dot(rgbM, L);\n"
+    "  float lMin = min(lM, min(min(lNW, lNE), min(lSW, lSE)));\n"
+    "  float lMax = max(lM, max(max(lNW, lNE), max(lSW, lSE)));\n"
+    "  float2 dir = float2(-((lNW + lNE) - (lSW + lSE)), ((lNW + lSW) - (lNE + lSE)));\n"
+    "  float dirReduce = max((lNW + lNE + lSW + lSE) * 0.03125, 0.0078125);\n"
+    "  float rcpMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);\n"
+    "  dir = clamp(dir * rcpMin, float2(-uFxaa.x, -uFxaa.x), float2(uFxaa.x, uFxaa.x)) * ts;\n"
+    "  float3 rgbA = 0.5 * (tex0.Sample(samp0, uv + dir * (-0.166667)).rgb\n"
+    "                     + tex0.Sample(samp0, uv + dir * ( 0.166667)).rgb);\n"
+    "  float3 rgbB = rgbA * 0.5 + 0.25 * (tex0.Sample(samp0, uv + dir * (-0.5)).rgb\n"
+    "                                   + tex0.Sample(samp0, uv + dir * ( 0.5)).rgb);\n"
+    "  float lB = dot(rgbB, L);\n"
+    "  if (lB < lMin || lB > lMax) return rgbA;\n"
+    "  return rgbB;\n"
+    "}\n"
     "float4 psPost(PSIn i) : SV_Target {\n"
     "  float3 c = tex0.Sample(samp0, i.uv).rgb;\n"
+    "  if (uParams.w > 0.5) { c = fxaa3(c, i.uv, float2(uFxaa.y, uFxaa.z)); }\n"
     "  c *= uParams.x;\n"
     "  float l = dot(c, float3(0.299, 0.587, 0.114));\n"
     "  c = lerp(float3(l, l, l), c, uParams.y);\n"
@@ -447,6 +501,7 @@ static int d3d_make_shared(void)
     if (!(s_vs[SLR_PROG_BLIT] = d3d_make_vs(HLSL_VS_FULL, "vsFull"))) return 0;
     if (!(s_ps[SLR_PROG_BLIT] = d3d_make_ps(HLSL_PS_BLIT, "psBlit"))) return 0;
     if (!(s_ps[SLR_PROG_POST] = d3d_make_ps(HLSL_PS_POST, "psPost"))) return 0;
+    if (!(s_ps_taa = d3d_make_ps(HLSL_PS_TAA, "psTaa"))) return 0;
     if (!(s_vs_clear = d3d_make_vs(HLSL_VS_CLEAR, "vsClear"))) return 0;
     if (!(s_ps_clear = d3d_make_ps(HLSL_PS_CLEAR, "psClear"))) return 0;
     s_vs[SLR_PROG_TEX]  = s_vs[SLR_PROG_FLAT];    /* 同一 VS 复用 */
@@ -512,13 +567,16 @@ static int d3d_make_shared(void)
     bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     bd.ByteWidth = sizeof(SlrPerDraw);        /* PerDraw：mat4[64]+vec4[64]+wmat[128] */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_draw))) goto fail_cb;
-    bd.ByteWidth = 16;                         /* PerObj / PerFx             */
+    bd.ByteWidth = 16;                         /* PerObj                     */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_obj))) goto fail_cb;
+    bd.ByteWidth = 32;                         /* PerFx：uParams + uFxaa（v3.6 FXAA）*/
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_fx))) goto fail_cb;
     bd.ByteWidth = 80;                         /* PerV1：mat4 + vec4         */
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_v1))) goto fail_cb;
     bd.ByteWidth = sizeof(SlrLightBlock);      /* PerLight：26 vec4（光照 + N2a/N2b shadow）*/
     if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_light))) goto fail_cb;
+    bd.ByteWidth = 16;                         /* v3.7 TaaParams（b5）*/
+    if (FAILED(s_dev->CreateBuffer(&bd, NULL, &s_cb_taa))) goto fail_cb;
 
     /* 槽位常驻绑定：b0 PerDraw / b1 PerObj / b2 PerV1 / b3 PerFx / b4 PerLight
      *（VS 与 PS 两阶段同名寄存器都用到 PerDraw/PerObj）*/
@@ -609,6 +667,7 @@ static void d3d_free_shared(void)
     }
     if (s_vs_clear) { s_vs_clear->Release(); s_vs_clear = NULL; }
     if (s_ps_clear) { s_ps_clear->Release(); s_ps_clear = NULL; }
+    if (s_ps_taa) { s_ps_taa->Release(); s_ps_taa = NULL; }
     if (s_layout) { s_layout->Release(); s_layout = NULL; }
     for (i = 0; i < 4; i++)
     {
@@ -626,6 +685,7 @@ static void d3d_free_shared(void)
     if (s_cb_obj) { s_cb_obj->Release(); s_cb_obj = NULL; }
     if (s_cb_v1) { s_cb_v1->Release(); s_cb_v1 = NULL; }
     if (s_cb_fx) { s_cb_fx->Release(); s_cb_fx = NULL; }
+    if (s_cb_taa) { s_cb_taa->Release(); s_cb_taa = NULL; }
     if (s_samp) { s_samp->Release(); s_samp = NULL; }
     if (s_samp_shadow) { s_samp_shadow->Release(); s_samp_shadow = NULL; }
     if (s_rs) { s_rs->Release(); s_rs = NULL; }
@@ -707,6 +767,71 @@ static void d3d_target_destroy(SlrRhiTarget* t)
     if (t->rtv) t->rtv->Release();
     if (t->tex) t->tex->Release();
     free(t);
+}
+
+/* ---- v3.6 MSAA：多采样颜色纹理 + TEXTURE2DMS RTV + 多采样深度 -------
+ * 采样数经 CheckMultisampleQualityLevels 验证（R8G8B8A8 支持 4/8 常见；
+ * 不支持返回 NULL -> 管线回退单采样）。MSAA 纹理不可配 SRV（采样消费
+ * 一律走 resolve 后的单采样目标）。 ------------------------------------ */
+static SlrRhiTarget* d3d_target_create_ms(int w, int h, int samples)
+{
+    D3D11_TEXTURE2D_DESC td;
+    D3D11_RENDER_TARGET_VIEW_DESC rv;
+    D3D11_DEPTH_STENCIL_VIEW_DESC dv;
+    SlrRhiTarget* t = (SlrRhiTarget*)malloc(sizeof(SlrRhiTarget));
+    UINT q = 0;
+    if (!t) { set_error(SLR_E_MEMORY); return NULL; }
+    memset(t, 0, sizeof(*t));
+    t->w = w; t->h = h;
+    if (FAILED(s_dev->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM,
+                                                    (UINT)samples, &q)) || q == 0)
+    {
+        free(t);
+        set_error_detail(SLR_E_FBO, "MSAA sample count not supported");
+        return NULL;
+    }
+    memset(&td, 0, sizeof(td));
+    td.Width = (UINT)w;
+    td.Height = (UINT)h;
+    td.MipLevels = 1;
+    td.ArraySize = 1;
+    td.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    td.SampleDesc.Count = (UINT)samples;
+    td.SampleDesc.Quality = 0;
+    td.Usage = D3D11_USAGE_DEFAULT;
+    td.BindFlags = D3D11_BIND_RENDER_TARGET;
+    if (FAILED(s_dev->CreateTexture2D(&td, NULL, &t->tex))) goto fail;
+    memset(&rv, 0, sizeof(rv));
+    rv.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    rv.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+    if (FAILED(s_dev->CreateRenderTargetView(t->tex, &rv, &t->rtv))) goto fail;
+    /* 深度：多采样 D24 + TEXTURE2MS DSV */
+    td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    if (FAILED(s_dev->CreateTexture2D(&td, NULL, &t->dtex))) goto fail;
+    memset(&dv, 0, sizeof(dv));
+    dv.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    dv.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+    if (FAILED(s_dev->CreateDepthStencilView(t->dtex, &dv, &t->dsv))) goto fail;
+    return t;
+
+fail:
+    if (t->dsv) t->dsv->Release();
+    if (t->dtex) t->dtex->Release();
+    if (t->rtv) t->rtv->Release();
+    if (t->tex) t->tex->Release();
+    free(t);
+    set_error_detail(SLR_E_FBO, "D3D11 MSAA target creation failed");
+    return NULL;
+}
+
+/* v3.6 MSAA resolve：src（多采样）-> dst（单采样）颜色（同格式 8B8A8）*/
+static void d3d_target_resolve(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
+{
+    (void)w; (void)h;
+    s_ctx->ResolveSubresource((ID3D11Resource*)dst->tex, 0,
+                              (ID3D11Resource*)src->tex, 0,
+                              DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
 /* ---- N2a shadow map：depth-only 纹理 + DSV + SRV ---------------------
@@ -1046,10 +1171,12 @@ static void d3d_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
                              const float* prm)
 {
     UINT stride = 16, offset = 0;
-    float fx[4];
-    /* v1 DXBC 着色器只消费 brightness/saturation/vignette（cb_fx[3] 预留；
-     * 新字段 contrast/filter/hue/grain/tonemap 需 HLSL 重产，M5） */
+    float fx[8];
+    /* v3.6：uParams=(bright,sat,vig,fxaaOn) + uFxaa=(spanMax,1/w,1/h,0)。
+     * contrast/filter/hue/grain/tonemap 仍冻结（需 HLSL 重产），
+     * FXAA 已进运行期编译的 psPost（b3 扩 32B）。 */
     int enabled = prm[0] > 0.5f ? 1 : 0;
+    int fxaa = prm[13] > 0.5f ? 1 : 0;   /* v3.6：FXAA 独立于 color-adjustments */
     float bright = prm[1], sat = prm[3], vig = prm[4];
     d3d_unbind_srv();
     s_ctx->OMSetRenderTargets(1, &dst->rtv, NULL);
@@ -1059,9 +1186,16 @@ static void d3d_post_process(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h,
     s_ctx->IASetInputLayout(s_layout);
     s_ctx->OMSetBlendState(s_bs_none, NULL, 0xFFFFFFFF);
     s_ctx->OMSetDepthStencilState(NULL, 0);
-    if (enabled)
+    if (enabled || fxaa)
     {
-        fx[0] = bright; fx[1] = sat; fx[2] = vig; fx[3] = 0.0f;
+        /* 仅 FXAA（enabled=0）时颜色参数取中性值（b=1 s=1 v=0）*/
+        if (!enabled) { bright = 1.0f; sat = 1.0f; vig = 0.0f; }
+        fx[0] = bright; fx[1] = sat; fx[2] = vig;
+        fx[3] = prm[13];
+        fx[4] = prm[14];
+        fx[5] = (w > 0) ? 1.0f / (float)w : 0.0f;
+        fx[6] = (h > 0) ? 1.0f / (float)h : 0.0f;
+        fx[7] = 0.0f;
         d3d_cb_update(s_cb_fx, fx, sizeof(fx));
         s_ctx->VSSetShader(s_vs[SLR_PROG_BLIT], NULL, 0);
         s_ctx->PSSetShader(s_ps[SLR_PROG_POST], NULL, 0);
@@ -1091,6 +1225,39 @@ static void d3d_blit(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
     s_ctx->VSSetShader(s_vs[SLR_PROG_BLIT], NULL, 0);
     s_ctx->PSSetShader(s_ps[SLR_PROG_BLIT], NULL, 0);
     s_ctx->PSSetShaderResources(0, 1, &src->srv);
+    s_ctx->IASetVertexBuffers(0, 1, &s_vb[2], &stride, &offset);
+    s_ctx->Draw(3, 0);
+}
+
+/* v3.7 TAA resolve：cur(t0)/vel(t1)/hist(t2) -> dst；b5 = TaaParams。
+ * 先解除全部 SRV（d3d_unbind_srv），免绑定为 RTV 的纹理仍在 t0 引发警告。 */
+static void d3d_taa_resolve(SlrRhiTarget* dst, SlrRhiTarget* cur,
+                            SlrRhiTarget* vel, SlrRhiTarget* hist,
+                            int w, int h, float blend, int reset)
+{
+    UINT stride = 16, offset = 0;
+    float prm[4];
+    ID3D11ShaderResourceView* srvs[3];
+    prm[0] = blend;
+    prm[1] = reset ? 1.0f : 0.0f;
+    prm[2] = (w > 0) ? 1.0f / (float)w : 0.0f;
+    prm[3] = (h > 0) ? 1.0f / (float)h : 0.0f;
+    d3d_cb_update(s_cb_taa, prm, sizeof(prm));
+    d3d_unbind_srv();
+    s_ctx->OMSetRenderTargets(1, &dst->rtv, NULL);
+    d3d_full_viewport(w, h);
+    s_ctx->RSSetState(s_rs);
+    s_ctx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    s_ctx->IASetInputLayout(s_layout);
+    s_ctx->OMSetBlendState(s_bs_none, NULL, 0xFFFFFFFF);
+    s_ctx->OMSetDepthStencilState(NULL, 0);
+    s_ctx->VSSetShader(s_vs[SLR_PROG_BLIT], NULL, 0);
+    s_ctx->PSSetShader(s_ps_taa, NULL, 0);
+    srvs[0] = cur->srv;
+    srvs[1] = vel->srv;
+    srvs[2] = reset ? cur->srv : hist->srv;
+    s_ctx->PSSetShaderResources(0, 3, srvs);
+    s_ctx->PSSetConstantBuffers(5, 1, &s_cb_taa);
     s_ctx->IASetVertexBuffers(0, 1, &s_vb[2], &stride, &offset);
     s_ctx->Draw(3, 0);
 }
@@ -1298,6 +1465,18 @@ static const SlrRhi s_rhi_d3d11 =
     d3d_thread_nop,
     /* doc/13 §2.1 cubemap：D3D11 后端未实现（调用点判 NULL 跳过）*/
     NULL,
+    NULL,
+    /* v3.6 AA + MotionVectors：MSAA 硬件路径（TEXTURE2MS + ResolveSubre-
+     * source）+ FXAA（运行期 HLSL psPost）；motion 不支持（NULL——
+     * 需 PerDrawPrev cbuffer + 双 MVP VS，登记后续专项）*/
+    d3d_target_create_ms,
+    d3d_target_resolve,
+    NULL,
+    /* v3.7 TAA：PS 已实现但管线层因缺 upload_perdraw_prev（无速度图）
+     * 拒绝启用——保留指针供后续 D3D11 motion pass 专项直接接上 */
+    d3d_taa_resolve,
+    /* v3.8 Motion Blur：D3D11 无速度图（同 TAA 边界）——待 motion pass
+     * 专项后补 PS；管线层 set_motion_blur 返回 0 */
     NULL,
 };
 

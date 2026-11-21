@@ -79,6 +79,10 @@ enum
     SLR_PROG_BLIT,       /* 全屏拷贝                          */
     SLR_PROG_POST,       /* 后处理                            */
     SLR_PROG_SKY,        /* P6：渐变天空背景（全屏 quad，无深度写入）*/
+    /* v3.6 MotionVectors：速度 pass（VS 出 cur/prev 双 NDC，FS 编码
+     * RG = vel*0.5+0.5；PerDrawPrev UBO 绑定点 2 消费；插入在 GEN_BASE
+     * 之前——GEN_BASE/SKY_CUBE/COUNT 相应平移，全部消费点走宏/枚举名）*/
+    SLR_PROG_MOTION,
     /* v3.4 Phong：v3.3 光照 + Blinn-Phong 伪 3D 高光（uSpec[64] 消费）。
      * 尾部追加不动既有槽序（VK 固化表依赖顺序；VK 将新槽降级映射到
      * PFLAT/PTEX —— SPIR-V 未含光照/高光，绘制不报错仅无 Phong 效果）*/
@@ -121,6 +125,15 @@ typedef struct
     float wmat[SLR_MAX_OBJECTS][8];
     float spec[SLR_MAX_OBJECTS][4];
 } SlrPerDraw;
+
+/* v3.6 MotionVectors：PerDrawPrev 帧级块（std140，GL/GLES UBO 绑定点 2，
+ * SLR_PROG_MOTION 顶点着色器消费 uPrevMVP[obj]）。槽位 = 当前帧绘制项
+ * 数组下标（与 SlrPerDraw.mvp 同布局同槽序），CPU 侧在阶段 6 由
+ * 上帧对象变换快照 × 上帧相机视域投影现场组算。 */
+typedef struct
+{
+    float prev_mvp[SLR_MAX_OBJECTS][16];
+} SlrPerDrawPrev;
 
 /* ── 光照槽（管线级，SL 侧 Light.applyTo 经 slr_light_set 写入）──
  * 直射光存归一化方向；聚光存位置 + 归一化光轴 + cos(锥半角) + 范围。 */
@@ -374,6 +387,53 @@ typedef struct
      * 0 = 同步直接回放（默认）。模式经流内 AsyncMode 控制命令切换。*/
     SlrAsyncQueue async;
     int async_mode;
+
+    /* ── v3.6 AA + MotionVectors（尾部追加，set_aa/set_motion 写入）── */
+    /* AA：请求值与实际生效值分离——后端无 target_create_ms（VK）或
+     * 创建失败时 msaa_active=0 回退单采样（stat MSAA_SAMPLES 读实际值）。
+     * msaa 变化触发 targets 重建（set_aa 内部）。
+     * FXAA：FS_POST 内嵌前段（GL/GLES/D3D11 运行期 HLSL 消费；
+     * VK SPIR-V 冻结忽略），fxaa_span = 采样延伸上限（默认 8）。 */
+    int   aa_msaa;          /* 请求采样数（0/1 = 关）*/
+    int   aa_msaa_active;   /* 实际生效采样数（0 = 单采样）*/
+    int   fxaa_on;          /* FXAA 开关（0 = 关，输出逐位 = 旧版）*/
+    float fxaa_span;        /* FXAA spanMax（默认 8.0）*/
+    SlrRhiTarget* rt_resolve;   /* MSAA resolve 中转（单采样；仅 msaa_active 时存在）*/
+    /* MotionVectors：rt_motion（无深度，懒创建）+ 上帧变换快照。
+     * RG 通道编码 = 速度*0.5+0.5（0.5 = 静止），B=0 A=1；
+     * 快照在阶段 10 落盘（阶段 6 组算 prev 块消费）：
+     *   obj_prev_*  = 上帧对象 pos/rot/scale（valid=0 首帧/新建 -> prev=cur）；
+     *   cam_prev_*  = 上帧相机视域 (l,r,b,t)（相机运动随 MVP 进速度）。 */
+    int   mv_on;
+    SlrRhiTarget* rt_motion;
+    float obj_prev_pos[SLR_MAX_OBJECTS][3];
+    float obj_prev_rot[SLR_MAX_OBJECTS];
+    float obj_prev_scale[SLR_MAX_OBJECTS][2];
+    int   obj_prev_valid[SLR_MAX_OBJECTS];
+    float cam_prev_ext[SLR_MAX_CAMERAS][4];
+    int   cam_prev_valid[SLR_MAX_CAMERAS];
+
+    /* ── v3.7 TAA（尾部追加，set_taa 写入）──
+     * taa_on=0 时零开销（post 输入 = 原场景色）；taa_on=1 且后端支持
+     * taa_resolve 时：阶段 11 前以 history ping-pong（rt_taa_hist[2]，
+     * taa_hist_idx 读旧写新）做时域累积；依赖 motion pass 的速度图
+     * （mv_on=0 时 set_taa 自动开启 motion——TAA 必须有速度输入）。
+     * taa_reset=1 时本帧强制忽略历史（首帧/尺寸变化/开关切换）。 */
+    int   taa_on;
+    float taa_blend;            /* 当前帧权重（0..1，默认 0.1）*/
+    int   taa_reset;            /* 本帧忽略历史 */
+    int   taa_hist_idx;         /* 下帧读的 history 槽（0/1）*/
+    SlrRhiTarget* rt_taa_hist[2];
+    SlrRhiTarget* rt_taa_cur;   /* TAA 输出（post 的输入，替代 src）*/
+
+    /* ── v3.8 Motion Blur（尾部追加）──
+     * mb_on=1 且后端有 motion_blur + 速度图时：阶段 10.6 以 rt_motion
+     * 为速度输入，把 src（场景/TAA 输出）模糊到 rt_mb；阶段 11 post
+     * 从 rt_mb 读（再走 FXAA/调色）。mb_on=0 零开销。 */
+    int   mb_on;
+    float mb_scale;             /* 速度倍率（默认 1.0）*/
+    int   mb_samples;           /* 采样数（默认 8）*/
+    SlrRhiTarget* rt_mb;
 } SlrPipeline;
 
 /* ===================================================================== */

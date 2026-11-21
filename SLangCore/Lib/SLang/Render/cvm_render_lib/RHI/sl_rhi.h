@@ -180,6 +180,51 @@ void (*draw_sky)(const float* top_bottom);
      * 多面覆盖）；全屏 quad 按视线采样 cube（GL/GLES 实现，D3D11/VK
      * NULL）。状态处理与 draw_sky 一致（关深度/混合，画完恢复）。 */
     void (*draw_sky_cube)(void* tex, const float* cam11);
+
+    /* ---- v3.6 AA + MotionVectors（尾部追加不动既有槽序；后端不支持
+     * 时保持 NULL，管线层判空回退单采样/关闭 motion）----
+     * MSAA：
+     *   target_create_ms(w,h,samples)  多采样渲染目标（颜色 + 深度同
+     *     samples；GL: 多采样纹理 + 多采样深度 RB；GLES: 多采样颜色/深度
+     *     RB；D3D11: SampleDesc.Count 纹理 + TEXTURE2DMS RTV/DSV）。
+     *     NULL = 后端不支持（VK），管线回退单采样。
+     *   target_resolve(dst,src,w,h)    MSAA src -> 单采样 dst 颜色 resolve
+     *     （GL/GLES: glBlitFramebuffer；D3D11: ResolveSubresource）。
+     * MotionVectors：
+     *   upload_perdraw_prev(data,bytes) PerDrawPrev 帧级块（prevMVP[64]，
+     *     GL/GLES UBO 绑定点 2，MOTION 程序消费）；NULL = 后端不支持
+     *     motion（VK/D3D11），管线跳过 motion pass。
+     * 帧内顺序：阶段 6 upload_perdraw_prev -> 阶段 9 尾 motion pass ->
+     * 阶段 10 上帧变换快照 -> 阶段 11 MSAA resolve + 后处理。 */
+    SlrRhiTarget* (*target_create_ms)(int w, int h, int samples);
+    void (*target_resolve)(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h);
+    void (*upload_perdraw_prev)(const void* data, int bytes);
+
+    /* ---- v3.7 TAA（时域抗锯齿；尾部追加不动既有槽序）----
+     * taa_resolve(dst, cur, vel, hist, w, h, blend, reset)：
+     *   全屏 pass——读入当前帧颜色 cur（已 MSAA resolve）、速度图 vel
+     *   （RG = NDC 速度*0.5+0.5）、上帧累积 hist，输出到 dst：
+     *     prevUv = uv - decodedVel*0.5（NDC→UV 半幅）；
+     *     3x3 邻域 clamp 历史（防鬼影，disocclusion 退化为当前帧）；
+     *     out = mix(historyClamped, current, blend)；
+     *   blend = 当前帧权重（默认 0.1，越小区越稳、越大越跟手）；
+     *   reset=1 时忽略 hist 直接输出 current（首帧/尺寸变化/开关切换）。
+     * NULL = 后端不支持（VK），管线跳过 TAA 输出 = current。 */
+    void (*taa_resolve)(SlrRhiTarget* dst, SlrRhiTarget* cur,
+                        SlrRhiTarget* vel, SlrRhiTarget* hist,
+                        int w, int h, float blend, int reset);
+
+    /* ---- v3.8 Motion Blur（后处理链一环；尾部追加不动既有槽序）----
+     * motion_blur(dst, src, vel, w, h, scale, samples)：
+     *   全屏 pass——读 src 颜色 + 速度图 vel（RG=NDC 速度*0.5+0.5），
+     *   沿速度方向做对称快门多次采样平均（默认 8 taps），scale=速度
+     *   倍率（默认 1.0）；速度 0 的像素输出 = src 原值（无模糊）。
+     *   samples 取 0 时后端按默认 8。NULL = 后端不支持（VK），
+     *   管线跳过模糊、post 输入保持原场景色。
+     * 位置：阶段 10.6（TAA 之后、阶段 11 FXAA/调色之前）。 */
+    void (*motion_blur)(SlrRhiTarget* dst, SlrRhiTarget* src,
+                        SlrRhiTarget* vel, int w, int h,
+                        float scale, int samples);
 } SlrRhi;
 
 /* 当前后端（slr_init / slr_init_backend 设置；未初始化为 NULL）*/

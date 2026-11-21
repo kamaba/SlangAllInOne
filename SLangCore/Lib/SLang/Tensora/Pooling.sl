@@ -34,7 +34,7 @@ public class MaxPool2D extends Layer
         int w = x.shape().dims[2]
         int outH = ( h - this._pool ) / this._stride + 1
         int outW = ( w - this._pool ) / this._stride + 1
-        Tensor out = Tensor( Shape.cube( c, outH, outW ) )
+        Tensor outV = Tensor( Shape.cube( c, outH, outW ) )
         this._maxIndex = Array<Int32>( c * outH * outW )
         int n = 0
         for ch = 0, ch < c, ch++
@@ -43,7 +43,7 @@ public class MaxPool2D extends Layer
             {
                 for ox = 0, ox < outW, ox++
                 {
-                    Float32 m = x.get( ch, oy * this._stride, ox * this._stride )
+                    Float32 m = x.at( ch, oy * this._stride, ox * this._stride )
                     int mi = ( ch * h + oy * this._stride ) * w + ox * this._stride
                     for py = 0, py < this._pool, py++
                     {
@@ -51,7 +51,7 @@ public class MaxPool2D extends Layer
                         {
                             int iy = oy * this._stride + py
                             int ix = ox * this._stride + px
-                            Float32 v = x.get( ch, iy, ix )
+                            Float32 v = x.at( ch, iy, ix )
                             if v > m
                             {
                                 m = v
@@ -59,14 +59,14 @@ public class MaxPool2D extends Layer
                             }
                         }
                     }
-                    out.set( ch, oy, ox, m )
+                    outV.setAt( ch, oy, ox, m )
                     this._maxIndex[n] = mi
                     n++
                 }
             }
         }
-        this.outputCache = out
-        ret out
+        this.outputCache = outV
+        ret outV
     }
 
     override Tensor backward( Tensor gradOutput )
@@ -127,14 +127,14 @@ public class AvgPool2D extends Layer
             {
                 for ox = 0, ox < gradOutput.shape().dims[2], ox++
                 {
-                    Float32 g = gradOutput.get( ch, oy, ox ) * inv
+                    Float32 g = gradOutput.at( ch, oy, ox ) * inv
                     for py = 0, py < this._pool, py++
                     {
                         for px = 0, px < this._pool, px++
                         {
                             int iy = oy * this._stride + py
                             int ix = ox * this._stride + px
-                            dx.set( ch, iy, ix, dx.get( ch, iy, ix ) + g )
+                            dx.setAt( ch, iy, ix, dx.at( ch, iy, ix ) + g )
                         }
                     }
                 }

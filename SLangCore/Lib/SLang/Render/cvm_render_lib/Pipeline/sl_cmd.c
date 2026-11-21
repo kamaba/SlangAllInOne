@@ -431,9 +431,11 @@ static int cmd_replay_locked(SlrPipeline* p, const unsigned char* base,
         case SLR_CMD_POST_PROCESS:
         {
             /* 命令三参覆盖 pipeline 同名字段；其余（contrast/filter/hue/
-             * grain/tonemap/vigSmooth）沿用 set_post_params 写入的管线值
-             * （未设置 = 中性 → 与旧三参行为逐位一致） */
-            float cb[13];
+             * grain/tonemap/vigSmooth/fxaa）沿用 set_post_params / set_aa
+             * 写入的管线值（未设置 = 中性 → 与旧三参行为逐位一致）。
+             * v3.6：prm 13 -> 16 float + MSAA 生效时先 resolve 中转。 */
+            float cb[16];
+            SlrRhiTarget* src = p->rt_scene;
             cb[0] = (float)(int)args[ai];
             cb[1] = floats[fi];
             cb[2] = p->post_contrast;
@@ -447,7 +449,15 @@ static int cmd_replay_locked(SlrPipeline* p, const unsigned char* base,
             cb[10] = p->post_filter[0];
             cb[11] = p->post_filter[1];
             cb[12] = p->post_filter[2];
-            g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h, cb);
+            cb[13] = (float)p->fxaa_on;
+            cb[14] = p->fxaa_span;
+            cb[15] = 0.0f;
+            if (p->aa_msaa_active > 0 && p->rt_resolve && g_rhi->target_resolve)
+            {
+                g_rhi->target_resolve(p->rt_resolve, p->rt_scene, p->w, p->h);
+                src = p->rt_resolve;
+            }
+            g_rhi->post_process(p->rt_post, src, p->w, p->h, cb);
             p->program_switches++;
             p->draw_calls++;
             break;

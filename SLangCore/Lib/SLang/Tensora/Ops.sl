@@ -1,3 +1,4 @@
+import Math;
 # Ops —— 张量算子集合（放 Tensor 之外的高层算子）
 #
 # 包含：
@@ -41,12 +42,12 @@ public class Ops
                                     {
                                         if ix < w
                                         {
-                                            v = input.get( ch, iy, ix )
+                                            v = input.at( ch, iy, ix )
                                         }
                                     }
                                 }
                             }
-                            col.set( row, col2, v )
+                            col.setAt( row, col2, v )
                             col2++
                         }
                     }
@@ -66,12 +67,12 @@ public class Ops
         int k = kernel.shape().dims[1]
         int outH = ( h + 2 * padding - k ) / stride + 1
         int outW = ( w + 2 * padding - k ) / stride + 1
-        Tensor out = Tensor( Shape.cube( 1, outH, outW ) )
+        Tensor outV = Tensor( Shape.cube( 1, outH, outW ) )
         for oy = 0, oy < outH, oy++
         {
             for ox = 0, ox < outW, ox++
             {
-                Float32 sum = 0.0f
+                Float32 acc = 0.0f
                 for ch = 0, ch < c, ch++
                 {
                     for ky = 0, ky < k, ky++
@@ -88,7 +89,7 @@ public class Ops
                                     {
                                         if ix < w
                                         {
-                                            sum = sum + input.get( ch, iy, ix ) * kernel.get( ch, ky, kx )
+                                            acc = acc + input.at( ch, iy, ix ) * kernel.at( ch, ky, kx )
                                         }
                                     }
                                 }
@@ -96,10 +97,10 @@ public class Ops
                         }
                     }
                 }
-                out.set( 0, oy, ox, sum )
+                outV.setAt( 0, oy, ox, acc )
             }
         }
-        ret out
+        ret outV
     }
 
     public static Tensor maxPool2d( Tensor input, Int32 pool, Int32 stride )
@@ -109,30 +110,30 @@ public class Ops
         int w = input.shape().dims[2]
         int outH = ( h - pool ) / stride + 1
         int outW = ( w - pool ) / stride + 1
-        Tensor out = Tensor( Shape.cube( c, outH, outW ) )
+        Tensor outV = Tensor( Shape.cube( c, outH, outW ) )
         for ch = 0, ch < c, ch++
         {
             for oy = 0, oy < outH, oy++
             {
                 for ox = 0, ox < outW, ox++
                 {
-                    Float32 m = input.get( ch, oy * stride, ox * stride )
+                    Float32 m = input.at( ch, oy * stride, ox * stride )
                     for py = 0, py < pool, py++
                     {
                         for px = 0, px < pool, px++
                         {
-                            Float32 v = input.get( ch, oy * stride + py, ox * stride + px )
+                            Float32 v = input.at( ch, oy * stride + py, ox * stride + px )
                             if v > m
                             {
                                 m = v
                             }
                         }
                     }
-                    out.set( ch, oy, ox, m )
+                    outV.setAt( ch, oy, ox, m )
                 }
             }
         }
-        ret out
+        ret outV
     }
 
     public static Tensor avgPool2d( Tensor input, Int32 pool, Int32 stride )
@@ -142,7 +143,7 @@ public class Ops
         int w = input.shape().dims[2]
         int outH = ( h - pool ) / stride + 1
         int outW = ( w - pool ) / stride + 1
-        Tensor out = Tensor( Shape.cube( c, outH, outW ) )
+        Tensor outV = Tensor( Shape.cube( c, outH, outW ) )
         Float32 inv = 1.0f / SystemConvertFloat32( pool * pool )
         for ch = 0, ch < c, ch++
         {
@@ -155,14 +156,14 @@ public class Ops
                     {
                         for px = 0, px < pool, px++
                         {
-                            acc = acc + input.get( ch, oy * stride + py, ox * stride + px )
+                            acc = acc + input.at( ch, oy * stride + py, ox * stride + px )
                         }
                     }
-                    out.set( ch, oy, ox, acc * inv )
+                    outV.setAt( ch, oy, ox, acc * inv )
                 }
             }
         }
-        ret out
+        ret outV
     }
 
     # ── 组合 / 转换 ──────────────────────────────────────
@@ -205,11 +206,11 @@ public class Ops
                 {
                     if axis == 0
                     {
-                        r.set( cursor + a, b, t.get( a, b ) )
+                        r.setAt( cursor + a, b, t.at( a, b ) )
                     }
                     else
                     {
-                        r.set( a, cursor + b, t.get( a, b ) )
+                        r.setAt( a, cursor + b, t.at( a, b ) )
                     }
                 }
             }
@@ -235,7 +236,7 @@ public class Ops
         {
             for j = 0, j < cols, j++
             {
-                r.set( i, j, tensors[i].at( j ) )
+                r.setAt( i, j, tensors[i].at( j ) )
             }
         }
         ret r
@@ -246,7 +247,7 @@ public class Ops
         Tensor r = Tensor( Shape.matrix( labels.length, classCount ) )
         for i = 0, i < labels.length, i++
         {
-            r.set( i, labels[i], 1.0f )
+            r.setAt( i, labels[i], 1.0f )
         }
         ret r
     }
@@ -411,5 +412,474 @@ public class Ops
             r.setAt( off, r.at( off ) + g.at( f ) )
         }
         ret r
+    }
+
+    # ══════════════════════════════════════════════════════
+    # 索引算子（设计文档 §2.5 缺口表：index_select/gather/scatter/
+    # masked_fill/nonzero；I32 dtype 实装前索引以 F32 承载）
+    # ══════════════════════════════════════════════════════
+
+    # 辅助：取张量某维长度（成员链+下标须拆局部变量，SL 语法约束）
+    static Int32 dimOf( Tensor t, Int32 axis )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        ret dm[axis]
+    }
+
+    # index_select：沿 axis 取 idxArr 列出的下标组成新张量
+    public static Tensor indexSelect( Tensor src, Int32 axis, Array<Int32> idxArr )
+    {
+        int rk = src.rank()
+        int n = idxArr.length
+        Array<Int32> outDims = Array<Int32>( rk )
+        for a = 0, a < rk, a++
+        {
+            int dv = Ops.dimOf( src, a )
+            if a == axis
+            {
+                dv = n
+            }
+            outDims[a] = dv
+        }
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape )
+        for f = 0, f < outShape.size(), f++
+        {
+            Array<Int32> oidx = outShape.unflatten( f )
+            int pickIdx = idxArr[ oidx[axis] ]
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = oidx[a]
+            }
+            sidx[axis] = pickIdx
+            res.setAt( f, src.at( sidx ) )
+        }
+        ret res
+    }
+
+    # gather：out[..] = src[..（axis 位替换为 idx 值）..]；
+    # 输出形状 = idx 形状（对齐 torch.gather）
+    public static Tensor gather( Tensor src, Int32 axis, Tensor idx )
+    {
+        int rk = src.rank()
+        Shape idxShape = idx.shape()
+        Tensor res = Tensor( idxShape.clone() )
+        for f = 0, f < idxShape.size(), f++
+        {
+            Array<Int32> oidx = idxShape.unflatten( f )
+            int iv = SystemConvertInt32( idx.at( f ) )
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = oidx[a]
+            }
+            sidx[axis] = iv
+            res.setAt( f, src.at( sidx ) )
+        }
+        ret res
+    }
+
+    # scatter：out = src 克隆，沿 axis 按 idx 放 value（对齐 torch.scatter）
+    public static Tensor scatter( Tensor src, Int32 axis, Tensor idx, Tensor value )
+    {
+        int rk = src.rank()
+        Tensor res = src.clone()
+        Shape idxShape = idx.shape()
+        for f = 0, f < idxShape.size(), f++
+        {
+            Array<Int32> oidx = idxShape.unflatten( f )
+            int iv = SystemConvertInt32( idx.at( f ) )
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = oidx[a]
+            }
+            sidx[axis] = iv
+            res.setAt( sidx, value.at( f ) )
+        }
+        ret res
+    }
+
+    # masked_fill：mask（广播）非 0 处填 v（对齐 torch.masked_fill）
+    public static Tensor maskedFill( Tensor src, Tensor mask, Float32 v )
+    {
+        Shape broad = Shape.broadcastShape( src.shape(), mask.shape() )
+        if broad == null
+        {
+            ret null
+        }
+        Tensor res = Tensor( broad )
+        for f = 0, f < broad.size(), f++
+        {
+            Array<Int32> idx = broad.unflatten( f )
+            Float32 mv = mask.pick( idx )
+            if mv != 0.0f
+            {
+                res.setAt( f, v )
+            }
+            else
+            {
+                res.setAt( f, src.pick( idx ) )
+            }
+        }
+        ret res
+    }
+
+    # nonzero：返回非零元素的扁平下标（v1 一维扁平语义）
+    public static Array<Int32> nonzero( Tensor t )
+    {
+        List<Int32> hits = List<Int32>()
+        for f = 0, f < t.size(), f++
+        {
+            Float32 v = t.at( f )
+            if v != 0.0f
+            {
+                hits.add( f )
+            }
+        }
+        Array<Int32> res = Array<Int32>( hits.length )
+        for i = 0, i < hits.length, i++
+        {
+            res[i] = hits._getItem_( i )
+        }
+        ret res
+    }
+
+    # ══════════════════════════════════════════════════════
+    # 形状算子（设计文档 §2.5 缺口表：squeeze/unsqueeze/expand/
+    # repeat/pad/cat 任意维/stack/flip/narrow/chunk）
+    # ══════════════════════════════════════════════════════
+
+    # squeeze：去掉全部长度 1 的维
+    public static Tensor squeeze( Tensor t )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        int kept = 0
+        for a = 0, a < rk, a++
+        {
+            int dv = dm[a]
+            if dv != 1
+            {
+                kept++
+            }
+        }
+        if kept == rk
+        {
+            ret t.clone()
+        }
+        Array<Int32> outDims = Array<Int32>( kept )
+        int w = 0
+        for a = 0, a < rk, a++
+        {
+            int dv = dm[a]
+            if dv != 1
+            {
+                outDims[w] = dv
+                w++
+            }
+        }
+        ret t.reshape( Shape( outDims ) )
+    }
+
+    # squeeze 指定轴（仅该轴为 1 时生效）
+    public static Tensor squeezeAxis( Tensor t, Int32 axis )
+    {
+        int dv = Ops.dimOf( t, axis )
+        if dv != 1
+        {
+            ret t.clone()
+        }
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        Array<Int32> outDims = Array<Int32>( rk - 1 )
+        int w = 0
+        for a = 0, a < rk, a++
+        {
+            if a != axis
+            {
+                outDims[w] = dm[a]
+                w++
+            }
+        }
+        ret t.reshape( Shape( outDims ) )
+    }
+
+    # unsqueeze：在 axis 位置插入长度 1 的维
+    public static Tensor unsqueeze( Tensor t, Int32 axis )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        Array<Int32> outDims = Array<Int32>( rk + 1 )
+        int w = 0
+        for a = 0, a < rk + 1, a++
+        {
+            if a == axis
+            {
+                outDims[w] = 1
+            }
+            else
+            {
+                outDims[w] = dm[ a - 1 ]
+            }
+            w++
+        }
+        ret t.reshape( Shape( outDims ) )
+    }
+
+    # expand：尺寸 1 的维扩展到目标形状（复制语义，无 view）
+    public static Tensor expand( Tensor t, Shape target )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        if target.rank() != rk
+        {
+            ret null
+        }
+        for a = 0, a < rk, a++
+        {
+            int dv = dm[a]
+            int tv = target.dims[a]
+            if dv != 1 && dv != tv
+            {
+                ret null
+            }
+        }
+        Tensor res = Tensor( target )
+        for f = 0, f < target.size(), f++
+        {
+            Array<Int32> idx = target.unflatten( f )
+            res.setAt( f, t.pick( idx ) )
+        }
+        ret res
+    }
+
+    # repeat（tile 语义）：每维重复 tiles[a] 次（对齐 torch.Tensor.repeat）
+    public static Tensor repeatTile( Tensor t, Array<Int32> tiles )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        Array<Int32> outDims = Array<Int32>( rk )
+        for a = 0, a < rk, a++
+        {
+            outDims[a] = dm[a] * tiles[a]
+        }
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape )
+        for f = 0, f < outShape.size(), f++
+        {
+            Array<Int32> idx = outShape.unflatten( f )
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = idx[a] % dm[a]
+            }
+            res.setAt( f, t.at( sidx ) )
+        }
+        ret res
+    }
+
+    # pad：最后一维左右常量填充
+    public static Tensor padLastDim( Tensor t, Int32 left, Int32 right, Float32 v )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        int last = dm[ rk - 1 ]
+        Array<Int32> outDims = Array<Int32>( rk )
+        for a = 0, a < rk, a++
+        {
+            outDims[a] = dm[a]
+        }
+        outDims[ rk - 1 ] = last + left + right
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape, v )
+        for f = 0, f < s.size(), f++
+        {
+            Array<Int32> idx = s.unflatten( f )
+            Array<Int32> oidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                oidx[a] = idx[a]
+            }
+            int lc = idx[ rk - 1 ]
+            oidx[ rk - 1 ] = lc + left
+            res.setAt( oidx, t.at( f ) )
+        }
+        ret res
+    }
+
+    # cat 任意维（对齐 torch.cat）：沿 axis 拼接，其余维须一致
+    public static Tensor catTensors( Array<Tensor> list, Int32 axis )
+    {
+        int n = list.length
+        Tensor first = list[0]
+        int rk = first.rank()
+        int total = 0
+        for i = 0, i < n, i++
+        {
+            total = total + Ops.dimOf( list[i], axis )
+        }
+        Array<Int32> outDims = Array<Int32>( rk )
+        for a = 0, a < rk, a++
+        {
+            int dv = Ops.dimOf( first, a )
+            if a == axis
+            {
+                dv = total
+            }
+            outDims[a] = dv
+        }
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape )
+        Array<Int32> starts = Array<Int32>( n )
+        int acc = 0
+        for i = 0, i < n, i++
+        {
+            starts[i] = acc
+            acc = acc + Ops.dimOf( list[i], axis )
+        }
+        for f = 0, f < outShape.size(), f++
+        {
+            Array<Int32> idx = outShape.unflatten( f )
+            int c = idx[axis]
+            int k = 0
+            for i = 0, i < n, i++
+            {
+                int st = starts[i]
+                int en = st + Ops.dimOf( list[i], axis )
+                if c >= st && c < en
+                {
+                    k = i
+                }
+            }
+            Tensor src = list[k]
+            int st2 = starts[k]
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = idx[a]
+            }
+            sidx[axis] = c - st2
+            res.setAt( f, src.at( sidx ) )
+        }
+        ret res
+    }
+
+    # stack：新轴堆叠（对齐 torch.stack）；全部张量同形状
+    public static Tensor stackAxis( Array<Tensor> list, Int32 axis )
+    {
+        int n = list.length
+        Tensor first = list[0]
+        Shape s = first.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        Array<Int32> outDims = Array<Int32>( rk + 1 )
+        int w = 0
+        for a = 0, a < rk + 1, a++
+        {
+            if a == axis
+            {
+                outDims[w] = n
+            }
+            else
+            {
+                outDims[w] = dm[ a - 1 ]
+            }
+            w++
+        }
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape )
+        for f = 0, f < outShape.size(), f++
+        {
+            Array<Int32> idx = outShape.unflatten( f )
+            int which = idx[axis]
+            Array<Int32> sidx = Array<Int32>( rk )
+            int w2 = 0
+            for a = 0, a < rk + 1, a++
+            {
+                if a != axis
+                {
+                    sidx[w2] = idx[a]
+                    w2++
+                }
+            }
+            Tensor src = list[which]
+            res.setAt( f, src.at( sidx ) )
+        }
+        ret res
+    }
+
+    # flip：沿 axis 反转（对齐 torch.flip）
+    public static Tensor flip( Tensor t, Int32 axis )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        int d = dm[axis]
+        Tensor res = Tensor( s.clone() )
+        for f = 0, f < s.size(), f++
+        {
+            Array<Int32> idx = s.unflatten( f )
+            idx[axis] = d - 1 - idx[axis]
+            res.setAt( idx, t.at( f ) )
+        }
+        ret res
+    }
+
+    # narrow：沿 axis 切片 [start, start+length)（对齐 torch.narrow）
+    public static Tensor narrow( Tensor t, Int32 axis, Int32 start, Int32 length )
+    {
+        Shape s = t.shape()
+        Array<Int32> dm = s.dims
+        int rk = dm.length
+        Array<Int32> outDims = Array<Int32>( rk )
+        for a = 0, a < rk, a++
+        {
+            outDims[a] = dm[a]
+        }
+        outDims[axis] = length
+        Shape outShape = Shape( outDims )
+        Tensor res = Tensor( outShape )
+        for f = 0, f < outShape.size(), f++
+        {
+            Array<Int32> oidx = outShape.unflatten( f )
+            Array<Int32> sidx = Array<Int32>( rk )
+            for a = 0, a < rk, a++
+            {
+                sidx[a] = oidx[a]
+            }
+            sidx[axis] = oidx[axis] + start
+            res.setAt( f, t.at( sidx ) )
+        }
+        ret res
+    }
+
+    # chunk：沿 axis 均分 n 块（不整除时前面块更大，对齐 torch.chunk）
+    public static Array<Tensor> chunk( Tensor t, Int32 n, Int32 axis )
+    {
+        int d = Ops.dimOf( t, axis )
+        int baseLen = d / n
+        int rem = d % n
+        Array<Tensor> res = Array<Tensor>( n )
+        int start = 0
+        for i = 0, i < n, i++
+        {
+            int len = baseLen
+            if i < rem
+            {
+                len = baseLen + 1
+            }
+            res[i] = Ops.narrow( t, axis, start, len )
+            start = start + len
+        }
+        ret res
     }
 }

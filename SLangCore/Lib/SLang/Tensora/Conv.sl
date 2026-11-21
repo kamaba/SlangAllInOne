@@ -61,7 +61,7 @@ public class Conv2D extends Layer
             {
                 for kx = 0, kx < this._kernel, kx++
                 {
-                    k.set( c, ky, kx, this.weight.get( o, c, ky, kx ) )
+                    k.setAt( c, ky, kx, this.weight.at( o, c, ky, kx ) )
                 }
             }
         }
@@ -76,7 +76,7 @@ public class Conv2D extends Layer
         int w = x.shape().dims[2]
         int outH = ( h + 2 * this._padding - this._kernel ) / this._stride + 1
         int outW = ( w + 2 * this._padding - this._kernel ) / this._stride + 1
-        Tensor out = Tensor( Shape.cube( this._outChannels, outH, outW ) )
+        Tensor outV = Tensor( Shape.cube( this._outChannels, outH, outW ) )
         for o = 0, o < this._outChannels, o++
         {
             Tensor k = this.kernelOf( o )
@@ -85,12 +85,12 @@ public class Conv2D extends Layer
             {
                 for ox = 0, ox < outW, ox++
                 {
-                    out.set( o, oy, ox, fm.get( 0, oy, ox ) + this.bias.get( 0, o ) )
+                    outV.setAt( o, oy, ox, fm.at( 0, oy, ox ) + this.bias.at( 0, o ) )
                 }
             }
         }
-        this.preActivation = out
-        this.outputCache = Activation.apply( out, this._activation )
+        this.preActivation = outV
+        this.outputCache = Activation.apply( outV, this._activation )
         ret this.outputCache
     }
 
@@ -135,14 +135,14 @@ public class Conv2D extends Layer
                                         {
                                             if ix < w
                                             {
-                                                acc = acc + x.get( c, iy, ix ) * g.get( o, oy, ox )
+                                                acc = acc + x.at( c, iy, ix ) * g.at( o, oy, ox )
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        gs[0].set( o, c, ky, kx, gs[0].get( o, c, ky, kx ) + acc )
+                        gs[0].setAt( o, c, ky, kx, gs[0].at( o, c, ky, kx ) + acc )
                     }
                 }
             }
@@ -152,10 +152,10 @@ public class Conv2D extends Layer
             {
                 for ox = 0, ox < g.shape().dims[2], ox++
                 {
-                    bacc = bacc + g.get( o, oy, ox )
+                    bacc = bacc + g.at( o, oy, ox )
                 }
             }
-            gs[1].set( 0, o, gs[1].get( 0, o ) + bacc )
+            gs[1].setAt( 0, o, gs[1].at( 0, o ) + bacc )
         }
 
         # dx：梯度按核权重回填（full 卷积近似）
@@ -182,8 +182,8 @@ public class Conv2D extends Layer
                                         {
                                             if ix < w
                                             {
-                                                Float32 v = dx.get( c, iy, ix )
-                                                dx.set( c, iy, ix, v + g.get( o, oy, ox ) * this.weight.get( o, c, ky, kx ) )
+                                                Float32 v = dx.at( c, iy, ix )
+                                                dx.setAt( c, iy, ix, v + g.at( o, oy, ox ) * this.weight.at( o, c, ky, kx ) )
                                             }
                                         }
                                     }

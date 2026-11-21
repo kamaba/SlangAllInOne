@@ -1,0 +1,534 @@
+﻿=== C VM run (disk) ===
+csimple_lang run .\export\RenderTest\RenderTest.module.slb --no-banner
+========== GLRenderTest (SLangRender RHI multi-backend + QT window) ==========
+
+backends: gl,d3d11,vk,gles
+
+-- Phase D: D3D11 backend (same-effect pixel assertions) --
+
+[d3d11] renderer: Direct3D 11 (FL 11.0)
+
+[d3d11] version : D3D11 / 11.0
+
+-- Phase A1: v1 RenderContext compat (direct FBO path, 128x128) --
+
+[v1] center RGB.r=255 RGB.b=0
+
+[v1] PASS
+
+-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --
+
+[pipe] scene: objects=2 textures=1
+
+[pipe] t=0 corner   RGB=(15,15,25)
+
+[pipe] t=0 tri      RGB=(255,0,0)
+
+[pipe] t=0 quad tex RGB=(147,67,137)
+
+[pipe] stats: stage=13 visible=2 culled=0 opaque=1 transp=1 layers=3 chunks=2 uploads=4
+
+[pipe] t=5 tri      RGB=(127,255,0)
+
+[pipe] masked quad   RGB=(15,15,25)
+
+[pipe] post gray tri  RGB=(76,76,76)
+
+[pipe] t=10 tri     RGB=(0,244,244)
+
+[pipe] Phase A2: PASS (13-stage pipeline: triangle anim + textured quad + culling + post + staged walk)
+
+-- Phase A3: multi-camera (depth order + viewport split) + image file load --
+
+[cam] image loaded: RenderTexture(0x0)
+
+[cam] dual-cam stats: cameras=2 visible=3
+
+[cam] left img    RGB=(235,130,40) @ (320,360)
+
+[cam] right img   RGB=(235,130,40) @ (800,360)
+
+[cam] right clear RGB=(0,64,25) @ (1200,113)
+
+[cam] left bg     RGB=(15,15,25) @ (320,113)
+
+[cam] blue quad   RGB=(51,102,255) @ (800,360)
+
+[cam] blue quad   RGB=(51,102,255) @ (960,360)
+
+[cam] Phase A3: PASS (multi-camera depth order + viewport split + cullingMask + image file render)
+
+-- Phase L: lighting + sway + Phong + shadow (1 directional + 1 spot, ambient 0.25) --
+
+[light] lit   A=255 B=64 P1=125 P2=64 S_in=102 S_out=156
+
+[light] sway  P1=115 (lamp px=0.06905674934387207 I=1.0145573616027832)
+
+[light] phong L=153 P=207
+
+[light] unlit A=255 B=255 P1=255 P2=255 S=255
+
+[light] Phase L: PASS (directional ndl + spot cone/attenuation + lamp sway + Phong specular + shadow + no-light regression)
+
+-- Phase SHADOW2: shadow map + PCF (directional light, 256x256) --
+
+[shadow2] S_in=213 S_out=255 S_side=255
+
+[shadow2] Phase SHADOW2: PASS (shadow map: in-shadow 213 < out-shadow 255, PCF + projection bounds verified)
+
+-- Phase G: frozen shaders (gen effects, material>=2) --
+
+[gen] gen BlinnPhong-flat (uSpec=0)  : (59,117,235)
+
+[gen] gen Lambert-flat (uSpec=0) : (59,117,235)
+
+[gen] gen BlinnPhong specular(2,8): (104,208,255)
+
+[gen] gen Phong specular(2,8)    : (63,126,251)
+
+[gen] gen NormalMap-flat (bump=0) : (59,117,235)
+
+[gen] gen Toon-flat (steps=3)     : (48,97,207)
+
+[gen] gen BlinnPhong-tex          : (26,54,120)
+
+[gen] gen Lambert-tex            : (26,54,120)
+
+[gen] gen NormalMap-tex (bump=0)  : (26,54,120)
+
+[gen] gen Toon-tex (steps=3)      : (21,45,106)
+
+[gen] Phase G: PASS (5 frozen effects live: Lambert/Phong/BlinnPhong/NormalMap/Toon x flat+tex, backend d3d11)
+
+[d3d11] Phase D: PASS (v1 + 13-stage + multi-cam + image + lighting + shadow-map + frozen-gen, pixels identical to GL)
+
+-- Phase E: Vulkan backend (same-effect pixel assertions) --
+
+[vk] renderer: Vulkan (NVIDIA GeForce RTX 2080)
+
+[vk] version : Vulkan 1.4.341
+
+-- Phase A1: v1 RenderContext compat (direct FBO path, 128x128) --
+
+[v1] center RGB.r=255 RGB.b=0
+
+[v1] PASS
+
+-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --
+
+[pipe] scene: objects=2 textures=1
+
+[pipe] t=0 corner   RGB=(15,15,25)
+
+[pipe] t=0 tri      RGB=(255,0,0)
+
+[pipe] t=0 quad tex RGB=(147,67,137)
+
+[pipe] stats: stage=13 visible=2 culled=0 opaque=1 transp=1 layers=3 chunks=2 uploads=4
+
+[pipe] t=5 tri      RGB=(127,255,0)
+
+[pipe] masked quad   RGB=(15,15,25)
+
+[pipe] post gray tri  RGB=(76,76,76)
+
+[pipe] t=10 tri     RGB=(0,244,244)
+
+[pipe] Phase A2: PASS (13-stage pipeline: triangle anim + textured quad + culling + post + staged walk)
+
+-- Phase A3: multi-camera (depth order + viewport split) + image file load --
+
+[cam] image loaded: RenderTexture(0x0)
+
+[cam] dual-cam stats: cameras=2 visible=3
+
+[cam] left img    RGB=(235,130,40) @ (320,360)
+
+[cam] right img   RGB=(235,130,40) @ (800,360)
+
+[cam] right clear RGB=(0,64,25) @ (1200,113)
+
+[cam] left bg     RGB=(15,15,25) @ (320,113)
+
+[cam] blue quad   RGB=(51,102,255) @ (800,360)
+
+[cam] blue quad   RGB=(51,102,255) @ (960,360)
+
+[cam] Phase A3: PASS (multi-camera depth order + viewport split + cullingMask + image file render)
+
+[vk] lighting phase skipped (SPIR-V frozen shaders do not consume lights yet)
+
+-- Phase G: frozen shaders (gen effects, material>=2) --
+
+[gen] gen BlinnPhong-flat (uSpec=0)  : (51,102,204)
+
+[gen] gen Lambert-flat (uSpec=0) : (51,102,204)
+
+[gen] gen BlinnPhong specular(2,8): (51,102,204)
+
+[gen] vk fallback slot: gen effects degrade to builtin PFLAT/PTEX (uSpec not consumed) - specular assertion skipped
+
+[gen] gen Phong specular(2,8)    : (51,102,204)
+
+[gen] gen NormalMap-flat (bump=0) : (51,102,204)
+
+[gen] gen Toon-flat (steps=3)     : (51,102,204)
+
+[gen] gen BlinnPhong-tex          : (22,47,104)
+
+[gen] gen Lambert-tex            : (22,47,104)
+
+[gen] gen NormalMap-tex (bump=0)  : (22,47,104)
+
+[gen] gen Toon-tex (steps=3)      : (22,47,104)
+
+[gen] Phase G: PASS (5 frozen effects live: Lambert/Phong/BlinnPhong/NormalMap/Toon x flat+tex, backend vk)
+
+[vk] Phase E: PASS (v1 + 13-stage + multi-cam + image + frozen-gen, pixels identical to GL)
+
+-- Phase F: EGL/GLES3 backend (graceful degrade when absent) --
+
+[gles] renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 2080 (0x00001E82) Direct3D11 vs_5_0 ps_5_0, D3D11-32.0.16.1062)
+
+[gles] version : OpenGL ES 3.0.0 (ANGLE 2.1.25161 git hash: fa40b7c586fd)
+
+-- Phase A1: v1 RenderContext compat (direct FBO path, 128x128) --
+
+[v1] center RGB.r=255 RGB.b=0
+
+[v1] PASS
+
+-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --
+
+[pipe] scene: objects=2 textures=1
+
+[pipe] t=0 corner   RGB=(15,15,25)
+
+[pipe] t=0 tri      RGB=(255,0,0)
+
+[pipe] t=0 quad tex RGB=(147,67,137)
+
+[pipe] stats: stage=13 visible=2 culled=0 opaque=1 transp=1 layers=3 chunks=2 uploads=4
+
+[pipe] t=5 tri      RGB=(127,255,0)
+
+[pipe] masked quad   RGB=(15,15,25)
+
+[pipe] post gray tri  RGB=(76,76,76)
+
+[pipe] t=10 tri     RGB=(0,244,244)
+
+[pipe] Phase A2: PASS (13-stage pipeline: triangle anim + textured quad + culling + post + staged walk)
+
+-- Phase A3: multi-camera (depth order + viewport split) + image file load --
+
+[cam] image loaded: RenderTexture(0x0)
+
+[cam] dual-cam stats: cameras=2 visible=3
+
+[cam] left img    RGB=(235,130,40) @ (320,360)
+
+[cam] right img   RGB=(235,130,40) @ (800,360)
+
+[cam] right clear RGB=(0,64,25) @ (1200,113)
+
+[cam] left bg     RGB=(15,15,25) @ (320,113)
+
+[cam] blue quad   RGB=(51,102,255) @ (800,360)
+
+[cam] blue quad   RGB=(51,102,255) @ (960,360)
+
+[cam] Phase A3: PASS (multi-camera depth order + viewport split + cullingMask + image file render)
+
+-- Phase L: lighting + sway + Phong + shadow (1 directional + 1 spot, ambient 0.25) --
+
+[light] lit   A=255 B=64 P1=125 P2=64 S_in=102 S_out=156
+
+[light] sway  P1=115 (lamp px=0.06905674934387207 I=1.0145573616027832)
+
+[light] phong L=153 P=207
+
+[light] unlit A=255 B=255 P1=255 P2=255 S=255
+
+[light] Phase L: PASS (directional ndl + spot cone/attenuation + lamp sway + Phong specular + shadow + no-light regression)
+
+-- Phase SHADOW2: shadow map + PCF (directional light, 256x256) --
+
+[shadow2] S_in=213 S_out=255 S_side=255
+
+[shadow2] Phase SHADOW2: PASS (shadow map: in-shadow 213 < out-shadow 255, PCF + projection bounds verified)
+
+-- Phase G: frozen shaders (gen effects, material>=2) --
+
+[gen] gen BlinnPhong-flat (uSpec=0)  : (59,117,235)
+
+[gen] gen Lambert-flat (uSpec=0) : (59,117,235)
+
+[gen] gen BlinnPhong specular(2,8): (104,208,255)
+
+[gen] gen Phong specular(2,8)    : (63,126,251)
+
+[gen] gen NormalMap-flat (bump=0) : (59,117,235)
+
+[gen] gen Toon-flat (steps=3)     : (48,97,207)
+
+[gen] gen BlinnPhong-tex          : (26,54,120)
+
+[gen] gen Lambert-tex            : (26,54,120)
+
+[gen] gen NormalMap-tex (bump=0)  : (26,54,120)
+
+[gen] gen Toon-tex (steps=3)      : (21,45,106)
+
+[gen] Phase G: PASS (5 frozen effects live: Lambert/Phong/BlinnPhong/NormalMap/Toon x flat+tex, backend gles)
+
+[gles] Phase F: PASS (v1 + 13-stage + multi-cam + image + lighting + shadow-map + frozen-gen, pixels identical to GL)
+
+backend : gl  renderer: NVIDIA GeForce RTX 2080/PCIe/SSE2
+
+version : 3.3.0 NVIDIA 610.62
+
+-- Phase A1: v1 RenderContext compat (direct FBO path, 128x128) --
+
+[v1] center RGB.r=255 RGB.b=0
+
+[v1] PASS
+
+-- Phase A2: Unity-style 13-stage pipeline (256x256 RGBA8) --
+
+[pipe] scene: objects=2 textures=1
+
+[pipe] t=0 corner   RGB=(15,15,25)
+
+[pipe] t=0 tri      RGB=(255,0,0)
+
+[pipe] t=0 quad tex RGB=(147,67,137)
+
+[pipe] stats: stage=13 visible=2 culled=0 opaque=1 transp=1 layers=3 chunks=2 uploads=4
+
+[pipe] t=5 tri      RGB=(127,255,0)
+
+[pipe] masked quad   RGB=(15,15,25)
+
+[pipe] post gray tri  RGB=(76,76,76)
+
+[pipe] t=10 tri     RGB=(0,244,244)
+
+[pipe] Phase A2: PASS (13-stage pipeline: triangle anim + textured quad + culling + post + staged walk)
+
+-- Phase A3: multi-camera (depth order + viewport split) + image file load --
+
+[cam] image loaded: RenderTexture(0x0)
+
+[cam] dual-cam stats: cameras=2 visible=3
+
+[cam] left img    RGB=(235,130,40) @ (320,360)
+
+[cam] right img   RGB=(235,130,40) @ (800,360)
+
+[cam] right clear RGB=(0,64,25) @ (1200,113)
+
+[cam] left bg     RGB=(15,15,25) @ (320,113)
+
+[cam] blue quad   RGB=(51,102,255) @ (800,360)
+
+[cam] blue quad   RGB=(51,102,255) @ (960,360)
+
+[cam] Phase A3: PASS (multi-camera depth order + viewport split + cullingMask + image file render)
+
+-- Phase L: lighting + sway + Phong + shadow (1 directional + 1 spot, ambient 0.25) --
+
+[light] lit   A=255 B=64 P1=125 P2=64 S_in=102 S_out=156
+
+[light] sway  P1=115 (lamp px=0.06905674934387207 I=1.0145573616027832)
+
+[light] phong L=153 P=207
+
+[light] unlit A=255 B=255 P1=255 P2=255 S=255
+
+[light] Phase L: PASS (directional ndl + spot cone/attenuation + lamp sway + Phong specular + shadow + no-light regression)
+
+-- Phase SHADOW2: shadow map + PCF (directional light, 256x256) --
+
+[shadow2] S_in=255 S_out=255 S_side=255
+
+[shadow2] FAIL: shadowed floor brightness out of range (expect ~213)
+
+-- Phase CSM: 4-cascade shadow atlas (v split 0.05/0.25/0.6/1.0, 256x256) --
+
+[csm] S_inA=255 S_inB=255 S_out=255 S_e1=255 S_e2=255 S_out2=255
+
+[csm] FAIL: cascade 0 sampling misplaced (expect ~213)
+
+-- Phase G: frozen shaders (gen effects, material>=2) --
+
+[gen] gen BlinnPhong-flat (uSpec=0)  : (59,117,235)
+
+[gen] gen Lambert-flat (uSpec=0) : (59,117,235)
+
+[gen] gen BlinnPhong specular(2,8): (104,208,255)
+
+[gen] gen Phong specular(2,8)    : (63,126,251)
+
+[gen] gen NormalMap-flat (bump=0) : (59,117,235)
+
+[gen] gen Toon-flat (steps=3)     : (48,97,207)
+
+[gen] gen BlinnPhong-tex          : (26,54,120)
+
+[gen] gen Lambert-tex            : (26,54,120)
+
+[gen] gen NormalMap-tex (bump=0)  : (26,54,120)
+
+[gen] gen Toon-tex (steps=3)      : (21,45,106)
+
+[gen] Phase G: PASS (5 frozen effects live: Lambert/Phong/BlinnPhong/NormalMap/Toon x flat+tex, backend gl)
+
+-- Phase CB: CommandBuffer record -> sort -> execute (SLMC stream, 256x256) --
+
+[cb] recorded 11 commands (overflow=0)
+
+[cb] sortDrawItems -> 3 draw items sorted
+
+[cb] stats: draws=5 opaque=1 transp=2
+
+[cb] corner  RGB=(15,15,25)
+
+[cb] tri     RGB=(255,0,0)
+
+[cb] quadtex RGB=(182,41,153)
+
+[cb] overlap RGB=(104,90,192)
+
+[cb] Phase CB: PASS (record 11 -> sort 3 -> execute: pixels + stats + overlap all ok)
+
+-- Phase INST: GPU instancing (64 instances / 1 draw vs 64 draws, 256x256) --
+
+[inst] A draws=3 opaque=1 instances=64
+
+[inst] B draws=66 opaque=64 instances=64
+
+[inst] slot0  RGB=(16,16,64)  slot63 RGB=(239,239,189)
+
+[inst] A/B full-frame compare: 262144 bytes identical
+
+[inst] Phase INST: PASS (64 instances -> 1 instanced draw, pixel-identical to 64 draws)
+
+-- Phase ENV: RenderEnvironment query (support / current / hardware / resources / config) --
+
+[RenderEnvironment]
+available     : true
+initialized   : true
+backend       : gl (supported: gl,d3d11,vk,gles)
+gpu renderer  : NVIDIA GeForce RTX 2080/PCIe/SSE2
+gpu version   : 3.3.0 NVIDIA 610.62
+resources     : context 0/16, pipeline 6/32, texture 3/64
+commandbuffer : 256 cmds / 2048 args / 8192 floats
+render queue  : transparent >= 2500
+frame stats   : passes 0, feature runs 0
+last error    : ok
+
+[env] frame stats: passes=0 featureRuns=0
+
+[env] Phase ENV: PASS (available + gl current + hardware + resources + config)
+
+-- Phase RTPOOL: RTHandlePool request/reuse/release (cap 64) --
+
+[pool] RTHandlePool(2/64, reuse=1), texture count 3 -> 5
+
+[pool] Phase RTPOOL: PASS (size-keyed reuse + releaseAll: counts all ok)
+
+-- Phase DATA: CullingData + FrameData + PassData (data layer, 256x256) --
+
+[data] culling: 3 items sorted (opaque=1 transparent=2)
+
+[data] frame: target/env/viewProj/viewport ok, renderCameraScene pixels ok
+
+[data] pass: in/out + 2 params ok
+
+[data] Phase DATA: PASS (culling snapshot + frame data + pass data)
+
+-- Phase RAY: software ray tracing (CPU whitted, 2 spheres + ground, 256x256) --
+
+[ray] recorded 13 commands (overflow=0)
+
+[ray] stats: draws=3 opaque=1 instances=1
+
+[ray] bg      (32,32) RGB=(115,158,242)
+
+[ray] diffuse (128,128) RGB=(141,25,25)
+
+[ray] shadow  (166,176) RGB=(51,60,77)
+
+[ray] reflect (128,197) RGB=(130,122,122)
+
+[ray] Phase RAY: PASS (bg + diffuse + shadow + reflection 4-point hand-computed assertions, ref=(0.44999998807907104,0.5524518489837646,0.20000000298023224,0.5117585062980652))
+
+-- Phase ASYNC: double-buffer pack + render worker (6-cmd stream per frame) --
+
+[async] mode1 sync 6 frames ok; stats: draws=3 opaque=1
+
+[async] mode2 worker 6 frames ok; stats: draws=3 opaque=1
+
+[async] Phase ASYNC: PASS (mode1 sync 6 + mode2 worker 6 + post-shutdown sync 1; pixels identical)
+
+-- Phase AA: FXAA + MSAA --
+
+[aa] fxaa diff pixels: 0
+
+[aa] FAIL: fxaa produced no edge change
+
+-- Phase MV: motion vectors --
+
+[mv] FAIL: setMotionVectors - ok
+
+-- Phase AUD-P: audio probe (wav / mp4-pcm / aac-adts / mp4-aac) --
+
+[aud] backends: wav,pcm,mp3,mp4,mf-aac,wave
+
+[aud] probe PASS (4 fixtures: 44100Hz mono)
+
+-- Phase AUD-C: whole-decode clips (preloaded, instant-play ready) --
+
+[aud] ok test_audio.wav (src=1, frames=88200)
+
+[aud] ok test_audio.mp4 (src=7, frames=88200)
+
+[aud] ok test_audio.aac (src=6, frames=88064)
+
+[aud] ok test_audio_aac.mp4 (src=9, frames=88064)
+
+[aud] clip PASS (wav/mp4-pcm/aac/mp4-aac)
+
+-- Phase AUD-S: streaming decode (wav + aac-adts + pcm passthrough) --
+
+[aud] ok stream wav (frames=88200)
+
+[aud] ok stream aac (frames=87040)
+
+[aud] ok pcm passthrough (frames=88200)
+
+[aud] stream PASS
+
+-- Phase AUD-PLAY: playback smoke (waveOut, SKIP if no device) --
+
+[aud] pos=20480 buffered=67720
+
+[aud] playback PASS
+
+-- Phase AUD-SRC: AudioSource component (clip/volume/loop/one-shot, waveOut) --
+
+[aud] ok source loop (loopCount=1, oneshots=1)
+
+[aud] AudioSource PASS
+
+-- Phase W: WebUI window + browser WebGL direct render (default) + d3d11 JPEG push comparison; 60s auto-quit --
+
+[webui] switch -> d3d11 (Direct3D 11 (FL 11.0))
+
+[WebUI] page shown (browser WebGL direct render 640x360; auto-quit after 60s) -- if no browser opened, check default browser settings
+
+[WebUI] quit timer fired (normal 60s exit)
+
+[WebUI] verdict: PASS web=1818 render=0 enc=0 mask=2
+

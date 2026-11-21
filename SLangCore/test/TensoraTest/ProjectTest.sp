@@ -13,6 +13,7 @@ Project
         SystemPrintln( "===== TensoraTest _main_ start =====" )
 
         TensorTest.fun()
+        BackendTest.fun()
         AutogradTest.fun()
         CnnTest.fun()
         NnTest.fun()

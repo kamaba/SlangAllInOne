@@ -24,7 +24,7 @@ DataTest
         {
             for j = 0, j < cols, j++
             {
-                x.set( i, j, rng.uniform( 0.0f, 1.0f ) )
+                x.setAt( i, j, rng.uniform( 0.0f, 1.0f ) )
             }
         }
         ret x
@@ -45,9 +45,9 @@ DataTest
         check( "classCount == 3", ds.classCount() == 3 )
         check( "labelAt(4) == 2", ds.labelAt( 4 ) == 2 )
 
-        Dataset tr = ds.trainPart( 0.5f )
-        Dataset va = ds.valPart( 0.5f )
-        check( "split 3/3", tr.count() == 3 && va.count() == 3 )
+        Dataset trainDs = ds.trainPart( 0.5f )
+        Dataset valDs = ds.valPart( 0.5f )
+        check( "split 3/3", trainDs.count() == 3 && valDs.count() == 3 )
 
         ds.shuffle()
         global.println( "shuffled ok" )
@@ -66,7 +66,7 @@ DataTest
         int nb = 0
         while dl.hasNext()
         {
-            Batch b = dl.next()
+            Batch b = dl.nextBatch()
             global.println( "batch x=" + b.x.shape().toString() + " size=" + b.size.toString() )
             nb++
         }
@@ -86,10 +86,10 @@ DataTest
         Tensor z = nz.transform( x )
         global.println( "mean = " + nz.mean.toString() )
         global.println( "std  = " + nz.std.toString() )
-        check( "standardized mean ~= 0", TensorMath.abs( z.sumAlong( 0 ).get( 0, 0 ) ) < 0.001f )
+        check( "standardized mean ~= 0", TensorMath.abs( z.sumAlong( 0 ).at( 0, 0 ) ) < 0.001f )
 
         Tensor back = nz.inverse( z )
-        check( "inverse ~= origin", TensorMath.abs( back.get( 0, 0 ) - x.get( 0, 0 ) ) < 0.001f )
+        check( "inverse ~= origin", TensorMath.abs( back.at( 0, 0 ) - x.at( 0, 0 ) ) < 0.001f )
     }
 
     # ── 4. Tokenizer ────────────────────────────────────
@@ -135,7 +135,7 @@ DataTest
         global.println( "macroF1       = " + SystemConvertString( Metrics.macroF1( pred, labels, 3 ) ) )
 
         Tensor cm = Metrics.confusionMatrix( pred, labels, 3 )
-        check( "confusion diagonal == 4", cm.get( 0, 0 ) + cm.get( 1, 1 ) + cm.get( 2, 2 ) == 4.0f )
+        check( "confusion diagonal == 4", cm.at( 0, 0 ) + cm.at( 1, 1 ) + cm.at( 2, 2 ) == 4.0f )
 
         Tensor p = Tensor.vector( [ 1.0f, 2.0f, 3.0f ] )
         Tensor t = Tensor.vector( [ 1.1f, 1.9f, 3.2f ] )

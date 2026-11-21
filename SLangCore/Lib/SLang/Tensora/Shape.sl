@@ -90,12 +90,12 @@ public class Shape
         ret this.dims.length == 2
     }
 
-    Int32 get( int axis )
+    Int32 dim( int axis )
     {
         ret this.dims[axis]
     }
 
-    void set( int axis, Int32 value )
+    void setDim( int axis, Int32 value )
     {
         this.dims[axis] = value
     }
@@ -200,7 +200,7 @@ public class Shape
         {
             n = rb
         }
-        Array<Int32> out = Array<Int32>( n )
+        Array<Int32> broad = Array<Int32>( n )
         for k = 0, k < n, k++
         {
             int da = 1
@@ -215,15 +215,15 @@ public class Shape
             }
             if da == db
             {
-                out[k] = da
+                broad[k] = da
             }
             elif da == 1
             {
-                out[k] = db
+                broad[k] = db
             }
             elif db == 1
             {
-                out[k] = da
+                broad[k] = da
             }
             else
             {
@@ -231,7 +231,7 @@ public class Shape
                 ret null
             }
         }
-        ret Shape( out )
+        ret Shape( broad )
     }
 
     # ── 工厂 ─────────────────────────────────────────────

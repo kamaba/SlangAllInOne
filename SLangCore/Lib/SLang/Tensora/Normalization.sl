@@ -1,3 +1,4 @@
+import Math;
 # Normalization —— 归一化层
 #
 # BatchNorm：沿 batch 维（列）归一化，训练用 batch 统计 + 滑动平均，推理用滑动统计
@@ -41,24 +42,24 @@ public class BatchNorm extends Layer
         {
             Tensor mean = x.sumAlong( 0 ).scale( 1.0f / SystemConvertFloat32( n ) )
             Tensor diff = x.sub( mean )
-            Tensor var = diff.mul( diff ).sumAlong( 0 ).scale( 1.0f / SystemConvertFloat32( n ) )
-            Tensor std = Tensor( var.shape() )
-            for i = 0, i < var.size(), i++
+            Tensor vari = diff.mul( diff ).sumAlong( 0 ).scale( 1.0f / SystemConvertFloat32( n ) )
+            Tensor std = Tensor( vari.shape() )
+            for i = 0, i < vari.size(), i++
             {
-                std.setAt( i, Mathf.sqrt( var.at( i ) + this._eps ) )
+                std.setAt( i, Mathf.sqrt( vari.at( i ) + this._eps ) )
             }
             Tensor norm = diff.div( std )
             this._normalized = norm
             this._batchMean = mean
-            this._batchVar = var
+            this._batchVar = vari
 
             # 滑动平均更新
             for i = 0, i < d, i++
             {
-                Float32 m = this.runningMean.get( 0, i )
-                Float32 v = this.runningVar.get( 0, i )
-                this.runningMean.set( 0, i, m + ( mean.get( 0, i ) - m ) * this._momentum )
-                this.runningVar.set( 0, i, v + ( var.get( 0, i ) - v ) * this._momentum )
+                Float32 m = this.runningMean.at( 0, i )
+                Float32 v = this.runningVar.at( 0, i )
+                this.runningMean.setAt( 0, i, m + ( mean.at( 0, i ) - m ) * this._momentum )
+                this.runningVar.setAt( 0, i, v + ( vari.at( 0, i ) - v ) * this._momentum )
             }
             this.outputCache = norm.mul( this.gamma ).add( this.beta )
             ret this.outputCache
@@ -87,11 +88,11 @@ public class BatchNorm extends Layer
             Float32 db = 0.0f
             for i = 0, i < n, i++
             {
-                dg = dg + gradOutput.get( i, j ) * this._normalized.get( i, j )
-                db = db + gradOutput.get( i, j )
+                dg = dg + gradOutput.at( i, j ) * this._normalized.at( i, j )
+                db = db + gradOutput.at( i, j )
             }
-            gs[0].set( 0, j, gs[0].get( 0, j ) + dg )
-            gs[1].set( 0, j, gs[1].get( 0, j ) + db )
+            gs[0].setAt( 0, j, gs[0].at( 0, j ) + dg )
+            gs[1].setAt( 0, j, gs[1].at( 0, j ) + db )
         }
 
         # dx
@@ -102,15 +103,15 @@ public class BatchNorm extends Layer
             Float32 sumGN = 0.0f
             for i = 0, i < n, i++
             {
-                sumG = sumG + gradOutput.get( i, j )
-                sumGN = sumGN + gradOutput.get( i, j ) * this._normalized.get( i, j )
+                sumG = sumG + gradOutput.at( i, j )
+                sumGN = sumGN + gradOutput.at( i, j ) * this._normalized.at( i, j )
             }
-            Float32 std = Mathf.sqrt( this._batchVar.get( 0, j ) + this._eps )
+            Float32 std = Mathf.sqrt( this._batchVar.at( 0, j ) + this._eps )
             for i = 0, i < n, i++
             {
-                Float32 g = gradOutput.get( i, j )
-                Float32 v = ( g - sumG * invN - this._normalized.get( i, j ) * sumGN * invN ) / std
-                dx.set( i, j, v * this.gamma.get( 0, j ) )
+                Float32 g = gradOutput.at( i, j )
+                Float32 v = ( g - sumG * invN - this._normalized.at( i, j ) * sumGN * invN ) / std
+                dx.setAt( i, j, v * this.gamma.at( 0, j ) )
             }
         }
         ret dx
@@ -147,34 +148,34 @@ public class LayerNorm extends Layer
         this.inputCache = x
         int n = x.rows()
         int d = x.cols()
-        Tensor out = Tensor( x.shape() )
+        Tensor outV = Tensor( x.shape() )
         Tensor norm = Tensor( x.shape() )
         for i = 0, i < n, i++
         {
             Float32 mean = 0.0f
             for j = 0, j < d, j++
             {
-                mean = mean + x.get( i, j )
+                mean = mean + x.at( i, j )
             }
             mean = mean / SystemConvertFloat32( d )
-            Float32 var = 0.0f
+            Float32 vari = 0.0f
             for j = 0, j < d, j++
             {
-                Float32 v = x.get( i, j ) - mean
-                var = var + v * v
+                Float32 v = x.at( i, j ) - mean
+                vari = vari + v * v
             }
-            var = var / SystemConvertFloat32( d )
-            Float32 std = Mathf.sqrt( var + this._eps )
+            vari = vari / SystemConvertFloat32( d )
+            Float32 std = Mathf.sqrt( vari + this._eps )
             for j = 0, j < d, j++
             {
-                Float32 nv = ( x.get( i, j ) - mean ) / std
-                norm.set( i, j, nv )
-                out.set( i, j, nv * this.gamma.get( 0, j ) + this.beta.get( 0, j ) )
+                Float32 nv = ( x.at( i, j ) - mean ) / std
+                norm.setAt( i, j, nv )
+                outV.setAt( i, j, nv * this.gamma.at( 0, j ) + this.beta.at( 0, j ) )
             }
         }
         this._normalized = norm
-        this.outputCache = out
-        ret out
+        this.outputCache = outV
+        ret outV
     }
 
     override Tensor backward( Tensor gradOutput )
@@ -188,11 +189,11 @@ public class LayerNorm extends Layer
             Float32 db = 0.0f
             for i = 0, i < n, i++
             {
-                dg = dg + gradOutput.get( i, j ) * this._normalized.get( i, j )
-                db = db + gradOutput.get( i, j )
+                dg = dg + gradOutput.at( i, j ) * this._normalized.at( i, j )
+                db = db + gradOutput.at( i, j )
             }
-            gs[0].set( 0, j, gs[0].get( 0, j ) + dg )
-            gs[1].set( 0, j, gs[1].get( 0, j ) + db )
+            gs[0].setAt( 0, j, gs[0].at( 0, j ) + dg )
+            gs[1].setAt( 0, j, gs[1].at( 0, j ) + db )
         }
         Tensor dx = Tensor( gradOutput.shape() )
         for i = 0, i < n, i++
@@ -201,13 +202,13 @@ public class LayerNorm extends Layer
             Float32 sumGN = 0.0f
             for j = 0, j < d, j++
             {
-                sumG = sumG + gradOutput.get( i, j )
-                sumGN = sumGN + gradOutput.get( i, j ) * this._normalized.get( i, j )
+                sumG = sumG + gradOutput.at( i, j )
+                sumGN = sumGN + gradOutput.at( i, j ) * this._normalized.at( i, j )
             }
             for j = 0, j < d, j++
             {
-                Float32 v = gradOutput.get( i, j ) - sumG / SystemConvertFloat32( d ) - this._normalized.get( i, j ) * sumGN / SystemConvertFloat32( d )
-                dx.set( i, j, v * this.gamma.get( 0, j ) )
+                Float32 v = gradOutput.at( i, j ) - sumG / SystemConvertFloat32( d ) - this._normalized.at( i, j ) * sumGN / SystemConvertFloat32( d )
+                dx.setAt( i, j, v * this.gamma.at( 0, j ) )
             }
         }
         ret dx

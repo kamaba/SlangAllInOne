@@ -74,3 +74,8 @@ GLDECL(glDrawArraysInstanced,   void, (GLenum, GLint, GLsizei, GLsizei))
 GLDECL(glColorMask,             void, (GLboolean, GLboolean, GLboolean, GLboolean))
 GLDECL(glClearDepth,            void, (GLdouble))
 GLDECL(glDrawBuffers,           void, (GLsizei, const GLenum*))
+/* v3.6 MSAA（glTexImage2DMultisample 仅 GL 桌面版加载；GLES 用多采样
+ * renderbuffer 路径，指针保持 NULL 不调用）*/
+GLDECL(glTexImage2DMultisample,        void, (GLenum, GLsizei, GLint, GLsizei, GLsizei, GLboolean))
+GLDECL(glRenderbufferStorageMultisample, void, (GLenum, GLsizei, GLenum, GLsizei, GLsizei))
+GLDECL(glBlitFramebuffer,       void, (GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLint, GLbitfield, GLenum))

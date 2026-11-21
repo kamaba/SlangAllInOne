@@ -81,6 +81,18 @@ public class RenderTest
         # Phase ASYNC：异步提交（N3：SLMC 双缓冲 + 渲染 worker 线程）
         bool phaseAsync = RenderTestPhasesE.runAsyncSubmit()
 
+        # Phase AA：FXAA + MSAA（v3.6：FS_POST 内嵌 FXAA + 多采样 resolve）
+        bool phaseAa = RenderTestPhasesF.runAa()
+
+        # Phase MV：MotionVectors 速度 RT（v3.6：PerDrawPrev 上帧 MVP）
+        bool phaseMv = RenderTestPhasesF.runMotion()
+
+        # Phase TAA：时域抗锯齿（v3.7：history ping-pong + 速度重投影）
+        bool phaseTaa = RenderTestPhasesF.runTaa()
+
+        # Phase MB：后处理动态模糊（v3.8：速度方向对称快门）
+        bool phaseMb = RenderTestPhasesF.runMotionBlur()
+
         # Phase AUDIO：音频模块（SLangAudio：probe / 整段解码 / 流式 / 播放冒烟）
         bool phaseAudProbe = RenderTestAudio.runAudioProbe()
         bool phaseAudClip = RenderTestAudio.runAudioClipDecode()
@@ -146,6 +158,10 @@ public class RenderTest
         Console.println( "phase DATA(data layer)       : " + ( phaseData ? "PASS" : "FAIL" ) )
         Console.println( "phase RAY (software raytr)   : " + ( phaseRay ? "PASS" : "FAIL" ) )
         Console.println( "phase ASYNC(async submit)   : " + ( phaseAsync ? "PASS" : "FAIL" ) )
+        Console.println( "phase AA  (fxaa + msaa)     : " + ( phaseAa ? "PASS" : "FAIL" ) )
+        Console.println( "phase MV  (motion vectors)  : " + ( phaseMv ? "PASS" : "FAIL" ) )
+        Console.println( "phase TAA (temporal AA)     : " + ( phaseTaa ? "PASS" : "FAIL" ) )
+        Console.println( "phase MB  (motion blur)     : " + ( phaseMb ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-P (audio probe)   : " + ( phaseAudProbe ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-C (audio clip)    : " + ( phaseAudClip ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-S (audio stream)  : " + ( phaseAudStream ? "PASS" : "FAIL" ) )
@@ -213,6 +229,22 @@ public class RenderTest
             allOk = false
         }
         if !phaseAsync
+        {
+            allOk = false
+        }
+        if !phaseAa
+        {
+            allOk = false
+        }
+        if !phaseMv
+        {
+            allOk = false
+        }
+        if !phaseTaa
+        {
+            allOk = false
+        }
+        if !phaseMb
         {
             allOk = false
         }

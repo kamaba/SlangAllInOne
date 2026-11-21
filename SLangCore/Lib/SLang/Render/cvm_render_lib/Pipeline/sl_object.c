@@ -41,6 +41,9 @@ int64_t slr_object_create(int64_t h, int mesh_kind)
         o->mesh = mesh_kind;
         o->visible = 1;
         o->layer = 0;
+        /* v3.6 MotionVectors：新槽位可能复用已销毁对象的历史快照，
+         * 复位 prev 有效位（首帧 prev=cur，速度 0 不产生伪运动）*/
+        p->obj_prev_valid[i] = 0;
         /* 对齐 Unity 渲染队列：三角默认不透明，四边形/动态网格默认透明 */
         o->queue = (mesh_kind == SLR_MESH_TRIANGLE) ? 2000 : 3000;
         o->scale[0] = 1.0f; o->scale[1] = 1.0f;

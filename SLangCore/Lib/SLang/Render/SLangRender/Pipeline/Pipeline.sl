@@ -15,6 +15,8 @@
 #   8  updateCoreTime        核心更新时间（帧间隔 dt 推进）
 #   9  renderShaderSegments  shader 分段渲染（透明段，后→前混合）
 #   10 assembleRenderedLayers 整理渲染后的图层（图层位掩码/状态复位）
+#   10.5 taaResolve          v3.7 TAA 时域累积（速度重投影 + 邻域 clamp）
+#   10.6 motionBlur          v3.8 动态模糊（速度方向对称快门采样）
 #   11 postProcess           后处理（亮度/饱和度/暗角全屏 pass）
 #   12 integrateLayers       层级的逻辑整合（合成到最终 renderTexture）
 #   13 outputRenderTexture   输出最终渲染 renderTexture（RGBA8 回读）
@@ -72,6 +74,14 @@ namespace SLang
         public static Int32 STAT_PROGRAM_SWITCHES   = 15
         public static Int32 STAT_CAMERA_COUNT       = 16
         public static Int32 STAT_INSTANCE_COUNT    = 17
+        # v3.6 AA + MotionVectors
+        public static Int32 STAT_MV_ENABLED        = 18
+        public static Int32 STAT_MSAA_SAMPLES      = 19
+        public static Int32 STAT_FXAA              = 20
+        # v3.7 TAA（实际生效：0 = 后端不支持/关）
+        public static Int32 STAT_TAA               = 21
+        # v3.8 Motion Blur（实际生效：0 = 后端不支持/关）
+        public static Int32 STAT_MOTION_BLUR       = 22
 
         # ── 相机清屏标志位（clearFlags）──────────────────────────
         public static Int32 CLEAR_COLOR = 1
@@ -89,16 +99,17 @@ namespace SLang
         public static Int32 ANIM_HUE_CYCLE   = 1
 
         # ── 着色器程序槽（C 侧 SLR_PROG_* 逐值一致；命令流 drawItem 的
-        #    prog 参数取值。0..7 内建槽 + 8..17 v3.5 固化编译槽）────
+        #    prog 参数取值。0..8 内建槽 + 9..18 v3.5 固化编译槽）────
         public static Int32 PROG_FLAT       = 0    # v1：MVP/Color uniform
         public static Int32 PROG_TEX        = 1    # v1：MVP/Color + 纹理
         public static Int32 PROG_PFLAT      = 2    # 管线：PerDraw + 纯色
         public static Int32 PROG_PTEX       = 3    # 管线：PerDraw + 纹理
         public static Int32 PROG_BLIT       = 4    # 全屏拷贝
-        public static Int32 PROG_POST       = 5    # 后处理
+        public static Int32 PROG_POST       = 5    # 后处理（v3.6 内嵌 FXAA）
         public static Int32 PROG_PHONG_FLAT = 6    # Phong 光照 + 纯色
         public static Int32 PROG_PHONG_TEX  = 7    # Phong 光照 + 纹理
-        public static Int32 PROG_GEN_BASE   = 8    # 固化槽基（effect*2+variant）
+        public static Int32 PROG_MOTION     = 8    # v3.6 MotionVectors 速度 pass
+        public static Int32 PROG_GEN_BASE   = 9    # 固化槽基（effect*2+variant）
 
         # ── 命令流渲染目标 id（executeCommandBuffer 桥接的目标表）────
         public static Int32 TARGET_SCENE    = 0    # rt_scene（场景，带深度）
@@ -319,6 +330,76 @@ namespace SLang
                 ret false
             }
             ret RenderPipeline.ffiSetPostParams( this._handle, prmPtr )
+        }
+
+        # setAa(msaa, fxaaOn, fxaaSpan) —— v3.6 抗锯齿（FXAA + MSAA）：
+        #   msaa ∈ {0,1}=关，否则钳 [2,8]（非 2/4/8 按 4）——rt_scene 改建
+        #   多采样目标，阶段 11 先 resolve 再后处理；后端不支持（vk）或创建
+        #   失败自动回退单采样。
+        #   fxaaOn = FS_POST 内嵌 FXAA 前段开关（0 = 关，输出与旧版逐位一致）；
+        #   fxaaSpan = 采样延伸上限（默认 8）。
+        #   返回值 = 后端实际生效 MSAA 采样数（0 = 单采样）——调用方可用它
+        #   判断回退（stat STAT_MSAA_SAMPLES 同源）。
+        public Int32 setAa( Int32 msaa, Int32 fxaaOn, Float32 fxaaSpan )
+        {
+            if this._handle == 0
+            {
+                ret 0
+            }
+            ret RenderPipeline.ffiSetAa( this._handle, msaa, fxaaOn, fxaaSpan )
+        }
+
+        # setMotionVectors(on) —— v3.6 速度 RT 开关：阶段 9 尾逐相机以
+        # PROG_MOTION 重绘全部绘制项（上帧 MVP 经 PerDrawPrev 块下发），
+        # 输出 top-down RGBA8（RG = 速度*0.5+0.5，0.5 = 静止）。
+        # 后端无 upload_perdraw_prev（vk/d3d11）时开关无效（stat 读 0）。
+        public bool setMotionVectors( Int32 on )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetMotion( this._handle, on )
+        }
+
+        # outputMotionTexture(dstPtr) —— 回读速度 RT（w*h*4 RGBA8 块，
+        # top-down 行序；RG 通道 = 速度*0.5+0.5 编码）。
+        # motion 未启用或尚未渲染任何帧（RT 未创建）返回 false。
+        public bool outputMotionTexture( Int64 dstPtr )
+        {
+            if this._handle == 0 || dstPtr == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiOutputMotion( this._handle, dstPtr )
+        }
+
+        # setTaa(on, blend) —— v3.7 TAA 时域抗锯齿（on=1 开，自动开 motion
+        # 取速度图；blend = 当前帧权重 0..1，默认 0.1，越小平滑越重）。
+        # 内部：重投影历史帧（velocity RG）+ 3x3 邻域 clamp 防鬼影 +
+        # mix(hist, cur, blend)；history ping-pong 双 RT，首帧/切换时
+        # reset 忽略旧历史。后端不支持（vk / 无 motion 的 d3d11）返回 false。
+        public bool setTaa( Int32 on, Float32 blend )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetTaa( this._handle, on, blend )
+        }
+
+        # setMotionBlur(on, scale, samples) —— v3.8 动态模糊（后处理链
+        # 第一环）：on=1 自动打开 motion，沿速度方向对称快门采样平均；
+        # scale=速度倍率（默认 1.0，钳 0..4）；samples=采样数（默认 8，
+        # 钳 4..16）。速度 0 的像素输出原色（静止画面零模糊）。
+        # 后端无 motion_blur / 无速度图（VK/D3D11）返回 false。
+        public bool setMotionBlur( Int32 on, Float32 scale, Int32 samples )
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiSetMotionBlur( this._handle, on, scale, samples )
         }
 
         # ── 场景对象 ─────────────────────────────────────────────
@@ -547,6 +628,28 @@ namespace SLang
             ret RenderPipeline.ffiAssembleRenderedLayers( this._handle )
         }
 
+        # v3.7 TAA 阶段（10.5：MSAA resolve 之后、后处理之前的全屏
+        # 时域累积 pass；未开启时 C 侧空操作返回 true）
+        public bool taaResolve()
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiTaa( this._handle )
+        }
+
+        # v3.8 Motion Blur 阶段（10.6：TAA 之后、FXAA/调色之前的
+        # 全屏速度方向采样；未开启时 C 侧空操作返回 true）
+        public bool motionBlur()
+        {
+            if this._handle == 0
+            {
+                ret false
+            }
+            ret RenderPipeline.ffiMotionBlur( this._handle )
+        }
+
         public bool postProcess()
         {
             if this._handle == 0
@@ -629,6 +732,14 @@ namespace SLang
             if ok
             {
                 ok = this.assembleRenderedLayers()
+            }
+            if ok
+            {
+                ok = this.taaResolve()
+            }
+            if ok
+            {
+                ok = this.motionBlur()
             }
             if ok
             {
@@ -807,6 +918,37 @@ namespace SLang
             ret false
         }
 
+        # v3.6 AA + MotionVectors FFI
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_aa", "i64,i32,i32,f32->i32" )
+        static Int32 ffiSetAa( Int64 p, Int32 msaa, Int32 fxaaOn, Float32 fxaaSpan )
+        {
+            ret 0
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_motion", "i64,i32->bool" )
+        static bool ffiSetMotion( Int64 p, Int32 on )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_output_motion_texture", "i64,i64->bool" )
+        static bool ffiOutputMotion( Int64 p, Int64 dstPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_taa", "i64,i32,f32->bool" )
+        static bool ffiSetTaa( Int64 p, Int32 on, Float32 blend )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_set_motion_blur", "i64,i32,f32,i32->bool" )
+        static bool ffiSetMotionBlur( Int64 p, Int32 on, Float32 scale, Int32 samples )
+        {
+            ret false
+        }
+
         # ── 多相机 FFI ────────────────────────────────────────────
 
         @DllStaticImport( "sl_render_lib", "slr_camera_create", "i64,i32->i64" )
@@ -933,6 +1075,18 @@ namespace SLang
 
         @DllStaticImport( "sl_render_lib", "slr_pipeline_assemble_rendered_layers", "i64->bool" )
         static bool ffiAssembleRenderedLayers( Int64 p )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_taa", "i64->bool" )
+        static bool ffiTaa( Int64 p )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_render_lib", "slr_pipeline_motion_blur", "i64->bool" )
+        static bool ffiMotionBlur( Int64 p )
         {
             ret false
         }

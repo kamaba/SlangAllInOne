@@ -1,3 +1,4 @@
+import Math;
 # Recurrent —— 循环单元与序列层
 #
 # RNNCell  / LSTMCell / GRUCell ：单步单元，内部保存上一步隐状态
@@ -115,27 +116,27 @@ public class LSTMCell extends Layer
         Tensor concat = Tensor( Shape.matrix( 1, this._inputSize + this._hiddenSize ) )
         for j = 0, j < this._inputSize, j++
         {
-            concat.set( 0, j, x.get( 0, j ) )
+            concat.setAt( 0, j, x.at( 0, j ) )
         }
         for j = 0, j < this._hiddenSize, j++
         {
-            concat.set( 0, this._inputSize + j, h.get( 0, j ) )
+            concat.setAt( 0, this._inputSize + j, h.at( 0, j ) )
         }
         this._concat = concat
         Tensor z = concat.matmul( this.wAll.transpose() ).add( this.bias )
         this._gates = z
-        int h = this._hiddenSize
-        Tensor newH = Tensor( Shape.matrix( 1, h ) )
-        Tensor newC = Tensor( Shape.matrix( 1, h ) )
-        for j = 0, j < h, j++
+        int hid = this._hiddenSize
+        Tensor newH = Tensor( Shape.matrix( 1, hid ) )
+        Tensor newC = Tensor( Shape.matrix( 1, hid ) )
+        for j = 0, j < hid, j++
         {
-            Float32 i = TensorMath.sigmoid( z.get( 0, j ) )
-            Float32 f = TensorMath.sigmoid( z.get( 0, h + j ) )
-            Float32 g = Mathf.tanh( z.get( 0, 2 * h + j ) )
-            Float32 o = TensorMath.sigmoid( z.get( 0, 3 * h + j ) )
-            Float32 nc = f * c.get( 0, j ) + i * g
-            newC.set( 0, j, nc )
-            newH.set( 0, j, o * Mathf.tanh( nc ) )
+            Float32 gi = TensorMath.sigmoid( z.at( 0, j ) )
+            Float32 gf = TensorMath.sigmoid( z.at( 0, hid + j ) )
+            Float32 gg = Mathf.tanh( z.at( 0, 2 * hid + j ) )
+            Float32 go = TensorMath.sigmoid( z.at( 0, 3 * hid + j ) )
+            Float32 nc = gf * c.at( 0, j ) + gi * gg
+            newC.setAt( 0, j, nc )
+            newH.setAt( 0, j, go * Mathf.tanh( nc ) )
         }
         this.cPrev = newC
         ret newH
@@ -156,10 +157,10 @@ public class LSTMCell extends Layer
         Tensor gz = Tensor( this._gates.shape() )
         for j = 0, j < h, j++
         {
-            gz.set( 0, j, gradOutput.get( 0, j ) * TensorMath.sigmoidDeriv( TensorMath.sigmoid( this._gates.get( 0, j ) ) ) )
-            gz.set( 0, h + j, gradOutput.get( 0, j ) )
-            gz.set( 0, 2 * h + j, gradOutput.get( 0, j ) * TensorMath.tanhDeriv( Mathf.tanh( this._gates.get( 0, 2 * h + j ) ) ) )
-            gz.set( 0, 3 * h + j, gradOutput.get( 0, j ) )
+            gz.setAt( 0, j, gradOutput.at( 0, j ) * TensorMath.sigmoidDeriv( TensorMath.sigmoid( this._gates.at( 0, j ) ) ) )
+            gz.setAt( 0, h + j, gradOutput.at( 0, j ) )
+            gz.setAt( 0, 2 * h + j, gradOutput.at( 0, j ) * TensorMath.tanhDeriv( Mathf.tanh( this._gates.at( 0, 2 * h + j ) ) ) )
+            gz.setAt( 0, 3 * h + j, gradOutput.at( 0, j ) )
         }
         Array<Tensor> gs = this.gradients()
         gs[0].addInPlace( gz.transpose().matmul( this._concat ) )
@@ -211,21 +212,21 @@ public class GRUCell extends Layer
         Tensor concat = Tensor( Shape.matrix( 1, this._inputSize + h ) )
         for j = 0, j < this._inputSize, j++
         {
-            concat.set( 0, j, x.get( 0, j ) )
+            concat.setAt( 0, j, x.at( 0, j ) )
         }
         for j = 0, j < h, j++
         {
-            concat.set( 0, this._inputSize + j, this.hPrev.get( 0, j ) )
+            concat.setAt( 0, this._inputSize + j, this.hPrev.at( 0, j ) )
         }
         this._concat = concat
         Tensor z = concat.matmul( this.wAll.transpose() ).add( this.bias )
         Tensor newH = Tensor( Shape.matrix( 1, h ) )
         for j = 0, j < h, j++
         {
-            Float32 zt = TensorMath.sigmoid( z.get( 0, j ) )
-            Float32 rt = TensorMath.sigmoid( z.get( 0, h + j ) )
-            Float32 nt = Mathf.tanh( z.get( 0, 2 * h + j ) )
-            newH.set( 0, j, ( 1.0f - zt ) * nt + zt * this.hPrev.get( 0, j ) * rt )
+            Float32 zt = TensorMath.sigmoid( z.at( 0, j ) )
+            Float32 rt = TensorMath.sigmoid( z.at( 0, h + j ) )
+            Float32 nt = Mathf.tanh( z.at( 0, 2 * h + j ) )
+            newH.setAt( 0, j, ( 1.0f - zt ) * nt + zt * this.hPrev.at( 0, j ) * rt )
         }
         this.hPrev = newH
         this.outputCache = newH
@@ -239,9 +240,9 @@ public class GRUCell extends Layer
         Tensor gz = Tensor( Shape.matrix( 1, 3 * h ) )
         for j = 0, j < h, j++
         {
-            gz.set( 0, j, gradOutput.get( 0, j ) )
-            gz.set( 0, h + j, gradOutput.get( 0, j ) )
-            gz.set( 0, 2 * h + j, gradOutput.get( 0, j ) )
+            gz.setAt( 0, j, gradOutput.at( 0, j ) )
+            gz.setAt( 0, h + j, gradOutput.at( 0, j ) )
+            gz.setAt( 0, 2 * h + j, gradOutput.at( 0, j ) )
         }
         Array<Tensor> gs = this.gradients()
         gs[0].addInPlace( gz.transpose().matmul( this._concat ) )
@@ -284,22 +285,22 @@ public class RNN extends Layer
         int t = seq.rows()
         int h = this.cell.hPrev.cols()
         this._steps = t
-        Tensor out = Tensor( Shape.matrix( t, h ) )
+        Tensor outV = Tensor( Shape.matrix( t, h ) )
         for i = 0, i < t, i++
         {
             Tensor xt = seq.row( i )
             Tensor ht = this.cell.forward( xt )
             for j = 0, j < h, j++
             {
-                out.set( i, j, ht.get( 0, j ) )
+                outV.setAt( i, j, ht.at( 0, j ) )
             }
         }
         if this.returnSequence
         {
-            this.outputCache = out
-            ret out
+            this.outputCache = outV
+            ret outV
         }
-        Tensor last = out.row( t - 1 )
+        Tensor last = outV.row( t - 1 )
         this.outputCache = last
         ret last
     }

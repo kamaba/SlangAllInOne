@@ -23,7 +23,7 @@ public class Dropout extends Layer
             this.outputCache = x
             ret x
         }
-        Rng rng = Rng.global()
+        Rng rng = Rng.current()
         Tensor mask = Tensor( x.shape() )
         Float32 keep = 1.0f - this._p
         Float32 scale = 1.0f / keep

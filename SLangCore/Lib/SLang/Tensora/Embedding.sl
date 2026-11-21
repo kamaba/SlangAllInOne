@@ -41,17 +41,17 @@ public class Embedding extends Layer
             idList[i] = SystemConvertInt32( ids.at( i ) )
         }
         this._lastIds = idList
-        Tensor out = Tensor( Shape.matrix( n, this._dim ) )
+        Tensor outV = Tensor( Shape.matrix( n, this._dim ) )
         for i = 0, i < n, i++
         {
             int id = idList[i]
             for j = 0, j < this._dim, j++
             {
-                out.set( i, j, this.table.get( id, j ) )
+                outV.setAt( i, j, this.table.at( id, j ) )
             }
         }
-        this.outputCache = out
-        ret out
+        this.outputCache = outV
+        ret outV
     }
 
     override Tensor backward( Tensor gradOutput )
@@ -62,8 +62,8 @@ public class Embedding extends Layer
             int id = this._lastIds[i]
             for j = 0, j < this._dim, j++
             {
-                Float32 v = gs[0].get( id, j )
-                gs[0].set( id, j, v + gradOutput.get( i, j ) )
+                Float32 v = gs[0].at( id, j )
+                gs[0].setAt( id, j, v + gradOutput.at( i, j ) )
             }
         }
         # 嵌入层一般不向输入回传梯度（输入是离散 id）

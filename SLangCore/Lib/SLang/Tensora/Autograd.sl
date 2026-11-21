@@ -11,7 +11,7 @@
 @Nickname("Variable")
 public class Variable
 {
-    public Tensor data = null
+    public Tensor tensor = null
     public Tensor grad = null
     public bool requiresGrad = false
 
@@ -27,29 +27,29 @@ public class Variable
 
     void _init_()
     {
-        this.data = null
+        this.tensor = null
         this.requiresGrad = false
         this.op = ""
         this.parents = null
     }
 
-    void _init_( Tensor data, bool requiresGrad )
+    void _init_( Tensor tensor, bool requiresGrad )
     {
-        this.data = data
+        this.tensor = tensor
         this.requiresGrad = requiresGrad
         this.op = ""
         this.parents = null
     }
 
     # ── 构造 ─────────────────────────────────────────────
-    public static Variable of( Tensor data )
+    public static Variable of( Tensor tensor )
     {
-        ret Variable( data, false )
+        ret Variable( tensor, false )
     }
 
-    public static Variable parameter( Tensor data )
+    public static Variable parameter( Tensor tensor )
     {
-        ret Variable( data, true )
+        ret Variable( tensor, true )
     }
 
     public static Variable constant( Float32 value )
@@ -87,7 +87,7 @@ public class Variable
         ins[0] = this
         ins[1] = o
         bool need = this.requiresGrad || o.requiresGrad
-        ret this.emit( this.data.add( o.data ), "add", ins, need )
+        ret this.emit( this.tensor.add( o.tensor ), "add", ins, need )
     }
 
     Variable sub( Variable o )
@@ -96,7 +96,7 @@ public class Variable
         ins[0] = this
         ins[1] = o
         bool need = this.requiresGrad || o.requiresGrad
-        ret this.emit( this.data.sub( o.data ), "sub", ins, need )
+        ret this.emit( this.tensor.sub( o.tensor ), "sub", ins, need )
     }
 
     Variable mul( Variable o )
@@ -105,7 +105,7 @@ public class Variable
         ins[0] = this
         ins[1] = o
         bool need = this.requiresGrad || o.requiresGrad
-        ret this.emit( this.data.mul( o.data ), "mul", ins, need )
+        ret this.emit( this.tensor.mul( o.tensor ), "mul", ins, need )
     }
 
     Variable div( Variable o )
@@ -114,7 +114,7 @@ public class Variable
         ins[0] = this
         ins[1] = o
         bool need = this.requiresGrad || o.requiresGrad
-        ret this.emit( this.data.div( o.data ), "div", ins, need )
+        ret this.emit( this.tensor.div( o.tensor ), "div", ins, need )
     }
 
     Variable matmul( Variable o )
@@ -123,14 +123,14 @@ public class Variable
         ins[0] = this
         ins[1] = o
         bool need = this.requiresGrad || o.requiresGrad
-        ret this.emit( this.data.matmul( o.data ), "matmul", ins, need )
+        ret this.emit( this.tensor.matmul( o.tensor ), "matmul", ins, need )
     }
 
     Variable scale( Float32 k )
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        Variable r = this.emit( this.data.scale( k ), "scale", ins, this.requiresGrad )
+        Variable r = this.emit( this.tensor.scale( k ), "scale", ins, this.requiresGrad )
         r.param = k
         ret r
     }
@@ -139,42 +139,42 @@ public class Variable
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.relu(), "relu", ins, this.requiresGrad )
+        ret this.emit( this.tensor.relu(), "relu", ins, this.requiresGrad )
     }
 
     Variable sigmoid()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.sigmoid(), "sigmoid", ins, this.requiresGrad )
+        ret this.emit( this.tensor.sigmoid(), "sigmoid", ins, this.requiresGrad )
     }
 
     Variable tanh()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.tanh(), "tanh", ins, this.requiresGrad )
+        ret this.emit( this.tensor.tanh(), "tanh", ins, this.requiresGrad )
     }
 
     Variable exp()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.exp(), "exp", ins, this.requiresGrad )
+        ret this.emit( this.tensor.exp(), "exp", ins, this.requiresGrad )
     }
 
     Variable log()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.log(), "log", ins, this.requiresGrad )
+        ret this.emit( this.tensor.log(), "log", ins, this.requiresGrad )
     }
 
     Variable pow( Float32 p )
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        Variable r = this.emit( this.data.pow( p ), "pow", ins, this.requiresGrad )
+        Variable r = this.emit( this.tensor.pow( p ), "pow", ins, this.requiresGrad )
         r.param = p
         ret r
     }
@@ -183,41 +183,41 @@ public class Variable
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( Tensor.scalar( this.data.sum() ), "sum", ins, this.requiresGrad )
+        ret this.emit( Tensor.scalar( this.tensor.sum() ), "sum", ins, this.requiresGrad )
     }
 
     Variable mean()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( Tensor.scalar( this.data.mean() ), "mean", ins, this.requiresGrad )
+        ret this.emit( Tensor.scalar( this.tensor.mean() ), "mean", ins, this.requiresGrad )
     }
 
     Variable softmax()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.softmax(), "softmax", ins, this.requiresGrad )
+        ret this.emit( this.tensor.softmax(), "softmax", ins, this.requiresGrad )
     }
 
     Variable reshape( Shape s )
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.reshape( s ), "reshape", ins, this.requiresGrad )
+        ret this.emit( this.tensor.reshape( s ), "reshape", ins, this.requiresGrad )
     }
 
     Variable transpose()
     {
         Array<Variable> ins = Array<Variable>( 1 )
         ins[0] = this
-        ret this.emit( this.data.transpose(), "transpose", ins, this.requiresGrad )
+        ret this.emit( this.tensor.transpose(), "transpose", ins, this.requiresGrad )
     }
 
     # ── 反向 ─────────────────────────────────────────────
     void backward()
     {
-        this.backward( Tensor.onesLike( this.data ) )
+        this.backward( Tensor.onesLike( this.tensor ) )
     }
 
     void backward( Tensor seed )
@@ -261,33 +261,33 @@ public class Variable
         }
         if this.op == "add"
         {
-            this.parents[0].accumulate( Ops.reduceTo( this.grad, this.parents[0].data.shape() ) )
-            this.parents[1].accumulate( Ops.reduceTo( this.grad, this.parents[1].data.shape() ) )
+            this.parents[0].accumulate( Ops.reduceTo( this.grad, this.parents[0].tensor.shape() ) )
+            this.parents[1].accumulate( Ops.reduceTo( this.grad, this.parents[1].tensor.shape() ) )
         }
         elif this.op == "sub"
         {
-            this.parents[0].accumulate( Ops.reduceTo( this.grad, this.parents[0].data.shape() ) )
-            this.parents[1].accumulate( Ops.reduceTo( this.grad.neg(), this.parents[1].data.shape() ) )
+            this.parents[0].accumulate( Ops.reduceTo( this.grad, this.parents[0].tensor.shape() ) )
+            this.parents[1].accumulate( Ops.reduceTo( this.grad.neg(), this.parents[1].tensor.shape() ) )
         }
         elif this.op == "mul"
         {
-            Tensor a = this.parents[0].data
-            Tensor b = this.parents[1].data
+            Tensor a = this.parents[0].tensor
+            Tensor b = this.parents[1].tensor
             this.parents[0].accumulate( Ops.reduceTo( this.grad.mul( b ), a.shape() ) )
             this.parents[1].accumulate( Ops.reduceTo( this.grad.mul( a ), b.shape() ) )
         }
         elif this.op == "div"
         {
-            Tensor a2 = this.parents[0].data
-            Tensor b2 = this.parents[1].data
+            Tensor a2 = this.parents[0].tensor
+            Tensor b2 = this.parents[1].tensor
             this.parents[0].accumulate( Ops.reduceTo( this.grad.div( b2 ), a2.shape() ) )
             Tensor gb = this.grad.mul( a2 ).div( b2.mul( b2 ) ).neg()
             this.parents[1].accumulate( Ops.reduceTo( gb, b2.shape() ) )
         }
         elif this.op == "matmul"
         {
-            Tensor a3 = this.parents[0].data
-            Tensor b3 = this.parents[1].data
+            Tensor a3 = this.parents[0].tensor
+            Tensor b3 = this.parents[1].tensor
             this.parents[0].accumulate( this.grad.matmul( b3.transpose() ) )
             this.parents[1].accumulate( a3.transpose().matmul( this.grad ) )
         }
@@ -297,7 +297,7 @@ public class Variable
         }
         elif this.op == "relu"
         {
-            Tensor a4 = this.parents[0].data
+            Tensor a4 = this.parents[0].tensor
             Tensor mask = Tensor( a4.shape() )
             for i = 0, i < a4.size(), i++
             {
@@ -314,61 +314,61 @@ public class Variable
         }
         elif this.op == "sigmoid"
         {
-            Tensor s = this.data
+            Tensor s = this.tensor
             this.parents[0].accumulate( this.grad.mul( s ).mul( Tensor.onesLike( s ).sub( s ) ) )
         }
         elif this.op == "tanh"
         {
-            Tensor t = this.data
+            Tensor t = this.tensor
             this.parents[0].accumulate( this.grad.mul( Tensor.onesLike( t ).sub( t.mul( t ) ) ) )
         }
         elif this.op == "exp"
         {
-            this.parents[0].accumulate( this.grad.mul( this.data ) )
+            this.parents[0].accumulate( this.grad.mul( this.tensor ) )
         }
         elif this.op == "log"
         {
-            this.parents[0].accumulate( this.grad.div( this.parents[0].data ) )
+            this.parents[0].accumulate( this.grad.div( this.parents[0].tensor ) )
         }
         elif this.op == "pow"
         {
-            Tensor a5 = this.parents[0].data
+            Tensor a5 = this.parents[0].tensor
             Tensor gp = this.grad.mul( a5.pow( this.param - 1.0f ) ).scale( this.param )
             this.parents[0].accumulate( gp )
         }
         elif this.op == "sum"
         {
-            Tensor a6 = this.parents[0].data
+            Tensor a6 = this.parents[0].tensor
             this.parents[0].accumulate( Tensor.full( a6.shape(), this.grad.sum() ) )
         }
         elif this.op == "mean"
         {
-            Tensor a7 = this.parents[0].data
+            Tensor a7 = this.parents[0].tensor
             Float32 v = this.grad.sum() / SystemConvertFloat32( a7.size() )
             this.parents[0].accumulate( Tensor.full( a7.shape(), v ) )
         }
         elif this.op == "softmax"
         {
             # J = diag(s) - s·sᵀ  →  gx = s * (g - Σ(g*s))
-            Tensor s2 = this.data
+            Tensor s2 = this.tensor
             Tensor gx = Tensor( s2.shape() )
             for i = 0, i < s2.rows(), i++
             {
                 Float32 dot = 0.0f
                 for j = 0, j < s2.cols(), j++
                 {
-                    dot = dot + this.grad.get( i, j ) * s2.get( i, j )
+                    dot = dot + this.grad.at( i, j ) * s2.at( i, j )
                 }
                 for j = 0, j < s2.cols(), j++
                 {
-                    gx.set( i, j, s2.get( i, j ) * ( this.grad.get( i, j ) - dot ) )
+                    gx.setAt( i, j, s2.at( i, j ) * ( this.grad.at( i, j ) - dot ) )
                 }
             }
             this.parents[0].accumulate( gx )
         }
         elif this.op == "reshape"
         {
-            this.parents[0].accumulate( this.grad.reshape( this.parents[0].data.shape() ) )
+            this.parents[0].accumulate( this.grad.reshape( this.parents[0].tensor.shape() ) )
         }
         elif this.op == "transpose"
         {
@@ -402,14 +402,19 @@ public class Graph
         Graph._order = List<Variable>()
         Graph._marks = List<Variable>()
         Graph.dfs( root )
-        for i = 0, i < Graph._marks.length, i++
+        # List<自定义类> 局部下标在 MetaCore 报 not array（模板 _getItem_
+        # 返回类型解析失败，List<Int32> 值类型则 OK）——显式 _getItem_ 绕开
+        List<Variable> marks = Graph._marks
+        List<Variable> order = Graph._order
+        for i = 0, i < marks.length, i++
         {
-            Graph._marks[i]._visited = false
+            Variable mv = marks._getItem_( i )
+            mv._visited = false
         }
-        Array<Variable> arr = Array<Variable>( Graph._order.length )
-        for i = 0, i < Graph._order.length, i++
+        Array<Variable> arr = Array<Variable>( order.length )
+        for i = 0, i < order.length, i++
         {
-            arr[i] = Graph._order[i]
+            arr[i] = order._getItem_( i )
         }
         ret arr
     }

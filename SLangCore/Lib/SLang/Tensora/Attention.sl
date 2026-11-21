@@ -1,3 +1,4 @@
+import Math;
 # Attention —— 注意力机制
 #
 # Attention.scaledDotProduct：softmax(Q·Kᵀ / √d) · V
@@ -24,9 +25,9 @@ public class Attention
             {
                 for j = 0, j < scores.cols(), j++
                 {
-                    if mask.get( i, j ) < 0.5f
+                    if mask.at( i, j ) < 0.5f
                     {
-                        scores.set( i, j, 0.0f - 1000000000.0f )
+                        scores.setAt( i, j, 0.0f - 1000000000.0f )
                     }
                 }
             }
@@ -52,11 +53,11 @@ public class Attention
             {
                 if j <= i
                 {
-                    m.set( i, j, 1.0f )
+                    m.setAt( i, j, 1.0f )
                 }
                 else
                 {
-                    m.set( i, j, 0.0f )
+                    m.setAt( i, j, 0.0f )
                 }
             }
         }
@@ -130,7 +131,7 @@ public class MultiHeadAttention extends Layer
         {
             for j = 0, j < count, j++
             {
-                r.set( i, j, m.get( i, start + j ) )
+                r.setAt( i, j, m.at( i, start + j ) )
             }
         }
         ret r
@@ -163,21 +164,21 @@ public class MultiHeadAttention extends Layer
                 {
                     for j = 0, j < scores.cols(), j++
                     {
-                        if mask.get( i, j ) < 0.5f
+                        if mask.at( i, j ) < 0.5f
                         {
-                            scores.set( i, j, 0.0f - 1000000000.0f )
+                            scores.setAt( i, j, 0.0f - 1000000000.0f )
                         }
                     }
                 }
             }
             Tensor attn = scores.softmax()
             this.attnWeights = attn
-            Tensor out = attn.matmul( vh )
-            for i = 0, i < out.rows(), i++
+            Tensor outV = attn.matmul( vh )
+            for i = 0, i < outV.rows(), i++
             {
                 for j = 0, j < this._headDim, j++
                 {
-                    ctx.set( i, off + j, out.get( i, j ) )
+                    ctx.setAt( i, off + j, outV.at( i, j ) )
                 }
             }
         }
@@ -226,11 +227,11 @@ public class PositionalEncoding extends Layer
                 Float32 angle = SystemConvertFloat32( pos ) / Mathf.pow( 10000.0f, SystemConvertFloat32( ( i / 2 ) * 2 ) / SystemConvertFloat32( this._dModel ) )
                 if i % 2 == 0
                 {
-                    t.set( pos, i, Mathf.sin( angle ) )
+                    t.setAt( pos, i, Mathf.sin( angle ) )
                 }
                 else
                 {
-                    t.set( pos, i, Mathf.cos( angle ) )
+                    t.setAt( pos, i, Mathf.cos( angle ) )
                 }
             }
         }
@@ -241,16 +242,16 @@ public class PositionalEncoding extends Layer
     override Tensor forward( Tensor x )
     {
         this.inputCache = x
-        Tensor out = Tensor( x.shape() )
+        Tensor outV = Tensor( x.shape() )
         for i = 0, i < x.rows(), i++
         {
             for j = 0, j < x.cols(), j++
             {
-                out.set( i, j, x.get( i, j ) + this.table.get( i, j ) )
+                outV.setAt( i, j, x.at( i, j ) + this.table.at( i, j ) )
             }
         }
-        this.outputCache = out
-        ret out
+        this.outputCache = outV
+        ret outV
     }
 
     override Tensor backward( Tensor gradOutput )

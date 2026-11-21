@@ -1,3 +1,4 @@
+import Math;
 # TensorMath —— Tensora 专用标量数学（Mathf 之上的 AI 补充函数）
 #
 # 说明：

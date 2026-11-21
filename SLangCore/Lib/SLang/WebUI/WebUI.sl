@@ -157,6 +157,8 @@ namespace SLang
         # ── 服务器 / 文件 ──────────────────────────────────────────
         @DllStaticImport( "webui_lib", "webui_set_root_folder_sl" )
         public static bool libSetRootFolder( Int64 w, string path ) { ret false }
+        @DllStaticImport( "webui_lib", "webui_set_port_sl" )
+        public static bool libSetPort( Int64 w, Int64 port ) { ret false }
         @DllStaticImport( "webui_lib", "webui_start_server_sl" )
         public static string libStartServer( Int64 w, string content ) { ret "" }
 
@@ -254,6 +256,11 @@ namespace SLang
 
         # ── 服务器 / 文件 ──────────────────────────────────────────
         public bool setRootFolder( string path ) { ret SLang.WebUI.libSetRootFolder( this._handle, path ) }
+        # 固定服务端口（须在 show/startServer 前调用）：残留浏览器标签页的
+        # webui.js 重连循环在服务重启后会抢连接，multi_client 禁用下新窗口
+        # 收 "Access Denied" 导致事件全断 —— 固定端口让重连旧标签页落回
+        # 新 server 自动加载新页面，成为合法客户端
+        public bool setPort( Int64 port ) { ret SLang.WebUI.libSetPort( this._handle, port ) }
         public string startServer( string content ) { ret SLang.WebUI.libStartServer( this._handle, content ) }
 
         # ── 关闭 ───────────────────────────────────────────────────

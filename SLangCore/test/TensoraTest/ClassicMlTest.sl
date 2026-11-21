@@ -83,7 +83,7 @@ public class LogisticRegression
         Array<Int32> res = Array<Int32>( p.rows() )
         for i = 0, i < p.rows(), i++
         {
-            if p.get( i, 0 ) >= 0.5f
+            if p.at( i, 0 ) >= 0.5f
             {
                 res[i] = 1
             }
@@ -126,7 +126,7 @@ public class KNN
             Float32 acc = 0.0f
             for j = 0, j < d.cols(), j++
             {
-                acc = acc + d.get( 0, j ) * d.get( 0, j )
+                acc = acc + d.at( 0, j ) * d.at( 0, j )
             }
             dist[i] = acc
         }
@@ -202,7 +202,7 @@ public class KMeans
         Float32 acc = 0.0f
         for j = 0, j < d.cols(), j++
         {
-            acc = acc + d.get( 0, j ) * d.get( 0, j )
+            acc = acc + d.at( 0, j ) * d.at( 0, j )
         }
         ret acc
     }
@@ -232,7 +232,7 @@ public class KMeans
         {
             for j = 0, j < f, j++
             {
-                this.centers.set( c, j, x.get( c, j ) )
+                this.centers.setAt( c, j, x.at( c, j ) )
             }
         }
         this.assign = Array<Int32>( n )
@@ -252,7 +252,7 @@ public class KMeans
                     {
                         for j = 0, j < f, j++
                         {
-                            sum.set( 0, j, sum.get( 0, j ) + x.get( i, j ) )
+                            sum.setAt( 0, j, sum.at( 0, j ) + x.at( i, j ) )
                         }
                         cnt = cnt + 1.0f
                     }
@@ -261,7 +261,7 @@ public class KMeans
                 {
                     for j = 0, j < f, j++
                     {
-                        this.centers.set( c, j, sum.get( 0, j ) / cnt )
+                        this.centers.setAt( c, j, sum.at( 0, j ) / cnt )
                     }
                 }
             }
@@ -284,7 +284,7 @@ public class GaussianNB
 {
     public Int32 classCount = 0
     public Tensor mean = null
-    public Tensor var = null
+    public Tensor vari = null
     public Tensor prior = null
 
     public void _init_( Int32 classCount )
@@ -298,7 +298,7 @@ public class GaussianNB
         int f = x.cols()
         int c = this.classCount
         this.mean = Tensor( Shape.matrix( c, f ) )
-        this.var = Tensor( Shape.matrix( c, f ) )
+        this.vari = Tensor( Shape.matrix( c, f ) )
         this.prior = Tensor( Shape.matrix( 1, c ) )
         Array<Int32> cnt = Array<Int32>( c )
 
@@ -308,7 +308,7 @@ public class GaussianNB
             cnt[k] = cnt[k] + 1
             for j = 0, j < f, j++
             {
-                this.mean.set( k, j, this.mean.get( k, j ) + x.get( i, j ) )
+                this.mean.setAt( k, j, this.mean.at( k, j ) + x.at( i, j ) )
             }
         }
         for k = 0, k < c, k++
@@ -317,9 +317,9 @@ public class GaussianNB
             {
                 for j = 0, j < f, j++
                 {
-                    this.mean.set( k, j, this.mean.get( k, j ) / SystemConvertFloat32( cnt[k] ) )
+                    this.mean.setAt( k, j, this.mean.at( k, j ) / SystemConvertFloat32( cnt[k] ) )
                 }
-                this.prior.set( 0, k, SystemConvertFloat32( cnt[k] ) / SystemConvertFloat32( n ) )
+                this.prior.setAt( 0, k, SystemConvertFloat32( cnt[k] ) / SystemConvertFloat32( n ) )
             }
         }
         for i = 0, i < n, i++
@@ -327,8 +327,8 @@ public class GaussianNB
             Int32 k2 = y[i]
             for j = 0, j < f, j++
             {
-                Float32 d = x.get( i, j ) - this.mean.get( k2, j )
-                this.var.set( k2, j, this.var.get( k2, j ) + d * d )
+                Float32 d = x.at( i, j ) - this.mean.at( k2, j )
+                this.vari.setAt( k2, j, this.vari.at( k2, j ) + d * d )
             }
         }
         for k = 0, k < c, k++
@@ -337,7 +337,7 @@ public class GaussianNB
             {
                 for j = 0, j < f, j++
                 {
-                    this.var.set( k, j, this.var.get( k, j ) / SystemConvertFloat32( cnt[k] - 1 ) + 0.0001f )
+                    this.vari.setAt( k, j, this.vari.at( k, j ) / SystemConvertFloat32( cnt[k] - 1 ) + 0.0001f )
                 }
             }
         }
@@ -354,12 +354,12 @@ public class GaussianNB
             Float32 bestScore = 0.0f - 1000000000.0f
             for k = 0, k < this.classCount, k++
             {
-                Float32 logP = TensorMath.safeLog( this.prior.get( 0, k ) )
+                Float32 logP = TensorMath.safeLog( this.prior.at( 0, k ) )
                 for j = 0, j < f, j++
                 {
-                    Float32 m = this.mean.get( k, j )
-                    Float32 v = this.var.get( k, j )
-                    Float32 d = x.get( i, j ) - m
+                    Float32 m = this.mean.at( k, j )
+                    Float32 v = this.vari.at( k, j )
+                    Float32 d = x.at( i, j ) - m
                     logP = logP - 0.5f * TensorMath.safeLog( 6.283185307f * v ) - ( d * d ) / ( 2.0f * v )
                 }
                 if logP > bestScore
@@ -386,11 +386,11 @@ public class DecisionStump
     {
         this.feature = feature
         int n = x.rows()
-        Float32 lo = x.get( 0, feature )
+        Float32 lo = x.at( 0, feature )
         Float32 hi = lo
         for i = 1, i < n, i++
         {
-            Float32 v = x.get( i, feature )
+            Float32 v = x.at( i, feature )
             if v < lo
             {
                 lo = v
@@ -408,7 +408,7 @@ public class DecisionStump
             for i = 0, i < n, i++
             {
                 Int32 pred = this.rightClass
-                if x.get( i, feature ) <= th
+                if x.at( i, feature ) <= th
                 {
                     pred = this.leftClass
                 }
@@ -430,7 +430,7 @@ public class DecisionStump
         Array<Int32> res = Array<Int32>( x.rows() )
         for i = 0, i < x.rows(), i++
         {
-            if x.get( i, this.feature ) <= this.threshold
+            if x.at( i, this.feature ) <= this.threshold
             {
                 res[i] = this.leftClass
             }
@@ -483,12 +483,12 @@ ClassicMlTest
         }
     }
 
-    static Float32 accuracy( Array<Int32> pred, Array<Int32> label )
+    static Float32 accuracy( Array<Int32> pred, Array<Int32> labels )
     {
         int hit = 0
         for i = 0, i < pred.length, i++
         {
-            if pred[i] == label[i]
+            if pred[i] == labels[i]
             {
                 hit++
             }
@@ -507,7 +507,7 @@ ClassicMlTest
             Float32 center = SystemConvertFloat32( labels[i] ) * 3.0f
             for j = 0, j < features, j++
             {
-                x.set( i, j, center + rng.normal( 0.0f, 0.5f ) )
+                x.setAt( i, j, center + rng.normal( 0.0f, 0.5f ) )
             }
         }
         ret x
@@ -522,17 +522,17 @@ ClassicMlTest
         for i = 0, i < 6, i++
         {
             Float32 xv = SystemConvertFloat32( i ) * 0.5f
-            x.set( i, 0, xv )
-            y.set( i, 0, 2.0f * xv + 1.0f )
+            x.setAt( i, 0, xv )
+            y.setAt( i, 0, 2.0f * xv + 1.0f )
         }
         LinearRegression lr = LinearRegression()
         lr.lr = 0.05f
         lr.epochs = 300
         lr.fit( x, y )
-        global.println( "w ~= 2 -> " + SystemConvertString( lr.weight.get( 0, 0 ) ) )
+        global.println( "w ~= 2 -> " + SystemConvertString( lr.weight.at( 0, 0 ) ) )
         global.println( "b ~= 1 -> " + SystemConvertString( lr.bias ) )
         global.println( "r2 = " + SystemConvertString( Metrics.r2( lr.predict( x ), y ) ) )
-        check( "w near 2", TensorMath.abs( lr.weight.get( 0, 0 ) - 2.0f ) < 0.2f )
+        check( "w near 2", TensorMath.abs( lr.weight.at( 0, 0 ) - 2.0f ) < 0.2f )
     }
 
     # ── 2. 逻辑回归：x0 + x1 > 1 ─────────────────────────
@@ -548,16 +548,16 @@ ClassicMlTest
         {
             Float32 a = rng.uniform( 0.0f, 1.0f )
             Float32 b = rng.uniform( 0.0f, 1.0f )
-            x.set( i, 0, a )
-            x.set( i, 1, b )
+            x.setAt( i, 0, a )
+            x.setAt( i, 1, b )
             if a + b > 1.0f
             {
-                y.set( i, 0, 1.0f )
+                y.setAt( i, 0, 1.0f )
                 labels[i] = 1
             }
             else
             {
-                y.set( i, 0, 0.0f )
+                y.setAt( i, 0, 0.0f )
                 labels[i] = 0
             }
         }
@@ -633,8 +633,8 @@ ClassicMlTest
         for i = 0, i < 6, i++
         {
             Float32 t = SystemConvertFloat32( i ) * 0.5f
-            x.set( i, 0, t )
-            x.set( i, 1, t + 0.05f )
+            x.setAt( i, 0, t )
+            x.setAt( i, 1, t + 0.05f )
         }
         PCA pca = PCA()
         pca.fit( x, 50 )

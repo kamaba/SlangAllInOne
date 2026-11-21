@@ -5,6 +5,25 @@ Project
     _main_()
     {
         Console.println("===== BenchMark _main_ start =====")
+
+        # ── SL JIT / 非 JIT 双轮开关（启动传参 SL_JIT） ──
+        # VM 既有开关：SL_JIT=0/false → 本轮非 JIT（VM 字节码解释执行），
+        # SL 条目记入报告 SL-NoJIT 列；未设/SL_JIT=1 → JIT 轮（Release VM
+        # 默认开），记入 SL 列。两轮各跑一次，报告经 report/entries_*.txt
+        # sidecar 缓存互相合并，单份报告即有 SL 与 SL-NoJIT 双列对比。
+        # 说明：--no-jit 仅 CLI 通道、SL 脚本不可感知，本基准统一用 SL_JIT；
+        # PowerShell 非 JIT 轮：$env:SL_JIT = "0"（跑完 Remove-Item Env:SL_JIT）。
+        string jitEnv = Environment.env.getValue("SL_JIT")
+        if jitEnv == "0" || jitEnv == "false"
+        {
+            BenchCollector.setSlLanguage("SL-NoJIT")
+            Console.println("[BenchMark] SL_JIT=" + jitEnv + " -> non-JIT round (VM interpreter), SL entries -> SL-NoJIT column")
+        }
+        else
+        {
+            Console.println("[BenchMark] JIT round (SL_JIT unset/1), SL entries -> SL column (set SL_JIT=0 for non-JIT round)")
+        }
+
         nowMs = Environment.sys.nowMillis()
 
         HelloWorld.fun()

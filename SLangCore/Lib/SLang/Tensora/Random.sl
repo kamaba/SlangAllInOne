@@ -1,3 +1,4 @@
+import Math;
 # Rng —— 可复现伪随机数发生器（xorshift32 + Box-Muller 正态）
 #
 # 用途：权重初始化、dropout、数据打乱、采样（gumbel / bernoulli）
@@ -151,7 +152,8 @@ public class Rng
     }
 
     # ── 全局实例 ─────────────────────────────────────────
-    public static Rng global()
+    # global 为保留字，改名 current()（KwProbe 实证）
+    public static Rng current()
     {
         if Rng._global == null
         {

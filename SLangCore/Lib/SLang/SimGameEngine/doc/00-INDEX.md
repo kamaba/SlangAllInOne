@@ -1,6 +1,6 @@
 # SimGameEngine 文档索引
 
-> 版本：v2.18（21 章设计稿，2026-11-20；v2.18 新增第 21 章编辑器 Gizmo——GizmoTypes/GizmoGeometry/GizmoSystem 三件套：三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 几何走 MeshRef 烘焙路径零 C 改动，SceneDemo 接入 G 键循环模式，第 20 套 SimGizmoTest；前序 v2.17 新增第 20 章 ECS 系统——GameObject 渲染数据拔离 + 只挂 Data + 逻辑集中调度 + 自动分层合并 + 渲染层整体提交，第 19 套 SimEcsTest；前序 v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
+> 版本：v2.19（22 章设计稿，2026-11-20；v2.19 新增第 22 章 Prefab 机制——GameObject 子树 JSON，与 scene.json 同构共用读写代码，SceneManager 七个门面，导出侧补 Light/Volume，第 21 套 SimPrefabTest；前序 v2.18 新增第 21 章编辑器 Gizmo——GizmoTypes/GizmoGeometry/GizmoSystem 三件套：三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 几何走 MeshRef 烘焙路径零 C 改动，SceneDemo 接入 G 键循环模式，第 20 套 SimGizmoTest；前序 v2.17 新增第 20 章 ECS 系统——GameObject 渲染数据拔离 + 只挂 Data + 逻辑集中调度 + 自动分层合并 + 渲染层整体提交，第 19 套 SimEcsTest；前序 v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
 > 定位：SLang 游戏引擎「场景 / 节点 / 组件」层的设计与使用契约。
 > 配套渲染文档：`../Render/doc/01-Overview.md` 起（Render 只负责「可见物 + 相机 + 光源 → 像素」）。
 
@@ -27,7 +27,7 @@
 
 ---
 
-## 2. 文档清单（21 章 + 索引）
+## 2. 文档清单（22 章 + 索引）
 
 | 编号 | 文件 | 内容 | 读者 |
 |---|---|---|---|
@@ -52,8 +52,9 @@
 | 19 | `19-场景导出与SceneManager.md` | Scene→scene.json 导出、按路径加载场景、脚本挂载、帧循环门面、round-trip 与坑 | 写场景/关卡逻辑的人 |
 | 20 | `20-ECS系统.md` | opt-in ECS 模式：渲染数据拔离 / 只挂 Data / 逻辑集中调度 / 自动分层合并 / 渲染层整体提交 | 写批量实体与渲染管线的人 |
 | 21 | `21-编辑器Gizmo.md` | GizmoTypes / GizmoGeometry / GizmoSystem：三轴箭头 / 旋转环 / 缩放手柄 / 相机·光 2D·3D 图标，纯 SL 几何 + 帧生命周期 + 状态机 | 写编辑器/调试可视化的人 |
+| 22 | `22-Prefab机制.md` | GameObject 子树 JSON（与 scene.json 同构）：共用读取/写入层、SceneManager 实例化门面、Light/Volume 导出对称 | 写场景内容复用/关卡装配的人 |
 
-阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19 → 20 → 21`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 UI 两模式/相机叠加可读 `08 §8`，只关心编辑器辅助渲染可读 `21`。
+阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19 → 20 → 21 → 22`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 Prefab 可读 `22`，只关心 UI 两模式/相机叠加可读 `08 §8`，只关心编辑器辅助渲染可读 `21`。
 
 ---
 

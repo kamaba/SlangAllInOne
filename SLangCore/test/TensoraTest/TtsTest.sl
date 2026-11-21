@@ -1,5 +1,7 @@
 import Tensora
 
+import Math;
+
 # TtsTest —— 极简 TTS（文本 -> 声学特征 -> 波形）示例
 #
 # 参考 Wav2Vec2 的结构思路（只取骨架，规模极小）：
@@ -46,14 +48,14 @@ public class Conv1d
             {
                 for c = 0, c < this.inChannels, c++
                 {
-                    win.set( 0, c2, x.get( i * this.stride + p, c ) )
+                    win.setAt( 0, c2, x.at( i * this.stride + p, c ) )
                     c2++
                 }
             }
             Tensor z = win.matmul( this.weight.transpose() ).add( this.bias )
             for o = 0, o < this.outChannels, o++
             {
-                y.set( i, o, z.get( 0, o ) )
+                y.setAt( i, o, z.at( 0, o ) )
             }
         }
         ret y
@@ -133,7 +135,7 @@ public class TtsFrontend
         Tensor t = Tensor( Shape.matrix( ids.length, 1 ) )
         for i = 0, i < ids.length, i++
         {
-            t.set( i, 0, SystemConvertFloat32( ids[i] ) )
+            t.setAt( i, 0, SystemConvertFloat32( ids[i] ) )
         }
         ret t
     }
@@ -162,7 +164,7 @@ public class DurationPredictor
         Array<Int32> res = Array<Int32>( d.rows() )
         for i = 0, i < d.rows(), i++
         {
-            Int32 n = SystemConvertInt32( 1.0f + TensorMath.abs( d.get( i, 0 ) ) * 2.0f )
+            Int32 n = SystemConvertInt32( 1.0f + TensorMath.abs( d.at( i, 0 ) ) * 2.0f )
             if n < 1
             {
                 n = 1
@@ -184,7 +186,7 @@ public class LengthRegulator
             total = total + durations[i]
         }
         int dim = hidden.cols()
-        Tensor out = Tensor( Shape.matrix( total, dim ) )
+        Tensor outV = Tensor( Shape.matrix( total, dim ) )
         int r = 0
         for i = 0, i < durations.length, i++
         {
@@ -192,12 +194,12 @@ public class LengthRegulator
             {
                 for j = 0, j < dim, j++
                 {
-                    out.set( r, j, hidden.get( i, j ) )
+                    outV.setAt( r, j, hidden.at( i, j ) )
                 }
                 r++
             }
         }
-        ret out
+        ret outV
     }
 }
 
@@ -244,13 +246,13 @@ public class SimpleVocoder
                 Float32 v = 0.0f
                 for h = 1, h <= this.nHarmonics, h++
                 {
-                    Float32 amp = mel.get( i, ( h - 1 ) % nMels ) / SystemConvertFloat32( h )
+                    Float32 amp = mel.at( i, ( h - 1 ) % nMels ) / SystemConvertFloat32( h )
                     v = v + amp * Mathf.sin( 6.283185307f * this.f0 * SystemConvertFloat32( h ) * t )
                 }
                 # 帧边界做淡入淡出，避免拼接爆音
                 Float32 wnd = SystemConvertFloat32( k ) / SystemConvertFloat32( this.hopSize )
                 Float32 fade = 0.5f - 0.5f * Mathf.cos( 6.283185307f * wnd )
-                wav.set( idx, v * fade )
+                wav.setAt( idx, v * fade )
             }
         }
         ret wav
@@ -378,9 +380,9 @@ TtsTest
         global.println( "durations total = " + total.toString() )
 
         LengthRegulator lr = LengthRegulator()
-        Tensor out = lr.forward( hidden, d )
-        check( "regulated rows == total", out.rows() == total )
-        check( "regulated cols == 16", out.cols() == 16 )
+        Tensor outV2 = lr.forward( hidden, d )
+        check( "regulated rows == total", outV2.rows() == total )
+        check( "regulated cols == 16", outV2.cols() == 16 )
     }
 
     # ── 4. Mel 解码 + 声码器 ───────────────────────────

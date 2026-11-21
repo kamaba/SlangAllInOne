@@ -125,6 +125,15 @@ void pipeline_release_targets(SlrPipeline* p)
         if (p->rt_scene) g_rhi->target_destroy(p->rt_scene);
         if (p->rt_post)  g_rhi->target_destroy(p->rt_post);
         if (p->rt_final) g_rhi->target_destroy(p->rt_final);
+        /* v3.6：MSAA resolve 中转 + motion 速度 RT（常规单采样目标）*/
+        if (p->rt_resolve) g_rhi->target_destroy(p->rt_resolve);
+        if (p->rt_motion)  g_rhi->target_destroy(p->rt_motion);
+        /* v3.7：TAA history ping-pong（rt_taa_cur 是 hist[write_idx] 的
+         * 别名——不单独销毁，否则双重释放）*/
+        if (p->rt_taa_hist[0]) g_rhi->target_destroy(p->rt_taa_hist[0]);
+        if (p->rt_taa_hist[1]) g_rhi->target_destroy(p->rt_taa_hist[1]);
+        /* v3.8 Motion Blur 输出（独立 RT，非别名）*/
+        if (p->rt_mb) g_rhi->target_destroy(p->rt_mb);
         /* N2a：shadow 深度目标（后端无 shadow 能力时 vtable 为 NULL，
          * rt_shadow 恒 NULL，此调用天然跳过）*/
         if (p->rt_shadow && g_rhi->shadow_target_destroy)
@@ -145,16 +154,59 @@ void pipeline_release_targets(SlrPipeline* p)
     p->rt_scene = NULL;
     p->rt_post = NULL;
     p->rt_final = NULL;
+    p->rt_resolve = NULL;
+    p->rt_motion = NULL;
+    p->rt_taa_hist[0] = NULL;
+    p->rt_taa_hist[1] = NULL;
+    p->rt_taa_cur = NULL;
     p->rt_shadow = NULL;
     p->ray_tex_w = 0;
     p->ray_tex_h = 0;
 }
 
+/* v3.7 TAA：建 history ping-pong 两张（均单采样 RGBA8）；本帧输出
+ * 写入「下一帧的 hist」槽并交换索引，无额外中转 RT。
+ * 首帧/尺寸变化时 taa_reset=1（shader 忽略 hist 直接输出 current）。 */
+static int pipeline_make_taa_targets(SlrPipeline* p, int w, int h)
+{
+    p->taa_reset = 1;
+    p->taa_hist_idx = 0;
+    p->rt_taa_hist[0] = g_rhi->target_create(w, h, 0);
+    p->rt_taa_hist[1] = g_rhi->target_create(w, h, 0);
+    p->rt_taa_cur = NULL;
+    return p->rt_taa_hist[0] && p->rt_taa_hist[1];
+}
+
 static int pipeline_make_targets(SlrPipeline* p, int w, int h)
 {
-    return (p->rt_scene = g_rhi->target_create(w, h, 1)) != NULL
-        && (p->rt_post = g_rhi->target_create(w, h, 0)) != NULL
-        && (p->rt_final = g_rhi->target_create(w, h, 0)) != NULL;
+    int ok;
+    /* v3.6 MSAA：后端支持 target_create_ms/target_resolve 且请求 samples>1
+     * 时 rt_scene 改建多采样目标（深度同采样数），另建单采样 rt_resolve
+     * 中转（阶段 11 resolve 后再后处理）；不支持/失败自动回退单采样。 */
+    p->aa_msaa_active = 0;
+    p->rt_resolve = NULL;
+    if (p->aa_msaa > 1 && g_rhi->target_create_ms && g_rhi->target_resolve)
+    {
+        p->rt_scene = g_rhi->target_create_ms(w, h, p->aa_msaa);
+        if (p->rt_scene)
+        {
+            p->aa_msaa_active = p->aa_msaa;
+            p->rt_post = g_rhi->target_create(w, h, 0);
+            p->rt_final = g_rhi->target_create(w, h, 0);
+            p->rt_resolve = g_rhi->target_create(w, h, 0);
+            ok = p->rt_post && p->rt_final && p->rt_resolve;
+            if (ok && p->taa_on) ok = pipeline_make_taa_targets(p, w, h);
+            return ok;
+        }
+        /* MSAA 创建失败：清态回退单采样路径 */
+        p->rt_scene = NULL;
+    }
+    p->rt_scene = g_rhi->target_create(w, h, 1);
+    p->rt_post = g_rhi->target_create(w, h, 0);
+    p->rt_final = g_rhi->target_create(w, h, 0);
+    ok = p->rt_scene && p->rt_post && p->rt_final;
+    if (ok && p->taa_on) ok = pipeline_make_taa_targets(p, w, h);
+    return ok;
 }
 
 int64_t slr_pipeline_create(int w, int h)
@@ -421,6 +473,145 @@ int slr_pipeline_set_post_params(int64_t h, const float* prm)
     p->post_filter[1]   = prm[11];
     p->post_filter[2]   = prm[12];
     return 1;
+}
+
+/* v3.6 AA：MSAA 采样数 + FXAA 开关/span。msaa ∈ {0,1}=关，否则钳 [2,8]
+ * （非 2/4/8 按 4）；msaa 变化时重建渲染目标（fxaa/span 只改参数不动目标）。
+ * 返回后端实际生效采样数（0 = 单采样）——VK 无 target_create_ms 时请求
+ * 4 得 0（stat MSAA_SAMPLES 同源）。 */
+int slr_pipeline_set_aa(int64_t h, int msaa_samples, int fxaa_on, float fxaa_span)
+{
+    SlrPipeline* p;
+    int ms = msaa_samples;
+    int old_ms;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    if (ms <= 1) ms = 0;
+    else
+    {
+        if (ms > 8) ms = 8;
+        if (ms == 3 || ms > 4) ms = 4;   /* 非 2/4/8 一律按 4 */
+    }
+    p->fxaa_on = fxaa_on ? 1 : 0;
+    p->fxaa_span = (fxaa_span > 0.5f) ? fxaa_span : 8.0f;
+    old_ms = p->aa_msaa;
+    p->aa_msaa = ms;
+    if (ms != old_ms)
+    {
+        pipeline_release_targets(p);
+        if (!pipeline_make_targets(p, p->w, p->h))
+        {
+            pipeline_release_targets(p);
+            set_error(SLR_E_FBO);
+            rhi_exit();
+            return 0;
+        }
+    }
+    rhi_exit();
+    return p->aa_msaa_active;
+}
+
+/* v3.6 MotionVectors 开关（速度 RT 懒创建于 motion pass 首帧） */
+int slr_pipeline_set_motion(int64_t h, int on)
+{
+    SlrPipeline* p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); return 0; }
+    p->mv_on = on ? 1 : 0;
+    return 1;
+}
+
+/* v3.6 输出速度 RT（top-down RGBA8 回读；RG = 速度*0.5+0.5）。
+ * motion 未启用或尚未渲染任何帧（RT 未创建）返回 0。 */
+int slr_pipeline_output_motion_texture(int64_t h, int64_t dst_ptr)
+{
+    SlrPipeline* p;
+    int ok;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    if (!p->mv_on || !p->rt_motion)
+    {
+        set_error(SLR_E_BAD_PARAM);
+        rhi_exit();
+        return 0;
+    }
+    if (!dst_ptr) { set_error(SLR_E_BAD_PARAM); rhi_exit(); return 0; }
+    ok = 1;
+    g_rhi->readback(p->rt_motion, p->w, p->h, dst_ptr);
+    rhi_exit();
+    return ok;
+}
+
+/* v3.7 TAA 开关：on=1 时自动打开 motion（速度图是 TAA 重投影前提），
+ * 后端缺 taa_resolve 或 upload_perdraw_prev（VK/D3D11）时返回 0（stat TAA
+ * 同源），避免无速度图退化成同位置历史混合的鬼影；blend 钳 [0.02,0.9]
+ * （默认 0.1）——越小平滑越重、越大越跟手。切换开关/参数重建 TAA RT
+ * 并置 reset（首帧忽略历史，防旧画面污染）。 */
+int slr_pipeline_set_taa(int64_t h, int on, float blend)
+{
+    SlrPipeline* p;
+    int active;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    active = on && g_rhi->taa_resolve && g_rhi->upload_perdraw_prev ? 1 : 0;
+    p->taa_blend = (blend > 0.9f) ? 0.9f : (blend < 0.02f ? 0.1f : blend);
+    p->taa_on = active;
+    if (active)
+    {
+        p->mv_on = 1;   /* TAA 必须有速度输入 */
+        /* 目标懒建：create 时 taa_on 可能尚未设置——此处补建 */
+        if (!p->rt_taa_hist[0] || !p->rt_taa_hist[1])
+        {
+            if (!pipeline_make_taa_targets(p, p->w, p->h))
+            {
+                pipeline_release_targets(p);
+                set_error(SLR_E_FBO);
+                rhi_exit();
+                return 0;
+            }
+        }
+        else
+        {
+            p->taa_reset = 1;   /* 开关切换：忽略旧历史 */
+        }
+    }
+    rhi_exit();
+    return active;
+}
+
+/* v3.8 Motion Blur 开关：on=1 时自动打开 motion（速度图是模糊前提），
+ * 后端缺 motion_blur 或 upload_perdraw_prev（VK/D3D11）时返回 0。
+ * scale 钳 [0,4]（默认 1.0，0 = 无模糊但保持开关）；samples 钳 [4,16]
+ * （默认 8，后端 shader 按固定 tap 消费）。rt_mb 懒建。 */
+int slr_pipeline_set_motion_blur(int64_t h, int on, float scale, int samples)
+{
+    SlrPipeline* p;
+    int active;
+    if (!rhi_enter()) return 0;
+    p = pipe_from_handle(h);
+    if (!p) { set_error(SLR_E_PIPELINE); rhi_exit(); return 0; }
+    active = on && g_rhi->motion_blur && g_rhi->upload_perdraw_prev ? 1 : 0;
+    p->mb_scale = (scale < 0.0f) ? 0.0f : (scale > 4.0f ? 4.0f : scale);
+    p->mb_samples = (samples < 4) ? 8 : (samples > 16 ? 16 : samples);
+    p->mb_on = active;
+    if (active)
+    {
+        p->mv_on = 1;   /* 动态模糊必须有速度输入 */
+        if (!p->rt_mb)
+        {
+            p->rt_mb = g_rhi->target_create(p->w, p->h, 0);
+            if (!p->rt_mb)
+            {
+                set_error(SLR_E_FBO);
+                rhi_exit();
+                return 0;
+            }
+        }
+    }
+    rhi_exit();
+    return active;
 }
 
 /* ===================================================================== */
@@ -948,6 +1139,48 @@ static int stage_assemble_impl(SlrPipeline* p)
     return 1;
 }
 
+/* v3.6 MotionVectors：上帧 MVP 组算辅助 —— prev transform × prev 投影。
+ * 对象/相机首帧无快照（valid=0）时用当前值（速度 0）。 */
+static void motion_prev_matrix(SlrPipeline* p, const SlrDrawItem* it,
+                               float* out16, const float* cur_mvp)
+{
+    SlrObject* o = &p->objects[it->obj];
+    float pl, pr, pb, pt;
+    float proj[16], model[16];
+    float px, py, pz, prz, psx, psy;
+    int cam = it->cam;
+    if (p->obj_prev_valid[it->obj])
+    {
+        px = p->obj_prev_pos[it->obj][0];
+        py = p->obj_prev_pos[it->obj][1];
+        pz = p->obj_prev_pos[it->obj][2];
+        prz = p->obj_prev_rot[it->obj];
+        psx = p->obj_prev_scale[it->obj][0];
+        psy = p->obj_prev_scale[it->obj][1];
+    }
+    else
+    {
+        px = o->pos[0]; py = o->pos[1]; pz = o->pos[2];
+        prz = o->rot_z; psx = o->scale[0]; psy = o->scale[1];
+    }
+    if (cam >= 0 && cam < SLR_MAX_CAMERAS && p->cam_prev_valid[cam])
+    {
+        pl = p->cam_prev_ext[cam][0]; pr = p->cam_prev_ext[cam][1];
+        pb = p->cam_prev_ext[cam][2]; pt = p->cam_prev_ext[cam][3];
+    }
+    else
+    {
+        SlrCamera* c = &p->cameras[cam];
+        pl = c->cam_l; pr = c->cam_r; pb = c->cam_b; pt = c->cam_t;
+    }
+    mat4_ortho(proj, pl, pr, pb, pt, -1.0f, 1.0f);
+    mat4_model2d(model, px, py, pz, prz, psx, psy);
+    mat4_mul(out16, proj, model);
+    /* 阴影项等合成变换无"上帧"语义：prev = cur（速度 0，不产生伪运动）*/
+    if (it->is_shadow)
+        memcpy(out16, cur_mvp, sizeof(float) * 16);
+}
+
 /* 6 向 GPU 传入渲染数据（PerDraw 常量缓冲批量上传 + 光照块 + 纹理描述符表写入） */
 static int stage_upload_render_data(SlrPipeline* p)
 {
@@ -985,6 +1218,17 @@ static int stage_upload_render_data(SlrPipeline* p)
         s_perdraw.spec[i][1] = o->spec_shin;
     }
     g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
+    /* v3.6 MotionVectors：PerDrawPrev 帧级块（上帧 MVP，槽位同 PerDraw；
+     * 后端无 upload_perdraw_prev（VK/D3D11）时跳过——motion pass 不执行）*/
+    if (p->mv_on && g_rhi->upload_perdraw_prev)
+    {
+        SlrPerDrawPrev pdp;
+        int k;
+        memset(&pdp, 0, sizeof(pdp));
+        for (k = 0; k < p->item_count; k++)
+            motion_prev_matrix(p, &p->items[k], pdp.prev_mvp[k], s_perdraw.mvp[k]);
+        g_rhi->upload_perdraw_prev(&pdp, (int)sizeof(pdp));
+    }
     /* 帧级光照块：环境光 + 首个平行光 + 首个聚光（PFLAT/PTEX 消费）*/
     {
         SlrLightBlock lb;
@@ -1146,6 +1390,38 @@ static int stage_update_core_time(SlrPipeline* p)
     return 1;
 }
 
+/* v3.6 MotionVectors：速度 pass（阶段 9 尾执行——几何全部画完后）。
+ * 逐相机在 rt_motion（无深度单采样）上以 PROG_MOTION 重绘全部绘制项：
+ * VS 输出 cur/prev 双 NDC（PerDraw.mvp + PerDrawPrev.prev_mvp），
+ * FS 编码 RG = 速度*0.5+0.5（0.5 = 静止）。画家算法顺序覆盖写——
+ * 最后绘制（最上层）项的速度即为该像素速度，透明语义自然成立。
+ * 背景清为 (0.5,0.5,0.5,1)（速度 0）；相机运动经 prev 投影视域进
+ * MVP 差值捕获。后端无 upload_perdraw_prev（VK/D3D11）时整段跳过。 */
+static void motion_pass(SlrPipeline* p)
+{
+    int ci;
+    if (!p->mv_on || !g_rhi->upload_perdraw_prev) return;
+    if (!p->rt_motion)
+    {
+        p->rt_motion = g_rhi->target_create(p->w, p->h, 0);
+        if (!p->rt_motion) return;
+    }
+    for (ci = 0; ci < p->active_cam_count; ci++)
+    {
+        int bit = p->active_cams[ci];
+        SlrCamera* c = &p->cameras[bit];
+        SlrCamRange* rg = &p->cam_ranges[bit];
+        float neutral[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+        int i = rg->start, end = rg->start + rg->n_opaque + rg->n_trans;
+        g_rhi->camera_begin(p->rt_motion, c->vp_x, c->vp_y, c->vp_w, c->vp_h,
+                            p->h, SLR_CLEAR_COLOR, neutral);
+        g_rhi->set_state(0);
+        for (; i < end; i++)
+            g_rhi->draw_item(SLR_PROG_MOTION, p->items[i].slot,
+                             p->objects[p->items[i].obj].mesh, 1);
+    }
+}
+
 /* 9 shader 分段渲染（透明段：混合开、深度写关、后→前；多相机逐相机执行；
  * 绘制次序按深度排序不变（合批不得改变混合次序），材质分块只最小化
  * 绑定次数——块内纹理绑定一次，逐项仍按序绘制） */
@@ -1176,22 +1452,98 @@ static int stage_render_shader_segments(SlrPipeline* p)
             p->chunk_count++;    /* 批计数（= 状态切换次数）*/
         }
     }
+    /* v3.6：几何全部画完后执行 motion pass（rt_motion 独立目标）*/
+    motion_pass(p);
     return 1;
 }
 
-/* 10 整理渲染后的图层（簿记；渲染状态由后续 pass 自行设定） */
+/* 10 整理渲染后的图层（簿记 + v3.6 上帧变换快照：本帧几何已全部画完，
+ * 把对象 pos/rot/scale 与相机视域落到 prev 快照供下帧阶段 6 组算
+ * PerDrawPrev；删除/新建对象的槽位失效由 sl_object.c 在 create 时
+ * 复位 obj_prev_valid 保证） */
 static int stage_assemble_rendered_layers(SlrPipeline* p)
 {
+    int i, ci;
     p->last_stage = 10;
+    for (i = 0; i < SLR_MAX_OBJECTS; i++)
+    {
+        SlrObject* o = &p->objects[i];
+        if (!o->used) continue;
+        p->obj_prev_pos[i][0] = o->pos[0];
+        p->obj_prev_pos[i][1] = o->pos[1];
+        p->obj_prev_pos[i][2] = o->pos[2];
+        p->obj_prev_rot[i] = o->rot_z;
+        p->obj_prev_scale[i][0] = o->scale[0];
+        p->obj_prev_scale[i][1] = o->scale[1];
+        p->obj_prev_valid[i] = 1;
+    }
+    for (ci = 0; ci < SLR_MAX_CAMERAS; ci++)
+    {
+        SlrCamera* c = &p->cameras[ci];
+        if (!c->used) continue;
+        p->cam_prev_ext[ci][0] = c->cam_l;
+        p->cam_prev_ext[ci][1] = c->cam_r;
+        p->cam_prev_ext[ci][2] = c->cam_b;
+        p->cam_prev_ext[ci][3] = c->cam_t;
+        p->cam_prev_valid[ci] = 1;
+    }
     return 1;
 }
 
-/* 11 后处理（RHI：scene -> post，enabled=0 纯拷贝） */
+/* 10.5 v3.7 TAA 时域累积：MSAA resolve 之后、后处理之前。
+ * 写 hist[1-idx]（读 hist[idx]），交换索引；taa_reset 首帧跳过历史。
+ * 输出即 hist[newIdx]（p->rt_taa_cur 仅作日志别名，无额外 RT）。 */
+static int stage_taa(SlrPipeline* p)
+{
+    SlrRhiTarget* src = p->rt_scene;
+    int write_idx;
+    if (!p->taa_on || !g_rhi->taa_resolve ||
+        !p->rt_taa_hist[0] || !p->rt_taa_hist[1] || !p->rt_motion) return 1;
+    if (p->aa_msaa_active > 0 && p->rt_resolve && g_rhi->target_resolve)
+    {
+        g_rhi->target_resolve(p->rt_resolve, p->rt_scene, p->w, p->h);
+        src = p->rt_resolve;
+    }
+    write_idx = 1 - p->taa_hist_idx;
+    g_rhi->taa_resolve(p->rt_taa_hist[write_idx], src, p->rt_motion,
+                      p->rt_taa_hist[p->taa_hist_idx], p->w, p->h,
+                      p->taa_blend, p->taa_reset);
+    p->taa_hist_idx = write_idx;
+    p->rt_taa_cur = p->rt_taa_hist[write_idx];
+    p->taa_reset = 0;
+    p->draw_calls++;
+    return 1;
+}
+
+/* 10.6 v3.8 Motion Blur（后处理链第一环）：TAA 输出（或场景色）+
+ * 速度图 -> rt_mb；速度 0 像素输出 = 原值。关闭/后端不支持时空操作。 */
+static int stage_motion_blur(SlrPipeline* p)
+{
+    SlrRhiTarget* src = p->rt_taa_cur ? p->rt_taa_cur : p->rt_scene;
+    if (!p->mb_on || !g_rhi->motion_blur || !p->rt_mb || !p->rt_motion) return 1;
+    /* TAA 关闭且 MSAA 生效时 src 需先 resolve（TAA 阶段不会替我们做）*/
+    if (!p->taa_on && p->aa_msaa_active > 0 && p->rt_resolve && g_rhi->target_resolve)
+    {
+        g_rhi->target_resolve(p->rt_resolve, p->rt_scene, p->w, p->h);
+        src = p->rt_resolve;
+    }
+    g_rhi->motion_blur(p->rt_mb, src, p->rt_motion, p->w, p->h,
+                       p->mb_scale, p->mb_samples);
+    p->draw_calls++;
+    return 1;
+}
+
+/* 11 后处理（RHI：scene -> post，enabled=0 纯拷贝）。
+ * v3.6：MSAA 生效时先 resolve(rt_resolve<-rt_scene) 再后处理；
+ * v3.7：TAA 生效时 src = TAA 累积输出（已含 resolve），不重复 resolve；
+ * v3.8：MB 生效时 src = rt_mb（已含 resolve，不再重复）；
+ * 参数块 13 -> 16 float（尾部追加 fxaaOn/fxaaSpanMax/保留位）。 */
 static int stage_post_process(SlrPipeline* p)
 {
-    float prm[13];
+    float prm[16];
+    SlrRhiTarget* src = p->rt_scene;
     p->last_stage = 11;
-    /* v2 参数块（13 float，布局见 vm_sl_render.h set_post_params 注释） */
+    /* v2 参数块（16 float，布局见 vm_sl_render.h set_post_params 注释） */
     prm[0]  = (float)p->post_enabled;
     prm[1]  = p->post_brightness;
     prm[2]  = p->post_contrast;
@@ -1205,7 +1557,23 @@ static int stage_post_process(SlrPipeline* p)
     prm[10] = p->post_filter[0];
     prm[11] = p->post_filter[1];
     prm[12] = p->post_filter[2];
-    g_rhi->post_process(p->rt_post, p->rt_scene, p->w, p->h, prm);
+    prm[13] = (float)p->fxaa_on;
+    prm[14] = p->fxaa_span;
+    prm[15] = 0.0f;
+    if (p->mb_on && p->rt_mb)
+    {
+        src = p->rt_mb;          /* MB 阶段已做 resolve */
+    }
+    else if (p->taa_on && p->rt_taa_cur)
+    {
+        src = p->rt_taa_cur;     /* TAA 阶段已做 resolve */
+    }
+    else if (p->aa_msaa_active > 0 && p->rt_resolve && g_rhi->target_resolve)
+    {
+        g_rhi->target_resolve(p->rt_resolve, p->rt_scene, p->w, p->h);
+        src = p->rt_resolve;
+    }
+    g_rhi->post_process(p->rt_post, src, p->w, p->h, prm);
     p->program_switches++;
     p->draw_calls++;
     return 1;
@@ -1253,6 +1621,8 @@ SLR_STAGE_EXPORT(slr_pipeline_render_shader_chunks,    stage_render_shader_chunk
 SLR_STAGE_EXPORT(slr_pipeline_update_core_time,        stage_update_core_time)
 SLR_STAGE_EXPORT(slr_pipeline_render_shader_segments,  stage_render_shader_segments)
 SLR_STAGE_EXPORT(slr_pipeline_assemble_rendered_layers, stage_assemble_rendered_layers)
+SLR_STAGE_EXPORT(slr_pipeline_taa,                      stage_taa)
+SLR_STAGE_EXPORT(slr_pipeline_motion_blur,              stage_motion_blur)
 SLR_STAGE_EXPORT(slr_pipeline_post_process,            stage_post_process)
 SLR_STAGE_EXPORT(slr_pipeline_integrate_layers,        stage_integrate_layers)
 
@@ -1299,6 +1669,8 @@ int slr_pipeline_render_frame(int64_t h, float time, int64_t dst_ptr)
       && stage_update_core_time(p)
       && stage_render_shader_segments(p)
       && stage_assemble_rendered_layers(p)
+      && stage_taa(p)                    /* 10.5 v3.7 TAA 时域累积 */
+      && stage_motion_blur(p)            /* 10.6 v3.8 动态模糊 */
       && stage_post_process(p)
       && stage_integrate_layers(p)
       && stage_output_render_texture(p, dst_ptr);
@@ -1335,6 +1707,12 @@ int slr_pipeline_stat(int64_t h, int stat_id)
     case SLR_STAT_PROGRAM_SWITCHES:  return p->program_switches;
     case SLR_STAT_CAMERA_COUNT:      return p->active_cam_count;
     case SLR_STAT_INSTANCE_COUNT:    return p->instance_total;
+    /* v3.6 AA + MotionVectors */
+    case SLR_STAT_MV_ENABLED:        return p->mv_on;
+    case SLR_STAT_MSAA_SAMPLES:      return p->aa_msaa_active;
+    case SLR_STAT_FXAA:              return p->fxaa_on;
+    case SLR_STAT_TAA:               return p->taa_on;
+    case SLR_STAT_MOTION_BLUR:       return p->mb_on;
     default: set_error(SLR_E_BAD_PARAM); return 0;
     }
 }

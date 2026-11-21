@@ -1,3 +1,4 @@
+import Math;
 # Metrics —— 评估指标
 #
 # 分类：accuracy / topK / precision / recall / f1 / confusionMatrix
@@ -15,12 +16,12 @@ public class Metrics
         for i = 0, i < n, i++
         {
             int best = 0
-            Float32 m = logits.get( i, 0 )
+            Float32 m = logits.at( i, 0 )
             for j = 1, j < logits.cols(), j++
             {
-                if logits.get( i, j ) > m
+                if logits.at( i, j ) > m
                 {
-                    m = logits.get( i, j )
+                    m = logits.at( i, j )
                     best = j
                 }
             }
@@ -146,8 +147,8 @@ public class Metrics
         Tensor m = Tensor( Shape.matrix( classCount, classCount ) )
         for i = 0, i < labels.length, i++
         {
-            Float32 v = m.get( labels[i], preds[i] )
-            m.set( labels[i], preds[i], v + 1.0f )
+            Float32 v = m.at( labels[i], preds[i] )
+            m.setAt( labels[i], preds[i], v + 1.0f )
         }
         ret m
     }

@@ -109,7 +109,7 @@ public class Transformer extends Module
 {
     Int32 _dModel = 0
     Int32 _heads = 0
-    Int32 _layers = 0
+    Int32 _layerCount = 0
     Array<TransformerBlock> _blocks = null
 
     public void _init_( Int32 dModel, Int32 heads, Int32 layerCount )
@@ -117,7 +117,7 @@ public class Transformer extends Module
         this.name = "Transformer"
         this._dModel = dModel
         this._heads = heads
-        this._layers = layerCount
+        this._layerCount = layerCount
         this._blocks = Array<TransformerBlock>( layerCount )
         for i = 0, i < layerCount, i++
         {

@@ -85,7 +85,15 @@ enum
     SLR_STAT_TEXTURE_COUNT    = 14,  /* 全局纹理数                         */
     SLR_STAT_PROGRAM_SWITCHES = 15,  /* 本帧着色器程序切换次数              */
     SLR_STAT_CAMERA_COUNT     = 16,  /* 本帧实际参与渲染的相机数            */
-    SLR_STAT_INSTANCE_COUNT   = 17   /* N1：本帧实例总数（合批后）           */
+    SLR_STAT_INSTANCE_COUNT   = 17,  /* N1：本帧实例总数（合批后）           */
+    /* v3.6 AA + MotionVectors */
+    SLR_STAT_MV_ENABLED       = 18,  /* MotionVectors 开关（请求值）        */
+    SLR_STAT_MSAA_SAMPLES     = 19,  /* MSAA 实际生效采样数（0 = 单采样）   */
+    SLR_STAT_FXAA             = 20,  /* FXAA 开关                           */
+    /* v3.7 TAA */
+    SLR_STAT_TAA              = 21,  /* TAA 实际生效开关（0 = 后端不支持/关） */
+    /* v3.8 Motion Blur */
+    SLR_STAT_MOTION_BLUR      = 22   /* 动态模糊实际生效开关 */
 };
 
 /* ---- 网格类型 ---- */
@@ -212,6 +220,32 @@ SLR_API int     slr_pipeline_set_post(int64_t p, int enable,
  * 中性值（1,1,1,0,1,0,0,0,1,1,1）= 旧三参行为逐位一致；GL/GLES 全量消费，
  * VK/D3D11 v1 着色器只吃 enable/brightness/saturation/vignette。 */
 SLR_API int     slr_pipeline_set_post_params(int64_t p, const float* prm);
+
+/* ================= v3.6：AA（FXAA + MSAA）+ MotionVectors =================
+ * 后处理参数块扩展：post_process prm 13 -> 16 float（尾部追加）：
+ *   [13]fxaaOn(0/1)  [14]fxaaSpanMax(默认 8)  [15]保留(0)
+ * FXAA = FS_POST 内嵌前段（FXAA 3.11 简版：luma 驱动边缘检测 + 3x3 方向
+ * 采样混合），GL/GLES/D3D11(运行期 HLSL) 消费；VK SPIR-V 冻结忽略。
+ * 中性值（fxaaOn=0）输出与旧 13 float 逐位一致。
+ * MSAA：samples ∈ {0,1}=关，否则钳 [2,8]（非 2/4/8 按 4 处理）；
+ *   rt_scene 改建多采样目标，阶段 11 先 resolve 再后处理；后端不支持
+ *   （VK）或创建失败自动回退单采样（STAT_MSAA_SAMPLES 读实际值）。
+ * MotionVectors：速度 RT（RG = 速度*0.5+0.5，0.5 = 静止；B=0 A=1），
+ *   阶段 9 尾逐相机绘制（PROG_MOTION，消费 PerDrawPrev 上帧 MVP）；
+ *   后端无 upload_perdraw_prev（VK/D3D11）时 motion 无效（stat 读 0）。
+ *   背景像素速度恒 0（背景无几何，相机运动速度不含在背景里）。 */
+SLR_API int     slr_pipeline_set_aa(int64_t p, int msaa_samples,
+                                    int fxaa_on, float fxaa_span);
+SLR_API int     slr_pipeline_set_motion(int64_t p, int on);
+SLR_API int     slr_pipeline_output_motion_texture(int64_t p, int64_t dst_ptr);
+/* v3.7 TAA：on=1 开时域累积（自动打开 motion 取速度图）；blend = 当前帧
+ * 权重（0..1，默认 0.1）。返回实际生效开关（后端无 taa_resolve 时 0）。 */
+SLR_API int     slr_pipeline_set_taa(int64_t p, int on, float blend);
+/* v3.8 Motion Blur（后处理链）：on=1 开时自动打开 motion 取速度图；
+ * scale=速度倍率（默认 1.0）；samples=采样数（默认 8，后端可钳）。
+ * 返回实际生效开关（后端无 motion_blur / 无速度图时 0）。 */
+SLR_API int     slr_pipeline_set_motion_blur(int64_t p, int on,
+                                             float scale, int samples);
 
 /* ---- 场景对象 ---- */
 SLR_API int64_t slr_object_create(int64_t p, int mesh_kind);

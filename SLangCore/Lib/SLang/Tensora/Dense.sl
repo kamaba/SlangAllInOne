@@ -50,9 +50,9 @@ public class Dense extends Layer
         Tensor wt = this.weight.transpose()
         Tensor z = x.matmul( wt ).add( this.bias )
         this.preActivation = z
-        Tensor out = Activation.apply( z, this._activation )
-        this.outputCache = out
-        ret out
+        Tensor outV = Activation.apply( z, this._activation )
+        this.outputCache = outV
+        ret outV
     }
 
     override Tensor backward( Tensor gradOutput )

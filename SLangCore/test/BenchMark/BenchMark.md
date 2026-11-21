@@ -65,6 +65,7 @@ Mandelbrot）逐项同算法同参数，跨语言校验和可对拍。各语言�
 | 语言列 | 文件 | 插件 / 运行时 | 计时口径 |
 |--------|------|---------------|----------|
 | SL | `Fibonacci.sl` 等 13 个 | SL VM 字节码（JIT 默认开） | SL 侧 nowMillis ms×1000 存 us |
+| SL-NoJIT | 同上（同一套件非 JIT 轮） | SL VM 字节码解释执行（`SL_JIT=0` 关闭 JIT） | 同上 |
 | C / C++ | `CBench.sl` / `CppBench.sl` | cplus_clang（cl /O2 原生） | 块内 QPC/steady_clock ns /1000 |
 | ASM | `MasmBench.sl` | masm_x64（ml64，含 SimdAVX2 专列） | SL 侧 nowMillis 整块（asm 出通道兜底） |
 | CSharp | `CSharpBench.sl` | csharp_mono（Mono JIT） | 块内 Stopwatch us |
@@ -86,3 +87,27 @@ Mandelbrot）逐项同算法同参数，跨语言校验和可对拍。各语言�
   前须最后编译本工程**。PHP 运行时随插件包 vendored，无需本机另装 PHP。
 - 隔离冒烟：`test/Other/PhpBenchTest/`（只编译 PhpBench.sl + BenchCollector.sl，
   单独验证 PHP 计时与报告列，不依赖其它语言运行时）。
+
+## SL JIT / 非 JIT 双轮对比
+
+报告对比总表含 `SL`（JIT 轮）与 `SL-NoJIT`（非 JIT 轮）两列，由**启动传参
+`SL_JIT` 环境变量**切换（VM 既有开关，对 `slang.exe` 与发布 `BenchMark.exe`
+均生效；注意 `--no-jit` 仅 CLI 内部通道、SL 脚本不可感知，本基准统一用
+`SL_JIT`）：
+
+```powershell
+# JIT 轮（默认，Release VM JIT 开）：SL 条目记入 SL 列
+slang run out/export/BenchMark/BenchMark.module.slb
+
+# 非 JIT 轮（VM 字节码解释执行）：SL 条目记入 SL-NoJIT 列
+$env:SL_JIT = "0"
+slang run out/export/BenchMark/BenchMark.module.slb
+Remove-Item Env:SL_JIT
+```
+
+- 每轮结束时本轮 SL 系耗时落缓存 `report/entries_SL.txt` /
+  `report/entries_SL-NoJIT.txt`（latest wins）；生成报告时自动合并另一轮
+  缓存 → **单份报告同时呈现 JIT / 非 JIT 双列**（套件条数不齐则整批跳过
+  合并并打日志）。
+- JIT 是 run 前的进程级开关（`jit_config_apply`），单进程内不可切换、已
+  编译热点方法不可撤销——因此双轮对比必须分两次运行。

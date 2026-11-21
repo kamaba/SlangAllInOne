@@ -63,12 +63,12 @@ public class Activation
     }
 
     # out 为 sigmoid 输出
-    public static Tensor sigmoidGrad( Tensor out, Tensor gradOut )
+    public static Tensor sigmoidGrad( Tensor outV, Tensor gradOut )
     {
-        Tensor g = Tensor( out.shape() )
-        for i = 0, i < out.size(), i++
+        Tensor g = Tensor( outV.shape() )
+        for i = 0, i < outV.size(), i++
         {
-            g.setAt( i, gradOut.at( i ) * TensorMath.sigmoidDeriv( out.at( i ) ) )
+            g.setAt( i, gradOut.at( i ) * TensorMath.sigmoidDeriv( outV.at( i ) ) )
         }
         ret g
     }
@@ -78,12 +78,12 @@ public class Activation
         ret x.tanh()
     }
 
-    public static Tensor tanhGrad( Tensor out, Tensor gradOut )
+    public static Tensor tanhGrad( Tensor outV, Tensor gradOut )
     {
-        Tensor g = Tensor( out.shape() )
-        for i = 0, i < out.size(), i++
+        Tensor g = Tensor( outV.shape() )
+        for i = 0, i < outV.size(), i++
         {
-            g.setAt( i, gradOut.at( i ) * TensorMath.tanhDeriv( out.at( i ) ) )
+            g.setAt( i, gradOut.at( i ) * TensorMath.tanhDeriv( outV.at( i ) ) )
         }
         ret g
     }
@@ -134,19 +134,19 @@ public class Activation
     }
 
     # softmax 的雅可比：gx = s * (g - Σ g·s)
-    public static Tensor softmaxGrad( Tensor out, Tensor gradOut )
+    public static Tensor softmaxGrad( Tensor outV, Tensor gradOut )
     {
-        Tensor g = Tensor( out.shape() )
-        for i = 0, i < out.rows(), i++
+        Tensor g = Tensor( outV.shape() )
+        for i = 0, i < outV.rows(), i++
         {
             Float32 dot = 0.0f
-            for j = 0, j < out.cols(), j++
+            for j = 0, j < outV.cols(), j++
             {
-                dot = dot + gradOut.get( i, j ) * out.get( i, j )
+                dot = dot + gradOut.at( i, j ) * outV.at( i, j )
             }
-            for j = 0, j < out.cols(), j++
+            for j = 0, j < outV.cols(), j++
             {
-                g.set( i, j, out.get( i, j ) * ( gradOut.get( i, j ) - dot ) )
+                g.setAt( i, j, outV.at( i, j ) * ( gradOut.at( i, j ) - dot ) )
             }
         }
         ret g

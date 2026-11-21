@@ -706,6 +706,111 @@ public class SceneDemo
         SceneDemo.updateInfo()
     }
 
+    # ── 网页版（H5）初始化：与 run() 同款引擎装配，但用 D3D11 后端（事件
+    # 线程兼容性更好）且不启动 QT 宿主；由 SceneDemoWebUI.runWebUI 调用。
+    public static bool webInit( Int32 w, Int32 h )
+    {
+        SceneDemo.sm = SceneManager()
+        SceneDemo.sm.registerScript( "SphereMeshScript", SceneScriptFactories.makeSphereMesh )
+        SceneDemo.sm.registerScript( "ShapeMeshScript", SceneScriptFactories.makeShapeMesh )
+        SceneDemo.sm.registerScript( "SpinScript", SceneScriptFactories.makeSpin )
+        SceneDemo.sm.registerScript( "ProbeScript", SceneScriptFactories.makeProbe )
+        SceneDemo.sm.registerScript( "LightSwingScript", SceneScriptFactories.makeLightSwing )
+        SceneDemo.sm.registerScript( "AxisGizmoScript", SceneScriptFactories.makeAxis )
+        SceneDemo.baseDir = SceneDemo.findSceneDir()
+        # WebUI 浏览器渲染：D3D11 后端（无 GL 上下文线程亲和，best fit）
+        if SLang.Render.initializeBackend( "d3d11" ) == false
+        {
+            Console.println( "[scene][web] d3d11 backend failed: " + SLang.Render.errorString() )
+            ret false
+        }
+        SceneDemo.rs = RenderSystem()
+        if SceneDemo.rs.init( w, h ) == false
+        {
+            Console.println( "[scene][web] pipeline init failed: " + SceneDemo.rs.lastError )
+            ret false
+        }
+        SceneDemo.gs = GizmoSystem()
+        SceneDemo.rs.volumeSystem = VolumeSystem()
+        SceneDemo.pixels = Memory.alloc( w * h * 4 )
+        SceneDemo.renderW = w
+        SceneDemo.renderH = h
+        Float32 cx = SceneDemo.camX
+        Float32 cy = SceneDemo.camY
+        Float32_3 cc = Float32_3( cx, cy, 0.0f )
+        SceneDemo.rs.cameraCenter = cc
+        SceneDemo.rs.viewSize = SceneDemo.camView
+        SceneDemo.initBallMesh()
+        SceneDemo.initFairyUI()
+        SceneDemo.initMenuUI()
+        # 网页版直接进场景（菜单需要鼠标命中，H5 用场景按钮替代）
+        SceneDemo.inMenu = false
+        SceneDemo.loadScene( 4 )
+        Console.println( "[scene][web] ready " + w.toString() + "x" + h.toString() + " backend=" + SLang.Render.currentBackend() )
+        ret true
+    }
+
+    # ── 网页版每帧：主线程渲染一帧 + 处理来自 WebUI 事件线程的请求 ──
+    # 由 SceneDemoWebUI 的帧循环调用（非 QT timer）。返回 false 表示请求退出。
+    public static bool webFrame()
+    {
+        if SceneDemoWebUI.requestQuit
+        {
+            ret false
+        }
+        # 分辨率变更请求（JS setRes -> 事件线程写 pendingW/H，主线程执行）
+        if SceneDemoWebUI.pendingW > 0 && SceneDemoWebUI.pendingH > 0
+        {
+            Int32 nw = SceneDemoWebUI.pendingW
+            Int32 nh = SceneDemoWebUI.pendingH
+            SceneDemoWebUI.pendingW = 0
+            SceneDemoWebUI.pendingH = 0
+            if nw != SceneDemo.renderW || nh != SceneDemo.renderH
+            {
+                if SceneDemo.rs.resize( nw, nh )
+                {
+                    if SceneDemo.pixels != 0
+                    {
+                        Memory.free( SceneDemo.pixels )
+                    }
+                    SceneDemo.pixels = Memory.alloc( nw * nh * 4 )
+                    SceneDemo.renderW = nw
+                    SceneDemo.renderH = nh
+                    Console.println( "[scene][web] resize -> " + nw.toString() + "x" + nh.toString() )
+                }
+            }
+        }
+        # 场景切换请求（JS setScene）
+        if SceneDemoWebUI.pendingScene >= 0
+        {
+            Int32 si = SceneDemoWebUI.pendingScene
+            SceneDemoWebUI.pendingScene = -1
+            SceneDemo.loadScene( si )
+            SceneDemo.inMenu = false
+        }
+        # 相机写回（网页版无键鼠输入，用当前权威值；滚轮/拖拽预留）
+        Float32 cx = SceneDemo.camX
+        Float32 cy = SceneDemo.camY
+        Float32_3 cc = Float32_3( cx, cy, 0.0f )
+        SceneDemo.rs.cameraCenter = cc
+        SceneDemo.rs.viewSize = SceneDemo.camView
+        SceneDemo.rs.cameraEye = cc
+        SceneDemo.rs.camYaw = SceneDemo.camYaw
+        SceneDemo.rs.camPitch = SceneDemo.camPitch
+        SceneDemo.rs.useViewRotation = true
+        # 场景生命周期 + 同步（网页版只渲染核心场景：gizmo/FairyGUI 叠加
+        # 走事件线程会触发 0xC0000005，属编辑器辅助层，H5 不需要）
+        SceneDemo.sm.tick( -1.0f )
+        SceneDemo.rs.sync( SceneDemo.sm.activeScene )
+        # 渲染一帧到 RGBA8 像素块，再推给浏览器
+        Int64 pp = SceneDemo.pixels
+        if SceneDemo.rs.frame( 0.0f - 1.0f, pp )
+        {
+            SceneDemoWebUI.pushFrame( pp, SceneDemo.renderW, SceneDemo.renderH )
+        }
+        ret true
+    }
+
     public static void run()
     {
         SceneDemo.sm = SceneManager()

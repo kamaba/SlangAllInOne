@@ -95,7 +95,7 @@ L0 数据层  DataFrame（列式存储：List<string> 列名 + List<List<Float32
   `Memory.writeI8/readUInt8` 逐字节读写；`pixelPtr()` 直接返回缓冲地址——与史已验证的
   `QLabel.setPixmapRgba(ptr, w, h)` 契约（RenderTest Phase B）完全一致，上屏零拷贝。
   测试侧经 `nonWhiteCount(x0,y0,x1,y1)` 区域统计断言绘图结果。
-- **D3 内置 3×5 位图字体**。字号小（轴标签/图例足够清晰）、数据体积小（44 字形 × 5 行 × 3 bit /
+- **D3 内置 3×5 位图字体**。字号小（轴标签/图例足够清晰）、数据体积小（48 字形 × 5 行 × 3 bit /
   字母表），免系统字体依赖，平台一致性最好。标签渲染时小写字母自动大写。
 - **D4 图表布局常量集中化**（`Plot` 私有静态常量：边距 left=56/right=14/top=30/bottom=34，
   刻度 5 档、调色板 8 色与 R `palette()` 对齐：black/red/green3/blue/cyan/magenta/yellow/gray）。

@@ -56,6 +56,20 @@ $demo  = 'SlangAllInOne\SLangCore\Lib\SLang\SimGameEngine\gameExample\Test'
 & $slang run 'SlangAllInOne\out\export\SceneDemo\SceneDemo.module.slb' -- smoke --no-banner
 # 期望：=== SceneManager smoke PASS=42 FAIL=0 ===，EXIT=0
 
+# H5 网页版（两层 UI：总入口菜单 + 场景内按钮菜单）
+& $slang run 'SlangAllInOne\out\export\SceneDemo\SceneDemo.module.slb' -- web --no-banner
+# 默认浏览器自动打开 out\scene_webui\index.html，两层 UI：
+#   ① 总入口菜单：居中的 UI 菜单，列出可配置的多个场景，点一项进入对应场景。
+#      场景配置集中在 SceneDemoWebUI.sl 的 sceneCount / sceneLabel
+#      （与 SceneDemo.loadScene 的 idx→文件映射一一对应，改两处即可增删场景）；
+#      菜单项与场景内按钮条由同一张表生成，始终一致。
+#   ② 场景内顶部一排按钮菜单：Menu（返回入口）+ 场景切换按钮（当前项高亮）
+#      + 分辨率下拉框（默认 640x360 + 常用手机/平板/HD 9 档，选中即时调整
+#      H5 canvas 与引擎渲染目标尺寸）+ 当前尺寸标签 + FPS 标签（真实刷新帧数）。
+# 帧由引擎原生 D3D11 渲染 → JPEG → 8 槽落盘 → 浏览器 canvas 显示。
+# 注意：H5 版只渲染核心场景，编辑器辅助层（gizmo 箭头 / FairyGUI 叠加）
+# 在 WebUI 事件线程渲染会崩溃，故 H5 路径不绘制这两层。
+
 # QT 窗口示例
 & $slang run 'SlangAllInOne\out\export\SceneDemo\SceneDemo.module.slb' --no-banner
 ```

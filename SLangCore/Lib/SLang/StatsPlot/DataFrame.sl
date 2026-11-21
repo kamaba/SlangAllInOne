@@ -112,37 +112,29 @@ namespace StatsPlot
                 bool isFieldEnd = isEnd || isNewline || ( c == sepCode )
                 if isFieldEnd
                 {
-                    if cur != null || !firstLineDone
+                    string field = DataFrame._trimSlice( text, fieldStart, fieldEnd )
+                    if !firstLineDone
                     {
-                        string field = DataFrame._trimSlice( text, fieldStart, fieldEnd )
-                        if !firstLineDone
+                        names.add( field )
+                    }
+                    else
+                    {
+                        if cur == null
                         {
-                            names.add( field )
+                            cur = List<Float32>()
                         }
-                        else
+                        if cur.length < names.length
                         {
-                            if cur == null
-                            {
-                                cur = List<Float32>()
-                            }
-                            if cur.length < names.length
-                            {
-                                cur.add( DataFrame._parseFloat( field ) )
-                            }
+                            cur.add( DataFrame._parseFloat( field ) )
                         }
                     }
                     fieldStart = i + 1
                 }
                 if isNewline && !isEnd
                 {
-                    # 完成一行：该行结束（跳过跟随的同换行符）
-                    if firstLineDone && cur != null && cur.length > 0
+                    if firstLineDone && cur != null && cur.length > 0 && cur.length >= names.length
                     {
-                        # 只收满表头列数的行（缺列直接丢弃）
-                        if cur.length >= names.length
-                        {
-                            cols.add( cur )
-                        }
+                        cols.add( cur )
                     }
                     if c == 13 && i + 1 < len
                     {
@@ -165,7 +157,8 @@ namespace StatsPlot
             {
                 cols.add( cur )
             }
-            ret DataFrame.fromColumns( names, cols )
+            # 上面的 cols 是按行收集的（一行一列），用 fromRows 转置回列式
+            ret DataFrame.fromRows( names, cols )
         }
 
         # 字符串字段裁剪（去首尾空白）
@@ -612,7 +605,7 @@ namespace StatsPlot
             Int32 j = 0
             while j < m
             {
-                Int32 row = this._members._getItem_( ki )[ j ]
+                Int32 row = this._members._getItem_( ki )._getItem_( j )
                 if row < src.length
                 {
                     vals.add( src._getItem_( row ) )

@@ -24,6 +24,11 @@
     "files": [
       { "path": "TensorTest.sl",    "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "BackendTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CpuSimdTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "CudaBackendTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "OnnxMemTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "OnnxModelTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "TensorOpsTest.sl",   "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AutogradTest.sl",  "group": "tensora", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "CnnTest.sl",       "group": "tensora", "tag": "cnn",  "ignore": false, "priority": 0 },
       { "path": "NnTest.sl",        "group": "tensora", "tag": "nn",   "ignore": false, "priority": 0 },
@@ -59,6 +64,7 @@
     { "namespace": "TensoraTest", "children": [
       { "class": "TensorTest" },
       { "class": "BackendTest" },
+      { "class": "CpuSimdTest" },
       { "class": "AutogradTest" },
       { "class": "CnnTest" },
       { "class": "NnTest" },
@@ -80,7 +86,11 @@
       { "class": "SimpleVocoder" },
       { "class": "TtsModel" },
       { "class": "TtsTest" },
-      { "class": "TransformerModelTest" }
+      { "class": "TransformerModelTest" },
+      { "class": "CudaBackendTest" },
+      { "class": "OnnxMemTest" },
+      { "class": "OnnxModelTest" },
+      { "class": "TensorOpsTest" }
     ]}
   ],
   "export": {

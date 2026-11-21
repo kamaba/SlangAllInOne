@@ -9,6 +9,10 @@ macOs /iOS的环境
 2. 接入dart 
 3. R语言的接入
 
+把FrameData 这个 合并到Std里边吧、、
+
+Tensora里边增加协程还有Isolate 的 协调还有异步计算
+
 
 QTCodeEditor
 1. 解决方案区，没有右键区

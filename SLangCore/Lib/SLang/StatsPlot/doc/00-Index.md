@@ -76,5 +76,5 @@ StatsPlot/
 
 - **零原生依赖**：模块全部为纯 SL（仅引用 Core/Std/Math），无需新增 C 源码、无需 dllImports/vmDlls
 - **默认画布** 720×480，RGBA8 top-down，alpha 恒 255（与 `QLabel.setPixmapRgba` 契约一致）
-- **内置字体** 3×5 位图（ASCII 44 字形：数字 + 大写字母 + `-.%:/+,()=#`；小写自动大写）
+- **内置字体** 3×5 位图（ASCII 48 字形：数字 + 大写字母 + `-.%:/+,()=#`；小写自动大写）
 - **统计函数** Float32 输入输出（SL 主数值型），分位数为 R type-7 线性插值

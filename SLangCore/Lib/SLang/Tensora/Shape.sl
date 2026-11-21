@@ -163,18 +163,14 @@ public class Shape
         ret true
     }
 
-    override bool _eq_( Object obj1 )
+    override bool _eq_( Shape other )
     {
-        if obj1 is Shape other
-        {
-            ret this.equals( other )
-        }
-        ret false
+        ret this.equals( other )
     }
 
-    override bool _ne_( Object obj1 )
+    override bool _ne_( Shape obj1 )
     {
-        ret !this._eq_( obj1 )
+        ret !this.equals( other )
     }
 
     Shape clone()

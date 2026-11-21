@@ -14,7 +14,38 @@
   "systemCalls":
   [
     // 全部能力由 SL 层实现，仅需 Core 的系统调用（SystemPrintln / SystemConvert* / SystemArray*）
-    // 后续接 GPU 后端时在此登记 Tensora.xxx 扩展函数
+    // cvm 原生算子经 Cvm.sl @DllStaticImport 静态绑定直调（不下沉 SystemMethodCall）
+  ],
+  // ── cvm：统一硬件算子计算平台（P2B，Tensora\Cvm\）─────────────────
+  // FFI 导入表（jsonc "dllImports" 段）：cvm 加载 Tensora 模块即预载
+  // sl_tensora_lib.dll 并注册进 FFI.StaticLibrary，
+  // @DllStaticImport ("sl_tensora_lib","slcp_*"/"slc_*") 静态调用点由 cvm 装配期 attribute 注册表
+  // 改写为 CallFFIStatic(77) 直调绑定表。绑定失败（库未注册 / 符号
+  // 缺失）时回退 SL 函数体兜底（返回 0/false/null，Cvm.libIsaId()
+  // 返回 -1 即兜底征兆）。
+  "dllImports":
+  [
+    { "path": "sl_tensora_lib.dll", "name": "sl_tensora_lib", "alias": "sl_tensora_lib", "static": "sl_tensora_lib" }
+  ],
+  // vmDlls 构建规则：导出 Tensora 模块时，Front 用 MSBuild 编译
+  // project 指向的 VS 工程（路径相对本 jsonc 所在目录），并把产出的
+  // sl_tensora_lib.dll 拷贝到与 Tensora.module.json 相同的目录
+  // （out/export/Tensora/），即上方 dllImports 别名指向的位置。
+  // C 实现位于 Tensora\Cvm\cvm_sl_tensora_lib\cvm_sl_tensora_lib.vcxproj
+  // （cvm 合一工程：CPU / CUDA / 后续 ROCm·TPU·NPU 平台的源文件都在这一
+  // 工程内，产出单一 sl_tensora_lib.dll）：
+  //   sl_cpu_lib.c          CPU 入口 / cpuid+XCR0 检测 / 函数指针表分派
+  //   slcp_kernels_sse2.c   SSE2 保底 kernel（x64 基线，无 /arch 开关）
+  //   slcp_kernels_avx2.c   AVX2 kernel（per-file /arch:AVX2）
+  //   slcp_kernels_avx512.c AVX-512F/VL/DQ kernel（per-file /arch:AVX512）
+  //   slcp_kernels_neon.c   NEON kernel（ARM64 预留，x64 工程不编译）
+  //   sl_cuda_lib.c         NVIDIA GPU：CUDA 驱动 API（slc_*）运行期解析
+  //   vm_sl_cuda.h          nvcuda.dll，零 Toolkit 依赖；SL 绑定在 Cvm\Cuda.sl
+  // 零外部依赖；CPU Tier-1 kernel 与 Tensora L0 位级一致（仅 IEEE 单舍入
+  // 指令、禁 FMA，TensoraBackend.md §6.1.4）。后续 ROCm/TPU/NPU 等平台
+  // 在该工程内追加源文件即可。
+  "vmDlls": [
+    { "project": "Cvm/cvm_sl_tensora_lib/cvm_sl_tensora_lib.vcxproj", "name": "sl_tensora_lib.dll", "configuration": "Debug", "platform": "x64" }
   ],
   "compile": {
     "optimize": false,
@@ -35,7 +66,16 @@
       { "path": "Math.sl",    "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Random.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Device.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
+      { "path": "Cvm/Cpu_x64.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Cpu_arm64.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Tpu.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Npu.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Onnx.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Mem.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Cvm.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
+      { "path": "Cvm/Cuda.sl", "group": "tensora", "tag": "cvm", "ignore": false, "priority": 0 },
       { "path": "Backends/BackendRegistry.sl", "group": "tensora", "tag": "core", "ignore": false, "priority": 0 },
+      { "path": "Backends/CudaBackend.sl", "group": "tensora", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Tensor.sl",  "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Init.sl",    "group": "tensora", "tag": "core",  "ignore": false, "priority": 0 },
       { "path": "Ops.sl",     "group": "tensora", "tag": "ops",   "ignore": false, "priority": 0 },
@@ -84,7 +124,14 @@
     },
     "data": {
       "defaultBatchSize": 32,
-      "defaultLearningRate": 0.001
+      "defaultLearningRate": 0.001,
+      // P2B（§6.1.3-1）：CPU L1 SIMD 总开关默认值，默认关闭；true 时
+      // Backends.simd*On 阈值表生效，大矩阵走 sl_tensora_lib.dll 原生
+      // kernel（Tier-1 位级一致）。声明性文档：Tensora 为库工程（无
+      // .sp / Project 类），jsonc data.* 注入通道不生效，SL 侧为硬
+      // 默认 false，运行期用 Backends.setSimdEnabled() 覆盖。
+      "tensoraSimdEnabled": false,
+      "tensoraCudaEnabled": false
     }
   },
   "references": [
@@ -92,6 +139,9 @@
     { "path": "../Std", "name": "Std" },
     { "path": "../Math", "name": "Math" }
   ],
+  // 注意：新增类必须追加在 children 末尾（Backends 之后）——插在中间会使
+  // 既有类槽位后移，实测触发 C VM vm_sys_array_set_value_this 访问违例
+  // （TransformerModelTest 训练循环崩，dump: slang.exe.19804.dmp）。
   "struct": [
     { "namespace": "Tensora", "children": [
       { "class": "Shape" },
@@ -154,7 +204,22 @@
       { "class": "EDeviceKind" },
       { "class": "Device" },
       { "class": "BackendError" },
-      { "class": "Backends" }
+      { "class": "Cvm" },
+      { "class": "Backends" },
+      { "class": "Cuda" },
+      { "class": "CudaDevice" },
+      { "class": "CudaBuffer" },
+      { "class": "CudaStream" },
+      { "class": "CudaEvent" },
+      { "class": "CudaKernel" },
+      { "class": "CudaKernelArgs" },
+      { "class": "CudaBackend" },
+      { "class": "Cpu_x64" },
+      { "class": "Cpu_arm64" },
+      { "class": "Tpu" },
+      { "class": "Npu" },
+      { "class": "Onnx" },
+      { "class": "Mem" }
     ]}
   ],
   "export": {

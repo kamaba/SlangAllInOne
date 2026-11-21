@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 # Tensor —— 多维张量（Float32，行主序扁平存储）
 #
 # 存储：_data 一维数组 + _shape（维度）+ _strides（步长）
@@ -132,20 +132,20 @@ public class Tensor
     }
 
     # ── 读迫同步钩子（§5.2.3）───────────────────────────
-    # P1：无设备影子，恒为空操作；P2 起 S2 时在此触发下载协议
+    # S2 时触发下载协议（§5.2.2：P3 前全同步 + P4 循环回填）；CPU 张量空操作
     void ensureHostFresh()
     {
         if this._devDirty
         {
-            # P1 不可达：_devBlock==0 ⇒ _devDirty==false（不变式 I3）
-            this._devDirty = false
+            CudaBackend.downloadFlow( this )
         }
     }
 
     # ── 设备迁移（§5.3 分配协议）────────────────────────
     # to(device)：跨设备移动返回新张量（源不动，§5.2.5 唯一跨设备入口）；
     # 同设备无变化返回自身（对齐 torch.Tensor.to 的 no-op 短路）。
-    # P1：目标设备仅支持 cpu（非 cpu 后端 available()==false，走显式报错）
+    # P2A：GPU 实通路（§5.3 立即分配：预检+记账 + P1+P2 上传 → S0）；
+    # 设备→cpu 下载进新张量（源影子不动）；非 GPU kind 显式报错
     Tensor to( Device target ) throws
     {
         if target == null
@@ -163,11 +163,61 @@ public class Tensor
             {
                 ret this
             }
-            # 设备 -> cpu：P2 实现下载协议（§5.2.2）
+            # 设备 -> cpu：下载协议（§5.2.2 P3+P4），源张量不动
+            Tensor r = Tensor( this._shape.clone() )
+            r._dtype = this._dtype
+            this.ensureHostFresh()
+            for i = 0, i < this._data.length, i++
+            {
+                r._data[i] = this._data[i]
+            }
+            ret r
+        }
+        # 同设备 no-op 短路
+        if !srcCpu
+        {
+            if this._device.sameDevice( target )
+            {
+                ret this
+            }
+        }
+        # cpu -> 设备：v1 实通路仅 GPU；§5.3 立即分配（预检+记账）+上传
+        if target.kind != EDeviceKind.GPU
+        {
+            throw BackendError.UnsupportedOp
+        }
+        if !Backends.available( target.kind )
+        {
             throw BackendError.Unavailable
         }
-        # cpu -> 设备：P2 实现上传协议（§5.2.1）
-        throw BackendError.Unavailable
+        if this._dtype != EDtype.F32
+        {
+            throw BackendError.UnsupportedOp
+        }
+        Int32 bytes = this._data.length * 4
+        Int64 ptr = CudaBackend.allocDevRaw( bytes, target )
+        if ptr == 0
+        {
+            throw BackendError.Unavailable
+        }
+        # OQ-1：源数组 data 指针直接 H2D（零复制零循环）；出口张量置 S2
+        # （dev 权威）——_data 为零填充占位，首次读值时 D2H 直写填充，
+        # 消除旧路径的 O(n) 主机复制循环（h2d_bench：1024² 单张量省 ~1.9s）
+        if !CudaBackend.uploadInto( ptr, this._data, bytes )
+        {
+            CudaBackend.freeDevRaw( ptr, bytes, target )
+            throw BackendError.Unavailable
+        }
+        Tensor r = Tensor()
+        r._shape = this._shape.clone()
+        r._strides = r._shape.strides()
+        r._dtype = this._dtype
+        r._data = Array<Float32>( this._data.length )
+        r._device = target
+        r._devBlock = ptr
+        r._hostDirty = false
+        r._devDirty = true
+        ret r
     }
 
     Tensor cpu() throws
@@ -179,9 +229,55 @@ public class Tensor
     # SL 无析构钩子：长期驻留进程必须显式调用（OQ-8）
     void freeDevice()
     {
+        if this._devBlock != 0 && this._device != null
+        {
+            CudaBackend.freeDevRaw( this._devBlock, this._data.length * 4, this._device )
+        }
         this._devBlock = 0
         this._devDirty = false
         this._hostDirty = true
+    }
+
+    # 张量是否驻留 GPU（算子设备分支判定；位置驱动——已上设备的张量
+    # 不再受 Backends 开关影响，开关只门 to() 入口）
+    bool onGpu()
+    {
+        if this._device == null
+        {
+            ret false
+        }
+        ret this._device.isGpu()
+    }
+
+    # 双侧同 GPU 同卡驻留（设备算子前置；跨设备/混合 v1 走 CPU 合并）
+    bool sameGpuDevice( Tensor other )
+    {
+        if other == null
+        {
+            ret false
+        }
+        if !this.onGpu()
+        {
+            ret false
+        }
+        if other._device == null
+        {
+            ret false
+        }
+        ret this._device.sameDevice( other._device )
+    }
+
+    # 设备算子的 CPU 合并回落出口（§5.2.5：输出设备 = 输入设备）：
+    # 结果挂源设备、主机权威（S1，devBlock=0 惰性上传）——值正确；
+    # §5.2.5 的混合设备 BackendError 语义待算子 throws 通道扩展（v2）
+    Tensor _tagOut( Tensor r )
+    {
+        if this._device != null
+        {
+            r._device = this._device
+            r._hostDirty = true
+        }
+        ret r
     }
 
     # ── 索引访问 ─────────────────────────────────────────
@@ -290,6 +386,25 @@ public class Tensor
     # ── 拷贝 / 填充 ──────────────────────────────────────
     Tensor clone()
     {
+        # 设备分支（§5.2.4）：同设备 D2D（P5，不过主机），出口 S2
+        if this.onGpu() && this._devBlock != 0
+        {
+            if CudaBackend.stageOut( this )
+            {
+                Int64 cbBytes = this._data.length * 4
+                Int64 cb = CudaBackend.allocDevRaw( cbBytes, this._device )
+                if cb != 0
+                {
+                    Cuda.libDeviceSet( this._device.id )
+                    if Cuda.libMemcpyD2D( cb, this._devBlock, cbBytes )
+                    {
+                        ret CudaBackend.deviceTensor( this._shape.clone(), this._device, cb )
+                    }
+                    CudaBackend.freeDevRaw( cb, cbBytes, this._device )
+                }
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         r._dtype = this._dtype
         for i = 0, i < this._data.length, i++
@@ -301,7 +416,29 @@ public class Tensor
 
     void copyFrom( Tensor src )
     {
+        # 设备分支（§5.2.4）：双侧同 GPU 同形 → D2D（P5），出口 S2
+        if this.onGpu() && this._devBlock != 0 && src != null
+        {
+            if src.onGpu() && this._device.sameDevice( src._device )
+            {
+                if this._data.length == src._data.length
+                {
+                    if CudaBackend.stageOut( src )
+                    {
+                        Int64 cpBytes = this._data.length * 4
+                        Cuda.libDeviceSet( this._device.id )
+                        if Cuda.libMemcpyD2D( this._devBlock, src._devBlock, cpBytes )
+                        {
+                            this._hostDirty = false
+                            this._devDirty = true
+                            ret
+                        }
+                    }
+                }
+            }
+        }
         this.ensureHostFresh()
+        src.ensureHostFresh()
         for i = 0, i < this._data.length, i++
         {
             this._data[i] = src._data[i]
@@ -311,6 +448,31 @@ public class Tensor
 
     void fillValue( Float32 value )
     {
+        # 设备分支（§5.2.4）：纯写不 stageOut——整块覆写后主机侧自然
+        # 过期；0 值走 memset8（P5），非 0 走 TFILL kernel；出口 S2
+        if this.onGpu() && this._devBlock != 0
+        {
+            if value == 0.0f
+            {
+                Int64 zb = this._data.length * 4
+                Cuda.libDeviceSet( this._device.id )
+                if Cuda.libMemset8( this._devBlock, 0, zb )
+                {
+                    this._hostDirty = false
+                    this._devDirty = true
+                    ret
+                }
+            }
+            else
+            {
+                if CudaBackend.fillGpu( this, value )
+                {
+                    this._hostDirty = false
+                    this._devDirty = true
+                    ret
+                }
+            }
+        }
         this.ensureHostFresh()
         for i = 0, i < this._data.length, i++
         {
@@ -434,59 +596,206 @@ public class Tensor
     Tensor add( Tensor b )
     {
         Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+        # 设备分支（§6.2 EADD）：out 形状==本侧、b 同形/行向量/标量
+        # → kernel 内 gid % blen 广播映射（§5.2.6）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            if broad.size() == this._data.length
+            {
+                Int32 blen = b._data.length
+                bool okShape = blen == this._data.length
+                if !okShape
+                {
+                    if blen == 1
+                    {
+                        okShape = true
+                    }
+                }
+                if !okShape
+                {
+                    if b.rank() == 2
+                    {
+                        if b.rows() == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                }
+                if okShape
+                {
+                    Tensor g = CudaBackend.elemwise( this, b, 0, blen )
+                    if g != null
+                    {
+                        ret g
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( broad )
         for f = 0, f < broad.size(), f++
         {
             Array<Int32> idx = broad.unflatten( f )
             r.setAt( f, this.pick( idx ) + b.pick( idx ) )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor sub( Tensor b )
     {
         Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+        # 设备分支（§6.2 ESUB）：同 add 的形态判定（op=1）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            if broad.size() == this._data.length
+            {
+                Int32 blen = b._data.length
+                bool okShape = blen == this._data.length
+                if !okShape
+                {
+                    if blen == 1
+                    {
+                        okShape = true
+                    }
+                }
+                if !okShape
+                {
+                    if b.rank() == 2
+                    {
+                        if b.rows() == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                }
+                if okShape
+                {
+                    Tensor g = CudaBackend.elemwise( this, b, 1, blen )
+                    if g != null
+                    {
+                        ret g
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( broad )
         for f = 0, f < broad.size(), f++
         {
             Array<Int32> idx = broad.unflatten( f )
             r.setAt( f, this.pick( idx ) - b.pick( idx ) )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor mul( Tensor b )
     {
         Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+        # 设备分支（§6.2 EMUL）：同 add 的形态判定（op=2）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            if broad.size() == this._data.length
+            {
+                Int32 blen = b._data.length
+                bool okShape = blen == this._data.length
+                if !okShape
+                {
+                    if blen == 1
+                    {
+                        okShape = true
+                    }
+                }
+                if !okShape
+                {
+                    if b.rank() == 2
+                    {
+                        if b.rows() == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                }
+                if okShape
+                {
+                    Tensor g = CudaBackend.elemwise( this, b, 2, blen )
+                    if g != null
+                    {
+                        ret g
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( broad )
         for f = 0, f < broad.size(), f++
         {
             Array<Int32> idx = broad.unflatten( f )
             r.setAt( f, this.pick( idx ) * b.pick( idx ) )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor div( Tensor b )
     {
         Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+        # 设备分支（§6.2 EDIV）：同 add 的形态判定（op=3）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            if broad.size() == this._data.length
+            {
+                Int32 blen = b._data.length
+                bool okShape = blen == this._data.length
+                if !okShape
+                {
+                    if blen == 1
+                    {
+                        okShape = true
+                    }
+                }
+                if !okShape
+                {
+                    if b.rank() == 2
+                    {
+                        if b.rows() == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                }
+                if okShape
+                {
+                    Tensor g = CudaBackend.elemwise( this, b, 3, blen )
+                    if g != null
+                    {
+                        ret g
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( broad )
         for f = 0, f < broad.size(), f++
         {
             Array<Int32> idx = broad.unflatten( f )
             r.setAt( f, this.pick( idx ) / b.pick( idx ) )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor scale( Float32 k )
     {
+        # 设备分支（§6.2 ESCALE）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.scaleGpu( this, k )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = this._data[i] * k
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor addScalar( Float32 k )
@@ -510,6 +819,42 @@ public class Tensor
         int m = this.rows()
         int k = this.cols()
         int n = b.cols()
+        # 设备分支（§6.2 MMUL）：每线程一输出、p 序标量累加（禁 fma）
+        # → 与 L0 逐位一致
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            if this.rank() == 2 && b.rank() == 2
+            {
+                Tensor g = CudaBackend.matmulGpu( this, b, m, k, n )
+                if g != null
+                {
+                    ret g
+                }
+            }
+        }
+        # L1 SIMD 分派（§6.1.1）：CPU 稠密 f32 且规模过阈值走原生
+        # kernel（Tier-1 位级一致）；未启用 / 失败回落下方 L0 循环
+        if this._device == null && this._dtype == EDtype.F32
+        {
+            if b._device == null && b._dtype == EDtype.F32
+            {
+                if this.rank() == 2 && b.rank() == 2
+                {
+                    if Backends.simdMatmulOn( m, k, n )
+                    {
+                        Array<Float32> rd = Backends.simdMatmulArray( this._data, b._data, m, n, k )
+                        if rd != null
+                        {
+                            Tensor t = Tensor()
+                            t._shape = Shape.matrix( m, n )
+                            t._strides = t._shape.strides()
+                            t._data = rd
+                            ret t
+                        }
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( Shape.matrix( m, n ) )
         for i = 0, i < m, i++
         {
@@ -523,7 +868,7 @@ public class Tensor
                 r.setAt( i, j, acc )
             }
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     # ── 原地运算（优化器 / 反传用）───────────────────────
@@ -559,6 +904,15 @@ public class Tensor
 
     void scaleInPlace( Float32 k )
     {
+        # 设备原地分支（§5.2.4）：stageOut 先行（S1→S0）→ ESCALE
+        # dst==src → 出口 S2，不过主机
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            if CudaBackend.scaleInPlaceGpu( this, k )
+            {
+                ret
+            }
+        }
         this.ensureHostFresh()
         for i = 0, i < this._data.length, i++
         {
@@ -570,7 +924,29 @@ public class Tensor
     # ── 归约 ─────────────────────────────────────────────
     Float32 sum()
     {
+        # 设备分支（§6.2 RSUM）：单线程标量序累加 → 与 L0 逐位一致
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Array<Float32> rd = CudaBackend.sumGpu( this )
+            if rd != null
+            {
+                ret rd[0]
+            }
+        }
         this.ensureHostFresh()
+        # L1 SIMD 分派（§6.1.1）：CPU f32 且元素数过阈值走原生 kernel
+        # （标量序 C 循环，Tier-1 位级一致）；失败回落下方 L0 循环
+        if this._device == null && this._dtype == EDtype.F32
+        {
+            if Backends.simdSumOn( this._data.length )
+            {
+                Array<Float32> rd = Backends.simdSumArray( this._data )
+                if rd != null
+                {
+                    ret rd[0]
+                }
+            }
+        }
         Float32 s = 0.0f
         for i = 0, i < this._data.length, i++
         {
@@ -1011,97 +1387,576 @@ public class Tensor
     # ── 数学逐元素（AI 常用）─────────────────────────────
     Tensor exp()
     {
+        # 设备分支（§6.2 t_unary op=3；GPU 无 CRT expf → 容差验收）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 3 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.exp( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor log()
     {
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.safeLog( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor sqrt()
     {
+        # 设备分支（§6.2 t_unary op=5，逐位 sqrt.rn）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 5 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = Mathf.sqrt( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor abs()
     {
+        # 设备分支（§6.2 t_unary op=9，位级一致：符号位清零）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 9 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.abs( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor pow( Float32 p )
     {
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = Mathf.pow( this._data[i], p )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor clamp( Float32 lo, Float32 hi )
     {
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.clamp( this._data[i], lo, hi )
         }
-        ret r
+        ret this._tagOut( r )
+    }
+
+    # ── 基础逐元素补全（PyTorch ElementwiseOps 对齐，P2 期）──────
+    # GPU 分支走 t_unary op 表（CudaBackend.sl ptxUnary 注释对齐）；
+    # 低频函数（sin/cos/…/fmod/激活补充）v1 仅 L0，GPU 驻留张量经
+    # ensureHostFresh 读迫同步后在主机算，出口 _tagOut 保持设备语义。
+
+    # 1/x（CPU：0 → 0 防 VM 除零；GPU op4 div.rn：0 → +inf。
+    # 非零值两路逐位一致，仅 x=0 边缘有此差异——测试避开 0 输入）
+    Tensor reciprocal()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 4 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.reciprocal( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # 1/√x（approx 容差）
+    Tensor rsqrt()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 6 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.rsqrt( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # x²
+    Tensor square()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 15 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.square( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # 2^x
+    Tensor exp2()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 8 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.exp2( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # log₂x（approx 容差）
+    Tensor log2()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 7 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.log2( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # ⌊x⌋（逐位）
+    Tensor floor()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 11 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.floor( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # ⌈x⌉（逐位）
+    Tensor ceil()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 12 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.ceil( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # 四舍五入（逐位）
+    Tensor round()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 13 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.round( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # 符号（-1/0/1；逐位）
+    Tensor sign()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 14 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.sign( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # x - ⌊x⌋
+    Tensor frac()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.fract( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # e^x - 1
+    Tensor expm1()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.expm1( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # ln(1+x)
+    Tensor log1p()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.log1p( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # 浮点取余 this mod b（广播；结果符号随被除数，同 C fmod）
+    Tensor fmod( Tensor b )
+    {
+        Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+        Tensor r = Tensor( broad )
+        this.ensureHostFresh()
+        b.ensureHostFresh()
+        for f = 0, f < broad.size(), f++
+        {
+            Array<Int32> idx = broad.unflatten( f )
+            r.setAt( f, TensorMath.fmod( this.pick( idx ), b.pick( idx ) ) )
+        }
+        ret this._tagOut( r )
+    }
+
+    # ── 三角 / 双曲（L0； Mathf 同名直通）─────────────────
+    Tensor sin()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.sin( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor cos()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.cos( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor tan()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.tan( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor sinh()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.sinh( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor cosh()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = Mathf.cosh( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # ── 激活补充（gelu/silu 带 GPU；其余 L0）──────────────
+
+    # SiLU / Swish：x·sigmoid(x)
+    Tensor silu()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 16 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.silu( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    # GELU（tanh 近似式，同 L0 TensorMath.gelu）
+    Tensor gelu()
+    {
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 17 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.gelu( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor softplus()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.softplus( this._data[i] )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor leakyRelu( Float32 alpha )
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.leakyRelu( this._data[i], alpha )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor elu( Float32 alpha )
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.elu( this._data[i], alpha )
+        }
+        ret this._tagOut( r )
+    }
+
+    Tensor mish()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        for i = 0, i < this._data.length, i++
+        {
+            r._data[i] = TensorMath.mish( this._data[i] )
+        }
+        ret this._tagOut( r )
     }
 
     Tensor relu()
     {
+        # 设备分支（§6.2 t_unary op=0；纯比较语义 → 逐位一致）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 0 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.relu( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor sigmoid()
     {
+        # 设备分支（§6.2 t_unary op=1；容差验收）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 1 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.sigmoid( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor tanh()
     {
+        # 设备分支（§6.2 t_unary op=2；容差验收）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            Tensor g = CudaBackend.unaryGpu( this, 2 )
+            if g != null
+            {
+                ret g
+            }
+        }
+        this.ensureHostFresh()
         Tensor r = Tensor( this._shape.clone() )
         for i = 0, i < this._data.length, i++
         {
             r._data[i] = TensorMath.tanh( this._data[i] )
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     # 对最后一维做 softmax（逐行）
     Tensor softmax()
     {
+        # 设备分支（§6.2 SMAX）：每线程一行，max→exp-sum→归一三遍
+        # 标量序（与 L0 同算法结构；exp 容差验收）
+        if this.onGpu() && this._dtype == EDtype.F32
+        {
+            if this.rank() == 2
+            {
+                int gm = this._shape.dims[0]
+                int gn = this.cols()
+                Tensor g = CudaBackend.softmaxGpu( this, gm, gn )
+                if g != null
+                {
+                    ret g
+                }
+            }
+        }
+        # L1 SIMD 分派（§6.1.1）：CPU 稠密 f32 2D 且规模过阈值走原生
+        # kernel（exp 同 CRT expf，Tier-1 位级一致）；失败回落下方 L0
+        if this._device == null && this._dtype == EDtype.F32
+        {
+            if this.rank() == 2
+            {
+                int sm = this._shape.dims[0]
+                int sn = this.cols()
+                if Backends.simdSoftmaxOn( sm, sn )
+                {
+                    Array<Float32> rd = Backends.simdSoftmaxArray( this._data, sm, sn )
+                    if rd != null
+                    {
+                        Tensor t = Tensor()
+                        t._shape = Shape.matrix( sm, sn )
+                        t._strides = t._shape.strides()
+                        t._data = rd
+                        ret t
+                    }
+                }
+            }
+        }
         Tensor r = Tensor( this._shape.clone() )
         int m = this._shape.dims[0]
         int n = this.cols()
@@ -1125,7 +1980,7 @@ public class Tensor
                 r.setAt( i, j, TensorMath.exp( this.at( i, j ) - mx ) / denom )
             }
         }
-        ret r
+        ret this._tagOut( r )
     }
 
     Tensor logSoftmax()
@@ -1274,11 +2129,87 @@ public class Tensor
 
     Tensor maximum( Tensor b )
     {
+        # 设备分支（§6.2 t_max，op=5；NaN 语义与 L0 同：取非 NaN 侧）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+            if broad != null
+            {
+                if broad.size() == this._data.length
+                {
+                    Int32 blen = b._data.length
+                    bool okShape = blen == this._data.length
+                    if !okShape
+                    {
+                        if blen == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                    if !okShape
+                    {
+                        if b.rank() == 2
+                        {
+                            if b.rows() == 1
+                            {
+                                okShape = true
+                            }
+                        }
+                    }
+                    if okShape
+                    {
+                        Tensor g = CudaBackend.elemwise( this, b, 5, blen )
+                        if g != null
+                        {
+                            ret g
+                        }
+                    }
+                }
+            }
+        }
         ret this._compareWith( b, 6 )
     }
 
     Tensor minimum( Tensor b )
     {
+        # 设备分支（§6.2 t_min，op=4）
+        if this.sameGpuDevice( b ) && this._dtype == EDtype.F32 && b._dtype == EDtype.F32
+        {
+            Shape broad = Shape.broadcastShape( this._shape, b.shape() )
+            if broad != null
+            {
+                if broad.size() == this._data.length
+                {
+                    Int32 blen = b._data.length
+                    bool okShape = blen == this._data.length
+                    if !okShape
+                    {
+                        if blen == 1
+                        {
+                            okShape = true
+                        }
+                    }
+                    if !okShape
+                    {
+                        if b.rank() == 2
+                        {
+                            if b.rows() == 1
+                            {
+                                okShape = true
+                            }
+                        }
+                    }
+                    if okShape
+                    {
+                        Tensor g = CudaBackend.elemwise( this, b, 4, blen )
+                        if g != null
+                        {
+                            ret g
+                        }
+                    }
+                }
+            }
+        }
         ret this._compareWith( b, 7 )
     }
 
@@ -1385,6 +2316,404 @@ public class Tensor
     public static Tensor onesLike( Tensor x )
     {
         ret Tensor.ones( x.shape() )
+    }
+
+    # ── 归约扩展（PyTorch ReductionOps 对齐，L0）──────────
+    # （全局 argmax/argmin 已有上方 int 版本，此处不重复）
+
+    # 累积乘（扁平序）：r[i] = x[0]*x[1]*…*x[i]
+    Tensor cumprod()
+    {
+        this.ensureHostFresh()
+        Tensor r = Tensor( this._shape.clone() )
+        if this._data.length == 0
+        {
+            ret r
+        }
+        Float32 acc = 1.0f
+        for i = 0, i < this._data.length, i++
+        {
+            acc = acc * this._data[i]
+            r._data[i] = acc
+        }
+        ret this._tagOut( r )
+    }
+
+    # 沿 axis 累积乘（keepdim 形态同 sumAlong）
+    Tensor cumprodAlong( Int32 axis )
+    {
+        this.ensureHostFresh()
+        Int32 m = this._shape.dims[0]
+        Int32 n = this.cols()
+        if axis == 1 && this.rank() == 2
+        {
+            Tensor r = Tensor( m, n )
+            for i = 0, i < m, i++
+            {
+                Float32 acc = 1.0f
+                for j = 0, j < n, j++
+                {
+                    acc = acc * this.at( i, j )
+                    r.setAt( i, j, acc )
+                }
+            }
+            ret this._tagOut( r )
+        }
+        if axis == 0 && this.rank() == 2
+        {
+            Tensor r = Tensor( m, n )
+            for j = 0, j < n, j++
+            {
+                Float32 acc = 1.0f
+                for i = 0, i < m, i++
+                {
+                    acc = acc * this.at( i, j )
+                    r.setAt( i, j, acc )
+                }
+            }
+            ret this._tagOut( r )
+        }
+        ret this.cumprod()
+    }
+
+    # 非零元素计数
+    Int32 countNonZero()
+    {
+        this.ensureHostFresh()
+        Int32 c = 0
+        for i = 0, i < this._data.length, i++
+        {
+            if this._data[i] != 0.0f
+            {
+                c += 1
+            }
+        }
+        ret c
+    }
+
+    # ── 代数（L0）──────────────────────────────────────────
+
+    # 向量点积（1D；长度须一致）
+    Float32 dot( Tensor b )
+    {
+        this.ensureHostFresh()
+        b.ensureHostFresh()
+        if this._data.length != b._data.length
+        {
+            ret 0.0f
+        }
+        Float32 acc = 0.0f
+        for i = 0, i < this._data.length, i++
+        {
+            acc = acc + this._data[i] * b._data[i]
+        }
+        ret acc
+    }
+
+    # 外积：this[n] × b[m] -> [n,m]
+    Tensor outer( Tensor b )
+    {
+        this.ensureHostFresh()
+        b.ensureHostFresh()
+        Int32 n = this._data.length
+        Int32 m = b._data.length
+        Tensor r = Tensor( n, m )
+        for i = 0, i < n, i++
+        {
+            for j = 0, j < m, j++
+            {
+                r.setAt( i, j, this._data[i] * b._data[j] )
+            }
+        }
+        ret r
+    }
+
+    # ── 形状操作补全（L0）──────────────────────────────────
+
+    # 去除 axis 维（须为 1）
+    Tensor squeeze( Int32 axis )
+    {
+        Int32 r = this.rank()
+        if axis < 0 || axis >= r
+        {
+            ret null
+        }
+        if this._shape.dims[axis] != 1
+        {
+            ret null
+        }
+        Array<Int32> nd = Array<Int32>( r - 1 )
+        Int32 k = 0
+        for i = 0, i < r, i++
+        {
+            if i != axis
+            {
+                nd[k] = this._shape.dims[i]
+                k += 1
+            }
+        }
+        this.ensureHostFresh()
+        Tensor t = Tensor( Shape( nd ) )
+        for i = 0, i < this._data.length, i++
+        {
+            t._data[i] = this._data[i]
+        }
+        ret t
+    }
+
+    # 在 axis 处插入长度 1 维
+    Tensor unsqueeze( Int32 axis )
+    {
+        Int32 r = this.rank()
+        if axis < 0 || axis > r
+        {
+            ret null
+        }
+        Array<Int32> nd = Array<Int32>( r + 1 )
+        Int32 k = 0
+        for i = 0, i < r + 1, i++
+        {
+            if i == axis
+            {
+                nd[k] = 1
+            }
+            else
+            {
+                if i < axis
+                {
+                    nd[k] = this._shape.dims[i]
+                }
+                else
+                {
+                    nd[k] = this._shape.dims[i - 1]
+                }
+            }
+            k += 1
+        }
+        this.ensureHostFresh()
+        Tensor t = Tensor( Shape( nd ) )
+        for i = 0, i < this._data.length, i++
+        {
+            t._data[i] = this._data[i]
+        }
+        ret t
+    }
+
+    # 沿 axis 维反转（2D：axis 0 上下翻 / axis 1 左右翻）
+    Tensor flip( Int32 axis )
+    {
+        this.ensureHostFresh()
+        if this.rank() != 2
+        {
+            ret null
+        }
+        Int32 m = this._shape.dims[0]
+        Int32 n = this.cols()
+        Tensor r = Tensor( m, n )
+        if axis == 0
+        {
+            for i = 0, i < m, i++
+            {
+                for j = 0, j < n, j++
+                {
+                    r.setAt( i, j, this.at( m - 1 - i, j ) )
+                }
+            }
+        }
+        else
+        {
+            if axis == 1
+            {
+                for i = 0, i < m, i++
+                {
+                    for j = 0, j < n, j++
+                    {
+                        r.setAt( i, j, this.at( i, n - 1 - j ) )
+                    }
+                }
+            }
+            else
+            {
+                ret null
+            }
+        }
+        ret this._tagOut( r )
+    }
+
+    # torch.cat：张量序列沿 axis 拼接（1D axis 0；2D axis 0/1）
+    static Tensor cat( Array<Tensor> ts, Int32 axis )
+    {
+        if ts == null || ts.length == 0
+        {
+            ret null
+        }
+        Int32 n = ts.length
+        # 1D
+        if ts[0].rank() == 1
+        {
+            if axis != 0
+            {
+                ret null
+            }
+            Int32 total = 0
+            for k = 0, k < n, k++
+            {
+                if ts[k].rank() != 1
+                {
+                    ret null
+                }
+                total += ts[k]._data.length
+            }
+            Tensor r1 = Tensor( Shape.vector( total ) )
+            Int32 off = 0
+            for k = 0, k < n, k++
+            {
+                ts[k].ensureHostFresh()
+                for i = 0, i < ts[k]._data.length, i++
+                {
+                    r1._data[off + i] = ts[k]._data[i]
+                }
+                off += ts[k]._data.length
+            }
+        ret r1
+        }
+        # 2D
+        if ts[0].rank() == 2
+        {
+            if axis == 0
+            {
+                Int32 rows = 0
+                Int32 cols = ts[0].cols()
+                for k = 0, k < n, k++
+                {
+                    if ts[k].rank() != 2 || ts[k].cols() != cols
+                    {
+                        ret null
+                    }
+                    rows += ts[k].rows()
+                }
+                Tensor r2 = Tensor( rows, cols )
+                Int32 off = 0
+                for k = 0, k < n, k++
+                {
+                    ts[k].ensureHostFresh()
+                    for i = 0, i < ts[k].rows(), i++
+                    {
+                        for j = 0, j < cols, j++
+                        {
+                            r2.setAt( off + i, j, ts[k].at( i, j ) )
+                        }
+                    }
+                    off += ts[k].rows()
+                }
+        ret r2
+            }
+            if axis == 1
+            {
+                Int32 rows = ts[0].rows()
+                Int32 cols = 0
+                for k = 0, k < n, k++
+                {
+                    if ts[k].rank() != 2 || ts[k].rows() != rows
+                    {
+                        ret null
+                    }
+                    cols += ts[k].cols()
+                }
+                Tensor r3 = Tensor( rows, cols )
+                Int32 off = 0
+                for k = 0, k < n, k++
+                {
+                    ts[k].ensureHostFresh()
+                    for i = 0, i < rows, i++
+                    {
+                        for j = 0, j < ts[k].cols(), j++
+                        {
+                            r3.setAt( i, off + j, ts[k].at( i, j ) )
+                        }
+                    }
+                    off += ts[k].cols()
+                }
+        ret r3
+            }
+        }
+        ret null
+    }
+
+    # ── 构造器补全（torch.arange / linspace / eye）─────────
+
+    # [0, n) 步长 1
+    public static Tensor arange( Int32 n )
+    {
+        Tensor t = Tensor( Shape.vector( n ) )
+        for i = 0, i < n, i++
+        {
+            t._data[i] = SystemConvertFloat32( i )
+        }
+        ret t
+    }
+
+    # [start, end) 步长 step（step 不可为 0）
+    public static Tensor arange( Int32 start, Int32 end, Int32 step )
+    {
+        if step == 0
+        {
+            ret null
+        }
+        Int32 cnt = 0
+        if step > 0
+        {
+            cnt = ( end - start + step - 1 ) / step
+        }
+        else
+        {
+            cnt = ( start - end - step - 1 ) / ( -step )
+        }
+        if cnt <= 0
+        {
+            ret Tensor( Shape.vector( 0 ) )
+        }
+        Tensor t = Tensor( Shape.vector( cnt ) )
+        Int32 v = start
+        for i = 0, i < cnt, i++
+        {
+            t._data[i] = SystemConvertFloat32( v )
+            v += step
+        }
+        ret t
+    }
+
+    # [start, end] 等分 steps 段（含两端）
+    public static Tensor linspace( Float32 start, Float32 end, Int32 steps )
+    {
+        if steps <= 0
+        {
+            ret null
+        }
+        Tensor t = Tensor( Shape.vector( steps ) )
+        if steps == 1
+        {
+            t._data[0] = start
+            ret t
+        }
+        Float32 dv = ( end - start ) / SystemConvertFloat32( steps - 1 )
+        for i = 0, i < steps, i++
+        {
+            t._data[i] = start + dv * SystemConvertFloat32( i )
+        }
+        t._data[steps - 1] = end
+        ret t
+    }
+
+    # n×n 单位矩阵
+    public static Tensor eye( Int32 n )
+    {
+        Tensor t = Tensor( n, n )
+        for i = 0, i < n, i++
+        {
+            t.setAt( i, i, 1.0f )
+        }
+        ret t
     }
 
     override string toString()

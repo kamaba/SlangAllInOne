@@ -1,11 +1,11 @@
 ﻿import Std;
-import SLangCuda;
+import Tensora;
 
 # =========================================================================
-# CudaTest —— SLangCuda 端到端测试（本机 NVIDIA GPU，驱动 API 直连）
+# CudaTest —— Tensora.Cuda（cvm GPU 平台）端到端测试（本机 NVIDIA GPU，驱动 API 直连）
 #
 # 覆盖：
-#   1) 原生层可用性（driverVersion —— 非 fallback 说明 sl_cuda_lib.dll
+#   1) 原生层可用性（driverVersion —— 非 fallback 说明 sl_tensora_lib.dll
 #      已静态预载，@DllStaticImport 直调生效，且 nvcuda.dll 解析成功）
 #   2) 设备枚举与属性（deviceCount / device(0) / cc / SM 数 / warp）
 #   3) 设备内存（alloc / memset8 / upload / download / free / 余量）
@@ -14,7 +14,7 @@ import SLangCuda;
 #      含 i32 参数与 f32 参数两条路径）
 #   6) 错误路径（坏 PTX 返回 null + errorString 非空）
 #
-# SLangCuda 的类都在 namespace SLang 下，故统一用 SLang.xxx 全名访问。
+# Cuda 系七类都在 namespace Tensora 下，故统一用 Tensora.xxx 全名访问。
 # 语义对照 Python：Cuda.initialize() ~= cuda.cudart.cudaInit；
 # CudaBuffer.alloc/upload/download ~ cudaMalloc/cudaMemcpy(H2D/D2H)。
 # =========================================================================
@@ -137,14 +137,14 @@ class CudaTest
         Console.println( "===== CudaTest start =====" )
 
         # ── 1. 原生层可用性 ──────────────────────────────────────
-        check( "T01 initialize() ok", SLang.Cuda.initialize() )
-        Int32 ver = SLang.Cuda.driverVersion()
-        Console.println( "driverVersion = " + ver.toString() + " (" + SLang.Cuda.driverVersionText() + ")" )
+        check( "T01 initialize() ok", Tensora.Cuda.initialize() )
+        Int32 ver = Tensora.Cuda.driverVersion()
+        Console.println( "driverVersion = " + ver.toString() + " (" + Tensora.Cuda.driverVersionText() + ")" )
         check( "T02 driverVersion > 0 (DLL loaded, nvcuda resolved, not SL fallback)", ver > 0 )
-        check( "T03 driverVersionText not unknown", SLang.Cuda.driverVersionText() != "unknown" )
+        check( "T03 driverVersionText not unknown", Tensora.Cuda.driverVersionText() != "unknown" )
 
         # ── 2. 设备枚举与属性 ────────────────────────────────────
-        Int32 ndev = SLang.Cuda.deviceCount()
+        Int32 ndev = Tensora.Cuda.deviceCount()
         Console.println( "deviceCount = " + ndev.toString() )
         check( "T04 deviceCount >= 1", ndev >= 1 )
         if ndev < 1
@@ -154,7 +154,7 @@ class CudaTest
             ret
         }
 
-        SLang.CudaDevice dev = SLang.Cuda.device( 0 )
+        Tensora.CudaDevice dev = Tensora.Cuda.device( 0 )
         check( "T05 device(0) not null", dev != null )
         Console.println( "device[0] = " + dev.toString() )
         check( "T06 device name not empty", dev.name != "" )
@@ -165,10 +165,10 @@ class CudaTest
         check( "T11 totalMemory > 1GB", dev.totalMemory > 1073741824 )
 
         check( "T12 makeCurrent ok", dev.makeCurrent() )
-        check( "T13 currentDevice == 0", SLang.Cuda.currentDevice() == 0 )
+        check( "T13 currentDevice == 0", Tensora.Cuda.currentDevice() == 0 )
 
-        Int64 memTotal = SLang.Cuda.memTotalBytes()
-        Int64 memFree = SLang.Cuda.memFreeBytes()
+        Int64 memTotal = Tensora.Cuda.memTotalBytes()
+        Int64 memFree = Tensora.Cuda.memFreeBytes()
         Console.println( "memTotal = " + memTotal.toString() + " memFree = " + memFree.toString() )
         check( "T14 memTotalBytes > 0", memTotal > 0 )
         check( "T15 memFreeBytes > 0", memFree > 0 )
@@ -176,7 +176,7 @@ class CudaTest
 
         # ── 3. 设备内存：alloc / upload / download ───────────────
         int n = 4096
-        SLang.CudaBuffer buf = SLang.CudaBuffer.alloc( n * 4 )
+        Tensora.CudaBuffer buf = Tensora.CudaBuffer.alloc( n * 4 )
         check( "T17 buffer alloc ok", buf != null )
         check( "T18 buffer sizeBytes == n*4", buf.sizeBytes == n * 4 )
 
@@ -203,7 +203,7 @@ class CudaTest
         check( "T25 memset8 pattern 0x05050505", filled == 0x05050505 )
 
         # ── 4. 流与事件 ──────────────────────────────────────────
-        SLang.CudaStream stream = SLang.CudaStream.create()
+        Tensora.CudaStream stream = Tensora.CudaStream.create()
         check( "T26 stream create ok", stream != null )
         check( "T27 stream uploadAsync ok", buf.uploadAsync( host, n * 4, stream ) )
         check( "T28 stream downloadAsync ok", buf.downloadAsync( back, n * 4, stream ) )
@@ -211,28 +211,28 @@ class CudaTest
         Float32 av0 = Memory.readFloat32( back, 0 )
         check( "T30 async roundtrip [0] == 0", av0 == 0.0f )
 
-        SLang.CudaEvent evStart = SLang.CudaEvent.createTiming()
-        SLang.CudaEvent evEnd = SLang.CudaEvent.createTiming()
+        Tensora.CudaEvent evStart = Tensora.CudaEvent.createTiming()
+        Tensora.CudaEvent evEnd = Tensora.CudaEvent.createTiming()
         check( "T31 timing events created", evStart != null && evEnd != null )
         check( "T32 event record ok", evStart.record( stream ) )
         buf.uploadAsync( host, n * 4, stream )
         check( "T33 event record end ok", evEnd.record( stream ) )
         check( "T34 event sync ok", evEnd.synchronize() )
-        Float64 ms = SLang.CudaEvent.elapsedMs( evStart, evEnd )
+        Float64 ms = Tensora.CudaEvent.elapsedMs( evStart, evEnd )
         Console.println( "elapsedMs = " + SystemConvertString( ms ) )
         check( "T35 elapsedMs >= 0", ms >= 0.0 )
 
         # ── 5. PTX 内核：vec_add（u64 x3 + u32 参数）─────────────
-        SLang.CudaKernel kAdd = SLang.CudaKernel.fromPtx( CudaTest.vecAddPtx(), "vec_add" )
+        Tensora.CudaKernel kAdd = Tensora.CudaKernel.fromPtx( CudaTest.vecAddPtx(), "vec_add" )
         if kAdd == null
         {
-            Console.println( "fromPtx(vec_add) failed: " + SLang.Cuda.errorString() )
+            Console.println( "fromPtx(vec_add) failed: " + Tensora.Cuda.errorString() )
         }
         check( "T36 fromPtx(vec_add) not null", kAdd != null )
 
-        SLang.CudaBuffer a = SLang.CudaBuffer.alloc( n * 4 )
-        SLang.CudaBuffer b = SLang.CudaBuffer.alloc( n * 4 )
-        SLang.CudaBuffer outBuf = SLang.CudaBuffer.alloc( n * 4 )
+        Tensora.CudaBuffer a = Tensora.CudaBuffer.alloc( n * 4 )
+        Tensora.CudaBuffer b = Tensora.CudaBuffer.alloc( n * 4 )
+        Tensora.CudaBuffer outBuf = Tensora.CudaBuffer.alloc( n * 4 )
         Int64 hb = Memory.allocArray( n, "f32" )
         for i = 0, i < n, i++
         {
@@ -242,14 +242,14 @@ class CudaTest
         a.upload( host )
         b.upload( hb )
 
-        SLang.CudaKernelArgs args = SLang.CudaKernelArgs( 4 )
+        Tensora.CudaKernelArgs args = Tensora.CudaKernelArgs( 4 )
         args.addPtr( a.devicePointer )
         args.addPtr( b.devicePointer )
         args.addPtr( outBuf.devicePointer )
         args.addI32( n )
         check( "T37 args count == 4", args.count == 4 )
         check( "T38 launch1D ok", kAdd.launch1D( n, 256, null, args ) )
-        check( "T39 ctx synchronize ok", SLang.Cuda.synchronize() )
+        check( "T39 ctx synchronize ok", Tensora.Cuda.synchronize() )
         outBuf.download( back )
 
         # 抽查 [0] [1] [123] [n-1]：out[i] == i + 2i == 3i
@@ -266,10 +266,10 @@ class CudaTest
         check( "T40 vec_add results == 3*i", addOk )
 
         # ── 6. PTX 内核：vec_scale（u64 x2 + u32 + f32 参数）─────
-        SLang.CudaKernel kScale = SLang.CudaKernel.fromPtx( CudaTest.vecScalePtx(), "vec_scale" )
+        Tensora.CudaKernel kScale = Tensora.CudaKernel.fromPtx( CudaTest.vecScalePtx(), "vec_scale" )
         check( "T41 fromPtx(vec_scale) not null", kScale != null )
 
-        SLang.CudaKernelArgs args2 = SLang.CudaKernelArgs( 4 )
+        Tensora.CudaKernelArgs args2 = Tensora.CudaKernelArgs( 4 )
         args2.addPtr( a.devicePointer )
         args2.addPtr( outBuf.devicePointer )
         args2.addI32( n )
@@ -284,10 +284,10 @@ class CudaTest
         check( "T44 vec_scale out[100] == 1000 and tail == 40950", s100 == 1000.0f && sTail == 40950.0f )
 
         # ── 7. 错误路径：坏 PTX ──────────────────────────────────
-        SLang.CudaKernel kBad = SLang.CudaKernel.fromPtx( ".version 8.0\n.this is not valid ptx\n", "nope" )
+        Tensora.CudaKernel kBad = Tensora.CudaKernel.fromPtx( ".version 8.0\n.this is not valid ptx\n", "nope" )
         check( "T45 bad ptx returns null", kBad == null )
-        check( "T46 errorString not empty after failure", SLang.Cuda.errorString() != "" )
-        Console.println( "bad ptx error = [" + SLang.Cuda.errorString() + "]" )
+        check( "T46 errorString not empty after failure", Tensora.Cuda.errorString() != "" )
+        Console.println( "bad ptx error = [" + Tensora.Cuda.errorString() + "]" )
 
         # ── 8. 清理 ──────────────────────────────────────────────
         args.free()

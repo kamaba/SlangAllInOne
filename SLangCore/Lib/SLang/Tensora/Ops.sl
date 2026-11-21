@@ -67,6 +67,28 @@ public class Ops
         int k = kernel.shape().dims[1]
         int outH = ( h + 2 * padding - k ) / stride + 1
         int outW = ( w + 2 * padding - k ) / stride + 1
+        # L1 SIMD 分派（§6.1.1）：CPU 稠密 f32 且乘加体积过阈值走原生
+        # kernel（(ch,ky,kx) 标量序累加，Tier-1 位级一致）；失败回落 L0
+        if input._device == null && input._dtype == EDtype.F32
+        {
+            if kernel._device == null && kernel._dtype == EDtype.F32
+            {
+                if Backends.simdConv2dOn( c, outH, outW, k )
+                {
+                    Array<Float32> rd = Backends.simdConv2dArray( input._data, kernel._data,
+                                                                  c, h, w, k, stride, padding,
+                                                                  outH, outW )
+                    if rd != null
+                    {
+                        Tensor t = Tensor()
+                        t._shape = Shape.cube( 1, outH, outW )
+                        t._strides = t._shape.strides()
+                        t._data = rd
+                        ret t
+                    }
+                }
+            }
+        }
         Tensor outV = Tensor( Shape.cube( 1, outH, outW ) )
         for oy = 0, oy < outH, oy++
         {

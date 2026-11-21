@@ -228,4 +228,102 @@ public class TensorMath
         }
         ret mx + Mathf.log( acc )
     }
+
+    # ── 基础算子标量补全（PyTorch 基础逐元素方法，Tensor 层配套）──
+
+    # 1/x（0 返回 0，防炸）
+    public static Float32 reciprocal( Float32 x )
+    {
+        if x == 0.0f
+        {
+            ret 0.0f
+        }
+        ret 1.0f / x
+    }
+
+    # x²
+    public static Float32 square( Float32 x )
+    {
+        ret x * x
+    }
+
+    # 2^x
+    public static Float32 exp2( Float32 x )
+    {
+        ret Mathf.exp( x * 0.6931471805599453f )
+    }
+
+    # log2(x)
+    public static Float32 log2( Float32 x )
+    {
+        ret Mathf.log( x ) * 1.4426950408889634f
+    }
+
+    # e^x - 1（小 x 数值稳定版）
+    public static Float32 expm1( Float32 x )
+    {
+        if x > -0.0001f && x < 0.0001f
+        {
+            ret x + 0.5f * x * x
+        }
+        ret Mathf.exp( x ) - 1.0f
+    }
+
+    # ln(1+x)（小 x 数值稳定版）
+    public static Float32 log1p( Float32 x )
+    {
+        if x > -0.0001f && x < 0.0001f
+        {
+            ret x - 0.5f * x * x
+        }
+        ret Mathf.log( 1.0f + x )
+    }
+
+    # 浮点取余（同 C fmod / torch.fmod：结果符号随被除数。
+    # 商按截断（向零取整）而非向下取整——负被除数时与
+    # floor-mod（torch.remainder 语义）不同：fmod(-5,2)=-1）
+    public static Float32 fmod( Float32 a, Float32 b )
+    {
+        if b == 0.0f
+        {
+            ret 0.0f
+        }
+        Float32 q = a / b
+        Float32 t = Mathf.floor( q )
+        if q < 0.0f && q != t
+        {
+            t = t + 1.0f
+        }
+        ret a - b * t
+    }
+
+    # 小数部分 x - floor(x)
+    public static Float32 fract( Float32 x )
+    {
+        ret x - Mathf.floor( x )
+    }
+
+    # 双曲反函数（log 表达式；|x| 边界裁剪防 log(0)）
+    public static Float32 asinh( Float32 x )
+    {
+        ret Mathf.log( x + Mathf.sqrt( x * x + 1.0f ) )
+    }
+
+    public static Float32 acosh( Float32 x )
+    {
+        if x < 1.0f
+        {
+            ret 0.0f
+        }
+        ret Mathf.log( x + Mathf.sqrt( x * x - 1.0f ) )
+    }
+
+    public static Float32 atanh( Float32 x )
+    {
+        if x <= -0.9999f || x >= 0.9999f
+        {
+            ret 0.0f
+        }
+        ret 0.5f * Mathf.log( ( 1.0f + x ) / ( 1.0f - x ) )
+    }
 }

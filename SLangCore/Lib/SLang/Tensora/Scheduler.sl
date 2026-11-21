@@ -24,13 +24,13 @@ public class LRScheduler
         ret this._step
     }
 
-    public virtual Float32 getLr()
+    public Float32 getLr()
     {
         ret this.baseLr
     }
 
     # 推进一步并把学习率写回优化器
-    public virtual void step()
+    public void step()
     {
         this._step = this._step + 1
         this.optimizer.setLr( this.getLr() )

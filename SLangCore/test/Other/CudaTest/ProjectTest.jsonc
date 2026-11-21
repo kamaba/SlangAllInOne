@@ -2,7 +2,7 @@
   "project":
   {
     "name": "ProjectTest",
-    "desc": "Cuda test project - end-to-end CUDA driver-API tests (device / memory / copy / stream / event / PTX kernel launch) via SLangCuda module, running on the local NVIDIA GPU",
+    "desc": "Cuda test project - end-to-end CUDA driver-API tests (device / memory / copy / stream / event / PTX kernel launch) via Tensora module (cvm CUDA platform), running on the local NVIDIA GPU",
     "mainVersion": 0,
     "subVersion": 0,
     "buildVersion": 1,
@@ -40,7 +40,8 @@
   "references": [
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
-    { "path": "../../../../out/export/SLangCuda/SLangCuda.module.json" }
+    { "path": "./lib/Math.module.slb" },
+    { "path": "../../../../out/export/Tensora/Tensora.module.slb" }
   ],
   "struct": [
   ],

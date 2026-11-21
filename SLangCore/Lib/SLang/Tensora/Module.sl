@@ -59,7 +59,7 @@ public class Module
     }
 
     # ── 前向 / 反向 ──────────────────────────────────────
-    public virtual Tensor forward( Tensor x )
+    public Tensor forward( Tensor x )
     {
         this.ensureLayers()
         Tensor cur = x
@@ -70,7 +70,7 @@ public class Module
         ret cur
     }
 
-    public virtual Tensor backward( Tensor gradOutput )
+    public Tensor backward( Tensor gradOutput )
     {
         this.ensureLayers()
         Tensor g = gradOutput

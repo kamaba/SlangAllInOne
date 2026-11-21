@@ -103,6 +103,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_php_embed", "..\plugin\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sl_php_embed_frontend", "..\plugin\php_embed\frontend\sl_php_embed_frontend.vcxproj", "{A65DD7F5-FE79-46C3-AED3-D0C1D8D595A4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvm_sl_tensora_lib", "SLangCore\Lib\SLang\Tensora\Cvm\cvm_sl_tensora_lib\cvm_sl_tensora_lib.vcxproj", "{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -497,6 +499,18 @@ Global
 		{A65DD7F5-FE79-46C3-AED3-D0C1D8D595A4}.Release|x64.Build.0 = Release|x64
 		{A65DD7F5-FE79-46C3-AED3-D0C1D8D595A4}.Release|x86.ActiveCfg = Release|x64
 		{A65DD7F5-FE79-46C3-AED3-D0C1D8D595A4}.Release|x86.Build.0 = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|Any CPU.Build.0 = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|x64.ActiveCfg = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|x64.Build.0 = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|x86.ActiveCfg = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Debug|x86.Build.0 = Debug|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|Any CPU.ActiveCfg = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|Any CPU.Build.0 = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|x64.ActiveCfg = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|x64.Build.0 = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|x86.ActiveCfg = Release|x64
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814}.Release|x86.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -542,6 +556,7 @@ Global
 		{D0ED924D-D132-48BA-886E-EA932582140E} = {60C2FD81-7E9F-4A0B-9B1D-5E6F708192A3}
 		{898109F2-3C46-455B-9121-D280AF9FBF37} = {D0ED924D-D132-48BA-886E-EA932582140E}
 		{A65DD7F5-FE79-46C3-AED3-D0C1D8D595A4} = {D0ED924D-D132-48BA-886E-EA932582140E}
+		{D4E8F2A6-1B39-4C58-A7E2-6F0B3D95C814} = {960AABCC-273F-4640-9671-4E9874F0B526}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7E1A0F4-9D52-4A3B-8E64-7F1B5A2C9D30}

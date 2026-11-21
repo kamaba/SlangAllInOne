@@ -328,7 +328,8 @@ BackendTest
         Tensor cat = Ops.catTensors( cl, 1 )
         Shape cats = cat.shape()
         check( "cat3d shape (2,3,2)", cats.dims[0] == 2 && cats.dims[1] == 3 && cats.dims[2] == 2 )
-        check( "cat3d seam", cat.at( 0, 1, 0 ) == 100.0f && cat.at( 0, 2, 1 ) == 101.0f && cat.at( 0, 0, 1 ) == 1.0f )
+        # seam 两侧：c1 区末行 2 / c2 区首行 100,101 / c1 区首行 1
+        check( "cat3d seam", cat.at( 0, 1, 0 ) == 2.0f && cat.at( 0, 2, 0 ) == 100.0f && cat.at( 0, 2, 1 ) == 101.0f && cat.at( 0, 0, 1 ) == 1.0f )
 
         # stackAxis：3 x [2] -> [3,2]
         Tensor v1 = Tensor.vector( [ 1.0f, 2.0f ] )

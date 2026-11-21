@@ -14,6 +14,7 @@ Project
 
         TensorTest.fun()
         BackendTest.fun()
+        CpuSimdTest.fun()
         AutogradTest.fun()
         CnnTest.fun()
         NnTest.fun()
@@ -21,12 +22,18 @@ Project
         DataTest.fun()
         TtsTest.fun()
         TransformerModelTest.fun()
+        CudaBackendTest.fun()
+        OnnxMemTest.fun()
+        OnnxModelTest.fun()
+        TensorOpsTest.fun()
 
         SystemPrintln( "===== TensoraTest _main_ end =====" )
     }
     _test_()
     {
         # 单跑某一个用例时在这里加：例如 TensorTest.fun()
+        BackendTest.fun()
+        CpuSimdTest.fun()
     }
     _before_()
     {

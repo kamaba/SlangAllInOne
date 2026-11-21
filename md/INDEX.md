@@ -78,6 +78,7 @@ HttpServer / WebUI 为独立 module 包。
 - **[lib/Std](lib/Std/README.md)** —— 系统与生态库：[Component](lib/Std/Component.md)、IO `IO/`（Console / File / FileStream / Directory / Path / StdStream）、文本 `Text/`（Json / Csv / Xml / Toml / Yaml / Codecs / RegExp）、网络 `net/`（TcpSocket / UdpSocket / NetStream / TlsStream / HttpClient / Websocket / Mqtt / Uri / IpProtocal）、[DB/Sqlite](lib/Std/DB/Sqlite.md)、[Cache/Redis](lib/Std/Cache/Redis.md)、调试 `Debug/`（Log / Profiling / Trace）、编码 `Encoding/`（Base64 / Encoding / Md5 / Sha1 / Sha256）、压缩 `Zip/`（Zip / GZip）、[GPU/GPU](lib/Std/GPU/GPU.md)、FFI `FFI/`（Library / Struct）、[Isolate](lib/Std/Isolate/Isolate.md)（Capability / 端口 / 组 / 状态 / StreamBridge / TransferableData 等 10 篇）、`OS/`（DateTime / Process / Timer）、[InstanceAttr](lib/Std/InstanceAttr.md)、[Server](lib/Std/Server.md)
 - **[lib/HttpServer](lib/HttpServer/README.md)** —— 内置 HTTP 服务端框架（独立 module，17 篇）：HttpServerCore / Server / Router / RouteAttrs / Request / Response / BodyParser / HttpBodyReader / MultipartReader / StreamIo / Upload / Jwt / ApiResult / WebSocketServer / Plugin / Plugins / Docs
 - **[lib/WebUI](lib/WebUI/README.md)** —— SLangWebUI 界面包（独立 module）
+- **[StatsPlot（R 式统计绘图库，模块内文档）](../SLangCore/Lib/SLang/StatsPlot/doc/00-Index.md)** —— 像 R 一样整合数据与画图：DataFrame（data.frame）/ Stats（mean/median/sd/quantile/cor/table）/ Plot 六图表（bar/line/scatter/hist/pie/boxplot，纯 SL 软光栅）/ PlotIo（ASCII 预览 + RGBA8 上屏）；模块测试 `SLangCore/test/Other/StatsPlotTest/`
 
 ### 3.4 log\ —— 日志系统
 

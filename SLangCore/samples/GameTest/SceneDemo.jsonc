@@ -28,7 +28,8 @@
       { "path": "QTHost.sl", "group": "game", "tag": "game", "ignore": false, "priority": 0 },
       { "path": "SceneScripts.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 },
       { "path": "SceneSmokeTest.sl", "group": "game", "tag": "game", "ignore": false, "priority": 2 },
-      { "path": "SceneDemo.sl", "group": "game", "tag": "game", "ignore": false, "priority": 3 }
+      { "path": "SceneDemo.sl", "group": "game", "tag": "game", "ignore": false, "priority": 3 },
+      { "path": "SceneDemoWebUI.sl", "group": "game", "tag": "game", "ignore": false, "priority": 4 }
     ]
   },
   "references": [
@@ -37,7 +38,9 @@
     { "path": "../../../../../SLangCore/Lib/Math", "name": "Math" },
     { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
     { "path": "D:/project/lang/SlangAllInOne/out/export/SLangRender/SLangRender.module.slb", "name": "SLangRender" },
-    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" },
+    { "path": "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/WebUI/export/SLangWebUI/SLangWebUI.module.json", "name": "SLangWebUI" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangImage/SLangImage.module.json", "name": "SLangImage" }
   ],
   "struct": [
     { "class": "QTHost" },
@@ -47,7 +50,8 @@
     { "class": "ProbeScript" },
     { "class": "SceneScriptFactories" },
     { "class": "SceneSmokeTest" },
-    { "class": "SceneDemo" }
+    { "class": "SceneDemo" },
+    { "class": "SceneDemoWebUI" }
   ],
   "export": {
     "moduleName": "SceneDemo",

@@ -42,25 +42,27 @@ c.free()
 ### 2.1 三种构造方式
 
 ```sl
-# 方式一：按列（R data.frame）
-List<string> names = List<string>()
-names.add( "x" ).add( "y" )
-List<List<Float32>> cols = List<List<Float32>>()
-List<Float32> cx = List<Float32>();  cx.add( 1.0f ).add( 2.0f ).add( 3.0f )
-List<Float32> cy = List<Float32>();  cy.add( 10.0f ).add( 20.0f ).add( 30.0f )
-cols.add( cx ).add( cy )
-StatsPlot.DataFrame df = StatsPlot.DataFrame.fromColumns( names, cols )
-# df.rowCount() == 3, df.colCount() == 2
-
-# 方式二：按行
-StatsPlot.DataFrame df2 = StatsPlot.DataFrame.fromRows( names, rows )   # rows: 每行一列 List<Float32>
-
-# 方式三：CSV 文本（首行是列名，分隔符可指定，默认逗号）
+# 方式一：CSV 文本（首行是列名，分隔符可指定，默认逗号）
 StatsPlot.DataFrame df3 = StatsPlot.DataFrame.fromCsv( "a,b\n1,2\n3,4\n" )
+
+# 方式二：列式构造（R data.frame；create + addColumn）
+List<string> names = List<string>()
+names.add( "x" )
+names.add( "y" )
+StatsPlot.DataFrame df = StatsPlot.DataFrame.create( names )
+List<Float32> cx = List<Float32>()
+cx.add( 1.0f ).add( 2.0f ).add( 3.0f )
+List<Float32> cy = List<Float32>()
+cy.add( 10.0f ).add( 20.0f ).add( 30.0f )
+df.addColumn( "x", cx )
+df.addColumn( "y", cy )
+# df.rowCount() == 3, df.colCount() == 2
 ```
 
 - CSV 数值按 Float32 解析；空行跳过；每列必须等长（否则多出的行丢弃）。
 - 全部**数值列**，无字符串列（v0.1）。
+- `fromColumns/fromRows` 为模块内部工具：嵌套泛型参数在跨模块调用时 IR 链接不可解析（见 01-Design §5.2），列式构造请用 `create+addColumn`；`List.add` 返回 void 不能链式。
+- `List[i]` 下标在部分上下文受限，跨模块数据读取请先取局部列再 `_getItem_( i )`（示例见 2.3）。
 
 ### 2.2 读取与切片
 
@@ -80,10 +82,11 @@ List<Float32> row0 = df.rowValues( 0 )        # 第 0 行各列值
 
 ```sl
 # 筛选：给定与行数等长的布尔列表（R 逻辑下标）
+List<Float32> col = df.column( "x" )          # 先取局部列（跨模块下标访问须用 _getItem_）
 List<bool> which = List<bool>()
 for i = 0, i < df.rowCount(), i = i + 1
 {
-    which.add( df.column( "x" )[ i ] > 1.5f )
+    which.add( col._getItem_( i ) > 1.5f )
 }
 StatsPlot.DataFrame big = df.filter( which )
 
@@ -164,7 +167,11 @@ List<Int32> cnt  = StatsPlot.Stats.histCounts( v, 0 )
 
 ```sl
 # 柱状图（R barplot，自带数值标签）
-StatsPlot.PlotCanvas c1 = StatsPlot.Plot.barplot( df.column( "sales" ), df.column( "name" ), "Sales" )
+List<string> labels = List<string>()
+labels.add( "A" )
+labels.add( "B" )
+labels.add( "C" )
+StatsPlot.PlotCanvas c1 = StatsPlot.Plot.barplot( df.column( "sales" ), labels, "Sales" )
 
 # 折线图（R plot(type="l")）
 StatsPlot.PlotCanvas c2 = StatsPlot.Plot.lineplot( df.column( "sales" ), "Sales trend" )
@@ -176,7 +183,7 @@ StatsPlot.PlotCanvas c3 = StatsPlot.Plot.scatter( xs, ys, "xy" )
 StatsPlot.PlotCanvas c4 = StatsPlot.Plot.histogram( df.column( "age" ), 0, "Age" )
 
 # 饼图（R pie；右侧图例列标签，无标签时显示百分占比）
-StatsPlot.PlotCanvas c5 = StatsPlot.Plot.pie( df.column( "sales" ), df.column( "name" ), "Share" )
+StatsPlot.PlotCanvas c5 = StatsPlot.Plot.pie( df.column( "sales" ), labels, "Share" )
 
 # 箱线图（R boxplot；每组一箱：min~max 须线 + Q1~Q3 箱 + 中位线）
 # 组数据以“扁平向量 + 分组计数”传入（嵌套泛型参数跨模块调用受限）

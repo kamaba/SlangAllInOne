@@ -1,6 +1,6 @@
-# CudaTest —— SLangCuda 端到端测试工程
+# CudaTest —— Tensora.Cuda 端到端测试工程
 
-对 `SlangAllInOne\SLangCore\Lib\SLang\Cuda\`（SLangCuda 模块，namespace `SLang`）
+对 Tensora 模块的 cvm GPU 平台（`SlangAllInOne\SLangCore\Lib\SLang\Tensora\Cvm\Cuda.sl`，namespace `Tensora`）
 做真实环境验证：本机 NVIDIA GPU 上完成设备枚举、显存管理、主机↔设备拷贝、
 流/事件、PTX JIT 内核启动（vec_add / vec_scale）与错误路径。
 
@@ -8,7 +8,7 @@
 
 ```
 test/Other/CudaTest/
-├── ProjectTest.jsonc     # 工程配置（references 里引了 SLangCuda 模块）
+├── ProjectTest.jsonc     # 工程配置（references 里引了 Tensora 模块）
 ├── ProjectTest.sp         # _main_ 入口：跑 CudaTest.fun()
 ├── CudaTest.sl           # 用例 T01~T47 + 两个 PTX 内核生成器
 └── ProjectTest.md        # 本文档
@@ -20,13 +20,13 @@ test/Other/CudaTest/
 
 | 模块 | 说明 |
 | --- | --- |
-| `./lib/Core.module.slb` / `./lib/Std.module.slb` | 系统库（工程内落空自动回落官方库直查） |
-| `out/export/SLangCuda/SLangCuda.module.json` | 被测库，未命中即报错中止 |
+| `./lib/Core.module.slb` / `./lib/Std.module.slb` / `./lib/Math.module.slb` | 系统库（工程内落空自动回落官方库直查） |
+| `out/export/Tensora/Tensora.module.slb` | 被测库（含 cvm CUDA 绑定），未命中即报错中止 |
 
-被测库 SLangCuda 需先编译一次（非系统库，compile-stdlib 三件套不覆盖）：
+被测库 Tensora 需先编译一次（非系统库，compile-stdlib 三件套不覆盖）：
 
 ```powershell
-dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Cuda\Cuda.sp --format binary+json --no-banner
+dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Tensora\Tensora.sp --format binary+json --no-banner
 ```
 
 再编译本工程（产物落 `SlangAllInOne\out\export\CudaTest\`）：
@@ -42,7 +42,7 @@ dotnet run --project SlangAllInOne\Project\CSimpleVMTest\CSimpleVMTest.csproj --
 ```
 
 宿主把产物 stage 进发布包 `<package>\CudaTest\` 并**联动拷贝引用模块
-`SLangCuda\`**（`StageReferencedModules`），其中原生 DLL `sl_cuda_lib.dll`
+`Tensora\`**（`StageReferencedModules`），其中原生 DLL `sl_tensora_lib.dll`（CPU/CUDA 合一）
 由 `StageNativeDlls` 读模块 json `dllImports[].path` 自源导出树平铺补拷，
 再经包内 `slang.exe` 执行。无 CUDA 设备的机器上：T04 后跳过、打印统计。
 
@@ -75,8 +75,8 @@ Cuda.md「PTX 编写要点」：版本窗口、寄存器组、全局线程号 `g
 
 ## 关联
 
-- 库说明：`SlangAllInOne\SLangCore\Lib\SLang\Cuda\Cuda.md`
-- 原生层：`SlangAllInOne\SLangCore\Lib\SLang\Cuda\cvm_sl_cuda_lib\`
+- 库说明：`SlangAllInOne\SLangCore\Lib\SLang\Tensora\Cvm\Cuda.md`
+- 原生层：`SlangAllInOne\SLangCore\Lib\SLang\Tensora\Cvm\cvm_sl_tensora_lib\`
   （`sl_cuda_lib.c` / `vm_sl_cuda.h`，零 Toolkit 依赖，运行期解析
   nvcuda.dll 驱动 API；PTX JIT 编译器定位见 Cuda.md）
 

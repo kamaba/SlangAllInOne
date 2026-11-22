@@ -1,4 +1,4 @@
-import Application.Core;
+﻿import Application.Core;
 
 namespace Application.MFC;
 
@@ -47,7 +47,7 @@ Application.CI2
 }
 C22 extends Application.CI2
 {
-    virtual int getback(){ return 100; }
+    int getback(){ return 100; }
 
     Y = 10;
     interface int C2(){ return Y; }

@@ -73,11 +73,48 @@ StringTest
         global.println("verbatim f-triple: " + str6)
     }
 
+    static splitAndIndexSmoke()
+    {
+        global.println("----- splitAndIndexSmoke -----")
+
+        # split：基础切割（C99 层 vm_sys_string_split）
+        string s1 = "a,b,,c"
+        Array<string> parts = s1.split(",")
+        global.println("split count = " + parts.length.toString())
+        global.println("split[0]=[" + parts[0] + "] [1]=[" + parts[1] + "] [2]=[" + parts[2] + "] [3]=[" + parts[3] + "]")
+
+        # split：分隔符不存在 → 整串单元素
+        string s1b = "abc"
+        Array<string> noHit = s1b.split("|")
+        global.println("noHit count = " + noHit.length.toString() + " [0]=[" + noHit[0] + "]")
+
+        # splitLines：\r\n / \n 混合（尾行非空时无尾空串）
+        string s1c = "line1\r\nline2\nline3"
+        Array<string> lines = s1c.splitLines()
+        global.println("lines count = " + lines.length.toString())
+        global.println("lines[0]=[" + lines[0] + "] [1]=[" + lines[1] + "] [2]=[" + lines[2] + "]")
+
+        # _getItem_：下标读字符码（UTF-8 字节；越界 -1）
+        string s1d = "ABC"
+        global.println("getItem A = " + s1d._getItem_(0).toString())
+        global.println("getItem oob = " + s1d._getItem_(9).toString())
+
+        # _getItem_：s[i] 下标语法糖
+        string s = "HELLO"
+        global.println("indexer s[1] = " + s[1].toString())
+
+        # setChar：替换字符（返回新串，原串不变）
+        string s2 = "HELLX"
+        string s3 = s2.setChar(4, 79)
+        global.println("setChar -> [" + s3 + "]  src=[" + s2 + "]")
+    }
+
     static fun()
     {
         global.println("========== StringTest (start) ==========")
         literalAndFormatSmoke()
         dollarAndFormatSmoke()
+        splitAndIndexSmoke()
         global.println("========== StringTest (end) ==========")
     }
 }

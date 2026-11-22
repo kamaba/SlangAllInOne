@@ -1,4 +1,4 @@
-import Core;
+﻿import Core;
 import Std;
 import Math;
 import SLangRender;
@@ -33,27 +33,27 @@ public class CapsuleCollider extends Behaviour
     public Bounds worldBounds = Bounds()
 
     # 事件钩子（与 Box/Sphere 对齐；经 SystemSimEngineCallHook1/2 按名派发）
-    public virtual void onCollisionEnter( Behaviour other, ContactInfo info )
+    public void onCollisionEnter( Behaviour other, ContactInfo info )
     {
     }
 
-    public virtual void onCollisionStay( Behaviour other, ContactInfo info )
+    public void onCollisionStay( Behaviour other, ContactInfo info )
     {
     }
 
-    public virtual void onCollisionExit( Behaviour other )
+    public void onCollisionExit( Behaviour other )
     {
     }
 
-    public virtual void onTriggerEnter( Behaviour other )
+    public void onTriggerEnter( Behaviour other )
     {
     }
 
-    public virtual void onTriggerStay( Behaviour other )
+    public void onTriggerStay( Behaviour other )
     {
     }
 
-    public virtual void onTriggerExit( Behaviour other )
+    public void onTriggerExit( Behaviour other )
     {
     }
 

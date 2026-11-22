@@ -1,4 +1,4 @@
-# Layer —— 所有网络层的基类
+﻿# Layer —— 所有网络层的基类
 #
 # 约定：
 #   forward(x)      前向，子类必须缓存反传需要的中间量（inputCache / outputCache）
@@ -35,20 +35,20 @@ public class Layer
     }
 
     # ── 前向 / 反向 ──────────────────────────────────────
-    public virtual Tensor forward( Tensor x )
+    public Tensor forward( Tensor x )
     {
         this.inputCache = x
         this.outputCache = x
         ret x
     }
 
-    public virtual Tensor backward( Tensor gradOutput )
+    public Tensor backward( Tensor gradOutput )
     {
         ret gradOutput
     }
 
     # 默认 SGD 更新
-    public virtual void update( Float32 lr )
+    public void update( Float32 lr )
     {
         this.ensureParams()
         for i = 0, i < this._params.length, i++
@@ -85,19 +85,19 @@ public class Layer
     }
 
     # 复合层（MHA / TransformerBlock）通过重写这两个方法聚合子层参数
-    public virtual Array<Tensor> parameters()
+    public Array<Tensor> parameters()
     {
         this.ensureParams()
         ret this._params
     }
 
-    public virtual Array<Tensor> gradients()
+    public Array<Tensor> gradients()
     {
         this.ensureParams()
         ret this._grads
     }
 
-    public virtual void zeroGrad()
+    public void zeroGrad()
     {
         this.ensureParams()
         for i = 0, i < this._grads.length, i++
@@ -128,7 +128,7 @@ public class Layer
         this.training = false
     }
 
-    public virtual string summary()
+    public string summary()
     {
         ret this.name + " params=" + SystemConvertString( this.paramCount() )
     }

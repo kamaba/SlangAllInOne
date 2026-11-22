@@ -44,7 +44,7 @@ namespace SimpleLanguage.Compile
                 isDirty = true;
             }
         }
-        public virtual FileMetaBaseTerm root
+        public FileMetaBaseTerm root
         {
             get
             {
@@ -115,7 +115,7 @@ namespace SimpleLanguage.Compile
             }
             return ParamFileMetaTermList;
         }
-        public virtual void ClearDirty()
+        public void ClearDirty()
         {
             isDirty = false;
             for (int i = 0; i < m_FileMetaExpressList.Count; i++)
@@ -124,12 +124,12 @@ namespace SimpleLanguage.Compile
                 fme.ClearDirty();
             }
         }
-        public virtual void AddFileMetaTerm(FileMetaBaseTerm fmn)
+        public void AddFileMetaTerm(FileMetaBaseTerm fmn)
         {
             fmn.SetFileMeta(m_FileMeta);
             m_FileMetaExpressList.Add(fmn);
         }
-        public virtual void AddRangeFileMetaTerm(List<FileMetaBaseTerm> fmn)
+        public void AddRangeFileMetaTerm(List<FileMetaBaseTerm> fmn)
         {
             for( int i = 0; i < fmn.Count; i++ )
             {
@@ -137,7 +137,7 @@ namespace SimpleLanguage.Compile
             }
             m_FileMetaExpressList.AddRange(fmn);
         }
-        public virtual bool BuildAST()
+        public bool BuildAST()
         {
             return true;
         }
@@ -145,7 +145,7 @@ namespace SimpleLanguage.Compile
         {
             return token.lexeme.ToString();
         }
-        public virtual string ToTokenString()
+        public string ToTokenString()
         {
             StringBuilder sb = new StringBuilder();
 

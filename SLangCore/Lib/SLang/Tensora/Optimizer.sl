@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 # Optimizer —— 优化器
 #
 # 用法：
@@ -78,7 +78,7 @@ public class Optimizer
     }
 
     # 默认实现：朴素 SGD
-    public virtual void step( Array<Tensor> parameters, Array<Tensor> gradients )
+    public void step( Array<Tensor> parameters, Array<Tensor> gradients )
     {
         this._step = this._step + 1
         for i = 0, i < parameters.length, i++

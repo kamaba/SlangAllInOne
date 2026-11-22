@@ -39,9 +39,9 @@ namespace SimpleLanguage.Core
             }
         }
         public Token pingToken => m_PintTokenList.Count > 0 ? m_PintTokenList[0] : null;
-        public virtual bool isStatic => m_IsStatic;
-        public virtual bool isParsed => m_IsParsed;
-        public virtual string functionAllName {
+        public bool isStatic => m_IsStatic;
+        public bool isParsed => m_IsParsed;
+        public string functionAllName {
             get
             {
                 if (string.IsNullOrEmpty(m_FunctionAllName))
@@ -79,7 +79,7 @@ namespace SimpleLanguage.Core
                 return m_FunctionAllName;
             }
         }
-        public virtual string virtualFunctionName => m_VirtualFunctionName;
+        public string virtualFunctionName => m_VirtualFunctionName;
         public MetaVariable thisMetaVariable => m_ThisMetaVariable;
         public MetaVariable returnMetaVariable => m_ReturnMetaVariable;
         public EMethodCallType methodCallType => m_MethodCallType;
@@ -140,7 +140,7 @@ namespace SimpleLanguage.Core
             base.SetDeep(deep);
             m_MetaBlockStatements?.SetDeep(deep);
         }
-        public virtual void SetOwnerMetaClass(MetaClass ownerclass)
+        public void SetOwnerMetaClass(MetaClass ownerclass)
         {
             if( ownerclass == null )
             {
@@ -213,7 +213,7 @@ namespace SimpleLanguage.Core
             m_FunctionAllName = "";
             m_FunctionAllName = functionAllName;
         }
-        public virtual bool Parse()
+        public bool Parse()
         {
             return true;
         }
@@ -249,7 +249,7 @@ namespace SimpleLanguage.Core
 
             return true;
         }
-        public virtual bool IsEqualMetaInputParamCollection(MetaInputParamCollection mpc)
+        public bool IsEqualMetaInputParamCollection(MetaInputParamCollection mpc)
         {
             if (m_MetaMemberParamCollection.IsEqualMetaInputParamCollection(mpc))
             {
@@ -257,7 +257,7 @@ namespace SimpleLanguage.Core
             }
             return false;
         }
-        public virtual bool IsEqualMetaDefineParamCollection(MetaDefineParamCollection mdpc)
+        public bool IsEqualMetaDefineParamCollection(MetaDefineParamCollection mdpc)
         {
             if (m_MetaMemberParamCollection.IsEqualMetaDefineParamCollection(mdpc))
             {
@@ -269,7 +269,7 @@ namespace SimpleLanguage.Core
         {
             return m_MetaMemberTemplateCollection.GetMetaDefineTemplateByName(name);
         }
-        public virtual bool IsEqualMetaTemplateCollectionAndMetaParamCollection( MetaInputTemplateCollection mitc, MetaDefineParamCollection mpc )
+        public bool IsEqualMetaTemplateCollectionAndMetaParamCollection( MetaInputTemplateCollection mitc, MetaDefineParamCollection mpc )
         {
             //if (m_MetaMemberParamCollection.IsEqualMetaTemplateAndParamCollection(mitc, mpc) )
             //{
@@ -277,7 +277,7 @@ namespace SimpleLanguage.Core
             //}
             return false;
         }
-        public virtual string ToStatementString()
+        public string ToStatementString()
         {
             StringBuilder sb = new StringBuilder();
 

@@ -29,9 +29,9 @@ namespace SimpleLanguage.Core
             ArrayInner,
         }
         public bool isDefineMetaType => m_IsDefineMetaType;
-        public virtual bool isStatic => m_IsStatic;
-        public virtual bool isConst => m_IsConst;
-        public virtual bool isParsed => m_IsParsed;
+        public bool isStatic => m_IsStatic;
+        public bool isConst => m_IsConst;
+        public bool isParsed => m_IsParsed;
         public bool isArgument => m_VariableFrom == EVariableFrom.Argument;
         public bool isGlobal => m_VariableFrom == EVariableFrom.Global;
         public bool isArray
@@ -98,7 +98,7 @@ namespace SimpleLanguage.Core
             }
             m_RealMetaType = new MetaType(m_DefineMetaType);
         } 
-        public virtual void SetOwnerMetaClass(MetaClass ownerclass)
+        public void SetOwnerMetaClass(MetaClass ownerclass)
         {
             m_OwnerMetaClass = ownerclass;
         }
@@ -154,23 +154,23 @@ namespace SimpleLanguage.Core
         {
             m_DefineMetaType = mdt;
         }
-        public virtual void SetOwnerBlockstatements(MetaBlockStatements mbs)
+        public void SetOwnerBlockstatements(MetaBlockStatements mbs)
         {
             m_OwnerMetaBlockStatements = mbs;
         }
-        public virtual void ParseDefineMetaType()
+        public void ParseDefineMetaType()
         {
 
         }
-        public virtual bool Parse()
+        public bool Parse()
         {
             return true;
         }
-        public virtual void CreateMetaExpress()
+        public void CreateMetaExpress()
         {
 
         }
-        public virtual bool ParseMetaExpress()
+        public bool ParseMetaExpress()
         {
             return true;
         }        
@@ -183,7 +183,7 @@ namespace SimpleLanguage.Core
             m_MetaVariableDict.Add(mv.name, mv);
             return true;
         }
-        public virtual MetaVariable GetMetaVariable( string name )
+        public MetaVariable GetMetaVariable( string name )
         {
             if( m_MetaVariableDict.ContainsKey( name ))
             {
@@ -191,7 +191,7 @@ namespace SimpleLanguage.Core
             }
             return null;
         }
-        public virtual string ToStatementString()
+        public string ToStatementString()
         {
             return "";
         }

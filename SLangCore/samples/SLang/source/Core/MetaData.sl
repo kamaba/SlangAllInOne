@@ -75,7 +75,7 @@ namespace SimpleLanguage.Core
 
         //    MetaVariableManager.instance.AddMetaDataVariable(m_MetaVariable);
         //}
-        public virtual void ParseFileMetaDataMemeberData(FileMetaClass fmc)
+        public void ParseFileMetaDataMemeberData(FileMetaClass fmc)
         {
             bool isHave = false;
             for (int i = 0; i < fmc.memberDataList.Count; i++)

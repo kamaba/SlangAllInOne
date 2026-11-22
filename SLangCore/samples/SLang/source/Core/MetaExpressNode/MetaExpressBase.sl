@@ -35,7 +35,7 @@ namespace SimpleLanguage.Core
     }
     public class MetaExpressNode
     {
-        public virtual int opLevel
+        public int opLevel
         {
             get
             {
@@ -49,9 +49,9 @@ namespace SimpleLanguage.Core
         protected MetaClass m_OwnerMetaClass = null;
         protected MetaBlockStatements m_OwnerMetaBlockStatements = null;
         protected MetaType m_MetaDefineType = null;
-        public virtual int CalcParseLevel(int level) { return level; }
-        public virtual void CalcReturnType() { }
-        public virtual void Parse(AllowUseSettings auc) { }
+        public int CalcParseLevel(int level) { return level; }
+        public void CalcReturnType() { }
+        public void Parse(AllowUseSettings auc) { }
         public MetaClass GetReturnMetaClass()
         {
             if (m_MetaDefineType == null)
@@ -60,19 +60,19 @@ namespace SimpleLanguage.Core
             }
             return m_MetaDefineType?.metaClass;
         }
-        public virtual void SetMetaType( MetaType mt )
+        public void SetMetaType( MetaType mt )
         {
             m_MetaDefineType = mt;
         }
-        public virtual MetaType GetReturnMetaDefineType()
+        public MetaType GetReturnMetaDefineType()
         {
             return m_MetaDefineType;
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             return "";
         }
-        public virtual string ToTokenString()
+        public string ToTokenString()
         {
             return "";
         }

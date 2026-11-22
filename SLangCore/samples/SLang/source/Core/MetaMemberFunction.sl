@@ -467,7 +467,7 @@ namespace SimpleLanguage.Core
 
             return flag;
         }
-        public virtual void ParseDefineMetaType()
+        public void ParseDefineMetaType()
         {
             if (this.m_FileMetaMemberFunction != null)
             {
@@ -494,7 +494,7 @@ namespace SimpleLanguage.Core
             }
             UpdateVritualFunctionName();
         }
-        public virtual void CreateMetaExpress()
+        public void CreateMetaExpress()
         {
             for (int i = 0; i < m_MetaMemberParamCollection.metaDefineParamList.Count; i++)
             {
@@ -502,7 +502,7 @@ namespace SimpleLanguage.Core
                 mpl.CreateExpress();
             }
         }
-        public virtual bool ParseMetaExpress()
+        public bool ParseMetaExpress()
         {
             for (int i = 0; i < m_MetaMemberParamCollection.metaDefineParamList.Count; i++)
             {

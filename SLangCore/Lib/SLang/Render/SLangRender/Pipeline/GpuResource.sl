@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 # GpuResource —— GPU 资源基类与缓冲
 #
 # 对齐 DX12 / Vulkan 的概念：
@@ -61,7 +61,7 @@ public class GpuResource
         this.name = _name
     }
 
-    public virtual bool create()
+    public bool create()
     {
         object result = SystemCallExternalFunction( "Render.createResource",
             this.name, this.sizeBytes, this.heapType, this.state )

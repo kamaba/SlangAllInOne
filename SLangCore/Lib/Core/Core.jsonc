@@ -226,6 +226,8 @@
     { "name": "SystemStringEnd",         "returnType": "string",    "params": ["string", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_string_end" },
     { "name": "SystemStringRange",       "returnType": "string",    "params": ["string", "Int32", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_string_range" },
     { "name": "SystemStringCharCodeAt",  "returnType": "Int32",     "params": ["string", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_string_char_code" },
+    { "name": "SystemStringSplit",       "returnType": "Array<string>", "params": ["string", "string"], "isVariadic": false, "cvmFunction": "vm_sys_string_split" },
+    { "name": "SystemStringSetChar",     "returnType": "string",    "params": ["string", "Int32", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_string_set_char" },
     { "name": "SystemRegExpRun",         "returnType": "Int32",     "params": ["Array<object>", "Array<object>", "string", "Int32", "Int32", "Array<object>", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_regexp_run" },
     { "name": "SystemRegExpFindAll",     "returnType": "Array<object>", "params": ["Array<object>", "Array<object>", "string", "Int32", "Int32", "Int32", "Int32"], "isVariadic": false, "cvmFunction": "vm_sys_regexp_find_all" },
     { "name": "SystemRegExpFindMatches", "returnType": "object",  "params": ["Array<object>", "Array<object>", "string", "Int32", "Int32", "Int32", "Int32", "object", "object"], "isVariadic": false, "cvmFunction": "vm_sys_regexp_find_matches" },

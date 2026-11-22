@@ -41,7 +41,7 @@ namespace SimpleLanguage.Core
     }
     public partial class MetaClass
     {
-        public virtual bool isGenTemplate { get { return false; } }
+        public bool isGenTemplate { get { return false; } }
         public List<MetaGenTemplateClass> metaGenTemplateClassList => m_MetaGenTemplateClassList;
         public Dictionary<MetaClass, ClassLevelRelationData> metaTemplateMapDict => m_MetaTemplateMapDict;
         public bool isTemplateClass { get { return m_MetaTemplateList.Count > 0; } }        //是否是模版类
@@ -320,7 +320,7 @@ namespace SimpleLanguage.Core
             }
             return null;
         }
-        public virtual void ParseGenTemplateClassMetaType()
+        public void ParseGenTemplateClassMetaType()
         {
             var list = new List<MetaGenTemplateClass>(m_MetaGenTemplateClassList);
             foreach ( var v in list )

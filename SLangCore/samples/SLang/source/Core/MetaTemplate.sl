@@ -222,23 +222,23 @@ namespace SimpleLanguage.Core
             }
             return false;
         }
-        public virtual bool MatchMetaInputTemplate(MetaTemplate a, MetaType b)
+        public bool MatchMetaInputTemplate(MetaTemplate a, MetaType b)
         {
             if (a.IsInConstraintMetaClass(b.metaClass))
                 return true;
             return false;
         }
-        public virtual bool MatchMetaDefineTemplate(MetaTemplate a, MetaTemplate b)
+        public bool MatchMetaDefineTemplate(MetaTemplate a, MetaTemplate b)
         {
             if (a.name == b.name)
                 return true;
             return false;
         }
-        public virtual void AddMetaDefineTemplate(MetaTemplate defineTemplate)
+        public void AddMetaDefineTemplate(MetaTemplate defineTemplate)
         {
             m_MetaTemplateList.Add(defineTemplate);
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             //    StringBuilder sb = new StringBuilder();
             //    for (int i = 0; i < metaParamList.Count; i++)

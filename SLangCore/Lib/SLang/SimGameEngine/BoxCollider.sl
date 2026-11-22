@@ -1,4 +1,4 @@
-import Core;
+﻿import Core;
 import Std;
 import Math;
 import SLangRender;
@@ -26,27 +26,27 @@ public class BoxCollider extends Behaviour
     # 事件钩子（引擎经 SystemSimEngineCallHook1/2 按名派发到最派生
     # override；P3 简化：事件只投给宿主的 Collider 组件自身；参数统一
     # Behaviour 类型以兼容混合形状对——按名派发不校验参数类型）
-    public virtual void onCollisionEnter( Behaviour other, ContactInfo info )
+    public void onCollisionEnter( Behaviour other, ContactInfo info )
     {
     }
 
-    public virtual void onCollisionStay( Behaviour other, ContactInfo info )
+    public void onCollisionStay( Behaviour other, ContactInfo info )
     {
     }
 
-    public virtual void onCollisionExit( Behaviour other )
+    public void onCollisionExit( Behaviour other )
     {
     }
 
-    public virtual void onTriggerEnter( Behaviour other )
+    public void onTriggerEnter( Behaviour other )
     {
     }
 
-    public virtual void onTriggerStay( Behaviour other )
+    public void onTriggerStay( Behaviour other )
     {
     }
 
-    public virtual void onTriggerExit( Behaviour other )
+    public void onTriggerExit( Behaviour other )
     {
     }
 

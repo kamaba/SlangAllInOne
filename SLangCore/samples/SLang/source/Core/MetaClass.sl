@@ -23,7 +23,7 @@ namespace SimpleLanguage.Core
     }
     public partial class MetaClass : MetaBase
     {
-        public virtual string allClassName=> this.m_AllName;
+        public string allClassName=> this.m_AllName;
 
         public EType eType => m_Type;
         public EClassDefineType classDefineType => m_ClassDefineType;
@@ -180,23 +180,23 @@ namespace SimpleLanguage.Core
         {
             m_DefaultExpressNode = defaultExpressNode;
         }
-        public virtual void ParseGenTemplateClass( MetaGenTemplateClass mgtc)
+        public void ParseGenTemplateClass( MetaGenTemplateClass mgtc)
         {
         //    ParseExtendsRelation();
         //    ParseTemplateRelation();
         //    HandleExtendData();
         }
-        public virtual void ParseGenMemberVarible()
+        public void ParseGenMemberVarible()
         {
 
         }
-        public virtual void ParseInnerVariable()
+        public void ParseInnerVariable()
         {
         }
-        public virtual void ParseInnerFunction()
+        public void ParseInnerFunction()
         {
         }
-        public virtual void ParseInner()
+        public void ParseInner()
         {
             ParseInnerVariable();
             ParseInnerFunction();
@@ -207,7 +207,7 @@ namespace SimpleLanguage.Core
 
             this.m_ClassDefineType = ecdt;
         }
-        public virtual void ParseExtendsRelation()
+        public void ParseExtendsRelation()
         {
             if( this.classDefineType == EClassDefineType.InnerDefine )
             {
@@ -263,7 +263,7 @@ namespace SimpleLanguage.Core
             HandleParentClassTemplateMapRelation();
             HandleExtendClassTemplateMapRelation();
         }
-        public virtual void ParseInterfaceRelation()
+        public void ParseInterfaceRelation()
         {
             m_InterfaceMetaType.Clear();
             foreach ( var v in this.fileMetaClassDict )
@@ -289,7 +289,7 @@ namespace SimpleLanguage.Core
                 }
             }
         }
-        public virtual void HandleExtendMemberVariable()
+        public void HandleExtendMemberVariable()
         {
             if(m_ExtendClass == null )
             {
@@ -338,7 +338,7 @@ namespace SimpleLanguage.Core
                 }
             }
         }
-        public virtual void HandleExtendMemberFunction()
+        public void HandleExtendMemberFunction()
         {
             if (this.m_ExtendClass == null)
             {
@@ -465,14 +465,14 @@ namespace SimpleLanguage.Core
             }
             m_TempInnerFunctionList.Clear();
         }
-        public virtual void ParseMemberVariableDefineMetaType()
+        public void ParseMemberVariableDefineMetaType()
         {
             foreach (var it in this.m_FileCollectMetaMemberVariable )
             {
                 it.ParseDefineMetaType();
             }
         }
-        public virtual void ParseMemberFunctionDefineMetaType()
+        public void ParseMemberFunctionDefineMetaType()
         {
             foreach (var it in m_FileCollectMetaMemberFunctionList )
             {
@@ -605,7 +605,7 @@ namespace SimpleLanguage.Core
             }            
         }
         //解析 自动构建函数  
-        public virtual void ParseDefineComplete()
+        public void ParseDefineComplete()
         {
             if(m_IsInterfaceClass )
             {
@@ -748,7 +748,7 @@ namespace SimpleLanguage.Core
                 }
             }
         }
-        public virtual MetaMemberVariable GetMetaMemberVariableByName(string name)
+        public MetaMemberVariable GetMetaMemberVariableByName(string name)
         {
             if (m_MetaMemberVariableDict.ContainsKey(name))
             {
@@ -760,7 +760,7 @@ namespace SimpleLanguage.Core
             }
             return null;
         }
-        public virtual List<MetaMemberVariable>  GetMetaMemberVariableListByFlag( bool isStatic )
+        public List<MetaMemberVariable>  GetMetaMemberVariableListByFlag( bool isStatic )
         {
             List<MetaMemberVariable> mmvList = new List<MetaMemberVariable>();
             MetaMemberVariable tempMmv = null;
@@ -804,7 +804,7 @@ namespace SimpleLanguage.Core
             }
             return mmvList;
         }
-        public virtual MetaMemberFunction GetMetaDefineGetSetMemberFunctionByName(string name, MetaInputParamCollection inputParam, bool isGet, bool isSet)
+        public MetaMemberFunction GetMetaDefineGetSetMemberFunctionByName(string name, MetaInputParamCollection inputParam, bool isGet, bool isSet)
         {
             if (!m_MetaMemberFunctionTemplateNodeDict.ContainsKey(name))
             {
@@ -837,7 +837,7 @@ namespace SimpleLanguage.Core
             }
             return null;
         }
-        public virtual MetaMemberFunction GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(string name, int templateParamCount, MetaInputParamCollection inputParam, bool isIncludeExtendClass = true )
+        public MetaMemberFunction GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(string name, int templateParamCount, MetaInputParamCollection inputParam, bool isIncludeExtendClass = true )
         {
             if (!this.m_MetaMemberFunctionTemplateNodeDict.ContainsKey(name) )
             {
@@ -868,7 +868,7 @@ namespace SimpleLanguage.Core
             }
             return null;
         }
-        public virtual MetaMemberFunction GetMetaMemberFunctionByNameAndInputTemplateInputParam(string name, List<MetaClass> mtList, MetaInputParamCollection inputParam, bool isIncludeExtendClass = true)
+        public MetaMemberFunction GetMetaMemberFunctionByNameAndInputTemplateInputParam(string name, List<MetaClass> mtList, MetaInputParamCollection inputParam, bool isIncludeExtendClass = true)
         {
             if (!this.m_MetaMemberFunctionTemplateNodeDict.ContainsKey(name))
             {
@@ -914,7 +914,7 @@ namespace SimpleLanguage.Core
         {
             return GetMetaMemberConstructFunction(null);
         }
-        public virtual MetaMemberFunction GetMetaMemberConstructFunction( MetaInputParamCollection mmpc )
+        public MetaMemberFunction GetMetaMemberConstructFunction( MetaInputParamCollection mmpc )
         {
             return GetMetaMemberFunctionByNameAndInputTemplateInputParamCount("_init_", 0, mmpc, false );
         }
@@ -972,7 +972,7 @@ namespace SimpleLanguage.Core
         {
             return GetFormatString(false);
         }
-        public virtual string ToDefineTypeString()
+        public string ToDefineTypeString()
         {
             StringBuilder stringBuilder = new StringBuilder();
 

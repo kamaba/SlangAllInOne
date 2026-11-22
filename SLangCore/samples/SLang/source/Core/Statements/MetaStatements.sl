@@ -15,14 +15,14 @@ namespace SimpleLanguage.Core
         public MetaBlockStatements parentBlockStatements => m_OwnerMetaBlockStatements;
         public MetaVariable trMetaVariable => m_TrMetaVariable;
 
-        public virtual MetaClass ownerMetaClass
+        public MetaClass ownerMetaClass
         {
             get
             {
                 return ownerMetaFunction?.ownerMetaClass;
             }
         }
-        public virtual MetaFunction ownerMetaFunction
+        public MetaFunction ownerMetaFunction
         {
             get
             {
@@ -40,7 +40,7 @@ namespace SimpleLanguage.Core
         {
             m_OwnerMetaBlockStatements = mf;
         }
-        public virtual void SetTRMetaVariable( MetaVariable mv )
+        public void SetTRMetaVariable( MetaVariable mv )
         {
             m_TrMetaVariable = mv;
             if(m_NextMetaStatements != null )
@@ -56,11 +56,11 @@ namespace SimpleLanguage.Core
                 m_NextMetaStatements.SetDeep(deep);
             }
         }
-        public virtual void SetNextStatements(MetaStatements ms)
+        public void SetNextStatements(MetaStatements ms)
         {
             m_NextMetaStatements = ms;
         }
-        public virtual void UpdateOwnerMetaClass( MetaClass ownerclass )
+        public void UpdateOwnerMetaClass( MetaClass ownerclass )
         {
             if(m_TrMetaVariable != null )
             {

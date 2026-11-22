@@ -32,7 +32,7 @@ namespace SimpleLanguage.VM
         {
             this.m_Etype = etype;
         }
-        public virtual void SetNull()
+        public void SetNull()
         {
             m_IsNull = true;
         }
@@ -40,7 +40,7 @@ namespace SimpleLanguage.VM
         {
             m_IsVoid = true;
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             return "";
         }

@@ -55,7 +55,7 @@ namespace SimpleLanguage.Core
                 return list;
             }
         }
-        public virtual string allName
+        public string allName
         {
             get
             {
@@ -246,7 +246,7 @@ namespace SimpleLanguage.Core
         {
             return m_ChildrenMetaNodeDict.ContainsKey(name);
         }
-        public virtual MetaNode GetChildrenMetaNodeByName(string name)
+        public MetaNode GetChildrenMetaNodeByName(string name)
         {
             if (m_ChildrenMetaNodeDict.ContainsKey(name))
                 return m_ChildrenMetaNodeDict[name];
@@ -317,7 +317,7 @@ namespace SimpleLanguage.Core
                 v.Value.SetDeep( deep + 1 );
             }
         }
-        public virtual void SetAnchorDeep(int addep)
+        public void SetAnchorDeep(int addep)
         {
             m_AnchorDeep = addep;
             foreach (var v in m_ChildrenMetaNodeDict)
@@ -326,7 +326,7 @@ namespace SimpleLanguage.Core
             }
         }
         //该函数，只为调试效果时候使用，在编译逻辑里边不体现！
-        public virtual MetaNode GetMetaBaseInParentByName(string inputname, bool isInclude = true)
+        public MetaNode GetMetaBaseInParentByName(string inputname, bool isInclude = true)
         {
             if (m_Name == inputname && isInclude)
                 return this;

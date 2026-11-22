@@ -25,7 +25,7 @@ namespace SimpleLanguage.Core
             }
         }
         public EPermission permission => m_Permission;
-        public virtual string name => m_Name;
+        public string name => m_Name;
         public RefFromType refFromType => m_RefFromType;
         public MetaNode metaNode => m_MetaNode;
         public string pathName => m_MetaNode?.GetAllName();
@@ -58,11 +58,11 @@ namespace SimpleLanguage.Core
         {
             m_Name = _name;
         }
-        public virtual void SetAnchorDeep(int addep)
+        public void SetAnchorDeep(int addep)
         {
             m_AnchorDeep = addep;
         }
-        public virtual void SetDeep( int deep )
+        public void SetDeep( int deep )
         {
             m_Deep = deep;
         }
@@ -70,11 +70,11 @@ namespace SimpleLanguage.Core
         {
             this.m_MetaNode = mn;
         }
-        public virtual string GetFormatString()
+        public string GetFormatString()
         {
             return "";
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             return "";
         }

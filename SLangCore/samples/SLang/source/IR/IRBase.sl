@@ -47,7 +47,7 @@ namespace SimpleLanguage.IR
                 m_IRDataList.Add(v);
             }
         }
-        public virtual string ToIRString()
+        public string ToIRString()
         {
             StringBuilder sb = new StringBuilder();
 

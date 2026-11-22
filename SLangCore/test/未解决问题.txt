@@ -13,6 +13,8 @@ macOs /iOS的环境
 
 Tensora里边增加协程还有Isolate 的 协调还有异步计算
 
+string 增加一个split方法 ，可以 对行进行切割
+string 里边增加 _getItem_ _setItem_ 的方法 ，返回的是Int32 设置 的也是Int32的数
 
 QTCodeEditor
 1. 解决方案区，没有右键区

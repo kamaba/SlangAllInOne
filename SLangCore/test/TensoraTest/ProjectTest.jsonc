@@ -35,7 +35,8 @@
       { "path": "ClassicMlTest.sl", "group": "tensora", "tag": "ml",   "ignore": false, "priority": 0 },
       { "path": "DataTest.sl",      "group": "tensora", "tag": "data", "ignore": false, "priority": 0 },
       { "path": "TtsTest.sl",       "group": "tensora", "tag": "tts",  "ignore": false, "priority": 0 },
-      { "path": "TransformerModelTest.sl", "group": "tensora", "tag": "attn", "ignore": false, "priority": 0 }
+      { "path": "TransformerModelTest.sl", "group": "tensora", "tag": "attn", "ignore": false, "priority": 0 },
+      { "path": "BenchmarkTest.sl",   "group": "tensora", "tag": "bench", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -58,7 +59,8 @@
     { "path": "./lib/Core.module.slb" },
     { "path": "./lib/Std.module.slb" },
     { "path": "./lib/Math.module.slb" },
-    { "path": "../../../out/export/Tensora/Tensora.module.slb" }
+    { "path": "../../../out/export/Tensora/Tensora.module.slb" },
+    { "path": "../../../out/export/SimGameEngine/SimGameEngine.module.slb" }
   ],
   "struct": [
     { "namespace": "TensoraTest", "children": [
@@ -90,7 +92,8 @@
       { "class": "CudaBackendTest" },
       { "class": "OnnxMemTest" },
       { "class": "OnnxModelTest" },
-      { "class": "TensorOpsTest" }
+      { "class": "TensorOpsTest" },
+      { "class": "BenchmarkTest" }
     ]}
   ],
   "export": {

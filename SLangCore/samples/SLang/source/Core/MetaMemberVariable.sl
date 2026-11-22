@@ -182,13 +182,13 @@ namespace SimpleLanguage.Core
                 }
             }
         }
-        public virtual int CalcParseLevelBeCall(int level)
+        public int CalcParseLevelBeCall(int level)
         {
             parseLevel = level - 1;
 
             return parseLevel;
         }
-        public virtual void CalcParseLevel()
+        public void CalcParseLevel()
         {
             if (isConst)
             {

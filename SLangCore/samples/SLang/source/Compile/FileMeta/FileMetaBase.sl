@@ -12,7 +12,7 @@ namespace SimpleLanguage.Compile
     {
         public Token token => m_Token;
         public int deep => m_Deep;
-        public virtual string name
+        public string name
         {
             get
             {
@@ -35,11 +35,11 @@ namespace SimpleLanguage.Compile
         {
             m_FileMeta = fm;
         }
-        public virtual void SetDeep( int _deep )
+        public void SetDeep( int _deep )
         {
             m_Deep = _deep;
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             return "";
         }

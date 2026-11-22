@@ -46,14 +46,14 @@ namespace SimpleLanguage.Core
         {
             m_Express = inputExpress;
         }
-        public virtual void Parse()
+        public void Parse()
         {
             if (m_Express != null)
             {
                 m_Express.Parse(new AllowUseSettings() { parseFrom = EParseFrom.InputParamExpress } );
             }
         }
-        public virtual void CaleReturnType()
+        public void CaleReturnType()
         {
             if(m_Express != null )
             {
@@ -68,7 +68,7 @@ namespace SimpleLanguage.Core
             }
             return CoreMetaClassManager.objectMetaClass;
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             return m_Express?.ToFormatString();
         }
@@ -151,7 +151,7 @@ namespace SimpleLanguage.Core
                 m_MetaExpressNode = ExpressManager.CreateExpressNode(cep);
             }
         }
-        public virtual void Parse()
+        public void Parse()
         {
             if (m_MetaExpressNode != null)
             {
@@ -219,7 +219,7 @@ namespace SimpleLanguage.Core
                 //m_MetaVariable.SetRetMetaClass(m_DefineMetaClassType);
             }
         }
-        public virtual string ToFormatString()
+        public string ToFormatString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(m_MetaVariable?.ToFormatString());

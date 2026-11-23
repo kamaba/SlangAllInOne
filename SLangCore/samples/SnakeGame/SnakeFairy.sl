@@ -68,6 +68,20 @@ public class SnakeFairy
         {
             ret p3
         }
+        # wasm/MEMFS 候选（web 版 game.js 经 FS.writeFile stage；桌面探测
+        # 恒落空，不影响既有路径）
+        string p4 = "/work/snake/fairyui"
+        bool e4 = File.exists( p4 + "/package.xml" )
+        if e4
+        {
+            ret p4
+        }
+        string p5 = "/fairyui"
+        bool e5 = File.exists( p5 + "/package.xml" )
+        if e5
+        {
+            ret p5
+        }
         ret ""
     }
 

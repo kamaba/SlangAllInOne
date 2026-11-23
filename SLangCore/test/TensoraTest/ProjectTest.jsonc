@@ -36,7 +36,8 @@
       { "path": "DataTest.sl",      "group": "tensora", "tag": "data", "ignore": false, "priority": 0 },
       { "path": "TtsTest.sl",       "group": "tensora", "tag": "tts",  "ignore": false, "priority": 0 },
       { "path": "TransformerModelTest.sl", "group": "tensora", "tag": "attn", "ignore": false, "priority": 0 },
-      { "path": "BenchmarkTest.sl",   "group": "tensora", "tag": "bench", "ignore": false, "priority": 0 }
+      { "path": "BenchmarkTest.sl",   "group": "tensora", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "AsyncTest.sl",       "group": "tensora", "tag": "async", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -93,7 +94,8 @@
       { "class": "OnnxMemTest" },
       { "class": "OnnxModelTest" },
       { "class": "TensorOpsTest" },
-      { "class": "BenchmarkTest" }
+      { "class": "BenchmarkTest" },
+      { "class": "AsyncTest" }
     ]}
   ],
   "export": {

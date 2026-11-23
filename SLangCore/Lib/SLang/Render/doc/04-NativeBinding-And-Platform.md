@@ -406,3 +406,30 @@ SL 侧 `CommandQueue.execute()` 负责组装；后端按 opcode 表解释执行�
 - 投影：DX 风格深度 [0,1]（剔除平面提取已按此写，near=row2）。
 - NDC：v1 统一 DX 风格；GL 后端在投影矩阵里做 Z 翻转（后端或 MatrixUtil 统一处理，单点决策）。
 - UV：左上原点；fullscreen VS 里已做 `1-y` 翻转，保持。
+
+---
+
+## 8. Windows 系统 GDI 兼容层（v0.5 新增，2026-11-23）
+
+### 8.1 定位
+
+`slr_gdi_*` 是**平台绘制能力**，不是 RHI 后端：它用 Windows GDI 在离屏 DIB 上作图，再把像素经既有纹理通道送回渲染管线。SL 侧只保留 `GdiCanvas` 薄门面，绘图全在 C 层完成；非 Windows 平台保留同名导出并安全降级。
+
+### 8.2 新增符号（§4 全量表追加）
+
+| 符号 | 作用 |
+|---|---|
+| `slr_gdi_create/destroy/size/bits` | DIB 画布生命周期与原始位访问 |
+| `slr_gdi_clear/set_pixel/get_pixel` | 像素读写（颜色 `0xAARRGGBB`） |
+| `slr_gdi_line/rect/fill_rect/ellipse/fill_ellipse/polygon` | GDI 笔刷原语 |
+| `slr_gdi_blit` | `BitBlt(SRCCOPY)` |
+| `slr_gdi_text` | `TextOutW`（UTF-8 → UTF-16，系统默认字体） |
+| `slr_gdi_to_rgba/create_texture/update_texture` | BGRA → RGBA8 转换 + 既有纹理上传 |
+
+### 8.3 契约与坑
+
+- DIB 以负高度创建：内存顶行在前；GDI 内存字节序为 BGRA，`to_rgba` 交换 R/B 后才符合库 RGBA8 top-down 契约。
+- `get_pixel` 直读 DIB 字节；`GetPixel` 在 32bpp DIB 下常把 alpha 写 0，不可用。
+- 绘图原语收包围盒 `(x0,y0,x1,y1)`，不是中心+半径；参数上限 6，文本用 NUL 终止 UTF-8 而非额外 len 参数。
+- C 源文件加入 `cvm_sl_render_lib.vcxproj`（+ `.filters`）；改 C 后必须重编 `Render.jsonc` 并同步 `sl_render_lib.dll` 到所有消费槽位与调试 zip。
+- 验证：`SimTextDrawTest` 54/54（真 GDI DIB 创建 + 各原语 + BGRA→RGBA8），`RenderTest` EXIT=0。

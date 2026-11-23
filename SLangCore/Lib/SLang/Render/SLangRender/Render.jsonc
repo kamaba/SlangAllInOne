@@ -102,7 +102,14 @@
       // Environment —— 渲染环境查询类（根级 RenderEnvironment：查明
       // 支持后端/当前选择/硬件条件/资源占用/当前渲染配置）；
       // 消费 RenderFFI 计数绑定（priority 1）与 CommandBuffer 常量（22）
-      { "path": "Environment.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 35 }
+      { "path": "Environment.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 35 },
+      // GdiCanvas —— Windows 系统 GDI 离屏画布（C 层 slr_gdi_*，非 SL 软光栅）
+      { "path": "GdiCanvas.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 36 },
+      // BasicDraw —— 基础图形统一绘制接口层（线/点/圆/三角形/四边形/多边形/
+      // 椭圆/曲线/贝塞尔/折线/方向箭头/虚线；GDI 后端直通 GdiCanvas，RHI 后端
+      // MESH_CUSTOM 三角化 + 256×1 调色板纹理逐图元配色；消费 RenderFFI(1) /
+      // GdiCanvas(36) / RenderPipeline 门面）
+      { "path": "BasicDraw.sl", "group": "render", "tag": "gpu", "ignore": false, "priority": 37 }
     ]
   },
   "compileFilter": {
@@ -160,6 +167,9 @@
     { "class": "Renderer" },
     { "class": "RenderLight" },
     { "class": "Ray" },
+    { "class": "GdiCanvas" },
+    // BasicDraw —— 基础图形统一绘制接口层（根级类；GDI/RHI 双后端）
+    { "class": "BasicDraw" },
     // N4a 软光追（Ray.sl）：求交记录 / 球元素 / 场景 + SL 参考实现
     { "class": "RayHit" },
     { "class": "RaySphere" },

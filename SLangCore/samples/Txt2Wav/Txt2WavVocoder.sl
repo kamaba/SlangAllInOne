@@ -32,6 +32,12 @@ public class Txt2WavVocoder
     public Int32 specBins = 257
     public Int32 glIters = 3
 
+    # 幅度谱逐帧热循环的分片并行（实验性，默认关）：
+    # isolate 回传只能走 List<T>，T×K 结果的逐元素装箱/序列化开销在
+    # 本机实测比本地单块慢 8~18%；大 T 或纯 CPU 长句可置 true 试并行。
+    public bool asyncMag = false
+    public Int32 magChunks = 2
+
     Device dev = null
 
     # 常量基（CPU 构造，to(dev) 后使用）
@@ -157,38 +163,49 @@ public class Txt2WavVocoder
         }
     }
 
-    # ── 幅度谱合成：ctx [T, 8]（CPU 张量）→ mag [T, K]（设备上）──
-    # 纯数组数值循环（源-滤波模型）：一次构造、一次上传设备。
-    # （张量算子链版本因 square/scale/round 等无 GPU 分支被拉回 CPU 解释
-    #  循环、且每个 tile() 走 CPU matmul 的 T×K 次 at()，实测慢两个数量级）
-    Tensor synthMagnitude( Tensor ctx, Array<Float32> f0 )
+    # ── 幅度谱合成作业体（本地/isolate 共用）────────────────
+    # isolate 消息通道只认 List<T>，故全部载荷用 List；返回与 TensorAsync
+    # 一致的打包张量 [ dims:List<Int32>, data:List<Float32> ]。
+    # payload: [0]=[rows,K] [1]=[binHz] [2]=ctx 行块(rows*8) [3]=f0 行块(rows)
+    static object synthMagJob( object arg )
     {
-        Int32 T = ctx.rows()
-        Int32 K = this.specBins
-        Tensor ctxC = ctx.cpu()
-        Array<Float32> cd = ctxC._data
-        Array<Float32> mag = Array<Float32>( T * K )
-        Float32 binHz = SystemConvertFloat32( this.sampleRate ) / SystemConvertFloat32( this.nfft )
+        List<object> job = arg as List<object>
+        if job == null
+        {
+            ret null
+        }
+        List<Int32> meta = job._getItem_( 0 ) as List<Int32>
+        List<Float32> cfg = job._getItem_( 1 ) as List<Float32>
+        List<Float32> cd = job._getItem_( 2 ) as List<Float32>
+        List<Float32> f0 = job._getItem_( 3 ) as List<Float32>
+        if meta == null || cfg == null || cd == null || f0 == null
+        {
+            ret null
+        }
+        Int32 rows = meta._getItem_( 0 )
+        Int32 K = meta._getItem_( 1 )
+        Float32 binHz = cfg._getItem_( 0 )
+        List<Float32> mag = new()
 
         Int32 t = 0
-        while t < T
+        while t < rows
         {
             Int32 rb = t * 8
-            Float32 f1 = cd[ rb ] * 2000.0f
-            Float32 f2 = cd[ rb + 1 ] * 6000.0f
-            Float32 f3 = cd[ rb + 2 ] * 4000.0f
+            Float32 f1 = cd._getItem_( rb ) * 2000.0f
+            Float32 f2 = cd._getItem_( rb + 1 ) * 6000.0f
+            Float32 f3 = cd._getItem_( rb + 2 ) * 4000.0f
             Float32 v = 0.0f
-            if cd[ rb + 3 ] > 0.4f
+            if cd._getItem_( rb + 3 ) > 0.4f
             {
                 v = 1.0f
             }
-            Float32 amp = cd[ rb + 4 ] * 2.0f
-            Float32 nm = cd[ rb + 6 ] * 2.0f
+            Float32 amp = cd._getItem_( rb + 4 ) * 2.0f
+            Float32 nm = cd._getItem_( rb + 6 ) * 2.0f
             if nm > 1.0f
             {
                 nm = 1.0f
             }
-            Float32 bwn = cd[ rb + 7 ] * 2.0f
+            Float32 bwn = cd._getItem_( rb + 7 ) * 2.0f
             if bwn < 0.5f
             {
                 bwn = 0.5f
@@ -196,13 +213,12 @@ public class Txt2WavVocoder
             Float32 b1 = 105.0f * bwn
             Float32 b2 = 150.0f * bwn
             Float32 b3 = 210.0f * bwn
-            Float32 f0t = f0[ t ]
+            Float32 f0t = f0._getItem_( t )
             if f0t < 20.0f
             {
                 f0t = 20.0f
             }
 
-            Int32 rowBase = t * K
             Int32 k = 0
             while k < K
             {
@@ -242,10 +258,212 @@ public class Txt2WavVocoder
                 {
                     hp = 1.0f
                 }
-                mag[ rowBase + k ] = amp * ( tone + noise ) * hp
+                mag.add( amp * ( tone + noise ) * hp )
                 k = k + 1
             }
             t = t + 1
+        }
+
+        List<Int32> dims = new()
+        dims.add( rows )
+        dims.add( K )
+        List<object> packed = new()
+        packed.add( dims )
+        packed.add( mag )
+        ret packed
+    }
+
+    # Isolate worker：执行行块作业并把打包结果送回请求方端口。
+    static void magWorker( SendPort reply, List<object> payload )
+    {
+        if reply == null
+        {
+            ret
+        }
+        object res = Txt2WavVocoder.synthMagJob( payload )
+        reply.send( res )
+    }
+
+    # 构造一个行块载荷（ctx 行 [r0,r1) + f0 行），全部用 List 便于跨 isolate。
+    List<object> makeMagPayload( Array<Float32> cd, Array<Float32> f0, Int32 r0, Int32 r1, Int32 K, Float32 binHz )
+    {
+        List<Int32> meta = new()
+        meta.add( r1 - r0 )
+        meta.add( K )
+        List<Float32> cfg = new()
+        cfg.add( binHz )
+        List<Float32> cdPart = new()
+        Int32 q = r0 * 8
+        Int32 qEnd = r1 * 8
+        while q < qEnd
+        {
+            cdPart.add( cd[ q ] )
+            q = q + 1
+        }
+        List<Float32> f0Part = new()
+        q = r0
+        while q < r1
+        {
+            f0Part.add( f0[ q ] )
+            q = q + 1
+        }
+        List<object> payload = new()
+        payload.add( meta )
+        payload.add( cfg )
+        payload.add( cdPart )
+        payload.add( f0Part )
+        ret payload
+    }
+
+    # 在静态上下文里起 isolate（闭包不能捕获 this / Device / Tensor）。
+    static TensorJob submitMagJob( List<object> payload )
+    {
+        ReceivePort rp = ReceivePort()
+        SendPort sp = rp.sendPort
+        function worker = function( SendPort reply, List<object> partPayload )
+        {
+            Txt2WavVocoder.magWorker( reply, partPayload )
+        }
+        Isolate iso = Isolate.spawn( worker( sp, payload ) )
+        TensorJob j = TensorJob( EComputeMode.Iso )
+        j._attachIsolate( iso, rp )
+        ret j
+    }
+
+    # ── 幅度谱合成：ctx [T, 8]（CPU 张量）→ mag [T, K]（设备上）──
+    # 默认本地单块直算；asyncMag=true 时按行块切给 isolate 并行，
+    # waitAll 挂起当前协程收口。数学与原地循环一致（同一运算次序）。
+    Tensor synthMagnitude( Tensor ctx, Array<Float32> f0 )
+    {
+        Int32 T = ctx.rows()
+        Int32 K = this.specBins
+        Tensor ctxC = ctx.cpu()
+        Array<Float32> cd = ctxC._data
+        Array<Float32> mag = Array<Float32>( T * K )
+        Float32 binHz = SystemConvertFloat32( this.sampleRate ) / SystemConvertFloat32( this.nfft )
+
+        Int32 chunks = this.magChunks
+        if chunks < 1
+        {
+            chunks = 1
+        }
+        if !this.asyncMag || T < 32
+        {
+            chunks = 1
+        }
+        if chunks > T
+        {
+            chunks = T
+        }
+
+        if chunks == 1
+        {
+            # 默认快路径：原始 Array 逐帧循环，零装箱零序列化
+            Int32 t = 0
+            while t < T
+            {
+                Int32 rb = t * 8
+                Float32 f1 = cd[ rb ] * 2000.0f
+                Float32 f2 = cd[ rb + 1 ] * 6000.0f
+                Float32 f3 = cd[ rb + 2 ] * 4000.0f
+                Float32 v = 0.0f
+                if cd[ rb + 3 ] > 0.4f
+                {
+                    v = 1.0f
+                }
+                Float32 amp = cd[ rb + 4 ] * 2.0f
+                Float32 nm = cd[ rb + 6 ] * 2.0f
+                if nm > 1.0f
+                {
+                    nm = 1.0f
+                }
+                Float32 bwn = cd[ rb + 7 ] * 2.0f
+                if bwn < 0.5f
+                {
+                    bwn = 0.5f
+                }
+                Float32 b1 = 105.0f * bwn
+                Float32 b2 = 150.0f * bwn
+                Float32 b3 = 210.0f * bwn
+                Float32 f0t = f0[ t ]
+                if f0t < 20.0f
+                {
+                    f0t = 20.0f
+                }
+
+                Int32 rowBase = t * K
+                Int32 k = 0
+                while k < K
+                {
+                    Float32 f = SystemConvertFloat32( k ) * binHz
+                    Float32 q1 = ( f - f1 ) / b1
+                    Float32 q2 = ( f - f2 ) / b2
+                    Float32 q3 = ( f - f3 ) / b3
+                    Float32 env = TensorMath.exp( 0.0f - q1 * q1 )
+                    env = env + 0.55f * TensorMath.exp( 0.0f - q2 * q2 )
+                    env = env + 0.3f * TensorMath.exp( 0.0f - q3 * q3 )
+
+                    Float32 xh = f / f0t
+                    Int32 ri = SystemConvertInt32( xh + 0.5f )
+                    if ri < 1
+                    {
+                        ri = 1
+                    }
+                    Float32 rr = SystemConvertFloat32( ri )
+                    Float32 dd = xh - rr
+                    Float32 tooth = TensorMath.exp( 0.0f - 20.0f * dd * dd )
+                    Float32 comb = tooth / rr
+
+                    Float32 noise = env * Mathf.sqrt( f / 7800.0f ) * nm
+                    Float32 tone = env * comb * v
+                    Float32 hp = f / 160.0f + 0.12f
+                    if hp < 0.12f
+                    {
+                        hp = 0.12f
+                    }
+                    if hp > 1.0f
+                    {
+                        hp = 1.0f
+                    }
+                    mag[ rowBase + k ] = amp * ( tone + noise ) * hp
+                    k = k + 1
+                }
+                t = t + 1
+            }
+        }
+        else
+        {
+            # 可选并行路径：行块送 isolate，waitAll 按序收敛
+            Array<TensorJob> jobs = Array<TensorJob>( chunks )
+            Array<Int32> rowStarts = Array<Int32>( chunks )
+            Int32 ci = 0
+            while ci < chunks
+            {
+                Int32 r0 = ( T * ci ) / chunks
+                Int32 r1 = ( T * ( ci + 1 ) ) / chunks
+                rowStarts[ ci ] = r0
+                List<object> payload = this.makeMagPayload( cd, f0, r0, r1, K, binHz )
+                jobs[ ci ] = Txt2WavVocoder.submitMagJob( payload )
+                ci = ci + 1
+            }
+            Array<Tensor> parts = TensorAsync.waitAll( jobs )
+            ci = 0
+            while ci < chunks
+            {
+                Tensor part = parts[ ci ]
+                if part != null
+                {
+                    Array<Float32> pd = part._data
+                    Int32 baseRow = rowStarts[ ci ] * K
+                    Int32 pi = 0
+                    while pi < pd.length
+                    {
+                        mag[ baseRow + pi ] = pd[ pi ]
+                        pi = pi + 1
+                    }
+                }
+                ci = ci + 1
+            }
         }
 
         Tensor m = Tensor()

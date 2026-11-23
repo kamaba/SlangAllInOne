@@ -126,6 +126,9 @@ public class Txt2WavDecoder
     # 帧时长（毫秒）：16000Hz / hop 256 = 16ms
     public Int32 frameMs = 16
 
+    # 注意力双 matmul 的异步模式：EComputeMode.Coro（默认）/ Iso
+    public Int32 computeMode = EComputeMode.Coro
+
     _init_()
     {
         this.postnet = Dense( this.dim, this.dim )
@@ -202,8 +205,16 @@ public class Txt2WavDecoder
         Tensor onesColT = Tensor.ones( Shape.matrix( total, 1 ) )
 
         # 注意力打分：logits[t,j] = -18·(focus(t) - j)²（单调对齐）
-        Tensor fTile = focusCol.matmul( onesRowP )
-        Tensor jTile = onesColT.matmul( jRow )
+        # 两个 tile matmul 互不依赖，交给 Tensora 异步层并发提交：
+        # waitAll 挂起当前协程收口，不阻塞 OS 线程；大张量可把
+        # decoder.computeMode 切到 EComputeMode.Iso 走后台线程。
+        Int32 mode = this.computeMode
+        Array<TensorJob> jobs = Array<TensorJob>( 2 )
+        jobs[0] = TensorAsync.matmulAsync( focusCol, onesRowP, mode )
+        jobs[1] = TensorAsync.matmulAsync( onesColT, jRow, mode )
+        Array<Tensor> tiles = TensorAsync.waitAll( jobs )
+        Tensor fTile = tiles[0]
+        Tensor jTile = tiles[1]
         Tensor logits = fTile.sub( jTile ).square().scale( -18.0f )
 
         Device devT = dev

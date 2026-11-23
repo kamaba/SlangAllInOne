@@ -252,6 +252,37 @@ static unsigned char* read_file_utf8(const char* path_utf8, int64_t* out_size)
     fclose(f);
     *out_size = fsize;
     return data;
+#elif defined(__EMSCRIPTEN__)
+    /* wasm：MEMFS 直读（宿主经 FS.writeFile 注入的 UTF-8 路径原样可用）*/
+    FILE* f = NULL;
+    long fsize;
+    unsigned char* data;
+    if (!path_utf8 || !path_utf8[0] || !out_size)
+    {
+        sla_set_error(SLA_E_BAD_PARAM);
+        return NULL;
+    }
+    f = fopen(path_utf8, "rb");
+    if (!f)
+    {
+        sla_set_error(SLA_E_IO);
+        return NULL;
+    }
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); sla_set_error(SLA_E_IO); return NULL; }
+    fsize = ftell(f);
+    if (fsize <= 0 || fseek(f, 0, SEEK_SET) != 0) { fclose(f); sla_set_error(SLA_E_IO); return NULL; }
+    data = (unsigned char*)malloc((size_t)fsize);
+    if (!data) { fclose(f); sla_set_error(SLA_E_MEMORY); return NULL; }
+    if (fread(data, 1, (size_t)fsize, f) != (size_t)fsize)
+    {
+        free(data);
+        fclose(f);
+        sla_set_error(SLA_E_IO);
+        return NULL;
+    }
+    fclose(f);
+    *out_size = fsize;
+    return data;
 #else
     (void)path_utf8; (void)out_size;
     sla_set_error(SLA_E_UNSUPPORTED);

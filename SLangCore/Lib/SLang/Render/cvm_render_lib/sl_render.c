@@ -104,7 +104,15 @@ typedef struct
     const SlrRhi* (*get)(void);
 } SlrBackendEntry;
 
-/* 全部后端静态注册（初始化失败 = 当前环境不可用，init 返回 0 降级）*/
+/* 全部后端静态注册（初始化失败 = 当前环境不可用，init 返回 0 降级）。
+ * wasm（Emscripten）只编入 GLES 后端——gl/d3d11/vk 三个源文件不参与
+ * wasm 构建（WGL/D3D SDK/Vulkan 均不可用），注册表同步条件化。 */
+#if defined(__EMSCRIPTEN__)
+static const SlrBackendEntry s_backends[] =
+{
+    { "gles",  slr_rhi_gles  },
+};
+#else
 static const SlrBackendEntry s_backends[] =
 {
     { "gl",    slr_rhi_gl    },
@@ -112,6 +120,7 @@ static const SlrBackendEntry s_backends[] =
     { "vk",    slr_rhi_vk    },
     { "gles",  slr_rhi_gles  },
 };
+#endif
 
 #define SLR_BACKEND_COUNT (sizeof(s_backends) / sizeof(s_backends[0]))
 

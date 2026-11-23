@@ -170,6 +170,11 @@
       { "path": "Mathf.sl", "group": "math", "tag": "mathf", "ignore": false, "priority": 0 },
       { "path": "Mathh.sl", "group": "math", "tag": "mathh", "ignore": false, "priority": 0 },
 
+      // ── 复数（Complex64 双精度 / Complex32 单精度 / 工具门面）────
+      { "path": "Complex64.sl",    "group": "math", "tag": "complex", "ignore": false, "priority": 0 },
+      { "path": "Complex32.sl",    "group": "math", "tag": "complex", "ignore": false, "priority": 0 },
+      { "path": "MathComplex.sl",  "group": "math", "tag": "complex", "ignore": false, "priority": 0 },
+
       // ── 大数 ─────────────────────────────────────────
       { "path": "BigNumber.sl",  "group": "math", "tag": "bignum", "ignore": false, "priority": 0 },
       { "path": "BigDecimal.sl", "group": "math", "tag": "bignum", "ignore": false, "priority": 0 },
@@ -233,6 +238,9 @@
       { "class": "Mathd" },
       { "class": "Mathf" },
       { "class": "Mathh" },
+      { "class": "Complex64" },
+      { "class": "Complex32" },
+      { "class": "MathComplex" },
       { "class": "BigNumber" },
       { "class": "BigDecimal" },
       { "class": "Factor" },

@@ -181,7 +181,7 @@ Txt2Wav
 
     static void runOne( Txt2WavEngine eng, string text )
     {
-        if SystemStringLength( text ) == 0
+        if text.length == 0
         {
             ret
         }
@@ -266,12 +266,12 @@ Txt2Wav
                 break
             }
             string s = line
-            Int32 len = SystemStringLength( s )
-            # 去掉尾部空白
+            Int32 len = s.length
+            # 去掉尾部空白（String.length + s[i] 下标读）
             while len > 0
             {
-                Int32 c = SystemStringCharCodeAt( s, len - 1 )
-                if Txt2Wav.isSpaceChar( c )
+                Int32 lastPos = len - 1
+                if Txt2Wav.isSpaceChar( s[ lastPos ] )
                 {
                     len = len - 1
                 }
@@ -284,9 +284,9 @@ Txt2Wav
             {
                 len = 0 - len
             }
-            s = s.front( len )
+            s = s.slice( 0, len )
 
-            if SystemStringLength( s ) == 0
+            if s.length == 0
             {
                 break
             }
@@ -297,21 +297,22 @@ Txt2Wav
 
             # 设备前缀
             bool needNew = false
-            if SystemStringLength( s ) > 4 && Txt2WavLexicon.strEq( s.slice( 0, 4 ), "cpu:" )
+            Int32 slen = s.length
+            if slen > 4 && Txt2WavLexicon.strEq( s.slice( 0, 4 ), "cpu:" )
             {
                 if eng.useGpu
                 {
                     needNew = true
                 }
-                s = s.slice( 4, SystemStringLength( s ) )
+                s = s.slice( 4, slen )
             }
-            elif SystemStringLength( s ) > 4 && Txt2WavLexicon.strEq( s.slice( 0, 4 ), "gpu:" )
+            elif slen > 4 && Txt2WavLexicon.strEq( s.slice( 0, 4 ), "gpu:" )
             {
                 if !eng.useGpu
                 {
                     needNew = true
                 }
-                s = s.slice( 4, SystemStringLength( s ) )
+                s = s.slice( 4, slen )
             }
             if needNew
             {

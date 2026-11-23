@@ -4,12 +4,14 @@
  * 全局纹理槽表 s_textures：句柄 1 起始，RGBA8 top-down 像素契约
  * （上传前统一翻行为 bottom-up 行序，交由 RHI 后端原样入显存——
  * GL t=0 与 D3D11 v=0 均指首行，采样语义跨后端一致）。
- * 文件解码走 WIC（PNG/JPEG/BMP/TIFF），零 SDK .lib 依赖
- * （windowscodecs/uuid 由 pragma 注入）。
- * ========================================================================= */
+/* 文件解码走 WIC（PNG/JPEG/BMP/TIFF），零 SDK .lib 依赖
+ * （windowscodecs/uuid 由 pragma 注入）。wasm 载体：WIC 不可用，
+ * slr_texture_load_file 走恒失败降级（RGBA8 直传路径不受影响）。 */
+#if defined(_WIN32)
 #include <wincodec.h>
 #pragma comment(lib, "windowscodecs.lib")
 #pragma comment(lib, "uuid.lib")
+#endif
 #include "sl_render_internal.h"
 
 SlrTexRes s_textures[SLR_MAX_TEX];
@@ -67,6 +69,7 @@ int64_t slr_texture_create_rgba(int w, int h, int64_t data_ptr)
 
 /* 从图片文件创建纹理：WIC 解码 -> 转 32bppRGBA -> 上传。
  * path 为 UTF-8（SL string 契约）；支持 PNG/JPEG/BMP/TIFF 等 WIC 解码器。 */
+#if defined(_WIN32)
 int64_t slr_texture_load_file(const char* path_utf8)
 {
     int64_t handle = 0;
@@ -134,6 +137,57 @@ done:
     if (com_init) CoUninitialize();
     return handle;
 }
+#else /* !defined(_WIN32)：wasm 载体——stb_image 解码（PNG/JPEG/BMP，
+       * 单头纯 C，third_party/stb/stb_image.h），MEMFS 文件直读。
+       * FairyGUI 图集（RenderTexture.loadFile）在 wasm 依赖本分支。 */
+/* stb 声明（实现在 sl_image_lib 的 Codec/sl_image_stb.c —— wasm 构建
+ * 两库同链，避免 STB_IMAGE_IMPLEMENTATION 双实例符号冲突） */
+#include "third_party/stb/stb_image.h"
+int64_t slr_texture_load_file(const char* path_utf8)
+{
+    FILE* f = NULL;
+    long fsize = 0;
+    unsigned char* data = NULL;
+    int w = 0, h = 0, comp = 0;
+    unsigned char* pixels = NULL;
+    int64_t handle = 0;
+    if (!path_utf8 || !path_utf8[0]) { set_error(SLR_E_BAD_PARAM); return 0; }
+    if (!s_ready) { set_error(SLR_E_NOT_INITIALIZED); return 0; }
+    f = fopen(path_utf8, "rb");
+    if (!f) { set_error_detail(SLR_E_IMAGE, "open file"); return 0; }
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); set_error(SLR_E_IMAGE); return 0; }
+    fsize = ftell(f);
+    if (fsize <= 0 || fseek(f, 0, SEEK_SET) != 0) { fclose(f); set_error(SLR_E_IMAGE); return 0; }
+    data = (unsigned char*)malloc((size_t)fsize);
+    if (!data) { fclose(f); set_error(SLR_E_MEMORY); return 0; }
+    if (fread(data, 1, (size_t)fsize, f) != (size_t)fsize)
+    {
+        free(data);
+        fclose(f);
+        set_error(SLR_E_IMAGE);
+        return 0;
+    }
+    fclose(f);
+    /* 强制 4 通道 = 32bppRGBA（与 WIC GUID_WICPixelFormat32bppRGBA 对齐）*/
+    pixels = stbi_load_from_memory(data, (int)fsize, &w, &h, &comp, 4);
+    free(data);
+    if (!pixels || w <= 0 || h <= 0 || w > 8192 || h > 8192)
+    {
+        if (pixels) stbi_image_free(pixels);
+        set_error_detail(SLR_E_IMAGE, "decode failed");
+        return 0;
+    }
+    if (!rhi_enter())
+    {
+        stbi_image_free(pixels);
+        return 0;
+    }
+    handle = texture_register((int)w, (int)h, pixels);
+    rhi_exit();
+    stbi_image_free(pixels);
+    return handle;
+}
+#endif
 
 /* cubemap 纹理注册：faces6 = 6 面 RGBA8 **top-down** 连续块（每面
  * w*h*4；面序 +X,-X,+Y,-Y,+Z,-Z GL 约定）-> 逐面翻行(bottom-up) ->

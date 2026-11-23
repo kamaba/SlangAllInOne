@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SnakeGame Web - SimGameEngine + WebGL (wasm)</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    background: #14170f; color: #d8e6cf;
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+  h1 { font-size: 18px; margin: 0; color: #9fd57a; letter-spacing: 1px; }
+  #stage { position: relative; }
+  canvas {
+    display: block; width: 512px; height: 512px;
+    border: 2px solid #3a4530; border-radius: 6px;
+    background: #0c0e09;
+  }
+  #hint { font-size: 12px; color: #7d8a6d; }
+  #status { font-size: 12px; color: #8a8f7f; min-height: 16px; max-width: 720px;
+            white-space: pre-wrap; }
+  #status.err { color: #e97a6a; }
+  kbd {
+    background: #2a3121; border: 1px solid #46512f; border-radius: 4px;
+    padding: 1px 6px; font-family: Consolas, monospace; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+  <h1>贪吃蛇 · SimGameEngine wasm（WebGL2 渲染 + WebAudio + FairyGUI）</h1>
+  <div id="stage"><canvas id="cv" width="320" height="320"></canvas></div>
+  <div id="hint">
+    <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 移动 ·
+    <kbd>Space</kbd>/<kbd>Enter</kbd> 开始 · <kbd>R</kbd> 重开 ·
+    <kbd>鼠标</kbd> 点 FairyGUI 按钮 ·
+    引擎（SimGameEngine 渲染/声音/输入）整体跑在 WASM，页面只注入事件 + 上屏
+  </div>
+  <div id="status">正在加载 wasm VM（引擎 + 渲染 + 音频，首次较慢）…</div>
+  <script src="game.js"></script>
+</body>
+</html>

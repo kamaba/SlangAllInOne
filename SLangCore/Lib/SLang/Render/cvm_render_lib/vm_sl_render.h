@@ -344,6 +344,45 @@ SLR_API int slr_pipeline_stat(int64_t p, int stat_id);
  * 返回 1=成功；失败经 slr_last_error（坏流 = SLR_E_BAD_PARAM）。 */
 SLR_API int slr_cmd_execute_stream( int64_t pipe, int64_t stream_ptr, int32_t command_count );
 
+/* =============== v5：Windows 系统 GDI 绘图兼容层（Platform/sl_gdi.c） ===============
+ * 不是 SL 软光栅：离屏 CreateDIBSection + HDC + GDI pen/brush/TextOutW 真渲染。
+ * 画布句柄 = SlrGdiCanvas*（非零），SL 侧用 Int64 承载；颜色 = 0xAARRGGBB。
+ * GDI 原生 DIB 为 BGRA，slr_gdi_to_rgba / *_texture 负责转成本库 RGBA8 top-down
+ * 契约；v1 alpha 策略 = clear 色 alpha 生效，绘制像素 alpha 统一置 255。
+ * 非 Windows 平台全部安全降级（0/false）。 */
+SLR_API int64_t slr_gdi_create(int w, int h);
+SLR_API int     slr_gdi_destroy(int64_t handle);
+SLR_API int     slr_gdi_size(int64_t handle, int* w, int* h);
+SLR_API int64_t slr_gdi_bits(int64_t handle);
+SLR_API int     slr_gdi_clear(int64_t handle, int rgba);
+SLR_API int     slr_gdi_set_pixel(int64_t handle, int x, int y, int rgba);
+SLR_API int     slr_gdi_get_pixel(int64_t handle, int x, int y);
+SLR_API int     slr_gdi_line(int64_t handle, int x0, int y0, int x1, int y1, int rgba);
+SLR_API int     slr_gdi_rect(int64_t handle, int x0, int y0, int x1, int y1, int rgba);
+SLR_API int     slr_gdi_fill_rect(int64_t handle, int x0, int y0, int x1, int y1, int rgba);
+SLR_API int     slr_gdi_ellipse(int64_t handle, int x0, int y0, int x1, int y1, int rgba);
+SLR_API int     slr_gdi_fill_ellipse(int64_t handle, int x0, int y0, int x1, int y1, int rgba);
+SLR_API int     slr_gdi_polygon(int64_t handle, const float* points, int count, int stroke, int fill);
+SLR_API int     slr_gdi_blit(int64_t dst, int64_t src, int x, int y);
+SLR_API int     slr_gdi_text(int64_t handle, const char* utf8, int x, int y, int height, int rgba);
+SLR_API int     slr_gdi_to_rgba(int64_t handle, int64_t dst_ptr);
+SLR_API int64_t slr_gdi_create_texture(int64_t handle);
+SLR_API int     slr_gdi_update_texture(int64_t handle, int64_t tex);
+
+/* ---- v5.1：BasicDraw 基础图形 GDI 原生补齐（虚线/折线/贝塞尔/圆弧/描边多边形）----
+ * style_info = (width << 8) | pen_style：width 1..32（像素），pen_style
+ * 0=solid 1=dash 2=dot 3=dashdot 4=dashdotdot（GDI PS_* 逐项对应）。
+ * GDI 硬限制：非实线样式的装饰笔宽度必须为 1（宽>1 自动回实线）——
+ * C 侧对非 solid 显式钳 width=1 保持虚线语义；宽虚线由 SL 层拆段实现。
+ * points 数组布局与 slr_gdi_polygon 相同：x,y 浮点对平铺。
+ * line_ex 因 FFI 6 参上限改 ptr 传参：coords = 4 浮点 [x0,y0,x1,y1]。 */
+SLR_API int     slr_gdi_line_ex(int64_t handle, const float* coords, int style_info, int rgba);
+SLR_API int     slr_gdi_polyline(int64_t handle, const float* points, int count, int style_info, int rgba);
+SLR_API int     slr_gdi_poly_closed(int64_t handle, const float* points, int count, int style_info, int rgba);
+SLR_API int     slr_gdi_bezier(int64_t handle, const float* points, int count, int rgba);
+SLR_API int     slr_gdi_arc(int64_t handle, const float* coords, int rgba);
+SLR_API int     slr_gdi_points(int64_t handle, const float* points, int count, int rgba);
+
 #ifdef __cplusplus
 }
 #endif

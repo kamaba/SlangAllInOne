@@ -2,6 +2,7 @@
 
 > Tensor 核心类与神经网络层 API 详细参考：签名、参数语义、返回值、设备支持、示例与分派语义。
 > 方法总览见 [TensoraMethods.md](TensoraMethods.md)；平台层见 [Cvm/CvmApi.md](Cvm/CvmApi.md)、[Backends/BackendsApi.md](Backends/BackendsApi.md)。
+> 异步计算（协程 / Isolate / Future）见 [TensoraAsync.md](TensoraAsync.md)。
 
 ## 目录
 
@@ -19,6 +20,7 @@
 12. [神经网络层 API](#12-神经网络层-api)
 13. [常见用法示例集](#13-常见用法示例集)
 14. [注意事项与已知差异](#14-注意事项与已知差异)
+15. [异步计算 API](TensoraAsync.md)
 
 ---
 

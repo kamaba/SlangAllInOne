@@ -1,0 +1,83 @@
+{
+  // SnakeGameWeb - browser wasm port driven by the SimGameEngine mechanism
+  // (2026-11-22 architecture fix). Engine C libs (sl_sim_engine_lib /
+  // sl_render_lib GLES->WebGL2 / sl_audio_lib WebAudio) are linked INTO the
+  // wasm binary (csimple_lang_game); @DllStaticImport resolves via
+  // dlopen(NULL). Layers:
+  //   game    SnakeGameBehaviour.sl  - engine-API-only game logic (Behaviour)
+  //   host    WebHost.sl             - pump/render present bridge (QTHost eqv.)
+  //   shared  ../SnakeSfx.sl ../SnakeFairy.sl - audio + FairyGUI (reused)
+  // Entry = SnakeGameWeb.sp _main_ -> WebHost.run(). Build:
+  //   slang compile web\SnakeGameWeb.jsonc --format binary
+  // (see web\compile.ps1; success criterion = slb timestamp rewritten).
+  "project": {
+    "name": "SnakeGameWeb",
+    "desc": "Snake game on SimGameEngine (render/audio/input) for the browser wasm VM",
+    "mainVersion": 0,
+    "subVersion": 2,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": {
+    "root": "."
+  },
+  "dllImports": [],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "WebHost.sl", "group": "host", "tag": "host", "ignore": false, "priority": 0 },
+      { "path": "SnakeGameBehaviour.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 },
+      { "path": "../SnakeSfx.sl", "group": "sfx", "tag": "sfx", "ignore": false, "priority": 2 },
+      { "path": "../SnakeFairy.sl", "group": "ui", "tag": "ui", "ignore": false, "priority": 3 }
+    ]
+  },
+  "references": [
+    // Lib packages relative to this jsonc (web/ -> SnakeGame -> samples ->
+    // SLangCore -> SlangAllInOne). Front rewrites them relative to the module
+    // export dir (WASM_BUILD.md 5.1) - MEMFS staging must mirror that layout.
+    // SimGameEngine transitively brings SLangRender/SLangAudio; explicit
+    // entries pin their FFI dll names for the static-preload channel.
+    { "path": "../../../../SLangCore/Lib/Core", "name": "Core" },
+    { "path": "../../../../SLangCore/Lib/Std", "name": "Std" },
+    { "path": "../../../../SLangCore/Lib/Math", "name": "Math" },
+    { "path": "../../../../SLangCore/Lib/SLang/SimGameEngine", "name": "SimGameEngine" },
+    { "path": "../../../../SLangCore/Lib/SLang/Render/SLangRender", "name": "SLangRender" },
+    { "path": "../../../../SLangCore/Lib/SLang/Audio", "name": "SLangAudio" }
+  ],
+  "struct": [
+    { "class": "WebHost" }
+  ],
+  "export": {
+    "moduleName": "SnakeGameWeb",
+    "outputDir": "D:\\project\\lang\\SlangAllInOne\\out\\export",
+    "versionMain": 0,
+    "versionSub": 2,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  },
+  "global": {
+    "imports": []
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  }
+}

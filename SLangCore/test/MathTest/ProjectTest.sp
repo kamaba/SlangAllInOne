@@ -7,6 +7,7 @@ Project
         Matrix4x4Test.fun()
         FFIMathTest.fun()
         MatrixBigTest.fun()
+        ComplexTest.fun()
     }
     _before_()
     {

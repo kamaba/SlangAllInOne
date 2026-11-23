@@ -55,9 +55,9 @@
       { "path": "Debug/Log.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Profiling.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "Debug/Trace.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
-      // Data/Table.sl、Data/Tree.sl 已删除（源文件为空壳 stub，待 FrameData 重构），登记暂时注释
-      // { "path": "Data/Table.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
-      // { "path": "Data/Tree.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      // ---- Debug/FrameData.sl：帧数据变化记录器（自 Core/Data/FrameData.sl stub 迁入并重构）----
+      // namespace SLang（挂 namespace Data 会被 Core 根类 Data 同名遮蔽，Data.XXX 解析命中 Core.Data）
+      { "path": "Debug/FrameData.sl", "group": "std", "tag": "debug", "ignore": false, "priority": 0 },
       { "path": "DB/Sqlite.sl", "group": "std", "tag": "db", "ignore": false, "priority": 0 },
       { "path": "Isolate/IsolateStatus.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Isolate/IsolateError.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
@@ -181,12 +181,7 @@
                 { "class": "_MqttPacket" }
             ]
       },
-      // { "namespace": "Data", "children":
-      //    [
-      //       { "class": "Table" },
-      //       { "class": "Tree" }
-      //    ]
-      // },
+      // ---- Std/Data：Table/Tree 空壳 stub 已删除；FrameData 移至 Debug/（namespace SLang）----
       { "namespace": "DB", "children":
          [
             { "enum": "SQLITE_OPEN" },
@@ -205,13 +200,17 @@
       // 无 namespace 声明、注册到模块根，引用方裸名可见（同 Component/Base64 先例）
       { "class": "Color" },
       { "class": "ColorInt" },
-      // ---- Std/Debug：SLang 命名空间（Log/Profiling/Trace.sl 均有 namespace SLang 声明）----
+      // ---- Std/Debug：SLang 命名空间（Log/Profiling/Trace/FrameData.sl 均有 namespace SLang 声明）----
+      // FrameData 帧数据变化记录器：FrameData 基类 / FrameData<T> 泛型值包装 / FrameDataManager 管理类
       { "namespace": "SLang", "children":
          [
             { "class": "Log" },
             { "class": "Logger" },
             { "class": "Profiling" },
-            { "class": "Trace" }
+            { "class": "Trace" },
+            { "class": "FrameData" },
+            { "class": "FrameData<T>" },
+            { "class": "FrameDataManager" }
          ]
       },
       { "namespace": "GPU", "children":

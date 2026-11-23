@@ -34,8 +34,20 @@ SLVM_EC_BEGIN
 /* ------------------------------------------------------------------ */
 /* VMObject 布局偏移                                                    */
 /* ------------------------------------------------------------------ */
+/* wasm32（Emscripten）：指针 4 字节，struct _VMObject 实际布局为
+ *   偏移  0 : header（uint64 联合，8 字节）
+ *   偏移  8 : member_data（uint8*，4 字节）
+ *   偏移 12 : member_data_size（uint32）
+ *   偏移 16 : bind_runtime_type（指针，4 字节）
+ * x64 与 wasm32 下 member_data 恰好都落在偏移 8，member_data_size 则
+ * 分别在 16 / 12，必须按目标指针宽度选择。 */
+#if defined(__wasm__) || defined(__EMSCRIPTEN__)
+#define MATHVM_OBJ_MEMBER_DATA_OFFSET       8   /* uint8* member_data（4 字节指针） */
+#define MATHVM_OBJ_MEMBER_DATA_SIZE_OFFSET  12  /* uint32  member_data_size */
+#else
 #define MATHVM_OBJ_MEMBER_DATA_OFFSET       8   /* uint8*  member_data */
 #define MATHVM_OBJ_MEMBER_DATA_SIZE_OFFSET  16  /* uint32  member_data_size */
+#endif
 
 #define MATHVM_OBJ_MEMBER_DATA(obj) \
     (*(uint8**)((uint8*)(obj) + MATHVM_OBJ_MEMBER_DATA_OFFSET))

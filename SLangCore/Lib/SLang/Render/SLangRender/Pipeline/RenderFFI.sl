@@ -48,4 +48,83 @@ public class RenderFFI
     {
         ret 0
     }
+
+    # ── Windows 系统 GDI 兼容层（cvm_render_lib/Platform/sl_gdi.c）──
+    # 真 GDI：CreateDIBSection + HDC + GDI pen/brush/TextOutW；
+    # 句柄 = C 侧 SlrGdiCanvas*（Int64 承载），颜色 = 0xAARRGGBB。
+    @DllStaticImport( "sl_render_lib", "slr_gdi_create", "i32,i32->i64" )
+    public static Int64 ffiGdiCreate( Int32 w, Int32 h ) { ret 0 }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_destroy", "i64->bool" )
+    public static bool ffiGdiDestroy( Int64 canvas ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_size", "i64,ptr->bool" )
+    public static bool ffiGdiSize( Int64 canvas, Int64 dstPtr ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_bits", "i64->i64" )
+    public static Int64 ffiGdiBits( Int64 canvas ) { ret 0 }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_clear", "i64,i32->bool" )
+    public static bool ffiGdiClear( Int64 canvas, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_set_pixel", "i64,i32,i32,i32->bool" )
+    public static bool ffiGdiSetPixel( Int64 canvas, Int32 x, Int32 y, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_get_pixel", "i64,i32,i32->i32" )
+    public static Int32 ffiGdiGetPixel( Int64 canvas, Int32 x, Int32 y ) { ret -1 }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_line", "i64,i32,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiLine( Int64 canvas, Int32 x0, Int32 y0, Int32 x1, Int32 y1, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_rect", "i64,i32,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiRect( Int64 canvas, Int32 x0, Int32 y0, Int32 x1, Int32 y1, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_fill_rect", "i64,i32,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiFillRect( Int64 canvas, Int32 x0, Int32 y0, Int32 x1, Int32 y1, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_ellipse", "i64,i32,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiEllipse( Int64 canvas, Int32 x0, Int32 y0, Int32 x1, Int32 y1, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_fill_ellipse", "i64,i32,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiFillEllipse( Int64 canvas, Int32 x0, Int32 y0, Int32 x1, Int32 y1, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_polygon", "i64,ptr,i32,i32,i32->bool" )
+    public static bool ffiGdiPolygon( Int64 canvas, Int64 pointsPtr, Int32 count, Int32 stroke, Int32 fill ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_blit", "i64,i64,i32,i32->bool" )
+    public static bool ffiGdiBlit( Int64 dst, Int64 src, Int32 x, Int32 y ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_text", "i64,utf8,i32,i32,i32,i32->bool" )
+    public static bool ffiGdiText( Int64 canvas, string text, Int32 x, Int32 y, Int32 height, Int32 color ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_to_rgba", "i64,ptr->bool" )
+    public static bool ffiGdiToRgba( Int64 canvas, Int64 dstPtr ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_create_texture", "i64->i64" )
+    public static Int64 ffiGdiCreateTexture( Int64 canvas ) { ret 0 }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_update_texture", "i64,i64->bool" )
+    public static bool ffiGdiUpdateTexture( Int64 canvas, Int64 tex ) { ret false }
+
+    # ── v5.1：BasicDraw 基础图形 GDI 原生补齐 ──
+    # style_info = (width << 8) | pen_style（宽 1..32，样式 0=solid
+    # 1=dash 2=dot 3=dashdot 4=dashdotdot）；非实线笔宽钳 1。
+    # lineEx 因 6 参上限走 ptr：coords = 4 浮点 [x0,y0,x1,y1]。
+    @DllStaticImport( "sl_render_lib", "slr_gdi_line_ex", "i64,ptr,i32,i32->bool" )
+    public static bool ffiGdiLineEx( Int64 canvas, Int64 coordsPtr, Int32 styleInfo, Int32 rgba ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_polyline", "i64,ptr,i32,i32,i32->bool" )
+    public static bool ffiGdiPolyline( Int64 canvas, Int64 pointsPtr, Int32 count, Int32 styleInfo, Int32 rgba ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_poly_closed", "i64,ptr,i32,i32,i32->bool" )
+    public static bool ffiGdiPolyClosed( Int64 canvas, Int64 pointsPtr, Int32 count, Int32 styleInfo, Int32 rgba ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_bezier", "i64,ptr,i32,i32->bool" )
+    public static bool ffiGdiBezier( Int64 canvas, Int64 pointsPtr, Int32 count, Int32 rgba ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_arc", "i64,ptr,i32->bool" )
+    public static bool ffiGdiArc( Int64 canvas, Int64 coordsPtr, Int32 rgba ) { ret false }
+
+    @DllStaticImport( "sl_render_lib", "slr_gdi_points", "i64,ptr,i32,i32->bool" )
+    public static bool ffiGdiPoints( Int64 canvas, Int64 pointsPtr, Int32 count, Int32 rgba ) { ret false }
 }

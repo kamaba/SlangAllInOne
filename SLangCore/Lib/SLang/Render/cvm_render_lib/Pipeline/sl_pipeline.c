@@ -20,6 +20,9 @@
  * 相机槽表管理在 Pipeline/sl_camera.c。
  * ========================================================================= */
 #include "sl_render_internal.h"
+#if defined(__EMSCRIPTEN__)
+#include <emscripten.h>
+#endif
 
 SlrPipeline s_pipes[SLR_MAX_PIPES];
 
@@ -1217,6 +1220,47 @@ static int stage_upload_render_data(SlrPipeline* p)
         s_perdraw.spec[i][0] = o->spec_str;
         s_perdraw.spec[i][1] = o->spec_shin;
     }
+#if defined(__EMSCRIPTEN__)
+    /* PerDraw 组装探针（单缓冲版）：[item_count, items[0..3].mvp ×64,
+     * s_perdraw.mvp[0..3] ×64, obj0 pos3+rot1+scale2] —— 仲裁 C 组装
+     * 与上传链路。JS 体禁裸逗号。 */
+    if (p->item_count > 0)
+    {
+        float dbg[1 + 64 + 64 + 6];
+        int di = 0, k;
+        dbg[di++] = (float)p->item_count;
+        for (k = 0; k < 4; k++)
+        {
+            const float* src = (p->item_count > k) ? p->items[k].mvp : p->items[0].mvp;
+            int f;
+            for (f = 0; f < 16; f++) dbg[di++] = src[f];
+        }
+        for (k = 0; k < 4; k++)
+        {
+            const float* src = s_perdraw.mvp[p->item_count > k ? k : 0];
+            int f;
+            for (f = 0; f < 16; f++) dbg[di++] = src[f];
+        }
+        {
+            SlrObject* o0 = &p->objects[p->items[0].obj];
+            dbg[di++] = o0->pos[0];
+            dbg[di++] = o0->pos[1];
+            dbg[di++] = o0->pos[2];
+            dbg[di++] = o0->rot_z;
+            dbg[di++] = o0->scale[0];
+            dbg[di++] = o0->scale[1];
+        }
+        EM_ASM({
+            if (typeof window !== 'undefined') {
+                var a = [];
+                var base = arguments[0] / 4;
+                var i;
+                for (i = 0; i < 135; i++) a.push(HEAPF32[base + i]);
+                window.__glesAssembleProbe = a;
+            }
+        }, (int)(intptr_t)dbg);
+    }
+#endif
     g_rhi->upload_perdraw(&s_perdraw, (int)sizeof(SlrPerDraw));
     /* v3.6 MotionVectors：PerDrawPrev 帧级块（上帧 MVP，槽位同 PerDraw；
      * 后端无 upload_perdraw_prev（VK/D3D11）时跳过——motion pass 不执行）*/

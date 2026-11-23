@@ -37,6 +37,7 @@ typedef unsigned int GLbitfield;
 typedef unsigned char GLboolean;
 typedef float       GLfloat;
 typedef char        GLchar;
+typedef double      GLdouble;   /* GL 侧专用（sl_gl_procs.h 清单含 glClearDepth；ES 不加载）*/
 typedef ptrdiff_t   GLintptr;
 typedef ptrdiff_t   GLsizeiptr;
 
@@ -46,6 +47,7 @@ typedef ptrdiff_t   GLsizeiptr;
 #define GL_TRIANGLES              0x0004
 #define GL_FLOAT                  0x1406
 #define GL_RGBA                   0x1908
+#define GL_UNSIGNED_BYTE          0x1401
 #define GL_RGBA8                  0x8058
 #define GL_DEPTH_COMPONENT24      0x81A6
 #define GL_DEPTH_COMPONENT16      0x81A5
@@ -168,6 +170,16 @@ typedef void*      (WINAPI *PFN_eglGetProcAddress)(const char*);
 typedef EGLint     (WINAPI *PFN_eglGetError)(void);
 typedef const char*(WINAPI *PFN_eglQueryString)(EGLDisplay, EGLint);
 
+#if defined(__EMSCRIPTEN__)
+/* web 载体追踪：gl_init 失败点直打浏览器 console（SL 侧 error detail
+ * 通道在 wasm 模块面不可读时仍可诊断）。单行宏体（EM_ASM 花括号内
+ * 禁裸逗号）。 */
+#include <emscripten.h>
+#define GLESTRI(...) EM_ASM({ if (typeof document !== 'undefined') { var s = document.getElementById('status'); if (s) { s.textContent += '\n[gles] ' + Array.prototype.slice.call(arguments).join(' '); } } }, __VA_ARGS__)
+#else
+#define GLESTRI(...)
+#endif
+
 static PFN_eglGetDisplay           p_eglGetDisplay;
 static PFN_eglInitialize           p_eglInitialize;
 static PFN_eglBindAPI              p_eglBindAPI;
@@ -181,6 +193,52 @@ static PFN_eglTerminate            p_eglTerminate;
 static PFN_eglGetProcAddress       p_eglGetProcAddress;
 static PFN_eglGetError             p_eglGetError;
 static PFN_eglQueryString          p_eglQueryString;
+
+#if defined(__EMSCRIPTEN__)
+/* Emscripten EGL shim（-sUSE_EGL=1）直链声明：类型与手写 EGL 类型一致
+ * （EGLDisplay/Surface/Context/Config = void*，EGLint = int32）。本翻译
+ * 单元不含系统 egl.h，无重复 typedef 冲突；链接期按符号名解析。 */
+extern EGLDisplay eglGetDisplay(void*);
+extern EGLBoolean eglInitialize(EGLDisplay, EGLint*, EGLint*);
+extern EGLBoolean eglBindAPI(EGLenum);
+extern EGLBoolean eglChooseConfig(EGLDisplay, const EGLint*, EGLConfig*, EGLint, EGLint*);
+extern EGLContext eglCreateContext(EGLDisplay, EGLConfig, EGLContext, const EGLint*);
+extern EGLSurface eglCreatePbufferSurface(EGLDisplay, EGLConfig, const EGLint*);
+extern EGLBoolean eglMakeCurrent(EGLDisplay, EGLSurface, EGLSurface, EGLContext);
+extern EGLBoolean eglDestroyContext(EGLDisplay, EGLContext);
+extern EGLBoolean eglDestroySurface(EGLDisplay, EGLSurface);
+extern EGLBoolean eglTerminate(EGLDisplay);
+extern void* eglGetProcAddress(const char*);
+extern EGLint eglGetError(void);
+extern const char* eglQueryString(EGLDisplay, EGLint);
+
+/* 取址包装：EGL shim 函数为 JS 库实现，wasm-ld 禁止对其取函数指针
+ * （R_WASM_TABLE_INDEX_SLEB relocation 错）。包装函数是本单元的普通
+ * wasm 函数，可安全取址；内部对 egl* 为普通直调（无表索引重定位）。 */
+static EGLDisplay w_eglGetDisplay(void* dpy) { return eglGetDisplay(dpy); }
+static EGLBoolean w_eglInitialize(EGLDisplay dpy, EGLint* maj, EGLint* mnr) { return eglInitialize(dpy, maj, mnr); }
+static EGLBoolean w_eglBindAPI(EGLenum api) { return eglBindAPI(api); }
+static EGLBoolean w_eglChooseConfig(EGLDisplay dpy, const EGLint* a, EGLConfig* c, EGLint n, EGLint* nc) { return eglChooseConfig(dpy, a, c, n, nc); }
+static EGLContext w_eglCreateContext(EGLDisplay dpy, EGLConfig c, EGLContext s, const EGLint* a) { return eglCreateContext(dpy, c, s, a); }
+/* shim 未实现 eglCreatePbufferSurface：存根恒返回 EGL_NO_SURFACE（wasm
+ * 绑定路径固定走 surfaceless，见 gl_init 第 5 步）。 */
+static EGLSurface w_eglCreatePbufferSurface(EGLDisplay dpy, EGLConfig c, const EGLint* a) { (void)dpy; (void)c; (void)a; return 0; }
+static EGLBoolean w_eglMakeCurrent(EGLDisplay dpy, EGLSurface r, EGLSurface w, EGLContext c) { return eglMakeCurrent(dpy, r, w, c); }
+static EGLBoolean w_eglDestroyContext(EGLDisplay dpy, EGLContext c) { return eglDestroyContext(dpy, c); }
+static EGLBoolean w_eglDestroySurface(EGLDisplay dpy, EGLSurface s) { return eglDestroySurface(dpy, s); }
+static EGLBoolean w_eglTerminate(EGLDisplay dpy) { return eglTerminate(dpy); }
+static void* w_eglGetProcAddress(const char* name) { return eglGetProcAddress(name); }
+static EGLint w_eglGetError(void) { return eglGetError(); }
+static const char* w_eglQueryString(EGLDisplay dpy, EGLint n) { return eglQueryString(dpy, n); }
+/* DOM 探测（headless 优雅降级，见 gl_init）：EM_ASM 无裸逗号（宏参数
+ * 分隔符坑），用括号表达式风格。 */
+static int wsl_has_dom(void)
+{
+    return (int)EM_ASM_INT({
+        return (typeof document !== 'undefined' && typeof document.createElement === 'function') ? 1 : 0;
+    });
+}
+#endif
 
 /* ===================================================================== */
 /* 后端私有状态                                                           */
@@ -1019,6 +1077,7 @@ static SlrRhiTarget* gl_target_create_ms(int w, int h, int samples)
     return t;
 }
 
+/* ===================================================================== */
 /* v3.6 MSAA resolve：src（多采样 FBO）-> dst（单采样 FBO）颜色 blit */
 static void gl_target_resolve(SlrRhiTarget* dst, SlrRhiTarget* src, int w, int h)
 {
@@ -1151,6 +1210,8 @@ static void* gl_texture_create_cube(int w, int h, const unsigned char* faces6)
 /* ===================================================================== */
 /* 管线 pass（与 GL 后端逐行同构：GL 语义即 GLES 语义）                     */
 /* ===================================================================== */
+
+/* 主渲染入口：绑主目标 + 全清（与 GL 后端逐行同构）*/
 static void gl_begin_scene(SlrRhiTarget* t, int w, int h, const float* clear)
 {
     p_glBindFramebuffer(GL_FRAMEBUFFER, t->fbo);
@@ -1583,7 +1644,11 @@ static FARPROC resolve_gles(const char* name)
             f = NULL;
     }
     if (!f && s_hgles)
+#if !defined(__EMSCRIPTEN__)
         f = GetProcAddress(s_hgles, name);
+#else
+        f = NULL;   /* wasm：无宿主加载 API，仅 eglGetProcAddress 通道 */
+#endif
     return f;
 }
 
@@ -1683,7 +1748,45 @@ static int gl_init(void)
     const char* exts;
     int guard;
 
-    /* 1) libEGL.dll（探测失败 = 环境无 GLES -> 优雅降级）*/
+    /* 1) EGL 函数装载。
+     *    Windows：libEGL.dll 运行期探测（失败 = 环境无 GLES -> 优雅降级）。
+     *    wasm：Emscripten EGL shim 直链（USE_EGL=1 全符号可用），GLES
+     *    符号走 eglGetProcAddress（emscripten_GetProcAddress 内建 ES3
+     *    core 解析表），无 libEGL/libGLESv2 概念。 */
+#if defined(__EMSCRIPTEN__)
+    /* headless 环境（Node 冒烟）无 document：EGL shim 直接触发 JS 异常
+     * （"document is not defined"）而非返回失败——先探测 DOM，无则
+     * 优雅降级（Host 打印 init False + 错误详情，游戏逻辑继续跑）。 */
+    if (!wsl_has_dom())
+    {
+        set_error_detail(SLR_E_BACKEND, "no DOM/canvas (headless env)");
+        GLESTRI("FAIL no dom (headless)");
+        return 0;
+    }
+    /* wasm：EGL shim 函数是 JS 库实现，不可取址（wasm-ld 报
+     * R_WASM_TABLE_INDEX_SLEB relocation 错）——经静态包装函数间接
+     * 引用：包装函数本身是普通 wasm 函数可取址，内部对 egl* 直调。 */
+    p_eglGetDisplay           = w_eglGetDisplay;
+    p_eglInitialize           = w_eglInitialize;
+    p_eglBindAPI              = w_eglBindAPI;
+    p_eglChooseConfig         = w_eglChooseConfig;
+    p_eglCreateContext        = w_eglCreateContext;
+    p_eglCreatePbufferSurface = w_eglCreatePbufferSurface;
+    p_eglMakeCurrent          = w_eglMakeCurrent;
+    p_eglDestroyContext       = w_eglDestroyContext;
+    p_eglDestroySurface       = w_eglDestroySurface;
+    p_eglTerminate            = w_eglTerminate;
+    p_eglGetProcAddress       = w_eglGetProcAddress;
+    p_eglGetError             = w_eglGetError;
+    p_eglQueryString          = w_eglQueryString;
+    if (!p_eglGetDisplay || !p_eglInitialize || !p_eglCreateContext ||
+        !p_eglMakeCurrent || !p_eglGetProcAddress || !p_eglBindAPI ||
+        !p_eglChooseConfig || !p_eglDestroyContext || !p_eglTerminate)
+    {
+        set_error_detail(SLR_E_BACKEND, "EGL shim entry points missing");
+        return 0;
+    }
+#else
     s_hegl = LoadLibraryA("libEGL.dll");
     if (!s_hegl) s_hegl = LoadLibraryA("egl.dll");
     if (!s_hegl)
@@ -1716,19 +1819,24 @@ static int gl_init(void)
     s_hgles = LoadLibraryA("libGLESv2.dll");
     if (!s_hgles) s_hgles = LoadLibraryA("libGLESv2.dll");
     /* 缺失不致命：eglGetProcAddress 仍可能解析到全部核心函数 */
+#endif
 
     /* 2) display + initialize */
     s_dpy = p_eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    GLESTRI("display=", (void*)s_dpy);
     if (!s_dpy)
     {
         set_error_detail(SLR_E_BACKEND, "eglGetDisplay(EGL_DEFAULT_DISPLAY) failed");
+        GLESTRI("FAIL eglGetDisplay");
         return 0;
     }
     if (!p_eglInitialize(s_dpy, &major, &minor))
     {
         set_error_detail(SLR_E_BACKEND, "eglInitialize failed (no EGL device)");
+        GLESTRI("FAIL eglInitialize");
         return 0;
     }
+    GLESTRI("initialized major=", (int)major, " minor=", (int)minor);
 
     /* 3) ES 绑定 + 选配置（pbuffer 兼容，全用离屏 FBO）*/
     p_eglBindAPI(EGL_OPENGL_ES_API);
@@ -1746,8 +1854,10 @@ static int gl_init(void)
         if (!p_eglChooseConfig(s_dpy, attribs, &cfg, 1, &ncfg) || ncfg < 1)
         {
             set_error_detail(SLR_E_BACKEND, "eglChooseConfig found no GLES3 config");
+            GLESTRI("FAIL eglChooseConfig ncfg=", (int)ncfg);
             return 0;
         }
+        GLESTRI("config ok ncfg=", (int)ncfg);
     }
 
     /* 4) ES 3.0 上下文 */
@@ -1760,11 +1870,23 @@ static int gl_init(void)
         if (!s_ctx)
         {
             set_error_detail(SLR_E_CONTEXT, "eglCreateContext(GLES3) failed");
+            GLESTRI("FAIL eglCreateContext GLES3");
             return 0;
         }
+        GLESTRI("context ok");
     }
 
-    /* 5) 绑定：优先无表面（EGL_KHR_surfaceless_context），回退 1x1 pbuffer */
+    /* 5) 绑定：优先无表面（EGL_KHR_surfaceless_context），回退 1x1 pbuffer。
+     *    wasm：Emscripten EGL shim 的 EGL_EXTENSIONS 恒返回空串，但其
+     *    eglMakeCurrent 实际接受 EGL_NO_SURFACE（surfaceless 可用）——
+     *    跳过扩展探测直接绑定；shim 亦无 eglCreatePbufferSurface。 */
+#if defined(__EMSCRIPTEN__)
+    if (p_eglMakeCurrent(s_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, s_ctx))
+        goto bound;
+    set_error_detail(SLR_E_CONTEXT_CURRENT, "eglMakeCurrent failed (surfaceless unsupported)");
+    GLESTRI("FAIL makeCurrent surfaceless");
+    return 0;
+#else
     exts = p_eglQueryString ? p_eglQueryString(s_dpy, EGL_EXTENSIONS) : NULL;
     if (exts && strstr(exts, "EGL_KHR_surfaceless_context"))
     {
@@ -1780,12 +1902,20 @@ static int gl_init(void)
         if (!s_surf || !p_eglMakeCurrent(s_dpy, s_surf, s_surf, s_ctx))
         {
             set_error_detail(SLR_E_CONTEXT_CURRENT, "eglMakeCurrent failed (surfaceless unsupported)");
+            GLESTRI("FAIL pbuffer/makeCurrent surf=", (void*)s_surf);
             return 0;
         }
+        GLESTRI("pbuffer bound");
     }
+#endif
 bound:
     /* 6) GLES 符号解析 */
-    if (!load_all_gles_procs()) return 0;
+    if (!load_all_gles_procs())
+    {
+        GLESTRI("FAIL load_all_gles_procs");
+        return 0;
+    }
+    GLESTRI("gles procs loaded");
 
     /* 7) 冲刷粘性错误 + 像素对齐 */
     guard = 0;
@@ -1811,8 +1941,10 @@ static void gl_shutdown(void)
     if (s_surf && p_eglDestroySurface) { p_eglDestroySurface(s_dpy, s_surf); s_surf = NULL; }
     if (s_ctx && p_eglDestroyContext) { p_eglDestroyContext(s_dpy, s_ctx); s_ctx = NULL; }
     if (s_dpy && p_eglTerminate) { p_eglTerminate(s_dpy); s_dpy = NULL; }
+#if !defined(__EMSCRIPTEN__)
     if (s_hgles) { FreeLibrary(s_hgles); s_hgles = NULL; }
     if (s_hegl) { FreeLibrary(s_hegl); s_hegl = NULL; }
+#endif
     p_eglGetDisplay = NULL; p_eglInitialize = NULL; p_eglBindAPI = NULL;
     p_eglChooseConfig = NULL; p_eglCreateContext = NULL;
     p_eglCreatePbufferSurface = NULL; p_eglMakeCurrent = NULL;

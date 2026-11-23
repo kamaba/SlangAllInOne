@@ -5,7 +5,7 @@
     "desc": "Tensora library - AI common classes: tensor/shape/ops, autograd, activations, losses, layers (dense/conv/pool/norm/dropout), module, rnn/lstm/gru, embedding, attention/transformer, optimizers, lr schedulers, metrics, dataset, tokenizer, trainer",
     "mainVersion": 0,
     "subVersion": 1,
-    "buildVersion": 0,
+    "buildVersion": 1,
     "buildSubVersion": 0
   },
   "source": {
@@ -108,7 +108,10 @@
       { "path": "Metrics.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 },
       { "path": "Dataset.sl",   "group": "tensora", "tag": "data",  "ignore": false, "priority": 0 },
       { "path": "Tokenizer.sl", "group": "tensora", "tag": "data",  "ignore": false, "priority": 0 },
-      { "path": "Trainer.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 }
+      { "path": "Trainer.sl",   "group": "tensora", "tag": "train", "ignore": false, "priority": 0 },
+
+      // ── 异步计算：协程任务 / Isolate 协调 / Future ──
+      { "path": "Async.sl",     "group": "tensora", "tag": "async", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -219,7 +222,13 @@
       { "class": "Tpu" },
       { "class": "Npu" },
       { "class": "Onnx" },
-      { "class": "Mem" }
+      { "class": "Mem" },
+      // ── 异步计算（必须追加在末尾：插中间会使既有类槽位后移致 C VM 越界） ──
+      { "class": "AsyncStatus" },
+      { "class": "EComputeMode" },
+      { "class": "EAsyncOp" },
+      { "class": "TensorJob" },
+      { "class": "TensorAsync" }
     ]}
   ],
   "export": {

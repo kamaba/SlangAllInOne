@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SimGameEngine Wasm 模板</title>
+<style>
+  /* 页面壳样式可按工程自由改；唯一硬约定：<canvas id="cv"> 存在，
+     且 width/height 属性 = 渲染分辨率（app.js 依此回调引擎窗口尺寸） */
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    background: #14170f; color: #d8e6cf;
+    font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  }
+  h1 { font-size: 18px; margin: 0; color: #9fd57a; letter-spacing: 1px; }
+  canvas {
+    display: block; width: 512px; height: 512px;   /* CSS 显示尺寸（可任意缩放） */
+    border: 2px solid #3a4530; border-radius: 6px; background: #0c0e09;
+  }
+  #status { font-size: 12px; color: #8a8f7f; min-height: 16px; max-width: 720px;
+            white-space: pre-wrap; }
+  #status.err { color: #e97a6a; }
+</style>
+</head>
+<body>
+  <h1>SimGameEngine wasm 模板（WebGL2 渲染 + WebAudio）</h1>
+  <canvas id="cv" width="320" height="320"></canvas>
+  <div id="status">正在加载 wasm VM…</div>
+  <script src="app.js"></script>
+</body>
+</html>

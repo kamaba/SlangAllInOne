@@ -1,4 +1,5 @@
 import Std
+import Core
 
 # =============================================================
 # Txt2WavG2p.sl —— 文本前端（仿 Tacotron frontend + 规则式 G2P）
@@ -99,28 +100,20 @@ CH 800 2700 3400 0 0.70 90 0.95 1.5
 JH 800 2700 3400 1 0.65 75 0.75 1.5
 _ 500 1500 2500 0 0.02 160 0.00 1.0
 """
-        Int32 len = SystemStringLength( dat )
-        Array<string> lines = Array<string>( 80 )
+        # splitLines 走 C99 strstr 逐行切割并剥掉 \r；只收非空行
+        Array<string> rawLines = dat.splitLines()
+        Array<string> lines = Array<string>( rawLines.length )
         Int32 lineCount = 0
-        Int32 i = 0
-        Int32 lineStart = 0
-        while i <= len
+        Int32 li = 0
+        while li < rawLines.length
         {
-            Int32 c = 10
-            if i < len
+            string row = rawLines[ li ]
+            if row.length > 0
             {
-                c = SystemStringCharCodeAt( dat, i )
+                lines[ lineCount ] = row
+                lineCount = lineCount + 1
             }
-            if c == 10 || c == 13 || i == len
-            {
-                if i > lineStart
-                {
-                    lines[ lineCount ] = SystemStringRange( dat, lineStart, i )
-                    lineCount = lineCount + 1
-                }
-                lineStart = i + 1
-            }
-            i = i + 1
+            li = li + 1
         }
 
         this.phoneCount = lineCount
@@ -185,8 +178,8 @@ _ 500 1500 2500 0 0.02 160 0.00 1.0
         {
             ret false
         }
-        Int32 la = SystemStringLength( a )
-        Int32 lb = SystemStringLength( b )
+        Int32 la = a.length
+        Int32 lb = b.length
         if la != lb
         {
             ret false
@@ -194,7 +187,7 @@ _ 500 1500 2500 0 0.02 160 0.00 1.0
         Int32 i = 0
         while i < la
         {
-            if SystemStringCharCodeAt( a, i ) != SystemStringCharCodeAt( b, i )
+            if a[ i ] != b[ i ]
             {
                 ret false
             }
@@ -207,12 +200,12 @@ _ 500 1500 2500 0 0.02 160 0.00 1.0
     # 支持 "730"、"0.45"、"-1.2e3"（纯 ASCII，负号/小数/指数）
     static Float32 parseNum( string s )
     {
-        Int32 len = SystemStringLength( s )
+        Int32 len = s.length
         Float32 sign = 1.0f
         Int32 i = 0
         if len > 0
         {
-            Int32 c0 = SystemStringCharCodeAt( s, 0 )
+            Int32 c0 = s[ 0 ]
             if c0 == 45
             {
                 sign = -1.0f
@@ -229,7 +222,7 @@ _ 500 1500 2500 0 0.02 160 0.00 1.0
         Float32 scale = 0.1f
         while i < len
         {
-            Int32 c = SystemStringCharCodeAt( s, i )
+            Int32 c = s[ i ]
             if c >= 48 && c <= 57
             {
                 Float32 d = SystemConvertFloat32( c - 48 )
@@ -258,54 +251,42 @@ _ 500 1500 2500 0 0.02 160 0.00 1.0
         ret sign * ( ip + frac )
     }
 
+    # 空格/制表符切词：复用 String.split（C99 strstr），再滤掉空段。
+    # 保留旧契约——连续空白折叠、首尾空白忽略、无词时返回 [""]。
     static Array<string> splitSpaces( string s )
     {
-        Int32 len = SystemStringLength( s )
-        Array<string> parts = Array<string>( 16 )
-        Int32 n = 0
+        List<string> parts = List<string>()
+        Array<string> bySpace = s.split( " " )
         Int32 i = 0
-        Int32 segStart = -1
-        while i <= len
+        while i < bySpace.length
         {
-            Int32 c = 32
-            if i < len
+            string seg = bySpace[ i ]
+            Array<string> byTab = seg.split( "\t" )
+            Int32 j = 0
+            while j < byTab.length
             {
-                c = SystemStringCharCodeAt( s, i )
-            }
-            if c == 32 || c == 9 || i == len
-            {
-                if segStart >= 0
+                string tok = byTab[ j ]
+                if tok.length > 0
                 {
-                    parts[ n ] = SystemStringRange( s, segStart, i )
-                    n = n + 1
-                    segStart = -1
+                    parts.add( tok )
                 }
-            }
-            else
-            {
-                if segStart < 0
-                {
-                    segStart = i
-                }
+                j = j + 1
             }
             i = i + 1
         }
-        if n == 0
+        if parts.length == 0
         {
             Array<string> empty = Array<string>( 1 )
             empty[ 0 ] = ""
             ret empty
         }
-        if n == parts.length
+        Array<string> outV = Array<string>( parts.length )
+        i = 0
+        while i < parts.length
         {
-            ret parts
-        }
-        Array<string> outV = Array<string>( n )
-        Int32 j = 0
-        while j < n
-        {
-            outV[ j ] = parts[ j ]
-            j = j + 1
+            string word = parts._getItem_( i )
+            outV[ i ] = word
+            i = i + 1
         }
         ret outV
     }
@@ -333,58 +314,61 @@ public class Txt2WavFrontend
     }
 
     # ── 1. 归一化：小写 + 数字展开 + 清理 ─────────────────
+    # 走 String.length / s[i] / slice 新协议；输出用 StringBuilder 逐段
+    # append（旧版 s = s + ch 是 O(n²) 拷贝）。
     string normalize( string text )
     {
-        Int32 len = SystemStringLength( text )
-        string s = ""
+        Int32 len = text.length
+        StringBuilder sb = StringBuilder( len * 2 + 16 )
+        # 与原版一致：字母直接接在后面；数字/标点仅当末字符非空格时
+        # 补一个前导空格；数字后固定带一个尾空格。空串视同末字符是空格。
+        bool lastWasSpace = true
+        string lc = this.LC
+        Array<string> digits = this.lex.DIGIT_WORDS
         Int32 i = 0
         while i < len
         {
-            Int32 c = SystemStringCharCodeAt( text, i )
+            Int32 c = text[ i ]
             if c >= 65 && c <= 90
             {
                 c = c + 32
             }
             if c >= 97 && c <= 122
             {
-                s = s + SystemStringRange( this.LC, c - 97, c - 96 )
+                Int32 a = c - 97
+                Int32 b = c - 96
+                sb.append( lc.slice( a, b ) )
+                lastWasSpace = false
             }
             elif c >= 48 && c <= 57
             {
-                # 数字逐位展开为单词
                 Int32 d = c - 48
-                Array<string> digits = this.lex.DIGIT_WORDS
                 string w = digits[ d ]
-                if SystemStringLength( s ) > 0
+                if !lastWasSpace
                 {
-                    Int32 lastC = SystemStringCharCodeAt( s, SystemStringLength( s ) - 1 )
-                    if lastC != 32
-                    {
-                        s = s + " "
-                    }
+                    sb.append( " " )
                 }
-                s = s + w + " "
+                sb.append( w )
+                sb.append( " " )
+                lastWasSpace = true
             }
             elif c == 32 || c == 44 || c == 46 || c == 33 || c == 63 || c == 59 || c == 58
             {
-                # 空格与标点保留（标点归一为空格 + 记录韵律）
                 if c == 63
                 {
                     this.risingTail = true
                 }
-                Int32 lastC = -1
-                if SystemStringLength( s ) > 0
+                if !lastWasSpace
                 {
-                    lastC = SystemStringCharCodeAt( s, SystemStringLength( s ) - 1 )
+                    sb.append( " " )
                 }
-                if lastC != 32
-                {
-                    s = s + " "
-                }
+                lastWasSpace = true
             }
             i = i + 1
         }
-        ret s
+        string outV = sb.toString()
+        sb.release()
+        ret outV
     }
 
     # ── 2. G2P：单词 → 音素序列 ──────────────────────────
@@ -422,7 +406,7 @@ public class Txt2WavFrontend
             d = d + 1
         }
 
-        Int32 len = SystemStringLength( word )
+        Int32 len = word.length
         if len == 0
         {
             ret Txt2WavFrontend.trimTo( res, n )
@@ -480,7 +464,8 @@ public class Txt2WavFrontend
                         # r 组合后跟元音时退化（如 "era"），避免误吞
                         if r >= 20 && r <= 24
                         {
-                            if i + 3 <= len && Txt2WavFrontend.isVowelChar( SystemStringCharCodeAt( word, i + 2 ) )
+                            Int32 vi = i + 2
+                            if i + 3 <= len && Txt2WavFrontend.isVowelChar( word[ vi ] )
                             {
                                 ok = false
                             }
@@ -522,9 +507,11 @@ public class Txt2WavFrontend
             # --- 魔法 e（v C e 词尾，如 make/like/code）---
             if !matched && i + 3 == len
             {
-                Int32 c = SystemStringCharCodeAt( word, i )
-                Int32 c1 = SystemStringCharCodeAt( word, i + 1 )
-                Int32 c2 = SystemStringCharCodeAt( word, i + 2 )
+                Int32 i1 = i + 1
+                Int32 i2 = i + 2
+                Int32 c = word[ i ]
+                Int32 c1 = word[ i1 ]
+                Int32 c2 = word[ i2 ]
                 bool magicE = false
                 if Txt2WavFrontend.isVowelChar( c )
                 {
@@ -574,11 +561,12 @@ public class Txt2WavFrontend
             # --- 单字母规则 ---
             if !matched
             {
-                Int32 c = SystemStringCharCodeAt( word, i )
+                Int32 c = word[ i ]
                 Int32 nc = -1
                 if i + 1 < len
                 {
-                    nc = SystemStringCharCodeAt( word, i + 1 )
+                    Int32 ni = i + 1
+                    nc = word[ ni ]
                 }
                 # 词尾静音 e（be/me 等已在词典）：直接跳过
                 bool silentE = false
@@ -779,7 +767,8 @@ public class Txt2WavFrontend
         {
             if n < 180
             {
-                if SystemStringLength( words[ w ] ) > 0
+                string wd = words[ w ]
+                if wd.length > 0
                 {
                     Array<string> ph = this.g2pWord( words[ w ] )
                     Int32 k = 0

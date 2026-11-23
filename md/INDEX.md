@@ -101,6 +101,7 @@ HttpServer / WebUI 为独立 module 包。
 | [ai/EXPORT_PATHS.md](ai/EXPORT_PATHS.md) | 导出路径说明 |
 | [ai/DEBUG_WORKFLOW.md](ai/DEBUG_WORKFLOW.md) | 调试工作流 |
 | [ai/故障排查流程.md](ai/故障排查流程.md) | 故障排查 SOP |
+| [ai/量子计算与生命科学扩展规划.md](ai/量子计算与生命科学扩展规划.md) | 两个新方向的扩展规划（共用基座 + 分层清单 + 实施路径） |
 | `ai/troubleshooting/`（8 篇） | 分场景排查手册（AI 无响应 / 编辑器 / VSCode / CLI 等） |
 
 ## 5. unity3d\（内部）

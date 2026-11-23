@@ -19,6 +19,19 @@
 
 #if defined(_WIN32)
 #include <windows.h>
+#else
+/* 非 Windows（wasm）：sl_image_wic.c 不编入（COM/WIC 专属），但解码/
+ * 编码主路的 WIC 兜底调用点仍在（sl_image_internal.h 声明）——提供
+ * 恒失败存根，链接可解析，运行期自然落到 stb 主路。 */
+unsigned char* sli_wic_decode_file(const wchar_t* wpath, int* w, int* h, int* src_fmt)
+{ (void)wpath; (void)w; (void)h; (void)src_fmt; return 0; }
+unsigned char* sli_wic_decode_mem(const unsigned char* data, int64_t size,
+                                  int* w, int* h, int* src_fmt)
+{ (void)data; (void)size; (void)w; (void)h; (void)src_fmt; return 0; }
+unsigned char* sli_wic_encode_tiff(const unsigned char* rgba,
+                                   int w, int h, int64_t* out_size)
+{ (void)rgba; (void)w; (void)h; (void)out_size; return 0; }
+int sli_wic_available(void) { return 0; }
 #endif
 
 /* ================= 内部状态 ================= */

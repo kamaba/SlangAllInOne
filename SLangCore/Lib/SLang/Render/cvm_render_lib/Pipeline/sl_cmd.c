@@ -658,6 +658,12 @@ void cmd_async_switch(SlrPipeline* p, int mode)
     SlrAsyncQueue* q = &p->async;
     if (mode)
     {
+#if defined(__EMSCRIPTEN__)
+        /* wasm 单线程协作式运行时：无 worker 线程，异步模式恒不可用
+         *（保持同步回放路径，行为与 async_mode=0 等价）*/
+        (void)q;
+        return;
+#endif
         if (p->async_mode) return;
         cmd_async_init(p);
         /* 解绑当前主线程绑定 + 此后主线程 exit 不再持绑（handoff）*/

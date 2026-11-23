@@ -27,6 +27,7 @@ Project
         OnnxModelTest.fun()
         TensorOpsTest.fun()
         BenchmarkTest.fun()
+        AsyncTest.fun()
 
         SystemPrintln( "===== TensoraTest _main_ end =====" )
     }

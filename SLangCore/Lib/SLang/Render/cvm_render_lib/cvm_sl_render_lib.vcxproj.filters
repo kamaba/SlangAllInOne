@@ -15,6 +15,9 @@
     <Filter Include="RHI">
       <UniqueIdentifier>{5c8e2f9a-3d41-4f0a-8b62-9e5d1c3a7f12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2d7f8c41-9e53-4b16-a80d-6c4f21e9b730}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sl_render.c">
@@ -46,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="RHI\sl_rhi_gles.c">
       <Filter>RHI</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\sl_gdi.c">
+      <Filter>Platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -53,6 +53,7 @@
       { "path": "suites/SimEcsTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimGizmoTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "suites/SimPrefabTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
+      { "path": "suites/SimTextDrawTest.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 9 },
       { "path": "Test.sl", "group": "scene", "tag": "base", "ignore": false, "priority": 10 }
     ]
   },

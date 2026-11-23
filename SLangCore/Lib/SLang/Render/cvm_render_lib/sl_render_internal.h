@@ -30,12 +30,46 @@
 #ifndef SL_RENDER_INTERNAL_H
 #define SL_RENDER_INTERNAL_H
 
-#include <windows.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#if defined(_WIN32)
+#include <windows.h>
+#elif defined(__EMSCRIPTEN__)
+/* ---- WebAssembly 兼容垫片（2026-11-22，SnakeGame web 版）----
+ * wasm 构建编入管线层 + GLES 后端（RHI/sl_rhi_gles.c，EGL 直链
+ * -sUSE_EGL=1 → Emscripten EGL shim → WebGL2）。单线程协作式运行时：
+ * 锁/线程/条件变量原语全部 no-op 化——异步渲染队列在 wasm 恒走同步
+ * 路径（sl_cmd.c 的 cmd_async_switch mode=1 分支短路，thread 恒 NULL）。
+ * GL 符号解析走 eglGetProcAddress（emscripten_GetProcAddress 可解析
+ * ES3 core），无 LoadLibrary/GetProcAddress。 */
+#include <stdbool.h>
+typedef void (*FARPROC)(void);
+#ifndef WINAPI
+#define WINAPI
+#endif
+#define _snprintf snprintf
+typedef unsigned long DWORD;
+typedef void* LPVOID;
+typedef void* HMODULE;
+typedef struct { int dummy; } CRITICAL_SECTION;
+typedef struct { int dummy; } CONDITION_VARIABLE;
+typedef void* HANDLE;
+static inline void InitializeCriticalSection(CRITICAL_SECTION* c) { (void)c; }
+static inline void EnterCriticalSection(CRITICAL_SECTION* c) { (void)c; }
+static inline void LeaveCriticalSection(CRITICAL_SECTION* c) { (void)c; }
+static inline void DeleteCriticalSection(CRITICAL_SECTION* c) { (void)c; }
+static inline void InitializeConditionVariable(CONDITION_VARIABLE* c) { (void)c; }
+static inline void WakeConditionVariable(CONDITION_VARIABLE* c) { (void)c; }
+static inline void WakeAllConditionVariable(CONDITION_VARIABLE* c) { (void)c; }
+static inline int SleepConditionVariableCS(CONDITION_VARIABLE* c, CRITICAL_SECTION* m, unsigned ms) { (void)c; (void)m; (void)ms; return 1; }
+#define INFINITE 0xFFFFFFFFu
+static inline HANDLE CreateThread(void* a, unsigned b, void* fn, void* p, unsigned f, unsigned* id) { (void)a; (void)b; (void)fn; (void)p; (void)f; (void)id; return (HANDLE)0; }
+static inline unsigned WaitForSingleObject(HANDLE h, unsigned ms) { (void)h; (void)ms; return 0; }
+static inline int CloseHandle(HANDLE h) { (void)h; return 1; }
+#endif
 #include "vm_sl_render.h"
 #include "RHI/sl_rhi.h"
 

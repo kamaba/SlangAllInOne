@@ -168,7 +168,16 @@
       // 依赖序：GizmoTypes(常量) -> GizmoGeometry(纯几何) -> GizmoSystem(状态+提交)
       { "path": "gizmo/GizmoTypes.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 41 },
       { "path": "gizmo/GizmoGeometry.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 42 },
-      { "path": "gizmo/GizmoSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 43 }
+      { "path": "gizmo/GizmoSystem.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 43 },
+      // ---- Windows 风格绘图 / 字库 / 文本（doc/23；纯 SL，零 C 改动）----
+      // 依赖序：Glyph(轮廓数据) -> Font(TTF 解析) -> FontAtlas(动态图集) -> TextMesh(网格)；Windows GDI 绘图在 Render 的 CVM 层
+      //          -> FontAtlas(动态图集) -> TextMesh(网格提交)
+      { "path": "text/Glyph.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 45 },
+      { "path": "text/Font.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 46 },
+      { "path": "text/FontAtlas.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 47 },
+      { "path": "text/TextMesh.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 48 },
+      // GameManager 依赖 Application / Systems（已在前序 priority 登记）
+      { "path": "GameManager.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 49 }
     ]
   },
   "compileFilter": {
@@ -274,7 +283,13 @@
     // 编辑器 Gizmo（doc/21）
     { "class": "GizmoTypes" },
     { "class": "GizmoGeometry" },
-    { "class": "GizmoSystem" }
+    { "class": "GizmoSystem" },
+    // Windows 绘图 / 字库 / 文本（doc/23）
+    { "class": "Glyph" },
+    { "class": "Font" },
+    { "class": "FontAtlas" },
+    { "class": "TextMesh" },
+    { "class": "GameManager" }
   ],
   "export": {
     "moduleName": "SimGameEngine",

@@ -6,6 +6,9 @@
 |------|------|-----------|-----------|------|
 | `BigDecimal` | class | [BigDecimal.sl](BigDecimal.md) |  | SLang 标准库类型 BigDecimal（详见源文件）。 |
 | `BigNumber` | class | [BigNumber.sl](BigNumber.md) |  | SLang 标准库类型 BigNumber（详见源文件）。 |
+| `Complex64` | class | [Complex64.sl](Complex.md) |  | 双精度复数（别名 Complex/Complex128）：四则/模/幅角/共轭/exp/sqrt/log，运算符重载。 |
+| `Complex32` | class | [Complex32.sl](Complex.md) |  | 单精度复数（别名 C32）：与 Complex64 对称，可转换。 |
+| `MathComplex` | class | [MathComplex.sl](Complex.md) |  | 复数静态工具门面：构造/四则/超越函数/整数幂。 |
 | `Factor` | class | [Factor.sl](Factor.md) |  | 数论 / 因子工具类 说明：本类只提供静态方法，不保存状态（原骨架 _init_ 为 vec4 风格的复制残留，已移除）。 覆盖：质数判定、质因数分解、约数枚举… |
 | `Float16_2` | class | [Float16_2.sl](Float16_2.md) |  | SLang 标准库类型 Float16_2（详见源文件）。 |
 | `Float16_3` | class | [Float16_3.sl](Float16_3.md) |  | SLang 标准库类型 Float16_3（详见源文件）。 |

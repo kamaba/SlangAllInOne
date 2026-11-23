@@ -3,8 +3,8 @@
 # Vocab    ：id <-> 词 双向映射，内置 <pad> <unk> <bos> <eos>
 # Tokenizer：词级 / 字符级分词，提供 encode / decode / pad / truncate
 #
-# 说明：标准库 String 目前只有 length / range / front / end，
-#       因此分词用 range(i, i+1) 逐字符扫描实现，不依赖 split/indexOf
+# 说明：词级分词复用 String.split(sep)（C99 strstr 一次扫描），只保留非空词；
+#       字符级仍用 slice(i, i+1) 逐字节扫描（UTF-8 字节语义）。
 
 @Nickname("Vocab")
 public class Vocab
@@ -189,32 +189,23 @@ public class Tokenizer
     # ── 切分 ─────────────────────────────────────────────
     public Array<string> split( string text )
     {
+        # 走 String.split（C 层 strstr 一次扫描 + 精确容量数组），滤掉相邻
+        # 空格产生的空串；旧版逐字符 slice + 字符串相加是 O(n²)。
+        Array<string> raw = text.split( " " )
         List<string> outV = List<string>()
-        string cur = ""
-        for i = 0, i < text.length(), i++
+        for i = 0, i < raw.length, i++
         {
-            string ch = text.slice( i, i + 1 )
-            if ch == " "
+            string part = raw[i]
+            if part != ""
             {
-                if cur != ""
-                {
-                    outV.add( cur )
-                    cur = ""
-                }
+                outV.add( part )
             }
-            else
-            {
-                cur = cur + ch
-            }
-        }
-        if cur != ""
-        {
-            outV.add( cur )
         }
         Array<string> arr = Array<string>( outV.length )
         for i = 0, i < outV.length, i++
         {
-            arr[i] = outV._getItem_( i )
+            string token = outV._getItem_( i )
+            arr[i] = token
         }
         ret arr
     }

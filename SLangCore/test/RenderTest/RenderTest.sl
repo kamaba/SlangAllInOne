@@ -93,6 +93,10 @@ public class RenderTest
         # Phase MB：后处理动态模糊（v3.8：速度方向对称快门）
         bool phaseMb = RenderTestPhasesF.runMotionBlur()
 
+        # Phase BD：基础绘图统一接口层（BasicDraw：GDI 直通 / RHI 三角化双后端，
+        # 线/点/圆/三角/四边/多边/椭圆/曲线/贝塞尔/折线/箭头/虚线 + clear 语义）
+        bool phaseBd = RenderTestBasicDraw.runBasicDraw()
+
         # Phase AUDIO：音频模块（SLangAudio：probe / 整段解码 / 流式 / 播放冒烟）
         bool phaseAudProbe = RenderTestAudio.runAudioProbe()
         bool phaseAudClip = RenderTestAudio.runAudioClipDecode()
@@ -162,6 +166,7 @@ public class RenderTest
         Console.println( "phase MV  (motion vectors)  : " + ( phaseMv ? "PASS" : "FAIL" ) )
         Console.println( "phase TAA (temporal AA)     : " + ( phaseTaa ? "PASS" : "FAIL" ) )
         Console.println( "phase MB  (motion blur)     : " + ( phaseMb ? "PASS" : "FAIL" ) )
+        Console.println( "phase BD  (basic draw bidi) : " + ( phaseBd ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-P (audio probe)   : " + ( phaseAudProbe ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-C (audio clip)    : " + ( phaseAudClip ? "PASS" : "FAIL" ) )
         Console.println( "phase AUD-S (audio stream)  : " + ( phaseAudStream ? "PASS" : "FAIL" ) )
@@ -245,6 +250,10 @@ public class RenderTest
             allOk = false
         }
         if !phaseMb
+        {
+            allOk = false
+        }
+        if !phaseBd
         {
             allOk = false
         }

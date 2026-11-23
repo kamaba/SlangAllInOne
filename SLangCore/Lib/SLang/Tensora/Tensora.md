@@ -21,6 +21,12 @@ Compile pre-hook entry (Project class). Executed before compilation.
 
 Compile post-hook entry (Project class). Executed after compilation, before IR export.
 
+## Async Computation
+
+Tensora includes an async layer built on coroutines and isolates, with a unified `TensorJob` future: `TensorAsync.addAsync/matmulAsync/...`, `waitAll`, `waitAny`, `result`, `tryResult`, `cancel`.
+
+See [TensoraAsync.md](TensoraAsync.md) for modes, signatures, examples and known constraints.
+
 ## Global Integration
 
 `global.xxx` / `global.func()` is integrated with `Project{}` semantic source.

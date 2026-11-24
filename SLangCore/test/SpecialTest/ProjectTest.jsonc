@@ -36,6 +36,7 @@
       { "path": "PythonTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "PhpTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "TypeScriptNodeV8Test.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
+      { "path": "GoTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "ProcessTest.sl", "group": "core", "tag": "base", "ignore": false, "priority": 0 },
       { "path": "AOT.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
       { "path": "MapTest.sl", "group": "core", "tag": "base", "ignore": true, "priority": 0 },
@@ -259,6 +260,32 @@
       "abi": 1,
       "prefix": "sl_typescript_nodev8_",
       "lib": "../../../../plugin/typescript_nodev8/package/windows/cvm_typescript_nodev8.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // golang：块体经 frontend（SLPF v3 契约）在 Front 导出期生成 Entry_N.go
+    //（package main + 预置 import + func Entry_N_run 形参标注 + _wrap 适配
+    // 层），构建器组装临时目录（package\windows\gohost 驱动源 + 条目 +
+    // 生成的 registry.go）后 `go build -trimpath`（CGO_ENABLED=0 /
+    // GOTOOLCHAIN=local 覆盖注入，纯标准库离线）出自包含 SLGoHost.exe
+    //（内嵌 Go 运行时）部署 <libDir>\go\——编译期产物，运行机器零 Go
+    // 依赖；labelExec 运行期经 go_bridge（keep-alive SLGoHost.exe 子进程
+    // + 行分隔 JSON stdio 协议 + registry 查表派发）执行。编译机依赖
+    // go.exe（SLANG_GO_EXE / GOROOT / PATH / 官方安装位四级探测），缺失时
+    // 块 build 报 kind=2 notFound。prefix = "sl_golang_"（plugin.jsonc entry.prefix）。
+    // 块内 Boolean 放行（Go 原生 bool，规格 B）；出通道 Boolean 拒收
+    //（bool 返回走缺省 int，python 先例口径）。
+    "golang": {
+      "name": "golang_runtime_use_host_go_toolchain",
+      "version": "0.1.0",
+      "path": "plugin/golang",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_golang_",
+      "lib": "../../../../plugin/golang/package/windows/cvm_golang.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

@@ -5,11 +5,24 @@ import Std
 # 13 项基准与 SL 版逐项对齐：相同算法 / 迭代次数 / 运算序列 / 输出行格式。
 # 计时：块内 Stopwatch 自身计时（us 粒度，经出通道 $us 回传 SL 侧
 # recordCSharp——不含引擎调用/装载/部署开销，与 C/C++/Python 口径一致）。
-# 递归类算法（fib/levenshtein/nqueens/quicksort/binarytree/mandelbrot 的
-# 算法主体）在 CsExtra/SlBenchLib.cs（jsonc plugins.csharp_mono.sources
-# 合并编译进 SLAtSign.dll），块内头区 using SlBench; 即可调用。
+# 算法全部内联进块体（原 CsExtra/SlBenchLib.cs 已合并删档）：块体是方法
+# 体且 csc 为 C#5（Framework64\v4.0.30319），无局部类/局部函数——递归算法
+# 用 Func/Action 自引用 lambda（fib/nqueens/quicksort/build/checksum），
+# 纯循环算法用单次 lambda 调用；binaryTree 的树节点用本文件顶层 SL
+# class BenchNode，binaryTree 块经入通道 `BenchNode mn <- $mn` 触发 Front
+# slTypes 布局下发，csharp_mono 插件生成 SLAtSign 命名空间镜像类
+#（public 字段 left/right/value）合并编进 SLAtSign.dll——保持与
+# SL/C++/Java/Go 逐节点对象堆分配同语义。
 # 注意：SL 层禁用行内 # 注释（只整行使用）；块内字符串禁字面 # 字符。
 # ============================================================================
+
+# CSharpBench 二叉树节点（供 binaryTree 块镜像生成，见文件头注释）
+class BenchNode
+{
+    BenchNode left = null
+    BenchNode right = null
+    long value = 0L
+}
 
 CSharpBench
 {
@@ -38,14 +51,15 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             Stopwatch sw = Stopwatch.StartNew();
+            Func<int, int> fib = null;
+            fib = n => n <= 1 ? n : fib(n - 1) + fib(n - 2);
             long sum = 0L;
             for (int i = 0; i < 22; i++)
             {
-                sum += Bench.Fib(i);
+                sum += fib(i);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
@@ -190,12 +204,39 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             int[] a = new int[] { 10, 20, 30, 40, 50, 60 };
             int[] b = new int[] { 10, 25, 30, 35, 40, 50, 65 };
-            int dist = Bench.Distance(a, b);
+            Func<int[], int[], int> distance = null;
+            distance = (x, y) =>
+            {
+                int m = x.Length;
+                int n = y.Length;
+                int[] prev = new int[n + 1];
+                int[] curr = new int[n + 1];
+                for (int j = 0; j <= n; j++)
+                {
+                    prev[j] = j;
+                }
+                for (int i = 1; i <= m; i++)
+                {
+                    curr[0] = i;
+                    for (int j = 1; j <= n; j++)
+                    {
+                        int cost = x[i - 1] == y[j - 1] ? 0 : 1;
+                        int del = prev[j] + 1;
+                        int ins = curr[j - 1] + 1;
+                        int sub = prev[j - 1] + cost;
+                        curr[j] = del < ins ? (del < sub ? del : sub) : (ins < sub ? ins : sub);
+                    }
+                    int[] tmp = prev;
+                    prev = curr;
+                    curr = tmp;
+                }
+                return prev[n];
+            };
+            int dist = distance(a, b);
             Console.WriteLine("levenshtein(a,b) = " + dist);
             Stopwatch sw = new Stopwatch();
             long total = 0L;
@@ -204,7 +245,7 @@ CSharpBench
             sw.Restart();
             for (int r = 0; r < 5000; r++)
             {
-                total += Bench.Distance(a, b);
+                total += distance(a, b);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
@@ -482,14 +523,40 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             Stopwatch sw = new Stopwatch();
+            Func<int[], int, int, int> place = null;
+            place = (qs, row, size) =>
+            {
+                if (row == size)
+                {
+                    return 1;
+                }
+                int count = 0;
+                for (int col = 0; col < size; col++)
+                {
+                    int ok = 1;
+                    for (int i = 0; i < row; i++)
+                    {
+                        if (qs[i] == col || qs[i] - i == col - row || qs[i] + i == col + row)
+                        {
+                            ok = 0;
+                            break;
+                        }
+                    }
+                    if (ok == 1)
+                    {
+                        qs[row] = col;
+                        count += place(qs, row + 1, size);
+                    }
+                }
+                return count;
+            };
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
-            int solutions = Bench.Solve(11);
+            int solutions = place(new int[11], 0, 11);
             sw.Stop();
             Console.WriteLine("nqueens(11) solutions = " + solutions + "  [" + sw.ElapsedMilliseconds + " ms]");
             int total = 0;
@@ -498,7 +565,7 @@ CSharpBench
             sw.Restart();
             for (int r = 0; r < 10; r++)
             {
-                total += Bench.Solve(9);
+                total += place(new int[9], 0, 9);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
@@ -516,14 +583,35 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             Stopwatch sw = new Stopwatch();
+            Func<int, int> countPrimes = limit =>
+            {
+                int[] isComposite = new int[limit + 1];
+                int count = 0;
+                for (int i = 2; i <= limit; i++)
+                {
+                    if (isComposite[i] == 0)
+                    {
+                        count++;
+                        if (i <= limit / i)
+                        {
+                            int j = i * i;
+                            while (j <= limit)
+                            {
+                                isComposite[j] = 1;
+                                j += i;
+                            }
+                        }
+                    }
+                }
+                return count;
+            };
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
-            int primes = Bench.CountPrimes(1000000);
+            int primes = countPrimes(1000000);
             sw.Stop();
             Console.WriteLine("sieve 1e6 primes = " + primes + "  [" + sw.ElapsedMilliseconds + " ms]");
             int total = 0;
@@ -532,7 +620,7 @@ CSharpBench
             sw.Restart();
             for (int r = 0; r < 5; r++)
             {
-                total += Bench.CountPrimes(500000);
+                total += countPrimes(500000);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
@@ -550,8 +638,39 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
+            Action<long[], int, int> sort = null;
+            sort = (sarr, lo, hi) =>
+            {
+                if (lo >= hi)
+                {
+                    return;
+                }
+                int i = lo;
+                int j = hi;
+                long p = sarr[(lo + hi) / 2];
+                while (i <= j)
+                {
+                    while (sarr[i] < p)
+                    {
+                        i++;
+                    }
+                    while (sarr[j] > p)
+                    {
+                        j--;
+                    }
+                    if (i <= j)
+                    {
+                        long tmp = sarr[i];
+                        sarr[i] = sarr[j];
+                        sarr[j] = tmp;
+                        i++;
+                        j--;
+                    }
+                }
+                sort(sarr, lo, j);
+                sort(sarr, i, hi);
+            };
             int n = 30000;
             int rounds = 5;
             long[] arr = new long[n];
@@ -567,7 +686,7 @@ CSharpBench
                     arr[i] = seed;
                 }
                 sw.Restart();
-                Bench.Sort(arr, 0, n - 1);
+                sort(arr, 0, n - 1);
                 sw.Stop();
                 totalUs += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
                 for (int i = 0; i < n; i++)
@@ -596,7 +715,6 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             int n = 100;
@@ -612,13 +730,28 @@ CSharpBench
                     b[i * n + j] = (i * 7 + j * 3) % 100;
                 }
             }
+            Action<int[], int[], int[], int> mul = (ma, mb, mc, size) =>
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        int sum = 0;
+                        for (int k = 0; k < size; k++)
+                        {
+                            sum += ma[i * size + k] * mb[k * size + j];
+                        }
+                        mc[i * size + j] = sum;
+                    }
+                }
+            };
             Stopwatch sw = new Stopwatch();
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < rounds; r++)
             {
-                Bench.Mul(a, b, c, n);
+                mul(a, b, c, n);
             }
             sw.Stop();
             long checksum = 0L;
@@ -635,24 +768,43 @@ CSharpBench
     }
 
     # 12. BinaryTree：depth12 x10 轮 + depth16 x2 轮（构建 + 求和）
+    # 节点 = 本文件顶层 SL class BenchNode 的镜像类（块入通道 `BenchNode mn
+    # <- $mn` 触发布局下发，见文件头注释），dummy 节点仅在编译期触发生成、
+    # 运行期随哨兵装配一次（零开销级），树构建/求和全在块内镜像类上进行。
     static binaryTree()
     {
         Console.println("========== BinaryTree (CSharp) (start) ==========")
         long us = 0L
+        BenchNode mn = BenchNode()
         @csharp_mono()
         {
-            using SlBench;
+            BenchNode mn <- $mn
             using System.Diagnostics;
             long acc = 0L;
             Stopwatch sw = new Stopwatch();
+            Func<int, int, BenchNode> build = null;
+            build = (depth, v) =>
+            {
+                if (depth <= 0)
+                {
+                    return null;
+                }
+                BenchNode node = new BenchNode();
+                node.value = v;
+                node.left = build(depth - 1, v * 2);
+                node.right = build(depth - 1, v * 2 + 1);
+                return node;
+            };
+            Func<BenchNode, long> checksum = null;
+            checksum = node => node == null ? 0L : node.value + checksum(node.left) + checksum(node.right);
             long total = 0L;
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < 10; r++)
             {
-                BenchNode root = Bench.Build(12, r + 1);
-                total += Bench.Checksum(root);
+                BenchNode root = build(12, r + 1);
+                total += checksum(root);
             }
             sw.Stop();
             Console.WriteLine("tree depth12 x10 checksum = " + total + "  [" + sw.ElapsedMilliseconds + " ms]");
@@ -662,8 +814,8 @@ CSharpBench
             sw.Restart();
             for (int r = 0; r < 2; r++)
             {
-                BenchNode root = Bench.Build(16, r + 1);
-                total2 += Bench.Checksum(root);
+                BenchNode root = build(16, r + 1);
+                total2 += checksum(root);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
@@ -681,7 +833,6 @@ CSharpBench
         long us = 0L
         @csharp_mono()
         {
-            using SlBench;
             using System.Diagnostics;
             long acc = 0L;
             int w = 240;
@@ -690,13 +841,41 @@ CSharpBench
             int rounds = 3;
             long iterSum = 0L;
             int insideCount = 0;
+            Func<int, int, int, long> render = (ww, hh, mi) =>
+            {
+                long iterTotal = 0L;
+                for (int py = 0; py < hh; py++)
+                {
+                    double y0 = py * 4.0 / hh - 2.0;
+                    for (int px = 0; px < ww; px++)
+                    {
+                        double x0 = px * 4.0 / ww - 2.0;
+                        double x = 0.0;
+                        double y = 0.0;
+                        int iter = 0;
+                        while (iter < mi && x * x + y * y <= 4.0)
+                        {
+                            double xtemp = x * x - y * y + x0;
+                            y = 2.0 * x * y + y0;
+                            x = xtemp;
+                            iter++;
+                        }
+                        iterTotal += iter;
+                        if (iter == mi)
+                        {
+                            insideCount++;
+                        }
+                    }
+                }
+                return iterTotal;
+            };
             Stopwatch sw = new Stopwatch();
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;
             sw.Restart();
             for (int r = 0; r < rounds; r++)
             {
-                iterSum += Bench.Render(w, h, maxIter, ref insideCount);
+                iterSum += render(w, h, maxIter);
             }
             sw.Stop();
             acc += sw.ElapsedTicks * 1000000L / Stopwatch.Frequency;

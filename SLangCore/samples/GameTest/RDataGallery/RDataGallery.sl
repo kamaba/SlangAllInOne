@@ -3,6 +3,10 @@ import SimGameEngine;
 
 # RDataGallery —— 6 视图：Std.RData 五类结构经由 RDataChart 生成图表，
 # 最后一格演示同一 DrawCanvas 同时产出 RenderTexture（GPU）与像素指针（QT）。
+#
+# 2026-11-24 重构：6 个视图块抽成 public static DrawCanvas view0()..view5()
+# （自含数据构造），run() 按序消费 —— 桌面 QT 行为不变；web wasm 版
+# （GameTest/web/RDataWeb）按 idx 惰性重渲染单视图。
 public class RDataGallery
 {
     static void blit( Int32 idx, string caption, DrawCanvas c )
@@ -23,45 +27,59 @@ public class RDataGallery
         ret v
     }
 
-    public static void run()
+    static RData.RTable csvTable()
     {
-        SLang.Render.initialize()
-        RDataHost.build()
+        string csv = "city,sales,profit\n1,10,2.5\n2,20,3.0\n1,15,4.5\n2,12,3.6\n1,18,4.0\n2,22,5.1\n"
+        ret RData.RTable.fromCsvText( csv )
+    }
 
-        # [0] RVector → 折线/点图
+    # ── 视图构造（public：web wasm 版按 idx 复用）──────────────────
+
+    # [0] RVector → 折线/点图
+    public static DrawCanvas view0()
+    {
         RData.RVector vec = RData.RVector.create( RDataGallery.nums() )
         List<Float32> vv = vec.values()
-        DrawCanvas c0 = RDataChart.plotVector( vv, "RVector (named)" )
-        RDataGallery.blit( 0, "[0] Std.RData.RVector -> plotVector", c0 )
+        ret RDataChart.plotVector( vv, "RVector (named)" )
+    }
 
-        # [1] RFactor → 条形图（CSV 分类列）
-        string csv = "city,sales,profit\n1,10,2.5\n2,20,3.0\n1,15,4.5\n2,12,3.6\n1,18,4.0\n2,22,5.1\n"
-        RData.RTable table = RData.RTable.fromCsvText( csv )
+    # [1] RFactor → 条形图（CSV 分类列）
+    public static DrawCanvas view1()
+    {
+        RData.RTable table = RDataGallery.csvTable()
         RData.RFactor fac = table.factorByName( "city" )
         List<Float32> cnt = List<Float32>()
         List<Int32> raw = fac.counts()
         Int32 ci = 0
         while ci < raw.length
         {
-            cnt.add( SystemConvertFloat32( raw._getItem_( ci ) ) )
+            Int32 rc = raw._getItem_( ci )
+            cnt.add( SystemConvertFloat32( rc ) )
             ci = ci + 1
         }
-        DrawCanvas c1 = RDataChart.barFactor( cnt, fac.levels(), "city factor" )
-        RDataGallery.blit( 1, "[1] Std.RData.RFactor -> barFactor", c1 )
+        ret RDataChart.barFactor( cnt, fac.levels(), "city factor" )
+    }
 
-        # [2] RTimeSeries → 折线图
+    # [2] RTimeSeries → 折线图
+    public static DrawCanvas view2()
+    {
         RData.RTimeSeries ts = RData.RTimeSeries.fromList( RDataGallery.nums(), 2024.0f, 4.0f )
         List<Float32> tsv = ts.values()
-        DrawCanvas c2 = RDataChart.plotSeries( tsv, ts.start(), ts.frequency(), "quarterly series" )
-        RDataGallery.blit( 2, "[2] Std.RData.RTimeSeries -> plotSeries", c2 )
+        ret RDataChart.plotSeries( tsv, ts.start(), ts.frequency(), "quarterly series" )
+    }
 
-        # [3] RTable 数值列 → 图表
+    # [3] RTable 数值列 → 图表
+    public static DrawCanvas view3()
+    {
+        RData.RTable table = RDataGallery.csvTable()
         RData.RVector sales = table.columnByName( "sales" )
         List<Float32> salesVals = sales.values()
-        DrawCanvas c3 = RDataChart.plotCsvColumn( salesVals, "sales", "csv column" )
-        RDataGallery.blit( 3, "[3] Std.RData.RTable -> plotCsvColumn", c3 )
+        ret RDataChart.plotCsvColumn( salesVals, "sales", "csv column" )
+    }
 
-        # [4] RForecast → 置信带预测图
+    # [4] RForecast → 置信带预测图
+    public static DrawCanvas view4()
+    {
         List<Float32> mu = RDataGallery.nums()
         List<Float32> lo = List<Float32>()
         List<Float32> hi = List<Float32>()
@@ -77,11 +95,69 @@ public class RDataGallery
         List<Float32> fm = fc.meanValues()
         List<Float32> fl = fc.lowerValues()
         List<Float32> fu = fc.upperValues()
-        DrawCanvas c4 = RDataChart.plotForecast( fm, fl, fu, "forecast with 80% band" )
-        RDataGallery.blit( 4, "[4] Std.RData.RForecast -> plotForecast", c4 )
+        ret RDataChart.plotForecast( fm, fl, fu, "forecast with 80% band" )
+    }
+
+    # [5] 同一画布 → RenderTexture（GPU）+ 同一像素块 → QLabel（QT 回绘）
+    public static DrawCanvas view5()
+    {
+        List<Float32> mu = RDataGallery.nums()
+        List<Float32> lo = List<Float32>()
+        List<Float32> hi = List<Float32>()
+        Int32 i = 0
+        while i < mu.length
+        {
+            Float32 m = mu._getItem_( i )
+            lo.add( m - 1.5f )
+            hi.add( m + 1.5f )
+            i = i + 1
+        }
+        RData.RForecast fc = RData.RForecast.fromLists( mu, lo, hi )
+        List<Float32> fm = fc.meanValues()
+        List<Float32> fl = fc.lowerValues()
+        List<Float32> fu = fc.upperValues()
+        ret RDataChart.plotForecast( fm, fl, fu, "same canvas: texture + QLabel" )
+    }
+
+    # 视图标题（与 run() 的 blit caption 一致；web 版信息条用）
+    public static string caption( Int32 idx )
+    {
+        if idx == 0
+        {
+            ret "[0] Std.RData.RVector -> plotVector"
+        }
+        if idx == 1
+        {
+            ret "[1] Std.RData.RFactor -> barFactor"
+        }
+        if idx == 2
+        {
+            ret "[2] Std.RData.RTimeSeries -> plotSeries"
+        }
+        if idx == 3
+        {
+            ret "[3] Std.RData.RTable -> plotCsvColumn"
+        }
+        if idx == 4
+        {
+            ret "[4] Std.RData.RForecast -> plotForecast"
+        }
+        ret "[5] DrawCanvas.toTexture() + QLabel blit"
+    }
+
+    public static void run()
+    {
+        SLang.Render.initialize()
+        RDataHost.build()
+
+        RDataGallery.blit( 0, "[0] Std.RData.RVector -> plotVector", RDataGallery.view0() )
+        RDataGallery.blit( 1, "[1] Std.RData.RFactor -> barFactor", RDataGallery.view1() )
+        RDataGallery.blit( 2, "[2] Std.RData.RTimeSeries -> plotSeries", RDataGallery.view2() )
+        RDataGallery.blit( 3, "[3] Std.RData.RTable -> plotCsvColumn", RDataGallery.view3() )
+        RDataGallery.blit( 4, "[4] Std.RData.RForecast -> plotForecast", RDataGallery.view4() )
 
         # [5] 同一画布 → RenderTexture（GPU）+ 同一像素块 → QLabel（QT 回绘）
-        DrawCanvas c5 = RDataChart.plotForecast( fm, fl, fu, "same canvas: texture + QLabel" )
+        DrawCanvas c5 = RDataGallery.view5()
         var tex = c5.toTexture()
         string rtState = "RenderTexture: unavailable in this backend"
         if tex != null

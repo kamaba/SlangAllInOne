@@ -3,8 +3,8 @@ import Std
 # ============================================================================
 # CppBench — C++ 惯用法基准（@cplus_clang(){} 内联块，cplus_clang 插件原生编译）
 #
-# 14 项与 SL/CSharp/Java/JS 共享基准逐项同算法/同参数（对齐 CsExtra/
-# SlBenchLib.cs，校验和可跨语言对拍），外加 ListWalk 一项 C++ 专列。
+# 14 项与 SL/CSharp/Java/JS 共享基准逐项同算法/同参数（对齐 CSharpBench
+# 块内算法，校验和可跨语言对拍），外加 ListWalk 一项 C++ 专列。
 # 惯用法：vector 迭代器、对象与成员方法、std::sort、std::string、
 # vector<vector>、unique_ptr 树、泛型递归 lambda（auto&& self）。
 #
@@ -738,7 +738,7 @@ CppBench
 		ret ns
 	}
 
-	# 13. Mandelbrot：标准映射（对齐 SlBenchLib Render）
+	# 13. Mandelbrot：标准映射（对齐 CSharpBench render lambda）
 	static long mandelbrot()
 	{
 		Console.println("========== Mandelbrot (C++) (start) ==========")

@@ -59,10 +59,29 @@ public class DrawCanvas
     }
 
     # ── 创建 / 尺寸 / 释放 ─────────────────────────────────
-    # 默认 GDI 后端（Windows；像素行为与测试基准对齐）
+    # 默认 GDI 后端（Windows；像素行为与测试基准对齐）。GDI 不可用
+    # （wasm / 非 Windows）时自动回退 RHI 后端：wasm 里 RHI 走 gles →
+    # WebGL2（需渲染后端可用；无 GL 环境两者皆失败 → 画布 0×0，调用方
+    # 按 width()==0 跳过上屏）。
     public static DrawCanvas create( Int32 w, Int32 h )
     {
-        ret DrawCanvas.createBackend( w, h, BasicDraw.BACKEND_GDI )
+        DrawCanvas c = DrawCanvas.createBackend( w, h, BasicDraw.BACKEND_GDI )
+        if c != null && c.width() > 0
+        {
+            ret c
+        }
+        if c != null
+        {
+            c.free()
+        }
+        if SLang.Render.currentBackend() == "none"
+        {
+            if SLang.Render.initializeBackend( "gles" ) == false
+            {
+                SLang.Render.initialize()
+            }
+        }
+        ret DrawCanvas.createBackend( w, h, BasicDraw.BACKEND_RHI )
     }
 
     # 显式后端创建：BasicDraw.BACKEND_GDI / BasicDraw.BACKEND_RHI

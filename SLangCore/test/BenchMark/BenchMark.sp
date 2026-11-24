@@ -65,6 +65,12 @@ Project
         # 经出通道 us 回传；pysrc 共享部署位，本工程须最后编译——同上）
         PythonBench.fun()
 
+        # Go 惯用基准（golang 插件：Front 编译期 go build 出自包含 SLGoHost.exe
+        #（内嵌 Go 运行时），运行期 go_bridge keep-alive 子进程执行；块内
+        # time.Since ns 计时经出通道 /1000 折算 us 回传；go\ 共享部署位，
+        # 本工程须最后编译——同上）
+        GoBench.fun()
+
         # PHP 惯用基准（php_embed 插件：统计值 SL 侧 nowMillis 整块计时——php
         # 出通道回传在 AOT 发布包失效兜底，参照 MasmBench；phpsrc 共享部署位，
         # 本工程须最后编译——同上。vendored php8ts.dll 随包齐备，无需本机另装 PHP）

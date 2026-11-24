@@ -57,6 +57,15 @@ Project
         # package\windows\php8ts.dll（vendored PHP 8.4 TS x64）随包齐备。
         PhpTest.fun();
 
+        # GoTest：@golang 块（Front 导出期生成 Entry_N.go → 构建器组装临时
+        # 目录 go build -trimpath 出自包含 SLGoHost.exe（内嵌 Go 运行时，
+        # CGO_ENABLED=0 纯标准库）；CVM 运行期 go_bridge keep-alive 子进程
+        # + 行分隔 JSON stdio 协议执行）。
+        # 前置：先跑 plugin\golang\cvm\build-golang.ps1；编译机须有 go.exe
+        #（SLANG_GO_EXE / GOROOT / PATH 三级探测）。SLGoHost.exe 为共享
+        # 部署位——重编其他使用 golang 块的工程后须最后编译本工程。
+        GoTest.fun();
+
         # JavaTest2：callSL 通道（P4 §5.7）——Java 块内 SLChannel.call 回调
         # SL 静态方法（int/string/double/void-null/嵌套块 save/restore 回归）
         #JavaTest2.fun()

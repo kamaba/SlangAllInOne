@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        RExamplesWeb.run()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

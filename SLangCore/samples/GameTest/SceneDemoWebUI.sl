@@ -25,11 +25,8 @@ public class SceneDemoWebUI
     static Int32 _err = 0                    # 编码/落盘失败打印一次
     static bool _ready = false               # show 完成、进入 wait 后置 true
 
-    # 供 SceneDemo.frameTick 消费的跨模块状态（事件线程写、主线程读的简单标量）
-    static Int32 pendingW = 0                # 请求的新渲染宽（0=无请求）
-    static Int32 pendingH = 0
-    static Int32 pendingScene = -1           # 请求切换的场景号（-1=无请求）
-    static bool requestQuit = false
+    # 供 SceneDemo.frameTick 消费的跨模块状态已下沉到 SceneDemo.webPending*
+    # （页面事件写、主线程读的简单标量）；本类只剩展示/推帧状态。
     static bool isWeb = false
 
     # ── 页面 JS 错误回传（仅出错时分配字符串）────────────────────
@@ -45,8 +42,8 @@ public class SceneDemoWebUI
         Int32 h = SLang.WebUI.getArgInt( e, 1 ).toInt32()
         if w >= 16 && h >= 16 && w <= 4096 && h <= 4096
         {
-            SceneDemoWebUI.pendingW = w
-            SceneDemoWebUI.pendingH = h
+            SceneDemo.webPendingW = w
+            SceneDemo.webPendingH = h
         }
         SLang.WebUI.returnBool( e, true )
     }
@@ -57,7 +54,7 @@ public class SceneDemoWebUI
         Int32 idx = SLang.WebUI.getArgInt( e, 0 ).toInt32()
         if idx >= 0 && idx < SceneDemoWebUI.sceneCount
         {
-            SceneDemoWebUI.pendingScene = idx
+            SceneDemo.webPendingScene = idx
         }
         SLang.WebUI.returnBool( e, true )
     }
@@ -69,7 +66,7 @@ public class SceneDemoWebUI
     # RenderTestWebUI push 模式结论）。
     public static void onFrame( Int64 e )
     {
-        if SceneDemoWebUI._ready == false || SceneDemoWebUI.requestQuit
+        if SceneDemoWebUI._ready == false || SceneDemo.webReqQuit
         {
             SLang.WebUI.returnInt( e, 0 )
             ret
@@ -79,13 +76,14 @@ public class SceneDemoWebUI
             SLang.WebUI.returnInt( e, 0 )
             ret
         }
+        SceneDemoWebUI.pushFrame( SceneDemo.pixels, SceneDemo.renderW, SceneDemo.renderH )
         SLang.WebUI.returnInt( e, SceneDemoWebUI._latest )
     }
 
     # ── 退出：JS quit() -> exitAll（webui 线程直接终止进程）──
     public static void onQuit( Int64 e )
     {
-        SceneDemoWebUI.requestQuit = true
+        SceneDemo.webReqQuit = true
         SLang.WebUI.returnBool( e, true )
         SLang.WebUI.exitAll()
     }
@@ -329,10 +327,10 @@ public class SceneDemoWebUI
         SceneDemoWebUI._slot = 0
         SceneDemoWebUI._frames = 0
         SceneDemoWebUI._err = 0
-        SceneDemoWebUI.pendingW = 0
-        SceneDemoWebUI.pendingH = 0
-        SceneDemoWebUI.pendingScene = -1
-        SceneDemoWebUI.requestQuit = false
+        SceneDemo.webPendingW = 0
+        SceneDemo.webPendingH = 0
+        SceneDemo.webPendingScene = 0 - 1
+        SceneDemo.webReqQuit = false
         SceneDemoWebUI._ready = true
         Console.println( "[SceneWeb] page shown; frame pump active (out/scene_webui)" )
 

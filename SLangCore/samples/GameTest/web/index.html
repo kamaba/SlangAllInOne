@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GameTest - SimGameEngine wasm</title>
+<style>
+body{margin:0;background:#0e0e18;color:#cfd3dc;font-family:Segoe UI,Arial,sans-serif}
+#home{position:fixed;inset:0;background:radial-gradient(circle at 50% 28%,#1b2442,#0a0a11 72%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9}
+#home h1{margin:0 0 4px;font-size:30px;letter-spacing:2px;color:#eef1f8}
+#home .sub{margin:0 0 24px;font-size:13px;color:#8f97ad}
+#homeMenu{display:flex;flex-direction:column;align-items:center}
+.mi{min-width:340px;margin:5px 0;padding:12px 18px;border:1px solid #3a3a52;border-radius:6px;
+  background:#1b1b2e;color:#cfd3dc;cursor:pointer;font-size:15px;text-align:left;font-family:inherit}
+.mi:hover{background:#283a6e;border-color:#5a78c8;color:#fff}
+.mi b{display:inline-block;width:26px;color:#7fd4ff}
+.mi small{display:block;color:#8f97ad;font-size:12px;margin-top:2px}
+#stage{display:none}
+#bar{display:flex;align-items:center;gap:6px;padding:8px 10px;background:#181826;flex-wrap:wrap}
+button{padding:4px 10px;border:1px solid #3a3a52;border-radius:4px;background:#23233a;color:#cfd3dc;
+  cursor:pointer;font-size:12px;font-family:inherit}
+button.on{background:#2d8f4e;color:#fff;font-weight:bold}
+button.home{background:#3a3a6a;color:#fff;font-weight:bold}
+select{padding:4px 6px;border:1px solid #3a3a52;border-radius:4px;background:#23233a;color:#cfd3dc;font-size:12px}
+#lbl{font-size:12px;color:#9aa0ae;margin-left:4px}
+#fps{font-size:12px;color:#7fd4ff;margin-left:auto}
+#wrap{padding:10px;text-align:center}
+canvas{border:1px solid #3a3a52;background:#08080c;max-width:96vw}
+#status{white-space:pre-wrap;font:11px/1.5 Consolas,monospace;color:#8f97ad;background:#101018;
+  border-top:1px solid #22223a;padding:6px 10px;max-height:120px;overflow:auto;margin:0}
+.err{color:#ff7b7b}
+</style>
+</head>
+<body>
+
+<!-- 总入口主菜单：列出 GameTest 的 4 个 wasm 工程（app.js 由 DEMOS 表生成） -->
+<div id="home">
+  <h1>GameTest</h1>
+  <div class="sub">SimGameEngine on wasm + WebGL2 &mdash; select a sample to enter</div>
+  <div id="homeMenu"></div>
+</div>
+
+<!-- 演示页：顶部一排按钮菜单（最左 = 返回主菜单）+ 画布 + 状态区 -->
+<div id="stage">
+  <div id="bar">
+    <button id="homeBtn" class="home">&#8962; 主菜单</button>
+    <span id="btns"></span>
+    <span id="lbl"></span>
+    <span id="fps">0.0 fps</span>
+  </div>
+  <div id="wrap"><canvas id="cv" width="480" height="480"></canvas></div>
+  <pre id="status">booting...</pre>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

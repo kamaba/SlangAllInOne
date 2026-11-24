@@ -1,0 +1,66 @@
+{
+  // SceneDemoWeb - GameTest SceneDemo 的 wasm 浏览器版（web-template 机制，
+  // 引擎 C 库编进 csimple_lang_game，@DllStaticImport 经 dlopen(NULL) 解析）。
+  // 层次：
+  //   web/QTHost.sl        - 桌面 QTHost 的 web 替身（引擎输入表 + sle_web_blit）
+  //   ../SceneScripts.sl   - 场景脚本（与桌面共用）
+  //   ../SceneDemo.sl      - 场景逻辑/帧循环（与桌面共用，零 QT 依赖编译）
+  // 入口 = SceneDemoWeb.sp _main_ -> SceneDemo.preferredBackend="gles" + run()
+  //        + frameTick 泵帧。构建：web/compile.ps1（判据 = slb 时间戳重写）。
+  // 注意：不含 SceneDemoWebUI/SceneSmokeTest（H5 WebUI/冒烟为桌面形态）。
+  "project": {
+    "name": "SceneDemoWeb",
+    "desc": "SceneDemo on SimGameEngine (gles->WebGL2) for the browser wasm VM",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "dllImports": [],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "QTHost.sl", "group": "host", "tag": "host", "ignore": false, "priority": 0 },
+      { "path": "../SceneScripts.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 },
+      { "path": "../SceneDemo.sl", "group": "game", "tag": "game", "ignore": false, "priority": 2 }
+    ]
+  },
+  "references": [
+    // Lib 包相对本 jsonc 上 4 级（web -> GameTest -> samples -> SLangCore ->
+    // SlangAllInOne）；Front 按模块导出目录重写，MEMFS 布局见 app.js stageAssets。
+    { "path": "../../../../SLangCore/Lib/Core", "name": "Core" },
+    { "path": "../../../../SLangCore/Lib/Std", "name": "Std" },
+    { "path": "../../../../SLangCore/Lib/Math", "name": "Math" },
+    { "path": "../../../../SLangCore/Lib/SLang/SimGameEngine", "name": "SimGameEngine" },
+    { "path": "../../../../SLangCore/Lib/SLang/Render/SLangRender", "name": "SLangRender" }
+  ],
+  "struct": [
+    { "class": "QTHost" },
+    { "class": "SceneDemo" }
+  ],
+  "export": {
+    "moduleName": "SceneDemoWeb",
+    "outputDir": "D:\\project\\lang\\SlangAllInOne\\out\\export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false, "token": false, "node": false, "file": false,
+      "meta": false, "ir": false
+    }
+  },
+  "global": { "imports": [] },
+  "compileFilter": { "isAllGroup": true, "isAllTag": true }
+}

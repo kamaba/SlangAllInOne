@@ -47,6 +47,15 @@ public class SceneDemo
     # 显示 label 同步变）
     static Int32 renderW = 480
     static Int32 renderH = 480
+    # 网页版请求通道（页面事件 → 宿主写、webFrame 读；桌面 H5 由
+    # SceneDemoWebUI 转写同一组字段，wasm 由 SceneDemoWeb 宿主消费）
+    static bool webReqQuit = false
+    static Int32 webPendingW = 0
+    static Int32 webPendingH = 0
+    static Int32 webPendingScene = 0 - 1
+    # 非 "" 时 run() 先 initializeBackend(该后端)（wasm 注册表只有 gles；
+    # 桌面留空走默认后端，行为不变）
+    static string preferredBackend = ""
     # FairyGUI XML 包适配（XML 数据 → 图集 uvRect/九宫格 → 自定义 UI 网格）
     static FairyPackage fairyPkg = null
     static FairyUIRenderer fairyRenderer = null
@@ -755,21 +764,22 @@ public class SceneDemo
         ret true
     }
 
-    # ── 网页版每帧：主线程渲染一帧 + 处理来自 WebUI 事件线程的请求 ──
-    # 由 SceneDemoWebUI 的帧循环调用（非 QT timer）。返回 false 表示请求退出。
+    # ── 网页版每帧：主线程渲染一帧 + 处理来自页面/宿主的请求 ──
+    # 由 SceneDemoWebUI（桌面 H5）或 SceneDemoWeb wasm 宿主的帧循环调用。
+    # 请求通道 = 本类 webPending* 静态字段。返回 false 表示请求退出。
     public static bool webFrame()
     {
-        if SceneDemoWebUI.requestQuit
+        if SceneDemo.webReqQuit
         {
             ret false
         }
-        # 分辨率变更请求（JS setRes -> 事件线程写 pendingW/H，主线程执行）
-        if SceneDemoWebUI.pendingW > 0 && SceneDemoWebUI.pendingH > 0
+        # 分辨率变更请求（页面 setRes -> 请求通道写 pendingW/H，主线程执行）
+        if SceneDemo.webPendingW > 0 && SceneDemo.webPendingH > 0
         {
-            Int32 nw = SceneDemoWebUI.pendingW
-            Int32 nh = SceneDemoWebUI.pendingH
-            SceneDemoWebUI.pendingW = 0
-            SceneDemoWebUI.pendingH = 0
+            Int32 nw = SceneDemo.webPendingW
+            Int32 nh = SceneDemo.webPendingH
+            SceneDemo.webPendingW = 0
+            SceneDemo.webPendingH = 0
             if nw != SceneDemo.renderW || nh != SceneDemo.renderH
             {
                 if SceneDemo.rs.resize( nw, nh )
@@ -785,11 +795,11 @@ public class SceneDemo
                 }
             }
         }
-        # 场景切换请求（JS setScene）
-        if SceneDemoWebUI.pendingScene >= 0
+        # 场景切换请求（页面 setScene）
+        if SceneDemo.webPendingScene >= 0
         {
-            Int32 si = SceneDemoWebUI.pendingScene
-            SceneDemoWebUI.pendingScene = -1
+            Int32 si = SceneDemo.webPendingScene
+            SceneDemo.webPendingScene = 0 - 1
             SceneDemo.loadScene( si )
             SceneDemo.inMenu = false
         }
@@ -807,17 +817,19 @@ public class SceneDemo
         # 走事件线程会触发 0xC0000005，属编辑器辅助层，H5 不需要）
         SceneDemo.sm.tick( -1.0f )
         SceneDemo.rs.sync( SceneDemo.sm.activeScene )
-        # 渲染一帧到 RGBA8 像素块，再推给浏览器
+        # 渲染一帧到 RGBA8 像素块；推帧/上屏由调用方完成
+        # （桌面 H5 = SceneDemoWebUI.onFrame 推 JPEG 槽；wasm = web 宿主 sle_web_blit）
         Int64 pp = SceneDemo.pixels
-        if SceneDemo.rs.frame( 0.0f - 1.0f, pp )
-        {
-            SceneDemoWebUI.pushFrame( pp, SceneDemo.renderW, SceneDemo.renderH )
-        }
+        SceneDemo.rs.frame( 0.0f - 1.0f, pp )
         ret true
     }
 
     public static void run()
     {
+        if SceneDemo.preferredBackend != ""
+        {
+            SLang.Render.initializeBackend( SceneDemo.preferredBackend )
+        }
         SceneDemo.sm = SceneManager()
         SceneDemo.sm.registerScript( "SphereMeshScript", SceneScriptFactories.makeSphereMesh )
         SceneDemo.sm.registerScript( "ShapeMeshScript", SceneScriptFactories.makeShapeMesh )

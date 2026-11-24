@@ -80,6 +80,59 @@ $demo  = 'D:\project\lang\SlangAllInOne\SLangCore\samples\GameTest'
 QT 窗口程序需要 `slang_qt.dll` 与 Qt6 运行库；可用 `slang publish SceneDemo.jsonc`
 按 jsonc 的 `qtRuntime` 段一并打包。
 
+## Web（wasm + WebGL2）—— GameTestWeb 四件套（2026-11-24）
+
+`web/` 目录把 GameTest 的 4 个工程按 SimGameEngine wasm 模板
+（`../../Lib/SLang/SimGameEngine/web-template/`，参考实现 `SnakeGame/web/`）
+接入浏览器：引擎整体跑在 `csimple_lang_game.wasm`（GLES→WebGL2），
+页面只做「注入事件 + 上屏像素」，两层 UI 与桌面/H5 同款：
+
+- **总入口主菜单**：`index.html` 列出 4 个工程（SceneDemo / RExamples /
+  StatsGallery / RDataGallery），点一项进入 `?demo=<key>`；
+- **演示页顶部菜单条**：最左「主菜单」返回入口页；SceneDemo 另有分辨率
+  下拉框（改 canvas 属性 → `updateRenderTarget` 自动 `rs.resize`）、
+  场景键 1~5 / M（回引擎内 FairyGUI 菜单）/ G（Gizmo）/ U（UI 叠加）；
+  图库为 ◀/▶ 切格（JS 经 `_sle_input_set_mouse_wheel` 注入滚轮，
+  画布内方向键同样可切）。
+
+```powershell
+# SL 编译（4 个 wasm 模块；判据 = slb 时间戳重写）
+powershell -File web\compile.ps1
+
+# wasm 引擎载体（C 侧无改动时直接复用现产物）
+powershell -File ..\..\..\..\csimple_lang\scripts\cmake-build-wasm.ps1 -Game -Configuration Release
+# 注意：改了 @DllStaticImport 绑定后需重生成导出面再重链：
+#   node csimple_lang\build\extract_ffi_syms.js && node csimple_lang\build\filter_ffi_syms.js
+
+# 起服务 + 无窗口冒烟
+node web\server.js 8080          # http://127.0.0.1:8080/
+node web\smoke-node.js scenedemo|rexamples|statsgallery|rdata
+```
+
+| 工程 | 模块 | 说明 |
+|---|---|---|
+| SceneDemo | `SceneDemoWeb` | 桌面 `SceneDemo.sl` 零改动编译（`web/QTHost.sl` 为同签名 web 替身：引擎输入表 + `sle_web_blit`；`windowW/H` 返回画布尺寸 +16/+60 抵消信息条扣除）；场景 JSON / FairyGUI 包 / 贴图 stage 到 MEMFS `/work/proj`（FS.chdir）+ `/assets` 兜底 |
+| RExamples | `RExamplesWeb` | 12 图表单视图全屏轮播（滚轮/方向键） |
+| StatsGallery | `StatsGalleryWeb` | 16 视图轮播（`StatsGallery.view0..15()` 视图工厂复用） |
+| RDataGallery | `RDataGalleryWeb` | 6 视图轮播（`RDataGallery.view0..5()` 视图工厂复用） |
+
+实现要点 / 已知边界：
+
+- 图库为 CPU 绘图：`DrawCanvas.create()` 在 GDI 不可用（wasm）时自动回退
+  RHI 后端（gles→WebGL2，`DrawCanvas.sl` 2026-11-24）；node 无 GL 时画布
+  0×0、上屏自动跳过（冒烟只断言文本链路）。wasm RHI 通道的 DrawCanvas
+  渲染有轻微视觉瑕疵（如 exPlot 回归线偏粗），系 BasicDraw RHI 后端绘制
+  语义，桌面 GDI 路径不受影响。
+- 图库主循环保持当前画布存活并每帧重 blit：Emscripten 上下文无
+  preserveDrawingBuffer，合成后绘图缓冲被清，单次 blit 会黑屏。
+- `StatsGallery.sl` / `RDataGallery.sl` 的视图块抽成了 public 视图工厂
+  （2026-11-24 重构），桌面 QT 行为不变（run() 按序消费同一批工厂）。
+- SceneDemo 的 web 请求通道（分辨率/场景切换/退出）下沉为 `SceneDemo`
+  自有静态字段（`webPending*`），桌面 H5（`SceneDemoWebUI`）与 wasm 宿主
+  共用同一通道；`webFrame` 只渲染，推帧/上屏由调用方完成。
+- 引擎依赖 slb（`out/export/SimGameEngine` 等）改动后必须重导出再重编
+  web 模块——`out/export` 里的引用模块 slb 过期会触发诡异挂起/渲染异常。
+
 ## RExamples — R 风格图表示例（12 格 QT 图库）
 
 `RExamples/` 仿菜鸟教程 R 绘图/回归页写了 12 个示例，每格都是真实图表：

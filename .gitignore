@@ -136,3 +136,8 @@
 /test-run.log
 /SLangCore/samples/Txt2Wav/Txt2WavModel
 /SLangCore/samples/Txt2Wav/Txt2WavG2p
+/eng-compile.log
+/gallery-compile.log
+/gallery-err.log
+/gallery-run.log
+/gallery-run2.log

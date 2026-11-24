@@ -44,6 +44,7 @@
       { "path": "CppBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "MasmBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "PythonBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
+      { "path": "GoBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "PhpBench.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 },
       { "path": "BenchCollector.sl", "group": "core", "tag": "bench", "ignore": false, "priority": 0 }
     ]
@@ -80,7 +81,6 @@
       "abi": 1,
       "prefix": "sl_csharp_mono_",
       "lib": "../../../../plugin/csharp_mono/package/windows/cvm_csharp_mono.dll",
-      "sources": [ "CsExtra/SlBenchLib.cs" ],
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [
@@ -211,6 +211,31 @@
       "abi": 1,
       "prefix": "sl_php_embed_",
       "lib": "../../../../plugin/php_embed/package/windows/cvm_php_embed.dll",
+      "platform": { "os": "windows", "arch": "x86_64" },
+      "onUnavailable": "warn",
+      "capabilities": [
+        { "type": "signLabel", "name": "signLabel" }
+      ]
+    },
+    // golang：GoBench 13 项共享基准经此插件执行（Front 导出期生成 Entry_N.go
+    // + 组装临时目录 go build -trimpath 出自包含 SLGoHost.exe（内嵌 Go 运行时，
+    // CGO_ENABLED=0 纯标准库）部署 <libDir>\go\；运行期 go_bridge keep-alive
+    // 子进程 + 行分隔 JSON stdio 协议执行，块内 gohost QPC（kernel32
+    // QueryPerformanceCounter 直调——go1.26.2/Windows 的 time.Since 在无
+    // syscall 纯计算区间会退化恒 0，QPC 亚微秒粒度可靠）ns 计时经出通道
+    // /1000 折算 us 回传）。块产物 go\SLGoHost.exe 与 pysrc / SLCpp.dll /
+    // java classes 同款共享部署位（后编译覆盖）——运行 BenchMark 前须最后
+    // 编译本工程。编译机依赖 go.exe（SLANG_GO_EXE / GOROOT / PATH / 官方
+    // 安装位四级探测），缺失时块 build 报 kind=2 notFound；SLGoHost.exe
+    // 编译期产物，运行机器零 Go 依赖。prefix = "sl_golang_"（plugin.jsonc entry.prefix）。
+    "golang": {
+      "name": "golang_runtime_use_host_go_toolchain",
+      "version": "0.1.0",
+      "path": "plugin/golang",
+      "enabled": true,
+      "abi": 1,
+      "prefix": "sl_golang_",
+      "lib": "../../../../plugin/golang/package/windows/cvm_golang.dll",
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

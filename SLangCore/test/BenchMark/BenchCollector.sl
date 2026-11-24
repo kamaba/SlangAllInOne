@@ -15,6 +15,8 @@ import Std
 #   按（测试类型, 测试参数）归并四语言横向对比表 + 全量原始条目表，
 #   以 OS.DateTime.now() 拼时间戳文件名 BenchmarkReport_yyyyMMdd_HHmmss.md，
 #   经 File.writeAllText 写入进程工作目录（相对路径）。
+#   同时导出同时间戳 CSV：report/BenchmarkReport_yyyyMMdd_HHmmss.csv
+#  （全量原始条目平表一列不并表，UTF-8 BOM，Excel 直接打开）。
 #
 # 实现注意：data 类型经 for-in + as 转型在运行时得到 null（MetaCore
 # 仅提示不阻断），因此遍历统一用 List._getItem_(i) 索引访问（元素静态
@@ -135,6 +137,19 @@ BenchCollector
         BenchCollector.record( "Python", "Python / CPython 3.14 内嵌（python_cpython 插件）", "CPython 字节码解释器（无 JIT），块内 perf_counter_ns 计时（us 回传）", testType, testParam, timeUs )
     }
 
+    # Go：参数为微秒（Go 块内 gohost QPC 纳秒精确计时，acc int64 累加——ns 粒度
+    # 超 int32 出通道上限同 python 口径，块内统一 /1000 折算 us 回传）。SLGoHost.exe
+    # 由 golang 插件 frontend 在 Front 编译期 go build 产出（内嵌 Go 运行时的自包含
+    # 二进制），运行期 go_bridge keep-alive 子进程执行——块内计时为 SLGoHost 进程内
+    # "净算法耗时"，不含协议往返；QPC 说明：go1.26.2/Windows 的 time.Since 在无
+    # syscall 纯计算区间会退化（实测恒 0），基准统一走 kernel32
+    # QueryPerformanceCounter 直调（亚微秒粒度）；共享部署位 go\ 同 pysrc 约定，
+    # 本工程须最后编译。
+    static recordGolang( string testType, string testParam, long timeUs )
+    {
+        BenchCollector.record( "Go", "Go 1.26 / SLGoHost 自包含宿主（golang 插件，go build 编译期产物）", "Go 编译原生代码（GC 运行时），块内 QPC ns 计时（us 回传）", testType, testParam, timeUs )
+    }
+
     # PHP：参数为微秒（2026-11-20 修订：php 出通道 $us <- (...) 回传在 AOT
     # 发布包（BenchMark.exe）实测失效——块内 echo 正常、毒化 long 回传致报告
     # PHP 列全空；源码树 slang.exe 运行正常。参照 MasmBench asm 出通道失效
@@ -202,6 +217,61 @@ BenchCollector
         {
             Console.println( "[BenchCollector] report write FAILED: " + fileName )
         }
+
+        # 同时间戳 CSV 导出（全量原始条目平表，一列不并表；UTF-8 BOM 前缀，
+        # Excel 直接打开中文不乱码）
+        string csvFile = "report/BenchmarkReport_" + stamp + ".csv"
+        bool csvOk = File.writeAllText( csvFile, BenchCollector.buildCsv() )
+        if csvOk
+        {
+            Console.println( "[BenchCollector] csv written: " + csvFile + "  (" + BenchCollector._entries.length.toString() + " entries)" )
+        }
+        else
+        {
+            Console.println( "[BenchCollector] csv write FAILED: " + csvFile )
+        }
+    }
+
+    # CSV 正文：UTF-8 BOM + 中文表头 + 全量原始条目（采集顺序；时间统一
+    # 原始微秒值，单位换算/自适应显示交给 Excel 等表格工具，与 md 附录同源）
+    static string buildCsv()
+    {
+        string nl = "\n"
+        string csv = "\uFEFF"
+        csv = csv + "语言,语言说明,优化选项,测试类型,参数,运行时间(us)" + nl
+        for i = 0, i < BenchCollector._entries.length, i++
+        {
+            BenchEntry e = BenchCollector._entries._getItem_( i )
+            csv = csv + BenchCollector.csvField( e.language )
+            csv = csv + "," + BenchCollector.csvField( e.languageDesc )
+            csv = csv + "," + BenchCollector.csvField( e.optDesc )
+            csv = csv + "," + BenchCollector.csvField( e.testType )
+            csv = csv + "," + BenchCollector.csvField( e.testParam )
+            csv = csv + "," + e.timeUs.toString() + nl
+        }
+        ret csv
+    }
+
+    # CSV 字段转义：全量加引号（中文/逗号/换行安全），内部 " 翻倍。
+    # SL string 无 replace：按单字符 slice 扫描重组（ASCII 引号 UTF-8 下
+    # 单字节安全，与 parseNumberLines 同款手法）
+    static string csvField( string s )
+    {
+        int len = s.length
+        string escaped = "\""
+        for i = 0, i < len, i++
+        {
+            string ch = s.slice( i, i + 1 )
+            if ch == "\""
+            {
+                escaped = escaped + "\"\""
+            }
+            else
+            {
+                escaped = escaped + ch
+            }
+        }
+        ret escaped + "\""
     }
 
     # 报告正文：标题 + 语言说明表 + 四语言对比总表 + 全量原始条目附录

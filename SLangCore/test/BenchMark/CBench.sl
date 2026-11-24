@@ -3,8 +3,8 @@ import Std
 # ============================================================================
 # CBench — C 惯用法基准（@cplus_clang(){} 内联块，cplus_clang 插件原生编译）
 #
-# 14 项与 SL/CSharp/Java/JS 共享基准逐项同算法/同参数（对齐 CsExtra/
-# SlBenchLib.cs，校验和可跨语言对拍），外加 ListWalk 一项 C 专列。
+# 14 项与 SL/CSharp/Java/JS 共享基准逐项同算法/同参数（对齐 CSharpBench
+# 块内算法，校验和可跨语言对拍），外加 ListWalk 一项 C 专列。
 # 惯用法：malloc/free、裸指针游走、行指针矩阵、函数指针、SLCPP_EXPORT
 # 递归函数（fib/nqueens）、显式栈 DFS、手写 char* 拼接、sprintf。
 #
@@ -876,7 +876,7 @@ CBench
 		ret ns
 	}
 
-	# 13. Mandelbrot：标准映射（对齐 SlBenchLib Render：x0=px*4/w-2, y0=py*4/h-2）
+	# 13. Mandelbrot：标准映射（对齐 CSharpBench render lambda：x0=px*4/w-2, y0=py*4/h-2）
 	static long mandelbrot()
 	{
 		Console.println("========== Mandelbrot (C) (start) ==========")

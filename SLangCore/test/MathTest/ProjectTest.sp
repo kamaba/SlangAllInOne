@@ -8,6 +8,7 @@ Project
         FFIMathTest.fun()
         MatrixBigTest.fun()
         ComplexTest.fun()
+        MathRTest.fun()
     }
     _before_()
     {

@@ -1140,25 +1140,30 @@ public class RenderSystem
         this._objIds2D.clear()
     }
 
-    public void shutdown()
+    # 清除上一帧提交的 FairyGUI / UI 叠加网格对象。
+    # sync()/recycle() 只回收 3D 与 2D 对象，_uiObjIds 是持久槽；
+    # 菜单切场景后若不清除，旧 UI 会一直叠在新场景上。
+    public void clearUi()
     {
-        this.recycle()
-        this.recycle2D()
         Int32 ui = 0
         Int32 un = this._uiObjIds.length
         while ui < un
         {
             Int64 oid = this._uiObjIds[ui]
-            if oid != 0
+            if oid != 0 && this._pipe != null
             {
-                if this._pipe != null
-                {
-                    SLang.RenderObject.destroyById( this._pipe.handle, oid )
-                }
-                this._uiObjIds[ui] = 0
+                SLang.RenderObject.destroyById( this._pipe.handle, oid )
             }
+            this._uiObjIds[ui] = 0
             ui = ui + 1
         }
+    }
+
+    public void shutdown()
+    {
+        this.recycle()
+        this.recycle2D()
+        this.clearUi()
         this._uiObjIds.clear()
         if this._uiCam != null
         {

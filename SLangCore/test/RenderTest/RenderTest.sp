@@ -11,6 +11,18 @@ Project
     #          填充（renderTexture 通道）
     _main_()
     {
+        # 参数 basicdraw = 只跑 RenderTestBasicDraw（点/线/圆/三角等全覆盖），
+        # 不进入 GLRenderTest 全相位与 QT 帧循环。
+        Array<Object> args = global._inputArgs
+        if args.length > 0
+        {
+            string a0 = args[0].toString()
+            if a0 == "basicdraw"
+            {
+                bool ok = RenderTestBasicDraw.runBasicDraw()
+                ret
+            }
+        }
         RenderTest.main()
     }
 

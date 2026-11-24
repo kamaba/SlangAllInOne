@@ -26,14 +26,7 @@ public class SceneSmokeTest
 
     static string sceneDir()
     {
-        string cwd = IO.Directory.getCurrentDirectory()
-        string c1 = cwd + "/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/scenes"
-        bool e1 = File.exists( c1 + "/PureTest.scene.json" )
-        if e1
-        {
-            ret c1
-        }
-        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/scenes"
+        ret SceneDemo.findProjectDir() + "/assets/scenes"
     }
 
     static void runOne( string file, Int32 expectedNodes, Int32 expectedScripts, string tag )
@@ -118,13 +111,7 @@ public class SceneSmokeTest
 
     static string fairyDir()
     {
-        string cwd = IO.Directory.getCurrentDirectory()
-        string p1 = cwd + "/assets/fairygui/Demo"
-        if File.exists( p1 + "/package.xml" )
-        {
-            ret p1
-        }
-        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/Demo"
+        ret SceneDemo.findProjectDir() + "/assets/fairygui/Demo"
     }
 
     static void runFairy()
@@ -171,7 +158,7 @@ public class SceneSmokeTest
         }
         # 主入口菜单包 + 命中测试（5 个场景按钮）
         FairyPackage mp = FairyPackage()
-        string menuPath = "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/MainMenu"
+        string menuPath = SceneDemo.findMainMenuDir()
         bool mok = mp.load( menuPath )
         SceneSmokeTest.check( mok, "FairyGUI main menu package load" )
         if mok

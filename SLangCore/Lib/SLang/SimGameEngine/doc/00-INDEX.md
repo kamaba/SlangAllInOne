@@ -1,6 +1,6 @@
 # SimGameEngine 文档索引
 
-> 版本：v2.20（23 章设计稿，2026-11-23；v2.20 新增第 23 章 Windows 系统 GDI 绘图（render CVM/C 层 `slr_gdi_*` + `SLangRender.GdiCanvas` 门面）/ 字库动态图集 / 文本网格 / GameManager，第 22 套 SimTextDrawTest 54/54；前序 v2.19 新增第 22 章 Prefab 机制——GameObject 子树 JSON，与 scene.json 同构共用读写代码，SceneManager 七个门面，导出侧补 Light/Volume，第 21 套 SimPrefabTest；前序 v2.18 新增第 21 章编辑器 Gizmo——GizmoTypes/GizmoGeometry/GizmoSystem 三件套：三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 几何走 MeshRef 烘焙路径零 C 改动，SceneDemo 接入 G 键循环模式，第 20 套 SimGizmoTest；前序 v2.17 新增第 20 章 ECS 系统——GameObject 渲染数据拔离 + 只挂 Data + 逻辑集中调度 + 自动分层合并 + 渲染层整体提交，第 19 套 SimEcsTest；前序 v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
+> 版本：v2.23（26 章设计稿，2026-11-23；v2.23 新增 Std.RData 数据结构 → 引擎映射 chart → RenderTexture/QT 回绘链路，doc/26；前序 v2.22 将独立模块 StatsPlot 整建制合并入引擎 `stats/`（namespace StatsPlot 不变、66 项断言并入第 24 套），并新增 QT 图库示例展示全部绘图接口，doc/25；前序 v2.21 新增第 24 章基础绘图与 R 风格图表（纯 SL 软光栅：DrawCanvas 图元 + PlotParams + DrawChart 图表工厂），第 23 套 SimDrawingTest 59/59；前序 v2.20 新增第 23 章 Windows 系统 GDI 绘图（render CVM/C 层 `slr_gdi_*` + `SLangRender.GdiCanvas` 门面）/ 字库动态图集 / 文本网格 / GameManager，第 22 套 SimTextDrawTest 54/54；前序 v2.19 新增第 22 章 Prefab 机制——GameObject 子树 JSON，与 scene.json 同构共用读写代码，SceneManager 七个门面，导出侧补 Light/Volume，第 21 套 SimPrefabTest；前序 v2.18 新增第 21 章编辑器 Gizmo——GizmoTypes/GizmoGeometry/GizmoSystem 三件套：三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 几何走 MeshRef 烘焙路径零 C 改动，SceneDemo 接入 G 键循环模式，第 20 套 SimGizmoTest；前序 v2.17 新增第 20 章 ECS 系统——GameObject 渲染数据拔离 + 只挂 Data + 逻辑集中调度 + 自动分层合并 + 渲染层整体提交，第 19 套 SimEcsTest；前序 v2.16 新增 Camera/Light 实体（extends GameObject + CameraData/LightData 组件）+ Camera 四类矩阵方法，第 18 套 SimCameraLightTest；前序 v2.15 doc/08 §8 UI 画布两模式 + 引擎层图层叠加；v2.12 新增第 19 章「场景导出与 SceneManager」：SceneExporter 落盘 scene.json + SceneManager 按路径加载/脚本挂载/帧循环 + SceneImporter 脚本扩展；P0~P7 全部落盘（P2 Submit 烘焙段收尾：C `sle_ortho_bake` 正交投影 → uploadMesh MESH_CUSTOM）+ **Transform/RectTransform 统一合并入 SLangRender** + **P8 Volume v1（C 核心）** + **P8 完整 SceneImporter v1** + **Mesh GJK+MTV 精化 v1（C 核心，mesh-mesh 物理闭环）** + **P9 固定形状库 v1（C 核心，11 形状）** + **统一时间同步 v1（TimeService/EngineTime，域时钟挂接音频/视频）** + system/ 系统层 + test/ 统一测试入口（Test.sl，十四套 656 项）+ C99 原生库 sl_sim_engine_lib）
 > 定位：SLang 游戏引擎「场景 / 节点 / 组件」层的设计与使用契约。
 > 配套渲染文档：`../Render/doc/01-Overview.md` 起（Render 只负责「可见物 + 相机 + 光源 → 像素」）。
 
@@ -27,7 +27,7 @@
 
 ---
 
-## 2. 文档清单（23 章 + 索引）
+## 2. 文档清单（26 章 + 索引）
 
 | 编号 | 文件 | 内容 | 读者 |
 |---|---|---|---|
@@ -54,8 +54,11 @@
 | 21 | `21-编辑器Gizmo.md` | GizmoTypes / GizmoGeometry / GizmoSystem：三轴箭头 / 旋转环 / 缩放手柄 / 相机·光 2D·3D 图标，纯 SL 几何 + 帧生命周期 + 状态机 | 写编辑器/调试可视化的人 |
 | 22 | `22-Prefab机制.md` | GameObject 子树 JSON（与 scene.json 同构）：共用读取/写入层、SceneManager 实例化门面、Light/Volume 导出对称 | 写场景内容复用/关卡装配的人 |
 | 23 | `23-Windows绘图与文本.md` | Windows 系统 GDI（render CVM 原生层）/ TTF 字库按需烘焙 / TextMesh 网格 / GameManager 主控 | 写 2D 表现与主控流程的人 |
+| 24 | `24-基础绘图与图表.md` | 跨平台 RGBA8 软光栅：DrawCanvas 图元（线/虚线/圆/椭圆/弧/扇形/多边形/文字）+ PlotParams（par）+ DrawChart（plot/hist/barplot/boxplot/pie/abline/legend） | 写数据可视化与离屏绘图的人 |
+| 25 | `25-StatsPlot统计绘图设计.md` | 原独立模块 StatsPlot 合并入引擎：DataFrame / Stats / PlotCanvas / Plot / PlotIo 的设计与 API 一览（namespace 与源码不变） | 实现者与评审 |
+| 26 | `26-RData映射与图表.md` | Std.RData 五类结构 → RDataChart 映射/chart → RenderTexture 与 QT 同源回绘；边界取舍与实证坑 | 实现者与评审 |
 
-阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19 → 20 → 21 → 22 → 23`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 Prefab 可读 `22`，只关心 UI 两模式/相机叠加可读 `08 §8`，只关心编辑器辅助渲染可读 `21`。
+阅读顺序：`01 → 02 → 03 → 04 → 05 → 06/07/08 → 09 → 10 → 11/12 → 13/14 → 15 → 16 → 17/18 → 19 → 20 → 21 → 22 → 23 → 24 → 25 → 26`。只关心接入的可直接读 `10`，只关心场景数据化可读 `19`，只关心 Prefab 可读 `22`，只关心 UI 两模式/相机叠加可读 `08 §8`，只关心编辑器辅助渲染可读 `21`，只关心离屏绘图/图表可读 `24`。
 
 ---
 
@@ -76,6 +79,8 @@
 补充（v2.18）：【已落盘】新增编辑器 Gizmo 三件（`GizmoTypes` 常量+调色板 / `GizmoGeometry` 纯几何生成 / `GizmoSystem` 状态机+六色槽提交，doc/21）——三轴箭头 / 旋转环 / 缩放手柄 + 相机·光 2D/3D 图标，纯 SL 三角形几何走既有 `MeshRef` 烘焙渲染路径（零 C 库改动）；SceneDemo 接入（G 键循环 move→rotate→scale→none，信息条显示模式，替换原手工三色轴缓冲）；第 20 套 `SimGizmoTest` 35 项绿，统一入口累计 963 PASS / 33 FAIL（33 为 v2.11 既有 fixedDt 回归），SceneDemo 冒烟 50/50。
 
 补充（v2.20）：【已落盘】新增 Windows 系统 GDI 绘图（render CVM 层 `slr_gdi_*` 18 导出 + `SLangRender.GdiCanvas` 薄门面，非纯 SL 软光栅）+ 字库文本五件（`Font` / `Glyph` / `FontAtlas` / `TextMesh` / `GameManager`，doc/23）——GDI 真画布 + `.ttf` 字形解析 + 按需动态图集 + quad 文本网格 + 全局主控门面；第 22 套 `SimTextDrawTest` 54 项绿，统一入口累计 **1063 PASS / 33 FAIL**（33 为 v2.11 既有 fixedDt 回归，无新增），RenderTest EXIT=0。
+
+补充（v2.21）：【已落盘】新增基础绘图四件（`DrawTypes` / `DrawCanvas` / `PlotParams` / `DrawChart`，doc/24）——跨平台 RGBA8 软光栅画布 + 11 类图元（含虚线/圆弧/扇形）+ R `par()` 参数对象 + 8 种图表工厂与 abline/legend 叠加，零 C 改动、零新模块依赖；第 23 套 `SimDrawingTest` 59 项绿，23 套统一入口本轮实测 **1155 PASS / 0 FAIL**。
 
 ---
 
@@ -105,6 +110,7 @@
 | AssetDatabase / 编辑器资源管线 | 第 16 章导出器 + `SceneImporter` | 无（纯资源层，不进渲染） | 导出器落点已核实 / 本体设计稿 |
 | Editor Gizmos / Handles（编辑态渲染） | GizmoSystem / GizmoGeometry / GizmoTypes（第 21 章） | 走既有 `MeshRef` 顶点烘焙 → RenderObject，无专用图元 | 已落盘（纯显示，无拾取） |
 | Windows GDI 画布（Unity 无同名类） | `GdiCanvas`（第 23 章，Render CVM 原生层） | DIB → RGBA8 → 既有纹理通道 | 已落盘（仅 Windows） |
+| 2D 画布 / 统计图表（Unity 无内置同名类；参考 R base graphics） | `DrawCanvas` / `PlotParams` / `DrawChart`（第 24 章） | `pixelPtr()` 上屏 / `toTexture()` 转纹理 | 已落盘（纯 SL 跨平台） |
 | Font / TextMesh / FontAtlas（Unity 文本） | `Font` / `TextMesh` / `FontAtlas`（第 23 章） | `RenderTexture` 图集 + `submitUiMeshTex` 透明 UI 网格 | 已落盘（二值 alpha，无 kerning） |
 | 全局主控（Unity 无内置同名类） | `GameManager`（第 23 章） | 持有 `Application` + `Systems`，自身不渲染 | 已落盘 |
 
@@ -114,6 +120,9 @@
 
 | 日期 | 版本 | 变更 |
 |---|---|---|
+| 2026-11-23 | v2.23 | **Std.RData 数据结构 → chart → RenderTexture/QT 链路**：Std 新增 `RData/` 五类（`RVector/RFactor/RTable/RTimeSeries/RForecast`，namespace RData，compileFiles+struct 登记，Std buildVersion→1）；引擎新增 `r/RDataChart.sl` 五个映射接口（含置信带预测图 plotForecast），登记 priority 59 + struct，buildVersion→8；第 25 套 `SimRDataTest` 52/52；QT 示例 `samples/GameTest/RDataGallery/` 6 视图，离屏实证 RenderTexture 创建 + QLabel 回绘；全套件 25 套 **1273 PASS / 0 FAIL**。因 Front 不支持跨模块带点命名空间类型作形参，边界定为基础列表（Std 取值器导出）。文档 doc/26 + `md/lib/Std/RData.md` + `md/lib/SimGameEngine/rdata-chart.md` |
+| 2026-11-23 | v2.22 | **StatsPlot 合并入引擎 + QT 图库示例**：原独立模块五件源码（`Stats/DataFrame/PlotCanvas/Plot/PlotIo`）整建制迁入 `SimGameEngine/stats/`，保留 `namespace StatsPlot` 与全部公开 API（消费方改 `import SimGameEngine;` 即可），登记 priority 54..58 + struct 命名空间；原 66 项断言并入统一测试入口第 24 套 `SimStatsPlotTest`（`import SimGameEngine;` 后 `StatsPlot.*` 照用）；新增 `samples/GameTest/StatsGallery/` QT 图库（4×4 共 16 视图：DrawCanvas 图元 + DrawChart 八接口 + StatsPlot 七接口 + DataFrame/Stats/PlotIo 链路），离屏验证 16 视图全渲染、事件循环稳定；全套件 24 套 **1221 PASS / 0 FAIL**。旧独立模块源码与旧测试已删除。文档：doc/25 设计 + `md/lib/SimGameEngine/statsplot.md` 使用 |
+| 2026-11-23 | v2.21 | **基础绘图 + R 风格图表落盘（doc/24，零 C 改动）**：新增 `drawing/` 四件——`DrawTypes`（线型/点符号/调色板/绘图自带三角与 log2）/ `DrawCanvas`（RGBA8 软光栅：点/线/虚线/点线/矩形/圆/椭圆/弧/扇形/多边形/3×5 文字 + 上屏与纹理输出）/ `PlotParams`（R `par()` 参数对象）/ `DrawChart`（统计辅助 + plot/scatter/curve/plotY/hist/barplot/boxplot/pie + abline/legend 叠加）；全部登记 `SimGameEngine.jsonc`（priority 50..53 + struct）；第 23 套 `SimDrawingTest` 59/59，全套件 23 套 **1155 PASS / 0 FAIL**（本轮实测全绿，v2.11 登记的 33 项 fixedDt 回归未复现）。坑：`half` 保留字再证 / `List.add` 不可链式 / 循环变量漏自增死循环 / `as Int32` 与乘除混写优先级异常（先落 Float32 局部再 cast）/ 引擎内跨模块 `Mathf.cos/sin` 返回 0 → 绘图自带三角；使用文档 `md/lib/SimGameEngine/drawing-and-charts.md` |
 | 2026-11-23 | v2.20 | **Windows 系统 GDI + 字库 / 文本落盘（doc/23）**：① 绘图走**渲染 CVM 原生层**——`cvm_render_lib/Platform/sl_gdi.c` 新增 18 个 `slr_gdi_*` 导出（`CreateDIBSection` + HDC + GDI 笔刷 / `Polygon` / `BitBlt` / `TextOutW`），`vm_sl_render.h` 登记、`RenderFFI.sl` 静态绑定、`SLangRender/GdiCanvas.sl` 薄门面；旧纯 SL `WinDraw.sl` 已删除（层次错误）；DIB 为 BGRA 顶行，对外 `toRgba`/`*_texture` 转库统一 RGBA8。② 字库文本五件（`Font` sfnt-cmap-glyf 解析 / `Glyph` / `FontAtlas` 按需动态图集 / `TextMesh` quad 网格 / `GameManager` 主控）保持纯 SL；先筛出文本用到的字再烘焙 256×256 图集。第 22 套 `SimTextDrawTest` 54/54（含 GDI 真画布 + 测试内现场构造 352B 最小 TTF），全量 22 套 **1063 PASS / 33 FAIL**（33 为既有 fixedDt 回归，无新增），RenderTest EXIT=0。坑：`GetPixel` 丢 alpha 改直读 DIB；C 改动后须同步 sl_render_lib.dll 全槽位（含调试 zip）；`bind`/`data`/`half` 保留字与 `num` 类名冲突、跨行 `ret a + b`、`ret list[i]`、跨模块 `tex.handle` 先落局部；使用文档 `md/lib/SimGameEngine/windows-draw-text.md` |
 | 2026-11-20 | v2.18 | **编辑器 Gizmo 落盘（doc/21，零 C 改动）**：新增 `gizmo/` 三件——`GizmoTypes`（模式/轴/图标常量 + 调色板方法）、`GizmoGeometry`（纯 SL 三角形几何：方向箭头/旋转圆环/缩放手柄/相机 2D·3D 图标/平行光·点光·聚光图标，细长四边形模拟线段）、`GizmoSystem`（六色槽状态机 + 帧生命周期 begin/draw/end + 相机·光图标 + 诊断 getters），几何经 `MeshRef.setVertices` 走既有 Batcher/sync 烘焙路径；`SimGizmoTest` 35 项（第 20 套），二十套 **963 PASS / 33 FAIL**（33 为既有 fixedDt 回归）。SceneDemo 接入：手工三色轴缓冲改为 GizmoSystem 委托，G 键循环 move→rotate→scale→none、信息条显示模式、场景锚点画相机/光图标；**Ctrl+Home 顶部菜单栏（QMenuBar 子控件形态）+「辅助 Gizmo」菜单下「显示辅助 Gizmo」action 切 showAxes 全局开关**（QTHost.startHost 增 toggleGizmoHandler 无参回调，SIG_TRIGGERED 连接）；GUI 实跑验证：窗口正常渲染、数字键切场景、Ctrl+Home 弹出菜单、点 action 后 objs=7→2（gizmo 网格节点从提交链移除）确认开关生效、进程稳定无崩溃；冒烟 50/50。坑：`half` 是词法保留字（参数改名 `hh`）；跨模块 static 几何函数有签名风险，SceneDemo 与测试一律走 GizmoSystem 实例方法消费；冒烟测试原引用已删的 `SceneDemo.vertsX` 同步改为 `gs.vertexCountAt(0)` |
 | 2026-11-20 | v2.17 | **ECS 模式落盘（doc/20）**：新增 `ecs/` 五件（EcsData 纯数据 / EcsLogic 逻辑组件 / EcsLogicSystem 集中调度 / EcsLayer 分层结果 / EcsWorld 实体+数据仓+分层）；GameObject 的 MeshRef/MaterialRef 在注册时拔离到世界 ECS 模式只挂 Data（其它 Behaviour 拒绝），逻辑统一由 world.logic 按 order 调度；Batcher 增 collectEcs + EcsLayer 分层收口，RenderSystem 增 ecsSource 直接提交分层结果（零 C 库改动）；Systems.bindEcs 一键接线；Application 固定步/帧逻辑/变换后分层三处接入；`SimEcsTest` 48 项（第 19 套），十九套 928 PASS / 33 FAIL（33 为既有 fixedDt 回归）。坑：`bind`/`label` 保留字；GameObject 新字段名避开 `world`（与 Camera 局部同名会污染解析链）；跨模块 List 下标先落局部变量；顺手修 `SimSystemsTest` 重复变量声明 |

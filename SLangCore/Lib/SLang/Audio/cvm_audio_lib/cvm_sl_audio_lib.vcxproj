@@ -94,17 +94,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="sl_audio.c" />
+    <ClCompile Include="sl_audio_librosa.c" />
     <ClCompile Include="Codec\sl_audio_wav.c" />
     <ClCompile Include="Codec\sl_audio_mp3.c" />
     <ClCompile Include="Codec\sl_audio_mp4.c" />
     <ClCompile Include="Codec\sl_audio_mf.c" />
     <ClCompile Include="Codec\sl_audio_wave.c" />
+    <ClCompile Include="third_party\librosa\sl_librosa.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vm_sl_audio.h" />
     <ClInclude Include="sl_audio_internal.h" />
     <ClInclude Include="third_party\minimp4\minimp4.h" />
     <ClInclude Include="third_party\minimp3\minimp3.h" />
+    <ClInclude Include="third_party\librosa\sl_librosa.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,6 +4,11 @@
 
 | 类型 | 种类 | 模块(.sl) | 基类/接口 | 说明 |
 |------|------|-----------|-----------|------|
+| `RVector` | class | [RData/RVector.sl](RData.md) |  | R 风格数值向量（名称 + NA + 统计） |
+| `RFactor` | class | [RData/RFactor.sl](RData.md) |  | R factor 分类变量（levels + 整数编码 + 频数） |
+| `RTable` | class | [RData/RTable.sl](RData.md) |  | R data.frame 风格列式数据表（CSV 入口） |
+| `RTimeSeries` | class | [RData/RTimeSeries.sl](RData.md) |  | R ts 时间序列（起点 + 频率 + lag/diff/window） |
+| `RForecast` | class | [RData/RForecast.sl](RData.md) |  | 预测结果（点预测 + 上下置信界 + 残差） |
 | `Row` | class | [Cache/Redis.sl](Cache/Redis.md) |  | Row - 行数据，仿 Python sqlite3.Row |
 | `Cursor` | class | [Cache/Redis.sl](Cache/Redis.md) |  | Cursor - 游标，仿 Python sqlite3.Cursor |
 | `Command` | class | [Cache/Redis.sl](Cache/Redis.md) |  | Command - 命令对象（ADO.NET 风格辅助类，保留已有定义） |

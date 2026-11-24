@@ -486,7 +486,9 @@ public class SimShapeTest
         m.applyTo( meshRef )
         check( meshRef.hasVertexData == true, "S2 applyTo sets hasVertexData" )
         int lv = meshRef.vertices.length
-        check( lv == v, "S2 applyTo vertex count" )
+        # MeshRef.vertices 是三角形汤（每 3 顶点一三角），索引化网格下
+        # 汤长度 = triangleCount*3，与去重顶点数 vertexCount 不同
+        check( lv == m.triangleCount() * 3, "S2 applyTo soup vertex count" )
         # toMesh（消费方自理：跨模块类型声明与构造都须限定名 SLang.Mesh）
         SLang.Mesh mesh = SLang.Mesh( m.getPositions(), m.getTriangles(), m.getNormals() )
         int mv = mesh.vertexCount()

@@ -76,12 +76,14 @@ public class Txt2WavEncoder
             this.gru.wAll.setAt( 2 * h + j, j, 1.0f )
             j = j + 1
         }
-        # 偏置：z 门 0.62（σ≈0.65 续航权重）、r 门 4.0（σ≈0.98 全开）、n 门 0
+        # 偏置：z 门 -0.62（σ≈0.35 → h' ≈ 0.65·tanh(x) + 0.35·h_prev：
+        # 音素特征快速到位只留轻度拖尾——动量过强会把元音特征抹平趋同）、
+        # r 门 4.0（σ≈0.98 全开）、n 门 0
         this.gru.bias.fillValue( 0.0f )
         j = 0
         while j < h
         {
-            this.gru.bias.setAt( 0, j, 0.62f )
+            this.gru.bias.setAt( 0, j, -0.62f )
             this.gru.bias.setAt( 0, h + j, 4.0f )
             j = j + 1
         }
@@ -167,20 +169,21 @@ public class Txt2WavDecoder
             total = 2
         }
 
-        # 焦点位置：帧 t 属于哪个音素（硬对齐，softmax 后边界自动软化）
+        # 焦点位置：音素内线性斜坡 p-0.5 → p+0.5（帧 t 的 focus 连续变化），
+        # 配合 softmax 尺度 -3 在音素边界形成 50/50 交叉淡化——帧级共振峰
+        # 滑移（双元音/协同发音）；音素中心处 focus=p，自身权重占优。
         Array<Float32> focus = Array<Float32>( total )
         Int32 t = 0
         p = 0
         while p < pcount
         {
+            Int32 d = durs[ p ]
             Int32 k = 0
-            while k < durs[ p ]
+            while k < d && t < total
             {
-                if t < total
-                {
-                    focus[ t ] = SystemConvertFloat32( p )
-                    t = t + 1
-                }
+                # focus = p - 0.5 + (k+0.5)/d；d=1 时恰为 p（音素中心）
+                focus[ t ] = SystemConvertFloat32( p ) - 0.5f + ( SystemConvertFloat32( k ) + 0.5f ) / SystemConvertFloat32( d )
+                t = t + 1
                 k = k + 1
             }
             p = p + 1
@@ -204,7 +207,8 @@ public class Txt2WavDecoder
         Tensor onesRowP = Tensor.ones( Shape.matrix( 1, pcount ) )
         Tensor onesColT = Tensor.ones( Shape.matrix( total, 1 ) )
 
-        # 注意力打分：logits[t,j] = -18·(focus(t) - j)²（单调对齐）
+        # 注意力打分：logits[t,j] = -3·(focus(t) - j)²（focus 已是线性斜坡，
+        # 尺度 -3 使音素中心处邻音素权重 e^-3≈5%、边界处 50/50 交叉淡化）
         # 两个 tile matmul 互不依赖，交给 Tensora 异步层并发提交：
         # waitAll 挂起当前协程收口，不阻塞 OS 线程；大张量可把
         # decoder.computeMode 切到 EComputeMode.Iso 走后台线程。
@@ -215,7 +219,7 @@ public class Txt2WavDecoder
         Array<Tensor> tiles = TensorAsync.waitAll( jobs )
         Tensor fTile = tiles[0]
         Tensor jTile = tiles[1]
-        Tensor logits = fTile.sub( jTile ).square().scale( -18.0f )
+        Tensor logits = fTile.sub( jTile ).square().scale( -3.0f )
 
         Device devT = dev
         Tensor logitsD = logits.to( devT )

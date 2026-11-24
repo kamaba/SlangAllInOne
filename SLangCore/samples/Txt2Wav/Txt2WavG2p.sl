@@ -32,6 +32,12 @@ public class Txt2WavLexicon
     # 数字词（数字展开用，逐位朗读）
     Array<string> DIGIT_WORDS = null
 
+    # 编码前展开表：词典/规则可能输出表内不存在的记号，直接查 id 会
+    # 塌缩成 AA（nameToId 未命中返回 0）——AY/EY/OW 展开为双元音滑移，
+    # J 是 JH 的别名
+    Array<string> XEXP_FROM = null
+    Array<string> XEXP_TO = null
+
     # ── 解析后的音素表 ────────────────────────────────────
     Array<string> names = null
     Array<Float32> feats = null
@@ -47,6 +53,8 @@ public class Txt2WavLexicon
         Array<string> dictWords = [ "the", "a", "to", "of", "is", "was", "are", "you", "one", "two", "do", "does", "what", "this", "that", "hello", "world", "yes", "no", "love", "be", "me", "my", "we", "he", "she", "they", "there", "have", "has", "had", "and", "or", "for", "from", "with", "at", "on", "in", "it", "as", "your", "our", "out", "about", "test", "text", "speech", "speak", "simple", "sample", "engine", "language", "open", "source", "code", "write", "read", "run", "file", "save", "user", "computer", "data", "like", "just", "use", "new", "now", "how", "who", "water", "time", "first", "second", "version", "english", "work", "quick", "brown", "fox", "jumps", "over", "lazy", "dog", "zero", "three", "four", "five", "six", "seven", "eight", "nine", "ten" ]
         Array<string> dictPhones = [ "DH AH", "AH", "T UW", "AH V", "IH Z", "W AH Z", "AA R", "Y UW", "W AH N", "T UW", "D UW", "D AH Z", "W AH T", "DH IH S", "DH AE T", "HH EH L OW", "W ER L D", "Y EH S", "N OW", "L AH V", "B IY", "M IY", "M AA Y", "W IY", "HH IY", "SH IY", "DH EH Y", "DH EH R", "HH AE V", "HH AE Z", "HH AE D", "AE N D", "AO R", "F AO R", "F R AH M", "W IH TH", "AE T", "AA N", "IH N", "IH T", "AE Z", "Y AO R", "AA W ER", "AA W T", "AH B AA W T", "T EH S T", "T EH K S T", "S P IY CH", "S P IY K", "S IH M P AH L", "S AE M P AH L", "EH N JH IH N", "L AE NG G W IH J", "AO W P AH N", "S AO R S", "K AO D", "R AA Y T", "R IY D", "R AH N", "F AA Y L", "S EH Y V", "Y UW Z ER", "K AH M P Y UW T ER", "D EH Y T AH", "L AA Y K", "JH AH S T", "Y UW Z", "N UW", "N AA W", "HH AA W", "HH UW", "W AO T ER", "T AA Y M", "F ER S T", "S EH K AH N D", "V ER ZH AH N", "IH NG G L IH SH", "W ER K", "K W IH K", "B R AA W N", "F AA K S", "JH AH M P S", "OW V ER", "L EY Z IY", "D AA G", "Z IY R OW", "TH R IY", "F AO R", "F AY V", "S IH K S", "S EH V AH N", "EY T", "N AY N", "T EH N" ]
         Array<string> digitWords = [ "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" ]
+        Array<string> xexpFrom = [ "AY", "EY", "OW", "J" ]
+        Array<string> xexpTo = [ "AA Y", "EH Y", "AO W", "JH" ]
 
         this.PAT2 = pat2
         this.OUT2 = out2
@@ -55,6 +63,8 @@ public class Txt2WavLexicon
         this.DICT_WORDS = dictWords
         this.DICT_PHONES = dictPhones
         this.DIGIT_WORDS = digitWords
+        this.XEXP_FROM = xexpFrom
+        this.XEXP_TO = xexpTo
 
         this.parsePhones()
     }
@@ -793,17 +803,63 @@ public class Txt2WavFrontend
         ret Txt2WavFrontend.trimTo( res, n )
     }
 
-    # ── 4. 音素 → id 序列 ────────────────────────────────
+    # ── 4. 音素 → id 序列（先做双元音/别名展开）──────────
+    # 词典/规则的记号可能不在音素表内（AY/EY/OW/J），nameToId 未命中
+    # 返回 0 会塌缩成 AA——这里先按 XEXP 表展开成真实音素序列，双元音
+    # 因此获得相邻两音素间的共振峰滑移。
     Array<Int32> encode( Array<string> phones )
     {
-        Array<Int32> ids = Array<Int32>( phones.length )
+        Int32 total = 0
         Int32 i = 0
         while i < phones.length
         {
-            ids[ i ] = this.lex.nameToId( phones[ i ] )
+            if this.xexpIndex( phones[ i ] ) >= 0
+            {
+                total = total + 2
+            }
+            else
+            {
+                total = total + 1
+            }
+            i = i + 1
+        }
+
+        Array<Int32> ids = Array<Int32>( total )
+        Int32 n = 0
+        i = 0
+        while i < phones.length
+        {
+            Int32 x = this.xexpIndex( phones[ i ] )
+            if x >= 0
+            {
+                Array<string> two = Txt2WavLexicon.splitSpaces( this.lex.XEXP_TO[ x ] )
+                ids[ n ] = this.lex.nameToId( two[ 0 ] )
+                ids[ n + 1 ] = this.lex.nameToId( two[ 1 ] )
+                n = n + 2
+            }
+            else
+            {
+                ids[ n ] = this.lex.nameToId( phones[ i ] )
+                n = n + 1
+            }
             i = i + 1
         }
         ret ids
+    }
+
+    Int32 xexpIndex( string name )
+    {
+        Array<string> from = this.lex.XEXP_FROM
+        Int32 i = 0
+        while i < from.length
+        {
+            if Txt2WavLexicon.strEq( name, from[ i ] )
+            {
+                ret i
+            }
+            i = i + 1
+        }
+        ret 0 - 1
     }
 
     static bool isVowelChar( Int32 c )

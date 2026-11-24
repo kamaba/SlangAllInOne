@@ -124,16 +124,9 @@ public class Txt2WavEngine
         ret y
     }
 
-    # ── 波形 → WAV 文件 ──────────────────────────────────
-    bool writeWav( string path, Array<Float32> samples )
+    # ── 波形 → WAV 文件（缓冲由调用方构造，供 WAV 编码与 Librosa 分析共用）──
+    bool writeWav( string path, Audio.AudioBuffer buf )
     {
-        Audio.AudioBuffer buf = Audio.AudioBuffer( this.vocoder.sampleRate, 1, samples.length )
-        Int32 i = 0
-        while i < samples.length
-        {
-            buf.setSample( i, 0, samples[ i ] )
-            i = i + 1
-        }
         Array<UInt8> bytes = Audio.Wav.encode( buf )
         if bytes == null
         {
@@ -199,22 +192,33 @@ Txt2Wav
         Console.println( "[txt2wav] samples : " + eng.lastSamples.toString() + "  duration ~= " + SystemConvertString( dur ) + "s" )
         Console.println( "[txt2wav] time    : frontend " + eng.lastFrontendMs.toString() + "ms  neural " + eng.lastNeuralMs.toString() + "ms  vocoder(gl x" + eng.vocoder.glIters.toString() + ") " + eng.lastVocoderMs.toString() + "ms" )
 
-        # 静音检测（RMS）
-        Float32 energy = 0.0f
+        # 波形缓冲（WAV 编码与 Audio.Librosa 分析共用）
+        Audio.AudioBuffer buf = Audio.AudioBuffer( eng.vocoder.sampleRate, 1, y.length )
         Int32 i = 0
         while i < y.length
         {
-            energy = energy + y[ i ] * y[ i ]
+            buf.setSample( i, 0, y[ i ] )
             i = i + 1
         }
+
+        # 静音检测（RMS）：Audio.Librosa 库逐帧 RMS（帧 2048/步 512），取峰值帧
         Float32 rms = 0.0f
-        if y.length > 0
+        Array<Float32> rmsFrames = Audio.Librosa.rms( buf )
+        if rmsFrames != null
         {
-            rms = Mathf.sqrt( energy / SystemConvertFloat32( y.length ) )
+            Int32 fi = 0
+            while fi < rmsFrames.length
+            {
+                if rmsFrames[ fi ] > rms
+                {
+                    rms = rmsFrames[ fi ]
+                }
+                fi = fi + 1
+            }
         }
         Console.println( "[txt2wav] rms     : " + SystemConvertString( rms ) )
 
-        bool ok = eng.writeWav( path, y )
+        bool ok = eng.writeWav( path, buf )
         if ok
         {
             Int64 sz = File.getSize( path )

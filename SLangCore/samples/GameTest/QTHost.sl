@@ -27,7 +27,7 @@ public class QTHost
         SLang.QT.ffi_widgetSetGeometry( windowHandle, 80, 80, 500, 566 )
         infoHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( infoHandle, 8, 6, 484, 44 )
-        SLang.QT.ffi_widgetSetText( infoHandle, "CLICK scene to enter | M back to menu | 1-5 scenes | LMB pan, RMB ROTATE, WASD, wheel | G axes, F ui fmt, Ctrl+Home menu, Esc quit" )
+        SLang.QT.ffi_widgetSetText( infoHandle, "CLICK scene to enter | M back to menu | 1-5 scenes | LMB pan, RMB ROTATE, WASD, wheel | G axes, U ui overlay, F ui fmt, Ctrl+Home menu, Esc quit" )
         labelHandle = SLang.QT.ffi_labelCreate( windowHandle )
         SLang.QT.ffi_widgetSetGeometry( labelHandle, 8, 52, 484, 484 )
         # 顶部菜单栏：QMenuBar 作普通 QWidget 子控件放窗口最顶（非 QMainWindow

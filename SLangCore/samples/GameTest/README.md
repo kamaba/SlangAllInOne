@@ -1,4 +1,4 @@
-# SceneDemo — 场景管理示例（gameExample/Test）
+# SceneDemo — 场景管理示例（samples/GameTest）
 
 演示 SimGameEngine 的场景数据化闭环：按路径读取 `scene.json` → 建节点树 →
 挂载脚本 → 运行场景逻辑 → 再导出回 JSON。设计说明见 `../../doc/19-场景导出与SceneManager.md`。
@@ -17,13 +17,15 @@
 
 - 无参数（默认）— QT 窗口展示；窗口可自由拉伸缩放，渲染分辨率与显示内容
   随窗口同步变化（Unity OnResize 语义：`viewSize` = 视口纵向半高，横向随
-  窗口宽高比自适应，内容不拉伸）。按 `1`~`5` 切换场景（`5` = RotateTest），
-  `WASD` 平移相机、左键拖拽移动视角（内容跟随鼠标）、右键拖拽旋转视角、
-  滚轮缩放（半高 1.5~40）、`G` 切换坐标轴箭头、`F` 切换 FairyGUI 包格式
-  （XML/`.fui`），`O` 把当前场景导出到 `assets/scenes/exported.scene.json`，
-  `Esc` 退出；信息条显示 nodes/scripts/lights/objs 运行时计数。
+  窗口宽高比自适应，内容不拉伸）。启动后是场景选择菜单，点其中一项进入；
+  `M` 返回菜单，`1`~`5` 直接切换场景（`5` = RotateTest）。`WASD` 平移相机、
+  左键拖拽移动视角（内容跟随鼠标）、右键拖拽旋转视角、滚轮缩放（半高 1.5~40）、
+  `G` 切换坐标轴箭头、`U` 开关场景内 FairyGUI 覆盖层（默认关闭，避免遮挡
+  3D 图形）、`F` 切换 FairyGUI 包格式（XML/`.fui`），`O` 把当前场景导出到
+  `assets/scenes/exported.scene.json`，`Esc` 退出；信息条显示
+  nodes/scripts/lights/objs 运行时计数。
 - `-- smoke` — 无窗口冒烟；五场景加载、脚本挂载、跑 8 帧、导出落盘再回读，
-  外加 FairyGUI XML/`.fui` 包解析断言，42 项全绿（退出码 0，失败退出码 1）。
+  外加 FairyGUI XML/`.fui` 包解析断言，50 项全绿（退出码 0，失败退出码 1）。
 
 ## FairyGUI UI 示例
 
@@ -33,8 +35,9 @@
 `gen_atlas.py` / `gen_fui.py` 可重新生成后两个资源。
 
 UI 由引擎的 FairyGUI 适配层读取后转成带 UV 的自定义网格，经独立的
-UI 叠加相机渲染，始终显示在 3D 场景之上。默认加载 XML 包，按 `F`
-切到 `.fui` 包，两者共用同一套渲染层。文本用图集白块占位，暂不接字体。
+UI 叠加相机渲染，显示在 3D 场景之上。场景内该覆盖层默认关闭（按 `U`
+开启），菜单界面不受影响；默认加载 XML 包，按 `F` 切到 `.fui` 包，
+两者共用同一套渲染层。文本用图集白块占位，暂不接字体。
 
 资源目录：`assets/textures/`（three.js MIT 示例贴图 brick/grass/hardwood）、
 `assets/shaders/`（DirectX-Graphics-Samples/MIT 的 BasicHLSL11 对照源；
@@ -42,19 +45,19 @@ UI 叠加相机渲染，始终显示在 3D 场景之上。默认加载 XML 包�
 
 ## 构建与运行
 
-在工作区根目录 `d:\project\lang` 执行（需先编译 SimGameEngine 与 SLangRender/SLangQT
-模块，命令见 `SnakeGame/README.md`）：
+先编译 SimGameEngine 与 SLangRender/SLangQT 模块（命令见 `SnakeGame/README.md`），
+再在示例目录 `SlangAllInOne\SLangCore\samples\GameTest` 执行：
 
 ```powershell
-$slang = '.\SlangAllInOne\out\cli-release\slang.exe'
-$demo  = 'SlangAllInOne\SLangCore\Lib\SLang\SimGameEngine\gameExample\Test'
+$slang = 'D:\project\lang\SlangAllInOne\out\cli-release\slang.exe'
+$demo  = 'D:\project\lang\SlangAllInOne\SLangCore\samples\GameTest'
 
 # 编译（一次编译两种模式共用）
 & $slang compile "$demo\SceneDemo.jsonc" --format binary+json --no-banner
 
 # 无窗口冒烟（CI / 快速验证场景/脚本/导出链路）
 & $slang run 'SlangAllInOne\out\export\SceneDemo\SceneDemo.module.slb' -- smoke --no-banner
-# 期望：=== SceneManager smoke PASS=42 FAIL=0 ===，EXIT=0
+# 期望：=== SceneManager smoke PASS=50 FAIL=0 ===，EXIT=0
 
 # H5 网页版（两层 UI：总入口菜单 + 场景内按钮菜单）
 & $slang run 'SlangAllInOne\out\export\SceneDemo\SceneDemo.module.slb' -- web --no-banner
@@ -76,6 +79,25 @@ $demo  = 'SlangAllInOne\SLangCore\Lib\SLang\SimGameEngine\gameExample\Test'
 
 QT 窗口程序需要 `slang_qt.dll` 与 Qt6 运行库；可用 `slang publish SceneDemo.jsonc`
 按 jsonc 的 `qtRuntime` 段一并打包。
+
+## RExamples — R 风格图表示例（12 格 QT 图库）
+
+`RExamples/` 仿菜鸟教程 R 绘图/回归页写了 12 个示例，每格都是真实图表：
+散点+回归线、均值/中位数直方图、彩色条形图、分组条形图、班级箱线图、
+市场份额饼图、`plot(type=n+h+o)` 气温图、`par(mfrow=c(2,2))` 四联图、
+三产品折线图例、`abline` 参考线、`lm` 预测 170cm 体重，以及 Math 库
+`MathDist.dnorm/rnorm` 密度曲线叠加直方图。
+
+```powershell
+& $slang compile "$demo\RExamples\RExamples.jsonc" --format binary+json --no-banner
+& $slang run 'SlangAllInOne\out\export\RExamples\RExamples.module.slb' -- smoke --no-banner
+# 期望：===== RExamples smoke PASS=12 FAIL=0 =====，EXIT=0
+& $slang run 'SlangAllInOne\out\export\RExamples\RExamples.module.slb' --no-banner
+# QT 4×3 图库窗口；发布用 slang publish RExamples.sp
+```
+
+示例只依赖 Math 库新增的 `MathRBasic/MathStats/MathDist/MathVec` 与引擎
+`DrawChart`，数据在 `RExamples.sl` 的各 `exNN()` 方法中，改数值即可复用。
 
 ## 场景数据与脚本约定
 

@@ -1,0 +1,86 @@
+{
+  // StatsGallery — SimGameEngine 绘图接口 QT 图库（v2.22）
+  // 窗口 4×4 共 16 格，展示引擎 drawing/ 四件 + 合并入引擎的 StatsPlot 六类。
+  // 构建：slang compile StatsGallery.jsonc --format binary+json
+  // 运行：先 slang publish StatsGallery.sp --mode both --cvm Release，再跑 exe
+  "project": {
+    "name": "StatsGallery",
+    "desc": "QT gallery of SimGameEngine drawing APIs: primitives + DrawChart 8 charts + merged StatsPlot 7 charts",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "dllImports": [],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "GalleryHost.sl", "group": "game", "tag": "game", "ignore": false, "priority": 0 },
+      { "path": "StatsGallery.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 }
+    ]
+  },
+  "references": [
+    { "path": "../../../../../SLangCore/Lib/Core", "name": "Core" },
+    { "path": "../../../../../SLangCore/Lib/Std", "name": "Std" },
+    { "path": "../../../../../SLangCore/Lib/Math", "name": "Math" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
+  ],
+  "struct": [
+    { "class": "GalleryHost" },
+    { "class": "StatsGallery" }
+  ],
+  "export": {
+    "moduleName": "StatsGallery",
+    "outputDir": "D:\\project\\lang\\SlangAllInOne\\out\\export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false,
+      "token": false,
+      "node": false,
+      "file": false,
+      "meta": false,
+      "ir": false
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish",
+    "config": "Release"
+  },
+  "qtRuntime": {
+    "enabled": true,
+    "qt6Dir": "C:\\Qt\\6.8.1\\msvc2022_64",
+    "debugRuntime": false,
+    "targetDir": "lib/windows",
+    "modules": [],
+    "plugins": {
+      "platforms": ["qwindows", "qoffscreen", "qminimal"],
+      "styles": ["qmodernwindowsstyle"],
+      "imageformats": ["qgif", "qico", "qjpeg"],
+      "iconengines": [],
+      "sqldrivers": [],
+      "tls": [],
+      "networkinformation": [],
+      "generic": []
+    },
+    "extraBinDlls": ["opengl32sw.dll"]
+  },
+  "global": { "imports": [] },
+  "compileFilter": { "isAllGroup": true, "isAllTag": true }
+}

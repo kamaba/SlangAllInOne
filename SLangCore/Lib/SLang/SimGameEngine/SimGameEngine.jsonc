@@ -4,7 +4,7 @@
     "desc": "SLang game engine scene/node/component layer - GameObject tree + Transform(TRS) + Scene + Behaviour lifecycle + headless Application frame loop; batching submits to SLangRender (see doc/)",
     "mainVersion": 0,
     "subVersion": 1,
-    "buildVersion": 7,
+    "buildVersion": 8,
     "buildSubVersion": 0
   },
   "source": {
@@ -177,7 +177,24 @@
       { "path": "text/FontAtlas.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 47 },
       { "path": "text/TextMesh.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 48 },
       // GameManager 依赖 Application / Systems（已在前序 priority 登记）
-      { "path": "GameManager.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 49 }
+      { "path": "GameManager.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 49 },
+      // ---- 基础绘图 / R 风格图表（doc/24；纯 SL 软光栅，零 C 改动）----
+      // 依赖序：DrawTypes(常量) -> DrawCanvas(画布图元) -> PlotParams(par 参数) -> DrawChart(图表工厂)
+      { "path": "drawing/DrawTypes.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 50 },
+      { "path": "drawing/DrawCanvas.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 51 },
+      { "path": "drawing/PlotParams.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 52 },
+      { "path": "drawing/DrawChart.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 53 },
+      // ---- StatsPlot 合并入引擎（v2.22；原独立模块整建制迁入 stats/，保留
+      //      namespace StatsPlot，零源码改动；消费方 import StatsPlot 后按
+      //      StatsPlot.Stats / StatsPlot.DataFrame / StatsPlot.Plot 使用）----
+      // 依赖序：Stats -> DataFrame(含 StatsGroup) -> PlotCanvas -> Plot -> PlotIo
+      { "path": "stats/Stats.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 54 },
+      { "path": "stats/DataFrame.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 55 },
+      { "path": "stats/PlotCanvas.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 56 },
+      { "path": "stats/Plot.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 57 },
+      { "path": "stats/PlotIo.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 58 },
+      // ---- Std.RData 数据结构 → chart → RenderTexture 映射（v2.23）----
+      { "path": "r/RDataChart.sl", "group": "scene", "tag": "engine", "ignore": false, "priority": 59 }
     ]
   },
   "compileFilter": {
@@ -289,7 +306,24 @@
     { "class": "Font" },
     { "class": "FontAtlas" },
     { "class": "TextMesh" },
-    { "class": "GameManager" }
+    { "class": "GameManager" },
+    // 基础绘图 / R 风格图表（doc/24）
+    { "class": "DrawTypes" },
+    { "class": "DrawCanvas" },
+    { "class": "PlotParams" },
+    { "class": "DrawChart" },
+    // Std.RData 数据结构 → chart → RenderTexture 映射（v2.23）
+    { "class": "RDataChart" },
+    // StatsPlot 合并入引擎（v2.22）：源码保留 namespace StatsPlot
+
+    { "namespace": "StatsPlot", "children": [
+      { "class": "DataFrame" },
+      { "class": "StatsGroup" },
+      { "class": "Stats" },
+      { "class": "PlotCanvas" },
+      { "class": "Plot" },
+      { "class": "PlotIo" }
+    ]}
   ],
   "export": {
     "moduleName": "SimGameEngine",

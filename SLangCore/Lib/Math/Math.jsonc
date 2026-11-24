@@ -170,6 +170,12 @@
       { "path": "Mathf.sl", "group": "math", "tag": "mathf", "ignore": false, "priority": 0 },
       { "path": "Mathh.sl", "group": "math", "tag": "mathh", "ignore": false, "priority": 0 },
 
+      // ── R base 风格扩展（基础数学 / 统计 / 概率分布 / 向量操作）──
+      { "path": "MathRBasic.sl", "group": "math", "tag": "rext", "ignore": false, "priority": 1 },
+      { "path": "MathStats.sl", "group": "math", "tag": "rext", "ignore": false, "priority": 2 },
+      { "path": "MathDist.sl", "group": "math", "tag": "rext", "ignore": false, "priority": 3 },
+      { "path": "MathVec.sl", "group": "math", "tag": "rext", "ignore": false, "priority": 4 },
+
       // ── 复数（Complex64 双精度 / Complex32 单精度 / 工具门面）────
       { "path": "Complex64.sl",    "group": "math", "tag": "complex", "ignore": false, "priority": 0 },
       { "path": "Complex32.sl",    "group": "math", "tag": "complex", "ignore": false, "priority": 0 },
@@ -238,6 +244,10 @@
       { "class": "Mathd" },
       { "class": "Mathf" },
       { "class": "Mathh" },
+      { "class": "MathRBasic" },
+      { "class": "MathStats" },
+      { "class": "MathDist" },
+      { "class": "MathVec" },
       { "class": "Complex64" },
       { "class": "Complex32" },
       { "class": "MathComplex" },

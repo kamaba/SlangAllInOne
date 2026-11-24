@@ -30,6 +30,9 @@ import Std;
 #       20 = SimGizmoTest        编辑器 Gizmo（三模式几何/相机·光图标/状态机/槽读写）
 #       21 = SimPrefabTest       Prefab 子树 JSON 保存/加载/实例化（复用 Scene 读写）
 #       22 = SimTextDrawTest     Windows GDI（render CVM）/ TTF 字库 / 动态图集 / TextMesh / GameManager
+#       23 = SimDrawingTest      基础绘图（RGBA8 画布图元）+ R 风格图表（plot/hist/barplot/boxplot/pie/abline/legend）
+#       24 = SimStatsPlotTest    StatsPlot 合并入引擎（DataFrame/Stats/Plot/PlotCanvas/PlotIo，原 66 项断言）
+#       25 = SimRDataTest        Std.RData 统计数据结构 + 引擎映射/chart + RenderTexture
 #   2. 注释开关：把 runAll() 里不想要的 runXxx() 调用行注释掉即可
 # 汇总：每套跑完打印各自 PASS=/FAIL=，入口末尾打印 TOTAL 并统一判退出码
 #      （任何 FAIL → OS.Kernel.exit(1)；原各套不再单独退出）
@@ -42,7 +45,7 @@ public class Test
     static Int32 _pass = 0
     static Int32 _fail = 0
 
-    # ── 选套开关：0=全部；1..22=单套（套件表见文件头注释）──
+    # ── 选套开关：0=全部；1..25=单套（套件表见文件头注释）──
     static Int32 runSuite = 0
 
     static bool selected( Int32 no )
@@ -340,9 +343,48 @@ public class Test
         _fail = _fail + SimTextDrawTest.failCount()
     }
 
+    static void runDrawing()
+    {
+        if !selected( 23 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [23] SimDrawingTest -----" )
+        SimDrawingTest.run()
+        _pass = _pass + SimDrawingTest.passCount()
+        _fail = _fail + SimDrawingTest.failCount()
+    }
+
+    static void runStatsPlot()
+    {
+        if !selected( 24 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [24] SimStatsPlotTest -----" )
+        SimStatsPlotTest.run()
+        _pass = _pass + SimStatsPlotTest.passCount()
+        _fail = _fail + SimStatsPlotTest.failCount()
+    }
+
+    static void runRData()
+    {
+        if !selected( 25 )
+        {
+            ret
+        }
+        Console.println( "" )
+        Console.println( "----- [25] SimRDataTest -----" )
+        SimRDataTest.run()
+        _pass = _pass + SimRDataTest.passCount()
+        _fail = _fail + SimRDataTest.failCount()
+    }
+
     public static void run()
     {
-        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..22=single) ===" )
+        Console.println( "=== SimGameEngine Test harness (runSuite=" + runSuite.toString() + "; 0=all, 1..25=single) ===" )
         runEngine()
         runBatch()
         runCollision()
@@ -365,6 +407,9 @@ public class Test
         runGizmo()
         runPrefab()
         runTextDraw()
+        runDrawing()
+        runStatsPlot()
+        runRData()
         Console.println( "" )
         Console.println( "=== TOTAL PASS=" + _pass.toString() + " FAIL=" + _fail.toString() + " ===" )
         if _fail > 0

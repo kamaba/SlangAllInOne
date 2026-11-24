@@ -143,6 +143,67 @@ SLA_API int         sla_player_volume(int64_t ply, int vol0100);  /* 0..100 */
 SLA_API int64_t     sla_player_buffered(int64_t ply);     /* 队列剩余帧数  */
 SLA_API int         sla_player_free(int64_t ply);
 
+/* ============ librosa 1.0.1 分析层（third_party/librosa，ISC） ============
+ * 纯算法无句柄：输出块由 SL 侧按已知尺寸预分配（尺寸均可先验计算，
+ * 见 SL 侧 Librosa.sl 注释），C 侧填充后返回 1；失败走粘性错误。
+ * FFI 参数上限 6（SL_FFI_MAX_ARGS），全部签名 <= 6 参。 */
+/* LR_VEC op：谱向量特征选择（sla_lr_vecs 入参 op） */
+#define SLA_LRV_CENTROID   1   /* spectral_centroid 逐帧质心       */
+#define SLA_LRV_BANDWIDTH  2   /* spectral_bandwidth p=2            */
+#define SLA_LRV_ROLLOFF   3   /* spectral_rolloff 0.85             */
+#define SLA_LRV_FLATNESS  4   /* spectral_flatness                 */
+/* LR_SCALAR op：标量换算选择（sla_lr_scalar 入参 op） */
+#define SLA_LRS_HZ_TO_MEL   1   /* Slaney 尺度（htk=0）            */
+#define SLA_LRS_MEL_TO_HZ   2   /* Slaney 尺度（htk=0）            */
+#define SLA_LRS_HZ_TO_MEL_H 3   /* HTK 尺度（htk=1）               */
+#define SLA_LRS_MEL_TO_HZ_H 4   /* HTK 尺度（htk=1）               */
+#define SLA_LRS_HZ_TO_MIDI  5
+#define SLA_LRS_MIDI_TO_HZ  6
+#define SLA_LRS_POWER_TO_DB 7   /* amin=1e-10，ref 入参            */
+#define SLA_LRS_DB_TO_POWER 8
+#define SLA_LRS_AMP_TO_DB   9   /* amin=1e-5，ref 入参             */
+#define SLA_LRS_DB_TO_AMP  10
+
+SLA_API int         sla_lr_last_error(void);
+SLA_API const char* sla_lr_error_string(int err);
+SLA_API const char* sla_lr_version_string(void);
+/* 标量换算：op 见 SLA_LRS_*（x/ref 语义随 op） */
+SLA_API double      sla_lr_scalar(int op, double x, double ref);
+/* 音名（"C#4" 风格 ASCII；非有限值返回空串）；返回串为静态缓冲，勿释放 */
+SLA_API const char* sla_lr_hz_to_note(double hz);
+
+/* STFT：mono f32 -> 复数矩阵（re/im 交错 f32）。
+ * 输出块字节 = (1+n_fft/2)*(1+n/hop)*2*4，rows=1+n_fft/2，cols=1+n/hop。 */
+SLA_API int         sla_lr_stft(int64_t y_ptr, int64_t n, int n_fft, int hop,
+                                int64_t out_ptr);
+/* ISTFT：复数矩阵 -> 时域 f32。n_fft=2*(rows-1)；length<=0 用默认全长。
+ * 返回产出样本数（0=失败）。 */
+SLA_API int64_t     sla_lr_istft(int64_t reim_ptr, int64_t rows, int64_t cols,
+                                 int hop, int64_t length, int64_t dst_ptr);
+/* mel 频谱：输出块字节 = n_mels*cols*4，rows=n_mels（cols 同 stft） */
+SLA_API int         sla_lr_melspec(int64_t reim_ptr, int64_t rows, int64_t cols,
+                                   int sr, int n_mels, int64_t out_ptr);
+/* MFCC：输出块字节 = n_mfcc*cols*4，rows=n_mfcc（<= mel_rows） */
+SLA_API int         sla_lr_mfcc(int64_t mel_ptr, int64_t mel_rows, int64_t cols,
+                                int n_mfcc, int64_t out_ptr);
+/* chroma：输出块字节 = 12*cols*4 */
+SLA_API int         sla_lr_chroma(int64_t reim_ptr, int64_t rows, int64_t cols,
+                                   int sr, int64_t out_ptr);
+/* estimate_tuning：调音偏差 [-0.5,0.5) 写入 out_f64 指向的 8 字节块 */
+SLA_API int         sla_lr_tuning(int64_t reim_ptr, int64_t rows, int64_t cols,
+                                   int sr, int64_t out_f64_ptr);
+/* 谱向量特征：op 见 SLA_LRV_*；返回帧数（cols），dst 容量 >= cols */
+SLA_API int64_t     sla_lr_vecs(int64_t reim_ptr, int64_t rows, int64_t cols,
+                                int sr, int op, int64_t dst_ptr);
+/* rms / zcr（center=True，frame 2048 hop 512 建议值）；返回帧数 */
+SLA_API int64_t     sla_lr_rms(int64_t y_ptr, int64_t n, int frame_len, int hop,
+                               int64_t dst_ptr);
+SLA_API int64_t     sla_lr_zcr(int64_t y_ptr, int64_t n, int frame_len, int hop,
+                               int64_t dst_ptr);
+/* tempo（BPM，写入 out_f64 指向的 8 字节块） */
+SLA_API int         sla_lr_tempo(int64_t y_ptr, int64_t n, int sr, int hop,
+                                 int64_t out_f64_ptr);
+
 #ifdef __cplusplus
 }
 #endif

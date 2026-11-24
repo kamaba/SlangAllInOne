@@ -49,6 +49,16 @@
     { "path": "../../../out/export/Tensora/Tensora.module.slb" },
     { "path": "../../../out/export/SLangAudio/SLangAudio.module.slb" }
   ],
+  // 消费方自带 C 库声明（slb 引用不透传 vmDllImports，同 Audio test/TestLibrosa.jsonc
+  // 先例）：构建 sl_audio_lib.dll 并拷入本包目录，cvm 预载后 Audio.Librosa 的
+  // sla_lr_* 静态绑定才生效（缺失时 FFI 静默兜底返回空值）。
+  "dllImports":
+  [
+    { "path": "sl_audio_lib.dll", "name": "sl_audio_lib", "alias": "sl_audio_lib", "static": "sl_audio_lib" }
+  ],
+  "vmDlls": [
+    { "project": "../../Lib/SLang/Audio/cvm_audio_lib/cvm_sl_audio_lib.vcxproj", "name": "sl_audio_lib.dll", "configuration": "Release", "platform": "x64" }
+  ],
   "struct": [
     { "class": "Txt2WavLexicon" },
     { "class": "Txt2WavFrontend" },

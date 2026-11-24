@@ -52,14 +52,17 @@ public class SceneDemo
     static FairyUIRenderer fairyRenderer = null
     static string fairyDir = ""
     static string fairyInfo = "ui=off"
+    static bool uiVisible = false
     static bool useFui = false
     static bool prevF = false
+    static bool prevU = false
     # ── 主入口菜单（FairyGUI）：启动显示，点场景按钮进入 ────
     static FairyPackage menuPkg = null
     static FairyUIRenderer menuRenderer = null
     static string menuDir = ""
     static string menuInfo = "menu=off"
     static bool inMenu = true
+    static bool prevInMenu = true
     static bool prevClick = false
     static bool prevM = false
 
@@ -85,38 +88,35 @@ public class SceneDemo
         Console.println( "[scene] ball mesh upload ok=" + ok.toString() )
     }
 
-    static string findSceneDir()
+    # 示例根目录：兼容「在示例目录运行」「在工作区根运行」「在 publish/release 运行」
+    static string findProjectDir()
     {
         string cwd = IO.Directory.getCurrentDirectory()
-        string c1 = cwd + "/assets/scenes"
-        bool e1 = File.exists( c1 + "/MaterialBall.scene.json" )
-        if e1
+        if File.exists( cwd + "/assets/scenes/MaterialBall.scene.json" )
         {
-            ret c1
+            ret cwd
         }
-        string c2 = cwd + "/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/scenes"
-        bool e2 = File.exists( c2 + "/MaterialBall.scene.json" )
-        if e2
+        string ws = cwd + "/SlangAllInOne/SLangCore/samples/GameTest"
+        if File.exists( ws + "/assets/scenes/MaterialBall.scene.json" )
         {
-            ret c2
+            ret ws
         }
-        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/scenes"
+        string publishDir = cwd + "/../.."
+        if File.exists( publishDir + "/assets/scenes/MaterialBall.scene.json" )
+        {
+            ret publishDir
+        }
+        ret "D:/project/lang/SlangAllInOne/SLangCore/samples/GameTest"
+    }
+
+    static string findSceneDir()
+    {
+        ret SceneDemo.findProjectDir() + "/assets/scenes"
     }
 
     static string findFairyDir()
     {
-        string cwd = IO.Directory.getCurrentDirectory()
-        string p1 = cwd + "/assets/fairygui/Demo"
-        if File.exists( p1 + "/package.xml" )
-        {
-            ret p1
-        }
-        string p2 = cwd + "/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/Demo"
-        if File.exists( p2 + "/package.xml" )
-        {
-            ret p2
-        }
-        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/Demo"
+        ret SceneDemo.findProjectDir() + "/assets/fairygui/Demo"
     }
 
     static void initFairyUI()
@@ -153,18 +153,7 @@ public class SceneDemo
 
     static string findMainMenuDir()
     {
-        string cwd = IO.Directory.getCurrentDirectory()
-        string p1 = cwd + "/assets/fairygui/MainMenu"
-        if File.exists( p1 + "/package.xml" )
-        {
-            ret p1
-        }
-        string p2 = cwd + "/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/MainMenu"
-        if File.exists( p2 + "/package.xml" )
-        {
-            ret p2
-        }
-        ret "D:/project/lang/SlangAllInOne/SLangCore/Lib/SLang/SimGameEngine/gameExample/Test/assets/fairygui/MainMenu"
+        ret SceneDemo.findProjectDir() + "/assets/fairygui/MainMenu"
     }
 
     static void initMenuUI()
@@ -293,7 +282,7 @@ public class SceneDemo
                 gizmoMode = "scale"
             }
         }
-        s = s + "   yaw=" + yaw + " pitch=" + pit + " alt=" + alt + " lmb=" + mb + " rmb=" + rmb + " xy=" + mxy + " gizmo=" + gizmoMode
+        s = s + "   cam=" + SceneDemo.camView.toString() + " yaw=" + yaw + " pitch=" + pit + " alt=" + alt + " lmb=" + mb + " rmb=" + rmb + " xy=" + mxy + " gizmo=" + gizmoMode
         if SceneDemo.inMenu
         {
             s = "CLICK A SCENE  |  " + s
@@ -544,6 +533,7 @@ public class SceneDemo
         Int32 ke = QTHost.keyDown( 16777216 )
         Int32 kg = QTHost.keyDown( 71 )
         Int32 kf = QTHost.keyDown( 70 )
+        Int32 ku = QTHost.keyDown( 85 )
         Int32 km = QTHost.keyDown( 77 )
         Int32 kh = QTHost.keyDown( SceneDemo.KEY_HOME )
         Int32 kc = QTHost.keyDown( SceneDemo.KEY_CTRL )
@@ -555,6 +545,7 @@ public class SceneDemo
         bool po = ko == 1 && !SceneDemo.prevO
         bool pg = kg == 1 && !SceneDemo.prevG
         bool pf = kf == 1 && !SceneDemo.prevF
+        bool pu = ku == 1 && !SceneDemo.prevU
         bool pm = km == 1 && !SceneDemo.prevM
         SceneDemo.prev1 = k1 == 1
         SceneDemo.prev2 = k2 == 1
@@ -564,6 +555,7 @@ public class SceneDemo
         SceneDemo.prevO = ko == 1
         SceneDemo.prevG = kg == 1
         SceneDemo.prevF = kf == 1
+        SceneDemo.prevU = ku == 1
         SceneDemo.prevM = km == 1
         # Ctrl+Home：Home 按下沿且 Ctrl 处于按下 → 切换顶部菜单栏显示
         bool ph = kh == 1 && !SceneDemo.prevHome
@@ -603,6 +595,12 @@ public class SceneDemo
         {
             SceneDemo.useFui = !SceneDemo.useFui
             SceneDemo.initFairyUI()
+            SceneDemo.rs.clearUi()
+        }
+        if pu
+        {
+            SceneDemo.uiVisible = !SceneDemo.uiVisible
+            SceneDemo.rs.clearUi()
         }
         if p1
         {
@@ -651,6 +649,13 @@ public class SceneDemo
         {
             SceneDemo.tryMenuClick()
         }
+        if SceneDemo.inMenu != SceneDemo.prevInMenu
+        {
+            # UI 对象是持久槽，sync() 不回收；切菜单/场景时必须清掉，
+            # 否则旧菜单画面会一直盖在新场景上。
+            SceneDemo.rs.clearUi()
+            SceneDemo.prevInMenu = SceneDemo.inMenu
+        }
         SceneDemo.updateCamera()
         SceneDemo.beginAxisFrame()
         SceneDemo.sm.tick( -1.0f )
@@ -680,7 +685,7 @@ public class SceneDemo
                 }
             }
         }
-        elif SceneDemo.fairyRenderer != null
+        elif SceneDemo.uiVisible && SceneDemo.fairyRenderer != null
         {
             Int32 rw = SceneDemo.renderW
             Int32 rh = SceneDemo.renderH

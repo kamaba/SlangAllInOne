@@ -1,0 +1,13 @@
+Project
+{
+    _main_()
+    {
+        RDataGallery.run()
+    }
+    _before_()
+    {
+    }
+    _after_()
+    {
+    }
+}

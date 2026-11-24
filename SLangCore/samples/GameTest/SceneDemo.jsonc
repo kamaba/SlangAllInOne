@@ -1,5 +1,5 @@
 {
-  // SceneDemo — gameExample/Test（doc/19）：SceneManager 按路径加载三个场景，
+  // SceneDemo — samples/GameTest（doc/19）：SceneManager 按路径加载三个场景，
   // 场景里挂脚本由 Application 帧循环驱动；S 键经 SceneExporter 导出 JSON。
   // 构建：slang compile SceneDemo.jsonc --format binary+json
   // 运行：slang run out/export/SceneDemo/SceneDemo.module.slb

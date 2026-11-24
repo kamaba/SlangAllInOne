@@ -128,3 +128,11 @@
 /SLangCore/samples/Txt2Wav/txt2wav_1.wav
 /SLangCore/samples/Txt2Wav/txt2wav_2.wav
 /SLangCore/samples/Txt2Wav/txt2wav_3.wav
+/std-compile.log
+/test-compile.log
+/test-err-all.log
+/test-err.log
+/test-run-all.log
+/test-run.log
+/SLangCore/samples/Txt2Wav/Txt2WavModel
+/SLangCore/samples/Txt2Wav/Txt2WavG2p

@@ -103,9 +103,6 @@ Access:
 | `BinaryNode&lt;T&gt;` | class | DataStruct/Tree.sl |  | 二叉树节点（三叉链：_left/_right/_parent） |
 | `BinaryTree&lt;T&gt;` | class | DataStruct/Tree.sl | extends Object  | 二叉树（持有根节点，foreach 按中序迭代 _value） |
 | `BinarySearchTree&lt;T&gt;` | class | DataStruct/Tree.sl |  | 二叉搜索树（继承 BinaryTree，插入/查找/删除全部在 VM 层完成） 值须可有序比较（数值按大小、字符串按字典序）；重复值插入返回已存在节点。 |
-| `FrameData` | class | Data/FrameData.sl |  | 帧数据录制与调试剖析基础设施：按调用栈记录多帧 data 快照，支持帧间 diff、变化字段对比。 配合 Monitor / Trace 用于运行时调试、回归比… |
-| `Monitor` | class | Data/FrameData.sl |  | 监视器：对一组被观测 data 自动按帧录制快照；可配置采样频率、触发条件与变化断点。 |
-| `Trace` | class | Data/FrameData.sl |  | 调用栈追踪器：在记录日志的同时附带当前压栈作用域信息，可复用 Log 落盘并导出。 |
 | `DllImport` | class | DllImport.sl |  | SLang 标准库类型 DllImport（详见源文件）。 |
 | `DllStaticImport` | class | DllStaticImport.sl |  | SLang 标准库类型 DllStaticImport（详见源文件）。 |
 | `OSVersionNumber` | class | Environment.sl |  | OSVersionNumber - numeric OS version (§13.5: numeric layer, for &gt;=). |

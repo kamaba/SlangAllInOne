@@ -1,0 +1,81 @@
+{
+  // RExamples —— 仿菜鸟教程 R 绘图/回归页的 12 个图表示例（QT 4×3 图库）
+  // 构建：slang compile RExamples.jsonc --format binary+json
+  // 无窗口断言：slang run out/export/RExamples/RExamples.module.slb -- smoke
+  "project": {
+    "name": "RExamples",
+    "desc": "R-style chart examples: plot/hist/barplot/boxplot/pie/types/par/legend/abline/lm + MathR",
+    "mainVersion": 0,
+    "subVersion": 1,
+    "buildVersion": 0,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  "dllImports": [],
+  "systemCalls": [],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "RExamplesHost.sl", "group": "game", "tag": "game", "ignore": false, "priority": 0 },
+      { "path": "RExamples.sl", "group": "game", "tag": "game", "ignore": false, "priority": 1 }
+    ]
+  },
+  "references": [
+    { "path": "../../../../../SLangCore/Lib/Core", "name": "Core" },
+    { "path": "../../../../../SLangCore/Lib/Std", "name": "Std" },
+    { "path": "../../../../../SLangCore/Lib/Math", "name": "Math" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SimGameEngine/SimGameEngine.module.slb", "name": "SimGameEngine" },
+    { "path": "D:/project/lang/SlangAllInOne/out/export/SLangQT/SLangQT.module.json", "name": "SLangQT" }
+  ],
+  "struct": [
+    { "class": "RExamplesHost" },
+    { "class": "RExamples" }
+  ],
+  "export": {
+    "moduleName": "RExamples",
+    "outputDir": "D:\\project\\lang\\SlangAllInOne\\out\\export",
+    "versionMain": 0,
+    "versionSub": 1,
+    "versionPatch": 0,
+    "includeMetadata": true,
+    "debugText": {
+      "outputDir": "",
+      "code": false, "token": false, "node": false, "file": false,
+      "meta": false, "ir": false
+    }
+  },
+  "publish": {
+    "mode": "both",
+    "gui": true,
+    "outputDir": "publish",
+    "config": "Release"
+  },
+  "qtRuntime": {
+    "enabled": true,
+    "qt6Dir": "C:\\Qt\\6.8.1\\msvc2022_64",
+    "debugRuntime": false,
+    "targetDir": "lib/windows",
+    "modules": [],
+    "plugins": {
+      "platforms": ["qwindows", "qoffscreen", "qminimal"],
+      "styles": ["qmodernwindowsstyle"],
+      "imageformats": ["qgif", "qico", "qjpeg"],
+      "iconengines": [],
+      "sqldrivers": [],
+      "tls": [],
+      "networkinformation": [],
+      "generic": []
+    },
+    "extraBinDlls": ["opengl32sw.dll"]
+  },
+  "global": { "imports": [] },
+  "compileFilter": { "isAllGroup": true, "isAllTag": true }
+}

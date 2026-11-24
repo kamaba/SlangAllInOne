@@ -2,7 +2,7 @@
   "project":
   {
     "name": "SLangAudio",
-    "desc": "CPU audio decode/stream/playback library module - namespace Audio: AudioFfi (FFI static bindings + memory marshalling) / AudioIO (facade probe/load/stream/play) / AudioClip (whole-decode preloaded clip, instant-play ready) / AudioStream (feed-compressed-pull-PCM streaming) / AudioPlayer (waveOut playback) / AudioBuffer (Float32 interleaved PCM buffer, pure-SL ops) / AudioInfo (probe) / Wav+Mp3 (pure-SL header parsers), backed by sl_audio_lib.dll (minimp4 + minimp3 CC0 public-domain; Media Foundation AAC decoder MFT; waveOut playback with internal service thread + ring buffer, no ffmpeg, all streaming implemented in-repo; output is always interleaved S16LE, handles are 1-based, 0 = invalid)",
+    "desc": "CPU audio decode/stream/playback + analysis library module - namespace Audio: AudioFfi (FFI static bindings + memory marshalling) / AudioIO (facade probe/load/stream/play) / AudioClip (whole-decode preloaded clip, instant-play ready) / AudioStream (feed-compressed-pull-PCM streaming) / AudioPlayer (waveOut playback) / AudioBuffer (Float32 interleaved PCM buffer, pure-SL ops) / AudioInfo (probe) / Wav+Mp3 (pure-SL header parsers) / Librosa (librosa 1.0.1 analysis facade: stft/istft/melspectrogram/mfcc/chroma/tuning/centroid/bandwidth/rolloff/flatness/rms/zcr/tempo + unit converters, via LibrosaMatrix native-matrix wrapper), backed by sl_audio_lib.dll (minimp4 + minimp3 CC0 public-domain; Media Foundation AAC decoder MFT; waveOut playback with internal service thread + ring buffer; librosa port third_party\\librosa ISC, no ffmpeg, all streaming implemented in-repo; output is always interleaved S16LE, handles are 1-based, 0 = invalid)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -27,9 +27,11 @@
   // 拷贝到与 SLangAudio.module.json 相同的目录（out/export/SLangAudio/），
   // 即上方 dllImports 别名指向的位置。
   // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Audio\cvm_audio_lib\：
-  //   vm_sl_audio.h      - 公开契约（34 个 sla_* 导出，普通 C ABI，
+  //   vm_sl_audio.h      - 公开契约（50 个 sla_* 导出，普通 C ABI，
   //                         PCM 恒 interleaved S16LE）
   //   sl_audio.c         - 槽表/粘性错误/格式嗅探/解码流式播放主调度
+  //   sl_audio_librosa.c - librosa 分析层 FFI 分派（第 2 组导出
+  //                         sla_lr_*，17 个，无状态纯算法）
   //   Codec\sl_audio_wav.c   - RIFF/PCM 解析 + 裸 PCM 位深转换（纯 C）
   //   Codec\sl_audio_mp3.c   - minimp3 唯一 IMPLEMENTATION 编译点
   //                            （third_party\minimp3\，CC0 公有领域）
@@ -42,9 +44,17 @@
   //                            与 Image 模块 WIC 兜底同款先例）
   //   Codec\sl_audio_wave.c  - waveOut 播放（系统 winmm，内部服务线程
   //                            + 字节环形缓冲 + 4 WAVEHDR 轮转）
+  //   third_party\librosa\sl_librosa.c - librosa 1.0.1 分析算法纯 C
+  //                            移植（上游 ISC 许可，radix-2 FFT，无外部
+  //                            依赖；覆盖 stft/istft/mel/chroma 滤波器/
+  //                            mfcc DCT-II/piptrack tuning/谱特征/rms/
+  //                            zcr/tempo 管线，C 级黄金对照工具在
+  //                            tools\verify_librosa.c，476 项全对齐）
   // 禁 ffmpeg：MP4/MP3 解析走内置 CC0 单头库，AAC 走系统 MFT，流数据
   // 全部内部源码实现（无外部进程 / 无外部解码器依赖）。
-  // 上限：768kHz / 8ch / 2^28 帧；槽位 32 dec / 16 stream / 8 player。
+  // 上限：768kHz / 8ch / 2^28 帧；槽位 32 dec / 16 stream / 8 player；
+  // librosa 层：n_fft 8..32768（2 的幂）/ n_mels<=512 / 单侧矩阵
+  // <=2^26 float 元素。
   "vmDlls": [
     { "project": "cvm_audio_lib/cvm_sl_audio_lib.vcxproj", "name": "sl_audio_lib.dll", "configuration": "Release", "platform": "x64" }
   ],
@@ -72,7 +82,8 @@
       { "path": "AudioStream.sl", "group": "audio", "tag": "runtime", "ignore": false, "priority": 7 },
       { "path": "AudioPlayer.sl", "group": "audio", "tag": "runtime", "ignore": false, "priority": 8 },
       { "path": "AudioSource.sl", "group": "audio", "tag": "runtime", "ignore": false, "priority": 9 },
-      { "path": "AudioIO.sl", "group": "audio", "tag": "facade", "ignore": false, "priority": 10 }
+      { "path": "AudioIO.sl", "group": "audio", "tag": "facade", "ignore": false, "priority": 10 },
+      { "path": "Librosa.sl", "group": "audio", "tag": "analysis", "ignore": false, "priority": 11 }
     ]
   },
   "compileFilter": {
@@ -123,7 +134,9 @@
       { "class": "AudioStream" },
       { "class": "AudioPlayer" },
       { "class": "AudioSource" },
-      { "class": "AudioIO" }
+      { "class": "AudioIO" },
+      { "class": "LibrosaMatrix" },
+      { "class": "Librosa" }
     ]}
   ],
   "export": {

@@ -1,0 +1,66 @@
+{
+  // TestLibrosa — Audio.Librosa（librosa 1.0.1 分析层 FFI）e2e 测试
+  // 断言基准：../cvm_audio_lib/tools/librosa_golden.txt（Python librosa 1.0.1）
+  // 运行：本目录下 slang.exe TestLibrosa.jsonc（编译 + 运行一体）
+  "project": {
+    "name": "TestLibrosa",
+    "desc": "Audio.Librosa FFI e2e test - synthesizes golden signal s1 (20000 samples @ 22050 Hz), asserts stft/mel/mfcc/chroma/tuning/centroid/bandwidth/rolloff/flatness/rms/zcr/tempo/istft-roundtrip/scalars against librosa 1.0.1 golden data (rel tol 2e-4)",
+    "mainVersion": 0,
+    "subVersion": 0,
+    "buildVersion": 1,
+    "buildSubVersion": 0
+  },
+  "source": { "root": "." },
+  // 消费方自带 C 库声明（slb 引用不透传 vmDllImports，同 SimGameEngine
+  // test/Test.jsonc 先例）：构建 Audio C 库并把 sl_audio_lib.dll 拷到本
+  // 测试包目录，cvm 加载即预载 → sla_lr_* 静态绑定生效。
+  "dllImports":
+  [
+    { "path": "sl_audio_lib.dll", "name": "sl_audio_lib", "alias": "sl_audio_lib", "static": "sl_audio_lib" }
+  ],
+  "vmDlls": [
+    { "project": "../cvm_audio_lib/cvm_sl_audio_lib.vcxproj", "name": "sl_audio_lib.dll", "configuration": "Release", "platform": "x64" }
+  ],
+  "compile": {
+    "optimize": false,
+    "target": "x64",
+    "debug": true,
+    "isUseForceSemiColonInLineEnd": true,
+    "isForceUseClassKey": false,
+    "isSupportDoublePlus": false,
+    "requireSameNumericTypes": false
+  },
+  "compileFiles": {
+    "files": [
+      { "path": "TestLibrosa.sl", "group": "test", "tag": "base", "ignore": false, "priority": 0 }
+    ]
+  },
+  "compileFilter": {
+    "isAllGroup": true,
+    "isAllTag": true
+  },
+  "global": {
+    "imports": [
+      "Std.Console"
+    ],
+    "replace": {
+      "DEBUG": "true"
+    }
+  },
+  // test 目录上 5 级到 SlangAllInOne\out\export（Txt2Wav 同款 slb 引用）
+  "references": [
+    { "path": "../../../../../out/export/Core/Core.module.slb", "name": "Core" },
+    { "path": "../../../../../out/export/Std/Std.module.slb", "name": "Std" },
+    { "path": "../../../../../out/export/Math/Math.module.slb", "name": "Math" },
+    { "path": "../../../../../out/export/SLangAudio/SLangAudio.module.slb", "name": "SLangAudio" }
+  ],
+  "struct": [],
+  "export": {
+    "moduleName": "TestLibrosa",
+    "outputDir": "export",
+    "versionMain": 0,
+    "versionSub": 0,
+    "versionPatch": 1,
+    "includeMetadata": true
+  }
+}

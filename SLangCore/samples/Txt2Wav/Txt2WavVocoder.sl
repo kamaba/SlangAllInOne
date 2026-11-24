@@ -14,6 +14,9 @@ import Std
 # 设备自适应：全部重活（matmul / exp / sqrt / div / softmax）走 Tensora，
 # 张量上 GPU 即 CUDA kernel，CPU 即标量循环——同一份代码两条路径。
 # STFT 分析基 / ISTFT 合成基为常量矩阵，初始化时上传设备。
+# 注：这里保留自研基而不用 Audio.Librosa 的 stft/istft——后者固定
+# center=True + 窗平方和归一化且仅 CPU 实现，与 Griffin-Lim 投影的
+# 帧对齐（精确 T 帧）和 GPU matmul 路径语义不匹配。
 #
 # 谱合成（全 GPU 算子）：
 #   env    = Σ_i g_i·exp(-((f-F_i)/bw_i)²)          共振峰包络

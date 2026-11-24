@@ -27,6 +27,7 @@
 | `Float64_4x4` | class | [Float64_4x4.sl](Float64_4x4.md) |  | SLang 标准库类型 Float64_4x4（详见源文件）。 |
 | `Int32_2` | class | [Int32_2.sl](Int32_2.md) |  | SLang 标准库类型 Int32_2（详见源文件）。 |
 | `Int32_3` | class | [Int32_3.sl](Int32_3.md) |  | SLang 标准库类型 Int32_3（详见源文件）。 |
+| `MathRBasic` / `MathStats` / `MathDist` / `MathVec` | class | [MathR.md](MathR.md) |  | R base 风格扩展：基础数学/聚合、统计函数、概率分布、向量操作（Float64，纯 SL）。 |
 | `Mathd` | class | [Mathd.sl](Mathd.md) |  | Math —— Float64（double）精度数学库，默认通用入口。 底层能力：由 math_lib.dll（C ABI，见 source\Front\Li… |
 | `Mathf` | class | [Mathf.sl](Mathf.md) |  | Mathf —— Float32（single）精度数学库。 底层能力：由 math_lib.dll（C ABI，见 source\Front\Lib\Math… |
 | `Mathh` | class | [Mathh.sl](Mathh.md) |  | Mathh —— Float16（half）精度数学库。 实现说明： 运行时目前未注册 half 版外部函数，也没有 SystemConvertFloat16 … |

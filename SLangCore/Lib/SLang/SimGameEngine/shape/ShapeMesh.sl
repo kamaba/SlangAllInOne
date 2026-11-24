@@ -103,12 +103,22 @@ public class ShapeMesh
         {
             ret
         }
-        int n = this.vertexCount()
+        Array<Int32> tri = this._triangles
+        Int32 ti = this.triangleCount()
+        if tri == null || ti < 1
+        {
+            ret
+        }
+        # MeshRef 顶点按三角形汤消费（每 3 顶点一个三角），必须按索引
+        # 展开；直接灌 positions 会把索引缓冲当顶点序列，绕序错乱且多数
+        # 三角形退化 —— 形状在场景里几乎不可见。
+        Int32 n = ti * 3
         List<Float32_3> v = List<Float32_3>( n )
         int i = 0
         while i < n
         {
-            Float32_3 vtx = this.getVertex( i )
+            Int32 vi = tri[ i ]
+            Float32_3 vtx = this.getVertex( vi )
             v.add( vtx )
             i = i + 1
         }

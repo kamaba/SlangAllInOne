@@ -5,7 +5,7 @@
     "desc": "Standard library module",
     "mainVersion": 0,
     "subVersion": 1,
-    "buildVersion": 0,
+    "buildVersion": 1,
     "buildSubVersion": 0
   },
   "source": {
@@ -78,7 +78,14 @@
       { "path": "Encoding/Sha1.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Sha256.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
       { "path": "Encoding/Md5.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
-      { "path": "Encoding/Encoding.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 }
+      { "path": "Encoding/Encoding.sl", "group": "std", "tag": "core", "ignore": false, "priority": 0 },
+      // R 风格统计数据结构（v1；复用 Core.BaseCsv / Std.IO.File，零新增原生依赖）
+      // 依赖序：RVector -> RFactor/RTimeSeries/RForecast -> RTable
+      { "path": "RData/RVector.sl", "group": "std", "tag": "data", "ignore": false, "priority": 0 },
+      { "path": "RData/RFactor.sl", "group": "std", "tag": "data", "ignore": false, "priority": 0 },
+      { "path": "RData/RTimeSeries.sl", "group": "std", "tag": "data", "ignore": false, "priority": 0 },
+      { "path": "RData/RForecast.sl", "group": "std", "tag": "data", "ignore": false, "priority": 0 },
+      { "path": "RData/RTable.sl", "group": "std", "tag": "data", "ignore": false, "priority": 0 }
     ]
   },
   "compileFilter": {
@@ -102,6 +109,14 @@
     }
   ],
   "struct": [     
+      // R 风格统计数据结构（Std/RData/）；Std 无 namespace Std 层
+      { "namespace": "RData", "children": [
+          { "class": "RVector" },
+          { "class": "RFactor" },
+          { "class": "RTimeSeries" },
+          { "class": "RForecast" },
+          { "class": "RTable" }
+      ]},
       {
          "namespace": "IO", "children": 
          [

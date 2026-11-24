@@ -497,10 +497,37 @@ internal static class PublishCommand
                 baseDir = projectDir;
                 foreach (var r in cfgRefs)
                 {
+                    if (r == null)
+                        continue;
+                    /* 插件 refModule 引用经 Front refModule 装载后 Name 可为 null
+                     * （module.json 导出形态只有 uuid+path）——先归一再推断。 */
                     string name = r.Name;
-                    if (name.Length == 0)
+                    if (string.IsNullOrEmpty(name))
                         name = InferReferenceNameFromPath(r.Path);
-                    refs.Add((name, string.IsNullOrWhiteSpace(r.Path) ? null : r.Path));
+                    refs.Add((name ?? "", string.IsNullOrWhiteSpace(r.Path) ? null : r.Path));
+                }
+                /* 编译期真实装载的引用模块名并入（2026-11-24）：插件 refModule
+                 * 引用在 config.References 里 name 恒为 "slang"、path 指向插件
+                 * 目录，定位不到导出产物（发布包缺件 → 包装方法落空体桩 → 出
+                 * 通道 null，BenchMark Go/PHP/ASM 列全空实录）——以装载器登记
+                 * 的真实模块名（CSharpMono/Golang/...）为准补齐，refPath=null
+                 * 交由下方 exportRoots 按名定位 out\export\<名>。 */
+                foreach (var loadedName in ProjectReferenceModuleLoader.LoadedPackageNames)
+                {
+                    if (string.IsNullOrWhiteSpace(loadedName)
+                        || SystemModuleNames.Contains(loadedName))
+                        continue;
+                    bool already = false;
+                    foreach (var (existing, _) in refs)
+                    {
+                        if (string.Equals(existing, loadedName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            already = true;
+                            break;
+                        }
+                    }
+                    if (!already)
+                        refs.Add((loadedName, null));
                 }
                 Console.WriteLine("[info] reference staging: module.json unavailable (release FrontEnd exports slb only); using jsonc references");
             }

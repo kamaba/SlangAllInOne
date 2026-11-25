@@ -121,7 +121,7 @@ plugin/<plugin_id>/                         ← 推荐目录名 = plugin.id（�
   `refModule.channelClassPath` 生成对这组函数的调用，`<-` 赋值不写死进 opcode 124；
   范本见 `csharp_mono/slang/CSharpMono.sl`。
 - `references` 指向 Core/Std 等编译包（`"./lib/<名>.module.slb"` 新形态，工程内未命中系统库自动回落 `<exe>\lib\` 直查，见 `md/project/project-config-jsonc-guide.md` §4.9）；`export.outputDir` 指向 `..\..\..\SlangAllInOne\out\export`（仓库重组后 out 根）。
-- 导出命令：`dotnet run --no-launch-profile --project simple_language\source\SimpleLanguageFront.csproj -- c -p <Module>.sp -e ir --format binary+json`（⚠ `compile` 默认不导出，须 `-e ir`；Front 退出码恒 0，判据 = module 产物 mtime 重写）。
+- 导出命令：`dotnet run --no-launch-profile --project simple_language\source\SimpleLanguageFront.csproj -- c -p <Module>.sp -e ir --format binary`（⚠ `compile` 默认不导出，须 `-e ir`；Front 退出码恒 0，判据 = module 产物 mtime 重写）。
 
 ## 4. 调用方工程接入（测试/业务工程的 .jsonc）
 
@@ -160,7 +160,7 @@ plugin/<plugin_id>/                         ← 推荐目录名 = plugin.id（�
 | 4 | 构建 cvm dll → 插件包 `package/<平台>/`（vcxproj OutDir=..\package\windows\） | MSVC 走 vcxproj（挂 sln「plugins」文件夹）或 `build-<name>.ps1`；clang 亦可 |
 | 5 | 实现 `frontend/` 双契约 | 纯 C99 四导出 ABI v3（sl_frontend_abi.h + sl_plugin_msg.c）；Parse/Build 均 **SLPF v3 二进制进出**（布局表对齐 `SlPluginMessageCodec.cs`） |
 | 6 | 构建 frontend dll | `msbuild frontend\<name>_frontend.vcxproj /p:Configuration=Release /p:Platform=x64`（或 build 脚本内代跑） |
-| 7 | 写 `slang/` 四件套并导出 | `e -p slang\<Module>.sp` → `out/export/<Module>/<Module>.module.json` |
+| 7 | 写 `slang/` 四件套并导出 | `e -p slang\<Module>.sp` → `out/export/<Module>/<Module>.slb` |
 | 8 | 调用方工程 jsonc 挂 plugins 段 + AtSign 哨兵 | §4；`path` 相对工作区根；lib 指向插件包 `package/<平台>/<dll>`（字符串直给相对路径） |
 | 9 | 写测试用例 + 验证 | 编译 `compile -p <工程>.sp -e ir` → 运行 `csimple_lang.exe run` → `passed=N failed=0` |
 | 10 | 文档同步 | 插件 README；语法篇 `simple_language/md/syntax/<tag>.md`（如暴露 @ 标签）；`PLUGIN_SYSTEM_DESIGN.md` §2.2 现状表 |
@@ -179,7 +179,7 @@ dotnet run --project source\Front\SimpleLanguageFront.csproj -- compile -p test\
 #   成功标志：Front.txt 出现 `AtSignLabel: build success (N block(s))` + `export module success`
 
 # ④ 运行验证
-csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\out\export\SpecialTest\SpecialTest.module.json
+csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\out\export\SpecialTest\SpecialTest.slb
 #   成功标志：`passed=N failed=0`，退出码 0
 ```
 
@@ -196,7 +196,7 @@ csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner simple_language\ou
 | T7 | 新系统方法/能力点变更时四处同步：slang jsonc `systemCalls[]` ↔ cvm 实现 ↔ `plugin.jsonc` capabilities ↔ 调用方测试 | 声明与实现漂移（运行期 -87/-13） |
 | T8 | 产物只落插件包 `package/<平台>/`（原位加载语义，依赖树同目录齐备）；v1.12 起 PluginLib 递归拷贝可带走深依赖树 | BCL/子依赖缺失（TopDirectoryOnly 不递归） |
 | T9 | 带通道的 `@<tag>(){}` 插件：slang/ 必须提供四个通道包装函数（`ChannelInInt/ChannelInString/ChannelOutInt/ChannelOutString`，名字固定）且 `plugin.jsonc` 声明 `refModule.channelClassPath` | 脱糖调用解析不到（LID 20058 / 未定义函数）——`<-` 赋值是 SL 函数调系统方法，不是 opcode 内置 |
-| T10 | **refModule 依赖 compiled module.json**：调用方加载插件 refModule 优先取 `out/export/<M>/<M>.module.json`；只有 source `.jsonc` 时虽日志显示 `loaded (source): structCount=N` 但**类链不建立**，Meta 层连锁报 `解析链 节点[<Module>] 没有找到`（每个 @块一行）。故 **build 脚本应内含 slang refModule 编译步**（java_hotspot build 脚本 2.6 步：`compile -p <绝对路径>.sp -e ir` + module.json 重写时间戳判据）——csharp_mono 的 build 脚本无此步，靠历史产物存在 | 换机/清 out 缓存后调用方工程编译连环报错，且 Front 退出码 0 掩盖失败 |
+| T10 | **refModule 依赖 compiled SLB module**：调用方加载插件 refModule 优先取 `out/export/<M>/<M>.slb`；只有 source `.jsonc` 时虽日志显示 `loaded (source): structCount=N` 但**类链不建立**，Meta 层连锁报 `解析链 节点[<Module>] 没有找到`（每个 @块一行）。故 **build 脚本应内含 slang refModule 编译步**（java_hotspot build 脚本 2.6 步：`compile -p <绝对路径>.sp -e ir` + SLB 重写时间戳判据）——csharp_mono 的 build 脚本无此步，靠历史产物存在 | 换机/清 out 缓存后调用方工程编译连环报错，且 Front 退出码 0 掩盖失败 |
 
 ## 8. 最小实现骨架（代码怎么写、接口怎么定）
 

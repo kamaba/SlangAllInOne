@@ -66,7 +66,9 @@ internal sealed class FrontendService
             result.ErrorCount = Log.errorCount;
             if (!ok || Log.errorCount > 0)
             {
-                Console.WriteLine($"Front compile failed, error count: {Log.errorCount}");
+                Console.WriteLine(Log.errorCount > 0
+                    ? $"Front compile failed, error count: {Log.errorCount}"
+                    : "Front compile failed (no error was counted; see [FAIL] lines above)");
                 return result;
             }
 

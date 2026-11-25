@@ -2,6 +2,8 @@
  * + D-P4a v1.1 (children object/array tree + expression evaluator + handle
  * epoch invalidation + statics identifier + enhanced object summary)
  * + deep-callchain stack view (add/deepC 5+ frames) + scalar full set.
+ * + D-P4b v1.2 (set-watchpoints value-change stop + watchBreak session
+ * hit + monitor-frames Monitor frame query).
  *
  * Usage (from repo root d:\project\lang):
  *   1. dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\test\Other\DebugSmoke\DebugSmoke.sp -e ir --format binary+json
@@ -139,6 +141,7 @@ async function main() {
     { cwd: path.dirname(MODULE), stdio: ['ignore', 'pipe', 'pipe'] });
   proc.stderr.on('data', (d) => { vmStderr += d.toString('utf8'); });
   proc.stdout.on('data', (d) => { process.stdout.write('[vm-out] ' + d); });
+  proc.on('exit', (c) => { console.error('[vm-exit] code ' + c); });
   const exitPromise = new Promise((res) => proc.on('exit', (c) => res(c)));
 
   await sleep(400);
@@ -510,6 +513,67 @@ async function main() {
   assert(k241 && k241.value === '241', 'counter=241 after store: ' + JSON.stringify(k241));
   ok('counter=241 at run:94');
 
+  /* --- v1.2 · D-P4b: set-watchpoints 值变化停 + monitor-frames 帧查询 ---
+   * 源布局（94 后追加块）：99 wk=0 / 100 wi=0 / 101 while / 103 wk=wi*10 /
+   * 104 Monitor.watch(wk,"wk") / 105 wi+1 / 107 watchBreak(wk==50)。
+   * 局部量随帧预分配：resume 后首个边界（run:94）建基线（wk 未初始化
+   * 文本），99 行存储 0 → 100 行边界文本变化 → 首停 line=100 "wk = 0"
+   * （初始化写入即值变化，对齐真实调试器"当值更改时中断"）。 */
+  r = await cli.send('set-watchpoints', { items: [{ expr: 'wk' }] });
+  assert(r.ok && r.data.watchpoints.length === 1
+    && r.data.watchpoints[0].verified === true,
+    'set-watchpoints: ' + JSON.stringify(r));
+  ok('set-watchpoints [wk] -> verified (value-change mode)');
+
+  p = cli.expectEvent('stopped');
+  r = await cli.send('resume');
+  assert(r.ok, 'resume failed');
+  st = await p;
+  assert(st.data.reason === 'watchpoint', 'watch stop: ' + JSON.stringify(st.data));
+  assert(st.data.text === 'wk = 0', 'watch stop text: ' + JSON.stringify(st.data));
+  assert(st.data.line === 100, 'watch stop line: ' + st.data.line + ' (want 100)');
+  r = await cli.send('evaluate', { depth: 0, expr: 'wk' });
+  assert(r.ok && r.data.value === '0', 'evaluate wk at watch stop: ' + JSON.stringify(r));
+  ok('watchpoint stop #1: reason=watchpoint text="wk = 0" line=100 (init write)');
+
+  /* 整表替换空表（清空路径）：后续 10/20/.../50 变化不再停 */
+  r = await cli.send('set-watchpoints', { items: [] });
+  assert(r.ok && r.data.watchpoints.length === 0,
+    'clear watchpoints: ' + JSON.stringify(r));
+  ok('set-watchpoints [] -> table cleared (no further value-change stops)');
+
+  /* watchBreak(wk==50)：循环结束 cond==true → 请求暂停 → stopped
+   * reason=watchpoint + text="[break] wkb = 50"（vm_debug 透传，§5.9） */
+  p = cli.expectEvent('stopped');
+  r = await cli.send('resume');
+  assert(r.ok, 'resume failed');
+  st = await p;
+  assert(st.data.reason === 'watchpoint', 'break stop: ' + JSON.stringify(st.data));
+  assert(st.data.text === '[break] wkb = 50', 'break stop text: ' + JSON.stringify(st.data));
+  assert(st.data.line === 108, 'break stop line: ' + st.data.line + ' (want 108)');
+  ok('watchBreak hit: text="' + st.data.text + '" line=108 (next instr boundary)');
+
+  /* monitor-frames：Monitor 采样环形帧（最新在前）+ breakHits 统计。
+   * 停点时序：wk=0..50 六帧 watch（label=wk）+ wkb break 帧 = total 7。 */
+  r = await cli.send('monitor-frames', { last: 100 });
+  assert(r.ok, 'monitor-frames: ' + JSON.stringify(r));
+  const mf = r.data;
+  const wkFrames = mf.frames.filter((f) => f.label === 'wk');
+  const brk = mf.frames[0];
+  assert(mf.total === 7, 'monitor total: ' + mf.total + ' (want 7)');
+  assert(mf.breakHits === 1 && mf.assertViolations === 0,
+    'breakHits/assertViolations: ' + mf.breakHits + '/' + mf.assertViolations);
+  assert(wkFrames.length === 6, 'wk frames: ' + wkFrames.length);
+  assert(wkFrames.every((f) => f.kind === 0 && f.kindName === 'watch' && f.mode === 0
+    && f.line === 104), 'wk frame shape: ' + JSON.stringify(wkFrames[0]));
+  const wkTexts = wkFrames.map((f) => f.text).sort();
+  assert(wkTexts[0] === '0' && wkTexts[5] === '50',
+    'wk frame texts: ' + wkTexts.join('|') + ' (裸值；[watch] 前缀为 SL 侧合成)');
+  assert(brk && brk.kind === 4 && brk.kindName === 'break' && brk.label === 'wkb'
+    && brk.mode === 4 && brk.line === 107 && brk.text === '50',
+    'break frame: ' + JSON.stringify(brk));
+  ok('monitor-frames: total=7 breakHits=1 (wk x6 + break wkb, newest-first)');
+
   /* --- final resume -> terminated exitCode 0 --- */
   p = cli.expectEvent('terminated');
   r = await cli.send('resume');
@@ -521,13 +585,15 @@ async function main() {
   ok('terminated exitCode=0, process exit 0');
 
   sock.end();
-  console.log('\nALL SMOKE CHECKS PASSED (D-P2 core + D-P4a v1.1 + deep stack)');
+  console.log('\nALL SMOKE CHECKS PASSED (D-P2 core + D-P4a v1.1 + deep stack + D-P4b v1.2 watchpoint)');
 }
 
 main().then(
   () => { /* done */ },
   (e) => {
     console.error('SMOKE FAILED: ' + (e && e.message ? e.message : e));
+    require('fs').writeFileSync('D:\\project\\lang\\_temp\\vm_stderr.txt', vmStderr);
+    console.error('--- vm stderr tail ---\n' + vmStderr.split('\n').slice(-20).join('\n'));
     process.exit(1);
   }
 );

@@ -77,9 +77,9 @@ DrawCanvas c = RDataChart.plotForecast( m, l, u, "Demand forecast" )
 ],
 "references": [
   // Core / Std / Math
-  { "path": "<...>/SimGameEngine.module.slb", "name": "SimGameEngine" },
-  { "path": "<...>/SLangRender.module.slb", "name": "SLangRender" },
-  { "path": "<...>/SLangQT.module.json", "name": "SLangQT" }
+  { "path": "<...>/SimGameEngine.slb", "name": "SimGameEngine" },
+  { "path": "<...>/SLangRender.slb", "name": "SLangRender" },
+  { "path": "<...>/SLangQT.slb", "name": "SLangQT" }
 ]
 ```
 

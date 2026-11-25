@@ -151,6 +151,21 @@ public class Monitor extends Object
     {
     }
 
+    # 条件断点（§5.9）：每次照常落监视帧，cond==true 时立即暂停——
+    # SLDP 调试会话（--debug-server）→ 调试泵停在断点指令边界
+    # （stopped reason=watchpoint，客户端 resume 后原地续跑）；无会话 →
+    # 抛可 catch 的 Monitor 断点异常（catch 即恢复点，可 lastFrame() 查
+    # 命中值；未捕获则程序以错误码 -91 终止）——特译 opcode 121 mode=4
+    public static void watchBreak( object value, string tag, bool cond )
+    {
+    }
+
+    # 条件断点累计命中数（watchBreak cond==true 次数；o2/未启用为 0）
+    public static Int32 breakHits()
+    {
+        ret SystemDebugGetBreakHits()
+    }
+
     # 违规累计计数（§5.4，watchAssert cond==false 次数）
     public static Int32 assertViolations()
     {

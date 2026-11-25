@@ -147,7 +147,7 @@ internal static class Program
                 return 0;
 
             string moduleDir = Path.Combine(repoRootHolder ?? ".", "out", "export", presetName);
-            string slbPath = Path.Combine(moduleDir, presetName + ".module.slb");
+            string slbPath = Path.Combine(moduleDir, presetName + ".slb"); // 2026-11-25 命名简化
             bool fresh = File.Exists(slbPath) && File.GetLastWriteTime(slbPath) >= start.AddSeconds(-5);
             if (!fresh)
             {
@@ -181,13 +181,18 @@ internal static class Program
             {
                 Directory.CreateDirectory(libDir);
 
-                string slbSrc = Path.Combine(moduleDir, name + ".module.slb");
+                string slbSrc = Path.Combine(moduleDir, name + ".slb");
+                File.Copy(slbSrc, Path.Combine(libDir, name + ".slb"), overwrite: true);
+                /* 旧名别名：存量工程 jsonc 的 ./lib/Core.module.slb 等引用不破。 */
                 File.Copy(slbSrc, Path.Combine(libDir, name + ".module.slb"), overwrite: true);
 
                 /* json 调试副本只进 debug 包（release 包按包卫生不带）。 */
-                string jsonSrc = Path.Combine(moduleDir, name + ".module.json");
+                string jsonSrc = Path.Combine(moduleDir, name + ".json");
                 if (pkg.EndsWith("-debug") && File.Exists(jsonSrc))
+                {
+                    File.Copy(jsonSrc, Path.Combine(libDir, name + ".json"), overwrite: true);
                     File.Copy(jsonSrc, Path.Combine(libDir, name + ".module.json"), overwrite: true);
+                }
 
                 /* math_lib.dll 是 Windows PE：落 win32 包 lib\windows\ 平台位
                  * （布局标准 2026-10-25，与 publish 的 pack-modules 同落位）；

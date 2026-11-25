@@ -43,7 +43,7 @@
          本体（Front VersionString / C VM SLVM_VERSION_* / 本 csproj）独立演进，
          与 VSCode / 插件 / 包 分开；改写经后管 admin-server。
          中位 = 真实发布版本（仅 release-slang.ps1 发布时提升），末位 = 随时递增的小版本。 -->
-    <Version>0.0.70</Version>
+    <Version>0.0.72</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>SlangAllInOne</RootNamespace>
@@ -256,9 +256,17 @@
       <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>csharp_mono</PluginId></SlangPluginLibs>
       <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>java_hotspot</PluginId></SlangPluginLibs>
       <SlangPluginLibs Include="$(MSBuildThisFileDirectory)..\plugin\echo\package\**\*" Exclude="$(PluginLibJunkExclude)"><PluginId>echo</PluginId></SlangPluginLibs>
+      <!-- plugin.jsonc 的 refModule.path = "slang"：发布包原本只把 .slb 平铺在
+           插件根，Front 的 LoadReferences 找不到 <plugin>\slang\ 目录 →
+           systemCall 声明（SLang.Plugin.CSharpMono.*）不注册、@tag 通道原语
+           解析失败。把编好的 refModule 同时投到 slang\ 子目录（按模块名命名，
+           ResolveReferenceModulePath 的目录扫描首分支即可命中）。 -->
+      <SlangPluginRefModules Include="$(MSBuildThisFileDirectory)..\plugin\csharp_mono\package\CSharpMono.slb" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\csharp_mono\package\CSharpMono.slb')"><PluginId>csharp_mono</PluginId></SlangPluginRefModules>
+      <SlangPluginRefModules Include="$(MSBuildThisFileDirectory)..\plugin\java_hotspot\package\JavaHotspot.slb" Condition="Exists('$(MSBuildThisFileDirectory)..\plugin\java_hotspot\package\JavaHotspot.slb')"><PluginId>java_hotspot</PluginId></SlangPluginRefModules>
     </ItemGroup>
     <Copy SourceFiles="@(SlangPluginManifests)" DestinationFiles="@(SlangPluginManifests->'$(PublishDir)plugin\%(PluginId)\plugin.jsonc')" SkipUnchangedFiles="true" Condition="'@(SlangPluginManifests)' != ''" />
     <Copy SourceFiles="@(SlangPluginLibs)" DestinationFiles="@(SlangPluginLibs->'$(PublishDir)plugin\%(PluginId)\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'@(SlangPluginLibs)' != ''" />
+    <Copy SourceFiles="@(SlangPluginRefModules)" DestinationFiles="@(SlangPluginRefModules->'$(PublishDir)plugin\%(PluginId)\slang\%(Filename)%(Extension)')" SkipUnchangedFiles="true" Condition="'@(SlangPluginRefModules)' != ''" />
   </Target>
 
   <!-- Official release packaging: compile the standard library modules

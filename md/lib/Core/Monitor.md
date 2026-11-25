@@ -4,7 +4,7 @@
 
 ## class `Monitor`
 
-- **说明**：Monitor 点监视采样门面（DEBUG_SYSTEM_DESIGN.md v4） 链路：Monitor.* → Front 特译 Debug IR（compile.debug 才生成，§7.2） → *.module.json 携带 optimizeLevel → C VM 分派 → 落帧 / 查询 采样类方法（watch*/begin/end）体为空壳：调用点全部由 Front 特译为 opcode 119/120/121（Core.jsonc 无对应系统调用注册）；compile.debug 关闭时整句消除。 查询/监听类为普通系统调用：compile.debug 关闭或 optimizeLevel>=2 时 返回空/0，不报错。 注：类名 Monitor（原 Debug，避免与 Std 的 SLang.Debug 混淆）。
+- **说明**：Monitor 点监视采样门面（DEBUG_SYSTEM_DESIGN.md v4） 链路：Monitor.* → Front 特译 Debug IR（compile.debug 才生成，§7.2） → *.slb 携带 optimizeLevel → C VM 分派 → 落帧 / 查询 采样类方法（watch*/begin/end）体为空壳：调用点全部由 Front 特译为 opcode 119/120/121（Core.jsonc 无对应系统调用注册）；compile.debug 关闭时整句消除。 查询/监听类为普通系统调用：compile.debug 关闭或 optimizeLevel>=2 时 返回空/0，不报错。 注：类名 Monitor（原 Debug，避免与 Std 的 SLang.Debug 混淆）。
 
 | 类型 | 签名 | 说明 |
 |------|------|------|

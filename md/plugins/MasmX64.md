@@ -258,7 +258,7 @@ $total <- rax;
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File plugin\masm_x64\cvm\build-masm-x64.ps1   # ① 插件三件套
-dotnet run --no-launch-profile --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\test\BenchMark\BenchMark.sp -e ir --format binary+json --no-banner   # ② 本工程最后编译（SLMasm.dll 共享部署位）
+dotnet run --no-launch-profile --project simple_language\source\SimpleLanguageFront.csproj -- compile -p SlangAllInOne\SLangCore\test\BenchMark\BenchMark.sp -e ir --format binary --no-banner   # ② 本工程最后编译（SLMasm.dll 共享部署位）
 csimple_lang\build\Debug\bin\csimple_lang.exe run --no-banner SlangAllInOne\out\export\BenchMark\BenchMark.module.slb   # ③ 运行
 ```
 

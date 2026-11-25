@@ -250,9 +250,9 @@ Int32 col = c.palette( 0 )                                  # 调色板取色
 
 ```powershell
 cd SlangAllInOne
-slang compile SLangCore\Lib\SLang\SimGameEngine\SimGameEngine.sp --format binary+json --no-banner
+slang compile SLangCore\Lib\SLang\SimGameEngine\SimGameEngine.sp --format binary --no-banner
 slang compile SLangCore\Lib\SLang\SimGameEngine\test\Test.sp --format binary --no-banner
-slang run SLangCore\Lib\SLang\SimGameEngine\test\export\Test\Test.module.slb --no-banner
+slang run SLangCore\Lib\SLang\SimGameEngine\test\export\Test\Test.slb --no-banner
 ```
 
 QT 可视化示例（16 格图库：图元 + DrawChart 八接口 + StatsPlot 七接口）：

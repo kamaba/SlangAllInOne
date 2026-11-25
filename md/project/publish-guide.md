@@ -17,7 +17,7 @@ SlangAllInOne\out\host\slang.exe publish SlangAllInOne\SLangCore\test\Other\Null
 
 # 运行产物
 .\NullFastTest\publish\release\NullFastTest.exe              # ① 应用 exe：双击/命令行直接执行（release 缺省；--cvm Debug → publish\debug\）
-SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest.module.slb   # ② slb：slang run 启动
+SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest.slb   # ② slb：slang run 启动
 ```
 
 ## 2. jsonc `publish` 段（配置面）
@@ -77,8 +77,8 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 ├── debug\                   # 配置子目录（--cvm Debug）：布局同 release，模板取 Debug 树
 └── release\                 # 配置子目录（--cvm Release 缺省）：每次发布清空重建（仅本子目录）
     ├── MyApp.exe            # mode=exe/both：应用 exe（载荷附着式，见 §5）
-    ├── MyApp.module.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
-    ├── <Ref>.module.slb     # 引用 stage：moduleReferences 非系统库引用平铺拷入
+    ├── MyApp.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
+    ├── <Ref>.slb     # 引用 stage：moduleReferences 非系统库引用平铺拷入
     │                        #（C VM 引用回退链 basename 直查命中；如 SLangServer）
     │                        # 含**插件 refModule**（MasmX64 / CPlusClang 等
     │                        # 无名引用：moduleReferences 只有 uuid+path，
@@ -86,15 +86,15 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
     │                        # 时 @tag 出通道包装（ChannelOutInt 等）运行时
     │                        # 落到空体桩、时间/返回值全为 null
     ├── lib\                 # 关联件统一目录（布局规则 2026-10-22 平台细分）
-    │   ├── Core.module.slb  # includeLibs=true：标准库 slb 平铺（平台无关）
-    │   ├── Std.module.slb
-    │   ├── Math.module.slb
+    │   ├── Core.slb  # includeLibs=true：标准库 slb 平铺（平台无关）
+    │   ├── Std.slb
+    │   ├── Math.slb
     │   └── windows\         # 平台子目录：本平台原生库（windows/linux/macos/android/ios
     │       ├── sqlite3.dll  #   承载 .dll/.so/.dylib/.lib/.a 等——一个发布目录可承载
     │       └── math_lib.dll #   多平台运行体，运行时按当前平台查找（C VM
     │                        #   sl_platform_dir_name；平铺 lib\ 为兼容位）
     ├── modules\<名>\        # 工程经 slang spm install 装的包整目录拷入（2026-10-29
-    │   └─ <名>.module.slb   # spm 规则，Step 8；布局 modules\<名>\<名>.module.slb|json，
+    │   └─ <名>.slb   # spm 规则，Step 8；布局 modules\<名>\<名>.slb|json，
     │                        # jsonc 引用写 ./modules/<名> 指模块文件夹（2026-10-30）；
     │                        # C VM 装载回退链 <dir>/modules 直查命中
     │                        #（链与布局 = package-layout.md §二.6 / §四）
@@ -127,12 +127,11 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 > basename 反推模块名（`../MasmX64/MasmX64.module` → `MasmX64`）后同样平铺
 > stage；漏 stage 时发布包内 `@tag` 出通道包装方法无方法体，`ChannelOutInt`
 > 类返回值静默变 null（BenchMark 发布包 ASM 列全空即此因，2026-11-19 修）。
-> 🔥 **引用清单双来源（2026-11-20）**：module.json 的 moduleReferences 优先；
-> json 副本不可用时（Release FrontEnd 淘汰 json 导出，`binary+json` 一律按
-> binary 处理）**回落 jsonc references**（Front 进程内已解析，path 相对工程
-> 目录，目录/文件两形态都解析）——不再以 json 产物存在为前置条件。此前
-> Release 包 publish 因 json 缺失整体静默跳过引用 stage，发布包缺全部引用
-> 模块与 FFI dll，GUI exe 秒退（SnakeGame 实录）。
+> 🔥 **引用清单来源（2026-11-20）**：以工程 jsonc 的 `references` 为准
+> （Front 进程内已解析，path 相对工程目录，目录/文件两形态都解析）。
+> 此前 Release 包 publish
+> 因依赖调试 JSON 而静默跳过引用 stage，发布包缺全部引用模块与 FFI dll，
+> GUI exe 秒退（SnakeGame 实录）。
 > 决策记录与机制 = [package-layout.md](package-layout.md) §六。
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
@@ -149,7 +148,7 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
   宿主裸工程路径 `slang <工程>` 的内存链路同一条执行路径）；未命中（普通 csimple_lang.exe）→ 原样 CLI 分派，**零行为变化**。
   两侧字段序必须逐字节镜像（同 R2 思想），载荷上限 1 GiB（坏 trailer 防御）。
 - **运行语义**：
-  - `base_dir` = exe 所在目录（`lib\*.module.slb`、FFI dllImports、`plugins\` 相对它解析）；
+  - `base_dir` = exe 所在目录（`lib\*.slb`、FFI dllImports、`plugins\` 相对它解析）；
   - argv 与 `run` 子命令同构：`--debug` 等选项照常、裸参数与 `--` 之后进 `Project._inputArgs`；
   - 默认 `--no-banner`（应用不打 VM banner）；
   - 🔥 **收尾 pause（2026-10-22）**：exe 执行结束退出前 `system("pause")` 等键
@@ -201,7 +200,7 @@ jsonc `publish.gui: true`（或 CLI `--gui` 强制开）：
 
 ```
 slang publish <工程>
-  ├─ ① Front 编译（--format binary+json，R15；slb 主产物 + json 调试副本留工程 export 目录）
+  ├─ ① Front 编译（--format binary，R15；slb 主产物 + 留工程 export 目录）
   ├─ ② 定位 C VM exe 模板：<slang>\bin\csimple_lang.exe（发布包布局，PackCvmRuntime 随包携带）
   │      → 回落 csimple_lang\build\{publish.config}\bin\ → 另一配置树
   ├─ ③ slb 拷贝 / exe 载荷附着 + lib\（标准库平铺 + lib\<平台>\ 原生库）+ 引用 stage + plugins\（对象 lib 随 export + 字符串直给插件 cvm 运行位 stage，frontend 不进包）+ modules\（工程 spm 包）
@@ -214,12 +213,11 @@ slang publish <工程>
 **引用 stage 的源目录解析链**（`PublishCommand.StageReferencedModules`，2026-10-30
 WebUITest 实录定稿）——非系统库引用（如 SLangWebUI）按名按序解析产物源：
 
-> 🔥 2026-11-20 起引用清单双来源：module.json 的 `moduleReferences` 优先；
-> json 副本缺失（Release FrontEnd 淘汰 json 导出）时回落 jsonc `references`
-> （path 相对工程目录，目录/文件两形态都解析），stage 不再以 json 产物为前置。
+> 🔥 2026-11-20 起引用清单以工程 jsonc `references` 为准（path 相对工程
+> 目录，目录/文件两形态都解析）。
 
-1. 标准导出树 `out\export\<名>\`（须实含 `*.module.*` 产物，同名陈旧空壳被拒）；
-2. `SLangCore\Lib\**\export\<名>\` —— **库家族导出位**（权威产物树，slb+json+
+1. 标准导出树 `out\export\<名>\`（须实含 `*.slb` 产物，同名陈旧空壳被拒）；
+2. `SLangCore\Lib\**\export\<名>\` —— **库家族导出位**（权威产物树，slb+
    原生库同位；排在 path 回退之前，见下方坑位实录）；
 3. 引用 `path` 字段回退（工程 jsonc references 里的路径；🔥 2026-10-30 起指
    spm 装包推荐目录形态 `./modules/<名>`——Front Strategy 1 目录扫描命中，
@@ -235,7 +233,7 @@ WebUITest 实录定稿）——非系统库引用（如 SLangWebUI）按名按�
 | 位置 | 角色 |
 |------|------|
 | `SlangAllInOne/Publish/PublishCommand.cs` | 宿主发布命令（布局组装 + 载荷写入） |
-| `SlangAllInOne/Program.cs` | `publish` 分派、`run` 的 `*.slb/*.module.json` 智能分派 |
+| `SlangAllInOne/Program.cs` | `publish` 分派、`run` 的 `*.slb/*.slb` 智能分派 |
 | `simple_language/source/Project/ProjectConfig.cs` | `PublishSection`（jsonc publish 段承载） |
 | `simple_language/source/Project/ProjectJsoncLoader.cs` | `publish` 段解析 |
 | `csimple_lang/src/cli/cli_app_payload.{h,c}` | exe 载荷检测与执行（C 侧） |
@@ -288,5 +286,5 @@ dotnet build SlangAllInOne\SlangAllInOne.csproj -c Debug -o SlangAllInOne\out\ho
 }
 ```
 
-> 发布产物跑法：`<Module>.exe` 双击/终端直跑；`slang run <publish>\<Module>.module.slb`。
+> 发布产物跑法：`<Module>.exe` 双击/终端直跑；`slang run <publish>\<Module>.slb`。
 > F5 调试发布产物暂不适用（载荷 exe 走内存二进制通道，SLDP 调试会话不开放，设计 §7.1）。

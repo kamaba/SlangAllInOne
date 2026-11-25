@@ -27,7 +27,7 @@ app.run()    # 阻塞运行直至 stop()；start() = 后台启动
 工程 `.jsonc` 需加依赖（产物目录按实际位置调整）：
 
 ```jsonc
-"references": [ { "path": "../../out/export/SLangServer", "name": "SLangServer.module.slb" } ]
+"references": [ { "path": "../../out/export/SLangServer", "name": "SLangServer.slb" } ]
 ```
 
 ## 内联 function 直传注册
@@ -726,14 +726,14 @@ Console.println( dyn.port.toString() + " tag=" + dyn.tag.toString() )
 ```powershell
 # ① 编译 SLangServer 库（cwd = SlangAllInOne；库改动后先编库）
 dotnet run --project "Project\CompileStdlib\SimpleLanguageCompileStdlib.csproj" -- "SLangCore\Lib\SLang\Server\Server"
-# 产物：out\export\SLangServer\SLangServer.module.slb + SLangServer.module.json
+# 产物：out\export\SLangServer\SLangServer.slb + SLangServer.slb
 
 # ② 编译消费工程（cwd = 仓库根；以 ServerTest 验收工程为例）
-dotnet run --project "simple_language\source\SimpleLanguageFront.csproj" -- compile -e ir -p "SlangAllInOne\SLangCore\test\Other\ServerTest\ServerTest.sp" --format binary+json --no-banner
+dotnet run --project "simple_language\source\SimpleLanguageFront.csproj" -- compile -e ir -p "SlangAllInOne\SLangCore\test\Other\ServerTest\ServerTest.sp" --format binary --no-banner
 
 # ③ 运行（cwd 必须是 ServerTest 目录：测试夹具按 cwd 相对路径加载）
 cd SlangAllInOne\SLangCore\test\Other\ServerTest
-..\..\..\..\package\win32-debug\bin\csimple_lang.exe run --no-banner ..\..\..\..\out\export\ServerTest\ServerTest.module.json
+..\..\..\..\package\win32-debug\bin\csimple_lang.exe run --no-banner ..\..\..\..\out\export\ServerTest\ServerTest.slb
 ```
 
 注意：Front 编译失败时进程退出码仍为 0——以阶段汇总无 `Failed`、产物 mtime 新鲜为准。

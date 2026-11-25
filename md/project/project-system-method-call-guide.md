@@ -217,7 +217,7 @@ static int32 mathvm_mat3f_pop(VM* vm, float** out_mat)
 
 两重作用：
 
-1. **构建**：Front 导出模块时用 MSBuild 编译 `project` 指向的 VS 工程，并把产出的 DLL 拷贝到与 `Math.module.json` 相同的目录（`out/export/Math/`）；
+1. **构建**：Front 导出模块时用 MSBuild 编译 `project` 指向的 VS 工程，并把产出的 DLL 拷贝到与 `Math.slb` 相同的目录（`out/export/Math/`）；
 2. **预载**：jsonc 的 `vmDlls` 被写入 module.json 的 `vmDllImports` 数组，cvm 加载程序集时**先按包目录预载**（见 4.2），DLL 因此不必放在标准搜索路径上。
 
 ### 3.4 dllImports 与 vmDlls 的区别（易混淆）
@@ -265,7 +265,7 @@ SystemMathMatMulFloat32( ra, rb, rout, 3, 3, 3 )   # 方式③：主工程符号
 
 ### 4.1 导出：jsonc → module.json
 
-Front 导出模块时把 `systemCalls` 写入 `Math.module.json`：每条含 `name`、`returnType`、`params`、`cvmFunction`，以及一个**唯一 int id**（由 `SystemMethodCallDeclaration.GetIndex` 基于 MD5 计算，随 systemCalls 条目与 CallSystemMethod 字节码 payload 一起携带）；`vmDlls` 写入 `vmDllImports` 数组（C 侧由 [slir_json_module_loader.c](../../../csimple_lang/src/vm/load/slir_json_module_loader.c) 解析）。
+Front 导出模块时把 `systemCalls` 写入 `Math.slb`：每条含 `name`、`returnType`、`params`、`cvmFunction`，以及一个**唯一 int id**（由 `SystemMethodCallDeclaration.GetIndex` 基于 MD5 计算，随 systemCalls 条目与 CallSystemMethod 字节码 payload 一起携带）；`vmDlls` 写入 `vmDllImports` 数组（C 侧由 [slir_json_module_loader.c](../../../csimple_lang/src/vm/load/slir_json_module_loader.c) 解析）。
 
 ### 4.2 加载顺序（sl_runtime_assembly.c 的 build_from_load_model）
 

@@ -11,6 +11,10 @@
 # P5 覆盖: stack 语句级空栈 + 表达式快照 / frames 栈顶帧方法名行号 /
 #          frameData locals+args 行 / frameVar 本帧+跨帧+args+未找到 /
 #          越界降级 / 协程内帧链独立
+# 条件断点覆盖(§5.9): watchBreak cond=false 落普通 watch 帧 /
+#          cond=true 落 kind=4 断点帧 + 无调试会话抛可 catch 断点异常 /
+#          命中点后语句跳过(立即暂停语义) / breakHits 计数 /
+#          disable 抑制路径 / 循环内命中即停
 # 前提: ProjectTest.jsonc compile.debug=true → Monitor.* 特译 opcode 119/120/121;
 #       optimize=false → optimizeLevel<2 → VM 采样开启。
 
@@ -992,6 +996,115 @@ MonitorTest
         else
         {
             SystemPrintln("P6 frameTable multi labels: FAIL tb4=[" + tb4 + "]")
+        }
+
+        # ---- 25. 条件断点: watchBreak (§5.9) ----
+        SystemPrintln("--- conditional breakpoint ---")
+        Int32 bh0 = Monitor.breakHits()
+
+        # 25a. cond=false: 照常落普通 watch 帧, 不命中断点
+        Monitor.watchBreak( 3, "bxf", 3 > 10 )
+        if (Monitor.lastFrame() == "[watch] bxf = 3")
+        {
+            SystemPrintln("watchBreak false cond lands watch frame: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak false cond lands watch frame: FAIL [" + Monitor.lastFrame() + "]")
+        }
+        if (Monitor.breakHits() == bh0)
+        {
+            SystemPrintln("watchBreak false cond no hit: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak false cond no hit: FAIL")
+        }
+
+        # 25b. cond=true: 落 kind=4 断点帧 + 无调试会话抛可 catch 断点异常;
+        #      命中点之后的语句被跳过(执行流停在断点处), catch 即恢复点
+        bool caught = false
+        Int32 afterHit = 0
+        label breakBlock
+        {
+            Monitor.watchBreak( 50, "bxhit", 50 >= 50 )
+            afterHit = 999
+        }
+        catch
+        {
+            caught = true
+        }
+        if (caught && afterHit == 0)
+        {
+            SystemPrintln("watchBreak pauses at hit point: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak pauses at hit point: FAIL caught=" + caught.toString() + " afterHit=" + afterHit.toString())
+        }
+        if (Monitor.lastFrame() == "[break] bxhit = 50")
+        {
+            SystemPrintln("watchBreak lands break frame: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak lands break frame: FAIL [" + Monitor.lastFrame() + "]")
+        }
+        if (Monitor.breakHits() == bh0 + 1)
+        {
+            SystemPrintln("breakHits counts hits: OK")
+        }
+        else
+        {
+            SystemPrintln("breakHits counts hits: FAIL " + bh0.toString() + " -> " + Monitor.breakHits().toString())
+        }
+
+        # 25c. 循环内命中即停: k==5 断点, 命中迭代内后续语句不执行
+        Int32 loopAfter = 0
+        Int32 loopVar = 0
+        label loopBreakBlock
+        {
+            int k = 0
+            while (k < 10)
+            {
+                loopVar = k
+                Monitor.watchBreak( k, "bloop", k == 5 )
+                loopAfter = loopAfter + 1
+                k = k + 1
+            }
+        }
+        catch
+        {
+            caught = true
+        }
+        if (loopVar == 5 && loopAfter == 5 && Monitor.breakHits() == bh0 + 2)
+        {
+            SystemPrintln("watchBreak stops mid-loop at condition: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak stops mid-loop at condition: FAIL loopVar=" + loopVar.toString() + " loopAfter=" + loopAfter.toString() + " hits=" + Monitor.breakHits().toString())
+        }
+
+        # 25d. disable 抑制: 采样关闭即断点整体惰性(不落帧/不命中/不暂停)
+        Monitor.disable( "bdis" )
+        bool caught2 = false
+        label disabledBlock
+        {
+            Monitor.watchBreak( 1, "bdis", true )
+        }
+        catch
+        {
+            caught2 = true
+        }
+        Monitor.enable( "bdis" )
+        if (!caught2 && Monitor.breakHits() == bh0 + 2)
+        {
+            SystemPrintln("watchBreak inert under disable: OK")
+        }
+        else
+        {
+            SystemPrintln("watchBreak inert under disable: FAIL caught2=" + caught2.toString() + " hits=" + Monitor.breakHits().toString())
         }
 
         SystemPrintln("========== MonitorTest (end) ==========")

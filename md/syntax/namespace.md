@@ -105,13 +105,13 @@ ProjectEnter
 | 错误提示（Info 摘要） | 触发写法示例 | 排查方向 |
 |------|------|------|
 | Error import 字符串中没有命名空间名称 | `import "Std:";` | 字符串形式（模块:命名空间）冒号后必须是非空命名空间 |
-| 没有找到 import 模块: | `import "Missing:Foo";` | 模块未在工程 `.jsonc` 的 `references` 中声明，或未完成编译导出（其 `export.outputDir` 下无 `*.module.json`） |
+| 没有找到 import 模块: | `import "Missing:Foo";` | 模块未在工程 `.jsonc` 的 `references` 中声明，或未完成编译导出（其 `export.outputDir` 下无 `*.slb`） |
 | import 命名空间路径解析失败，没有找到对应成员 | `import MissingModule.Foo;` | 路径逐段拼写有误；若首段是模块名，须在 `references` 中声明并完成编译导出 |
 | import 语句没有可解析的命名空间目标 | `import ;` | import 目标为空，检查语句语法 |
 
 排查要点：
 
-- **跨模块 import 的前提**：目标模块必须已在当前工程 `.jsonc` 的 `references` 中声明，并且**先于当前工程完成编译导出**（`out/export/<模块>/<模块>.module.json` 已生成）。
+- **跨模块 import 的前提**：目标模块必须已在当前工程 `.jsonc` 的 `references` 中声明，并且**先于当前工程完成编译导出**（`out/export/<模块>/<模块>.slb` 已生成）。
 - 引用模块的成员树来自其 **.sl 实际声明**（SLIR 包内容），而非其 jsonc `struct[]` 骨架——路径按实际声明写（同下文「模块别名」关键规则）。
 - 「没有找到 import 模块」日志的 Tips 会直接给出 references 声明与编译导出两步指引；若不确定目标模块是否导出过，先看其 `out/export/<模块>/Logs/Front.txt` 是否有 `export module success`。
 - 历史遗留的死导入（所指命名空间并不存在、仅因旧版静默放行而残留）在严格化后会直接编译失败，应删除（如 Core 库 Float32/Float64 曾残留的 `import CSharp.System;`）。

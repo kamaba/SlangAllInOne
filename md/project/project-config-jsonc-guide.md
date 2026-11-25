@@ -41,7 +41,7 @@
     "entryFile": "Main.sl"
   },
   "compile": {
-    "optimize": false,                // → module.json buildMode: true="release" / false="debug"
+    "optimize": false,                // → SLB buildMode: true="release" / false="debug"
     "target": "x64",                  // AnyCPU(缺省)/x86/x64/arm64/wasm32，加载期校验
     "debug": true,                    // 缺省 true，影响 IR 调用生成路径
     "isUseForceSemiColonInLineEnd": true,   // ⚠ 已解析未消费
@@ -88,7 +88,7 @@
   "references": [                     // 引用模块
     { "path": "../../out/export/Core",       // 普通条目：path 必填；空=条目丢弃；相对本 jsonc 目录
       "uuid": "123123123213",               // 随 moduleReferences 导出
-      "name": "Core.module.json" },         // 缺失时从已加载包回填
+      "name": "Core.slb" },         // 缺失时从已加载包回填
     { "type": "module",                      // module 依赖条目（§4.9 检查机制；path 由检查机制回填）
       "name": "SLangWebUI",                  // 必填 = 模块名/装包目录名
       "channel": "official",                 // official | git | url
@@ -106,7 +106,7 @@
           "sig": "i32,i32->i32" }             // FFI 签名，缺省 "->void"
       ] }
   ],
-  "vmDlls": [                          // 导出期用 MSBuild 编译并拷 DLL 到 module.json 同目录
+  "vmDlls": [                          // 导出期用 MSBuild 编译并拷 DLL 到 SLB 同目录
     { "project": "cvm_math_lib/cvm_math_lib.vcxproj", // 必填（相对 jsonc 目录）
       "name": "math_lib.dll",           // 必填；产出 DLL 文件名
       "configuration": "Debug",        // MSBuild Configuration，缺省 "Debug"
@@ -146,15 +146,15 @@
     "moduleName": "MyProject",         // 模块名；导出目录名第一优先级
     "outputDir": "..\\..\\out\\export", // 导出根目录（相对 jsonc 目录），缺省 "Export/SLVMCode"
     "publicExport": "public",          // none/public(缺省)/extern，public 类导出门槛三态（见 §4.14）
-    "format": "json",                  // json(缺省)/binary/binary+json（binary+json = slb 主产物 + <M>.module.json 调试副本，R15）；CLI --format 可覆盖
-    "binary": {                        // 仅 format="binary"/"binary+json" 生效（SLB，见 csimple_lang/md/design/SLB_DESIGN.md）
+    "format": "binary",                // SLB 模块包（默认）；CLI --format 可覆盖
+    "binary": {                        // SLB 选项（见 csimple_lang/md/design/SLB_DESIGN.md）
       "compressed": true,              // 缺省 true，DataArea 整体 zlib 压缩
       "includeDebugInfo": true,        // 缺省 true，是否写 DEBUG 段
       "strictDigest": false },         // 缺省 false，P5 预留
     "versionMain": 0,                  // 与 project.mainVersion 同字段（export 块后解析，同写时覆盖 project 块）
     "versionSub": 0,                   // 同上（project.subVersion）
     "versionPatch": 0,                 // 同上（project.buildVersion）
-    "nativeDll": "",                   // 原生 DLL 文件名，写入 module.json，VM 同目录查找
+    "nativeDll": "",                   // 原生 DLL 文件名，写入 SLB，VM 同目录查找
     "includeMetadata": true,           // ⚠ 已解析未消费
     "stringPoolAsBlob": true,         // ⚠ 已解析未消费
     "aot": {                           // MLIR AOT 导出子块
@@ -172,7 +172,7 @@
     "targets": ["windows"],            // 目标环境标签，⚠ 仅元数据不参与求值
     "when": "",                        // 表达式糖原文，⚠ 仅存储（v2 才校验；同给时以 require 为准）
     "fallbackHint": "",                 // 条件不满足时给用户的建议文案
-    "require": {                        // 运行条件 → 编译为条件 AST 随 module.json 导出；字段间 AND、数组内 OR
+    "require": {                        // 运行条件 → 编译为条件 AST 随 SLB 导出；字段间 AND、数组内 OR
       "os": "windows",                  // 封闭值域，大小写不敏感+别名归一（win64→window）
       "arch": "x86_64",
       "osVersion": { "min": "10.0" },
@@ -215,7 +215,7 @@
 |----|------|------|------|
 | `name` | string | `""` | 模块自名（`InitSelfModuleManager` 用它注册本模块）；导出目录名第二优先级（`export.moduleName` > `project.name` > `.sp` 文件名） |
 | `desc` | string | `""` | 项目描述（当前无编译期消费点） |
-| `mainVersion` | int | 0 | SLIR 包版本主号，随 module.json 导出 |
+| `mainVersion` | int | 0 | SLIR 包版本主号，随 SLB 导出 |
 | `subVersion` | int | 1 | 次版本号 |
 | `buildVersion` | int | 0 | 修订号（写入 VersionPatch） |
 
@@ -229,7 +229,7 @@
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `optimize` | bool | false | → module.json `buildMode`：`true`="release"、`false`="debug"（CVM 注入 `Environment.current.build`）；优化级别另有 CLI `-O<n>` 写 `optimizeLevel`（无 jsonc 键） |
+| `optimize` | bool | false | → SLB `buildMode`：`true`="release"、`false`="debug"（CVM 注入 `Environment.current.build`）；优化级别另有 CLI `-O<n>` 写 `optimizeLevel`（无 jsonc 键） |
 | `target` | string | `"AnyCPU"` | 编译目标架构，受控枚举 `AnyCPU/x86/x64/arm64/wasm32`；非法值 Error 20033；与 `platform.require.arch` 无交集仅 Warning 20034；值大小写不敏感并归一 |
 | `debug` | bool | true | Debug 模式开关，消费于 IR 调用生成（`IRCall.cs`） |
 | `isUseForceSemiColonInLineEnd` | bool | true | 已解析未消费（注意拼写：SemiColon 双大写、InLineEnd） |
@@ -297,9 +297,9 @@
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `path` | string | `""` | **指向 module.json/slb 的位置**（相对本 jsonc 所在目录解析）——推荐直接写产物文件路径（`"./lib/Core.module.slb"`、`"../../../out/export/X/X.module.json"`）；兼容旧目录/裸名形态（目录内产物扫描 + 源目录产物推导）；普通条目（无 `type`）**空则条目丢弃**；type=module 条目由检查机制回填 |
+| `path` | string | `""` | **指向 SLB 文件的位置**（相对本 jsonc 所在目录解析）——推荐直接写产物文件路径（`"./lib/Core.slb"`、`"../../../out/export/X/X.slb"`）；兼容旧目录/裸名形态（目录内产物扫描 + 源目录产物推导）；普通条目（无 `type`）**空则条目丢弃**；type=module 条目由检查机制回填 |
 | `uuid` | string | `""` | 可选；随导出 `moduleReferences[].uuid`（装载时按已加载包实际值回填覆盖） |
-| `name` | string | `""` | 可选；**工程内别名**，`import <name>:` 按它解析——不写则自动用模块自身名称；定义了就必须与 import 对应。旧文件名形态（`"Core.module.slb"`）仍兼容（剥后缀作别名）。type=module 条目中 name 必填（= 模块名，也是装包目录名） |
+| `name` | string | `""` | 可选；**工程内别名**，`import <name>:` 按它解析——不写则自动用模块自身名称；定义了就必须与 import 对应。旧文件名形态（`"Core.slb"`）仍兼容（剥后缀作别名）。type=module 条目中 name 必填（= 模块名，也是装包目录名） |
 | `type` | string | `""` | `module` 时该条目启用 **module 检查机制**（装载前版本对比 + 按渠道下载，见下方专段）；不写或其它值 = 普通引用条目（现有行为不变） |
 | `channel` | string | `""` | type=module 时的下载渠道三选一：`official`（官网 registry 按 name+version 检索）/ `git`（仓库 tag 归档）/ `url`（直链下载） |
 | `url` | string | `""` | type=module 时的地址：official 渠道可空（registry 检索）；git 渠道填仓库地址（version=tag，自动推导归档 zip；已是 .zip 直链则直用）；url 渠道填包 zip 直链（必填） |
@@ -307,16 +307,16 @@
 
 引用插件（plugin.jsonc）时，其 `refModule` 段声明的模块与 systemCalls 会在 RefModule 阶段自动加载，无需在本工程重复声明。
 
-⚠ 引用模块未在本段声明、或声明了但尚未完成编译导出（其 `export.outputDir` 下无 `*.module.json`）时，源码中对该模块的 `import` 会报 **Error**（「没有找到 import 模块」）并**阻断编译、不导出 module.json**（2026-10-13 起，详见 `md/syntax/namespace.md`「import 导入失败的处理」）——请先编译被引用模块再编译本工程。
+⚠ 引用模块未在本段声明、或声明了但尚未完成编译导出（其 `export.outputDir` 下无 `*.slb`）时，源码中对该模块的 `import` 会报 **Error**（「没有找到 import 模块」）并**阻断编译、不导出 SLB**（2026-10-13 起，详见 `md/syntax/namespace.md`「import 导入失败的处理」）——请先编译被引用模块再编译本工程。
 
 **装载规则（2026-10-18 用户规则定稿；2026-10-29 spm 落地后回退链放宽）**：
 
-1. `path` 工程内命中即装载：直接文件 → 目录内产物（`.module.slb` 优先 → `.package.json` → `.module.json`）→ 源目录产物推导（读其 jsonc 的 `export.outputDir`）→ 源码 struct 壳。
-2. **工程内未命中 → 包目录三级搜索链回落**（2026-10-29 spm 用户规则；此前仅限 Core/Std/Math 系统库）：① 本工程 `modules\`（`spm install` 装包位）→ ② `<exe>\modules\`（spm 全局装包 + 官方库平铺）→ ③ `<exe>\lib\`（Core/Std/Math 系统库平铺）；每处对平铺 `<名>.module.slb|json` 与 spm 目录布局 `modules\<名>\<名>.module.slb|json` 双重探测（slb 优先；`spm.exe` 用法见 `md/project/package-layout.md` §四）。
+1. `path` 工程内命中即装载：直接文件 → 目录内产物（`.slb` 优先 → `.package.json` → `.slb`）→ 源目录产物推导（读其 jsonc 的 `export.outputDir`）→ 源码 struct 壳。
+2. **工程内未命中 → 包目录三级搜索链回落**（2026-10-29 spm 用户规则；此前仅限 Core/Std/Math 系统库）：① 本工程 `modules\`（`spm install` 装包位）→ ② `<exe>\modules\`（spm 全局装包 + 官方库平铺）→ ③ `<exe>\lib\`（Core/Std/Math 系统库平铺）；每处对平铺 `<名>.slb` 与 spm 目录布局 `modules\<名>\<名>.slb` 双重探测（`spm.exe` 用法见 `md/project/package-layout.md` §四）。
 3. **三级链全落空 = 没有这个包 → 报错中止编译**（后续 File/MetaCore/IR/Export 阶段跳过、产物不导出）。
 4. `name` 为工程内别名供 `import` 解析；缺省自动取模块名。`import <模块>` 引入整模块、`import <模块>:<命名空间>`（无引号冒号形式，2026-10-18）与 `import "<模块>:<命名空间>"`（字符串形式）直达命名空间（成员无前缀直接搜索）；Core 被引用后自动可用无需 import。语法详见 `md/syntax/namespace.md` §4。
 
-**显式后缀兼容形态**（`name` 尾段带 `.slb`/`.json`，如 `{ "path": "./lib", "name": "Core.module.slb" }`）：严格只认指定格式（`.json` 只读 `.json`、`.slb` 只读 `.slb`，不做 SLB 重定向）——工程内 `path+name` 拼接落空时，**系统库**（Core/Std/Math）回落三级搜索链（原样文件名，含 spm 目录布局探测；非系统库不回落）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式（④ 三级链原样文件名直查，落空硬报错）。
+**显式后缀兼容形态**（`name` 尾段带 `.slb`，如 `{ "path": "./lib", "name": "Core.slb" }`）：严格只认 `.slb` 文件（不做 SLB 重定向）——工程内 `path+name` 拼接落空时，**系统库**（Core/Std/Math）回落三级搜索链（原样文件名，含 spm 目录布局探测；非系统库不回落）；均落空硬报错（LID 20042）并中止编译，C VM 运行期同样只认该格式（④ 三级链原样文件名直查，落空硬报错）。
 
 **type=module 引用（module 检查机制，2026-10-30）**——声明式模块依赖，装载前自动检查/下载：
 
@@ -334,14 +334,14 @@
 RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDependency.cs`，Front 自包含复刻 spm 约定——Front 不能引用下游 Spm 工程）：
 
 1. **工程位检查（是否"正确"）**：工程 `modules\<名>\` 已存在该模块且**正确**——清单 `spm.json` 的 `version` 与声明 version 语义化比较（`a.b.c` 逐段数字）一致；本地分发 zip（`<exe>\modules\<名>.zip`，见步骤 2）存在时清单 `Md5` 亦须与 zip 实际 md5 一致——**不执行后续操作**（Info LID 20045），回填 `path` = 模块目录，走上方既有装载规则。版本不符 / md5 不符 / zip 在而清单无 md5（旧格式装包）= **不正确** → 进入步骤 2 纠正。
-2. **本地 zip 纠正源（2026-11-12，与 spm CLI install 本地源同约定）**：`<exe>\modules\<名>.zip` 在即计算 md5 → 临时解压 → 布局探测（期望名优先）→ **版本门**（official/git 渠道 zip 内实际版本——读 `<名>.module.json` 的 versionMain/Sub/Patch——须与声明一致；url 渠道不设门）→ 删工程位旧目录强制重装到工程 `modules\<名>\`，写 `spm.json` 清单（PascalCase：Name/Version/Source/Url/InstalledAt/Md5/Zip，version 取 zip 内实际版本，md5/zip 指纹一并记录）。zip 缺失 / 版本门不过 → 继续步骤 3。
+2. **本地 zip 纠正源（2026-11-12，与 spm CLI install 本地源同约定）**：`<exe>\modules\<名>.zip` 在即计算 md5 → 临时解压 → 布局探测（期望名优先）→ **版本门**（official/git 渠道 zip 内实际版本——读 `<名>.slb` 的 versionMain/Sub/Patch——须与声明一致；url 渠道不设门）→ 删工程位旧目录强制重装到工程 `modules\<名>\`，写 `spm.json` 清单（PascalCase：Name/Version/Source/Url/InstalledAt/Md5/Zip，version 取 zip 内实际版本，md5/zip 指纹一并记录）。zip 缺失 / 版本门不过 → 继续步骤 3。
 3. **解析目标下载地址**：按渠道推导（official = registry 按 name+version 检索 / git = tag 归档推导 / url 直给，协议见步骤 5）；解析失败走步骤 6 降级。
 4. **全局位复用**：全局 `<exe>\modules\<名>\` 清单与目标**地址 + 版本均一致**（清单含 `url` 时须与目标地址相同；旧清单缺 `url` 字段退化为仅版本对比）→ **复制全局模块到工程 `modules\<名>\`** 再继续（不下载，Info LID 20050）；复制失败（目录占用/磁盘满）走步骤 5 下载。
 5. **全局未命中 → 按渠道下载并强制重装**（先删目标目录再装，区别于 spm CLI 的已装拒装）到工程 `modules\<名>\`，写 `spm.json` 清单（name/version/source/url/installedAt，`url` 记录下载地址供后续全局复用对比）：
    - **official**：registry 协议按 name+version 检索——`GET <reg>/api/packages/resolve?name=&version=`（P3 预留端点，先试）→ `GET <reg>/api/packages/<名>`（versions[] 数组取语义匹配版本的 download/file）→ 静态回落 `GET <reg>/<名>.json`（平铺形态 version 须精确匹配）；包体 URL 相对 registry 解析，缺省 `<reg>/<名>.zip`。registry 来源：工程 jsonc `spm.registry`（§4.17）> 全局 `<exe>\spm.json`；均空 = Warning（LID 20049）走降级。
    - **git**：version = tag；url 以 `.zip` 结尾直用，否则按 host 推导归档（GitHub `<repo>/archive/refs/tags/<tag>.zip` / Gitee `<repo>/repository/archive/<tag>.zip` / GitLab `<repo>/-/archive/<tag>/...`）；未知 host 失败。
    - **url**：url 字段直接下载。
-   - zip 布局自动探测：单一顶层目录（git tag 归档形态）/ 根含 `<名>.module.slb|json` / 多目录匹配；落位目录名固定 = name。
+   - zip 布局自动探测：单一顶层目录（git tag 归档形态）/ 根含 `<名>.slb` / 多目录匹配；落位目录名固定 = name。
 5. **失败降级**：下载失败但本地有任意版本（工程位优先，其次全局位）→ Warning（LID 20048）+ 回退本地继续编译（编译不中止）；本地完全无副本 → Error（LID 20047）+ **中止编译**（后续阶段跳过、产物不导出，同「没有这个包」规则）。channel 不合法（LID 20043）/ official-git 缺 version（LID 20044）直接拒绝并中止。
 
 无 type=module 条目零开销——普通工程（纯 `path` 引用）行为完全不变。
@@ -350,8 +350,8 @@ RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDe
 
 ```jsonc
 "references": [
-    { "path": "./lib/Core.module.slb" },
-    { "path": "./lib/Std.module.slb" }
+    { "path": "./lib/Core.slb" },
+    { "path": "./lib/Std.slb" }
 ]
 ```
 
@@ -359,7 +359,7 @@ RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDe
 
 ### 4.10 `dllImports[]`（兼容旧 `lib[]`）—— FFI 导入表
 
-顶层 `dllImports` 与旧顶层 `lib` 数组同构兼容（同一解析函数）。Front 侧合成持有类 `___DllImportGlobal___` + `global.dllImport.<alias>` 成员 + `global.<name>` 静态函数变量（经 `FFI.StaticLibrary.bindFunction` 程序化构造），并随 module.json `dllImports` 导出供引用方复用。
+顶层 `dllImports` 与旧顶层 `lib` 数组同构兼容（同一解析函数）。Front 侧合成持有类 `___DllImportGlobal___` + `global.dllImport.<alias>` 成员 + `global.<name>` 静态函数变量（经 `FFI.StaticLibrary.bindFunction` 程序化构造），并随 SLB `dllImports` 导出供引用方复用。
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
@@ -376,7 +376,7 @@ RefModule 装载前对每条 type=module 依次执行（`Project\ProjectModuleDe
 
 ### 4.11 `vmDlls[]` —— 导出期构建的 VM DLL
 
-导出时 Front 用 MSBuild 编译 `project` 指向的 VS 工程，并把产出 DLL 拷到 module.json 同目录；随 module.json `vmDllImports` 导出，cvm 按 package 目录预加载，供 `systemCalls` 的 `"DllName!symbol"` 形式解析。
+导出时 Front 用 MSBuild 编译 `project` 指向的 VS 工程，并把产出 DLL 拷到 SLB 同目录；随 SLB `vmDllImports` 导出，cvm 按 package 目录预加载，供 `systemCalls` 的 `"DllName!symbol"` 形式解析。
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
@@ -439,13 +439,13 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 
 | 键 | 类型 | 缺省 | 说明 |
 |----|------|------|------|
-| `moduleName` | string | `""` | 导出模块名（生成 `<moduleName>.module.json`）；导出目录名第一优先级 |
+| `moduleName` | string | `""` | 导出模块名（生成 `<moduleName>.slb`）；导出目录名第一优先级 |
 | `outputDir` | string | `"Export/SLVMCode"` | 导出根目录（相对 jsonc 目录解析）；驱动模块根/Logs 目录创建与进程内状态派生（`ProjectOutputEnvironment.Current*`；Front 不再写环境变量，`SIMPLELANG_*` 仅作外部只读覆盖）。⚠ DebugCode 不在其下：2026-10-19 起固定落 `{工程目录}/export/DebugCode/` |
 | `publicExport` | string | `"public"` | public 类导出门槛三态：`none`/`public`/`extern`（见下表）；非法值 Error |
-| `format` | string | `"json"` | `"json"`=SLIR `<M>.module.json`（现状）；`"binary"`=SLB `<M>.module.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；`"binary+json"`=slb 主产物 + `<M>.module.json` 调试副本（R15；`json+binary` 同义归一）——磁盘导出（output/temp 两态）双落，`--export-mode memory` 时 slb 留内存不压缩直传 C VM、json 系另产内存 JSON 文本（§8.2 导出三态）；非法值 Error 20039；CLI `--format` 覆盖 |
-| `binary` | object | — | SLB 选项（format="binary"/"binary+json" 生效）：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留）。~~`exportJson`~~ 已删（2026-10-18）：双产物改由 `format: "binary+json"` 单值表达 |
+| `format` | string | `"binary"` | SLB 模块包 `<M>.slb`（规范 `csimple_lang/md/design/SLB_DESIGN.md`）；磁盘导出（output/temp 两态）落盘，`--export-mode memory` 时 slb 不压缩直传 C VM（§8.2 导出三态）；非法值 Error 20039；CLI `--format` 覆盖 |
+| `binary` | object | — | SLB 选项：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留） |
 | `versionMain` / `versionSub` / `versionPatch` | int | 0 / 1 / 0 | 与 `project.mainVersion/subVersion/buildVersion` 同字段；**export 块后解析，两处同写时以 export 块为准** |
-| `nativeDll` | string | `""` | 原生 DLL 文件名，写入 module.json，VM 同目录查找 |
+| `nativeDll` | string | `""` | 原生 DLL 文件名，写入 SLB，VM 同目录查找 |
 | `includeMetadata` | bool | true | 已解析未消费 |
 | `stringPoolAsBlob` | bool | true | 已解析未消费 |
 | `aot` | object | — | MLIR AOT 导出子块（详见 `source/Front/Export/MLIR/MLIR_AOT_实现与待办.md`） |
@@ -479,7 +479,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `targets` | string[] | 空 | 目标环境标签（小写），**仅元数据，不参与条件求值** |
 | `when` | string | `""` | 表达式糖原文，**仅存储**（v2 才做与 require 的一致性校验；同给时以 require 为准） |
 | `fallbackHint` | string | `""` | 条件不满足时给用户的建议文案（随导出、诊断输出） |
-| `require` | object | null | 运行条件，编译为条件 AST 随 module.json `platform` 段导出，CVM 装载期 `sl_require_check` 求值 |
+| `require` | object | null | 运行条件，编译为条件 AST 随 SLB `platform` 段导出，CVM 装载期 `sl_require_check` 求值 |
 | `variants[]` | array | 空 | 多目标变体，**数组顺序即优先级**，CVM 取第一个通过的变体 |
 | `variants[].target` | string | `""` | 变体目标标签（仅诊断展示） |
 | `variants[].aot` | string | `""` | 该变体的 AOT 产物文件名（空=解释器兜底变体；选中时覆盖模块级 aot.dll） |
@@ -518,7 +518,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 宿主 `slang publish` 命令的配置面（类比 csproj 发布属性）；Front 只解析承载
 （`ProjectConfig.PublishSection`），值校验与执行在宿主 `PublishCommand`。
 **不声明 = 全缺省**（mode=both、输出 `<工程目录>\publish\`、config=Release、带全量标准库）。
-产物：`<Module>.exe`（SLVMAPP1 载荷附着应用，双击直跑）与 `<Module>.module.slb`
+产物：`<Module>.exe`（SLVMAPP1 载荷附着应用，双击直跑）与 `<Module>.slb`
 （`slang run <file>.slb` 启动）。字段表与布局详见权威文档 **`publish-guide.md`**。
 
 | 键 | 类型 | 缺省 | 说明 |
@@ -542,7 +542,7 @@ registry**（按名安装只依赖 `--registry` 参数或 `<lang>\spm.json` 全�
 |----|------|------|------|
 | `registry` | string | `""` | 按名安装（`spm install <包名>`）与查询（search/outdated）的服务器基 URL，实际 API = `<registry>/api/packages/...`（静态回落 `<registry>/<名>.json`）；优先级：CLI `--registry` > 本段 > `<lang>\spm.json` |
 
-安装的包落本工程 `modules\<包名>\<包名>.module.slb|json`；`references` 引用
+安装的包落本工程 `modules\<包名>\<包名>.slb|json`；`references` 引用
 纯名（或 `./modules/<包名>`）即可被装载三级搜索链第 ① 级命中（§4.9 装载规则 2）。
 也可以用 `references` 的 **type=module 条目**（`{ "type": "module", "name": ..., "channel": "official", "version": ... }`）
 声明依赖：编译时自动按 registry 检索 + 版本对比下载到工程 `modules\`（检查机制详见 §4.9 专段）——
@@ -568,12 +568,12 @@ registry**（按名安装只依赖 `--registry` 参数或 `<lang>\spm.json` 全�
 
 | 配置面 | jsonc 键 | 覆盖源 |
 |--------|----------|--------|
-| 导出格式（含双产物） | `export.format` | CLI `--format json\|binary\|binary+json`（`binary+json` = slb 主产物 + json 调试副本，磁盘导出（output/temp）双落；2026-10-18 起 `--export-json`/`--guide` 旗标与 jsonc `export.binary.exportJson`/`export.guide` 已删） |
+| 导出格式（含双产物） | `export.format` | CLI `--format json\|binary\|binary`（`binary` = slb 主产物 + ，磁盘导出（output/temp）双落；2026-10-18 起 `--export-json`/`--guide` 旗标与 jsonc `export.binary.exportJson`/`export.guide` 已删） |
 | 导出去向（三态） | — | CLI `--export-mode <output\|temp\|memory>`（2026-10-20）：output=导出到 jsonc `export.outputDir` 派生目录（缺省）/ temp=Frontend 运行目录下 `_temp\<模块名>\`（结构同正式导出，用完可整体删）/ memory=不落盘、SLB 恒不压缩留内存直传 C VM（原 `--in-memory` 并入此态）；`in-memory` 为 memory 别名；显式指定即隐含 `-e ir` |
-| 优化级别 | （无 jsonc 键） | CLI `-O<n>` → module.json `optimizeLevel`（jsonc 里只有布尔 `compile.optimize`→buildMode） |
+| 优化级别 | （无 jsonc 键） | CLI `-O<n>` → SLB `optimizeLevel`（jsonc 里只有布尔 `compile.optimize`→buildMode） |
 | 宏 | `global.macro` | 环境变量 `SL_MACRO_*` < CLI `--macro name=value`（可重复）< `Project._before_()` 钩子 |
 | 输出目录 | `export.outputDir` + 模块名 | 由 jsonc 派生存入进程内状态（`ProjectOutputEnvironment.Current*`，Front 不再写环境变量）；`SIMPLELANG_EXPORT_OUTDIR` / `SIMPLELANG_LOGS_DIR` / `SIMPLELANG_DEBUGCODE_ROOT` 仅作外部只读覆盖。`SIMPLELANG_VM_RESULT_DIR` 为过期条目（当前代码无实现） |
-| 导出与否 | — | CLI 必须带 `-e ir` 才执行导出阶段，缺省只编到 IR、module.json 不重写（dotnet 退出码仍 0，成功判据=module.json 文件 mtime 更新） |
+| 导出与否 | — | CLI 必须带 `-e ir` 才执行导出阶段，缺省只编到 IR、SLB 不重写（dotnet 退出码仍 0，成功判据=SLB 文件 mtime 更新） |
 
 常用命令：
 

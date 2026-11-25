@@ -92,6 +92,20 @@ class DebugSmoke
         int r = await h as int
         counter = counter + c + r + sum + deep
         Console.println( "result=" + SystemConvertString( counter ) )
+        # v1.2 数据监视断点用例（DEBUG_PROTOCOL_DESIGN §6.8/§6.9）：
+        #   wk 0→10→…→50：set-watchpoints(wk) 值变化即停；
+        #   Monitor.watch 落帧 → monitor-frames 可查；
+        #   watchBreak(wk==50) 会话内命中 → stopped reason=watchpoint
+        int wk = 0
+        int wi = 0
+        while (wi < 6)
+        {
+            wk = wi * 10
+            Monitor.watch( wk, "wk" )
+            wi = wi + 1
+        }
+        Monitor.watchBreak( wk, "wkb", wk == 50 )
+        Console.println( "done wk=" + SystemConvertString( wk ) )
     }
 }
 

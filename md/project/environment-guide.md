@@ -15,7 +15,7 @@ Environment 解决"同一份模块在不同平台/环境下如何声明要求、
     ↑ 运行期由 CVM 探测一次并分类（sl_environment 惰性单例，O(1) 查询）
 *.jsonc 工程配置 "platform" 段（声明层：require / override / variants / targets / when / fallbackHint）
     ↓ Front 编译期解析 + 校验（非法值 Error 20036，编译中止）
-*.module.json（SLIR 包，platform 段随包导出）
+*.slb（SLIR 包，platform 段随包导出）
     ↓ CVM 加载期判定 require、运行期应用 override
 csimple_lang run [--disable/--enable/--set/--override-file/--no-override] <module.json>
 ```
@@ -449,8 +449,8 @@ require 下出现上述 18 个之外的键 → LID `ProjectPlatformRequireUnknow
 | `--force-run` | 跳过硬性平台要求校验（打印警告并继续执行） |
 
 ```powershell
-csimple_lang run --disable device.gpu --set memory=256 Core.module.json
-csimple_lang run --enable cpu.avx2 --override-file overrides.json Core.module.json
+csimple_lang run --disable device.gpu --set memory=256 Core.slb
+csimple_lang run --enable cpu.avx2 --override-file overrides.json Core.slb
 ```
 
 ### 6.3 覆盖 key 命名

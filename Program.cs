@@ -654,8 +654,13 @@ internal static class Program
             }
             if (!IsModulePackageFile(opts.ProjectPath))
             {
-                Console.WriteLine($"run expects a compiled module (*.slb / *.module.json), got: {opts.ProjectPath}");
+                Console.WriteLine($"run expects a compiled module (*.slb / *.json), got: {opts.ProjectPath}");
                 Console.WriteLine("Compile-and-run a project instead: slang <project>   (compile only: slang compile <project>)");
+                return null;
+            }
+            if (!File.Exists(opts.ProjectPath))
+            {
+                Console.WriteLine($"module not found: {opts.ProjectPath}");
                 return null;
             }
             opts.ModuleJsonPath = opts.ProjectPath;
@@ -735,8 +740,8 @@ Commands:
   compile <project>         Compile a project with the Front (in-process).
                             Export target per --export-mode (default output =
                             the configured export directory).
-  run <module>              Run a COMPILED module (.module.slb / .module.json)
-                            on the C VM - no compile step.
+  run <module>              Run a COMPILED module (.slb) on the C VM -
+                            no compile step.
   run-disk <module>         Alias of `run` (kept for compatibility).
   info <module>             Show module metadata via the C VM.
   ffi-check <contract>      Validate an FFI contract (.slffi.json): schema
@@ -749,7 +754,7 @@ Commands:
                             mode picked by jsonc publish section /
                             --mode - both (default) emits a runnable app
                             exe (payload-attached csimple_lang.exe +
-                            sqlite3.dll + lib\) and <Module>.module.slb
+                            sqlite3.dll + lib\) and <Module>.slb
                             (start: slang run <file>.slb); exe / slb
                             emit just one. Layout: jsonc publish.outputDir
                             (default publish\) or --dest.
@@ -815,10 +820,7 @@ Options:
                              write, the uncompressed SLB binary stays in RAM
                              and goes straight to the C VM (bare project /
                              compile-and-run default)
-  --format <json|binary|binary+json>
-                             Export format: binary = SLB only; json /
-                             binary+json = SLB (always written) + .module.json
-                             debug copy (R15)
+  --format <binary>          Export format: SLB module package (default).
   --no-banner               Suppress banners
   --force-run               Skip C VM hard platform checks
   --debug                   C VM debug mode (verbose tracing)
@@ -840,15 +842,14 @@ Examples:
   slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest -t
   slang MyProject --export-mode temp
   slang MyProject -- arg1 arg2
-  slang run publish\MyApp.module.slb                            # run compiled
-  slang run SlangAllInOne\out\export\ProjectTest\ProjectTest.module.slb
+  slang run publish\MyApp.slb                                   # run compiled
+  slang run SlangAllInOne\out\export\ProjectTest\ProjectTest.slb
   slang compile MyProject
   slang compile MyProject --export-mode memory
-  slang compile MyProject --format binary+json
   slang publish MyProject
   slang publish MyProject --mode exe --cvm Release
   slang pack-modules --config Release
-  slang info SlangAllInOne\out\export\ProjectTest\ProjectTest.module.json");
+  slang info SlangAllInOne\out\export\ProjectTest\ProjectTest.slb");
         return 0;
     }
 }

@@ -105,7 +105,7 @@ spm 在执行「安装 / 更新 / 运行前校验」时，对每个依赖条目�
 | `本体包` | core | SLang 本体 / 语言分发 | `.../core/<ver>/slang.zip` |
 | `vscode` | vscode | VS Code 扩展 `.vsix` | `.../vscode/<name>/<ver>.vsix` |
 | `插件` | plugin | 插件 `.slb` / 元数据包 | `.../plugins/<id>/<ver>/<id>.slb` |
-| `包` | package | 模块包 `*.module.slb` | `.../packages/<name>/<ver>/<name>.module.slb` |
+| `包` | package | 模块包 `*.slb` | `.../packages/<name>/<ver>/<name>.slb` |
 
 调用方（spm / 官网）按用户选择的中文标签传 `type`；后端解析时映射到内部种类，再定位 `md5` 与 `url`。
 

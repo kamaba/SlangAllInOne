@@ -1,9 +1,8 @@
-TankGame.sl 引入Math类。把一些 二维的都使用Int32_2 Int32_3
-
 VSCode里边，如果识别到是变量，在右键的时候，要弹出一个按钮，叫 添加到监视 的功能，点击后，直接移动到监视栏 看看是否和我内部的监视代码可以整合
 
 增加
 macOs /iOS的环境 
+
 
 QTCodeEditor
 1. 解决方案区，没有右键区
@@ -47,7 +46,19 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 把现在的游戏在网页上跑起来
 然后做一个菜单选择 可以制作各式的游戏  2048，贪吃蛇，类马里奥跳的游戏，cell 吞食天地
 plugin插件，增加编译环境手动配置 还有就是集成非下载环境的功能。  把带虚拟机的需要放到打包环境里边
-JAVA_HOME的查找 Csharp_mono自动集成  quickjs直接集成 nodejs 为查找  
+Csharp_mono自动集成
+JAVA_HOME的查找 
+cplug_clang 调研看多大。
+quickjs直接集成 
+nodejs 为查找  
+php 调研下，看环境是否很大
+masm直接集成
+python 看多大，如果不大直接集成。
+golang 使用环境集成
+优化runtime
+在Image里这增加Gif的 解析和生成  https://www.runoob.com/pillow/imagesequence-module.html 可以仿着这个做
+于对Image可以在QT模块中的直接显示，中间的桥接
+https://www.runoob.com/pillow/pillow-image-module.html 把Image这种的方法 也多一些吧。
 ##############################################################################################
 
 接完nodejs后，看看能不能贴合到nodejs里边 然后他们的服务

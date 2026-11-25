@@ -125,9 +125,10 @@ internal static class PublishCommand
         /* Step 4: slb 产物（`slang run <path>.slb` 启动）。 */
         if (mode == "slb" || mode == "both")
         {
-            string destSlb = Path.Combine(publishDir, moduleName + ".module.slb");
+            // 2026-11-25 命名简化：发布产物 <Module>.slb（读取侧仍兼容旧名）。
+            string destSlb = Path.Combine(publishDir, moduleName + ".slb");
             File.Copy(result.ModuleSlbPath, destSlb, overwrite: true);
-            Console.WriteLine($"[OK]  slb:  {moduleName}.module.slb  (start: slang run \"{destSlb}\")");
+            Console.WriteLine($"[OK]  slb:  {moduleName}.slb  (start: slang run \"{destSlb}\")");
         }
 
         /* Step 5: exe 产物（载荷附着式应用）。 */
@@ -401,8 +402,8 @@ internal static class PublishCommand
             }
 
             Directory.CreateDirectory(destLib);
-            File.Copy(src, Path.Combine(destLib, name + ".module.slb"), overwrite: true);
-            Console.WriteLine($"[OK]  lib:  {name}.module.slb");
+            File.Copy(src, Path.Combine(destLib, name + ".slb"), overwrite: true);
+            Console.WriteLine($"[OK]  lib:  {name}.slb");
 
             if (string.Equals(name, "Math", StringComparison.OrdinalIgnoreCase))
             {
@@ -599,7 +600,8 @@ internal static class PublishCommand
                     string full = Path.GetFullPath(Path.Combine(baseDir, refPath));
                     string? d = Directory.Exists(full) ? full : Path.GetDirectoryName(full);
                     if (d != null && Directory.Exists(d)
-                        && Directory.GetFiles(d, "*.module.*").Length > 0)
+                        && (Directory.GetFiles(d, "*.slb").Length > 0
+                            || Directory.GetFiles(d, "*.module.*").Length > 0))
                     {
                         srcDir = d;
                     }
@@ -612,7 +614,8 @@ internal static class PublishCommand
                 /* 平铺 stage：主包目录直下 <名>.module.slb / .module.json——
                  * 对齐 C VM 引用回退链的 basename 直查形态。 */
                 bool any = false;
-                foreach (string f in Directory.GetFiles(srcDir, "*.module.*"))
+                foreach (string f in Directory.GetFiles(srcDir, "*.slb")
+                    .Concat(Directory.GetFiles(srcDir, "*.module.*")))
                 {
                     File.Copy(f, Path.Combine(publishDir, Path.GetFileName(f)), overwrite: true);
                     any = true;
@@ -880,17 +883,20 @@ internal static class PublishCommand
     /// <summary>单模块 slb 产物来源链（包布局优先 → dev out\export）。</summary>
     static string? FindModuleArtifact(string? repoRoot, string name)
     {
-        string packaged = Path.Combine(AppContext.BaseDirectory, "lib", name + ".module.slb");
-        if (File.Exists(packaged))
+        foreach (var suffix in new[] { ".slb", ".module.slb" })
         {
-            return packaged;
-        }
-        if (repoRoot != null)
-        {
-            string dev = Path.GetFullPath(Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name, name + ".module.slb"));
-            if (File.Exists(dev))
+            string packaged = Path.Combine(AppContext.BaseDirectory, "lib", name + suffix);
+            if (File.Exists(packaged))
             {
-                return dev;
+                return packaged;
+            }
+            if (repoRoot != null)
+            {
+                string dev = Path.GetFullPath(Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name, name + suffix));
+                if (File.Exists(dev))
+                {
+                    return dev;
+                }
             }
         }
         return null;

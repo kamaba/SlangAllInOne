@@ -82,7 +82,9 @@ internal static class PackModulesCommand
             }
 
             // 子进程编译；CWD 与 compile-stdlib.ps1 一致（SlangAllInOne\，库源树根）。
-            string slbPath = Path.Combine(exportRoot, name, $"{name}.module.slb");
+            // 2026-11-25 命名简化：产物 <name>.slb / <name>.json（旧 .module.*
+            // 读取侧兼容；lib\ 同时落一份旧名别名，存量工程引用不破）。
+            string slbPath = Path.Combine(exportRoot, name, $"{name}.slb");
             var start = DateTime.Now;
             Console.WriteLine($"--- {name}: compile {projectRel} -O3 --format binary+json");
             int exit = RunChild(selfExe,
@@ -101,7 +103,7 @@ internal static class PackModulesCommand
             // C VM FFI 候选链 <exe>\lib\<平台>\ 与 pkg_dir\<平台>\ 回退命中）。
             var sources = new List<string> { slbPath };
             if (includeJson)
-                sources.Add(Path.Combine(exportRoot, name, $"{name}.module.json"));
+                sources.Add(Path.Combine(exportRoot, name, $"{name}.json"));
 
             // 平铺单目录：模块产物直排 <dest>\lib\（2026-10-18 更名），
             // 无按模块子目录。lib\ = 系统自带标准库（官方库直查目录）。
@@ -115,6 +117,13 @@ internal static class PackModulesCommand
                     return 1;
                 }
                 File.Copy(src, Path.Combine(destModuleDir, Path.GetFileName(src)), overwrite: true);
+            }
+            // 旧名别名（<name>.module.slb/json）：存量工程/插件 jsonc 仍按老名
+            // 引用官方库，保留一份拷贝避免升级后装载失败；新工程用新名。
+            foreach (var src in sources)
+            {
+                var alias = Path.GetFileNameWithoutExtension(src) + ".module" + Path.GetExtension(src);
+                File.Copy(src, Path.Combine(destModuleDir, alias), overwrite: true);
             }
             if (name == "Math")
             {

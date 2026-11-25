@@ -4,6 +4,11 @@
 > 🔥 **2026-10-25 布局标准全量定稿，见 §七——§一~§六与 §七 冲突处以 §七 为准**）。
 > 配套改动（官方库直查、打包链、脚本）均以本文档为准；发布渠道策略另见
 > [RELEASE.md](../../RELEASE.md)。
+>
+> 🔥 **2026-11-25 命名简化**：模块产物主名改为 `<name>.slb`（去掉中间的
+> `module`）；读取侧（Front 引用装载、C VM loader）仍兼容旧
+> `<name>.module.slb`，发布包 `lib\` 同时保留旧名别名，存量工程无需改配置。
+> `slang run` 直接接 `*.slb`。
 
 ## 七、🔥 布局标准全量定稿（2026-10-25 用户指令；强制执行版）
 
@@ -23,7 +28,7 @@
 │   │   （MLIR/LLVM AOT 工具链，csproj PackMlirTools 自 simple_language\tools\llvm）
 │   └── （Debug 另有 *.pdb 侧车）
 ├── lib\                        引入的 module 与 module 关联的原生库：
-│   ├── *.module.slb            官方标准库等模块包（平铺）
+│   ├── *.slb            官方标准库等模块包（平铺）
 │   └── windows\                module 关联 dll 按平台分目录（2026-10-22 平台细分）
 │       ├── sqlite3.dll         （Core 关联：C VM 唯一硬动态依赖，delay-load +
 │       │                        sl_preload_associated_dlls 预装载）
@@ -44,7 +49,7 @@
 plugin\csharp_mono\                       （dev 树，仓库侧）
 ├── plugin.jsonc                          权威清单
 ├── package\                              ← 三工程导出汇聚（= 未来压缩成一个文件的插件包）
-│   ├── CSharpMono.module.slb             第三个工程：slang\ 的 .sl 打包产物（平铺 package\ 根）
+│   ├── CSharpMono.slb                    第三个工程：slang\ 的 .sl 打包产物（平铺 package\ 根）
 │   └── windows\                          平台分类库：windows | linux | macos | iOS | android
 │       ├── cvm_csharp_mono.dll           runtime(cvm) 工程 dll
 │       ├── sl_csharp_mono_frontend.dll   frontend 工程原生 dll
@@ -53,9 +58,17 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 
 <包根>\plugin\csharp_mono\                （发布包内——剥掉 package\ 层的平铺形态）
 ├── plugin.jsonc
-├── CSharpMono.module.slb
+├── CSharpMono.slb
+├── slang\CSharpMono.slb                  refModule 副本（见下方 2026-11-25 补记）
 └── windows\ …（平台子目录直接挂 plugin\<id>\ 下，无 lib\ / package\ 两层目录名）
 ```
+
+> **2026-11-25 补记**：`plugin.jsonc` 的 `refModule.path = "slang"`，Front 编译期
+> `LoadReferences` 只认 `<插件根>\slang\` 目录（里面要有 `*.slb|json`）；
+> 早期 PackPlugins 只把 refModule 平铺到插件根，发布包独立工程编译 `@csharp_mono`
+> 块时 systemCall 声明/`SLang.Plugin.CSharpMono.*` 不注册。现 csproj PackPlugins
+> 把 `CSharpMono.slb` / `JavaHotspot.slb` 同时投一份到 `<插件根>\slang\`，
+> 开发树和发布包使用同一份 refModule。
 
 - 平台目录名 = `windows|linux|macos|ios|android`，与主包 `lib\<平台>\`、
   C VM `sl_platform_dir_name` **同名约定**；旧 `lib\<os>-<arch>`（如
@@ -74,7 +87,7 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 
 | 环节 | 路径行为 |
 |------|----------|
-| Front 编译期 references 纯名（Core/Std/Math） | 官方库直查 `<exe>\lib\<名>.module.slb`（slb 优先；modules\ 兜底） |
+| Front 编译期 references 纯名（Core/Std/Math） | 官方库直查 `<exe>\lib\<名>.slb`（slb 优先；modules\ 兜底） |
 | Front `@tag{}` 路由 | `FindPluginsParent` 上溯 `plugin` → `<exe>\plugin\` 探测；frontendNative dll 取 `<插件根>\package\<平台>\<lib>`（发布包平铺 `<插件根>\<平台>\` 回退） |
 | Front PluginLib 导出段 | 平台目录回退（`<os>` 新标准位优先）→ **递归拷贝** `outDir\plugin\<id>\<平台>\`；module.json 记 `plugin/<id>/<平台>/<file>` |
 | C VM 引用装载 | `<exe>\lib\` → `<exe>\modules\` 直查（slb 优先） |
@@ -99,18 +112,18 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
 
 | 目录 | 定位 | 现状 |
 |------|------|------|
-| `lib\` | **系统自带文件**：官方标准库（Core / Math / Std 的 `*.module.slb` + `math_lib.dll` + Debug 包 json 调试副本）+ `sqlite3.dll`（C VM 唯一硬动态依赖，2026-10-22 布局规则自 bin\ 迁入：delay-load + 运行期预装载解析） | ✅ 2026-10-18 起由原 `module\` 更名（内容不变，平铺单目录）；🔥 2026-10-22 起关联 dll 统一入此目录（§六） |
-| `modules\` | **用户包目录**：spm 包管理器安装/管理第三方包的落位（布局 `modules\<名>\<名>.module.slb|json`，见 §四） | ✅ 独立 `spm.exe` 已落地（2026-10-30，`Project\Spm\` 工程：install/search/list/outdated/remove + plugin 子命令组）；装载三级搜索链见 §二.6 |
+| `lib\` | **系统自带文件**：官方标准库（Core / Math / Std 的 `*.slb` + `math_lib.dll` + Debug 包 ）+ `sqlite3.dll`（C VM 唯一硬动态依赖，2026-10-22 布局规则自 bin\ 迁入：delay-load + 运行期预装载解析） | ✅ 2026-10-18 起由原 `module\` 更名（内容不变，平铺单目录）；🔥 2026-10-22 起关联 dll 统一入此目录（§六） |
+| `modules\` | **用户包目录**：spm 包管理器安装/管理第三方包的落位（布局 `modules\<名>\<名>.slb|json`，见 §四） | ✅ 独立 `spm.exe` 已落地（2026-10-30，`Project\Spm\` 工程：install/search/list/outdated/remove + plugin 子命令组）；装载三级搜索链见 §二.6 |
 | `plugin\` | **插件目录**：插件内容的安装与管理位（区别于普通包，见下） | ✅ 插件管理器安装整插件目录到 `plugin\<id>\` 后即可被 `@tag{}` 路由（Front `FindPluginsParent` 已支持回退探测；两个运行时插件 frontend 自 2026-10-21 起 C 化为原生 dll、不经 publish 产出/归位，随插件整目录分发） |
 
 包根其余目录不变：`bin\`（C VM 运行时**本体**：`csimple_lang_dll.dll` / `csimple_lang.exe` / pdb 侧车——sqlite3.dll 已按 §六迁 `lib\`）、`md\`（用户文档）。~~`test\RefProbe\`（开箱示例）~~ 已于 2026-10-18 按用户指令移除（v0.0.5 起发布包不再带 `test\`，示例保留在仓库测试树 `SLangCore\test\Other\RefProbe`）。
 
 ## 二、迁移记录（2026-10-18）
 
-0. **CompileStdlib 直通包目录（同日晚些增补）**：CompileStdlib 驱动（core/math/std/all 预设）编译成功后自动把产物（R15 slb+json 双产物，`--format binary+json` 内置）同步到四个包目录的 `lib\`——slb 恒同步、json 副本仅 `*-debug` 目录、math_lib.dll 仅 `win32-*`；与 publish 的 pack-modules 同一落位，VS 里 F5 任意预设即可在包目录 `lib\` 看到新鲜产物（显式工程路径 selector 不属于标准库，不同步）。
+0. **CompileStdlib 直通包目录（同日晚些增补）**：CompileStdlib 驱动（core/math/std/all 预设）编译成功后自动把 `*.slb` 同步到四个包目录的 `lib\`——`math_lib.dll` 仅 `win32-*`；与 publish 的 pack-modules 同一落位，VS 里 F5 任意预设即可在包目录 `lib\` 看到新鲜产物（显式工程路径 selector 不属于标准库，不同步）。
 1. **`module\` → `lib\`**：PackModulesCommand 打包目录更名；发布包目录 = `package\{win32|linux}-{debug|release}` 四目录（csproj 零旗标 publish 默认；编译产物按 debug/release 分别落对应平台包的 lib\），与 release-slang.ps1 / build-packages.ps1 布局校验、冒烟路径同步。
 2. **官方库直查改链**：references 写纯模块名（"Core"/"Std"/"Math"）时——
-   - Front 编译期：`ProjectReferenceModuleLoader.TryResolveRuntimeModuleDirPath`（Strategy 4）按 `<exe>\lib\` → `<exe>\modules\` 顺序直查 `<名>.module.slb|json`（slb 优先）；
+   - Front 编译期：`ProjectReferenceModuleLoader.TryResolveRuntimeModuleDirPath`（Strategy 4）按 `<exe>\lib\` → `<exe>\modules\` 顺序直查 `<名>.slb|json`（slb 优先）；
    - C VM 运行期：`sl_load_references` ④（`csimple_lang/src/vm/load/slir_json_module_loader.c`）同序直查 `<exe_dir>/lib/` → `<exe_dir>/modules/`。
    两端一致，发布包内用户工程继续零相对路径配置。
    🔥 2026-10-29 起该链扩展为三级搜索链并放宽至所有引用，见 §二.6。
@@ -132,8 +145,8 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
    全落空 = 没有这个包 → 报错）：
    ① **工程目录 `modules\`**（`slang spm install` 装包位）→ ② **`<exe>\modules\`**
    （`spm install -g` 全局装包 + 官方库平铺）→ ③ **`<exe>\lib\`**（Core/Std/Math
-   系统库平铺）；每处对平铺 `<名>.module.slb|json` 与 spm 目录布局
-   `modules\<名>\<名>.module.slb|json` **双重探测**（slb 优先）。
+   系统库平铺）；每处对平铺 `<名>.slb|json` 与 spm 目录布局
+   `modules\<名>\<名>.slb|json` **双重探测**（slb 优先）。
    - Front 编译期：Strategy 4（`ProjectReferenceModuleLoader.cs`，裸名引用；
      显式后缀引用回落仍限系统库，落空硬报错 LID 20042）；
    - C VM 运行期：`sl_load_references` ④（`slir_json_module_loader.c`）同源
@@ -142,12 +155,12 @@ plugin\csharp_mono\                       （dev 树，仓库侧）
      Step 8，见 publish-guide.md §4），发布应用按链 ① 直查命中；
    - 🔥 **显式引用推荐目录形态**（2026-10-30）：references 指工程内 spm 装包
      写 `{ "path": "./modules/<名>" }`（模块**文件夹**）——Front Strategy 1
-     目录扫描 `*.module.slb`（TopDirectoryOnly 优先）命中，与 zip 解压安装
+     目录扫描 `*.slb`（TopDirectoryOnly 优先）命中，与 zip 解压安装
      布局同构（WebUITest 实录：编译/发布/exe 实跑 26/26 PASS）。
 
 ## 三、为什么 plugin 独立于 modules（插件 ≠ 普通包）
 
-普通包（module）只是编译产物 `*.module.slb|json`，装载即用；插件是**多层
+普通包（module）只是编译产物 `*.slb|json`，装载即用；插件是**多层
 结构 + 生命周期**的复合体（权威：`csimple_lang/md/design/PLUGIN_SYSTEM_DESIGN.md`）：
 
 - **三目录结构**：`cvm\`（原生库，`lib/<os>-<arch>/`）、`frontend\`（Front 层
@@ -212,14 +225,14 @@ spm config registry [<url>]  查看/设置全局 registry（落盘 <lang>\spm.js
   platforms[]）；**静态回落**（无门户 API 的文件服务器）：`<reg>/<名>.json`、
   `<reg>/plugins/<id>.json` 同构元数据，包体缺省 `<reg>/<名>.zip` /
   `<reg>/plugins/<id>.zip`（旧约定兼容）；
-- **安装布局**：包 `modules\<包名>\<包名>.module.slb|json` + 本地清单
+- **安装布局**：包 `modules\<包名>\<包名>.slb|json` + 本地清单
   `spm.json`（name/version/source/installedAt，供 outdated 对比）；插件
   `plugin\<id>\`（zip 内任意层级探测 plugin.jsonc 定位插件根）；
 - **registry 优先级**：`--registry` 参数 > 工程 jsonc `"spm"."registry"` 段
   （project-config-jsonc-guide.md §4.17）> `<lang>\spm.json` 全局；
 - 装包完只**提示**把包名加进 jsonc `references`（不自动改写工程文件）；🔥
   **引用写法（2026-10-30）**：`{ "path": "./modules/<名>" }` 指 spm 装包的模块
-  **文件夹**（非 slb 文件）——Front Strategy 1 目录扫描 `*.module.slb` 直接命中、
+  **文件夹**（非 slb 文件）——Front Strategy 1 目录扫描 `*.slb` 直接命中、
   C VM 双重探测同构；与安装形态对齐：包 zip 内含模块同名顶层文件夹，直接解压进
   `modules\` 即完成安装（WebUITest 实录验证）；
 - `lib\` 与 `modules\` 的边界不变：lib = 随 slang 发行、官方维护的系统标准库；

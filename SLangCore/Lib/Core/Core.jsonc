@@ -692,6 +692,8 @@
     { "name": "SystemDebugDisableWatch",     "returnType": "void",   "params": ["string"], "isVariadic": false, "cvmFunction": "vm_sys_debug_disable_watch" },
     // ---- Debug queries (DEBUG_SYSTEM_DESIGN §9.2, P3) ----
     { "name": "SystemDebugGetAssertViolations", "returnType": "Int32", "params": [], "isVariadic": false, "cvmFunction": "vm_sys_debug_get_assert_violations" },
+    // ---- Debug conditional breakpoint (DEBUG_SYSTEM_DESIGN §5.9, watchBreak) ----
+    { "name": "SystemDebugGetBreakHits", "returnType": "Int32", "params": [], "isVariadic": false, "cvmFunction": "vm_sys_debug_get_break_hits" },
     // ---- Debug listen (DEBUG_SYSTEM_DESIGN §9.2/§10, P4) ----
     { "name": "SystemDebugListen",      "returnType": "Int32", "params": ["object"], "isVariadic": false, "cvmFunction": "vm_sys_debug_listen" },
     { "name": "SystemDebugListenLabel", "returnType": "Int32", "params": ["string", "object"], "isVariadic": false, "cvmFunction": "vm_sys_debug_listen" },

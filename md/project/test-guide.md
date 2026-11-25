@@ -82,7 +82,7 @@ test/BaseTest/
 仓库根 `.vscode\launch.json` 已为**全部测试工程**预置 SLang DAP 调试配置（2026-10-20 起，62 项，`type: "slang"`，`program` = 各工程 `.sp` 入口）：调试面板下拉选「**调试 SLang: \<名\>**」→ **F5 调试 / Ctrl+F5 运行**。断点打在 `.sl` 源文件（slang_vscode_plugin P3-1 DAP：断点/单步/变量树/表达式求值；调试会话即禁 JIT）。
 
 - **覆盖清单**：六大用例集 + TensoraTest、`test\Other\*` 全部探针与功能用例（Json/Yaml/Xml/Websocket/Net/HttpWeb/Inline*×3/ARC·GC 探针×6/Const*·Final*·Hook 系/MiniSmoke/WasmDemo/GlobalSlot/ExportPerm/Crawler/Ref·Return·ReDebug·MemberInit 等）、NaNBench/EqBench、负例工程（名称带「负例」标注，F5 即走查预期 LID 拦截或平台拒跑）、示例 GameTank（默认 `args: ["auto"]` 自动化）。
-- **通用入口**：「调试 SLang: 当前工程」随活动编辑器自动定位（活动文件是 `.module.json` 用它，否则取当前 `.sp` 工程）；各配置可加 `"stopOnEntry": true` / `"args": ["…"]`（程序参数，透传 `Project._inputArgs`）。
+- **通用入口**：「调试 SLang: 当前工程」随活动编辑器自动定位（活动文件是 `.slb` 用它，否则取当前 `.sp` 工程）；各配置可加 `"stopOnEntry": true` / `"args": ["…"]`（程序参数，透传 `Project._inputArgs`）。
 - **前提**：安装 slang_vscode_plugin（提供 `slang` DAP 类型）；`settings.json` 的 `slang.executable.path` 指向的宿主已构建（现为 `SlangAllInOne\package\win32-release\slang.exe`，产品层 = AOT Front + Release 加固 cvm，改 Front/VM 代码后 `dotnet publish SlangAllInOne -c Release` 刷新；`--debug`/调试会话为 SL 语言级调试且自动禁 JIT，Debug/Release 两层语义见根 AGENTS.md §5）。
 - （宿主 C# 侧调试仍走 VS：打开 `SlangAllInOne.sln` 选 `CSimpleVMTest` 的 launchSettings profile。）
 
@@ -111,7 +111,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 | 配置 | 运行方式（包） | Front 导出参数 | 适合场景 |
 |------|---------------|----------------|----------|
-| Debug | `package\win32-debug\slang.exe`（框架依赖宿主 + bin\ 调试 C VM + lib\ slb+json 官方库） | `--format binary+json`（slb 主产物 + json 调试副本，两配置统一） | 验证 Debug 发布包；json 副本便于人工对照排查 |
+| Debug | `package\win32-debug\slang.exe`（框架依赖宿主 + bin\ 调试 C VM + lib\ slb 官方库） | `--format binary`（两配置统一） | 验证 Debug 发布包 |
 | Release | `package\win32-release\slang.exe`（Native AOT 一体化 + bin\ 加固 C VM，**JIT 默认开**，`--no-jit`/`SL_JIT=0` 关闭） | 同上 | 性能 / 接近真实分发形态 |
 
 包需先构建：`powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1`（或分别 `dotnet publish SlangAllInOne\SlangAllInOne.csproj -c Debug|Release`）；改了 Front/C VM 后需重编标准库（`CompileStdlib` 自动同步四包 lib\）再发布。
@@ -145,7 +145,7 @@ dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj -- BenchMark -- 
 
 ```powershell
 SlangAllInOne\out\host\slang.exe publish SlangAllInOne\SLangCore\test\Other\MiniSmoke\MiniSmoke --no-banner
-# 产物：<工程>\publish\<Module>.exe（双击直跑）+ <Module>.module.slb（slang run 启动）+ sqlite3.dll + lib\
+# 产物：<工程>\publish\<Module>.exe（双击直跑）+ <Module>.slb（slang run 启动）+ sqlite3.dll + lib\
 ```
 
 - **2026-10-22 实测**：MiniSmoke、NullFastTest、BaseTest、ExpendTest（产物名回退 ProjectTest2）、MathTest 五个代表工程发布全绿；exe 直跑（MiniSmoke/NullFast/MathTest 全 PASS）与 slb `slang run`（MiniSmoke/ExpendTest 全绿）双向验证通过。publish\ 为构建产物，不入库、可随时删除重发。
@@ -155,7 +155,7 @@ SlangAllInOne\out\host\slang.exe publish SlangAllInOne\SLangCore\test\Other\Mini
 ## 5. 常见问题
 
 - **`slang.exe not found in package`**：发布包尚未构建。执行：`powershell -ExecutionPolicy Bypass -File SlangAllInOne\scripts\build-packages.ps1`；改过 Front/C VM 后先重编标准库再发布（宿主不回退开发树——其意义即验证发布包形态）。
-- **跑 ServerTest 报 `SLangServer` 引用找不到（references 未命中，编译中止）**：ServerTest（SLangServer P0~P4.5 验收用例集）依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，非 Core/Std/Math 系统库，不享受运行目录 lib\ 官方库回落）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary+json --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
-- **`test\Other\*` 用例集 references 形态（2026-10-18 规则定稿）**：全部 53 个测试工程 jsonc 已统一为 `{ "path": "./lib/<名>.module.slb" }`（Core/Std/Math 系统库，工程内落空自动回落运行目录 lib\ 官方库直查，name/uuid 省略由导出侧自动回填）；非系统库引用（SLangServer/SLangMysql/Tensora/ConstLib/FinalLib）path 直指产物文件 `<上跳>/out/export/<模块>/<模块>.module.json`，未命中即报错中止编译（2026-10-18 前的 `../../../../out/export/<X>` 全量旧路径已废弃）。
+- **跑 ServerTest 报 `SLangServer` 引用找不到（references 未命中，编译中止）**：ServerTest（SLangServer P0~P4.5 验收用例集）依赖第四件库模块 `SLangServer`（`SLangCore\Lib\SLang\Server\`，非 Core/Std/Math 系统库，不享受运行目录 lib\ 官方库回落）。`compile-stdlib` 三件套不覆盖它，需先手动编译一次：`dotnet run --project simple_language\source\SimpleLanguageFront.csproj -- compile -e ir -p SlangAllInOne\SLangCore\Lib\SLang\Server\Server.sp --format binary --no-banner`（产物落 `SlangAllInOne\out\export\SLangServer\`）。
+- **`test\Other\*` 用例集 references 形态（2026-10-18 规则定稿）**：全部 53 个测试工程 jsonc 已统一为 `{ "path": "./lib/<名>.slb" }`（Core/Std/Math 系统库，工程内落空自动回落运行目录 lib\ 官方库直查，name/uuid 省略由导出侧自动回填）；非系统库引用（SLangServer/SLangMysql/Tensora/ConstLib/FinalLib）path 直指产物文件 `<上跳>/out/export/<模块>/<模块>.slb`，未命中即报错中止编译（2026-10-18 前的 `../../../../out/export/<X>` 全量旧路径已废弃）。
 - **字符串错乱 / 断言随机失败**：通常是新旧两棵构建树互相覆盖 DLL 所致，坚持只用 `csimple_lang\build\Debug` 这棵 Ninja 树（见第 2 节构建方式说明）。
 - **前端编译失败**：看 `out/export/<测试集名>/` 与 `build/logs/` 下的日志定位（详见 [`md/ai/DEBUG_WORKFLOW.md`](../ai/DEBUG_WORKFLOW.md)、[`md/ai/EXPORT_PATHS.md`](../ai/EXPORT_PATHS.md)）。

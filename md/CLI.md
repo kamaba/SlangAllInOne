@@ -21,10 +21,10 @@
 |------|------|
 | `slang <project>` | **裸工程路径 = 编译+运行一体化**（内部词 projectrun）：Front 编译 + C VM 运行。缺省 `--export-mode memory`（SLB 不落盘直传 VM）；`--export-mode output\|temp` 时先磁盘导出再从盘运行 |
 | `slang compile <project>` | 仅编译（Front 进程内）。缺省导出到 jsonc 配置的 export 目录 |
-| `slang run <module>` | 只运行**已编译**模块包（`.module.slb` / `.module.json`），不编译。裸模块包文件可省略 run：`slang Foo.module.slb` |
+| `slang run <module>` | 只运行**已编译**模块包（`.slb`），不编译。裸模块包文件可省略 run：`slang Foo.slb` |
 | `slang run-disk <module>` | `run` 的兼容别名 |
 | `slang info <module>` | 经 C VM 显示模块元数据（版本/依赖/符号表等） |
-| `slang publish <project>` | 发布（dotnet-publish 风格）：`both`（缺省）= 可运行 app exe（payload 附加 csimple_lang.exe + sqlite3.dll + lib\）+ `<Module>.module.slb`；`exe` / `slb` 只出其一。布局走 jsonc `publish` 段或 `--dest` |
+| `slang publish <project>` | 发布（dotnet-publish 风格）：`both`（缺省）= 可运行 app exe（payload 附加 csimple_lang.exe + sqlite3.dll + lib\）+ `<Module>.slb`；`exe` / `slb` 只出其一。布局走 jsonc `publish` 段或 `--dest` |
 | `slang new project <Name> [-p <dir>] [选项]` | 脚手架：`<dir>\<Name>\` 下成套落盘 `Name.sp / Name.jsonc / Name.sl / Name.md`（UTF-8 BOM，含 guide）。无选项时行为与旧版一致；选项见 §1.4 |
 | `slang new class <Name> [-p <dir>]` | 在 `<dir>` 找到的 `.sp` 旁创建 `<Name>.sl` 并登记进 jsonc |
 | `slang test <project>` | 跑工程 `tests/` 下的测试用例（第十八轮）：用例 = `tests\<Name>\` 目录工程（`<Name>.sl` 含 `Project._main_()` 入口 + `<Name>.jsonc`）；每个用例独立子进程编译+运行，**退出码 0 = PASS**，断言失败在用例里调 `SystemExit(非0)`（裸系统调用，Std 模块注册，引用 Std 即可用；正数透传为进程退出码）。输出逐用例 `[PASS]\|[FAIL] (exit=N)` + 汇总 `tests: N total, M passed, K failed`；全过 exit 0，否则 1；无 `tests/` 目录输出 `tests: none` exit 0。`--filter <子串>`（第十九轮）只跑名字含该子串的用例（大小写不敏感；无匹配输出 `tests: none matched filter` exit 0） |
@@ -32,7 +32,7 @@
 | `slang lsp [--stdio]` | 内嵌 LSP 3.17 服务器（stdio JSON-RPC；VSCode 插件消费：诊断推送 + 符号补全） |
 | `slang lsp-compile` | LSP 专用诊断子命令（新进程单次编译，结构化 JSON 到 stdout；`slang lsp` 每轮自动调用，一般不直接用） |
 | `slang ffi-check <contract> [--dll <lib.dll>]` | FFI 契约独立校验（`.slffi.json`）：schema 自检（version / functionList / structs / callbacks）+ 可选 DLL 导出表逐符号比对；失败 exit 1（CI 友好） |
-| `slang pack-modules [--dest <dir>] [--config Debug\|Release]` | 编译标准库（Core → Std → Math）打包到 `<dest>\out\export\`（镜像仓库布局，package references 原样解析）；Debug 保留 `.module.json` + `.slb`，Release 只留 `.slb`（+ `math_lib.dll`）。dotnet publish 自动执行 |
+| `slang pack-modules [--dest <dir>] [--config Debug\|Release]` | 编译标准库（Core → Std → Math）打包到 `<dest>\out\export\`（镜像仓库布局，package references 原样解析）；各配置只留 `.slb`（+ `math_lib.dll`）。dotnet publish 自动执行 |
 | `slang pack-docs [--dest <dir>]` | 把用户向文档（syntax / lib / project / log / plugins + 入门文档）拷入 `<dest>\md\`（跳过内部 `md\ai\`、`md\vm\`）。dotnet publish 自动执行 |
 | `slang spm <sub>` | **spm 已独立为 spm.exe**（slang 同目录）：仅打印兼容提示并 exit 2，请直接 `spm <命令>` |
 | `slang version` | 显示宿主 / Front / C VM 三端版本（四端统一版本号，见 PROJECTS.md §7） |
@@ -44,7 +44,7 @@
 |------|------|
 | `-p, --project <path>` | 工程路径（目录 / `.sp` / `.jsonc`；`.sp` 可省——jsonc-only 工程按非 main 入口/库模块编译） |
 | `--export-mode <output\|temp\|memory>` | 前后端交接三态：output = jsonc 配置的导出目录（compile 缺省）；temp = `<cwd>\_temp\<module>\`；memory = 不落盘，SLB 直传 VM（裸工程编译+运行缺省） |
-| `--format <json\|binary\|binary+json>` | 导出格式：binary = 仅 SLB；json / binary+json = SLB（必写）+ `.module.json` 调试副本 |
+| `--format <binary>` | 导出格式：SLB 模块包（默认） |
 | `-O0..-O3` | Front 优化级别 |
 | `-t, --test` | 传 `-test` 给 C VM（VM 端入口 switch 暂未实现，两种路径均跑 `_main_`） |
 | `--no-banner` | 关闭横幅 |
@@ -74,11 +74,11 @@ slang project scan . --json --exclude out,publish              # 额外排除目
 slang SlangAllInOne\SLangCore\test\BaseTest\ProjectTest        # 编译+运行（内存交接）
 slang MyProject --export-mode temp                             # 临时目录导出后运行
 slang MyProject -- arg1 arg2                                   # 程序参数透传
-slang compile MyProject --format binary+json                   # 仅编译，SLB+json 副本
-slang run publish\MyApp.module.slb                             # 只运行编译产物
+slang compile MyProject --format binary                   # 仅编译，SLB
+slang run publish\MyApp.slb                             # 只运行编译产物
 slang publish MyProject --mode exe --cvm Release               # 发布 GUI-less exe
 slang test MyProject                                           # 跑工程 tests/ 用例
-slang info out\export\ProjectTest\ProjectTest.module.json      # 模块元数据
+slang info out\export\ProjectTest\ProjectTest.slb      # 模块元数据
 slang pack-modules --config Release                            # 标准库打包
 ```
 
@@ -88,7 +88,7 @@ slang pack-modules --config Release                            # 标准库打包
 
 | 选项 | 说明 |
 |------|------|
-| `--kind app\|module` | `module` 缺省不建 `.sp` 与同名 `.sl`，`compileFiles.files[]` 为空数组，`export.format` 写入 `binary+json`；guide 中 `.sp` 专属段落改为库模块说明 |
+| `--kind app\|module` | `module` 缺省不建 `.sp` 与同名 `.sl`，`compileFiles.files[]` 为空数组，`export.format` 写入 `binary`；guide 中 `.sp` 专属段落改为库模块说明 |
 | `--no-guide` | 完全不使用 `.md`：不生成、不重生成、不占位；已存在的 `.md` 不触碰 |
 | `--guide-description <text>` / `--desc` | 写入 guide 的 `AI-DESCRIPTION` 区（显式给出时覆盖保留区） |
 | `--no-sp` / `--with-sp` | 跳过 / 保留 `.sp`（module 缺省跳过，`--with-sp` 可保留） |

@@ -80,11 +80,11 @@ csimple_lang run <module.json> -- 参数1 参数2 参数3 ...
 sl compile -p f:\project\lang\simple_language\test\InputArgsTest\ProjectTest -e ir --no-banner
 ```
 
-产物：`simple_language\out\export\InputArgsTest\ProjectTest.module.json`
+产物：`simple_language\out\export\InputArgsTest\ProjectTest.slb`
 
 ## 运行与预期输出
 
-以下用 `$mod` 指代 `f:\project\lang\simple_language\out\export\InputArgsTest\ProjectTest.module.json`，
+以下用 `$mod` 指代 `f:\project\lang\simple_language\out\export\InputArgsTest\ProjectTest.slb`，
 `$vm` 指代 `f:\project\lang\csimple_lang\build\Debug\bin\csimple_lang.exe`。
 
 ### 方式一：无参数（验证空数组）

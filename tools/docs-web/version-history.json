@@ -1,5 +1,68 @@
 [
  {
+  "at": "2026-11-25T11:58:05.124Z",
+  "key": "vscode",
+  "from": "0.0.71",
+  "to": "0.0.72",
+  "file": "slang_vscode_plugin/package.json"
+ },
+ {
+  "at": "2026-11-25T11:58:04.885Z",
+  "key": "host",
+  "from": "0.0.71",
+  "to": "0.0.72",
+  "file": "SlangAllInOne/SlangAllInOne.csproj"
+ },
+ {
+  "at": "2026-11-25T11:58:04.671Z",
+  "key": "cvm",
+  "from": "0.0.71",
+  "to": "0.0.72",
+  "file": "csimple_lang/src/cli/cli_version.h"
+ },
+ {
+  "at": "2026-11-25T11:58:04.448Z",
+  "key": "front",
+  "from": "0.0.71",
+  "to": "0.0.72",
+  "file": "simple_language/source/CLI/CommandExecutor.cs"
+ },
+ {
+  "at": "2026-11-25T09:36:41.048Z",
+  "key": "vscode",
+  "from": "0.0.70",
+  "to": "0.0.71",
+  "file": "slang_vscode_plugin/package.json"
+ },
+ {
+  "at": "2026-11-25T09:36:40.805Z",
+  "key": "host",
+  "from": "0.0.70",
+  "to": "0.0.71",
+  "file": "SlangAllInOne/SlangAllInOne.csproj"
+ },
+ {
+  "at": "2026-11-25T09:36:40.579Z",
+  "key": "cvm",
+  "from": "0.0.70",
+  "to": "0.0.71",
+  "file": "csimple_lang/src/cli/cli_version.h"
+ },
+ {
+  "at": "2026-11-25T09:36:40.329Z",
+  "key": "front",
+  "from": "0.0.70",
+  "to": "0.0.71",
+  "file": "simple_language/source/CLI/CommandExecutor.cs"
+ },
+ {
+  "at": "2026-11-25T07:36:29.001Z",
+  "key": "plugin:csharp_mono",
+  "from": "0.1.0",
+  "to": "0.2.0",
+  "file": "plugin/csharp_mono/plugin.jsonc"
+ },
+ {
   "at": "2026-11-03T07:42:06.793Z",
   "key": "package:Core",
   "from": "9.9.9",

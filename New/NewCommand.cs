@@ -501,8 +501,7 @@ $@"{{
     ""desc"": ""{desc}"",
     ""mainVersion"": 0,
     ""subVersion"": 0,
-    ""buildVersion"": 1,
-    ""buildSubVersion"": 0
+    ""buildVersion"": 1
   }},
   ""source"": {{
     ""root"": "".""

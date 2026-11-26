@@ -46,7 +46,6 @@ jsonc整体，增加 AOT, Mix, PureCVM,
 把现在的游戏在网页上跑起来
 然后做一个菜单选择 可以制作各式的游戏  2048，贪吃蛇，类马里奥跳的游戏，cell 吞食天地
 plugin插件，增加编译环境手动配置 还有就是集成非下载环境的功能。  把带虚拟机的需要放到打包环境里边
-Csharp_mono自动集成
 JAVA_HOME的查找 
 cplug_clang 调研看多大。
 quickjs直接集成 
@@ -59,6 +58,8 @@ golang 使用环境集成
 在Image里这增加Gif的 解析和生成  https://www.runoob.com/pillow/imagesequence-module.html 可以仿着这个做
 于对Image可以在QT模块中的直接显示，中间的桥接
 https://www.runoob.com/pillow/pillow-image-module.html 把Image这种的方法 也多一些吧。
+整一个完整的demo 加载所有的module然后 可以跑任意内容 
+网页没有icp备案
 ##############################################################################################
 
 接完nodejs后，看看能不能贴合到nodejs里边 然后他们的服务

@@ -652,15 +652,17 @@ internal static class Program
                 Console.WriteLine("Missing module path. Use: slang run <module.slb|module.json>");
                 return null;
             }
-            if (!IsModulePackageFile(opts.ProjectPath))
+            var modulePath = opts.ProjectPath;
+            if (!modulePath.EndsWith(".slb", StringComparison.OrdinalIgnoreCase)
+                && !modulePath.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine($"run expects a compiled module (*.slb / *.json), got: {opts.ProjectPath}");
+                Console.WriteLine($"run expects a compiled module (*.slb / *.json), got: {modulePath}");
                 Console.WriteLine("Compile-and-run a project instead: slang <project>   (compile only: slang compile <project>)");
                 return null;
             }
-            if (!File.Exists(opts.ProjectPath))
+            if (!File.Exists(modulePath))
             {
-                Console.WriteLine($"module not found: {opts.ProjectPath}");
+                Console.WriteLine($"module not found: {modulePath}");
                 return null;
             }
             opts.ModuleJsonPath = opts.ProjectPath;
@@ -783,12 +785,11 @@ Commands:
   lsp [--stdio]              Start the embedded LSP 3.17 server over stdio
                             (diagnostics push + symbol completion; consumed
                             by the Slang VSCode extension, engine=lsp).
-  pack-modules              Compile the stdlib (Core -> Std -> Math, slb +
-   [--dest <dir>]             json debug copy) and pack it into <dest>\out\
-   [--config Debug|Release]   export\ mirroring the repo layout so package
-                              references resolve unchanged. Debug keeps
-                              .module.json + .slb; Release keeps only the
-                              mandatory .slb (+ math_lib.dll). Default dest =
+  pack-modules              Compile the stdlib (Core -> Std -> Math, .slb)
+   [--dest <dir>]             and pack it into <dest>\out\export\ mirroring
+   [--config Debug|Release]   the repo layout so package references resolve
+                              unchanged. Mandatory .slb (+ math_lib.dll).
+                              Default dest =
                               exe directory. Runs automatically on dotnet
                               publish (official release packaging).
   pack-docs                  Copy the user-facing FrontEnd markdown docs

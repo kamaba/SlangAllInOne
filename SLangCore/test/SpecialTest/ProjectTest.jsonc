@@ -318,6 +318,11 @@
       "abi": 1,
       "prefix": "sl_typescript_nodev8_",
       "lib": "../../../../plugin/typescript_nodev8/package/windows/cvm_typescript_nodev8.dll",
+      // 单文件引入（2026-11-27）：块头静态 import 经 parse 期提升到生成
+      // 源码模块顶部；此处声明的源码按原始文件名部署 scripts\，块内以
+      // './SlTsExtraUtil.mts' 相对 import 复用（Node 内置库 import 'node:*'
+      // 与 npm 包 node_modules 上溯解析无需声明，Node 自行装载）。
+      "sources": [ "TsCode/SlTsExtraUtil.mts" ],
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [

@@ -26,10 +26,11 @@ Project
 
         # TypeScriptNodeV8Test：@typescript_nodev8 块（Node.js V8 引擎 + TypeScript 类型擦除；
         # V/J/D/S 通道 + TS 语法 + JS 异常桥接 SL try-catch + 异常后栈恢复）。
-        # 前置：本机 node.exe（PATH）；用例集自 test\TypeScriptNodeV8\Main.sl 移植。
-        # 2026-11-26 注释：testTsSyntax 运行期崩溃（V8 通道回传既有 FAIL 的同一
-        # 问题域），中止进程阻塞后续 CPlusClang/Masm 等测试；修复后恢复。
-        #TypeScriptNodeV8Test.fun();
+        # 前置：本机 node.exe（plugin.jsonc nodeHome / PATH）；用例集自 test\TypeScriptNodeV8\Main.sl 移植。
+        # 2026-11-26 注释：testTsSyntax 运行期崩溃，中止进程阻塞后续测试。
+        # 2026-11-27 恢复：崩溃不再复现，全量 9/9 PASS（含新增静态 import 用例
+        # testStaticImports——Node 内置库 + jsonc sources 单文件引入）。
+        TypeScriptNodeV8Test.fun();
 
         # CPlusClangTest：@cplus_clang 块（Front 导出期经 clang++/cl 合并编译成
         # SLCpp.dll，labelExec 固定原型派发）+ 块内 SLCPP_EXPORT 导出函数

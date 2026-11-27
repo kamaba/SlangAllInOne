@@ -12,6 +12,11 @@ import Core;
 # 动态 import 执行。
 # 块语法（与 @csharp_mono / @javascript_quickjs 同构）：
 #   头区入通道  Int32 a <- $a   （slType 形参名 <- $外层SL变量）
+#   头区静态    import { EOL } from 'node:os';          （2026-11-27：块头静态
+#              import 声明提升到生成源码模块顶部——Node 内置库 / npm 包
+#              （node_modules 逐级上溯）/ 单文件（'./xxx.mts'，jsonc
+#              plugins.typescript_nodev8.sources 声明部署到 scripts\）；
+#              须单行完整书写，中段只能用动态 import('node:fs')）
 #   代码段      TypeScript 原文（interface/类型标注/泛型/await 均可擦除）
 #   末行出通道  $c <- expr;     （Front 脱糖为 AtSignLabelCall 哨兵 + run 的
 #                                return，J/D/S/O 四规格）
@@ -111,6 +116,27 @@ class TypeScriptNodeV8Test
         check( "string channel: hi V8 ts", r == "hi V8 ts" )
     }
 
+    # ---------------- 静态 import：Node 内置库 + 单文件（2026-11-27） ----------------
+    # 块头静态 import 声明由解析器提升到生成源码模块顶部——像普通 TS 文件
+    # 一样引入 Node 内置库（'node:os'）/ npm 包（node_modules 逐级上溯）/
+    # 单文件（'./SlTsExtraUtil.mts'，jsonc plugins.typescript_nodev8.sources
+    # 声明 TsCode\SlTsExtraUtil.mts 部署到 scripts\）。
+    static testStaticImports()
+    {
+        Console.println( "===== TypeScriptNodeV8Test.testStaticImports =====" )
+        string r = ""
+        int n = 5
+        @typescript_nodev8()
+        {
+            Int32 n <- $n
+            import { EOL } from 'node:os';
+            import { addTen, GREET } from './SlTsExtraUtil.mts';
+            const v: number = addTen(n) + GREET.length + EOL.length;
+            String $r <- String(v);
+        }
+        check( "static import (node builtin + single file): addTen(5)+4+2 == 21", r == "21" )
+    }
+
     # ---------------- TS 类型语法：interface / 泛型 / 箭头 / await ----------------
     static testTsSyntax()
     {
@@ -188,6 +214,7 @@ class TypeScriptNodeV8Test
         testIntChannel()
         testDoubleChannel()
         testStringChannel()
+        testStaticImports()
         testTsSyntax()
         testJsException()
         testAfterCatch()

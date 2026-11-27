@@ -8,6 +8,9 @@
 #   4.  文件路径往返：save -> probeFile -> load -> File.delete 清理
 #   5.  错误路径：垃圾字节 / 不存在文件 / 无效 buffer
 #   6.  纯 SL 像素运算：setPixel/getPixel / fill / flipY / crop / convertTo
+#   7.  GIF 动画拆解/合成：GifEncoder 命令式逐帧合成 / GifDocument 声明式 /
+#       Gif.decode 拆解回帧（延迟 / 循环数 / 透明语义 / 量化容差 / LZW
+#       满表大帧字节精确） / ImageIO 静态 GIF 单帧路径 / 文件往返 / 错误路径
 #
 # 运行：dotnet run --project Project\CSimpleVMTest\CSimpleVMTest.csproj --
 #       SLangCore\test\Other\ImageTest\ProjectTest.jsonc
@@ -147,6 +150,92 @@ class ImageTest
         }
         Int32 count = a.width * a.height * 3
         ret total / count
+    }
+
+    # 4 色象限图（shift 轮转配色；多帧共享同一 4 色全局调色板 -> 精确直配）
+    static Image.ImageBuffer makeQuads( int w, int h, int shift )
+    {
+        Image.ImageBuffer b = Image.ImageBuffer( w, h, Image.EPixelFormat.Rgba8 )
+        int y = 0
+        while y < h
+        {
+            int x = 0
+            while x < w
+            {
+                int q = 3
+                if y < h / 2
+                {
+                    if x < w / 2 { q = 0 } else { q = 1 }
+                }
+                else
+                {
+                    if x < w / 2 { q = 2 } else { q = 3 }
+                }
+                int c = ( q + shift ) % 4
+                if c == 0 { b.setPixel( x, y, ColorInt( 200, 40, 80, 255 ) ) }
+                elif c == 1 { b.setPixel( x, y, ColorInt( 40, 200, 120, 255 ) ) }
+                elif c == 2 { b.setPixel( x, y, ColorInt( 80, 60, 200, 255 ) ) }
+                else { b.setPixel( x, y, ColorInt( 230, 200, 60, 255 ) ) }
+                x = x + 1
+            }
+            y = y + 1
+        }
+        ret b
+    }
+
+    # 象限图（左上象限 alpha 0 透明，其余不透明）
+    static Image.ImageBuffer makeQuadsAlpha( int w, int h )
+    {
+        Image.ImageBuffer b = Image.ImageBuffer( w, h, Image.EPixelFormat.Rgba8 )
+        int y = 0
+        while y < h
+        {
+            int x = 0
+            while x < w
+            {
+                if y < h / 2 && x < w / 2
+                {
+                    b.setPixel( x, y, ColorInt( 200, 40, 80, 0 ) )
+                }
+                elif y < h / 2
+                {
+                    b.setPixel( x, y, ColorInt( 40, 200, 120, 255 ) )
+                }
+                elif x < w / 2
+                {
+                    b.setPixel( x, y, ColorInt( 80, 60, 200, 255 ) )
+                }
+                else
+                {
+                    b.setPixel( x, y, ColorInt( 230, 200, 60, 255 ) )
+                }
+                x = x + 1
+            }
+            y = y + 1
+        }
+        ret b
+    }
+
+    # ncolors 种纯色（r=k,0,0）LCG 伪随机布点：唯一色 <= 255 精确直配，
+    # 16384 像素长流把 LZW 词典推过 4096 满表（CLEAR 复位路径）
+    static Image.ImageBuffer makeNoise( int w, int h, int ncolors )
+    {
+        Image.ImageBuffer b = Image.ImageBuffer( w, h, Image.EPixelFormat.Rgba8 )
+        int seed = 1
+        int y = 0
+        while y < h
+        {
+            int x = 0
+            while x < w
+            {
+                seed = ( seed * 75 ) % 65537
+                int k = seed % ncolors
+                b.setPixel( x, y, ColorInt( k, 0, 0, 255 ) )
+                x = x + 1
+            }
+            y = y + 1
+        }
+        ret b
     }
 
     static fun()
@@ -295,6 +384,194 @@ class ImageTest
         check( "T53 convertTo Gray8 channels == 1", gray != null && gray.channelCount == 1 )
         Image.ImageBuffer backRgba = gray.convertTo( Image.EPixelFormat.Rgba8 )
         check( "T54 Gray8 -> Rgba8 channels == 4", backRgba != null && backRgba.channelCount == 4 )
+
+        # ── 11. GIF 动画拆解 / 合成 ─────────────────────────────
+        # 11a. 命令式编码器：new -> addFrameWithDelay x3 -> build（一次性）
+        int qw = 32
+        int qh = 24
+        Image.ImageBuffer q1 = ImageTest.makeQuads( qw, qh, 0 )
+        Image.ImageBuffer q2 = ImageTest.makeQuads( qw, qh, 1 )
+        Image.ImageBuffer q3 = ImageTest.makeQuads( qw, qh, 2 )
+        Image.GifEncoder genc = Image.GifEncoder( qw, qh, 0 )
+        check( "T55 GifEncoder ctor valid", genc != null && genc.isValid )
+        bool addAll = genc.addFrameWithDelay( q1, 0 )
+        addAll = genc.addFrameWithDelay( q2, 100 ) && addAll
+        addAll = genc.addFrameWithDelay( q3, 250 ) && addAll
+        check( "T56 GifEncoder addFrameWithDelay x3", addAll )
+        check( "T57 GifEncoder frameCount == 3", genc.frameCount == 3 )
+        Array<UInt8> anim = genc.build()
+        check( "T58 GifEncoder.build not null", anim != null )
+        check( "T59 gif bytes > 100", anim != null && anim.length > 100 )
+        check( "T60 GifEncoder one-shot after build", !genc.isValid && !genc.addFrame( q1 ) )
+        genc.close()
+
+        # 11b. 容器嗅探（probeMem 识别 GIF）
+        Image.ImageInfo gpi = null
+        if anim != null
+        {
+            gpi = Image.ImageFfi.probeMem( anim )
+        }
+        check( "T61 gif probeMem format", gpi != null && gpi.format == Image.EImageFormat.Gif )
+        check( "T62 gif probeMem w/h", gpi != null && gpi.width == qw && gpi.height == qh )
+
+        # 11c. 拆解：Gif.decode -> GifDocument（循环 / 延迟 / 像素全对）
+        Image.GifDocument doc = Image.Gif.decode( anim )
+        check( "T63 Gif.decode doc not null", doc != null )
+        check( "T64 gif doc w/h", doc != null && doc.width == qw && doc.height == qh )
+        check( "T65 gif doc frameCount == 3", doc != null && doc.frameCount == 3 )
+        check( "T66 gif doc loopCount == 0 (infinite)", doc != null && doc.loopCount == 0 )
+        Image.GifFrame gf0 = null
+        Image.GifFrame gf1 = null
+        Image.GifFrame gf2 = null
+        if doc != null
+        {
+            gf0 = doc.frameAt( 0 )
+            gf1 = doc.frameAt( 1 )
+            gf2 = doc.frameAt( 2 )
+        }
+        check( "T67 gif frame delays [0,100,250]ms", gf0 != null && gf1 != null && gf2 != null && gf0.delayMs == 0 && gf1.delayMs == 100 && gf2.delayMs == 250 )
+        bool f0same = false
+        bool f1same = false
+        bool f2same = false
+        if gf0 != null && gf1 != null && gf2 != null
+        {
+            f0same = ImageTest.bytesEqual( q1.pixelBytes(), gf0.image.pixelBytes() )
+            f1same = ImageTest.bytesEqual( q2.pixelBytes(), gf1.image.pixelBytes() )
+            f2same = ImageTest.bytesEqual( q3.pixelBytes(), gf2.image.pixelBytes() )
+        }
+        check( "T68 gif frame0 byte-exact (palette direct hit)", f0same )
+        check( "T69 gif frame1 byte-exact", f1same )
+        check( "T70 gif frame2 byte-exact", f2same )
+        check( "T71 gif frameAt out-of-range -> null", doc != null && doc.frameAt( 3 ) == null && doc.frameAt( -1 ) == null )
+
+        # 11d. 单帧渐变：量化容差 + 无 NETSCAPE（2 参 ctor，loopCount -1）
+        Image.GifEncoder ggrad = Image.GifEncoder( w, h )
+        bool gAdd = ggrad.addFrame( grad )
+        Array<UInt8> gbytes = ggrad.build()
+        check( "T72 single-frame gradient gif built", gAdd && gbytes != null )
+        Image.GifDocument gdoc = Image.Gif.decode( gbytes )
+        check( "T73 gradient gif frameCount == 1 && loopCount == -1", gdoc != null && gdoc.frameCount == 1 && gdoc.loopCount == -1 )
+        Int32 gerr = 999999
+        if gdoc != null
+        {
+            Image.GifFrame gfr = gdoc.frameAt( 0 )
+            if gfr != null
+            {
+                gerr = ImageTest.lossyAvgError( grad, gfr.image )
+            }
+        }
+        Console.println( "gif gradient avg per-channel error = " + gerr.toString() )
+        check( "T74 gradient gif avg error < 24", gerr < 24 )
+
+        # 11e. 透明语义：alpha 0 象限 <-> GCE 透明索引
+        Image.ImageBuffer qa = ImageTest.makeQuadsAlpha( qw, qh )
+        Image.GifEncoder tenc = Image.GifEncoder( qw, qh, -1 )
+        bool tAdd = tenc.addFrameWithDelay( qa, 80 )
+        Array<UInt8> tbytes = tenc.build()
+        Image.GifDocument tdoc = Image.Gif.decode( tbytes )
+        bool tA0 = false
+        bool tA255 = false
+        if tdoc != null
+        {
+            Image.GifFrame tfr = tdoc.frameAt( 0 )
+            if tfr != null
+            {
+                Image.ImageBuffer tb = tfr.image
+                ColorInt ta = tb.getPixel( qw / 4, qh / 4 )
+                ColorInt tc1 = tb.getPixel( qw * 3 / 4, qh / 4 )
+                ColorInt tc2 = tb.getPixel( qw / 4, qh * 3 / 4 )
+                ColorInt tc3 = tb.getPixel( qw * 3 / 4, qh * 3 / 4 )
+                tA0 = ta.a == 0
+                tA255 = tc1.a == 255 && tc2.a == 255 && tc3.a == 255
+            }
+        }
+        check( "T75 gif transparent quadrant roundtrip", tAdd && tbytes != null && tdoc != null && tA0 && tA255 )
+
+        # 11f. LZW 词典长流：128x128、200 色噪声（palette 精确直配 -> 字节
+        #      精确往返；词典必然越过 4096 满表走 CLEAR 复位路径）
+        Image.ImageBuffer nz = ImageTest.makeNoise( 128, 128, 200 )
+        Image.GifEncoder nenc = Image.GifEncoder( 128, 128, 0 )
+        bool nAdd = nenc.addFrameWithDelay( nz, 40 )
+        Array<UInt8> nbytes = nenc.build()
+        Image.GifDocument ndoc = Image.Gif.decode( nbytes )
+        bool nSame = false
+        if nAdd && ndoc != null
+        {
+            Image.GifFrame nfr = ndoc.frameAt( 0 )
+            if nfr != null
+            {
+                nSame = ImageTest.bytesEqual( nz.pixelBytes(), nfr.image.pixelBytes() )
+            }
+        }
+        check( "T76 gif noise 200-color byte-exact (LZW dict fills)", nSame )
+
+        # 11g. ImageIO 静态 GIF（单帧走 SLI_FMT_GIF 静态路径）
+        Array<UInt8> sgif = Image.ImageIO.encode( q1, Image.EImageFormat.Gif, 100 )
+        check( "T77 ImageIO.encode(Gif) not null", sgif != null )
+        Image.ImageInfo sinfo = null
+        if sgif != null
+        {
+            sinfo = Image.ImageFfi.probeMem( sgif )
+        }
+        check( "T78 static gif probeMem format+w/h", sinfo != null && sinfo.format == Image.EImageFormat.Gif && sinfo.width == qw && sinfo.height == qh )
+        Image.ImageBuffer sback = null
+        if sgif != null
+        {
+            sback = Image.ImageIO.decode( sgif, Image.EImageFormat.Gif )
+        }
+        bool sSame = false
+        if sback != null
+        {
+            sSame = ImageTest.bytesEqual( q1.pixelBytes(), sback.pixelBytes() )
+        }
+        check( "T79 static gif decode byte-exact", sSame )
+
+        # 11h. 声明式文档 + 文件往返（encode / decodeFrames / save / decodeFile）
+        Image.GifDocument mdoc = Image.GifDocument( qw, qh )
+        mdoc.loopCount = 3
+        bool m1 = mdoc.addFrameWithDelay( q1, 50 )
+        bool m2 = mdoc.addFrameWithDelay( q2, 60 )
+        Array<UInt8> mbytes = Image.Gif.encode( mdoc )
+        check( "T80 Gif.encode(doc) not null", m1 && m2 && mbytes != null )
+        var mfr = Image.Gif.decodeFrames( mbytes )
+        check( "T81 Gif.decodeFrames length == 2", mfr != null && mfr.length == 2 )
+        string tmpAnim = "image_test_tmp_anim.gif"
+        bool animSaved = Image.Gif.save( mdoc, tmpAnim )
+        check( "T82 Gif.save file ok", animSaved )
+        Image.GifDocument fdoc = Image.Gif.decodeFile( tmpAnim )
+        check( "T83 Gif.decodeFile not null", fdoc != null )
+        check( "T84 file gif frameCount == 2 && loopCount == 3", fdoc != null && fdoc.frameCount == 2 && fdoc.loopCount == 3 )
+        bool fdelay = false
+        bool fpix = false
+        if fdoc != null
+        {
+            Image.GifFrame ffr0 = fdoc.frameAt( 0 )
+            Image.GifFrame ffr1 = fdoc.frameAt( 1 )
+            if ffr0 != null && ffr1 != null
+            {
+                fdelay = ffr0.delayMs == 50 && ffr1.delayMs == 60
+                fpix = ImageTest.bytesEqual( q1.pixelBytes(), ffr0.image.pixelBytes() )
+            }
+        }
+        check( "T85 file gif delays [50,60]ms", fdelay )
+        check( "T86 file gif frame0 byte-exact", fpix )
+        check( "T87 File.delete anim cleanup", File.delete( tmpAnim ) )
+
+        # 11i. 错误路径
+        check( "T88 Gif.decode(garbage) == null", Image.Gif.decode( garbage ) == null )
+        check( "T89 Gif.decodeFile(missing) == null", Image.Gif.decodeFile( "no_such_file_xyz.gif" ) == null )
+        check( "T90 Gif.encode(null) == null", Image.Gif.encode( null ) == null )
+        check( "T91 Gif.save(null, path) == false", !Image.Gif.save( null, "image_test_tmp_null.gif" ) )
+        Image.GifDocument edoc = Image.GifDocument( qw, qh )
+        check( "T92 Gif.encode(empty doc) == null", Image.Gif.encode( edoc ) == null )
+        Image.GifEncoder zenc = Image.GifEncoder( qw, qh )
+        Array<UInt8> zbytes = zenc.build()
+        check( "T93 empty GifEncoder.build == null && invalid", zbytes == null && !zenc.isValid )
+        Image.ImageBuffer smol = Image.ImageBuffer( 16, 12, Image.EPixelFormat.Rgba8 )
+        check( "T94 GifDocument.addFrameWithDelay rejects mismatch/null", !edoc.addFrameWithDelay( smol, 10 ) && !edoc.addFrame( null ) )
+        Image.GifEncoder mism = Image.GifEncoder( qw, qh )
+        check( "T95 GifEncoder.addFrame rejects mismatch/null", !mism.addFrame( smol ) && !mism.addFrame( null ) )
+        mism.close()
 
         Console.println( "" )
         Console.println( "===== ImageTest end PASS=" + s_pass.toString() + " FAIL=" + s_fail.toString() + " =====" )

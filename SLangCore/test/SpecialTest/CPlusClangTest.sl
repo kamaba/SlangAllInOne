@@ -38,6 +38,11 @@ import Core;
 #（popcount/xor 交换/IEEE754 memcpy 双关）⑮ 泛型递归 lambda + 引用传参
 # ⑯ std::thread 线程池 + std::atomic 归并 ⑰ unique_ptr RAII 数组
 # ⑱ std::map + 迭代器 + find。
+# ⑲ 外部库引入（工程 jsonc plugins.cplus_clang.references 显式清单）：
+# CLangdll.h（所在目录追加 -I）+ CLangdll.lib（追加链接输入）+
+# CLangdll.dll（写 SLCpp.dll.deps 伴随清单，cvm 装载目标库前预装载
+# 同位命中）——块内 #include 引入头并直接调用外部库导出函数，编译/
+# 链接/运行全链路（Front 导出期平拷引用入插件 libDir）。
 # 块内 C++ 代码约束：`<-` 序列禁用（通道标记语法）、#include 只能在块顶
 #（入通道行之后）、块内不用 # 行注释（SL lexer 吞换行）。
 # 前置：先跑 plugin\cplus_clang\cvm\build-cplus-clang.ps1（插件 dll +
@@ -88,6 +93,14 @@ class CPlusClangTest
     static string s_ffiGreet( string name )
     {
         ret ""
+    }
+
+    # 外部源导出（COrCplusCode\SlCppExtraUtil.cpp 的 SLCPP_EXPORT——
+    # 外部源与块体同批合并编译，其导出同样进 slffi 契约；符号绑定同上）
+    @DllImport( "SLCpp", "cpp_extra_ffi_mul" )
+    static long s_ffiExtMul( long a, long b )
+    {
+        ret 0
     }
 
     # ---------------- ① 无通道纯块（printf 直打进程控制台） ----------------
@@ -600,6 +613,62 @@ class CPlusClangTest
         check( "std::map: iterate+find packed == 13545 (total=135, grace=45)", packed == 13545 )
     }
 
+    # ---------------- ⑲ 外部库引入（CLangdll：references 全链路） ----------------
+    # 工程引用 ProjectTest.jsonc plugins.cplus_clang.references 三条目：
+    # .h → 所在目录 -I（#include "CLangdll.h" 引入原型）；.lib → 链接
+    # 输入（frontend 自动追加）；.dll → SLCpp.dll.deps 伴随清单（cvm
+    # labelExec 装载目标库前按自身目录逐个预装载，import 表命中）。
+    # 覆盖：整型/多宽度标量混合/i64 算术族/Utf8 字符串进出（字符串经
+    # 块内 printf 输出验证；块出通道仅 1 个，数值校验走 $packed）。
+    # sl_mix_all(1,2,3,4,5.5,6.5) = 1+4+9+16+27.5+39 = 96.5（精确）。
+    static testExternalLib()
+    {
+        Console.println( "===== CPlusClangTest.testExternalLib =====" )
+        int packed = 0
+        @cplus_clang()
+        {
+        #include "CLangdll.h"
+        #include <cstdio>
+        int r1 = simplelanguage_addtest( 20, 22 );
+        double d1 = sl_mix_all( 1, 2, 3, 4, 5.5, 6.5 );
+        long long r2 = sl_add( 100, 23 );
+        long long r3 = sl_mul2( 21 );
+        long long r4 = sl_mul10( 4 );
+        const char* e = sl_echo( "ext" );
+        const char* c = sl_concat( "foo", "bar" );
+        long long n = sl_strlen_utf8( c );
+        printf( "extlib: add=%d mix=%.1f add2=%lld mul2=%lld mul10=%lld echo=%s concat=%s len=%lld\n", r1, d1, r2, r3, r4, e, c, n );
+        $packed <- (int64_t)( d1 * 100 ) + r1 + r2 + r3 + r4;
+        }
+        Console.println( "extlib packed = " + packed.toString() )
+        check( "external lib: mix*100+add+add2+mul2+mul10 packed == 9897 (9650+42+123+42+40)", packed == 9897 )
+    }
+
+    # ---------------- ⑳ 外部源（Code 目录规范位：COrCplusCode\） ----------------
+    # jsonc plugins.cplus_clang.sources = COrCplusCode\SlCppExtraUtil.cpp（与块体
+    # 条目同批合并编译进 SLCpp.dll——同一 clang++ 命令多 TU 合并链接）：
+    # 块内前置声明后调用其中函数；其 SLCPP_EXPORT 导出同样进
+    # SLCpp.dll.slffi 契约（FFI 直调见 s_ffiExtMul）。
+    static testExternalSource()
+    {
+        Console.println( "===== CPlusClangTest.testExternalSource =====" )
+        int packed = 0
+        @cplus_clang()
+        {
+        #include <cstdio>
+        long long sl_cpp_extra_add( long long a, long long b );
+        long long cpp_extra_ffi_mul( long long a, long long b );
+        long long r1 = sl_cpp_extra_add( 20, 22 );
+        long long r2 = cpp_extra_ffi_mul( 6, 7 );
+        printf( "extsrc: sl_cpp_extra_add(20,22)=%lld cpp_extra_ffi_mul(6,7)=%lld\n", r1, r2 );
+        $packed <- r1 * 100 + r2;
+        }
+        int ffi = s_ffiExtMul( 3, 14 )
+        Console.println( "extsrc packed = " + packed.toString() + " ffiExtMul(3,14) = " + ffi.toString() )
+        check( "cppCodeDir: labelExec sl_cpp_extra_add(20,22) + ffi_mul(6,7) packed == 4242", packed == 4242 )
+        check( "cppCodeDir: cpp_extra_ffi_mul(3,14) == 42 (FFI direct)", ffi == 42 )
+    }
+
     static fun()
     {
         Console.println( "========== CPlusClangTest start ==========" )
@@ -621,6 +690,8 @@ class CPlusClangTest
         testThreads()
         testSmartPointers()
         testMapIteration()
+        testExternalLib()
+        testExternalSource()
         Console.println( "========== CPlusClangTest end: passed=" + passed.toString() + " failed=" + failed.toString() + " ==========" )
     }
 }

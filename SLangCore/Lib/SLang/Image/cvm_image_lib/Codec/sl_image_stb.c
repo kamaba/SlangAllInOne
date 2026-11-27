@@ -74,6 +74,38 @@ unsigned char* sli_stb_decode_mem(const unsigned char* data, int64_t size,
     return pixels;
 }
 
+/* GIF 动画解码：帧连排 RGBA8（处置语义已合成）+ 每帧毫秒延迟 + NETSCAPE 原值 */
+unsigned char* sli_stb_decode_gif(const unsigned char* data, int64_t size,
+                                   int* w, int* h, int* frames,
+                                   int** delays_ms, int* loop)
+{
+    int cw = 0, ch = 0, cz = 0, cc = 0;
+    int* delays = NULL;
+    unsigned char* pixels;
+    const char* why = NULL;
+
+    if (size > (int64_t)INT_MAX)
+    {
+        sli_set_error_detail(SLI_E_TOO_LARGE, "input %lld bytes", (long long)size);
+        return NULL;
+    }
+    pixels = stbi_load_gif_from_memory(data, (int)size, &delays,
+                                       &cw, &ch, &cz, &cc, 4);
+    if (!pixels)
+    {
+        why = stbi_failure_reason();
+        sli_set_error_detail(SLI_E_DECODE, "stb gif: %s",
+                             why ? why : "unknown reason");
+        return NULL;
+    }
+    *w = cw;
+    *h = ch;
+    *frames = cz;
+    *delays_ms = delays;          /* stb 产出毫秒数组（所有权移交） */
+    *loop = sli_gif_scan_loop(data, size);   /* -1 = 无扩展 */
+    return pixels;
+}
+
 /* ================= 编码 ================= */
 
 /* 增长缓冲（_to_func 回调的落点） */

@@ -18,12 +18,14 @@ Image/
 │   ├── ImageFfi.sl             # C 层 FFI 静态绑定 + 内存搬运（本模块核心）
 │   ├── ImageIO.sl              # 门面：load/save/probe/encode/decode/convert
 │   ├── Png.sl / Jpeg.sl / Webp.sl / Svg.sl   # 容器模型与选项（编解码本体已下沉 FFI）
+│   ├── Gif.sl                 # GIF 动画拆解/合成（GifFrame/GifDocument/GifEncoder/Gif 门面）
 │   └── export/DebugCode/       # Front 调试快照（Code/Token/Node/Meta/IR）
 ├── cvm_image_lib/              # C 层 VS 工程
-│   ├── vm_sl_image.h           # 公开契约（22 个 sli_* 导出，普通 C ABI）
-│   ├── sl_image.c              # 槽表/粘性错误/格式嗅探/probe/解码编码主路
+│   ├── vm_sl_image.h           # 公开契约（35 个 sli_* 导出：22 静图 + 13 GIF 动画，普通 C ABI）
+│   ├── sl_image.c              # 槽表/粘性错误/格式嗅探/probe/解码编码主路 + sli_gif_* 分派
 │   ├── sl_image_internal.h
-│   ├── Codec/sl_image_stb.c    # stb 唯一 IMPLEMENTATION 编译点
+│   ├── Codec/sl_image_stb.c    # stb 唯一 IMPLEMENTATION 编译点（含 stbi_load_gif_from_memory）
+│   ├── Codec/sl_image_gif.c    # 自研 GIF89a 编码器（调色板量化 + LZW + NETSCAPE2.0 循环扩展）
 │   ├── Codec/sl_image_wic.c    # WIC 兜底（纯 C lpVtbl 调用，零外部依赖）
 │   ├── cvm_sl_image_lib.vcxproj(.filters)   # VS 工程（Release|x64 → sl_image_lib.dll）
 │   ├── third_party/stb/        # stb_image.h / stb_image_write.h + LICENSE.md
@@ -41,10 +43,27 @@ Image/
   `writeI8/readUInt8` 搬运，上限 `ImageFfi.MAX_INLINE_BYTES`（4 MiB）；大图走文件路径
   API（`probeFile` / `decodeFile` / `saveMem` 落盘段）零搬运直通 C 层
 
+## GIF 动画（拆解 / 合成）
+
+- **拆解**（GIF → 普通图）：`Image.Gif.decode( bytes )` → `GifDocument`（width/height/
+  loopCount/frames），`frames[i]` → `GifFrame`（`image: ImageBuffer` + `delayMs: Int32`）；
+  只要帧不要元数据用 `decodeFrames( bytes )` → `List<ImageBuffer>` 一步到位；文件路径版
+  `decodeFile( path )`（`Image.Gif.decodeFile`）
+- **合成**（普通图 → GIF）：
+  - 命令式流式：`Image.GifEncoder( w, h, loopCount )` → `addFrame( buffer )` /
+    `addFrameWithDelay( buffer, delayMs )` ×N（帧尺寸必须匹配 ctor 的 w/h）→
+    `build()` → `Array<UInt8>`（一次性，build 后编码器失效），`save( path )` 落盘
+  - 声明式文档：`GifDocument( w, h )` + `addFrame / addFrameWithDelay` →
+    `Image.Gif.encode( doc )` / `Image.Gif.save( doc, path )`
+  - 单帧捷径：`ImageIO.encode( buffer, EImageFormat.Gif )`（无循环扩展，loopCount == -1）
+- **编码器**：自研 GIF89a（调色板量化 + LZW 满表 CLEAR + NETSCAPE2.0 循环 + 逐帧 GCE 延迟）；
+  调色板直命中时 roundtrip 字节精确，量化帧误差受控（测试口径 < 24/通道）
+
 ## FFI 绑定链
 
 1. jsonc `dllImports` 段 `"static": "sl_image_lib"` → cvm 加载 SL 模块即预载 DLL 注册进 FFI.StaticLibrary
-2. SL 侧 `@DllStaticImport("sl_image_lib", "sli_xxx", "sig")`（22 个 `lib*` 薄封装）
+2. SL 侧 `@DllStaticImport("sl_image_lib", "sli_xxx", "sig")`（35 个 `lib*` 薄封装，含
+   `libGif*` 13 个）
 3. 装配期 payload 重写绑定表 → 运行期 `CallFFIStatic` 直调；**绑定失败静默回退 SL 函数体兜底**
    （false/0/""，`ensureReady() == false` 即兜底征兆）
 4. 签名格式：无括号 Cuda 风格 `"i32,i32,i32,i32,ptr->i64"`；零参写 `"->utf8"`
@@ -79,6 +98,15 @@ dotnet run --no-launch-profile --project D:\project\lang\SlangAllInOne\Project\C
    TIFF 的 `"II"` 同理改两字节显式比较。
 4. FFU 签名不要带括号；`data` / `out` 是 SL 关键字；enum 成员行内注释会致解析中断；
    跨行长链表达式必失败（单行多操作符链 OK）。
+5. **改模块后跑 ImageTest 三步落位**（产物命名简化遗留）：Front 只导出 `<名>.slb/.json`
+   新命名，而测试链路（CSimpleVMTest stage 通配 `*.module.*` + C VM 引用相对解析命中
+   `package\win32-debug\<模块>\`）认旧名 `<名>.module.slb`。导出后需手动双名落位
+   （`Copy-Item SLangImage.slb SLangImage.module.slb`、`json → module.json`），并把
+   `module.slb / module.json / sl_image_lib.dll` 三件套同步进 `package\win32-debug\<模块>\`，
+   否则 run 的是旧 slb / FFI 静态绑定失败（测试全兜底：`ensureReady()==false`、
+   version 空）。诊断：`$env:SL_VM_LOG="on"` 后跑 slang.exe，看
+   `<测试目录>\build\logs\VM.txt`（`DllStaticImport: not preloaded` / `LoadLibrary failed`
+   即命中此坑）。Gif.sl 用 `List<GifFrame>` 而非 `Array`（定长无 add）。
 
 ## 许可
 

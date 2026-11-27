@@ -242,6 +242,33 @@ class JavaTest
         check( "object tree: rebuilt q.y == 12 (3*4)", q.y == 12 )
     }
 
+    # ---------------- 外部源（Code 目录规范位：JavaCode\）----------------
+    # jsonc plugins.java_hotspot.sources = JavaCode\SlJvExtraUtil.java（与块体
+    # 条目同批 javac 合并编译，class 部署 classes\SLAtSign\ 包目录）——块内
+    # 直调同包包私有类 SlJvExtraUtil 的静态方法（无需 import）。int/string
+    # 各一块（块出通道首期仅支持 1 个）。
+    static testExternalSource()
+    {
+        Console.println( "===== JavaTest.testExternalSource =====" )
+        int n = 0
+        @java_hotspot()
+        {
+            long n = SlJvExtraUtil.add( 20, 22 );
+            System.out.println( "[JavaCode] SlJvExtraUtil.add(20,22) = " + n );
+            $n <- n;
+        }
+        string greet = ""
+        @java_hotspot()
+        {
+            String greet = SlJvExtraUtil.greet( "SL" );
+            System.out.println( "[JavaCode] SlJvExtraUtil.greet(SL) = " + greet );
+            string $greet <- greet;
+        }
+        Console.println( "external source n = " + n.toString() + " greet = " + greet )
+        check( "jvCodeDir: SlJvExtraUtil.add(20,22) == 42", n == 42 )
+        check( "jvCodeDir: SlJvExtraUtil.greet('SL') == 'Hi, SL!'", greet == "Hi, SL!" )
+    }
+
     static fun()
     {
         Console.println( "========== JavaTest start ==========" )
@@ -254,6 +281,7 @@ class JavaTest
         testThrow()
         testSessionReuse()
         testObjectTree()
+        testExternalSource()
         Console.println( "========== JavaTest end: passed=" + passed.toString() + " failed=" + failed.toString() + " ==========" )
     }
 }

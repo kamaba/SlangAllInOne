@@ -40,8 +40,10 @@ static int s_ready = 0;
 static int s_last_error = SLI_OK;
 static char s_detail[256];
 
-SliImage s_images[SLI_MAX_IMAGES];
-SliBlob  s_blobs[SLI_MAX_BLOBS];
+SliImage  s_images[SLI_MAX_IMAGES];
+SliBlob   s_blobs[SLI_MAX_BLOBS];
+SliGif    s_gifs[SLI_MAX_GIFS];
+SliGifEnc s_gif_encs[SLI_MAX_GIF_ENCODERS];
 
 void sli_set_error(int err)
 {
@@ -96,6 +98,8 @@ int sli_init(void)
     if (s_ready) return 1;
     memset(s_images, 0, sizeof(s_images));
     memset(s_blobs, 0, sizeof(s_blobs));
+    memset(s_gifs, 0, sizeof(s_gifs));
+    memset(s_gif_encs, 0, sizeof(s_gif_encs));
     s_ready = 1;
     sli_set_error(SLI_OK);
     return 1;
@@ -118,6 +122,27 @@ int sli_uninit(void)
         {
             free(s_blobs[i].data);
             memset(&s_blobs[i], 0, sizeof(SliBlob));
+        }
+    }
+    for (i = 0; i < SLI_MAX_GIFS; i++)
+    {
+        if (s_gifs[i].used)
+        {
+            free(s_gifs[i].pixels);
+            free(s_gifs[i].delays_ms);
+            memset(&s_gifs[i], 0, sizeof(SliGif));
+        }
+    }
+    for (i = 0; i < SLI_MAX_GIF_ENCODERS; i++)
+    {
+        if (s_gif_encs[i].used)
+        {
+            int f;
+            for (f = 0; f < s_gif_encs[i].count; f++)
+                free(s_gif_encs[i].frame_pix[f]);
+            free(s_gif_encs[i].frame_pix);
+            free(s_gif_encs[i].delays_ms);
+            memset(&s_gif_encs[i], 0, sizeof(SliGifEnc));
         }
     }
     s_ready = 0;
@@ -724,6 +749,16 @@ int64_t sli_encode_mem(int fmt, int quality, int w, int h, int64_t pixels_ptr)
     case SLI_FMT_TIFF:
         out = sli_wic_encode_tiff(rgba, w, h, &out_size);
         break;
+    case SLI_FMT_GIF:
+        /* 单帧静态 GIF：延迟 0、不写 NETSCAPE（loop=-1） */
+        {
+            unsigned char* frames[1];
+            int delays[1];
+            frames[0] = (unsigned char*)rgba;
+            delays[0] = 0;
+            out = sli_gif_encode_animated(w, h, 1, frames, delays, -1, &out_size);
+        }
+        break;
     default:
         sli_set_error_detail(SLI_E_UNSUPPORTED, "fmt %d encode", fmt);
         return 0;
@@ -793,5 +828,311 @@ int sli_blob_free(int64_t blob)
     if (!b) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
     free(b->data);
     memset(b, 0, sizeof(SliBlob));
+    return 1;
+}
+
+/* ================= GIF 动画（拆解 / 合成） ================= */
+
+static SliGif* gif_from_handle(int64_t h)
+{
+    int i = (int)(h - 1);
+    if (h <= 0 || i >= SLI_MAX_GIFS || !s_gifs[i].used) return NULL;
+    return &s_gifs[i];
+}
+
+static SliGifEnc* gif_enc_from_handle(int64_t h)
+{
+    int i = (int)(h - 1);
+    if (h <= 0 || i >= SLI_MAX_GIF_ENCODERS || !s_gif_encs[i].used) return NULL;
+    return &s_gif_encs[i];
+}
+
+/* GIF 解码产物入槽（所有权：pixels / delays_ms 移交；满槽时释放并报 LIMIT） */
+static int64_t gif_register(unsigned char* pixels, int w, int h,
+                            int frames, int* delays_ms, int loop)
+{
+    int i;
+    for (i = 0; i < SLI_MAX_GIFS; i++)
+    {
+        if (s_gifs[i].used) continue;
+        s_gifs[i].used = 1;
+        s_gifs[i].w = w;
+        s_gifs[i].h = h;
+        s_gifs[i].frames = frames;
+        s_gifs[i].loop = loop;
+        s_gifs[i].delays_ms = delays_ms;
+        s_gifs[i].pixels = pixels;
+        return (int64_t)(i + 1);
+    }
+    free(pixels);
+    free(delays_ms);
+    sli_set_error(SLI_E_LIMIT);
+    return 0;
+}
+
+/* 读整个文件到堆块（UTF-8 路径 -> wchar 打开；512MB 上限） */
+static unsigned char* read_file_all(const char* path_utf8, int64_t* out_size)
+{
+#if defined(_WIN32)
+    FILE* f = NULL;
+    long sz;
+    unsigned char* buf;
+    wchar_t wpath[1024];
+
+    if (!path_utf8 || !path_utf8[0]) { sli_set_error(SLI_E_BAD_PARAM); return NULL; }
+    if (!MultiByteToWideChar(CP_UTF8, 0, path_utf8, -1, wpath, (int)(sizeof(wpath) / sizeof(wchar_t)) - 1))
+    {
+        sli_set_error_detail(SLI_E_IO, "bad path encoding");
+        return NULL;
+    }
+    if (_wfopen_s(&f, wpath, L"rb") != 0 || !f)
+    {
+        sli_set_error_detail(SLI_E_IO, "open file");
+        return NULL;
+    }
+    if (fseek(f, 0, SEEK_END) != 0) { fclose(f); sli_set_error(SLI_E_IO); return NULL; }
+    sz = ftell(f);
+    if (sz <= 0 || sz > (long)(512 * 1024 * 1024))
+    {
+        fclose(f);
+        sli_set_error_detail(SLI_E_TOO_LARGE, "file %ld bytes", sz);
+        return NULL;
+    }
+    rewind(f);
+    buf = (unsigned char*)malloc((size_t)sz);
+    if (!buf) { fclose(f); sli_set_error(SLI_E_MEMORY); return NULL; }
+    if (fread(buf, 1, (size_t)sz, f) != (size_t)sz)
+    {
+        fclose(f);
+        free(buf);
+        sli_set_error_detail(SLI_E_IO, "short read");
+        return NULL;
+    }
+    fclose(f);
+    *out_size = (int64_t)sz;
+    return buf;
+#else
+    (void)path_utf8; (void)out_size;
+    sli_set_error(SLI_E_UNSUPPORTED);
+    return NULL;
+#endif
+}
+
+static int64_t gif_decode_common(const unsigned char* data, int64_t size)
+{
+    int w = 0, h = 0, frames = 0, loop = -1;
+    int* delays_ms = NULL;
+    unsigned char* pixels;
+
+    if (!data || size <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    pixels = sli_stb_decode_gif(data, size, &w, &h, &frames, &delays_ms, &loop);
+    if (!pixels) return 0;                      /* 错误已由 codec set */
+
+    if (frames <= 0)
+    {
+        free(pixels);
+        free(delays_ms);
+        sli_set_error_detail(SLI_E_DECODE, "gif frames %d", frames);
+        return 0;
+    }
+    if (!dims_ok(w, h)) { free(pixels); free(delays_ms); return 0; }
+
+    if (!delays_ms)                              /* stb 正常必产出；兜底全 0 */
+    {
+        delays_ms = (int*)calloc((size_t)frames, sizeof(int));
+        if (!delays_ms) { free(pixels); sli_set_error(SLI_E_MEMORY); return 0; }
+    }
+    return gif_register(pixels, w, h, frames, delays_ms, loop);
+}
+
+int64_t sli_gif_decode_file(const char* path_utf8)
+{
+#if defined(_WIN32)
+    int64_t size = 0;
+    unsigned char* buf;
+    int64_t gif;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    buf = read_file_all(path_utf8, &size);
+    if (!buf) return 0;
+    gif = gif_decode_common(buf, size);
+    free(buf);
+    return gif;
+#else
+    (void)path_utf8;
+    sli_set_error(SLI_E_UNSUPPORTED);
+    return 0;
+#endif
+}
+
+int64_t sli_gif_decode_mem(int64_t data_ptr, int64_t size)
+{
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!data_ptr || size <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    return gif_decode_common((const unsigned char*)(intptr_t)data_ptr, size);
+}
+
+int sli_gif_width(int64_t gif)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    return g->w;
+}
+
+int sli_gif_height(int64_t gif)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    return g->h;
+}
+
+int sli_gif_frame_count(int64_t gif)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    return g->frames;
+}
+
+int sli_gif_loop_count(int64_t gif)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return -1; }
+    return g->loop;
+}
+
+int sli_gif_frame_delay(int64_t gif, int frame)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return -1; }
+    if (frame < 0 || frame >= g->frames)
+    {
+        sli_set_error_detail(SLI_E_BAD_PARAM, "frame %d of %d", frame, g->frames);
+        return -1;
+    }
+    return g->delays_ms ? g->delays_ms[frame] : 0;
+}
+
+int sli_gif_frame_pixels(int64_t gif, int frame, int64_t dst_ptr, int64_t cap)
+{
+    SliGif* g = gif_from_handle(gif);
+    int64_t need;
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    if (frame < 0 || frame >= g->frames)
+    {
+        sli_set_error_detail(SLI_E_BAD_PARAM, "frame %d of %d", frame, g->frames);
+        return 0;
+    }
+    if (!dst_ptr || cap <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    need = (int64_t)g->w * (int64_t)g->h * 4;
+    if (cap < need)
+    {
+        sli_set_error_detail(SLI_E_TOO_LARGE, "cap %lld < %lld", (long long)cap, (long long)need);
+        return 0;
+    }
+    memcpy((void*)(intptr_t)dst_ptr, g->pixels + (size_t)((int64_t)frame * need), (size_t)need);
+    return 1;
+}
+
+int sli_gif_free(int64_t gif)
+{
+    SliGif* g = gif_from_handle(gif);
+    if (!g) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    free(g->pixels);
+    free(g->delays_ms);
+    memset(g, 0, sizeof(SliGif));
+    return 1;
+}
+
+int64_t sli_gif_encode_new(int w, int h, int loop)
+{
+    int i;
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dims_ok(w, h)) return 0;
+    if (loop < -1) loop = -1;
+    for (i = 0; i < SLI_MAX_GIF_ENCODERS; i++)
+    {
+        if (s_gif_encs[i].used) continue;
+        memset(&s_gif_encs[i], 0, sizeof(SliGifEnc));
+        s_gif_encs[i].used = 1;
+        s_gif_encs[i].w = w;
+        s_gif_encs[i].h = h;
+        s_gif_encs[i].loop = loop;
+        return (int64_t)(i + 1);
+    }
+    sli_set_error(SLI_E_LIMIT);
+    return 0;
+}
+
+int sli_gif_encode_add_frame(int64_t enc, int64_t pixels_ptr, int delay_ms)
+{
+    SliGifEnc* e = gif_enc_from_handle(enc);
+    unsigned char* copy;
+    int64_t frame_bytes;
+
+    if (!e) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    if (!pixels_ptr) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    if (delay_ms < 0) delay_ms = 0;
+    if (delay_ms > 655350) delay_ms = 655350;    /* GCE u16 厘秒上限 */
+
+    frame_bytes = (int64_t)e->w * (int64_t)e->h * 4;
+    if (e->count >= e->cap)
+    {
+        int newcap = e->cap ? e->cap * 2 : 8;
+        unsigned char** fp;
+        int* dp;
+        fp = (unsigned char**)realloc(e->frame_pix, sizeof(unsigned char*) * (size_t)newcap);
+        if (!fp) { sli_set_error(SLI_E_MEMORY); return 0; }
+        e->frame_pix = fp;
+        dp = (int*)realloc(e->delays_ms, sizeof(int) * (size_t)newcap);
+        if (!dp) { sli_set_error(SLI_E_MEMORY); return 0; }
+        e->delays_ms = dp;
+        e->cap = newcap;
+    }
+
+    copy = (unsigned char*)malloc((size_t)frame_bytes);
+    if (!copy) { sli_set_error(SLI_E_MEMORY); return 0; }
+    memcpy(copy, (const void*)(intptr_t)pixels_ptr, (size_t)frame_bytes);
+    e->frame_pix[e->count] = copy;
+    e->delays_ms[e->count] = delay_ms;
+    e->count++;
+    return 1;
+}
+
+int64_t sli_gif_encode_finish(int64_t enc)
+{
+    SliGifEnc* e = gif_enc_from_handle(enc);
+    unsigned char* out = NULL;
+    int64_t out_size = 0;
+
+    if (!e) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    if (e->count == 0) sli_set_error_detail(SLI_E_BAD_PARAM, "no frames added");
+    else
+        out = sli_gif_encode_animated(e->w, e->h, e->count, e->frame_pix,
+                                      e->delays_ms, e->loop, &out_size);
+    /* 无论成败：帧数组释放、槽失效（finish 是一次性终点；空帧同样终结，
+     * SL 侧 build 失败后不再持有句柄 -> 零泄漏） */
+    {
+        int f;
+        for (f = 0; f < e->count; f++) free(e->frame_pix[f]);
+        free(e->frame_pix);
+        free(e->delays_ms);
+        memset(e, 0, sizeof(SliGifEnc));
+    }
+    if (!out) return 0;                          /* 错误已 set */
+    return sli_blob_register(out, out_size);    /* 失败时 blob_register 释放 out */
+}
+
+int sli_gif_encode_free(int64_t enc)
+{
+    SliGifEnc* e = gif_enc_from_handle(enc);
+    if (!e) { sli_set_error(SLI_E_BAD_HANDLE); return 0; }
+    {
+        int f;
+        for (f = 0; f < e->count; f++) free(e->frame_pix[f]);
+        free(e->frame_pix);
+        free(e->delays_ms);
+        memset(e, 0, sizeof(SliGifEnc));
+    }
     return 1;
 }

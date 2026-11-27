@@ -1,7 +1,8 @@
 # =========================================================================
 # Image/ImageFfi.sl —— C 层 sl_image_lib.dll 的 FFI 静态绑定 + 内存搬运
 #
-# C 契约：../cvm_image_lib/vm_sl_image.h（22 个 sli_* 导出，普通 C ABI）
+# C 契约：../cvm_image_lib/vm_sl_image.h（35 个 sli_* 导出，普通 C ABI）
+#         其中 13 个 sli_gif_* 的 SL 绑定在 Gif.sl（动画拆解 / 合成）
 # 后端：  stb_image / stb_image_write（公有领域 OR MIT-0，JPEG/PNG/BMP/GIF/
 #         TGA/PSD/HDR/PIC/PNM 读写）+ WIC（系统组件，TIFF/ICO/WebP 解码、
 #         TIFF 编码兜底）
@@ -337,7 +338,8 @@ namespace Image
 
         # Array<UInt8> -> 新分配原生块（count 字节，逐字节 writeI8）；
         # 返回 0 = 拒绝或分配失败（调用方持有释放权）
-        static Int64 _copyIn( Array<UInt8> bytes, Int32 count )
+        # （Gif.sl 复用，故 public）
+        public static Int64 _copyIn( Array<UInt8> bytes, Int32 count )
         {
             if bytes == null || count <= 0 || count > bytes.length
             {
@@ -362,7 +364,8 @@ namespace Image
         }
 
         # 原生块 -> 新 Array<UInt8>（count 字节，逐字节 readUInt8）
-        static Array<UInt8> _copyOut( Int64 ptr, Int32 count )
+        # （Gif.sl 复用，故 public）
+        public static Array<UInt8> _copyOut( Int64 ptr, Int32 count )
         {
             if ptr == 0 || count <= 0
             {

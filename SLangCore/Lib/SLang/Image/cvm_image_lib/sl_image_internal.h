@@ -14,6 +14,8 @@
 #define SLI_MAX_BLOBS   64      /* 同时存活的编码字节块句柄      */
 #define SLI_MAX_DIM     16384   /* 单边像素上限（防异常头 OOM）  */
 #define SLI_MAX_PIXELS  (256 * 1024 * 1024)  /* 1G 像素位上限     */
+#define SLI_MAX_GIFS    16      /* 同时存活的 GIF 动画句柄       */
+#define SLI_MAX_GIF_ENCODERS 8  /* 同时存活的 GIF 编码器句柄     */
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,6 +40,31 @@ typedef struct SliBlob
     int64_t          size;
 } SliBlob;
 
+/* ---- GIF 动画槽（解码产物） ---- */
+typedef struct SliGif
+{
+    int              used;
+    int              w;             /* 逻辑画布宽                 */
+    int              h;
+    int              frames;        /* 帧数（>= 1）               */
+    int              loop;          /* NETSCAPE 原值：-1 无扩展    */
+    int*             delays_ms;     /* stb 产出（毫秒），随 pixels */
+    unsigned char*   pixels;        /* frames * w*h*4 帧连排      */
+} SliGif;
+
+/* ---- GIF 编码器槽 ---- */
+typedef struct SliGifEnc
+{
+    int              used;
+    int              w;
+    int              h;
+    int              loop;
+    int              count;         /* 已喂入帧数                  */
+    int              cap;           /* 帧指针数组容量              */
+    int*             delays_ms;     /* 每帧毫秒                    */
+    unsigned char**  frame_pix;     /* 每帧 w*h*4（各自 malloc）   */
+} SliGifEnc;
+
 /* ---- 错误状态（sl_image.c 定义，全库共享；粘性：入口清零） ---- */
 void    sli_set_error(int err);
 void    sli_set_error_detail(int err, const char* fmt, ...);
@@ -45,6 +72,8 @@ void    sli_set_error_detail(int err, const char* fmt, ...);
 /* ---- 槽表（sl_image.c 定义） ---- */
 extern SliImage s_images[SLI_MAX_IMAGES];
 extern SliBlob  s_blobs[SLI_MAX_BLOBS];
+extern SliGif   s_gifs[SLI_MAX_GIFS];
+extern SliGifEnc s_gif_encs[SLI_MAX_GIF_ENCODERS];
 
 /* ---- blob 注册（encode 产物入槽；size 所有权移交） ---- */
 int64_t sli_blob_register(unsigned char* data, int64_t size);
@@ -65,6 +94,23 @@ unsigned char* sli_stb_decode_mem(const unsigned char* data, int64_t size,
 unsigned char* sli_stb_encode_mem(int fmt, int quality,
                                    int w, int h, const unsigned char* rgba,
                                    int64_t* out_size);
+/* GIF 动画解码：内存字节 -> 帧连排堆块（frames * w*h*4，已按处置语义合成）。
+ * delays_ms 指向 stb 产出的 int 数组（毫秒，所有权移交，free 释放）。
+ * loop 为 NETSCAPE 原值（-1 无扩展）。失败返回 NULL（错误已 set）。 */
+unsigned char* sli_stb_decode_gif(const unsigned char* data, int64_t size,
+                                   int* w, int* h, int* frames,
+                                   int** delays_ms, int* loop);
+
+/* ================= Codec: GIF（Codec/sl_image_gif.c，自有实现） ================= */
+/* GIF89a 动画编码：整画布帧序列 -> GIF 字节堆块（所有权移交，free 释放）。
+ * frame_pix = count 个 w*h*4 指针；delays_ms = 每帧毫秒；loop 语义同上。
+ * 失败返回 NULL（错误已 set）。 */
+unsigned char* sli_gif_encode_animated(int w, int h, int frame_count,
+                                       unsigned char** frame_pix,
+                                       const int* delays_ms, int loop,
+                                       int64_t* out_size);
+/* NETSCAPE2.0 循环扩展扫描：返回原值（-1 无扩展）。 */
+int sli_gif_scan_loop(const unsigned char* data, int64_t size);
 
 /* ================= Codec: WIC（Codec/sl_image_wic.c） ================= */
 /* WIC 文件解码 -> RGBA8 堆块。 */

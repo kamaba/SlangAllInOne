@@ -93,6 +93,7 @@
   <ItemGroup>
     <ClCompile Include="sl_image.c" />
     <ClCompile Include="Codec\sl_image_stb.c" />
+    <ClCompile Include="Codec\sl_image_gif.c" />
     <ClCompile Include="Codec\sl_image_wic.c" />
   </ItemGroup>
   <ItemGroup>

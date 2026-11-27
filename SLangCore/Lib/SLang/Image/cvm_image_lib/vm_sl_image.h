@@ -125,6 +125,40 @@ SLI_API int         sli_blob_copy(int64_t blob, int64_t dst_ptr, int64_t cap);
 SLI_API int         sli_blob_save(int64_t blob, const char* path_utf8);
 SLI_API int         sli_blob_free(int64_t blob);
 
+/* ======================= GIF 动画（多帧拆解 / 合成） ======================= */
+/* 2026-11-26：动画拆解与合成。
+ *   解码：stb 动画装载器（stbi_load_gif_from_memory），每帧已按处置语义
+ *         合成为整画布 RGBA8；帧延迟毫秒、NETSCAPE 循环数透出。
+ *   编码：自有 GIF89a 写入器（全局调色板量化 + LZW），逐帧喂入整画布像素。
+ * 对应 SL 侧 Gif.sl（GifFrame/GifDocument/GifEncoder/Gif 门面）。 */
+
+/* 动画解码：返回动画句柄（0 = 失败，原因进粘性错误）。
+ * 每帧像素契约同上（w*h*4，帧已含处置合成结果）。 */
+SLI_API int64_t     sli_gif_decode_file(const char* path_utf8);
+SLI_API int64_t     sli_gif_decode_mem(int64_t data_ptr, int64_t size);
+
+/* 动画元数据（句柄由 decode 获得；无效句柄置粘性错误并返回 0/-1） */
+SLI_API int         sli_gif_width(int64_t gif);
+SLI_API int         sli_gif_height(int64_t gif);
+SLI_API int         sli_gif_frame_count(int64_t gif);
+/* NETSCAPE 循环数原值：-1 = 无扩展（播放一次），0 = 无限循环，>0 = 额外重复次数 */
+SLI_API int         sli_gif_loop_count(int64_t gif);
+/* 第 frame 帧延迟（毫秒；越界返回 -1） */
+SLI_API int         sli_gif_frame_delay(int64_t gif, int frame);
+/* 第 frame 帧整画布像素拷出（dst_ptr/cap 契约同 sli_blob_copy；成功返回 1） */
+SLI_API int         sli_gif_frame_pixels(int64_t gif, int frame,
+                                        int64_t dst_ptr, int64_t cap);
+SLI_API int         sli_gif_free(int64_t gif);
+
+/* 动画编码：new 建立画布（w/h 必须为正；loop 语义同上，-1 不写 NETSCAPE），
+ * add_frame 逐帧喂入整画布 w*h*4 像素 + 毫秒延迟（clamp [0, 655350]），
+ * finish 产出 blob（0 = 失败）。finish 后句柄自动失效（可再调 free 兜底，
+ * 幂等安全）。 */
+SLI_API int64_t     sli_gif_encode_new(int w, int h, int loop);
+SLI_API int         sli_gif_encode_add_frame(int64_t enc, int64_t pixels_ptr, int delay_ms);
+SLI_API int64_t     sli_gif_encode_finish(int64_t enc);
+SLI_API int         sli_gif_encode_free(int64_t enc);
+
 #ifdef __cplusplus
 }
 #endif

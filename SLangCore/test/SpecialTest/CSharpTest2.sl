@@ -335,6 +335,35 @@ class CSharpTest2
         check( "csExtra: sources(SLExtra)+references(ExtraMathLib) merge -> Sum(4,Twice(5))+|(3,-4)| == 21", n == 21 )
     }
 
+    # ---------------- 外部源（Code 目录规范位：CsharpCode\）----------------
+    # jsonc plugins.csharp_mono.sources 增补 CsharpCode\SlCSharpCodeUtil.cs
+    #（与 CsExtra\SlExtraUtil.cs 同批合并编译进 SLAtSign.dll）；块内头区
+    # using SlCsCode; 调用其中静态方法。int/string 各一块（块出通道首期
+    # 仅支持 1 个）。
+    static testAtSignCsCodeDir()
+    {
+        Console.println( "===== CSharpTest2.testAtSignCsCodeDir =====" )
+        int n = 0
+        @csharp_mono()
+        {
+            using SlCsCode;
+            int n = SlCSharpCodeUtil.Add( 20, 22 );
+            Console.WriteLine( "[CsCodeDir] Add(20,22)=" + n.ToString() );
+            $n <- n;
+        }
+        string banner = ""
+        @csharp_mono()
+        {
+            using SlCsCode;
+            string banner = SlCSharpCodeUtil.Banner( "CsCode" );
+            Console.WriteLine( "[CsCodeDir] Banner=" + banner );
+            string $banner <- banner;
+        }
+        Console.println( "CsCodeDir n = " + n.toString() + " banner = " + banner )
+        check( "csCodeDir: SlCSharpCodeUtil.Add(20,22) == 42", n == 42 )
+        check( "csCodeDir: Banner('CsCode') == '[CsCode]'", banner == "[CsCode]" )
+    }
+
     static fun()
     {
         Console.println( "========== CSharpTest2 start ==========" )
@@ -345,6 +374,7 @@ class CSharpTest2
         testAtSignDataNested()
         testAtSignClassMirror()
         testAtSignCsExtra()
+        testAtSignCsCodeDir()
         Console.println( "========== CSharpTest2 end: passed=" + passed.toString() + " failed=" + failed.toString() + " ==========" )
     }
 }

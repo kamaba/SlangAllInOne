@@ -2,7 +2,7 @@
   "project":
   {
     "name": "SLangImage",
-    "desc": "CPU image decode/encode library module - namespace Image: ImageFfi (FFI static bindings + memory marshalling) / ImageIO (facade load/save/probe/convert) / ImageBuffer (tight pixel buffer, pure-SL pixel ops) / ImageInfo (header probe), pixel color class ColorInt now lives in Std root (Std/ColorInt.sl), backed by sl_image_lib.dll (stb_image/stb_image_write public-domain OR MIT-0 + WIC system codec; always RGBA8 top-down, handles are 1-based, 0 = invalid)",
+    "desc": "CPU image decode/encode library module - namespace Image: ImageFfi (FFI static bindings + memory marshalling) / ImageIO (facade load/save/probe/convert) / ImageBuffer (tight pixel buffer, pure-SL pixel ops) / ImageInfo (header probe) / Gif (animated GIF split into ImageBuffer frames and frame-by-frame GIF composition: GifDocument/GifEncoder/Gif facade), pixel color class ColorInt now lives in Std root (Std/ColorInt.sl), backed by sl_image_lib.dll (stb_image/stb_image_write public-domain OR MIT-0 + WIC system codec + self-written GIF89a encoder; always RGBA8 top-down, handles are 1-based, 0 = invalid)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -26,7 +26,7 @@
   // SLangImage.module.json 相同的目录（out/export/SLangImage/），即上方
   // dllImports 别名指向的位置。
   // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Image\cvm_image_lib\：
-  //   vm_sl_image.h     - 公开契约（22 个 sli_* 导出，普通 C ABI）
+  //   vm_sl_image.h     - 公开契约（35 个 sli_* 导出，普通 C ABI）
   //   sl_image.c        - 槽表/粘性错误/格式嗅探/解码编码主路
   //   Codec\sl_image_stb.c  - stb_image v2.31 + stb_image_write v1.17 唯一
   //                           IMPLEMENTATION 编译点（third_party\stb\，公有领域
@@ -62,7 +62,10 @@
       { "path": "Png.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 6 },
       { "path": "Jpeg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 7 },
       { "path": "Webp.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 8 },
-      { "path": "Svg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 9 }
+      { "path": "Svg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 9 },
+      // Gif.sl：GIF 动画拆解/合成（GifDocument/GifEncoder/Gif 门面，
+      // 自持 13 个 sli_gif_* 绑定，只向后引用 ImageFfi/ImageBuffer）
+      { "path": "Gif.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 10 }
     ]
   },
   "compileFilter": {
@@ -138,7 +141,11 @@
       { "class": "SvgPathElement" },
       { "class": "SvgGroup" },
       { "class": "SvgDocument" },
-      { "class": "Svg" }
+      { "class": "Svg" },
+      { "class": "GifFrame" },
+      { "class": "GifDocument" },
+      { "class": "Gif" },
+      { "class": "GifEncoder" }
     ]}
   ],
   "export": {

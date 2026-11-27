@@ -284,11 +284,13 @@ spm config registry [<url>]  查看/设置全局 registry（落盘 <lang>\spm.js
    basename 依次查 `<exe>\lib\<平台>\` → `<exe>\lib\` → `<exe>\..\lib\<平台>\`
    → `<exe>\..\lib\`；`vm_sys_ffi_static_lib_register`（dllImports "static" 预载）
    同序三重回退（pkg_dir 下 `<平台>/basename` 优先于平铺 basename）。
-4. **引用模块 stage（发布应用专属，2026-10-22）**：`slang publish` 把主模块
-   moduleReferences 非系统库引用（如 SLangServer）平铺拷入发布目录
-   `<名>.module.{slb,json}`——发布目录深度与开发导出树不同，内嵌相对路径必然
-   错位（装载期静默跳过，曾致 ServerP1Test 全线失效的实录），C VM 引用回退链
-   basename 直查恰好命中平铺形态。
+4. **引用模块 stage（发布应用专属，2026-10-22；json 淘汰 2026-11-27）**：
+   `slang publish` 把主模块 moduleReferences 非系统库引用（如 SLangServer）
+   的 slb 平铺拷入发布目录 `<名>.slb` / `<名>.module.slb`——发布目录深度与
+   开发导出树不同，内嵌相对路径必然错位（装载期静默跳过，曾致 ServerP1Test
+   全线失效的实录），C VM 引用回退链 basename 直查（slir_try_load_name_
+   variants 新旧候选名均覆盖）恰好命中平铺形态；json 调试副本不进包
+   （slb 优先装载，SimGameEngine 实录 .module.json 12.7MB+29.5MB 冗余）。
 5. **落点清单**：csproj `PackCvmRuntime`（bin\ 清单去 sqlite3.dll、新增 lib\ 拷贝）、
    `Publish/PublishCommand.cs`（配置子目录 + lib\<平台>\ + 引用 stage）、
    `Backend/CvmBackend.cs`（Linux 预载路径）、`scripts/build-packages.ps1`

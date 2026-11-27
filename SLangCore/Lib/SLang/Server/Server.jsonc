@@ -112,6 +112,9 @@
   "systemCalls": [],
   "export": {
     "moduleName": "SLangServer",
+    // 纯模块（类似 DLL，2026-11-27）：publish 恒不产可执行文件（mode exe/both
+    // 自动降级 slb），仅导出 .slb 模块包供消费方 references 引用（publish-guide.md §2.1）。
+    "executable": false,
     // 2026-10-25 修正：导出根单一真源 = SlangAllInOne\out\export\（PROJECTS.md §4.2；
     // 此前遗留 "export" 致产物落本目录 export\，测试 jsonc references 与宿主
     // StageReferencedModules（out\export\<名>\）双双落空；对齐 Mysql/Tensora 同层四段上跳）。

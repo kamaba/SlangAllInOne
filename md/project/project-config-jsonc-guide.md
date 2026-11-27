@@ -144,6 +144,8 @@
   },
   "export": {
     "moduleName": "MyProject",         // 模块名；导出目录名第一优先级
+    "executable": true,                // 是否导出可执行文件（缺省 true=应用工程，双平台 exe+Linux；
+                                       //   false=纯模块类似 DLL 仅 .slb，publish 不产 exe；见 §4.14）
     "outputDir": "..\\..\\out\\export", // 导出根目录（相对 jsonc 目录），缺省 "Export/SLVMCode"
     "publicExport": "public",          // none/public(缺省)/extern，public 类导出门槛三态（见 §4.14）
     "format": "binary",                // SLB 模块包（默认）；CLI --format 可覆盖
@@ -446,6 +448,7 @@ R7 四处同步的第一处（`.sl` 声明 + jsonc 注册 + C VM 实现 + `ESyst
 | `binary` | object | — | SLB 选项：`compressed`（默认 true）、`includeDebugInfo`（默认 true）、`strictDigest`（默认 false，P5 预留） |
 | `versionMain` / `versionSub` / `versionPatch` | int | 0 / 1 / 0 | 与 `project.mainVersion/subVersion/buildVersion` 同字段；**export 块后解析，两处同写时以 export 块为准** |
 | `nativeDll` | string | `""` | 原生 DLL 文件名，写入 SLB，VM 同目录查找 |
+| `executable` | bool | `true` | **是否导出可执行文件（2026-11-27）**：`true` = 应用工程——`slang publish`（mode exe/both）产出双平台可执行文件 Windows `<M>.exe` + Linux `<M>`（载荷附着式，同一份 SLB）；`false` = **纯模块**（类似 DLL，仅 `<M>.slb` 供消费方 `references` 引用，如 `SLangCore\Lib\SLang\*` 全家族）——publish 恒不产 exe，mode exe/both 自动降级 slb（CLI `--mode` 不豁免）。Front 只解析承载，语义在宿主 `PublishCommand`（publish-guide.md §2.1） |
 | `includeMetadata` | bool | true | 已解析未消费 |
 | `stringPoolAsBlob` | bool | true | 已解析未消费 |
 | `aot` | object | — | MLIR AOT 导出子块（详见 `source/Front/Export/MLIR/MLIR_AOT_实现与待办.md`） |

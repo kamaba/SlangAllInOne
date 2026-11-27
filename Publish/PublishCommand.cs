@@ -77,6 +77,18 @@ internal static class PublishCommand
             Console.WriteLine($"Unknown publish config: '{cvmConfig}' (expected Debug|Release)");
             return 1;
         }
+
+        /* Step 2b: 纯模块判定（jsonc "export"."executable"，缺省 true = 应用
+         * 工程）。false = 纯模块（类似 DLL，供消费方 references 引用，非可
+         * 运行应用，如 SLangCore\Lib\SLang\* 全家族）——publish 恒不产 exe：
+         * mode exe/both 自动降级 slb（CLI --mode 也不豁免——工程形态声明
+         * 优先于发布形态请求；publish-guide.md §2.1）。 */
+        bool exportExecutable = ProjectManager.config?.Export?.Executable ?? true;
+        if (!exportExecutable && mode != "slb")
+        {
+            Console.WriteLine("[info] export.executable=false: pure module (dll-like) - executable artifacts skipped, publishing slb only");
+            mode = "slb";
+        }
         bool includeLibs = opts.IncludeLibs ?? pub.IncludeLibs;
         bool gui = opts.Gui ?? pub.Gui;
         /* Console 三态（publish.console）：未配置(null) = 沿用 gui 既有行为；
@@ -131,63 +143,89 @@ internal static class PublishCommand
             Console.WriteLine($"[OK]  slb:  {moduleName}.slb  (start: slang run \"{destSlb}\")");
         }
 
-        /* Step 5: exe 产物（载荷附着式应用）。 */
+        /* Step 4b: 主模块原生依赖 stage（2026-11-27 纯模块实录修复）：
+         * Audio publish 后只剩孤 slb，拷进消费工程 FFI 预载 sl_audio_lib.dll
+         * 全线报错——vmDlls 产物 dll / dllImports 第三方 dll 必须随包自洽
+         * （"类似 DLL 的库模块"语义：拷走即用）。对所有 mode 生效：exe
+         * 应用自产 vmDlls 此前同样缺件（引用 stage 只覆盖"被引用的"模块，
+         * 主模块自身恒缺），见 StageMainModuleNatives。module.json 调试
+         * 副本不进发布包（2026-11-27 定稿：C VM 装载 slb 优先，json 冗余
+         * 且巨型——Audio 实录 13.9MB）。 */
+        StageMainModuleNatives(result.ExportDir, publishDir, projectDir);
+
+        /* Step 5: exe 产物（载荷附着式应用）。export.executable=false（纯模块，
+         * 类似 DLL）已在 Step 2b 降级 slb，恒不进本步。双平台成对产出
+         * （2026-11-27 用户定稿）：Windows &lt;M&gt;.exe + Linux &lt;M&gt;（同一份
+         * SLB 载荷附着；C 侧 cli_app_payload.c 自检双平台通用——Win
+         * GetModuleFileNameA / Unix /proc/self/exe）。 */
         if (mode == "exe" || mode == "both")
         {
-            if (!OperatingSystem.IsWindows())
+            /* 5a. Windows 应用 exe（csimple_lang.exe 模板）。 */
+            string? cvmExe = LocateCvmExe(repoRoot, cvmConfig);
+            if (cvmExe == null)
             {
-                Console.WriteLine("[FAIL] exe mode is Windows-only for now (csimple_lang.exe template; Linux pending).");
+                Console.WriteLine("[FAIL] csimple_lang.exe not found (neither <app dir>\\bin\\ nor a csimple_lang build tree).");
+                Console.WriteLine("       Build the C VM first: powershell scripts\\build-vm-win.ps1 -Config " + cvmConfig);
                 failures++;
             }
             else
             {
-                string? cvmExe = LocateCvmExe(repoRoot, cvmConfig);
-                if (cvmExe == null)
+                string appExe = Path.Combine(publishDir, moduleName + ".exe");
+                AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
+                Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
+                if (windowsSubsystem)
                 {
-                    Console.WriteLine("[FAIL] csimple_lang.exe not found (neither <app dir>\\bin\\ nor a csimple_lang build tree).");
-                    Console.WriteLine("       Build the C VM first: powershell scripts\\build-vm-win.ps1 -Config " + cvmConfig);
-                    failures++;
+                    PatchSubsystemWindows(appExe);
+                    string reason = opts.Gui == true ? "--gui" : (console.HasValue ? "console=false" : "gui");
+                    Console.WriteLine($"[OK]  {reason}:  PE subsystem Console -> Windows (no cmd window on double-click; see publish-guide.md §5.1)");
+                }
+                else if (console == true)
+                {
+                    Console.WriteLine("[OK]  console=true:  keep PE subsystem Console (cmd window on double-click; shell/cmd launch unchanged)");
+                }
+
+                /* C VM exe 唯一动态依赖（delay-load）：按布局规则落
+                 * lib\<平台>\（2026-10-22 平台细分）——运行期 exe 经
+                 * sl_preload_associated_dlls 按 <exe>\lib\<平台>\ 预装载
+                 * 绑定（平铺 lib\ 为兼容位）。 */
+                string? sqlite = FindSqlite3Dll(cvmExe);
+                if (sqlite != null)
+                {
+                    string destPlat = Path.Combine(publishDir, "lib", HostPlatformDir());
+                    Directory.CreateDirectory(destPlat);
+                    File.Copy(sqlite, Path.Combine(destPlat, "sqlite3.dll"), overwrite: true);
+                    Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\sqlite3.dll  (from {Path.GetRelativePath(AppContext.BaseDirectory, sqlite)})");
                 }
                 else
                 {
-                    string appExe = Path.Combine(publishDir, moduleName + ".exe");
-                    AttachPayload(cvmExe, appExe, File.ReadAllBytes(result.ModuleSlbPath));
-                    Console.WriteLine($"[OK]  exe:  {moduleName}.exe  (template: {Path.GetFileName(Path.GetDirectoryName(cvmExe))}\\{Path.GetFileName(cvmExe)}, payload attached)");
-                    if (windowsSubsystem)
-                    {
-                        PatchSubsystemWindows(appExe);
-                        string reason = opts.Gui == true ? "--gui" : (console.HasValue ? "console=false" : "gui");
-                        Console.WriteLine($"[OK]  {reason}:  PE subsystem Console -> Windows (no cmd window on double-click; see publish-guide.md §5.1)");
-                    }
-                    else if (console == true)
-                    {
-                        Console.WriteLine("[OK]  console=true:  keep PE subsystem Console (cmd window on double-click; shell/cmd launch unchanged)");
-                    }
-
-                    /* C VM exe 唯一动态依赖（delay-load）：按布局规则落
-                     * lib\<平台>\（2026-10-22 平台细分）——运行期 exe 经
-                     * sl_preload_associated_dlls 按 <exe>\lib\<平台>\ 预装载
-                     * 绑定（平铺 lib\ 为兼容位）。 */
-                    string? sqlite = FindSqlite3Dll(cvmExe);
-                    if (sqlite != null)
-                    {
-                        string destPlat = Path.Combine(publishDir, "lib", HostPlatformDir());
-                        Directory.CreateDirectory(destPlat);
-                        File.Copy(sqlite, Path.Combine(destPlat, "sqlite3.dll"), overwrite: true);
-                        Console.WriteLine($"[OK]  lib:  {HostPlatformDir()}\\sqlite3.dll  (from {Path.GetRelativePath(AppContext.BaseDirectory, sqlite)})");
-                    }
-                    else
-                    {
-                        Console.WriteLine("[WARN] sqlite3.dll not found near the C VM exe; the published app needs it at runtime.");
-                    }
-
-                    /* 官方标准库 lib\（引用 Core/Std/Math 时必须；
-                     * 应用 exe 运行时按 <exe>\lib 官方直查解析引用）。 */
-                    if (includeLibs)
-                    {
-                        failures += CopyLibs(repoRoot, publishDir, pub.Libs);
-                    }
+                    Console.WriteLine("[WARN] sqlite3.dll not found near the C VM exe; the published app needs it at runtime.");
                 }
+            }
+
+            /* 5b. Linux 应用可执行文件（build\{config}Linux\bin\csimple_lang 模板，
+             * unix 无扩展名形态）。与 Windows exe 同目录平铺——共享 lib\*.slb /
+             * modules\ 等相对 base_dir 的装载布局。PE/gui 补丁不适用（非 PE 文件）；
+             * Linux VM 动态依赖（系统 libsqlite3.so.0 等）由目标机系统解析
+             * （全自洽携带见 release-slang 包流程，publish 不重复预置）。 */
+            string? cvmLinux = LocateCvmLinuxExe(repoRoot, cvmConfig);
+            if (cvmLinux == null)
+            {
+                Console.WriteLine($"[FAIL] Linux C VM binary not found (csimple_lang\\build\\{cvmConfig}Linux\\bin\\csimple_lang; the other config tree is probed too).");
+                Console.WriteLine("       Build it first (WSL): powershell scripts\\build-vm-linux.ps1 -Config " + cvmConfig);
+                failures++;
+            }
+            else
+            {
+                string appLinux = Path.Combine(publishDir, moduleName);
+                AttachPayload(cvmLinux, appLinux, File.ReadAllBytes(result.ModuleSlbPath));
+                Console.WriteLine($"[OK]  linux: {moduleName}  (template: {Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(cvmLinux)))}\\bin\\csimple_lang, payload attached)");
+            }
+
+            /* 官方标准库 lib\（引用 Core/Std/Math 时必须；应用 exe 运行时按
+             * <exe>\lib 官方直查解析引用——双平台 exe 共享同一 lib\ 平铺）。 */
+            if (includeLibs)
+            {
+                failures += CopyLibs(repoRoot, publishDir, pub.Libs);
             }
         }
 
@@ -308,6 +346,31 @@ internal static class PublishCommand
         foreach (var cfg in candidates)
         {
             string exe = Path.GetFullPath(Path.Combine(repoRoot, "csimple_lang", "build", cfg, "bin", "csimple_lang.exe"));
+            if (File.Exists(exe))
+            {
+                return exe;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>定位 C VM Linux 二进制模板（2026-11-27 双平台 exe 定稿）：
+    /// dev 树 build\{config}Linux\bin\csimple_lang（WSL clang 构建，配置不中
+    /// 回落另一配置树，与 LocateCvmExe 同款回退）。发布包布局不携带 Linux
+    /// 宿主位（win 包/linux 包各自独立），故只查 dev 树。</summary>
+    static string? LocateCvmLinuxExe(string? repoRoot, string config)
+    {
+        if (repoRoot == null)
+        {
+            return null;
+        }
+
+        var candidates = string.Equals(config, "Release", StringComparison.OrdinalIgnoreCase)
+            ? new[] { "ReleaseLinux", "DebugLinux" }
+            : new[] { "DebugLinux", "ReleaseLinux" };
+        foreach (var cfg in candidates)
+        {
+            string exe = Path.GetFullPath(Path.Combine(repoRoot, "csimple_lang", "build", cfg, "bin", "csimple_lang"));
             if (File.Exists(exe))
             {
                 return exe;
@@ -443,14 +506,112 @@ internal static class PublishCommand
     static readonly HashSet<string> SystemModuleNames = new(StringComparer.OrdinalIgnoreCase)
     { "Core", "Std", "Math" };
 
+    /// <summary>主模块原生依赖 stage（2026-11-27 纯模块实录修复：Audio publish
+    /// 只剩孤 slb，拷进消费工程后 FFI 预载 sl_audio_lib.dll 全线报错）。
+    /// 两类件，源 = Front 导出目录（vmDlls 产物权威位：MSBuild 编译后 Front
+    /// 已拷到导出目录）：
+    /// ① 导出目录原生库（*.dll/*.so/*.dylib 平铺 + 一级平台子目录，同引用
+    ///    stage 扫描规则）按宿主平台落 lib\&lt;平台&gt;\——C VM FFI 查找链
+    ///    pkg_dir/&lt;平台&gt;/basename 命中（webui_lib.dll 同款先例）；
+    /// ② jsonc dllImports.path 指向的第三方 dll（Front 只登记不拷文件）：
+    ///    先按工程目录解析（path 相对 jsonc），未命中回落导出目录（Audio 的
+    ///    path="sl_audio_lib.dll" 无目录部分即 vmDlls 产物位），basename 平铺
+    ///    进 lib\&lt;平台&gt;\（Distinct 防双源重拷）。
+    /// module.json 不随包（2026-11-27 定稿，SimGameEngine 用户实录：主模块
+    /// json 13.9MB、引用 .module.json 12.7MB+29.5MB 混进发布包）——C VM
+    /// 装载 slb 优先（slir_try_load_name_variants 候选 <名>.slb 在前），
+    /// json 调试副本在包内冗余且巨型；R15 纪律"json 不进发布产物"落地。
+    /// 对所有 mode 生效——exe 应用自产 vmDlls 同样缺件（引用 stage 只覆盖
+    /// "被引用的"模块）。扫空仅静默（纯文本工程零原生件），不阻断。</summary>
+    static void StageMainModuleNatives(string? exportDir, string publishDir, string projectDir)
+    {
+        try
+        {
+            var nativeFiles = new List<string>();
+            string platDir = Path.Combine(publishDir, "lib", HostPlatformDir());
+
+            /* ② 导出目录原生库扫描。 */
+            if (!string.IsNullOrEmpty(exportDir) && Directory.Exists(exportDir))
+            {
+                foreach (string ext in new[] { "*.dll", "*.so", "*.dylib" })
+                {
+                    nativeFiles.AddRange(Directory.GetFiles(exportDir, ext));
+                }
+                foreach (string sub in new[] { HostPlatformDir(), Path.Combine("lib", HostPlatformDir()) })
+                {
+                    string subDir = Path.Combine(exportDir, sub);
+                    if (Directory.Exists(subDir))
+                    {
+                        foreach (string ext in new[] { "*.dll", "*.so", "*.dylib" })
+                        {
+                            nativeFiles.AddRange(Directory.GetFiles(subDir, ext));
+                        }
+                    }
+                }
+            }
+
+            /* ③ dllImports 第三方 dll（按 path 字段解析，缺失仅 WARN）。
+             * ProjectManager.config 的 jsonc 是宿主 Front 进程内已解析的
+             * 权威承载（同 Step 2b Export.Executable / Step 6 references）。 */
+            var dllImports = ProjectManager.config?.DllImports;
+            if (dllImports != null)
+            {
+                foreach (var imp in dllImports)
+                {
+                    if (imp == null || string.IsNullOrWhiteSpace(imp.Path))
+                    {
+                        continue;
+                    }
+                    string? found =
+                        ResolveFileCandidate(projectDir, imp.Path)
+                        ?? (!string.IsNullOrEmpty(exportDir) ? ResolveFileCandidate(exportDir, imp.Path) : null);
+                    if (found != null)
+                    {
+                        nativeFiles.Add(found);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[WARN] dllImports: '{imp.Path}' not found (project dir / export dir); consumer needs it next to the module");
+                    }
+                }
+            }
+
+            foreach (string f in nativeFiles.Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                Directory.CreateDirectory(platDir);
+                File.Copy(f, Path.Combine(platDir, Path.GetFileName(f)), overwrite: true);
+                Console.WriteLine($"[OK]  native:  lib\\{HostPlatformDir()}\\{Path.GetFileName(f)}");
+            }
+        }
+        catch (Exception ex)
+        {
+            /* stage 失败不阻断主流程（C VM 装载期按查找链解析，可诊断） */
+            Console.WriteLine("[WARN] main module native staging failed: " + ex.Message);
+        }
+    }
+
+    /// <summary>按 baseDir 解析相对/绝对路径并校验文件存在（不存在返回 null）。</summary>
+    static string? ResolveFileCandidate(string baseDir, string relPath)
+    {
+        try
+        {
+            string full = Path.GetFullPath(Path.Combine(baseDir, relPath));
+            return File.Exists(full) ? full : null;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
     /// <summary>解析主模块 moduleReferences，把非系统库引用（如 ExpendTest ->
-    /// SLangServer、WebUITest -&gt; SLangWebUI）的导出产物 stage 成
-    /// &lt;publish&gt;\&lt;名&gt;.module.{slb,json} **平铺**——发布目录深度与开发
+    /// SLangServer、WebUITest -&gt; SLangWebUI）的导出 slb stage 成
+    /// &lt;publish&gt;\&lt;名&gt;.slb / &lt;名&gt;.module.slb **平铺**（C VM 引用回退链
+    /// slir_try_load_name_variants 新旧候选名均覆盖）——发布目录深度与开发
     /// 导出树不同，内嵌相对路径必然错位（装载期静默跳过 → 引用方全线失效）；
-    /// C VM 引用回退链（sl_load_references ② basename 直查）恰好按
-    /// &lt;主包目录&gt;\&lt;名&gt;.module.json 平铺命中（SLB 优先重定向自动改指同名
-    /// .slb）；载荷 exe 的主包目录 = exe 目录（cli_app_payload base_dir）。
-    /// 导出目录解析序：标准导出树两处候选（须实含 *.module.* 产物，陈旧空
+    /// json 调试副本不进包（2026-11-27 定稿：slb 优先装载，json 巨型冗余）；
+    /// 载荷 exe 的主包目录 = exe 目录（cli_app_payload base_dir）。
+    /// 导出目录解析序：标准导出树两处候选（须实含 *.slb 产物，陈旧空
     /// 目录不再静默命中）→ moduleReferences.path 字段（相对主 module.json
     /// 目录解析，Front 导出时即被引用模块导出产物的权威指针）。被引用模块
     /// 导出目录里的原生库（webui_lib.dll 等）按布局规则落 lib\&lt;平台&gt;\
@@ -565,10 +726,12 @@ internal static class PublishCommand
                     Path.Combine(repoRoot, "SlangAllInOne", "out", "export", name),
                     Path.Combine(repoRoot, "SlangAllInOne", "SLangCore", "out", "export", name),
                 };
-                /* 候选目录须实含 *.module.* 产物：out\export\ 下的陈旧空壳目录
-                 * （仅剩 Logs\ 残留）命中即静默零拷贝，是发布缺件事故根源。 */
+                /* 候选目录须实含 slb 产物：out\export\ 下的陈旧空壳目录（仅剩
+                 * Logs\ 残留）命中即静默零拷贝，是发布缺件事故根源。判据取
+                 * *.slb（.module.slb 同被通配命中；2026-11-25 命名简化后纯
+                 * 模块导出树可只有 <名>.slb 无中缀形态）。 */
                 string? srcDir = exportRoots.FirstOrDefault(d =>
-                    Directory.Exists(d) && Directory.GetFiles(d, "*.module.*").Length > 0);
+                    Directory.Exists(d) && Directory.GetFiles(d, "*.slb").Length > 0);
                 /* 库家族导出位（2026-10-30 WebUITest 发布实录）：SLang\* 库工程
                  * 的权威产物在 Lib\**\export\<名>\（如 SLangWebUI 的
                  * Lib\SLang\WebUI\export\SLangWebUI\，webui_lib.dll 与产物同位）
@@ -586,7 +749,7 @@ internal static class PublishCommand
                         {
                             srcDir = Directory.EnumerateDirectories(libRoot, name,
                                     SearchOption.AllDirectories)
-                                .FirstOrDefault(d => Directory.GetFiles(d, "*.module.*").Length > 0);
+                                .FirstOrDefault(d => Directory.GetFiles(d, "*.slb").Length > 0);
                         }
                     }
                     catch (IOException) { }
@@ -611,11 +774,14 @@ internal static class PublishCommand
                     Console.WriteLine($"[WARN] reference: module '{name}' export artifacts not found, skipped (the app needs it if it is referenced)");
                     continue;
                 }
-                /* 平铺 stage：主包目录直下 <名>.module.slb / .module.json——
-                 * 对齐 C VM 引用回退链的 basename 直查形态。 */
+                /* 平铺 stage：主包目录直下 <名>.slb / <名>.module.slb（通配
+                 * *.slb 一网打尽两形态）——对齐 C VM 引用回退链 basename
+                 * 直查候选名（slir_try_load_name_variants：Core.slb /
+                 * Core.json / Core.module.slb / Core.module.json，slb 在前）。
+                 * json 调试副本不进包：slb 优先装载下 json 冗余且巨型
+                 * （SimGameEngine 实录 .module.json 12.7MB+29.5MB）。 */
                 bool any = false;
-                foreach (string f in Directory.GetFiles(srcDir, "*.slb")
-                    .Concat(Directory.GetFiles(srcDir, "*.module.*")))
+                foreach (string f in Directory.GetFiles(srcDir, "*.slb"))
                 {
                     File.Copy(f, Path.Combine(publishDir, Path.GetFileName(f)), overwrite: true);
                     any = true;
@@ -652,9 +818,9 @@ internal static class PublishCommand
                 if (Directory.Exists(refPlugins))
                     CopyDirectory(refPlugins, Path.Combine(publishDir, "plugin"));
                 if (any)
-                    Console.WriteLine($"[OK]  reference: {name}.module.* (staged flat into publish)");
+                    Console.WriteLine($"[OK]  reference: {name} slb staged flat into publish (json debug copy excluded)");
                 else
-                    Console.WriteLine($"[WARN] reference: module '{name}' has no *.module.* artifacts in {srcDir}");
+                    Console.WriteLine($"[WARN] reference: module '{name}' has no *.slb artifacts in {srcDir}");
             }
         }
         catch (Exception ex)

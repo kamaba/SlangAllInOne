@@ -221,8 +221,8 @@
     // SLangRender / SLangAudio —— 双模块同名专项实证：同名 Transform/Ray/
     // Material 模块作用域隔离不冲突；引擎模块可消费两模块的类
     //（slb 引用形态；消费方静态方法跨模块调用见 doc/10 §6 可用形态）
-    { "path": "..\\..\\..\\..\\out\\export\\SLangRender\\SLangRender.module.slb", "name": "SLangRender" },
-    { "path": "..\\..\\..\\..\\out\\export\\SLangAudio\\SLangAudio.module.slb", "name": "SLangAudio" }
+    { "path": "..\\..\\..\\..\\out\\export\\SLangRender\\SLangRender.slb", "name": "SLangRender" },
+    { "path": "..\\..\\..\\..\\out\\export\\SLangAudio\\SLangAudio.slb", "name": "SLangAudio" }
   ],
   "struct": [
     // 场景核心（根级类型，引用方裸名可见，同 Std Component 先例）
@@ -327,9 +327,12 @@
   ],
   "export": {
     "moduleName": "SimGameEngine",
+    // 纯模块（类似 DLL，2026-11-27）：publish 恒不产可执行文件（mode exe/both
+    // 自动降级 slb），仅导出 .slb 模块包供消费方 references 引用（publish-guide.md §2.1）。
+    "executable": false,
     // jsonc 位于 SLangCore\Lib\SLang\SimGameEngine\，上 4 级到 SlangAllInOne\out\export
     //（Render.jsonc 在 Lib\SLang\Render\SLangRender\ 故为 5 级；本模块少一层）
-    "outputDir": "..\\..\\..\\..\\out\\export",
+    "outputDir": "./",
     "versionMain": 0,
     "versionSub": 1,
     "versionPatch": 0,

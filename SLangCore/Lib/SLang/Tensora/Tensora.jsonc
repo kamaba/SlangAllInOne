@@ -233,6 +233,9 @@
   ],
   "export": {
     "moduleName": "Tensora",
+    // 纯模块（类似 DLL，2026-11-27）：publish 恒不产可执行文件（mode exe/both
+    // 自动降级 slb），仅导出 .slb 模块包供消费方 references 引用（publish-guide.md §2.1）。
+    "executable": false,
     "outputDir": "..\\..\\..\\..\\out\\export",
     "versionMain": 1,
     "versionSub": 0,

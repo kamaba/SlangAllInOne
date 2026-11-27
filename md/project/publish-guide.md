@@ -44,13 +44,33 @@ SlangAllInOne\out\host\slang.exe run .\NullFastTest\publish\release\NullFastTest
 
 | 字段 | 类型 / 取值 | 缺省 | 说明 |
 |------|------------|------|------|
-| `mode` | `exe` / `slb` / `both` | `both` | 产物形态。`exe` = 仅应用 exe；`slb` = 仅模块包；`both` = 两者 |
+| `mode` | `exe` / `slb` / `both` | `both` | 产物形态。`exe` = 仅应用可执行文件（**Windows exe + Linux 可执行文件双平台成对**，见 §5）；`slb` = 仅模块包；`both` = 两者。**纯模块（`export.executable=false`，§2.1）恒降级 slb，CLI `--mode` 也不豁免** |
 | `outputDir` | 相对/绝对路径 | `"publish"` | 发布根目录（相对 jsonc 所在目录）。**实际产物落 `<outputDir>\{debug|release}\` 配置子目录**（2026-10-22 发布规则，两型并存；仅本配置子目录清空重建） |
 | `config` | `Debug` / `Release` | `Release` | exe 载荷模板取 `csimple_lang\build\{config}\bin\csimple_lang.exe`（JIT/加固属性随该树；发布包内则取 `<slang>\bin\`，不中回落另一配置树） |
 | `includeLibs` | bool | `true` | 是否把官方标准库拷进发布目录 `lib\`。应用引用 Core/Std/Math 时必须为 true |
 | `libs` | string[] | `[]`=全量 | `includeLibs=true` 时生效；如 `["Core","Std"]` 只带这两件（Math 附带 `math_lib.dll`）。缺库仅 `[WARN]` 不中断（工程可能不引用它） |
 | `gui` | bool | `false` | GUI 应用形态：true 时发布把 exe 的 PE 子系统从 Console(3) 补丁为 Windows(2)——启动/双击**不再弹 cmd 窗口**（WebUI 浏览器窗等 GUI 应用用，见 §5.1）。CLI `--gui` 强制开 |
 | `console` | bool（三态） | 未配置 | **是否弹 Console 窗口**（见 §5.2）。未配置 = 完全沿用 `gui` 既有行为（零破坏）；`true` = 双击必弹 Console（保留 Console 子系统，即使 `gui:true`）；`false` = 双击必不弹（强制打 GUI 子系统补丁，即使 `gui:false`）。从 linux shell / windows cmd 启动不受本配置影响，一律走系统原行为 |
+
+### 2.1 纯模块开关：`export.executable`（2026-11-27 双平台 exe 定稿）
+
+工程形态声明放在 jsonc **`export` 段**（不在 publish 段——它是"这个工程是什么"，不是"这次发布要什么"）：
+
+```jsonc
+{
+  "export": {
+    "moduleName": "SLangServer",
+    "executable": false   // 缺省 true = 应用工程
+  }
+}
+```
+
+| 取值 | 语义 | publish 行为 |
+|------|------|-------------|
+| `true`（缺省） | 应用工程 | mode `exe`/`both` 正常产出**双平台可执行文件**：Windows `<M>.exe` + Linux `<M>`（无扩展名，同一份 SLB 载荷附着） |
+| `false` | **纯模块**（类似 DLL：供消费方 `references` 引用，非可运行应用——`SLangCore\Lib\SLang\*` 全家族） | **恒不产可执行文件**：mode `exe`/`both` 自动降级 `slb`（`[info]` 提示），CLI `--mode exe` 也不豁免——工程形态声明优先于发布形态请求。**产物自洽可拷走**：`<M>.slb` + `lib\<平台>\` 主模块原生件（vmDlls 产物 / dllImports 第三方 dll，2026-11-27 Audio 实录修复）。**json 调试副本不进包**（同日定稿：slb 优先装载，json 巨型冗余） |
+
+Front 只解析承载（`ProjectJsoncLoader` → `ProjectConfig.ExportSection.Executable`，缺省 true 保证存量工程零变化），降级判定收口在宿主 `PublishCommand` Step 2b。
 
 产物命名：`export.moduleName` > `project.name` > `.sp` 文件名，逐级回退。
 
@@ -76,10 +96,15 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 <publishRoot>\
 ├── debug\                   # 配置子目录（--cvm Debug）：布局同 release，模板取 Debug 树
 └── release\                 # 配置子目录（--cvm Release 缺省）：每次发布清空重建（仅本子目录）
-    ├── MyApp.exe            # mode=exe/both：应用 exe（载荷附着式，见 §5）
+    ├── MyApp.exe            # mode=exe/both：Windows 应用 exe（载荷附着式，见 §5）
+    ├── MyApp                # mode=exe/both：Linux 可执行文件（无扩展名，同 §5 载荷
+    │                        #   附着式；模板 csimple_lang\build\{config}Linux\bin\
+    │                        #   csimple_lang，与 exe 同目录平铺共享 lib\ 布局。
+    │                        #   2026-11-27 双平台定稿；纯模块恒不产这两件，§2.1）
     ├── MyApp.slb     # mode=slb/both：模块包（slang run <此文件> 启动）
-    ├── <Ref>.slb     # 引用 stage：moduleReferences 非系统库引用平铺拷入
-    │                        #（C VM 引用回退链 basename 直查命中；如 SLangServer）
+    ├── <Ref>.slb     # 引用 stage：moduleReferences 非系统库引用的 slb 平铺拷入
+    │                        #（仅 slb / .module.slb 两形态，json 调试副本不进包；
+    │                        #  C VM 引用回退链 basename 直查命中；如 SLangServer）
     │                        # 含**插件 refModule**（MasmX64 / CPlusClang 等
     │                        # 无名引用：moduleReferences 只有 uuid+path，
     │                        # 按 path basename 反推模块名 stage）——缺件
@@ -127,6 +152,16 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 > basename 反推模块名（`../MasmX64/MasmX64.module` → `MasmX64`）后同样平铺
 > stage；漏 stage 时发布包内 `@tag` 出通道包装方法无方法体，`ChannelOutInt`
 > 类返回值静默变 null（BenchMark 发布包 ASM 列全空即此因，2026-11-19 修）。
+> ④ **主模块原生件随包 stage（2026-11-27）**——主模块自身的 vmDlls 产物 dll /
+> jsonc dllImports 第三方 dll 由 Step 4b `StageMainModuleNatives` 从 Front 导出
+> 目录 stage，原生件落 `lib\<平台>\`（C VM FFI 查找链 `pkg_dir/<平台>/basename`
+> 命中，webui_lib.dll 同款先例）。此前引用 stage 只覆盖"被引用的"模块，主
+> 模块自身恒缺件——Audio 纯模块 publish 只剩孤 slb，拷进消费工程 FFI 预载
+> sl_audio_lib.dll 全线报错即此因。**对所有 mode 生效**（exe 应用自产
+> vmDlls 同样缺件）。**module.json 不随包**（2026-11-27 定稿，SimGameEngine
+> 用户实录：主模块 json 13.9MB / 引用 `.module.json` 12.7MB+29.5MB 巨型冗余
+> 混进发布包）——C VM 装载 slb 优先（slir_try_load_name_variants 候选
+> `<名>.slb` 在前），R15 纪律"json 调试副本不进发布产物"落地。
 > 🔥 **引用清单来源（2026-11-20）**：以工程 jsonc 的 `references` 为准
 > （Front 进程内已解析，path 相对工程目录，目录/文件两形态都解析）。
 > 此前 Release 包 publish
@@ -136,7 +171,7 @@ slang publish <projectPath> [--mode exe|slb|both] [--dest <dir>] [--cvm Debug|Re
 
 ## 5. 应用 exe 的实现形态：载荷附着式（SLVMAPP1）
 
-应用 exe = **csimple_lang.exe 副本 + 尾部附着的 SLB 载荷**，文件尾布局（trailer 固定 16 字节，小端）：
+应用 exe = **csimple_lang.exe 副本 + 尾部附着的 SLB 载荷**，文件尾布局（trailer 固定 16 字节，小端）。`mode=exe/both` 时**双平台成对产出**（2026-11-27 定稿）：Windows 取 `csimple_lang\build\{config}\bin\csimple_lang.exe` 模板产 `<M>.exe`，Linux 取 `csimple_lang\build\{config}Linux\bin\csimple_lang` 模板产 `<M>`（无扩展名，同一份 SLB 载荷附着，exe/Linux 文件同目录平铺共享 `lib\` 布局；C 侧 `cli_app_payload.c` 自检双平台通用——Win `GetModuleFileNameA` / Unix `/proc/self/exe`；缺 Linux 模板树时 `[FAIL]` 计数不中断）：
 
 ```
 [ 原始 exe 字节 ][ SLB payload ][ payload_size: u64 LE ][ "SLVMAPP1" ]

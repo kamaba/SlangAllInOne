@@ -279,6 +279,9 @@
   ],
   "export": {
     "moduleName": "SLangRender",
+    // 纯模块（类似 DLL，2026-11-27）：publish 恒不产可执行文件（mode exe/both
+    // 自动降级 slb），仅导出 .slb 模块包供消费方 references 引用（publish-guide.md §2.1）。
+    "executable": false,
     // jsonc 位于 SLangCore\Lib\SLang\Render\SLangRender\，上 5 级到
     // SlangAllInOne\out\export（GLRenderTest 引用 ../../../../out/export/SLangRender；
     // e2e StageReferencedModules 亦从 SlangAllInOne\out\export\SLangRender 拷贝）

@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdint.h>
+#include <math.h>
 
 #include "sl_image_internal.h"
 
@@ -1133,6 +1134,834 @@ int sli_gif_encode_free(int64_t enc)
         free(e->frame_pix);
         free(e->delays_ms);
         memset(e, 0, sizeof(SliGifEnc));
+    }
+    return 1;
+}
+
+/* =========================================================================
+ * 像素批量运算（sli_op_*，v2，2026-11-28）
+ *
+ * 纯 SL 每像素重循环下沉：convolve / rotate / resize / alpha 合成与混合 /
+ * 通道拆合 / 格式转换 / 贴入 / 填充 / 翻转 / 预乘。裸指针运算（无句柄槽），
+ * 语义与 SL 侧 ImageBuffer/ImageFilter 实现逐位对齐：
+ *   - 整数除法截断（C 与 SL int 语义一致）；
+ *   - toInt = clamp8((int)(v + 0.5f))（Std ColorInt.toInt 同式）；
+ *   - 灰度 BT.601：(299r + 587g + 114b + 500) / 1000；
+ *   - blendOver：src.a>=255 直通 src / <=0 直通 dst / 否则浮点 over。
+ * 失败返回 0（粘性错误），SL 侧据此回落纯 SL 循环兜底。
+ * ========================================================================= */
+
+/* SL 侧 ColorInt 数值语义 */
+static int op_clamp8(int v)
+{
+    if (v < 0) return 0;
+    if (v > 255) return 255;
+    return v;
+}
+
+static int op_toint(float v)      /* clamp8((int)(v + 0.5f)) */
+{
+    int i = (int)(v + 0.5f);
+    return op_clamp8(i);
+}
+
+static int op_gray(int r, int g, int b)   /* BT.601（SL grayscale 同式） */
+{
+    return (299 * r + 587 * g + 114 * b + 500) / 1000;
+}
+
+/* ---- convolve3x3：RGBA8 边界复制，RGB 卷积 + offset，alpha 保留中心 ---- */
+int sli_op_convolve3x3(int64_t src, int64_t dst, int w, int h, int64_t ctl)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const int* k = (const int*)(intptr_t)ctl;
+    int x, y;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !dp || !k || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    if (k[9] <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    for (y = 0; y < h; ++y)
+    {
+        for (x = 0; x < w; ++x)
+        {
+            int sr = 0, sg = 0, sb = 0, dy, dx;
+            const unsigned char* c = sp + (size_t)(y * w + x) * 4;
+            unsigned char* d = dp + (size_t)(y * w + x) * 4;
+            for (dy = -1; dy <= 1; ++dy)
+            {
+                for (dx = -1; dx <= 1; ++dx)
+                {
+                    int nx = x + dx, ny = y + dy;
+                    int ki = (dy + 1) * 3 + (dx + 1);
+                    const unsigned char* p;
+                    if (nx < 0) nx = 0;
+                    if (nx >= w) nx = w - 1;
+                    if (ny < 0) ny = 0;
+                    if (ny >= h) ny = h - 1;
+                    p = sp + (size_t)(ny * w + nx) * 4;
+                    sr += k[ki] * (int)p[0];
+                    sg += k[ki] * (int)p[1];
+                    sb += k[ki] * (int)p[2];
+                }
+            }
+            d[0] = (unsigned char)op_clamp8(sr / k[9] + k[10]);
+            d[1] = (unsigned char)op_clamp8(sg / k[9] + k[10]);
+            d[2] = (unsigned char)op_clamp8(sb / k[9] + k[10]);
+            d[3] = c[3];
+        }
+    }
+    return 1;
+}
+
+/* ---- rotate：逆时针为正；dst 预分配，圈外透明；nearest / bilinear ----
+ * angle_milli_deg = 度数×1000（i32 规避 VM f32 fast path 封送 bug——坑 9） */
+int sli_op_rotate(int64_t src, int64_t dst, int64_t ctl, int angle_milli_deg)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const int* c = (const int*)(intptr_t)ctl;
+    int sw, sh, dw, dh, mode, x, y;
+    float cs, sn, cx, cy, ncx, ncy, angle_rad;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !dp || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    sw = c[0]; sh = c[1]; dw = c[2]; dh = c[3]; mode = c[4];
+    if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0 || (mode != 0 && mode != 1))
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    angle_rad = (float)angle_milli_deg * (float)(3.14159265358979323846 / 180.0) / 1000.0f;
+    cs = (float)cos((double)angle_rad);
+    sn = (float)sin((double)angle_rad);
+    cx = 0.5f * (float)(sw - 1);
+    cy = 0.5f * (float)(sh - 1);
+    ncx = 0.5f * (float)(dw - 1);
+    ncy = 0.5f * (float)(dh - 1);
+    memset(dp, 0, (size_t)dw * (size_t)dh * 4);
+
+    for (y = 0; y < dh; ++y)
+    {
+        for (x = 0; x < dw; ++x)
+        {
+            float fx = (float)x - ncx;
+            float fy = (float)y - ncy;
+            float sx = cx + fx * cs - fy * sn;
+            float sy = cy + fx * sn + fy * cs;
+            int inside = (sx >= -0.5f) && (sx <= (float)sw - 0.5f) &&
+                        (sy >= -0.5f) && (sy <= (float)sh - 0.5f);
+            unsigned char* d = dp + (size_t)(y * dw + x) * 4;
+            if (!inside) continue;
+            if (mode == 0)
+            {
+                int ix = (int)(sx + 0.5f), iy = (int)(sy + 0.5f);
+                const unsigned char* p;
+                if (ix < 0) ix = 0;
+                if (ix >= sw) ix = sw - 1;
+                if (iy < 0) iy = 0;
+                if (iy >= sh) iy = sh - 1;
+                p = sp + (size_t)(iy * sw + ix) * 4;
+                d[0] = p[0]; d[1] = p[1]; d[2] = p[2]; d[3] = p[3];
+            }
+            else
+            {
+                int x0, x1, y0, y1;
+                float wx, wy;
+                const unsigned char *p00, *p10, *p01, *p11;
+                float w00, w10, w01, w11;
+                if (sx < 0.0f) sx = 0.0f;
+                if (sx > (float)(sw - 1)) sx = (float)(sw - 1);
+                if (sy < 0.0f) sy = 0.0f;
+                if (sy > (float)(sh - 1)) sy = (float)(sh - 1);
+                x0 = (int)sx; x1 = x0 + 1;
+                wx = sx - (float)x0;
+                y0 = (int)sy; y1 = y0 + 1;
+                wy = sy - (float)y0;
+                if (x1 >= sw) x1 = sw - 1;
+                if (y1 >= sh) y1 = sh - 1;
+                p00 = sp + (size_t)(y0 * sw + x0) * 4;
+                p10 = sp + (size_t)(y0 * sw + x1) * 4;
+                p01 = sp + (size_t)(y1 * sw + x0) * 4;
+                p11 = sp + (size_t)(y1 * sw + x1) * 4;
+                w00 = (1.0f - wx) * (1.0f - wy);
+                w10 = wx * (1.0f - wy);
+                w01 = (1.0f - wx) * wy;
+                w11 = wx * wy;
+                d[0] = (unsigned char)op_toint((float)p00[0] * w00 + (float)p10[0] * w10 +
+                                               (float)p01[0] * w01 + (float)p11[0] * w11);
+                d[1] = (unsigned char)op_toint((float)p00[1] * w00 + (float)p10[1] * w10 +
+                                               (float)p01[1] * w01 + (float)p11[1] * w11);
+                d[2] = (unsigned char)op_toint((float)p00[2] * w00 + (float)p10[2] * w10 +
+                                               (float)p01[2] * w01 + (float)p11[2] * w11);
+                d[3] = (unsigned char)op_toint((float)p00[3] * w00 + (float)p10[3] * w10 +
+                                               (float)p01[3] * w01 + (float)p11[3] * w11);
+            }
+        }
+    }
+    return 1;
+}
+
+/* ---- resize：nearest / bilinear（公式与 SL resizeNearest/Bilinear 一致） ---- */
+int sli_op_resize(int64_t src, int64_t dst, int64_t ctl)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const int* c = (const int*)(intptr_t)ctl;
+    int sw, sh, dw, dh, mode, x, y;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !dp || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    sw = c[0]; sh = c[1]; dw = c[2]; dh = c[3]; mode = c[4];
+    if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0 || (mode != 0 && mode != 1))
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    for (y = 0; y < dh; ++y)
+    {
+        for (x = 0; x < dw; ++x)
+        {
+            unsigned char* d = dp + (size_t)(y * dw + x) * 4;
+            if (mode == 0)
+            {
+                int sy = (int)(1.0f * (float)y * (float)sh / (float)dh);
+                int sx = (int)(1.0f * (float)x * (float)sw / (float)dw);
+                const unsigned char* p;
+                if (sy >= sh) sy = sh - 1;
+                if (sx >= sw) sx = sw - 1;
+                p = sp + (size_t)(sy * sw + sx) * 4;
+                d[0] = p[0]; d[1] = p[1]; d[2] = p[2]; d[3] = p[3];
+            }
+            else
+            {
+                float fy = 1.0f * (float)(y + 0.5f) * (float)sh / (float)dh - 0.5f;
+                float fx = 1.0f * (float)(x + 0.5f) * (float)sw / (float)dw - 0.5f;
+                int x0, x1, y0, y1;
+                float wx, wy;
+                const unsigned char *p00, *p10, *p01, *p11;
+                float w00, w10, w01, w11;
+                if (fy < 0.0f) fy = 0.0f;
+                if (fx < 0.0f) fx = 0.0f;
+                y0 = (int)fy; y1 = y0 + 1;
+                wy = fy - (float)y0;
+                x0 = (int)fx; x1 = x0 + 1;
+                wx = fx - (float)x0;
+                if (y0 < 0) y0 = 0;
+                if (y1 < 0) y1 = 0;
+                if (y0 >= sh) y0 = sh - 1;
+                if (y1 >= sh) y1 = sh - 1;
+                if (x0 < 0) x0 = 0;
+                if (x1 < 0) x1 = 0;
+                if (x0 >= sw) x0 = sw - 1;
+                if (x1 >= sw) x1 = sw - 1;
+                p00 = sp + (size_t)(y0 * sw + x0) * 4;
+                p10 = sp + (size_t)(y0 * sw + x1) * 4;
+                p01 = sp + (size_t)(y1 * sw + x0) * 4;
+                p11 = sp + (size_t)(y1 * sw + x1) * 4;
+                w00 = (1.0f - wx) * (1.0f - wy);
+                w10 = wx * (1.0f - wy);
+                w01 = (1.0f - wx) * wy;
+                w11 = wx * wy;
+                d[0] = (unsigned char)op_toint((float)p00[0] * w00 + (float)p10[0] * w10 +
+                                               (float)p01[0] * w01 + (float)p11[0] * w11);
+                d[1] = (unsigned char)op_toint((float)p00[1] * w00 + (float)p10[1] * w10 +
+                                               (float)p01[1] * w01 + (float)p11[1] * w11);
+                d[2] = (unsigned char)op_toint((float)p00[2] * w00 + (float)p10[2] * w10 +
+                                               (float)p01[2] * w01 + (float)p11[2] * w11);
+                d[3] = (unsigned char)op_toint((float)p00[3] * w00 + (float)p10[3] * w10 +
+                                               (float)p01[3] * w01 + (float)p11[3] * w11);
+            }
+        }
+    }
+    return 1;
+}
+
+/* ---- alpha 合成：src over dst（Std ColorInt.blendOver 逐位镜像） ---- */
+int sli_op_alpha_composite(int64_t dst, int64_t src, int64_t out, int w, int h)
+{
+    const unsigned char* d = (const unsigned char*)(intptr_t)dst;
+    const unsigned char* s = (const unsigned char*)(intptr_t)src;
+    unsigned char* o = (unsigned char*)(intptr_t)out;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!d || !s || !o || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* dp = d + (size_t)i * 4;
+        const unsigned char* sp = s + (size_t)i * 4;
+        unsigned char* op = o + (size_t)i * 4;
+        if (sp[3] >= 255)
+        {
+            op[0] = sp[0]; op[1] = sp[1]; op[2] = sp[2]; op[3] = sp[3];
+        }
+        else if (sp[3] <= 0)
+        {
+            op[0] = dp[0]; op[1] = dp[1]; op[2] = dp[2]; op[3] = dp[3];
+        }
+        else
+        {
+            float sa = 1.0f * (float)sp[3] / 255.0f;
+            float da = 1.0f * (float)dp[3] / 255.0f;
+            float oa = sa + da * (1.0f - sa);
+            if (oa <= 0.0f)
+            {
+                op[0] = 0; op[1] = 0; op[2] = 0; op[3] = 0;
+            }
+            else
+            {
+                float rr = (1.0f * (float)sp[0] * sa + 1.0f * (float)dp[0] * da * (1.0f - sa)) / oa;
+                float gg = (1.0f * (float)sp[1] * sa + 1.0f * (float)dp[1] * da * (1.0f - sa)) / oa;
+                float bb = (1.0f * (float)sp[2] * sa + 1.0f * (float)dp[2] * da * (1.0f - sa)) / oa;
+                int a;
+                if (oa > 1.0f) a = 255;
+                else a = (int)(oa * 255.0f + 0.5f);
+                op[0] = (unsigned char)op_toint(rr);
+                op[1] = (unsigned char)op_toint(gg);
+                op[2] = (unsigned char)op_toint(bb);
+                op[3] = (unsigned char)op_clamp8(a);
+            }
+        }
+    }
+    return 1;
+}
+
+/* ---- 线性混合：out = a*(1-alpha) + b*alpha（ImageBuffer.blend 同式；
+ * alpha_x1000 = alpha×1000，i32 规避 VM f32 封送 bug——坑 9） ---- */
+int sli_op_blend(int64_t a, int64_t b, int64_t out, int w, int h, int alpha_x1000)
+{
+    const unsigned char* pa = (const unsigned char*)(intptr_t)a;
+    const unsigned char* pb = (const unsigned char*)(intptr_t)b;
+    unsigned char* po = (unsigned char*)(intptr_t)out;
+    float alpha, fa;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!pa || !pb || !po || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    if (alpha_x1000 < 0) alpha_x1000 = 0;
+    if (alpha_x1000 > 1000) alpha_x1000 = 1000;
+    alpha = (float)alpha_x1000 / 1000.0f;
+    fa = 1.0f - alpha;
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* qa = pa + (size_t)i * 4;
+        const unsigned char* qb = pb + (size_t)i * 4;
+        unsigned char* qo = po + (size_t)i * 4;
+        qo[0] = (unsigned char)op_toint(1.0f * (float)qa[0] * fa + 1.0f * (float)qb[0] * alpha);
+        qo[1] = (unsigned char)op_toint(1.0f * (float)qa[1] * fa + 1.0f * (float)qb[1] * alpha);
+        qo[2] = (unsigned char)op_toint(1.0f * (float)qa[2] * fa + 1.0f * (float)qb[2] * alpha);
+        qo[3] = (unsigned char)op_toint(1.0f * (float)qa[3] * fa + 1.0f * (float)qb[3] * alpha);
+    }
+    return 1;
+}
+
+/* ---- 拆通道：RGBA8 -> 4 张 Gray8 平面 ---- */
+int sli_op_split_rgba(int64_t src, int64_t r, int64_t g, int64_t b, int64_t a, int64_t ctl)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* rp = (unsigned char*)(intptr_t)r;
+    unsigned char* gp = (unsigned char*)(intptr_t)g;
+    unsigned char* bp = (unsigned char*)(intptr_t)b;
+    unsigned char* ap = (unsigned char*)(intptr_t)a;
+    const int* c = (const int*)(intptr_t)ctl;
+    int w, h, i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !rp || !gp || !bp || !ap || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    w = c[0]; h = c[1];
+    if (w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* p = sp + (size_t)i * 4;
+        rp[i] = p[0];
+        gp[i] = p[1];
+        bp[i] = p[2];
+        ap[i] = p[3];
+    }
+    return 1;
+}
+
+/* ---- 合通道：3 张 Gray8 -> 不透明 Rgba8 ---- */
+int sli_op_merge_rgb(int64_t r, int64_t g, int64_t b, int64_t dst, int w, int h)
+{
+    const unsigned char* rp = (const unsigned char*)(intptr_t)r;
+    const unsigned char* gp = (const unsigned char*)(intptr_t)g;
+    const unsigned char* bp = (const unsigned char*)(intptr_t)b;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!rp || !gp || !bp || !dp || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        unsigned char* d = dp + (size_t)i * 4;
+        d[0] = rp[i]; d[1] = gp[i]; d[2] = bp[i]; d[3] = 255;
+    }
+    return 1;
+}
+
+/* ---- 合通道：4 张 Gray8 -> Rgba8 ---- */
+int sli_op_merge_rgba(int64_t r, int64_t g, int64_t b, int64_t a, int64_t dst, int64_t ctl)
+{
+    const unsigned char* rp = (const unsigned char*)(intptr_t)r;
+    const unsigned char* gp = (const unsigned char*)(intptr_t)g;
+    const unsigned char* bp = (const unsigned char*)(intptr_t)b;
+    const unsigned char* ap = (const unsigned char*)(intptr_t)a;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const int* c = (const int*)(intptr_t)ctl;
+    int w, h, i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!rp || !gp || !bp || !ap || !dp || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    w = c[0]; h = c[1];
+    if (w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        unsigned char* d = dp + (size_t)i * 4;
+        d[0] = rp[i]; d[1] = gp[i]; d[2] = bp[i]; d[3] = ap[i];
+    }
+    return 1;
+}
+
+/* ---- 像素格式转换（EPixelFormat 值；读写语义镜像 SL getPixel/setPixel） ---- */
+static int op_read_pixel(const unsigned char* p, int fmt, int* pr, int* pg, int* pb, int* pa)
+{
+    switch (fmt)
+    {
+    case 1: /* Gray8 */   { int v = p[0]; *pr = v; *pg = v; *pb = v; *pa = 255; return 1; }
+    case 2: /* Gray16 */  { int v = p[1]; *pr = v; *pg = v; *pb = v; *pa = 255; return 1; }
+    case 3: /* Rgb8 */    { *pr = p[0]; *pg = p[1]; *pb = p[2]; *pa = 255; return 1; }
+    case 4: /* Rgba8 */   { *pr = p[0]; *pg = p[1]; *pb = p[2]; *pa = p[3]; return 1; }
+    case 5: /* Bgr8 */    { *pr = p[2]; *pg = p[1]; *pb = p[0]; *pa = 255; return 1; }
+    case 6: /* Bgra8 */   { *pr = p[2]; *pg = p[1]; *pb = p[0]; *pa = p[3]; return 1; }
+    case 7: /* Rgb16 */   { *pr = p[1]; *pg = p[3]; *pb = p[5]; *pa = 255; return 1; }
+    case 8: /* Rgba16 */  { *pr = p[1]; *pg = p[3]; *pb = p[5]; *pa = p[7]; return 1; }
+    default: return 0;    /* 浮点格式 9/10 由 SL 兜底 */
+    }
+}
+
+static int op_write_pixel(unsigned char* p, int fmt, int r, int g, int b, int a)
+{
+    switch (fmt)
+    {
+    case 1: /* Gray8 */   { p[0] = (unsigned char)op_gray(r, g, b); return 1; }
+    case 2: /* Gray16 */ { int v = op_gray(r, g, b); p[0] = 0; p[1] = (unsigned char)v; return 1; }
+    case 3: /* Rgb8 */   { p[0] = (unsigned char)r; p[1] = (unsigned char)g; p[2] = (unsigned char)b; return 1; }
+    case 4: /* Rgba8 */  { p[0] = (unsigned char)r; p[1] = (unsigned char)g; p[2] = (unsigned char)b; p[3] = (unsigned char)a; return 1; }
+    case 5: /* Bgr8 */   { p[0] = (unsigned char)b; p[1] = (unsigned char)g; p[2] = (unsigned char)r; return 1; }
+    case 6: /* Bgra8 */  { p[0] = (unsigned char)b; p[1] = (unsigned char)g; p[2] = (unsigned char)r; p[3] = (unsigned char)a; return 1; }
+    case 7: /* Rgb16 */  { p[0] = 0; p[1] = (unsigned char)r; p[2] = 0; p[3] = (unsigned char)g; p[4] = 0; p[5] = (unsigned char)b; return 1; }
+    case 8: /* Rgba16 */ { p[0] = 0; p[1] = (unsigned char)r; p[2] = 0; p[3] = (unsigned char)g; p[4] = 0; p[5] = (unsigned char)b; p[6] = 0; p[7] = (unsigned char)a; return 1; }
+    default: return 0;
+    }
+}
+
+static int op_bpp(int fmt)
+{
+    switch (fmt)
+    {
+    case 1: return 1;
+    case 2: return 2;
+    case 3: case 5: return 3;
+    case 4: case 6: return 4;
+    case 7: return 6;
+    case 8: return 8;
+    default: return 0;
+    }
+}
+
+int sli_op_convert(int64_t src, int64_t dst, int w, int h, int src_fmt, int dst_fmt)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    int sbpp, dbpp, i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !dp || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    sbpp = op_bpp(src_fmt);
+    dbpp = op_bpp(dst_fmt);
+    if (sbpp <= 0 || dbpp <= 0)
+    { sli_set_error_detail(SLI_E_UNSUPPORTED, "fmt %d -> %d", src_fmt, dst_fmt); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        int r, g, b, a;
+        if (!op_read_pixel(sp + (size_t)i * sbpp, src_fmt, &r, &g, &b, &a))
+        { sli_set_error_detail(SLI_E_UNSUPPORTED, "fmt %d", src_fmt); return 0; }
+        if (!op_write_pixel(dp + (size_t)i * dbpp, dst_fmt, r, g, b, a))
+        { sli_set_error_detail(SLI_E_UNSUPPORTED, "fmt %d", dst_fmt); return 0; }
+    }
+    return 1;
+}
+
+/* ---- 区域贴入：整块覆盖，越界裁剪（ImageBuffer.paste 同域） ---- */
+int sli_op_paste(int64_t dst, int64_t src, int64_t ctl)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    const int* c = (const int*)(intptr_t)ctl;
+    int dw, dh, sw, sh, x, y, x0, y0, x1, y1, dy;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || !sp || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    dw = c[0]; dh = c[1]; sw = c[2]; sh = c[3]; x = c[4]; y = c[5];
+    if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    x0 = x < 0 ? 0 : x;
+    y0 = y < 0 ? 0 : y;
+    x1 = x + sw; if (x1 > dw) x1 = dw;
+    y1 = y + sh; if (y1 > dh) y1 = dh;
+    if (x1 <= x0 || y1 <= y0) return 1;    /* 空区域 = 成功（同 SL 语义） */
+
+    for (dy = y0; dy < y1; ++dy)
+    {
+        memcpy(dp + (size_t)(((size_t)dy * (size_t)dw) + (size_t)x0) * 4,
+               sp + (size_t)(((size_t)(dy - y) * (size_t)sw) + (size_t)(x0 - x)) * 4,
+               (size_t)(x1 - x0) * 4);
+    }
+    return 1;
+}
+
+/* ---- 纯色填充：rgba = 0xRRGGBBAA（Std toPackedRgba 布局） ---- */
+int sli_op_fill(int64_t dst, int w, int h, int rgba)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    unsigned char r = (unsigned char)((rgba >> 24) & 0xFF);
+    unsigned char g = (unsigned char)((rgba >> 16) & 0xFF);
+    unsigned char b = (unsigned char)((rgba >> 8) & 0xFF);
+    unsigned char a = (unsigned char)(rgba & 0xFF);
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        unsigned char* p = dp + (size_t)i * 4;
+        p[0] = r; p[1] = g; p[2] = b; p[3] = a;
+    }
+    return 1;
+}
+
+/* ---- 上下翻转：行交换（w*4 字节行） ---- */
+int sli_op_flip_y(int64_t dst, int w, int h)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    unsigned char* row;
+    int stride, top, bottom;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    stride = w * 4;
+    row = (unsigned char*)malloc((size_t)stride);
+    if (!row) { sli_set_error(SLI_E_MEMORY); return 0; }
+    top = 0;
+    bottom = h - 1;
+    while (top < bottom)
+    {
+        unsigned char* a = dp + (size_t)top * (size_t)stride;
+        unsigned char* b = dp + (size_t)bottom * (size_t)stride;
+        memcpy(row, a, (size_t)stride);
+        memcpy(a, b, (size_t)stride);
+        memcpy(b, row, (size_t)stride);
+        ++top;
+        --bottom;
+    }
+    free(row);
+    return 1;
+}
+
+/* ---- 左右翻转：行内像素交换 ---- */
+int sli_op_flip_x(int64_t dst, int w, int h)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    int y;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    for (y = 0; y < h; ++y)
+    {
+        unsigned char* row = dp + (size_t)y * (size_t)w * 4;
+        int left = 0, right = w - 1;
+        while (left < right)
+        {
+            unsigned char* a = row + (size_t)left * 4;
+            unsigned char* b = row + (size_t)right * 4;
+            unsigned char t0 = a[0], t1 = a[1], t2 = a[2], t3 = a[3];
+            a[0] = b[0]; a[1] = b[1]; a[2] = b[2]; a[3] = b[3];
+            b[0] = t0; b[1] = t1; b[2] = t2; b[3] = t3;
+            ++left;
+            --right;
+        }
+    }
+    return 1;
+}
+
+/* ---- alpha 预乘 / 反预乘（Std ColorInt.premultiply/unpremultiply 同式） ---- */
+int sli_op_premultiply(int64_t dst, int w, int h, int unpre)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    if (unpre != 0 && unpre != 1) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        unsigned char* p = dp + (size_t)i * 4;
+        int r = p[0], g = p[1], b = p[2], a = p[3];
+        if (unpre == 0)
+        {
+            p[0] = (unsigned char)((r * a + 127) / 255);
+            p[1] = (unsigned char)((g * a + 127) / 255);
+            p[2] = (unsigned char)((b * a + 127) / 255);
+        }
+        else
+        {
+            if (a <= 0) { p[0] = 0; p[1] = 0; p[2] = 0; }
+            else if (a >= 255) { /* 原样 */ }
+            else
+            {
+                p[0] = (unsigned char)op_clamp8(r * 255 / a);
+                p[1] = (unsigned char)op_clamp8(g * 255 / a);
+                p[2] = (unsigned char)op_clamp8(b * 255 / a);
+            }
+        }
+    }
+    return 1;
+}
+
+/* =========================================================================
+ * 高级合成家族（v2.1，2026-11-28）
+ * 仿 Pillow ImageChops / ImageEnhance / 蒙版合成（runoob pillow-advanced）。
+ * 语义与 SL 兜底逐位对齐：整数除法截断、clamp8、BT.601。
+ * ========================================================================= */
+
+/* ---- 灰度化（BT.601 写回 RGB，alpha 保留） ---- */
+int sli_op_grayscale(int64_t src, int64_t dst, int w, int h)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || !dp || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* p = sp + (size_t)i * 4;
+        unsigned char* d = dp + (size_t)i * 4;
+        int v = (unsigned char)op_gray(p[0], p[1], p[2]);
+        d[0] = (unsigned char)v;
+        d[1] = (unsigned char)v;
+        d[2] = (unsigned char)v;
+        d[3] = p[3];
+    }
+    return 1;
+}
+
+/* ---- BT.601 灰度均值（四舍五入 0..255；0 = 失败） ---- */
+int sli_op_luma_mean(int64_t src, int w, int h)
+{
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    int64_t sum = 0;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!sp || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* p = sp + (size_t)i * 4;
+        sum += op_gray(p[0], p[1], p[2]);
+    }
+    return (int)((sum + n / 2) / n);
+}
+
+/* ---- 通道运算（11 模式，4 通道同步） ---- */
+static int op_chop_channel(int op, int a, int b)
+{
+    switch (op)
+    {
+    case 0:  return op_clamp8(a + b);                        /* add        */
+    case 1:  return a - b > 0 ? a - b : 0;                    /* subtract   */
+    case 2:  return a * b / 255;                             /* multiply   */
+    case 3:  return 255 - (255 - a) * (255 - b) / 255;       /* screen     */
+    case 4:  { int d = a - b; return d < 0 ? -d : d; }       /* difference */
+    case 5:  return a > b ? a : b;                           /* lighter    */
+    case 6:  return a < b ? a : b;                           /* darker     */
+    case 7:  return 255 - a;                                 /* invert     */
+    case 8:  return (a * (255 - b) + b * b / 255) / 255;     /* soft_light */
+    case 9:  return b < 128                                  /* hard_light */
+             ? 2 * a * b / 255
+             : 255 - 2 * (255 - a) * (255 - b) / 255;
+    case 10: return a < 128                                  /* overlay    */
+             ? 2 * a * b / 255
+             : 255 - 2 * (255 - a) * (255 - b) / 255;
+    default: return a;
+    }
+}
+
+int sli_op_chops(int op, int64_t a, int64_t b, int64_t out, int w, int h)
+{
+    const unsigned char* pa = (const unsigned char*)(intptr_t)a;
+    const unsigned char* pb = (const unsigned char*)(intptr_t)b;
+    unsigned char* po = (unsigned char*)(intptr_t)out;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (op < 0 || op > 10)
+    { sli_set_error_detail(SLI_E_BAD_PARAM, "chops op %d", op); return 0; }
+    if (!pa || !po || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    if (op != 7 && !pb) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* qa = pa + (size_t)i * 4;
+        const unsigned char* qb = pb + (size_t)i * 4;
+        unsigned char* qo = po + (size_t)i * 4;
+        int k;
+        for (k = 0; k < 4; ++k)
+        {
+            qo[k] = (unsigned char)op_clamp8(op_chop_channel(op, qa[k], qb[k]));
+        }
+    }
+    return 1;
+}
+
+/* ---- 蒙版混合：out = a*(1-m/255) + b*(m/255)（4 通道） ---- */
+int sli_op_mask_blend(int64_t a, int64_t b, int64_t mask, int64_t out, int64_t ctl)
+{
+    const unsigned char* pa = (const unsigned char*)(intptr_t)a;
+    const unsigned char* pb = (const unsigned char*)(intptr_t)b;
+    const unsigned char* pm = (const unsigned char*)(intptr_t)mask;
+    unsigned char* po = (unsigned char*)(intptr_t)out;
+    const int* c = (const int*)(intptr_t)ctl;
+    int w, h, i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!pa || !pb || !pm || !po || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    w = c[0]; h = c[1];
+    if (w <= 0 || h <= 0) { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* qa = pa + (size_t)i * 4;
+        const unsigned char* qb = pb + (size_t)i * 4;
+        unsigned char* qo = po + (size_t)i * 4;
+        int m = pm[i];
+        int k;
+        for (k = 0; k < 4; ++k)
+        {
+            qo[k] = (unsigned char)op_clamp8(qa[k] + (qb[k] - qa[k]) * m / 255);
+        }
+    }
+    return 1;
+}
+
+/* ---- 带蒙版贴入：f = mask/255，dst = src*f + dst*(1-f)（覆盖域内） ---- */
+int sli_op_paste_masked(int64_t dst, int64_t src, int64_t mask, int64_t ctl)
+{
+    unsigned char* dp = (unsigned char*)(intptr_t)dst;
+    const unsigned char* sp = (const unsigned char*)(intptr_t)src;
+    const unsigned char* mp = (const unsigned char*)(intptr_t)mask;
+    const int* c = (const int*)(intptr_t)ctl;
+    int dw, dh, sw, sh, x, y, x0, y0, x1, y1, dy;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!dp || !sp || !mp || !c)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    dw = c[0]; dh = c[1]; sw = c[2]; sh = c[3]; x = c[4]; y = c[5];
+    if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+
+    x0 = x < 0 ? 0 : x;
+    y0 = y < 0 ? 0 : y;
+    x1 = x + sw; if (x1 > dw) x1 = dw;
+    y1 = y + sh; if (y1 > dh) y1 = dh;
+    if (x1 <= x0 || y1 <= y0) return 1;    /* 空区域 = 成功（同 paste 语义） */
+
+    for (dy = y0; dy < y1; ++dy)
+    {
+        int sy = dy - y;
+        int dx;
+        for (dx = x0; dx < x1; ++dx)
+        {
+            int sx = dx - x;
+            unsigned char* d = dp + (size_t)((size_t)dy * (size_t)dw + (size_t)dx) * 4;
+            const unsigned char* s = sp + (size_t)((size_t)sy * (size_t)sw + (size_t)sx) * 4;
+            int m = mp[(size_t)sy * (size_t)sw + (size_t)sx];
+            int k;
+            for (k = 0; k < 4; ++k)
+            {
+                d[k] = (unsigned char)op_clamp8(d[k] + (s[k] - d[k]) * m / 255);
+            }
+        }
+    }
+    return 1;
+}
+
+/* ---- 线性插值（不钳 factor；factor_x1000 = factor×1000，i32 规避
+ * VM f32 封送 bug——坑 9；ImageEnhance 外插用） ---- */
+int sli_op_blend_factor(int64_t a, int64_t b, int64_t out, int w, int h, int factor_x1000)
+{
+    const unsigned char* pa = (const unsigned char*)(intptr_t)a;
+    const unsigned char* pb = (const unsigned char*)(intptr_t)b;
+    unsigned char* po = (unsigned char*)(intptr_t)out;
+    float factor;
+    int i, n;
+
+    if (!s_ready) { sli_set_error(SLI_E_NOT_INITIALIZED); return 0; }
+    if (!pa || !pb || !po || w <= 0 || h <= 0)
+    { sli_set_error(SLI_E_BAD_PARAM); return 0; }
+    factor = (float)factor_x1000 / 1000.0f;
+
+    n = w * h;
+    for (i = 0; i < n; ++i)
+    {
+        const unsigned char* qa = pa + (size_t)i * 4;
+        const unsigned char* qb = pb + (size_t)i * 4;
+        unsigned char* qo = po + (size_t)i * 4;
+        int k;
+        for (k = 0; k < 4; ++k)
+        {
+            float v = (float)qa[k] * (1.0f - factor) + (float)qb[k] * factor;
+            qo[k] = (unsigned char)op_toint(v);
+        }
     }
     return 1;
 }

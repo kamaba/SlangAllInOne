@@ -1,3 +1,5 @@
+import Std;
+
 # =========================================================================
 # Image/ImageIO.sl —— 图像模块门面（统一入口）
 #
@@ -5,8 +7,10 @@
 #   ImageBuffer img = Image.ImageIO.load( "a.png" )
 #   Image.ImageIO.save( img, "out.webp", EImageFormat.Webp, 80 )
 #   ImageBuffer thumb = Image.ImageIO.thumbnail( img, 256, 256 )
+#   Image.ImageIO.show( img )        # 存临时 PNG + 弹系统查看器（仿 img.show()）
 #
-# 纯 SL：thumbnail（等比缩放到框内）、格式能力表、MIME / 扩展名映射
+# 纯 SL：thumbnail（等比缩放到框内）、格式能力表、MIME / 扩展名映射、
+#         show（临时 PNG + OS.Process.shell 调系统查看器）
 # 后端：  ImageFfi（sl_image_lib.dll：stb_image / stb_image_write + WIC）
 # =========================================================================
 
@@ -156,6 +160,41 @@ namespace Image
             if nw <= 0 { nw = 1 }
             if nh <= 0 { nh = 1 }
             ret src.resize( nw, nh, EInterpolation.Bilinear )
+        }
+
+        # ── 显示（仿 Pillow img.show()）──────────────────────
+        # 存临时 PNG（当前目录 slang_image_show.png）并弹出系统查看器；
+        # Windows 走 cmd start（默认图片查看器），其他平台不弹窗只落盘。
+        # openViewer = false 供测试/无人值守场景（只验证落盘，不弹窗）
+        public static bool show( ImageBuffer buffer )
+        {
+            ret ImageIO.show( buffer, true )
+        }
+
+        public static bool show( ImageBuffer buffer, bool openViewer )
+        {
+            if buffer == null || !buffer.isValid
+            {
+                ret false
+            }
+            if !ImageIO.save( buffer, "slang_image_show.png", EImageFormat.Png, 100 )
+            {
+                ret false
+            }
+            if !openViewer
+            {
+                ret true
+            }
+            bool launched = true
+            label showViewerBlock
+            {
+                try OS.Process.shell( "start slang_image_show.png" )
+            }
+            catch
+            {
+                launched = false
+            }
+            ret launched
         }
 
         # ── 格式能力表（纯 SL）──────────────────────────────

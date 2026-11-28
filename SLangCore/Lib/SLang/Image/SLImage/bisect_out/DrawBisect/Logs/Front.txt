@@ -1,0 +1,120 @@
+﻿[02:23:35 799] [Info] [Project]  [ProjectShowCompileFiles]  Info:[要编译的文件数量:7]
+[02:23:35 802] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageFormat.sl]
+[02:23:35 809] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageBuffer.sl]
+[02:23:35 819] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageInfo.sl]
+[02:23:35 821] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageFfi.sl]
+[02:23:35 823] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageIO.sl]
+[02:23:35 824] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageMask.sl]
+[02:23:35 826] [Info] [Process]  [ProcessCompileFileStart]  Info:[开始编译:ImageDraw.sl]
+[02:23:35 892] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageFormat.sl]编译File层完成]
+[02:23:35 947] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageBuffer.sl]编译File层完成]
+[02:23:35 950] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageInfo.sl]编译File层完成]
+[02:23:35 952] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageFfi.sl]编译File层完成]
+[02:23:35 954] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageIO.sl]编译File层完成]
+[02:23:35 955] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageMask.sl]编译File层完成]
+[02:23:35 956] [Info] [ParseFile]  [FileMetaExpressBuildTst] File:[ImageDraw.sl] Line:[104] Col:[23]  Info:[Error BuildTst 表达式解析错误!! 604 [] Extend:[Error BuildTst 表达式解析错误!! 604 [  (0i - dy)  >]]
+[02:23:35 965] [Info] [Process]  [ProcessCompileFileCompleted]  Info:[文件[ImageDraw.sl]编译File层完成]
+[02:23:35 966] [Info] [Process]  [ProcessPhaseEnd]  Info:[编译阶段[File]完成]
+[02:23:35 966] [Info] [Process]  [ProcessPhaseStart]  Info:[开始编译阶段: MetaCore]
+[02:23:35 997] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[ImageBuffer.sl] Line:[33] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[DrawBisect.Image.ImageBuffer] 方法: _init_ 重写了父类方法但未使用 override 标记: Core.Object._init_]
+[02:23:35 997] [Info] [ParseMeta]  [MetaCoreClassIssue4] File:[ImageInfo.sl] Line:[32] Col:[13]  Info:[Warning 类[] Extend:[Warning 类[DrawBisect.Image.ImageInfo] 方法: _init_ 重写了父类方法但未使用 override 标记: Core.Object._init_]
+[02:23:36 011] [Info] [ParseMeta]  [MetaCoreAttributeAttributeManagerProcessCompileTimeCompile]  Info:[AttributeManager.ProcessCompileTime: compile={}, runtime={}] Extend:[AttributeManager.ProcessCompileTime: compile=0, runtime=42]
+[02:23:36 063] [Info] [ParseMeta]  [MetaCoreCallNotFoundNotFound4] File:[ImageBuffer.sl] Line:[389] Col:[23]  Info:[not found functon by [] Extend:[not found functon by [stride]]
+[02:23:36 107] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[61] Col:[22]  Info:[解析链 节点[Png] 没有找到] Extend:[Name:Png not found!]
+[02:23:36 108] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[61] Col:[29]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 109] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[61] Col:[29]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 109] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[61] Col:[22]  Info:[解析链 [Lex: Png Path:ImageIO.sl Line: 61 Pos: 22  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 109] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[61] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 110] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[65] Col:[23]  Info:[解析链 节点[Jpeg] 没有找到] Extend:[Name:Jpeg not found!]
+[02:23:36 110] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[65] Col:[30]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 110] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[65] Col:[30]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 111] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[65] Col:[23]  Info:[解析链 [Lex: Jpeg Path:ImageIO.sl Line: 65 Pos: 23  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 111] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[65] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 111] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[69] Col:[23]  Info:[解析链 节点[Webp] 没有找到] Extend:[Name:Webp not found!]
+[02:23:36 112] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[69] Col:[30]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 112] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[69] Col:[30]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 112] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[69] Col:[23]  Info:[解析链 [Lex: Webp Path:ImageIO.sl Line: 69 Pos: 23  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 113] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[69] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 113] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[84] Col:[22]  Info:[解析链 节点[Png] 没有找到] Extend:[Name:Png not found!]
+[02:23:36 113] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[84] Col:[29]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 114] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[84] Col:[29]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 114] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[84] Col:[22]  Info:[解析链 [Lex: Png Path:ImageIO.sl Line: 84 Pos: 22  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 115] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[84] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 115] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[88] Col:[23]  Info:[解析链 节点[Jpeg] 没有找到] Extend:[Name:Jpeg not found!]
+[02:23:36 115] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[88] Col:[57]  Info:[解析链 节点[JpegEncodeOptions] 没有找到] Extend:[Name:JpegEncodeOptions not found!]
+[02:23:36 116] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[88] Col:[67]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 116] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[88] Col:[67]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 116] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[88] Col:[57]  Info:[解析链 [Lex: JpegEncodeOptions Path:ImageIO.sl Line: 88 Pos: 57  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 116] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[88] Col:[30]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 117] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[88] Col:[30]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 117] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[88] Col:[23]  Info:[解析链 [Lex: Jpeg Path:ImageIO.sl Line: 88 Pos: 23  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 117] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[88] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 118] [Error] [ParseMeta]  [MetaCoreNotFoundMetaTypeByFMClassDefine] File:[ImageIO.sl] Line:[92] Col:[32]  Info:[在定义的类名[WebpEncodeOptions]没有找到相关的定义] Extend:[DefineStatements Parse] Tips:[Auto-generated LID mapping] 
+
+[02:23:36 118] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[93] Col:[16]  Info:[解析链 节点[o] 没有找到] Extend:[Name:o not found!]
+[02:23:36 118] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[93] Col:[25]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 118] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[93] Col:[25]  Info:[解析链 节点[lossless] 没有找到] Extend:[Name:lossless not found!]
+[02:23:36 119] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[93] Col:[16]  Info:[解析链 [Lex: o Path:ImageIO.sl Line: 93 Pos: 16  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 119] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[94] Col:[16]  Info:[解析链 节点[o] 没有找到] Extend:[Name:o not found!]
+[02:23:36 119] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[94] Col:[24]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 119] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[94] Col:[24]  Info:[解析链 节点[quality] 没有找到] Extend:[Name:quality not found!]
+[02:23:36 120] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[94] Col:[16]  Info:[解析链 [Lex: o Path:ImageIO.sl Line: 94 Pos: 16  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 120] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[95] Col:[16]  Info:[解析链 节点[o] 没有找到] Extend:[Name:o not found!]
+[02:23:36 120] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[95] Col:[22]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 120] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[95] Col:[22]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 121] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[95] Col:[16]  Info:[解析链 [Lex: o Path:ImageIO.sl Line: 95 Pos: 16  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 121] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[96] Col:[23]  Info:[解析链 节点[Webp] 没有找到] Extend:[Name:Webp not found!]
+[02:23:36 121] [Error] [ParseMeta]  [MetaCoreParseCallNodeNotFoundContent] File:[ImageIO.sl] Line:[96] Col:[41]  Info:[解析链 节点[o] 没有找到] Extend:[Name:o not found!]
+[02:23:36 121] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[96] Col:[41]  Info:[解析链 [Lex: o Path:ImageIO.sl Line: 96 Pos: 41  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 122] [Info] [ParseMeta]  [MetaCoreCallNotSupportFrontCall] File:[ImageIO.sl] Line:[96] Col:[30]  Info:[Error front call node type not supported:] Extend:[Error front call node type not supported: None]
+[02:23:36 122] [Info] [ParseMeta]  [MetaCoreCallNotSupportNotSupport] File:[ImageIO.sl] Line:[96] Col:[30]  Info:[Error not support type] Extend:[Error not support type]
+[02:23:36 122] [Error] [ParseMeta]  [MetaCoreParseCallLinkFailed] File:[ImageIO.sl] Line:[96] Col:[23]  Info:[解析链 [Lex: Webp Path:ImageIO.sl Line: 96 Pos: 23  ] 出现了错误] Extend:[Call link parse failed!]
+[02:23:36 122] [Error] [ParseMeta]  [MetaCoreReturnStatementLeftCompareRight] File:[ImageIO.sl] Line:[96] Col:[18]  Info:[left compare right] Extend:[left compare right ]
+[02:23:36 129] [Error] [ParseMeta]  [MetaCoreParseFileExpressFailed]  Info:[解析表达式[]失败 ] Extend:[root is Null]
+[02:23:36 139] [Error] [Process]  [ProcessStepFailed]  Info:[编译步骤[ParseStatements]执行失败: 异常: Object reference not set to an instance of an object. | StackTrace:    at SimpleLanguage.Core.MetaIfStatements.Parse() in D:\project\lang\simple_language\source\Core\Statements\MetaIfStatements.cs:line 197
+   at SimpleLanguage.Core.MetaIfStatements..ctor(MetaBlockStatements mbs, FileMetaKeyIfSyntax fm, MetaVariable mv) in D:\project\lang\simple_language\source\Core\Statements\MetaIfStatements.cs:line 167
+   at SimpleLanguage.Core.MetaMemberFunction.HandleMetaSyntax(MetaBlockStatements currentBlockStatements, MetaStatements& beforeStatements, FileMetaSyntax childFms) in D:\project\lang\simple_language\source\Core\MetaMemberFunction.cs:line 1166
+   at SimpleLanguage.Core.MetaMemberFunction.CreateMetaSyntax(FileMetaSyntax rootMs, MetaBlockStatements currentBlockStatements) in D:\project\lang\simple_language\source\Core\MetaMemberFunction.cs:line 1144
+   at SimpleLanguage.Core.MetaWhileDoWhileStatements.Parse() in D:\project\lang\simple_language\source\Core\Statements\MetaWhileDoWhileStatements.cs:line 676
+   at SimpleLanguage.Core.MetaWhileDoWhileStatements..ctor(MetaBlockStatements mbs, FileMetaConditionExpressSyntax whileStatements) in D:\project\lang\simple_language\source\Core\Statements\MetaWhileDoWhileStatements.cs:line 645
+   at SimpleLanguage.Core.MetaMemberFunction.HandleMetaSyntax(MetaBlockStatements currentBlockStatements, MetaStatements& beforeStatements, FileMetaSyntax childFms) in D:\project\lang\simple_language\source\Core\MetaMemberFunction.cs:line 1264
+   at SimpleLanguage.Core.MetaMemberFunction.CreateMetaSyntax(FileMetaSyntax rootMs, MetaBlockStatements currentBlockStatements) in D:\project\lang\simple_language\source\Core\MetaMemberFunction.cs:line 1144
+   at SimpleLanguage.Core.MetaMemberFunction.ParseStatements() in D:\project\lang\simple_language\source\Core\MetaMemberFunction.cs:line 981
+   at SimpleLanguage.Core.MethodManager.ParseStatements() in D:\project\lang\simple_language\source\Core\MethodManager.cs:line 88
+   at SimpleLanguage.Project.ProjectCompile.<>c.<InitCompileProcess>b__9_17() in D:\project\lang\simple_language\source\Project\ProjectCompile.cs:line 279
+   at SimpleLanguage.Compile.Process.ProcessManager.RunPhaseSteps(CompilePhaseState ps) in D:\project\lang\simple_language\source\Process\ProcessManager.cs:line 223]
+[02:23:36 139] [Error] [Process]  [ProcessStepFailed]  Info:[编译步骤[ParseStatements]执行失败: 步骤执行返回失败]
+[02:23:36 140] [Error] [Process]  [ProcessPhaseFailed]  Info:[编译阶段[MetaCore]失败: 阶段内产生了 34 个错误]
+[02:23:36 140] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[IR]被跳过，前置阶段未成功完成]
+[02:23:36 140] [Warning] [Process]  [ProcessPhaseSkipped]  Info:[编译阶段[Export]被跳过，前置阶段未成功完成]
+[02:23:36 142] [Info] [Process]  [ProcessSummary]  Info:[编译过程汇总: [Completed] RefModule
+  [Completed] LoadRefModules
+[Completed] File
+  [Completed] PrepareFiles
+  [Completed] Token
+  [Completed] Node
+  [Completed] File
+[Failed] MetaCore : 阶段内产生了 34 个错误 errors: 34
+  [Completed] ExpandBind
+  [Completed] InjectDllImportHolder
+  [Completed] CreateNamespace
+  [Completed] CombineFileMeta
+  [Completed] CheckReferenceCycles
+  [Completed] ParseMetaClassLink
+  [Completed] ParseAttributes
+  [Completed] ParseMemberExpress
+  [Completed] CheckMemberNewCycles
+  [Completed] InjectProjectData
+  [Completed] ValidatePlatformConfig
+  [Completed] BuildLocalClass
+  [Failed] ParseStatements : 步骤执行返回失败 errors: 33
+  [Skipped] InjectInitCall
+  [Skipped] ExportMetaDebug
+  [Skipped] AddGlobalData
+  [Skipped] ProjectCompileAfter
+  [Skipped] AutoInlineMark
+[Skipped] IR : 前置阶段[MetaCore]失败
+  [Pending] TranslateIR
+[Skipped] Export : 前置阶段[MetaCore]失败
+  [Pending] ExportModule
+]

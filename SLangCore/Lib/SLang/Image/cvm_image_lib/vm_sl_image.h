@@ -159,6 +159,94 @@ SLI_API int         sli_gif_encode_add_frame(int64_t enc, int64_t pixels_ptr, in
 SLI_API int64_t     sli_gif_encode_finish(int64_t enc);
 SLI_API int         sli_gif_encode_free(int64_t enc);
 
+/* ======================= 像素批量运算（sli_op_*，v2） ======================= */
+/* 2026-11-28：纯 SL 每像素重循环下沉 C 层（convolve/rotate/resize/合成混合/
+ * 通道拆合/格式转换/贴入/填充/翻转/预乘）。与句柄家族不同，这组是裸指针
+ * 运算：src/dst/out 指向 SL 侧 Memory.alloc 块（像素契约同上 RGBA8 顶行
+ * 在前，Gray8 平面为 w*h 字节），不占句柄槽。
+ *   - ctl_ptr 指向 int32 控制块（布局各函数注明，字节序本机 LE）；
+ *   - 失败置粘性错误返回 0 —— SL 侧据此回落纯 SL 循环兜底；
+ *   - 语义与 SL 侧实现逐位对齐（除法截断 / clamp8 / BT.601 灰度 /
+ *     blendOver 浮点合成），测试口径 byte-exact。 */
+
+/* 3x3 卷积（RGBA8，边界复制，RGB 三通道卷积 + offset，alpha 保留中心像素）。
+ * ctl = int32[12]：kernel[0..8]（行主序）、scale（>0）、offset。 */
+SLI_API int         sli_op_convolve3x3(int64_t src, int64_t dst,
+                                       int w, int h, int64_t ctl);
+/* 任意角旋转（逆时针为正；dst 预分配 dw*dh*4，圈外透明；mode 0=最近邻
+ * 1=双线性）。angle_milli_deg = 度数×1000（i32，规避 VM CallFFIStatic
+ * fast path 对 f32 实参的栈封送 bug——坑 9；C 内部换算弧度）。
+ * ctl = int32[5]：sw, sh, dw, dh, mode。 */
+SLI_API int         sli_op_rotate(int64_t src, int64_t dst,
+                                   int64_t ctl, int angle_milli_deg);
+/* 缩放（mode 0=最近邻 1=双线性）。ctl = int32[5]：sw, sh, dw, dh, mode。 */
+SLI_API int         sli_op_resize(int64_t src, int64_t dst, int64_t ctl);
+/* alpha 合成 src over dst（逐像素 blendOver；三块均 w*h*4）。 */
+SLI_API int         sli_op_alpha_composite(int64_t dst, int64_t src,
+                                           int64_t out, int w, int h);
+/* 线性混合 out = a*(1-alpha) + b*alpha（alpha_x1000 = alpha×1000，
+ * 0..1000 域外钳制；i32 规避 f32 fast path 封送 bug——坑 9；
+ * 三块均 w*h*4）。 */
+SLI_API int         sli_op_blend(int64_t a, int64_t b, int64_t out,
+                                 int w, int h, int alpha_x1000);
+/* 拆通道：RGBA8 -> 4 张 Gray8 平面（各 w*h 字节）。
+ * ctl = int32[2]：w, h。 */
+SLI_API int         sli_op_split_rgba(int64_t src, int64_t r, int64_t g,
+                                     int64_t b, int64_t a, int64_t ctl);
+/* 合通道：3 张 Gray8 -> 不透明 Rgba8（三平面 + dst 均 w*h[+*4]）。 */
+SLI_API int         sli_op_merge_rgb(int64_t r, int64_t g, int64_t b,
+                                     int64_t dst, int w, int h);
+/* 合通道：4 张 Gray8 -> Rgba8（alpha 平面生效）。
+ * ctl = int32[2]：w, h。 */
+SLI_API int         sli_op_merge_rgba(int64_t r, int64_t g, int64_t b,
+                                      int64_t a, int64_t dst, int64_t ctl);
+/* 像素格式转换（fmt = SL 侧 EPixelFormat 值 1..8；浮点格式 9/10 不支持
+ * 返回 0 由 SL 兜底；dst 字节数 = w*h*bytesPerPixel(dst_fmt)）。 */
+SLI_API int         sli_op_convert(int64_t src, int64_t dst,
+                                    int w, int h, int src_fmt, int dst_fmt);
+/* 区域贴入（整块覆盖不混合，越界裁剪）。ctl = int32[6]：dw, dh, sw, sh, x, y。 */
+SLI_API int         sli_op_paste(int64_t dst, int64_t src, int64_t ctl);
+/* 纯色填充（rgba = 0xRRGGBBAA，与 Std ColorInt.toPackedRgba 布局一致）。 */
+SLI_API int         sli_op_fill(int64_t dst, int w, int h, int rgba);
+/* 上下翻转（行交换，w*4 字节行）。 */
+SLI_API int         sli_op_flip_y(int64_t dst, int w, int h);
+/* 左右翻转（行内像素交换，4 字节/像素）。 */
+SLI_API int         sli_op_flip_x(int64_t dst, int w, int h);
+/* alpha 预乘 / 反预乘（unpre 0=预乘 1=反预乘；直通 alpha 像素）。 */
+SLI_API int         sli_op_premultiply(int64_t dst, int w, int h, int unpre);
+
+/* ---- 高级合成家族（v2.1，2026-11-28；仿 Pillow ImageChops/ImageEnhance/
+ *      蒙版合成，runoob pillow-advanced 对照）。均为 RGBA8 裸指针块，
+ *      语义与 SL 兜底逐位对齐。 */
+
+/* 灰度化（BT.601 加权写回 RGB；alpha 原样保留）。 */
+SLI_API int         sli_op_grayscale(int64_t src, int64_t dst, int w, int h);
+/* BT.601 灰度均值（0..255 四舍五入；0 = 失败）。Contrast 枢轴用。 */
+SLI_API int         sli_op_luma_mean(int64_t src, int w, int h);
+/* 通道运算（11 模式；b 在 invert(7) 时忽略）：
+ *   0 add: min(255,a+b)          1 subtract: max(0,a-b)
+ *   2 multiply: a*b/255          3 screen: 255-(255-a)*(255-b)/255
+ *   4 difference: |a-b|          5 lighter: max  6 darker: min
+ *   7 invert: 255-a              8 soft_light: (a*(255-b)+b*b/255)/255
+ *   9 hard_light: b<128?2ab/255:255-2(255-a)(255-b)/255
+ *  10 overlay:    a<128?2ab/255:255-2(255-a)(255-b)/255
+ * 作用于全部 4 通道（RGBA 同步，与 PIL ImageChops 一致）。 */
+SLI_API int         sli_op_chops(int op, int64_t a, int64_t b,
+                                  int64_t out, int w, int h);
+/* 蒙版混合：out = a*(1-m/255) + b*(m/255)，4 通道同步；mask 为 w*h 字节
+ * Gray8 平面。ctl = int32[2]：w, h。 */
+SLI_API int         sli_op_mask_blend(int64_t a, int64_t b, int64_t mask,
+                                      int64_t out, int64_t ctl);
+/* 带蒙版贴入：f = mask/255（src 覆盖域内逐像素），dst = src*f + dst*(1-f)。
+ * ctl = int32[6]：dw, dh, sw, sh, x, y；mask 为 sw*sh 字节。 */
+SLI_API int         sli_op_paste_masked(int64_t dst, int64_t src, int64_t mask,
+                                       int64_t ctl);
+/* 线性插值（不钳 factor，支持外插增强）：out = a*(1-f) + b*f；
+ * factor_x1000 = factor×1000（i32 规避 f32 封送 bug——坑 9）；
+ * ImageEnhance 用（Pillow blend 钳 0..1，增强器 factor 可 > 1）。 */
+SLI_API int         sli_op_blend_factor(int64_t a, int64_t b, int64_t out,
+                                       int w, int h, int factor_x1000);
+
 #ifdef __cplusplus
 }
 #endif

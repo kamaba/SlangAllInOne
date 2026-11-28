@@ -1,8 +1,8 @@
-{
+﻿{
   "project":
   {
     "name": "SLangImage",
-    "desc": "CPU image decode/encode library module - namespace Image: ImageFfi (FFI static bindings + memory marshalling) / ImageIO (facade load/save/probe/convert) / ImageBuffer (tight pixel buffer, pure-SL pixel ops) / ImageInfo (header probe) / Gif (animated GIF split into ImageBuffer frames and frame-by-frame GIF composition: GifDocument/GifEncoder/Gif facade), pixel color class ColorInt now lives in Std root (Std/ColorInt.sl), backed by sl_image_lib.dll (stb_image/stb_image_write public-domain OR MIT-0 + WIC system codec + self-written GIF89a encoder; always RGBA8 top-down, handles are 1-based, 0 = invalid)",
+    "desc": "CPU image decode/encode library module - namespace Image: ImageFfi (FFI static bindings + memory marshalling) / ImageIO (facade load/save/probe/convert/show) / ImageBuffer (tight pixel buffer, pure-SL pixel ops incl Pillow-Image-style newImage/paste/pasteMasked/rotate/splitChannels/mergeRgba/mergeRgb/alphaComposite/blend) / ImageInfo (header probe) / Gif (animated GIF split into ImageBuffer frames and frame-by-frame GIF composition: GifDocument/GifEncoder/Gif facade) / ImageSequence (Pillow-style multi-frame sequence iteration: ImageSequenceIterator with seek/tell/nFrames for-in support + allFrames/allImages/framesOfImage/saveFrame/saveAllFrames facade) / ImageFilter (Pillow-ImageFilter-style named 3x3 convolution filters: Blur/Contour/Emboss/FindEdges/Sharpen/Smooth + convolve3x3 generic kernel) / ImageChops (Pillow-ImageChops channel ops: add/subtract/multiply/screen/difference/lighter/darker/invert + softLight/hardLight/overlay blend modes) / ImageEnhance (Pillow-ImageEnhance brightness/contrast/color/sharpness + grayscale) / ImageMask (gradient/circular/pattern/checkerboard mask generation + applyMaskBlend/transitionBlend/checkerboardBlend) / ImageDraw (Pillow-ImageDraw point/line/rectangle/ellipse/polygon/arc/circle + 3x5 bitmap text), pixel color class ColorInt now lives in Std root (Std/ColorInt.sl), backed by sl_image_lib.dll (stb_image/stb_image_write public-domain OR MIT-0 + WIC system codec + self-written GIF89a encoder; always RGBA8 top-down, handles are 1-based, 0 = invalid)",
     "mainVersion": 0,
     "subVersion": 1,
     "buildVersion": 0,
@@ -26,7 +26,12 @@
   // SLangImage.module.json 相同的目录（out/export/SLangImage/），即上方
   // dllImports 别名指向的位置。
   // C 实现位于 SlangAllInOne\SLangCore\Lib\SLang\Image\cvm_image_lib\：
-  //   vm_sl_image.h     - 公开契约（35 个 sli_* 导出，普通 C ABI）
+  //   vm_sl_image.h     - 公开契约（55 个 sli_* 导出：22 静图 + 13 GIF 动画 +
+  //                       20 sli_op_* 像素批量运算【卷积/旋转/缩放/合成混合/
+  //                       通道拆合/格式转换/贴入/填充/翻转/预乘 + 高级合成：
+  //                       灰度/通道运算11模式/蒙版混合/带蒙版贴入/外插混合，
+  //                       重循环下沉 C 层，SL 侧失败回落纯 SL 循环兜底】，
+  //                       普通 C ABI）
   //   sl_image.c        - 槽表/粘性错误/格式嗅探/解码编码主路
   //   Codec\sl_image_stb.c  - stb_image v2.31 + stb_image_write v1.17 唯一
   //                           IMPLEMENTATION 编译点（third_party\stb\，公有领域
@@ -65,7 +70,25 @@
       { "path": "Svg.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 9 },
       // Gif.sl：GIF 动画拆解/合成（GifDocument/GifEncoder/Gif 门面，
       // 自持 13 个 sli_gif_* 绑定，只向后引用 ImageFfi/ImageBuffer）
-      { "path": "Gif.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 10 }
+      { "path": "Gif.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 10 },
+      // ImageSequence.sl：多帧序列遍历门面（仿 Pillow ImageSequence：
+      // Iterator/allFrames/seek/tell/nFrames + 帧落盘，纯 SL 组合 Gif/ImageIO）
+      { "path": "ImageSequence.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 11 },
+      // ImageFilter.sl：3x3 卷积滤镜（仿 Pillow ImageFilter：Blur/Contour/
+      // Emboss/FindEdges/Sharpen/Smooth 等 8 命名滤镜 + convolve3x3 通用核）
+      { "path": "ImageFilter.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 12 },
+      // ImageChops.sl：通道运算（仿 Pillow ImageChops：add/subtract/multiply/
+      // screen/difference/lighter/darker/invert + softLight/hardLight/overlay）
+      { "path": "ImageChops.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 13 },
+      // ImageEnhance.sl：图像增强（仿 Pillow ImageEnhance：brightness/contrast/
+      // color/sharpness + grayscale）
+      { "path": "ImageEnhance.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 14 },
+      // ImageMask.sl：蒙版生成与蒙版合成（仿 Pillow advanced：渐变/圆形/
+      // 图案/棋盘蒙版 + applyMaskBlend/transitionBlend/checkerboardBlend）
+      { "path": "ImageMask.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 15 },
+      // ImageDraw.sl：2D 绘图（仿 Pillow ImageDraw：point/line/rectangle/
+      // ellipse/polygon/arc/circle + text 3x5 位图字体）
+      { "path": "ImageDraw.sl", "group": "image", "tag": "codec", "ignore": false, "priority": 16 }
     ]
   },
   "compileFilter": {
@@ -145,7 +168,24 @@
       { "class": "GifFrame" },
       { "class": "GifDocument" },
       { "class": "Gif" },
-      { "class": "GifEncoder" }
+      { "class": "GifEncoder" },
+      // ImageSequence（仿 Pillow ImageSequence 模块）：帧游标实现
+      // Core.IIterable/IIterator<GifFrame> 可 for-in；门面全静态
+      { "class": "ImageSequenceIterator" },
+      { "class": "ImageSequence" },
+      // ImageFilter（仿 Pillow ImageFilter 模块）：命名滤镜 + 通用 3x3 卷积
+      { "enum": "EImageFilter" },
+      { "class": "ImageFilter" },
+      // ImageChops（仿 Pillow ImageChops）：8 通道运算 + 3 混合模式
+      { "class": "ImageChops" },
+      // ImageEnhance（仿 Pillow ImageEnhance）：四增强器 + grayscale
+      { "class": "ImageEnhance" },
+      // ImageMask（仿 Pillow advanced 蒙版）：蒙版生成 + 蒙版合成
+      { "enum": "EMaskDirection" },
+      { "enum": "EMaskPattern" },
+      { "class": "ImageMask" },
+      // ImageDraw（仿 Pillow ImageDraw）：几何绘制 + 3x5 位图文本
+      { "class": "ImageDraw" }
     ]}
   ],
   "export": {

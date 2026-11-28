@@ -48,9 +48,8 @@ plugin插件，增加编译环境手动配置 还有就是集成非下载环境�
 php 调研下，看环境是否很大
 python 看多大，如果不大直接集成。
 优化runtime
-在Image里这增加Gif的 解析和生成  https://www.runoob.com/pillow/imagesequence-module.html 可以仿着这个做
 于对Image可以在QT模块中的直接显示，中间的桥接
-https://www.runoob.com/pillow/pillow-image-module.html 把Image这种的方法 也多一些吧。
+
 整一个完整的demo 加载所有的module然后 可以跑任意内容 
 网页没有icp备案
 benchmark 增加一个开关，是否进行20亿次的循环迭代测试 

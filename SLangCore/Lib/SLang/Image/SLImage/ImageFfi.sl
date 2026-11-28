@@ -1,8 +1,12 @@
 # =========================================================================
 # Image/ImageFfi.sl —— C 层 sl_image_lib.dll 的 FFI 静态绑定 + 内存搬运
 #
-# C 契约：../cvm_image_lib/vm_sl_image.h（35 个 sli_* 导出，普通 C ABI）
-#         其中 13 个 sli_gif_* 的 SL 绑定在 Gif.sl（动画拆解 / 合成）
+# C 契约：../cvm_image_lib/vm_sl_image.h（55 个 sli_* 导出，普通 C ABI）
+#         其中 13 个 sli_gif_* 的 SL 绑定在 Gif.sl（动画拆解 / 合成），
+#         20 个 sli_op_*（像素批量运算：卷积/旋转/缩放/合成混合/通道拆合/
+#         格式转换/贴入/填充/翻转/预乘/灰度/通道运算/蒙版合成/外插混合）
+#         在本文件，SL 侧重循环方法（ImageBuffer/ImageFilter/ImageChops/
+#         ImageEnhance/ImageMask）以「C 快路径 + 纯 SL 循环兜底」接入
 # 后端：  stb_image / stb_image_write（公有领域 OR MIT-0，JPEG/PNG/BMP/GIF/
 #         TGA/PSD/HDR/PIC/PNM 读写）+ WIC（系统组件，TIFF/ICO/WebP 解码、
 #         TIFF 编码兜底）
@@ -37,6 +41,16 @@ namespace Image
         public static const Int32 PROBE_OUT_BYTES = 24
 
         static bool _ready = false
+
+        # sli_op_* C 快路径总开关（运行期可变，非 const——避开编译期折叠）：
+        # true  = rotate/blend/blendFactor/maskBlend/pasteMasked 走 C 直调
+        # false = 走纯 SL 循环兜底（语义等价，较慢）
+        # 暂关原因（坑 9）：VM CallFFIStatic fast path 对「本批签名」存在
+        # 实参错位（C 返回 true 但未写 out 块，输出为 alloc 残影；DLL 本身
+        # P/Invoke 直测正确）—— 待 csimple_lang 修复弹参/封送后置 true。
+        # 其余 v2 函数（fill/paste/convolve/resize/convert/chops/grayscale/
+        # luma_mean/split/merge/flip/premultiply）实测 C 路径正常，不受此开关影响。
+        public static bool opFastPathsEnabled = false
 
         # ── 生命周期 ─────────────────────────────────────────
         # 幂等初始化（C 层 sli_init 可重入）；首次成功后置位，
@@ -218,6 +232,139 @@ namespace Image
 
         @DllStaticImport( "sl_image_lib", "sli_blob_free", "i64->bool" )
         public static bool libBlobFree( Int64 blob )
+        {
+            ret false
+        }
+
+        # ── 像素批量运算（sli_op_*，14 个；裸指针，无句柄槽）──
+        # 像素契约同上（RGBA8 top-down / Gray8 平面 w*h 字节）；
+        # 失败返回 false（粘性错误）—— 调用方据此回落纯 SL 循环兜底。
+        # 契约详见 vm_sl_image.h「像素批量运算」段。
+
+        @DllStaticImport( "sl_image_lib", "sli_op_convolve3x3", "ptr,ptr,i32,i32,ptr->bool" )
+        public static bool libOpConvolve3x3( Int64 srcPtr, Int64 dstPtr, Int32 w, Int32 h, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        # angleMilliDeg = 度数×1000（i32；规避 VM CallFFIStatic fast path
+        # 对 f32 实参的栈封送 bug——坑 9）
+        @DllStaticImport( "sl_image_lib", "sli_op_rotate", "ptr,ptr,ptr,i32->bool" )
+        public static bool libOpRotate( Int64 srcPtr, Int64 dstPtr, Int64 ctlPtr, Int32 angleMilliDeg )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_resize", "ptr,ptr,ptr->bool" )
+        public static bool libOpResize( Int64 srcPtr, Int64 dstPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_alpha_composite", "ptr,ptr,ptr,i32,i32->bool" )
+        public static bool libOpAlphaComposite( Int64 dstPtr, Int64 srcPtr, Int64 outPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        # alphaX1000 = alpha×1000（0..1000；i32 规避 f32 封送 bug——坑 9）
+        @DllStaticImport( "sl_image_lib", "sli_op_blend", "ptr,ptr,ptr,i32,i32,i32->bool" )
+        public static bool libOpBlend( Int64 aPtr, Int64 bPtr, Int64 outPtr, Int32 w, Int32 h, Int32 alphaX1000 )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_split_rgba", "ptr,ptr,ptr,ptr,ptr,ptr->bool" )
+        public static bool libOpSplitRgba( Int64 srcPtr, Int64 rPtr, Int64 gPtr, Int64 bPtr, Int64 aPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_merge_rgb", "ptr,ptr,ptr,ptr,i32,i32->bool" )
+        public static bool libOpMergeRgb( Int64 rPtr, Int64 gPtr, Int64 bPtr, Int64 dstPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_merge_rgba", "ptr,ptr,ptr,ptr,ptr,ptr->bool" )
+        public static bool libOpMergeRgba( Int64 rPtr, Int64 gPtr, Int64 bPtr, Int64 aPtr, Int64 dstPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_convert", "ptr,ptr,i32,i32,i32,i32->bool" )
+        public static bool libOpConvert( Int64 srcPtr, Int64 dstPtr, Int32 w, Int32 h, Int32 srcFmt, Int32 dstFmt )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_paste", "ptr,ptr,ptr->bool" )
+        public static bool libOpPaste( Int64 dstPtr, Int64 srcPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_fill", "ptr,i32,i32,i32->bool" )
+        public static bool libOpFill( Int64 dstPtr, Int32 w, Int32 h, Int32 rgba )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_flip_y", "ptr,i32,i32->bool" )
+        public static bool libOpFlipY( Int64 dstPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_flip_x", "ptr,i32,i32->bool" )
+        public static bool libOpFlipX( Int64 dstPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_premultiply", "ptr,i32,i32,i32->bool" )
+        public static bool libOpPremultiply( Int64 dstPtr, Int32 w, Int32 h, Int32 unpre )
+        {
+            ret false
+        }
+
+        # ── 高级合成家族（sli_op_* v2.1：仿 Pillow ImageChops/ImageEnhance/蒙版）──
+
+        @DllStaticImport( "sl_image_lib", "sli_op_grayscale", "ptr,ptr,i32,i32->bool" )
+        public static bool libOpGrayscale( Int64 srcPtr, Int64 dstPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_luma_mean", "ptr,i32,i32->i32" )
+        public static Int32 libOpLumaMean( Int64 srcPtr, Int32 w, Int32 h )
+        {
+            ret 0
+        }
+
+        # op：0 add / 1 subtract / 2 multiply / 3 screen / 4 difference /
+        #     5 lighter / 6 darker / 7 invert / 8 softLight / 9 hardLight / 10 overlay
+        @DllStaticImport( "sl_image_lib", "sli_op_chops", "i32,ptr,ptr,ptr,i32,i32->bool" )
+        public static bool libOpChops( Int32 op, Int64 aPtr, Int64 bPtr, Int64 outPtr, Int32 w, Int32 h )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_mask_blend", "ptr,ptr,ptr,ptr,ptr->bool" )
+        public static bool libOpMaskBlend( Int64 aPtr, Int64 bPtr, Int64 maskPtr, Int64 outPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        @DllStaticImport( "sl_image_lib", "sli_op_paste_masked", "ptr,ptr,ptr,ptr->bool" )
+        public static bool libOpPasteMasked( Int64 dstPtr, Int64 srcPtr, Int64 maskPtr, Int64 ctlPtr )
+        {
+            ret false
+        }
+
+        # factorX1000 = factor×1000（不钳，外插用；i32 规避 f32 封送 bug——坑 9）
+        @DllStaticImport( "sl_image_lib", "sli_op_blend_factor", "ptr,ptr,ptr,i32,i32,i32->bool" )
+        public static bool libOpBlendFactor( Int64 aPtr, Int64 bPtr, Int64 outPtr, Int32 w, Int32 h, Int32 factorX1000 )
         {
             ret false
         }
@@ -484,6 +631,67 @@ namespace Image
                 ret null
             }
             ret rgba.pixelBytes()
+        }
+
+        # ── sli_op_* 快路径搬运辅助（ImageBuffer/ImageFilter 复用，故 public）──
+
+        # 原生块 -> 已有 Array<UInt8> 就地回填（不再分配新数组）
+        public static bool _fillBytes( Int64 ptr, Array<UInt8> bytes, Int32 count )
+        {
+            if ptr == 0 || bytes == null || count <= 0 || count > bytes.length
+            {
+                ret false
+            }
+            Int32 i = 0
+            while i < count
+            {
+                bytes[ i ] = SystemConvertUInt8( Memory.readUInt8( ptr, i ) )
+                i = i + 1
+            }
+            ret true
+        }
+
+        # int32 控制块写入（自偏移 0 起逐个 writeI32）
+        public static bool _writeCtl( Int64 ptr, Array<Int32> values )
+        {
+            if ptr == 0 || values == null
+            {
+                ret false
+            }
+            Int32 i = 0
+            while i < values.length
+            {
+                Memory.writeI32( ptr, i * 4, values[ i ] )
+                i = i + 1
+            }
+            ret true
+        }
+
+        # ImageBuffer（任意格式）-> 原生 RGBA8 块（含格式转换）；
+        # 0 = 无效 / 超 MAX_INLINE_BYTES / 分配失败（调用方持有释放权）
+        public static Int64 _uploadRgba( ImageBuffer buffer )
+        {
+            Array<UInt8> rgba = ImageFfi.rgbaBytesOf( buffer )
+            if rgba == null
+            {
+                ret 0
+            }
+            ret ImageFfi._copyIn( rgba, rgba.length )
+        }
+
+        # EPixelFormat -> C 层 fmt id（显式逐值；浮点格式 9/10 返回 0 =
+        # 不支持，调用方回落 SL 循环）
+        public static Int32 fmtToInt( EPixelFormat fmt )
+        {
+            if fmt == EPixelFormat.Gray8 { ret 1 }
+            if fmt == EPixelFormat.Gray16 { ret 2 }
+            if fmt == EPixelFormat.Rgb8 { ret 3 }
+            if fmt == EPixelFormat.Rgba8 { ret 4 }
+            if fmt == EPixelFormat.Bgr8 { ret 5 }
+            if fmt == EPixelFormat.Bgra8 { ret 6 }
+            if fmt == EPixelFormat.Rgb16 { ret 7 }
+            if fmt == EPixelFormat.Rgba16 { ret 8 }
+            ret 0
         }
 
         # ── 文件路径（零搬运直通 C 层，推荐入口）────────────

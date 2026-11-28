@@ -25,8 +25,8 @@ import Std
 # 递归 fib 助手用双冒号全局标签 F_fib::（rcx=n → rax，内部无外部调用）。
 # 块内代码约束：`<-` 序列禁用；行首 $/# 禁用；行首裸 END/ENDP/PUBLIC/PROC
 # 禁用；块内不用 # 行注释（一律 ;）。
-# 前置：先跑 plugin\masm_x64\cvm\build-masm-x64.ps1；MSVC 工具集（cl +
-# ml64 同目录）本机可用。SLMasm.dll 为共享部署位（后编译覆盖）——运行
+# 前置：先跑 plugin\masm_x64\cvm\build-masm-x64.ps1（含自带 LLVM 工具链
+# 同步）。SLMasm.dll 为共享部署位（后编译覆盖）——运行
 # BenchMark 前须最后编译本工程（同 SLCpp.dll / java classes 行为）。
 # ============================================================================
 

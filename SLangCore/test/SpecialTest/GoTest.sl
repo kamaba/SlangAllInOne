@@ -24,13 +24,22 @@ import Core;
 # 用法覆盖：① 无通道纯块 ② 出通道 Int ③ 入+出通道 String ④ 块内 panic
 # 上抛 SL 异常 try-catch 捕获；附加：int64 全域往返、double 通道、bool
 # 通道（Go 域放行）、三类型混合入通道、OBJECT 树往返、异常后子进程会话
-# 存活（panic 已 recover 为 err 事件，不破坏协议管道/registry）。
-# 前置：编译机 Go 1.22+（go.exe 在 PATH 或 SLANG_GO_EXE/GOROOT 覆盖——
-# SLGoHost.exe 编译期产物内嵌 Go 运行时，运行机器零 Go 依赖）。
+# 存活（panic 已 recover 为 err 事件，不破坏协议管道/registry）、
+# 块首 import 提升与外部源码文件合并编译（2026-11-28）。
+# 前置：编译机 Go 1.22+（go.exe 在 PATH 或 SLANG_GO_EXE/GOROOT 覆盖，或
+# plugin.jsonc goExe 手动指定——SLGoHost.exe 编译期产物内嵌 Go 运行时，
+# 运行机器零 Go 依赖）。
 # 注意：本文件 SL 层禁用行内注释（Lexer 单行 # 注释会吞换行，导致成员
-# 丢失）。块体为 Go 函数体（func Entry_N_run）：import 只能在文件顶部——
-# 预置包 fmt/time/strings/strconv/math/sort/os 已可直接使用，块内勿遮蔽
-# 这些包名；<- 是 Go 原生 channel 接收操作符，块体内合法；for/if 的
+# 丢失）。块体为 Go 函数体（func Entry_N_run）：块首（入通道行之后、首条
+# 代码行之前）可写单行 import——非预置标准库（encoding/binary 等）、外部
+# 模块（github.com/xxx，构建器 go build -mod=mod 自动解析 go.mod 依赖，
+# 需联网 GOPROXY）、副作用空导入（import _ "..."）均提升到生成文件顶部；
+# 预置包 fmt/math/os/regexp/sort/strconv/strings/time 已可直接使用（块首
+# 裸 import 同名包自动去重跳过，带别名保留）；多行 import 组不支持（块首
+# 须单行）；中段 import 报错（位置铁律）。外部 .go 文件不经 import——
+# jsonc plugins.golang.sources 声明（本工程 GoCode/SlGoExtraUtil.go，
+# package main 同包直调，见 testExternalSource）；块内勿遮蔽预置包名；
+# <- 是 Go 原生 channel 接收操作符，块体内合法；for/if 的
 # 起始 { 必须与子句同行（Go 语法硬约束，不能 SL 换行花括号风格）。
 # ============================================================================
 
@@ -269,6 +278,55 @@ class GoTest
         check( "object tree: rebuilt q.y == 12 (3*4)", q.y == 12 )
     }
 
+    # ---------------- ⑥ 块首 import 提升（2026-11-28：非预置标准库 + 预置去重） ----------------
+    # 块首（入通道行之后、首条代码行之前）单行 import 收集后提升到生成文件
+    # 顶部区。encoding/binary 非预置 → 提升后块内直用；import "fmt" 与预置
+    # 组重复 → 裸导入自动去重跳过（带别名形态保留，Go 允许同包多名导入）。
+    # 外部模块（github.com/xxx）同写法，构建器检测后 go build -mod=mod
+    # 自动解析 go.mod 依赖（需联网 GOPROXY，离线跑不了网络依赖，本用例
+    # 仅覆盖标准库形态）。
+    static testBlockHeadImport()
+    {
+        Console.println( "===== GoTest.testBlockHeadImport =====" )
+        int n = 0
+        @golang()
+        {
+            import "encoding/binary"
+            import "fmt"
+
+            buf := make([]byte, 4)
+            binary.LittleEndian.PutUint32(buf, 300)
+            n64 := int64(binary.LittleEndian.Uint32(buf))
+            fmt.Println("le-roundtrip inner =", n64)
+            $n <- n64;
+        }
+        Console.println( "le-roundtrip = " + n.toString() )
+        check( "block-head import: encoding/binary promoted, 300 == 300", n == 300 )
+    }
+
+    # ---------------- ⑦ 外部源码文件合并编译（jsonc plugins.golang.sources） ----------------
+    # GoCode/SlGoExtraUtil.go（package main）经 sources 下发，构建器与条目
+    # 同目录合并编译——Go 按目录整包收录，同包直调无需 import（对照 java
+    # 域 SLAtSign 同包口径）；外部文件可自带 import 区（GoExtraRepeat 用
+    # strings，strings 虽是条目预置包但逐文件解析互不冲突）。
+    static testExternalSource()
+    {
+        Console.println( "===== GoTest.testExternalSource =====" )
+        int m = 0
+        string s = ""
+        @golang()
+        {
+            $m <- GoExtraMul( 6, 7 );
+        }
+        @golang()
+        {
+            string $s <- GoExtraRepeat( "ab", 3 );
+        }
+        Console.println( "external-source: m = " + m.toString() + " s = " + s )
+        check( "external source: GoExtraMul(6,7) == 42", m == 42 )
+        check( "external source: GoExtraRepeat('ab',3) == 'ababab'", s == "ababab" )
+    }
+
     static fun()
     {
         Console.println( "========== GoTest start ==========" )
@@ -282,6 +340,8 @@ class GoTest
         testThrow()
         testSessionReuse()
         testObjectTree()
+        testBlockHeadImport()
+        testExternalSource()
         Console.println( "========== GoTest end: passed=" + passed.toString() + " failed=" + failed.toString() + " ==========" )
     }
 }

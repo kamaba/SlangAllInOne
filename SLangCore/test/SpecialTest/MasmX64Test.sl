@@ -7,8 +7,8 @@ import Core;
 # 链路：@masm_x64(){} 块 → Front 哨兵脱糖 CallAtSignLabel(124) → 导出期
 # PluginManager 构建段转调插件 frontend（sl_label_parse 生成 Entry_N.asm：
 # meta 头 + PUBLIC/PROC/ENDP 包裹用户指令 + 寄存器映射注释；sl_label_build
-# 解析 meta 头生成 trampoline.c + ml64 /c 汇编 + cl /LD 合并链接部署
-# SLMasm.dll）→ CVM 经模块 atSignLabel[] 绑定懒 resolve 到 sl_masm_x64
+# 解析 meta 头生成 trampoline.c + 捆绑 llvm-ml64 /c 汇编 + clang-cl /LD
+# -fuse-ld=lld 合并链接部署 SLMasm.dll）→ CVM 经模块 atSignLabel[] 绑定懒 resolve 到 sl_masm_x64
 # labelExec → 装载 SLMasm.dll → GetProcAddress（"Entry_1_main"）固定原型
 # 调用（SLMasmValue = SLLabelValue 逐字段镜像，in/out 数组零转换直拷）
 # → trampoline 编译期解包/打包 → 出值回推。
@@ -36,8 +36,8 @@ import Core;
 #（多块共享同一汇编模块命名空间——各用例标签均已带块号后缀）、跳转标签
 # PROC 内局部（MASM 语义，跨块不冲突）、非易失寄存器（RBX/RDI/RSI/RBP/
 # R12-R15、XMM6-15 低位）须自行保存。
-# 前置：先跑 plugin\masm_x64\cvm\build-masm-x64.ps1（插件 dll +
-# frontend + refModule）；MSVC（cl + ml64 同工具集）本机可用。
+# 前置：先跑 plugin\masm_x64\cvm\build-masm-x64.ps1（插件 dll + frontend
+# + refModule + 自带 LLVM 工具链同步）。
 # 注意：本文件 SL 层禁用行内注释（Lexer 单行 # 注释会吞换行，导致成员丢失）。
 # ============================================================================
 

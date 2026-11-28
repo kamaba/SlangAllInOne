@@ -67,7 +67,9 @@ $total <- rax;        # ④ 出通道行（尾区，必须是块内最后一行�
 
 ## 3. 块内汇编的规则
 
-- 方言 = **MASM x64（ml64）**：Intel 语法、`;` 行注释、`PROC/ENDP`、`.data/.code` 段；
+- 方言 = **MASM x64（llvm-ml64，ml64 兼容）**：Intel 语法、`;` 行注释、`PROC/ENDP`、
+  `.data/.code` 段（插件自带 `toolchain\bin\llvm-ml64.exe` + `clang-cl.exe` +
+  `lld-link.exe`，构建不依赖机器上的 MSVC ml64/cl/link——见 §8）；
 - **禁**（编译期报错）：
   - `<-` 序列出现在中段（通道标记语法保留；字符串/注释内放行）；
   - 行首 `$`（通道标记语法保留）；
@@ -79,7 +81,10 @@ $total <- rax;        # ④ 出通道行（尾区，必须是块内最后一行�
   遵守 MS x64 ABI：`sub rsp, 40`（32B shadow space + 8 对齐）、varargs 先
   `xor eax, eax`（AL=向量参数数）、用完 `add rsp, 40`；
 - **数据段标签全 dll 唯一**（多块共享同一汇编模块命名空间，建议带块号后缀如
-  `buf5`）；跳转标签是 PROC 内局部作用域（MASM 语义），跨块同名无冲突。
+  `buf5`）；跳转标签是 PROC 内局部作用域（MASM 语义），跨块同名无冲突；
+- `OFFSET 标签` 可用（`mov r8, OFFSET buf5`）：捆绑 llvm-ml64 把它汇编成
+  32 位绝对地址，插件链接端以固定低基址 0x62000000 + 关 ASLR 保证其正确性
+  （详见 §8 第 4 条）；推荐优先 `lea r8, buf5`（RIP 相对，与基址无关）。
 
 ## 4. 必须遵守的 ABI 纪律（违反 = 调用后随机崩溃或结果错乱）
 
@@ -237,8 +242,14 @@ $total <- rax;
    模板见 `plugin/masm_x64/README.md`）；
 3. AtSign 哨兵两条 systemCalls（`AtSignLabelCall`/`AtSignLabelCallVoid`，
    `cvmFunction: "atsign:label"`）调用方工程须已声明；
-4. 机器须有 MSVC x64 工具集（cl + ml64 同目录）；无 ml64 时块构建 Info 级跳过
-   （`SL_ML64` 环境变量可指定 ml64 全路径）。
+4. 块构建工具链走插件**自带 LLVM 工具链**（`package\windows\toolchain\bin\`：
+   `llvm-ml64.exe` 汇编 + `clang-cl.exe` 编译 + `lld-link.exe` 链接，由
+   `build-masm-x64.ps1` 第 2.55 步从本地 LLVM 构建树同步）；缺工具时块构建
+   Info 级跳过（`SL_ML64`/`SL_CLANGCL` 环境变量可指定全路径覆盖）。MSVC
+   头/库定位交 clang-cl 自身 VS auto-detect，无需 VS 开发环境提示符。
+   SLMasm.dll 以**固定低基址 0x62000000 + 关 ASLR** 链接：llvm-ml64 的
+   `OFFSET` 汇编成 32 位绝对地址（mov imm32 符号扩展），默认镜像基址
+   0x180000000 会截断成垃圾指针，低固定基址保证 `OFFSET` 取址正确。
 
 ## 9. 基准测试（BenchMark 套件）
 

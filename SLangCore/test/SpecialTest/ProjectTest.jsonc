@@ -349,6 +349,15 @@
       "abi": 1,
       "prefix": "sl_golang_",
       "lib": "../../../../plugin/golang/package/windows/cvm_golang.dll",
+      // 额外源码（sources，2026-11-28）：与全部 @golang(){} 块体条目同批
+      // 合并编译进 SLGoHost.exe——构建器把外部 .go 文件按原文件名写进
+      // 临时组装目录，Go 按目录整包收录 *.go：声明 package main 即与生成
+      // 条目 Entry_N.go 同包直调（无需 import；Go 无相对路径 import，对照
+      // java 域 SLAtSign 同包合并编译口径）；外部 .go 可自带 import 区
+      //（逐文件解析），import 外部模块（首路径段含 '.'，如 github.com/xxx）
+      // 时构建器 go build 追加 -mod=mod 自动解析依赖。见 GoTest.sl 的
+      // testExternalSource / testBlockHeadImport。
+      "sources": [ "GoCode/SlGoExtraUtil.go" ],
       "platform": { "os": "windows", "arch": "x86_64" },
       "onUnavailable": "warn",
       "capabilities": [
